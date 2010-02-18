@@ -2619,11 +2619,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return toHit.getDesc();
             }
         }
-        if ((ae instanceof Infantry) && !isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te, false)) {
-            return "Attacker is already performing a legattack";
-        }
-        if ((ae instanceof Infantry) && !isOnlyAttack(game, ae, Infantry.SWARM_MEK, te, false)) {
-            return "Attacker is already performing a swarm attack.";
+        if ((ae instanceof Infantry) && isDoingInfantryAttack(game, ae)) {
+            return "Attacker is already performing an attack that must be the only attack";
         }
 
         // Leg attacks, Swarm attacks, and
@@ -2635,7 +2632,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te, true)) {
+            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te)) {
                 return "Leg attack must be an unit's only attack, and there must not be multiple Leg Attacks.";
             }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
@@ -2645,7 +2642,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK, te, true)) {
+            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK, te)) {
                 return "Swarm attack must be an unit's only attack, and there must not be multiple Swarm Attacks.";
             }
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
@@ -2742,7 +2739,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Some attacks are the only actions that a particular entity can make during its turn
      * Also, only this unit can make that particular attack.
      */
-    private static boolean isOnlyAttack(IGame game, Entity attacker, String attackType, Entity target, boolean checkOtherSameType) {
+    private static boolean isOnlyAttack(IGame game, Entity attacker, String attackType, Entity target) {
         // mechs can only be the target of one leg or swarm attack
         for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
             EntityAction ea = actions.nextElement();
@@ -2755,7 +2752,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         return false;
                     }
                 }
-                if (checkOtherSameType && waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
+                if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
                         attackType) && waa.getTarget(game).equals(target)) {
                     if (!waa.getEntity(game).equals(attacker)) {
                         //If there is an attack by another unit that has this attack type against the same target, fail.
@@ -2765,6 +2762,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         return true;
+    }
+
+    private static boolean isDoingInfantryAttack(IGame game, Entity ae) {
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+            EntityAction ea = actions.nextElement();
+            if (ea instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) ea;
+                if (waa.getEntity(game).equals(ae)) {
+                    // return true if ae is already doing a leg or swarm attack
+                    if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
+                            Infantry.LEG_ATTACK) ||
+                            waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
+                                    Infantry.SWARM_MEK)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

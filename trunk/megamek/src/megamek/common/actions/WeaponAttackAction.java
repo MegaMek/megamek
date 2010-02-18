@@ -873,7 +873,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(+1, "inaccurate weapon");
         }
 
-        
+
 
         // Has the pilot the appropriate gunnery skill?
         if (ae.crew.getOptions().booleanOption("gunnery_laser") && wtype.hasFlag(WeaponType.F_ENERGY)) {
@@ -887,18 +887,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.crew.getOptions().booleanOption("gunnery_missile") && wtype.hasFlag(WeaponType.F_MISSILE)) {
             toHit.addModifier(-1, "Gunnery/Missile");
         }
-        
+
         //Is the pilot a weapon specialist?
         if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
             toHit.addModifier(-2, "weapon specialist");
         } else if(ae.crew.getOptions().booleanOption("specialist")) {
             //aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
-            //Note that weapon specialist supercedes gunnery specialization, so if you have 
+            //Note that weapon specialist supercedes gunnery specialization, so if you have
             //a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod
             if(wtype.hasFlag(WeaponType.F_ENERGY)) {
                 if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_LASER)) {
                     toHit.addModifier(-1, "Laser Specialization");
-                } 
+                }
                 else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
@@ -906,7 +906,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             else if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
                 if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, "Ballistic Specialization");
-                } 
+                }
                 else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
@@ -914,7 +914,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             else if(wtype.hasFlag(WeaponType.F_MISSILE)) {
                 if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, "Missile Specialization");
-                } 
+                }
                 else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
@@ -2619,6 +2619,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return toHit.getDesc();
             }
         }
+        if ((ae instanceof Infantry) && !isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te, false)) {
+            return "Attacker is already performing a legattack";
+        }
+        if ((ae instanceof Infantry) && !isOnlyAttack(game, ae, Infantry.SWARM_MEK, te, false)) {
+            return "Attacker is already performing a swarm attack.";
+        }
 
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
@@ -2629,7 +2635,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK)) {
+            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te, true)) {
                 return "Leg attack must be an unit's only attack, and there must not be multiple Leg Attacks.";
             }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
@@ -2639,7 +2645,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK)) {
+            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK, te, true)) {
                 return "Swarm attack must be an unit's only attack, and there must not be multiple Swarm Attacks.";
             }
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
@@ -2732,12 +2738,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return null;
     }
 
-    /*
+    /**
      * Some attacks are the only actions that a particular entity can make during its turn
      * Also, only this unit can make that particular attack.
      */
-    private static boolean isOnlyAttack(IGame game, Entity attacker, String attackType) {
-        // mechs can only be the target of one leg attack
+    private static boolean isOnlyAttack(IGame game, Entity attacker, String attackType, Entity target, boolean checkOtherSameType) {
+        // mechs can only be the target of one leg or swarm attack
         for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
@@ -2749,10 +2755,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         return false;
                     }
                 }
-                if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
-                        attackType)) {
+                if (checkOtherSameType && waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
+                        attackType) && waa.getTarget(game).equals(target)) {
                     if (!waa.getEntity(game).equals(attacker)) {
-                    //If there is an attack by another unit that has this attack type, fail.
+                        //If there is an attack by another unit that has this attack type against the same target, fail.
                         return false;
                     }
                 }

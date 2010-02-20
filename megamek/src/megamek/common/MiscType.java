@@ -427,15 +427,15 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
             switch (entity.getWeightClass()) {
                 case EntityWeightClass.WEIGHT_LIGHT:
-                    return 2;
+                    return 1;
                 case EntityWeightClass.WEIGHT_MEDIUM:
-                    return 3;
+                    return 2;
                 case EntityWeightClass.WEIGHT_HEAVY:
-                    return 4;
+                    return 3;
                 case EntityWeightClass.WEIGHT_ASSAULT:
-                    return 5;
+                    return 4;
             }
-            return entity.getWeightClass() + 1;
+            return entity.getWeightClass();
         } else if (hasFlag(F_TRACKS)) {
             if (entity instanceof QuadMech) {
                 return 4;

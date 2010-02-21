@@ -466,7 +466,7 @@ public class MovePath implements Cloneable, Serializable {
                 }
                 if (!returned) {
                     if (step.getPosition().equals(entity.getPosition())
-                            || (step.getElevation() == entity.getElevation())) {
+                            && (step.getElevation() == entity.getElevation())) {
                         // we returned to the location
                         returned = true;
                         continue;

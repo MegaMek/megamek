@@ -15,6 +15,7 @@ v0.35.13-dev (SVN)
 + Bug 2944751: Leg and Swarm attacks bugged
 + Bug: added mech taser non-fusion engine incompatibility to unit verifier
 + Bug: AES occupies 1 crit too much
++ Bug 2935838: Movement Bug 0.35.12-dev
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

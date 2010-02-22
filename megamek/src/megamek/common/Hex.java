@@ -31,7 +31,7 @@ public class Hex implements IHex, Serializable {
     private ITerrain[] terrains;
     private String theme;
     private int fireTurn;
-
+    private Coords coords;
     /** Constructs clear, plain hex at level 0. */
     public Hex() {
         this(0);
@@ -39,12 +39,17 @@ public class Hex implements IHex, Serializable {
 
     /** Constructs clean, plain hex at specified elevation. */
     public Hex(int elevation) {
-        this(elevation, new ITerrain[Terrains.SIZE], null);
+        this(elevation, new ITerrain[Terrains.SIZE], null, new Coords(0,0));
     }
 
-    /** Constructs hex with all parameters. */
     public Hex(int elevation, ITerrain[] terrains, String theme) {
+        this(elevation, terrains, theme, new Coords(0,0));
+    }
+    
+    /** Constructs hex with all parameters. */
+    public Hex(int elevation, ITerrain[] terrains, String theme, Coords c) {
         this.elevation = elevation;
+        this.coords = c;
         this.terrains = terrains;
         if (theme == null || theme.length() > 0) {
             this.theme = theme;
@@ -52,10 +57,14 @@ public class Hex implements IHex, Serializable {
             this.theme = null;
         }
     }
+    
+    public Hex(int elevation, String terrain, String theme) {
+        this(elevation,terrain,theme,new Coords(0,0));
+    }
 
     /** Contructs hex with string terrain info */
-    public Hex(int elevation, String terrain, String theme) {
-        this(elevation, new ITerrain[Terrains.SIZE], theme);
+    public Hex(int elevation, String terrain, String theme, Coords c) {
+        this(elevation, new ITerrain[Terrains.SIZE], theme, c);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st
                 .hasMoreTokens();) {
             addTerrain(Terrains.getTerrainFactory().createTerrain(
@@ -394,7 +403,7 @@ public class Hex implements IHex, Serializable {
                 tcopy[i] = f.createTerrain(terrains[i]);
             }
         }
-        return new Hex(elevation, tcopy, theme);
+        return new Hex(elevation, tcopy, theme, coords);
     }
 
     public int terrainPilotingModifier(EntityMovementMode moveMode) {
@@ -535,4 +544,9 @@ public class Hex implements IHex, Serializable {
         }
         return mod;
     }
+
+    public Coords getCoords() {
+        return coords;
+    }
+
 }

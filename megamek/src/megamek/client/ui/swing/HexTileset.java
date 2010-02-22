@@ -35,6 +35,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
+import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
@@ -114,7 +115,7 @@ public class HexTileset {
         for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
             HexEntry entry = i.next();
             if (superMatch(hex, entry.getHex()) >= 1.0) {
-                matches.add(entry.getImage(comp));
+                matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
                 // remove involved terrain from consideration
                 for (int j = 0; j < Terrains.SIZE; j++) {
                     if (entry.getHex().containsTerrain(j)) {
@@ -154,7 +155,7 @@ public class HexTileset {
             }
         }
 
-        return bestMatch.getImage(comp);
+        return bestMatch.getImage(comp, hex.getCoords().hashCode());
     }
 
     // perfect match
@@ -386,12 +387,15 @@ public class HexTileset {
             return "data/images/hexes/" + imageFile; //$NON-NLS-1$
         }
 
-        public Image getImage(Component comp) {
+        public Image getImage(Component comp, int seed) {
             if (images == null) {
                 loadImage(comp);
             }
             if (images.size() > 1) {
-                int rand = (int) (r.nextDouble() * images.size());
+                //Instead of a random number. Use a "seed" for determining which
+                //Image to use from the tileset. Normally the seed is the hashcode of
+                //the hex coordinates.
+                int rand = (int) (seed % images.size());
                 return images.elementAt(rand);
             }
             return images.firstElement();

@@ -610,8 +610,8 @@ public class Board implements Serializable, IBoard {
             st.commentChar('#');
             st.quoteChar('"');
             st.wordChars('_', '_');
-            int count1 = 1;
-            int count2 = 1;
+            int x_pos = 1;
+            int y_pos = 1;
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
                 if (st.ttype == StreamTokenizer.TT_WORD
                         && st.sval.equalsIgnoreCase("size")) {
@@ -662,12 +662,12 @@ public class Board implements Serializable, IBoard {
                                 : st.sval;
                     }
                     int elevation = Integer.parseInt(args[1]);
-                    int newIndex = indexFor(args[0], nw, count2);
-                    nd[newIndex] = new Hex(elevation, args[2], args[3]);
-                    count1++;
-                    if (count1 > nw) {
-                        count2++;
-                        count1 = 1;
+                    int newIndex = indexFor(args[0], nw, y_pos);
+                    nd[newIndex] = new Hex(elevation, args[2], args[3], new Coords(x_pos,y_pos));
+                    x_pos++;
+                    if (x_pos > nw) {
+                        y_pos++;
+                        x_pos = 1;
                     }
                 } else if (st.ttype == StreamTokenizer.TT_WORD
                         && st.sval.equalsIgnoreCase("end")) {

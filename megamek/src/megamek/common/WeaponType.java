@@ -978,6 +978,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISGAC4());
         EquipmentType.addType(new ISGAC6());
         EquipmentType.addType(new ISGAC8());
+        EquipmentType.addType(new CLWERPPC());
 
         // Naval weapons
         EquipmentType.addType(new NL35Weapon());

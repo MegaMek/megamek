@@ -130,7 +130,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
-    private CustomInitiativeDialog initDialog;
     private PlanetaryConditionsDialog conditionsDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -645,13 +644,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             startingPositionDialog = new StartingPositionDialog(this);
         }
         return startingPositionDialog;
-    }
-
-    public CustomInitiativeDialog getCustomInitiativeDialog() {
-        if (initDialog == null) {
-            initDialog = new CustomInitiativeDialog(this);
-        }
-        return initDialog;
     }
 
     public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
@@ -1338,14 +1330,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
             if (curPanel instanceof ChatLounge) {
                 ChatLounge cl = (ChatLounge) curPanel;
-                boolean useMinefields = getClient().game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
-                cl.enableMinefields(useMinefields);
-                if (!useMinefields) {
-                    getClient().getLocalPlayer().setNbrMFConventional(0);
-                    getClient().getLocalPlayer().setNbrMFCommand(0);
-                    getClient().getLocalPlayer().setNbrMFVibra(0);
-                    getClient().sendPlayerInfo();
-                }
                 cl.updateMapSettings(getClient().getMapSettings());
             }
         }

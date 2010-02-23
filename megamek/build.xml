@@ -16,6 +16,7 @@
 	<property name="apidocdir" value="apidocs" />
 	<property name="docdir" value="docs" />
 	<property name="svndir" value="svndev" />
+	<property name="util" value="packaging_utils" />
 
 	<!-- same as builddir but under svn -->
 	<property name="svnbuilddir" value="${svndir}/${builddir}" />
@@ -248,7 +249,7 @@
 		<!-- keep in mind that directory references for 'excludes' are -->
 		<!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
 		<!-- absolute (project) ${basedir} -->
-		<zip zipfile="${basedir}/megamek-dev-svn-${DSTAMP}.zip" basedir="${svndir}" excludes="${builddir}/" />
+		<zip zipfile="${basedir}/megamek-dev-svn-${DSTAMP}.zip" basedir="${svndir}" excludes="${builddir}/ ${util}/" />
 	</target>
 
 	<target name="svndev-clean">

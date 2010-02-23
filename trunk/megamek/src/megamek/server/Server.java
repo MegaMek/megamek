@@ -21700,15 +21700,7 @@ public class Server implements Runnable {
     private Packet createPlanetaryConditionsPacket() {
         return new Packet(Packet.COMMAND_SENDING_PLANETARY_CONDITIONS, game.getPlanetaryConditions());
     }
-
-    /**
-     * Creates a packet containing temporary map settings as a response to a
-     * client query
-     */
-    private Packet createMapQueryPacket(MapSettings temp) {
-        return new Packet(Packet.COMMAND_QUERY_MAP_SETTINGS, temp);
-    }
-
+    
     /**
      * Creates a packet containing the game settingss
      */
@@ -22217,15 +22209,36 @@ public class Server implements Runnable {
                 receiveGameOptionsAux(packet, connId);
             }
             break;
-        case Packet.COMMAND_SENDING_MAP_SETTINGS:
+        case Packet.COMMAND_SENDING_MAP_SELECTION:
             if (game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)) {
                 MapSettings newSettings = (MapSettings) packet.getObject(0);
                 if (!mapSettings.equalMapGenParameters(newSettings)) {
-                    sendServerChat("Player " + player.getName() + " changed mapsettings");
+                    sendServerChat("Player " + player.getName() + " changed map selection");
                 }
                 mapSettings = newSettings;
                 newSettings = null;
+                resetPlayersDone();
+                transmitAllPlayerDones();
+                send(createMapSettingsPacket());
+            }
+            break;
+        case Packet.COMMAND_SENDING_MAP_DIMENSIONS:
+            if (game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)) {
+                MapSettings newSettings = (MapSettings) packet.getObject(0);
+                if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    sendServerChat("Player " + player.getName() + " changed map dimensions");
+                }
+                mapSettings = newSettings;
+                newSettings = null;
+                mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
+                mapSettings.removeUnavailable();
+                mapSettings.setNullBoards(DEFAULT_BOARD);
                 mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+                mapSettings.removeUnavailable();
+                //if still only nulls left, use BOARD_GENERATED
+                if (mapSettings.getBoardsSelected().next() == null) {
+                    mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
+                }
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 send(createMapSettingsPacket());
@@ -22241,19 +22254,6 @@ public class Server implements Runnable {
                 transmitAllPlayerDones();
                 send(createPlanetaryConditionsPacket());
             }
-            break;
-        case Packet.COMMAND_QUERY_MAP_SETTINGS:
-            MapSettings temp = (MapSettings) packet.getObject(0);
-            temp.setBoardsAvailableVector(scanForBoards(temp.getBoardWidth(), temp.getBoardHeight()));
-            temp.removeUnavailable();
-            temp.setNullBoards(DEFAULT_BOARD);
-            temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
-            temp.removeUnavailable();
-            // if still only nulls left, use BOARD_GENERATED
-            if (temp.getBoardsSelected().next() == null) {
-                temp.setNullBoards((MapSettings.BOARD_GENERATED));
-            }
-            send(connId, createMapQueryPacket(temp));
             break;
         case Packet.COMMAND_UNLOAD_STRANDED:
             receiveUnloadStranded(packet, connId);

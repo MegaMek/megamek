@@ -461,7 +461,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         lisBoardsAvailable.add(Messages
                 .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
-        client.getClient().sendMapQuery(mapSettings);
+        //client.getClient().sendMapQuery(mapSettings);
     }
 
     /**
@@ -516,7 +516,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
             mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
         }
 
-        client.getClient().sendMapSettings(mapSettings);
+        //client.getClient().sendMapSettings(mapSettings);
         setVisible(false);
         mapPreviewW.setVisible(false);
     }
@@ -625,7 +625,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         lisBoardsAvailable.add(Messages
                 .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
-        client.getClient().sendMapQuery(newMapSettings);
+        //client.getClient().sendMapQuery(newMapSettings);
     }
 
     /**

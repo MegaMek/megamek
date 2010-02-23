@@ -153,7 +153,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private MapSettings mapSettings;
     private RandomMapDialog randomMapDialog;
     private JComboBox comboMapType = new JComboBox();
-    private JButton butMapSize = new JButton("Map Size");
+    private JButton butMapSize = new JButton(Messages
+            .getString("ChatLounge.MapSize")); //$NON-NLS-1$
     private JButton butRandomMap = new JButton(Messages
             .getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
     private JButton buttonBoardPreview = new JButton(Messages
@@ -171,9 +172,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private JScrollPane scrBoardsAvailable;
     private JCheckBox chkRotateBoard = new JCheckBox(Messages
             .getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
-    private JCheckBox chkIncludeGround = new JCheckBox("Use Ground/Atmosphere");
-    private JCheckBox chkIncludeSpace = new JCheckBox("Use Space");
-    private JButton butSpaceSize = new JButton("Map Size");
+    private JCheckBox chkIncludeGround = new JCheckBox(Messages
+            .getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
+    private JCheckBox chkIncludeSpace = new JCheckBox(Messages
+            .getString("ChatLounge.IncludeSpace"));
+    private JButton butSpaceSize = new JButton(Messages
+            .getString("ChatLounge.MapSize"));
     
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;   

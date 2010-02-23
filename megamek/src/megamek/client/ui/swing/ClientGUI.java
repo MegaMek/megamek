@@ -122,7 +122,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public ChatLounge chatlounge;
 
     // some dialogs...
-    BoardSelectionDialog boardSelectionDialog;
     GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
     // private CustomBattleArmorDialog customBADialog;
@@ -619,16 +618,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if (chatlounge != null) {
             chatlounge.die();
         }
-    }
-
-    /**
-     * Returns the board selection dialog, creating it on the first call
-     */
-    public BoardSelectionDialog getBoardSelectionDialog() {
-        if (boardSelectionDialog == null) {
-            boardSelectionDialog = new BoardSelectionDialog(this);
-        }
-        return boardSelectionDialog;
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -1344,9 +1333,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if ((boardSelectionDialog != null) && boardSelectionDialog.isVisible()) {
-                boardSelectionDialog.update(getClient().getMapSettings(), true);
-            }
             if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) {
                 gameOptionsDialog.update(getClient().game.getOptions());
             }
@@ -1360,14 +1346,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     getClient().getLocalPlayer().setNbrMFVibra(0);
                     getClient().sendPlayerInfo();
                 }
+                cl.updateMapSettings(getClient().getMapSettings());
             }
         }
 
         @Override
         public void gameMapQuery(GameMapQueryEvent e) {
-            if ((boardSelectionDialog != null) && boardSelectionDialog.isVisible()) {
-                boardSelectionDialog.update(e.getSettings(), false);
-            }
+            
         }
     };
 

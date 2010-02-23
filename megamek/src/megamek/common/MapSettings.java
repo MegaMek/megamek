@@ -264,6 +264,8 @@ public class MapSettings implements Serializable {
         mapWidth = other.getMapWidth();
         mapHeight = other.getMapHeight();
 
+        medium = other.getMedium();
+        
         boardsSelected = (ArrayList<String>) other
                 .getBoardsSelectedVector().clone();
         boardsAvailable = (ArrayList<String>) other

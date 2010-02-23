@@ -614,10 +614,17 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Send the game settings to the server
+     * Send the new map selection to the server
      */
-    public void sendMapSettings(MapSettings settings) {
-        send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, settings));
+    public void sendMapSelection(MapSettings settings) {
+        send(new Packet(Packet.COMMAND_SENDING_MAP_SELECTION, settings));
+    }
+    
+    /**
+     * Send the new map dimensions to the server
+     */
+    public void sendMapDimensions(MapSettings settings) {
+        send(new Packet(Packet.COMMAND_SENDING_MAP_DIMENSIONS, settings));
     }
 
     /**
@@ -625,13 +632,6 @@ public class Client implements IClientCommandHandler {
      */
     public void sendPlanetaryConditions(PlanetaryConditions conditions) {
         send(new Packet(Packet.COMMAND_SENDING_PLANETARY_CONDITIONS, conditions));
-    }
-
-    /**
-     * Send the game settings to the server
-     */
-    public void sendMapQuery(MapSettings query) {
-        send(new Packet(Packet.COMMAND_QUERY_MAP_SETTINGS, query));
     }
 
     /**
@@ -1168,10 +1168,6 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
             game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
             game.processGameEvent(new GameSettingsChangeEvent(this));
-            break;
-        case Packet.COMMAND_QUERY_MAP_SETTINGS:
-            game.processGameEvent(new GameMapQueryEvent(this, (MapSettings) c
-                    .getObject(0)));
             break;
         case Packet.COMMAND_END_OF_GAME:
             String sEntityStatus = (String) c.getObject(0);

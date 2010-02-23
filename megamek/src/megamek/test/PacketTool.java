@@ -442,8 +442,11 @@ public class PacketTool extends Frame implements Runnable {
                 case Packet.COMMAND_SENDING_MAP_SETTINGS:
                     System.out.print("COMMAND_SENDING_MAP_SETTINGS");
                     break;
-                case Packet.COMMAND_QUERY_MAP_SETTINGS:
-                    System.out.print("COMMAND_QUERY_MAP_SETTINGS");
+                case Packet.COMMAND_SENDING_MAP_DIMENSIONS:
+                    System.out.print("COMMAND_SENDING_MAP_SETTINGS");
+                    break;
+                case Packet.COMMAND_SENDING_MAP_SELECTION:
+                    System.out.print("COMMAND_SENDING_MAP_SETTINGS");
                     break;
                 case Packet.COMMAND_END_OF_GAME:
                     System.out.print("COMMAND_END_OF_GAME");

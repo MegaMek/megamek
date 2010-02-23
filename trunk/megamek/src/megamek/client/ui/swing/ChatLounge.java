@@ -342,10 +342,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 column.setPreferredWidth(100);
             } else if (i == PlayerTableModel.COL_TEAM) {
                 column.setPreferredWidth(5);
-            } else if (i == PlayerTableModel.COL_COST) {
+            } else if (i == PlayerTableModel.COL_COST || i == PlayerTableModel.COL_START) {
                 column.setPreferredWidth(50);
             } else {
-                column.setPreferredWidth(25);
+                column.setPreferredWidth(30);
             }
         }
         scrPlayers = new JScrollPane(tablePlayers);
@@ -385,6 +385,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butInit.setActionCommand("custom_init"); //$NON-NLS-1$
         butInit.addActionListener(this);
 
+        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
+        butChangeStart.addActionListener(this);
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -408,8 +411,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridheight = 1;
         c.weightx = 1.0;
         c.weighty = 0.0;
-        gridbag.setConstraints(butInit, c);
-        panPlayerInfo.add(butInit);
+        gridbag.setConstraints(butChangeStart, c);
+        panPlayerInfo.add(butChangeStart);
 
         c.gridx = 0;
         c.gridy = 2;
@@ -1298,9 +1301,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         scrStarts = new JScrollPane(lisStarts);
         scrStarts.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
-        butChangeStart.addActionListener(this);
-
         panStarts = new JPanel();
 
         GridBagLayout gridbag = new GridBagLayout();
@@ -1322,8 +1322,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         c.weightx = 1.0;
         c.weighty = 0.0;
-        gridbag.setConstraints(butChangeStart, c);
-        panStarts.add(butChangeStart);
+        //gridbag.setConstraints(butChangeStart, c);
+        //panStarts.add(butChangeStart);
     }
 
     /**
@@ -2524,11 +2524,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         private static final long serialVersionUID = -1372393680232901923L;
 
         private static final int COL_PLAYER = 0;
-        private static final int COL_TEAM = 1;
-        private static final int COL_BV = 2;
-        private static final int COL_TON = 3;
-        private static final int COL_COST = 4;
-        private static final int N_COL = 5;
+        private static final int COL_START = 1;
+        private static final int COL_TEAM = 2;
+        private static final int COL_BV = 3;
+        private static final int COL_TON = 4;
+        private static final int COL_COST = 5;
+        private static final int N_COL = 6;
 
         private ArrayList<Player> players;
         private ArrayList<Integer> bvs;
@@ -2581,6 +2582,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             switch (column) {
                 case (COL_PLAYER):
                     return Messages.getString("ChatLounge.colPlayer");
+                case (COL_START):
+                    return "Start";
                 case (COL_TEAM):
                     return "Team";
                 case (COL_TON):
@@ -2614,6 +2617,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 return bv;
             } else if (col == COL_PLAYER) {
                 return player.getName();
+            } else if (col == COL_START) {
+                return IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()];
             } else if (col == COL_TON) {
                 float ton = tons.get(row);
                 if (blindDrop) {

@@ -58,18 +58,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
@@ -116,111 +110,68 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      */
     private static final long serialVersionUID = 1454736776730903786L;
 
-    // buttons & such
-    private JPanel panPlayerInfo;
-
-    private JComboBox choTeam;
-
-    private JButton butCamo;
-
-    private JButton butInit;
-
-    private JPanel panMinefield;
-    private JLabel labMinefield;
-    private JList lisMinefield;
-    private JScrollPane scrMinefield;
-    private JLabel labConventional;
-    private JLabel labCommandDetonated;
-    private JLabel labVibrabomb;
-    private JLabel labActive;
-    private JLabel labInferno;
-    private JTextField fldConventional;
-    private JTextField fldCommandDetonated;
-    private JTextField fldVibrabomb;
-    private JTextField fldActive;
-    private JTextField fldInferno;
-    private JButton butMinefield;
-
     private JButton butOptions;
-    private JToggleButton butCompact;
     
-    private JButton butConditions = new JButton("Planetary Conditions");
+    private JTabbedPane panTabs;
+    private JPanel panMain;
+    private JPanel panMap;
+    
+    /*Unit Configuration Panel*/
+    private JPanel panUnitInfo;
+    JButton butLoad;
+    JButton butArmy;
+    JButton butSkills;
+    JButton butLoadCustomFS;
+    private JButton butLoadList;
+    private JButton butSaveList;
+    private JButton butDeleteAll;
+    
+    /*Unit Table*/
+    JTable tableEntities;
+    private JScrollPane scrEntities;
+    private JToggleButton butCompact;
 
-    /**Map Setting**/
-    private JPanel panMap = new JPanel();
-    private JPanel panGroundMap = new JPanel();
-    private JPanel panSpaceMap = new JPanel();
+    private MekTableModel mekModel;
+
+    /*Player Configuration Panel*/
+    private JPanel panPlayerInfo;
+    private JComboBox choTeam;
+    private JButton butCamo;
+    private JButton butAddBot;
+    private JButton butRemoveBot;
+    private JButton butChangeStart;
+    private JTable tablePlayers;
+    private JScrollPane scrPlayers;
+    private PlayerTableModel playerModel;   
+    
+    /*Map Settings Panel*/
     private MapSettings mapSettings;
+    private JButton butConditions;
     private RandomMapDialog randomMapDialog;
-    private JComboBox comboMapType = new JComboBox();
-    private JButton butMapSize = new JButton(Messages
-            .getString("ChatLounge.MapSize")); //$NON-NLS-1$
-    private JButton butRandomMap = new JButton(Messages
-            .getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
-    private JButton buttonBoardPreview = new JButton(Messages
-            .getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
+    private JPanel panGroundMap;
+    private JPanel panSpaceMap;
+    private JComboBox comboMapType;
+    private JButton butMapSize;
+    private JButton butRandomMap;
+    private JButton buttonBoardPreview;
     private JScrollPane scrMapButtons;
-    private JPanel panMapButtons = new JPanel();
-    private JLabel labBoardsSelected = new JLabel(
-            Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
-    private JList lisBoardsSelected = new JList(new DefaultListModel());
+    private JPanel panMapButtons;
+    private JLabel labBoardsSelected;
+    private JList lisBoardsSelected;
     private JScrollPane scrBoardsSelected;
-    private JButton butChange = new JButton("<<"); //$NON-NLS-1$
-    private JLabel labBoardsAvailable = new JLabel(
-            Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
-    private JList lisBoardsAvailable = new JList(new DefaultListModel());
+    private JButton butChange;
+    private JLabel labBoardsAvailable;
+    private JList lisBoardsAvailable;
     private JScrollPane scrBoardsAvailable;
-    private JCheckBox chkRotateBoard = new JCheckBox(Messages
-            .getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
-    private JCheckBox chkIncludeGround = new JCheckBox(Messages
-            .getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
-    private JCheckBox chkIncludeSpace = new JCheckBox(Messages
-            .getString("ChatLounge.IncludeSpace"));
-    private JButton butSpaceSize = new JButton(Messages
-            .getString("ChatLounge.MapSize"));
+    private JCheckBox chkRotateBoard;
+    private JCheckBox chkIncludeGround;
+    private JCheckBox chkIncludeSpace;
+    private JButton butSpaceSize;
     
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;   
     JDialog gameBoardPreviewW;
     MiniMap gameBoardMap = null;
-    
-    private JButton butLoadList;
-    private JButton butSaveList;
-    private JButton butDeleteAll;
-
-    JButton butLoad;
-    JButton butArmy;
-    JButton butSkills;
-    // JButton butLoadCustomBA;
-    JButton butLoadCustomFS;
-    private JButton butDelete;
-    private JButton butCustom;
-    private JButton butMechReadout;
-    private JButton butViewGroup;
-    JTable tableEntities;
-    private JScrollPane scrEntities;
-    int[] entityCorrespondance;
-    private JPanel panButtons;
-
-    private JLabel labStarts;
-    private JList lisStarts;
-    private JScrollPane scrStarts;
-    private JPanel panStarts;
-    private JButton butChangeStart;
-
-    private JTable tablePlayers;
-    private JScrollPane scrPlayers;
-
-    private JTabbedPane panTabs;
-    private JPanel panMain;
-
-    private JPanel panTop;
-
-    private JButton butAddBot;
-    private JButton butRemoveBot;
-
-    private MekTableModel mekModel;
-    private PlayerTableModel playerModel;
 
     // keep track of portrait images
     private DirectoryItems portraits;
@@ -229,7 +180,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         public void doneLoading() {
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
-            // butLoadCustomBA.setEnabled(true);
             butLoadCustomFS.setEnabled(true);
         }
     };
@@ -278,17 +228,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         setupPlayerInfo();
-        setupMinefield();
 
         refreshGameSettings();
 
         setupEntities();
-        setupButtons();
+        setupUnitConfiguration();
 
         refreshEntities();
-
-        setupStarts();
-        refreshStarts();
 
         setupMainPanel();
 
@@ -302,6 +248,130 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     }
 
+    /**
+     * Sets up the entities table
+     */
+    private void setupEntities() {
+
+        mekModel = new MekTableModel();
+        tableEntities = new JTable();
+        tableEntities.setModel(mekModel);
+        tableEntities.setRowHeight(80);
+        tableEntities.setIntercellSpacing(new Dimension(0, 0));
+        tableEntities.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        TableColumn column = null;
+        for (int i = 0; i < MekTableModel.N_COL; i++) {
+            tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
+            column = tableEntities.getColumnModel().getColumn(i);
+            if ((i == MekTableModel.COL_UNIT) || (i == MekTableModel.COL_PILOT)) {
+                column.setPreferredWidth(170);
+            } else if (i == MekTableModel.COL_PLAYER) {
+                column.setPreferredWidth(50);
+            } else {
+                column.setPreferredWidth(10);
+            }
+        }
+        tableEntities.addMouseListener(new MekTableMouseAdapter());
+        tableEntities.addKeyListener(new MekTableKeyAdapter());
+        tableEntities.getSelectionModel().addListSelectionListener(this);
+        scrEntities = new JScrollPane(tableEntities);
+        scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+    }
+
+    /**
+     * Sets up the unit configuration panel
+     */
+    private void setupUnitConfiguration() {
+
+        butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
+        butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
+        butLoadList.addActionListener(this);
+
+        butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList")); //$NON-NLS-1$
+        butSaveList.setActionCommand("save_list"); //$NON-NLS-1$
+        butSaveList.addActionListener(this);
+        butSaveList.setEnabled(false);
+
+        butLoad = new JButton(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
+        butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
+        butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
+        butLoadCustomFS = new JButton(Messages.getString("ChatLounge.butLoadCustomFS"));
+
+        MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
+        mechSummaryCache.addListener(mechSummaryCacheListener);
+        butLoad.setEnabled(mechSummaryCache.isInitialized());
+        butArmy.setEnabled(mechSummaryCache.isInitialized());
+        butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
+
+        butSkills.setEnabled(true);
+
+        Font font = new Font("Sans Serif", Font.BOLD, 18); //$NON-NLS-1$
+        butLoad.setFont(font);
+        butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
+        butLoad.addActionListener(this);
+        butArmy.addActionListener(this);
+        butSkills.addActionListener(this);
+        butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
+        butLoadCustomFS.addActionListener(this);
+
+        butDeleteAll = new JButton(Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
+        butDeleteAll.setActionCommand("delete_all"); //$NON-NLS-1$
+        butDeleteAll.addActionListener(this);
+        butDeleteAll.setEnabled(false);
+
+        panUnitInfo = new JPanel();
+        panUnitInfo.setBorder(BorderFactory.createTitledBorder("Unit Setup"));
+
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panUnitInfo.setLayout(gridbag);
+
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = 2;
+        c.gridheight = 1;
+        gridbag.setConstraints(butLoad, c);
+        panUnitInfo.add(butLoad);
+
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        gridbag.setConstraints(butArmy, c);
+        panUnitInfo.add(butArmy);
+
+        c.gridx = 0;
+        c.gridy = 2;
+        gridbag.setConstraints(butSkills, c);
+        panUnitInfo.add(butSkills);
+
+        c.gridx = 0;
+        c.gridy = 3;
+        gridbag.setConstraints(butLoadCustomFS, c);
+        panUnitInfo.add(butLoadCustomFS);
+
+        c.gridx = 1;
+        c.gridy = 1;
+        gridbag.setConstraints(butLoadList, c);
+        panUnitInfo.add(butLoadList);
+
+        c.gridx = 1;
+        c.gridy = 2;
+        gridbag.setConstraints(butSaveList, c);
+        panUnitInfo.add(butSaveList);
+
+        c.gridx = 1;
+        c.gridy = 3;
+        gridbag.setConstraints(butDeleteAll, c);
+        panUnitInfo.add(butDeleteAll);
+    }
+    
     /**
      * Sets up the player info (team, camo) panel
      */
@@ -352,6 +422,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 column.setPreferredWidth(30);
             }
         }
+        
+        tablePlayers.addMouseListener(new PlayerTableMouseAdapter());
+        
         scrPlayers = new JScrollPane(tablePlayers);
         scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -383,11 +456,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         });
         camoDialog = new CamoChoiceDialog(clientgui.getFrame(), butCamo);
         refreshCamos();
-
-        butInit = new JButton(Messages.getString("ChatLounge.butInit")); //$NON-NLS-1$
-        butInit.setEnabled(true);
-        butInit.setActionCommand("custom_init"); //$NON-NLS-1$
-        butInit.addActionListener(this);
 
         butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
         butChangeStart.addActionListener(this);
@@ -448,146 +516,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         refreshPlayerInfo();
     }
 
-    /**
-     * Sets up the minefield panel
-     */
-    private void setupMinefield() {
-        panMinefield = new JPanel();
-
-        labMinefield = new JLabel(Messages.getString("ChatLounge.labMinefield")); //$NON-NLS-1$
-
-        lisMinefield = new JList(new DefaultListModel());
-        scrMinefield = new JScrollPane(lisMinefield);
-        scrMinefield.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        labConventional = new JLabel(Messages.getString("ChatLounge.labConventional"), SwingConstants.RIGHT); //$NON-NLS-1$
-        labCommandDetonated = new JLabel(Messages.getString("ChatLounge.labCommandDetonated"), SwingConstants.RIGHT); //$NON-NLS-1$
-        labVibrabomb = new JLabel(Messages.getString("ChatLounge.labVibrabomb"), SwingConstants.RIGHT); //$NON-NLS-1$
-        labActive = new JLabel(Messages.getString("ChatLounge.labActive"), SwingConstants.RIGHT); //$NON-NLS-1$
-        labInferno = new JLabel(Messages.getString("ChatLounge.labInferno"), SwingConstants.RIGHT); //$NON-NLS-1$
-
-        fldConventional = new JTextField(1);
-        fldCommandDetonated = new JTextField(1);
-        fldVibrabomb = new JTextField(1);
-        fldActive = new JTextField(1);
-        fldInferno = new JTextField(1);
-
-        butMinefield = new JButton(Messages.getString("ChatLounge.butMinefield")); //$NON-NLS-1$
-        butMinefield.addActionListener(this);
-
-        enableMinefields(clientgui.getClient().game.getOptions().booleanOption("minefields")); //$NON-NLS-1$
-
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panMinefield.setLayout(gridbag);
-
-        c.fill = GridBagConstraints.VERTICAL;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMinefield, c);
-        panMinefield.add(labMinefield);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        gridbag.setConstraints(scrMinefield, c);
-        panMinefield.add(scrMinefield);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labConventional, c);
-        panMinefield.add(labConventional);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(fldConventional, c);
-        panMinefield.add(fldConventional);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labCommandDetonated, c);
-        panMinefield.add(labCommandDetonated);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(fldCommandDetonated, c);
-        panMinefield.add(fldCommandDetonated);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labVibrabomb, c);
-        panMinefield.add(labVibrabomb);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(fldVibrabomb, c);
-        panMinefield.add(fldVibrabomb);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labActive, c);
-        panMinefield.add(labActive);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(fldActive, c);
-        panMinefield.add(fldActive);
-
-        c.gridwidth = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(labInferno, c);
-        panMinefield.add(labInferno);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(fldInferno, c);
-        panMinefield.add(fldInferno);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(butMinefield, c);
-        panMinefield.add(butMinefield);
-
-        refreshMinefield();
-    }
-
-    public void enableMinefields(boolean enable) {
-        fldConventional.setEnabled(enable);
-        labConventional.setEnabled(enable);
-
-        fldCommandDetonated.setEnabled(false);
-        labCommandDetonated.setEnabled(false);
-
-        fldVibrabomb.setEnabled(enable);
-        labVibrabomb.setEnabled(enable);
-
-        fldActive.setEnabled(enable);
-        labActive.setEnabled(enable);
-
-        fldInferno.setEnabled(enable);
-        labInferno.setEnabled(enable);
-
-        butMinefield.setEnabled(enable);
-    }
-
     
     private void setupMainPanel() {
-        setupTop();
         setupMap();
         
         panMain = new JPanel();
@@ -636,8 +566,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
-        gridbag.setConstraints(panButtons, c);
-        panMain.add(panButtons);
+        gridbag.setConstraints(panUnitInfo, c);
+        panMain.add(panUnitInfo);
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
@@ -658,32 +588,34 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridheight = 1;
         gridbag.setConstraints(scrPlayers, c);
         panMain.add(scrPlayers);
-
-        // Should we display the panels in tabs?
-        if (GUIPreferences.getInstance().getChatLoungeTabs()) {
-            panTabs.add("Select Units", panMain); //$NON-NLS-1$
-            //panTabs.add("Configure Game", panTop); //$NON-NLS-1$
-            panTabs.add("Select Map", panMap); //$NON-NLS-1$
-        } else {
-            c.weighty = 0.0;
-            gridbag.setConstraints(panTop, c);
-            panMain.add(panTop);
-        }
+  
+        panTabs.add("Select Units", panMain); //$NON-NLS-1$
+        panTabs.add("Select Map", panMap); //$NON-NLS-1$
     }
     
     private void setupMap() {
+        
+        panMap = new JPanel();
+     
         mapSettings = (MapSettings) clientgui.getClient().getMapSettings().clone();
         
         randomMapDialog = new RandomMapDialog(clientgui.frame, this, mapSettings);
         
+        butConditions  = new JButton(Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
         butConditions.addActionListener(this);
+        
+        butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
         //butRandomMap.addActionListener(this);
         
+        chkIncludeGround  = new JCheckBox(Messages.getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
         chkIncludeGround.addActionListener(this);
+        
+        chkIncludeSpace = new JCheckBox(Messages.getString("ChatLounge.IncludeSpace")); //$NON-NLS-1$
         chkIncludeSpace.addActionListener(this);
-        refreshSpaceGround();
+        
         setupGroundMap();
         setupSpaceMap();
+        refreshSpaceGround();
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -741,17 +673,34 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      */
     private void setupGroundMap() {
         
+        panGroundMap = new JPanel();
         panGroundMap.setBorder(BorderFactory.createTitledBorder("Planetary Map"));
         
-        setupMapChoice();
-        refreshBoardsSelected();
-        refreshBoardsAvailable();
+        panMapButtons = new JPanel();
         
+        comboMapType = new JComboBox();
+        setupMapChoice();
+ 
+        butMapSize = new JButton(Messages.getString("ChatLounge.MapSize")); //$NON-NLS-1$
+        butMapSize.addActionListener(this);
+        
+        buttonBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
+        buttonBoardPreview.addActionListener(this);
+        
+        butChange = new JButton("<<"); //$NON-NLS-1$
         butChange.addActionListener(this);
+        
+        labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
+        labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
+        
+        lisBoardsSelected = new JList(new DefaultListModel());
+        lisBoardsAvailable = new JList(new DefaultListModel());
+        refreshBoardsSelected();
+        refreshBoardsAvailable();  
         lisBoardsAvailable.addMouseListener(this);
         lisBoardsAvailable.addListSelectionListener(this);
-        buttonBoardPreview.addActionListener(this);
-        butMapSize.addActionListener(this);
+        
+        chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
         chkRotateBoard.addActionListener(this);
 
         // layout
@@ -946,8 +895,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
     
     private void setupSpaceMap() {
+        
+        panSpaceMap = new JPanel();
         panSpaceMap.setBorder(BorderFactory.createTitledBorder("Space Map"));
         
+        butSpaceSize = new JButton(Messages.getString("ChatLounge.MapSize"));
         butSpaceSize.addActionListener(this);
         
         // layout
@@ -1034,7 +986,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.setSelectedIndex(0);
-        //refreshSelectAllCheck();
     }
     
     /**
@@ -1105,230 +1056,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
        
     }
 
-    /**
-     * Sets up the top panel with the player info, map info and starting
-     * positions
-     */
-    private void setupTop() {
-        panTop = new JPanel(new BorderLayout());
-
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panTop.setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(6, 6, 1, 6);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.gridwidth = 1;
-
-        gridbag.setConstraints(panStarts, c);
-        panTop.add(panStarts);
-
-        // gridbag.setConstraints(panPlayerInfo, c);
-        // panTop.add(panPlayerInfo);
-
-        gridbag.setConstraints(panMinefield, c);
-        panTop.add(panMinefield);
-    }
-
-    /**
-     * Sets up the entities table
-     */
-    private void setupEntities() {
-
-        mekModel = new MekTableModel();
-        tableEntities = new JTable();
-        tableEntities.setModel(mekModel);
-        tableEntities.setRowHeight(80);
-        tableEntities.setIntercellSpacing(new Dimension(0, 0));
-        tableEntities.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        TableColumn column = null;
-        for (int i = 0; i < MekTableModel.N_COL; i++) {
-            tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
-            column = tableEntities.getColumnModel().getColumn(i);
-            if ((i == MekTableModel.COL_UNIT) || (i == MekTableModel.COL_PILOT)) {
-                column.setPreferredWidth(170);
-            } else if (i == MekTableModel.COL_PLAYER) {
-                column.setPreferredWidth(50);
-            } else {
-                column.setPreferredWidth(10);
-            }
-        }
-        tableEntities.addMouseListener(new MekTableMouseAdapter());
-        tableEntities.addKeyListener(new MekTableKeyAdapter());
-        tableEntities.getSelectionModel().addListSelectionListener(this);
-        scrEntities = new JScrollPane(tableEntities);
-        scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-    }
-
-    /**
-     * Sets up the buttons on the main tab
-     */
-    private void setupButtons() {
-
-        butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList")); //$NON-NLS-1$
-        butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
-        butLoadList.addActionListener(this);
-
-        butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList")); //$NON-NLS-1$
-        butSaveList.setActionCommand("save_list"); //$NON-NLS-1$
-        butSaveList.addActionListener(this);
-        butSaveList.setEnabled(false);
-
-        butLoad = new JButton(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
-        butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
-        butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
-        /*
-         * butLoadCustomBA = new JButton(Messages
-         * .getString("ChatLounge.butLoadCustomBA"));
-         */
-        butLoadCustomFS = new JButton(Messages.getString("ChatLounge.butLoadCustomFS"));
-
-        MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
-        mechSummaryCache.addListener(mechSummaryCacheListener);
-        butLoad.setEnabled(mechSummaryCache.isInitialized());
-        butArmy.setEnabled(mechSummaryCache.isInitialized());
-        // butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
-        butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
-
-        butSkills.setEnabled(true);
-
-        Font font = new Font("Sans Serif", Font.BOLD, 18); //$NON-NLS-1$
-        butLoad.setFont(font);
-        butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
-        butLoad.addActionListener(this);
-        butArmy.addActionListener(this);
-        butSkills.addActionListener(this);
-        //butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
-        // butLoadCustomBA.addActionListener(this);
-        butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
-        butLoadCustomFS.addActionListener(this);
-
-        butCustom = new JButton(Messages.getString("ChatLounge.butCustom")); //$NON-NLS-1$
-        butCustom.setActionCommand("custom_mech"); //$NON-NLS-1$
-        butCustom.addActionListener(this);
-        butCustom.setEnabled(false);
-
-        butMechReadout = new JButton(Messages.getString("ChatLounge.butMechReadout")); //$NON-NLS-1$
-        butMechReadout.setActionCommand("Mech_readout"); //$NON-NLS-1$
-        butMechReadout.addActionListener(this);
-        butMechReadout.setEnabled(false);
-
-        butViewGroup = new JButton(Messages.getString("ChatLounge.butViewGroup")); //$NON-NLS-1$
-        butViewGroup.setActionCommand("view_group"); //$NON-NLS-1$
-        butViewGroup.addActionListener(this);
-        butViewGroup.setEnabled(false);
-
-        butDelete = new JButton(Messages.getString("ChatLounge.butDelete")); //$NON-NLS-1$
-        butDelete.setActionCommand("delete_mech"); //$NON-NLS-1$
-        butDelete.addActionListener(this);
-        butDelete.setEnabled(false);
-
-        butDeleteAll = new JButton(Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
-        butDeleteAll.setActionCommand("delete_all"); //$NON-NLS-1$
-        butDeleteAll.addActionListener(this);
-        butDeleteAll.setEnabled(false);
-
-        panButtons = new JPanel();
-        panButtons.setBorder(BorderFactory.createTitledBorder("Unit Setup"));
-
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = 2;
-        c.gridheight = 1;
-        gridbag.setConstraints(butLoad, c);
-        panButtons.add(butLoad);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        gridbag.setConstraints(butArmy, c);
-        panButtons.add(butArmy);
-
-        c.gridx = 0;
-        c.gridy = 2;
-        gridbag.setConstraints(butSkills, c);
-        panButtons.add(butSkills);
-
-        c.gridx = 0;
-        c.gridy = 3;
-        /*
-         * gridbag.setConstraints(butLoadCustomBA, c);
-         * panButtons.add(butLoadCustomBA);
-         *
-         * c.gridx = 0; c.gridy = 4;
-         */
-        gridbag.setConstraints(butLoadCustomFS, c);
-        panButtons.add(butLoadCustomFS);
-
-        c.gridx = 1;
-        c.gridy = 1;
-        gridbag.setConstraints(butLoadList, c);
-        panButtons.add(butLoadList);
-
-        c.gridx = 1;
-        c.gridy = 2;
-        gridbag.setConstraints(butSaveList, c);
-        panButtons.add(butSaveList);
-
-        /*
-         * c.gridx = 1; c.gridy = 2; gridbag.setConstraints(butViewGroup, c);
-         * panButtons.add(butViewGroup);
-         */
-
-        c.gridx = 1;
-        c.gridy = 3;
-        gridbag.setConstraints(butDeleteAll, c);
-        panButtons.add(butDeleteAll);
-    }
-
-    /**
-     * Sets up the starting positions panel
-     */
-    private void setupStarts() {
-        labStarts = new JLabel(Messages.getString("ChatLounge.labStarts"), SwingConstants.CENTER); //$NON-NLS-1$
-
-        lisStarts = new JList(new DefaultListModel());
-        scrStarts = new JScrollPane(lisStarts);
-        scrStarts.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        panStarts = new JPanel();
-
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panStarts.setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labStarts, c);
-        panStarts.add(labStarts);
-
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        gridbag.setConstraints(scrStarts, c);
-        panStarts.add(scrStarts);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        //gridbag.setConstraints(butChangeStart, c);
-        //panStarts.add(butChangeStart);
-    }
+    
 
     /**
      * Refreshes the game settings with new info from the client
@@ -1344,8 +1072,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public void refreshEntities() {
         mekModel.clearData();
         boolean localUnits = false;
-        // entityCorrespondance = new int[clientgui.getClient().game
-        // .getNoOfEntities()];
 
         /*
          * We will attempt to sort by the following criteria: My units first,
@@ -1405,22 +1131,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 entity.clearQuirks();
             }
 
-            boolean rpgSkills = clientgui.getClient().game.getOptions().booleanOption("rpg_gunnery");
-
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient().game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !clientgui.getClient().game.getOptions().booleanOption("real_blind_drop")) { //$NON-NLS-1$
 
-                // ((DefaultListModel) lisEntities.getModel())
-                // .addElement(formatUnit(entity, true, rpgSkills));
                 mekModel.addUnit(entity);
-                // entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(clientgui.getClient().getLocalPlayer()) || (!clientgui.getClient().game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !clientgui.getClient().game.getOptions().booleanOption("real_blind_drop"))) { //$NON-NLS-1$
-                // ((DefaultListModel) lisEntities.getModel())
-                // .addElement(formatUnit(entity, false, rpgSkills));
                 mekModel.addUnit(entity);
-                // entityCorrespondance[listIndex++] = entity.getId();
             }
         }
 
@@ -1428,14 +1146,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         // buttons if the local player has units.
         butSaveList.setEnabled(localUnits);
         butDeleteAll.setEnabled(localUnits);
-
-        butViewGroup.setEnabled(mekModel.getRowCount() != 0);// lisEntities.getModel().getSize()
-        // != 0);
-
-        // Disable the "must select" buttons.
-        butCustom.setEnabled(false);
-        butMechReadout.setEnabled(false);
-        butDelete.setEnabled(false);
     }
 
     public static String formatPilotCompact(Pilot pilot, boolean blindDrop) {
@@ -1776,61 +1486,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     }
 
-    /**
-     * Refreshes the minefield
-     */
-    private void refreshMinefield() {
-        ((DefaultListModel) lisMinefield.getModel()).removeAllElements();
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
-            final Player player = i.nextElement();
-            if (player != null) {
-                StringBuffer pi = new StringBuffer();
-                pi.append(player.getName()).append(" : "); //$NON-NLS-1$
-                pi.append(player.getNbrMFConventional()).append("/"); //$NON-NLS-1$
-                pi.append(player.getNbrMFCommand()).append("/"); //$NON-NLS-1$
-                pi.append(player.getNbrMFVibra()).append("/"); //$NON-NLS-1$
-                pi.append(player.getNbrMFActive()).append("/"); //$NON-NLS-1$
-                pi.append(player.getNbrMFInferno());
-
-                ((DefaultListModel) lisMinefield.getModel()).addElement(pi.toString());
-            }
-        }
-        int nbr = clientgui.getClient().getLocalPlayer().getNbrMFConventional();
-        fldConventional.setText(Integer.toString(nbr));
-
-        nbr = clientgui.getClient().getLocalPlayer().getNbrMFCommand();
-        fldCommandDetonated.setText(Integer.toString(nbr));
-
-        nbr = clientgui.getClient().getLocalPlayer().getNbrMFVibra();
-        fldVibrabomb.setText(Integer.toString(nbr));
-
-        nbr = clientgui.getClient().getLocalPlayer().getNbrMFActive();
-        fldActive.setText(Integer.toString(nbr));
-
-        nbr = clientgui.getClient().getLocalPlayer().getNbrMFInferno();
-        fldInferno.setText(Integer.toString(nbr));
-    }
-
     private void refreshCamos() {
         Client c = getPlayerSelected();
         camoDialog.setPlayer(c.getLocalPlayer());
-    }
-
-    /**
-     * Refreshes the starting positions
-     */
-    private void refreshStarts() {
-        // stores the current selection if it exists
-        ((DefaultListModel) lisStarts.getModel()).removeAllElements();
-        for (Enumeration<Player> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
-            Player player = i.nextElement();
-            if (player != null) {
-                StringBuffer ssb = new StringBuffer();
-                ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
-                ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
-                ((DefaultListModel) lisStarts.getModel()).addElement(ssb.toString());
-            }
-        }
     }
 
     /**
@@ -1879,53 +1537,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     }
 
-    private void updateMinefield() {
-        String conv = fldConventional.getText();
-        String cmd = fldCommandDetonated.getText();
-        String vibra = fldVibrabomb.getText();
-        String active = fldActive.getText();
-        String inferno = fldInferno.getText();
-
-        int nbrConv = 0;
-        int nbrCmd = 0;
-        int nbrVibra = 0;
-        int nbrActive = 0;
-        int nbrInferno = 0;
-
-        try {
-            if ((conv != null) && (conv.length() != 0)) {
-                nbrConv = Integer.parseInt(conv);
-            }
-            if ((cmd != null) && (cmd.length() != 0)) {
-                nbrCmd = Integer.parseInt(cmd);
-            }
-            if ((vibra != null) && (vibra.length() != 0)) {
-                nbrVibra = Integer.parseInt(vibra);
-            }
-            if ((active != null) && (active.length() != 0)) {
-                nbrActive = Integer.parseInt(active);
-            }
-            if ((inferno != null) && (inferno.length() != 0)) {
-                nbrInferno = Integer.parseInt(inferno);
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.message"), Messages.getString("ChatLounge.MinefieldAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
-        }
-
-        if ((nbrConv < 0) || (nbrCmd < 0) || (nbrVibra < 0) || (nbrActive < 0) || (nbrInferno < 0)) {
-            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.message"), Messages.getString("ChatLounge.MinefieldAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
-        }
-        Client c = getPlayerListSelected(lisMinefield);
-        c.getLocalPlayer().setNbrMFConventional(nbrConv);
-        c.getLocalPlayer().setNbrMFCommand(nbrCmd);
-        c.getLocalPlayer().setNbrMFVibra(nbrVibra);
-        c.getLocalPlayer().setNbrMFActive(nbrActive);
-        c.getLocalPlayer().setNbrMFInferno(nbrInferno);
-        c.sendPlayerInfo();
-    }
-
     /**
      * Pop up the customize mech dialog
      */
@@ -1934,8 +1545,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         if (tableEntities.getSelectedRow() == -1) {
             return;
         }
-        // Entity entity = clientgui.getClient().game
-        // .getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
         customizeMech(mekModel.getEntityAt(tableEntities.getSelectedRow()));
     }
 
@@ -1979,6 +1588,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
     }
 
+    public void customizePlayer() {
+        Client c = getPlayerSelected();
+        if(null != c) {
+            PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c);
+            psd.setVisible(true);
+        }
+    }
+    
     /**
      * Pop up the view mech dialog
      */
@@ -2071,9 +1688,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         FighterSquadron fs = new FighterSquadron(name);
         fs.setOwner(clientgui.getClient().getLocalPlayer());
         clientgui.getClient().sendAddEntity(fs);
-        /*
-         * clientgui.getCustomFSDialog().setVisible(true);
-         */
     }
 
     private void loadArmy() {
@@ -2083,11 +1697,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public void loadRandomSkills() {
         clientgui.getRandomSkillDialog().setVisible(true);
     }
-
-    private void viewGroup() {
-        new MechGroupView(clientgui.getFrame(), clientgui.getClient(), entityCorrespondance).setVisible(true);
-    }
-    
 
     /**
      * Changes all selected boards to be the specified board
@@ -2121,9 +1730,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         refreshDoneButton();
         clientgui.getClient().game.setupTeams();
         refreshPlayerInfo();
-        refreshStarts();
         refreshCamos();
-        refreshMinefield();
         refreshEntities();
     }
 
@@ -2139,9 +1746,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             refreshPlayerInfo();
             refreshTeams();
             refreshCamos();
-            refreshMinefield();
             refreshEntities();
-            refreshStarts();
         }
     }
 
@@ -2216,18 +1821,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
              */
         } else if (ev.getSource() == butLoadCustomFS) {
             loadCustomFS();
-        } else if (ev.getSource().equals(butCustom) || ev.getSource().equals(tableEntities)) {
+        } else if (ev.getSource().equals(tableEntities)) {
             customizeMech();
-        } else if (ev.getSource().equals(butDelete)) {
-            // delete mech
-            Entity e = mekModel.getEntityAt(tableEntities.getSelectedRow());
-            Client c = clientgui.getBots().get(e.getOwner().getName());
-            if (c == null) {
-                c = clientgui.getClient();
-            }
-            if (tableEntities.getSelectedRow() != -1) {
-                c.sendDeleteEntity(mekModel.getEntityAt(tableEntities.getSelectedRow()).getId());
-            }
+        } else if (ev.getSource().equals(tablePlayers)) {
+                customizePlayer();
         } else if (ev.getSource().equals(butDeleteAll)) {
             // Build a Vector of this player's entities.
             ArrayList<Entity> currentUnits = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false);
@@ -2253,7 +1850,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 tableEntities.setRowHeight(80);
             }
             refreshEntities();
-        } else if (ev.getSource().equals(butChangeStart) || ev.getSource().equals(lisStarts)) {
+        } else if (ev.getSource().equals(butChangeStart)) {
             clientgui.getStartingPositionDialog().update();
             Client c = getPlayerSelected();
             if (c == null) {
@@ -2262,12 +1859,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             clientgui.getStartingPositionDialog().setClient(c);
             clientgui.getStartingPositionDialog().setVisible(true);
-        } else if (ev.getSource().equals(butMechReadout)) {
-            if (tableEntities.getSelectedRow() != -1) {
-                mechReadout(mekModel.getEntityAt(tableEntities.getSelectedRow()));
-            }
-        } else if (ev.getSource().equals(butViewGroup)) {
-            viewGroup();
         } else if (ev.getSource().equals(butLoadList)) {
             // Allow the player to replace their current
             // list of entities with a list from a file.
@@ -2276,21 +1867,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             // Allow the player to save their current
             // list of entities to a file.
             clientgui.saveListFile(clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false));
-        } else if (ev.getSource().equals(butMinefield)) {
-            updateMinefield();
-        } else if (ev.getSource() == butInit) {
-            // alert about teams
-            if (clientgui.getClient().game.getOptions().booleanOption("team_initiative")) {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.InitiativeAlert.message"), Messages.getString("ChatLounge.InitiativeAlert.title"), JOptionPane.INFORMATION_MESSAGE); //$NON-NLS-1$
-            }
-            Client c = getPlayerSelected();
-            if (c == null) {
-                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
-                return;
-            }
-            clientgui.getCustomInitiativeDialog().setClient(c);
-            clientgui.getCustomInitiativeDialog().updateValues();
-            clientgui.getCustomInitiativeDialog().setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
             String name = "Bot" + tablePlayers.getModel().getRowCount(); //$NON-NLS-1$
             name = (String) JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"), Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE, null, null, name);
@@ -2490,19 +2066,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 butRemoveBot.setEnabled(true);
             }
             choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
-        } else if (event.getSource().equals(tableEntities.getSelectionModel())) {
-            boolean selected = tableEntities.getSelectedRow() != -1;
-            butCustom.setEnabled(selected);
-
-            // Handle "Blind drop" option.
-            if (selected && clientgui.getClient().game.getOptions().booleanOption("blind_drop")) { //$NON-NLS-1$
-                Entity entity = mekModel.getEntityAt(tableEntities.getSelectedRow());
-                butMechReadout.setEnabled(entity.getOwner().equals(clientgui.getClient().getLocalPlayer()));
-                butCustom.setEnabled(entity.getOwner().equals(clientgui.getClient().getLocalPlayer()));
-            } else {
-                butMechReadout.setEnabled(selected);
-            }
-            butDelete.setEnabled(selected);
         } else if (event.getSource().equals(tablePlayers.getSelectionModel())) {
             butRemoveBot.setEnabled(false);
             Client c = getPlayerSelected();
@@ -2643,6 +2206,61 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         public Player getPlayerAt(int row) {
             return players.get(row);
         }
+    }
+    
+    public class PlayerTableMouseAdapter extends MouseInputAdapter implements ActionListener {
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                int row = tablePlayers.rowAtPoint(e.getPoint());
+                Player player = playerModel.getPlayerAt(row);
+                if (player != null) {
+                    boolean isOwner = player.equals(clientgui.getClient().getLocalPlayer());
+                    boolean isBot = clientgui.getBots().get(player.getName()) != null;
+                    if ((isOwner || isBot)) {
+                        customizePlayer();
+                    }
+                }
+            }
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        private void maybeShowPopup(MouseEvent e) {
+            JPopupMenu popup = new JPopupMenu();
+            int row = tablePlayers.rowAtPoint(e.getPoint());
+            Player player = playerModel.getPlayerAt(row);
+            boolean isOwner = player.equals(clientgui.getClient().getLocalPlayer());
+            boolean isBot = clientgui.getBots().get(player.getName()) != null;
+            if (e.isPopupTrigger()) {
+                JMenuItem menuItem = null;
+                // JMenu menu = null;
+                menuItem = new JMenuItem("Configure unit...");
+                menuItem.setActionCommand("CONFIGURE|" + row);
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                popup.add(menuItem);
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        }
+
+        public void actionPerformed(ActionEvent action) {
+            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
+            String command = st.nextToken();
+            if (command.equalsIgnoreCase("CONFIGURE")) {
+                customizePlayer();
+            } 
+        }
+
     }
 
     /**

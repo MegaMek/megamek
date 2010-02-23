@@ -21,6 +21,7 @@ v0.35.13-dev (SVN)
 + Map Selection Tab in Chat Lounge
 + added back player starting position button in the Player setup panel
 + added some missing messages
++ Bug: can't change bot's starting position
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

@@ -1,26 +1,27 @@
 <?xml version="1.0"?>
 <project default="all" name="MegaMek" basedir=".">
-  <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
-  <target name="all">
-    <jarbundler dir="." name="MegaMek" mainclass="megamek.MegaMek" workingdirectory="$APP_PACKAGE/Contents/Resources/" >
-      <jarfileset dir=".">
-        <include name="**/*.jar" />
-      </jarfileset>
-      <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
-      <javaproperty name="apple.awt.brushMetal" value="true" />
-      <resourcefileset dir=".">
-        <include name="**/*" />
-        <exclude name="**/*.class" />
-        <exclude name="**/*.jar" />
-        <exclude name="src/" />
-        <exclude name="MegaMek.exe" />
-        <exclude name="startup.sh" />
-      </resourcefileset>
-    </jarbundler>
-    <delete file="MegaMek.app/Contents/MacOS/JavaApplicationStub" />
-    <exec executable="ln">
-      <arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub" />
-      <arg value="MegaMek.app/Contents/MacOS/JavaApplicationStub" />
-    </exec>
-  </target>
+	<property name="util" value="packaging_utils" />
+	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar"/>
+  	<target name="all">
+    	<jarbundler dir="." name="MegaMek" mainclass="megamek.MegaMek" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/Contents/Resources/" >
+      		<jarfileset dir=".">
+       	 		<include name="**/*.jar" />
+      		</jarfileset>
+      		<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+      		<javaproperty name="apple.awt.brushMetal" value="true" />
+      		<resourcefileset dir=".">
+       			<include name="**/*" />
+       	 		<exclude name="**/*.class" />
+       	 		<exclude name="**/*.jar" />
+       	 		<exclude name="src/" />
+       	 		<exclude name="MegaMek.exe" />
+       	 		<exclude name="startup.sh" />
+      		</resourcefileset>
+   	 	</jarbundler>
+  	  	<delete file="MegaMek.app/Contents/MacOS/JavaApplicationStub" />
+  	  	<exec executable="ln">
+   	  		<arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub" />
+   	   		<arg value="MegaMek.app/Contents/MacOS/JavaApplicationStub" />
+   	 	</exec>
+	</target>
 </project>

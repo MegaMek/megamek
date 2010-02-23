@@ -2255,7 +2255,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             refreshEntities();
         } else if (ev.getSource().equals(butChangeStart) || ev.getSource().equals(lisStarts)) {
             clientgui.getStartingPositionDialog().update();
-            Client c = getPlayerListSelected(lisStarts);
+            Client c = getPlayerSelected();
             if (c == null) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;

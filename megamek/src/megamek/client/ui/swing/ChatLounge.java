@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -31,9 +32,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +48,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -54,13 +58,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
@@ -74,9 +83,11 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.Board;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
@@ -96,9 +107,10 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
+import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
-public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener, ListSelectionListener {
+public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, ItemListener, ListSelectionListener, MouseListener, IMapSettingsObserver {
     /**
      *
      */
@@ -131,16 +143,43 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
     private JButton butOptions;
     private JToggleButton butCompact;
+    
+    private JButton butConditions = new JButton("Planetary Conditions");
 
-    private JLabel labMapType;
-    private JLabel labBoardSize;
-    private JLabel labMapSize;
-    private JList lisBoardsSelected;
+    /**Map Setting**/
+    private JPanel panMap = new JPanel();
+    private JPanel panGroundMap = new JPanel();
+    private JPanel panSpaceMap = new JPanel();
+    private MapSettings mapSettings;
+    private RandomMapDialog randomMapDialog;
+    private JComboBox comboMapType = new JComboBox();
+    private JButton butMapSize = new JButton("Map Size");
+    private JButton butRandomMap = new JButton(Messages
+            .getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
+    private JButton buttonBoardPreview = new JButton(Messages
+            .getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
+    private JScrollPane scrMapButtons;
+    private JPanel panMapButtons = new JPanel();
+    private JLabel labBoardsSelected = new JLabel(
+            Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
+    private JList lisBoardsSelected = new JList(new DefaultListModel());
     private JScrollPane scrBoardsSelected;
-    private JButton butChangeBoard;
-    private JPanel panBoardSettings;
-    private JButton butConditions;
-
+    private JButton butChange = new JButton("<<"); //$NON-NLS-1$
+    private JLabel labBoardsAvailable = new JLabel(
+            Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
+    private JList lisBoardsAvailable = new JList(new DefaultListModel());
+    private JScrollPane scrBoardsAvailable;
+    private JCheckBox chkRotateBoard = new JCheckBox(Messages
+            .getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
+    private JCheckBox chkIncludeGround = new JCheckBox("Use Ground/Atmosphere");
+    private JCheckBox chkIncludeSpace = new JCheckBox("Use Space");
+    private JButton butSpaceSize = new JButton("Map Size");
+    
+    JPanel mapPreviewPanel;
+    MiniMap miniMap = null;   
+    JDialog gameBoardPreviewW;
+    MiniMap gameBoardMap = null;
+    
     private JButton butLoadList;
     private JButton butSaveList;
     private JButton butDeleteAll;
@@ -237,7 +276,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         setupPlayerInfo();
         setupMinefield();
 
-        setupBoardSettings();
         refreshGameSettings();
 
         setupEntities();
@@ -540,88 +578,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butMinefield.setEnabled(enable);
     }
 
-    /**
-     * Sets up the board settings panel
-     */
-    private void setupBoardSettings() {
-        labMapType = new JLabel(Messages.getString("ChatLounge.labMapType"), SwingConstants.CENTER); //$NON-NLS-1$
-        labBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"), SwingConstants.CENTER); //$NON-NLS-1$
-        labMapSize = new JLabel(Messages.getString("ChatLounge.labMapSize"), SwingConstants.CENTER); //$NON-NLS-1$
-
-        lisBoardsSelected = new JList(new DefaultListModel());
-        lisBoardsSelected.addListSelectionListener(this);
-        scrBoardsSelected = new JScrollPane(lisBoardsSelected);
-        scrBoardsSelected.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-
-        butChangeBoard = new JButton(Messages.getString("ChatLounge.butChangeBoard")); //$NON-NLS-1$
-        butChangeBoard.setActionCommand("change_board"); //$NON-NLS-1$
-        butChangeBoard.addActionListener(this);
-
-        butConditions = new JButton(Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
-        butConditions.addActionListener(this);
-
-        panBoardSettings = new JPanel();
-
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panBoardSettings.setLayout(gridbag);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(labMapType, c);
-        panBoardSettings.add(labMapType);
-
-        gridbag.setConstraints(labBoardSize, c);
-        panBoardSettings.add(labBoardSize);
-
-        gridbag.setConstraints(labMapSize, c);
-        panBoardSettings.add(labMapSize);
-
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        gridbag.setConstraints(scrBoardsSelected, c);
-        panBoardSettings.add(scrBoardsSelected);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(butChangeBoard, c);
-        panBoardSettings.add(butChangeBoard);
-
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(butConditions, c);
-        panBoardSettings.add(butConditions);
-
-        refreshBoardSettings();
-    }
-
-    private void refreshBoardSettings() {
-        labMapType.setText(Messages.getString("ChatLounge.MapType") + " " + MapSettings.getMediumName(clientgui.getClient().getMapSettings().getMedium()));
-        labBoardSize.setText(Messages.getString("ChatLounge.BoardSize", //$NON-NLS-1$
-                new Object[]
-                    { new Integer(clientgui.getClient().getMapSettings().getBoardWidth()), new Integer(clientgui.getClient().getMapSettings().getBoardHeight()) }));
-        labMapSize.setText(Messages.getString("ChatLounge.MapSize", //$NON-NLS-1$
-                new Object[]
-                    { new Integer(clientgui.getClient().getMapSettings().getMapWidth()), new Integer(clientgui.getClient().getMapSettings().getMapHeight()) }));
-
-        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
-        int index = 0;
-        for (Iterator<String> i = clientgui.getClient().getMapSettings().getBoardsSelected(); i.hasNext();) {
-            if (clientgui.getClient().getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE) {
-                ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + Messages.getString("ChatLounge.SPACE")); //$NON-NLS-1$
-                i.next();
-            } else {
-                ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + i.next()); //$NON-NLS-1$
-            }
-        }
-    }
     
     private void setupMainPanel() {
         setupTop();
+        setupMap();
         
         panMain = new JPanel();
 
@@ -695,12 +655,447 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         // Should we display the panels in tabs?
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
             panTabs.add("Select Units", panMain); //$NON-NLS-1$
-            panTabs.add("Configure Game", panTop); //$NON-NLS-1$
+            //panTabs.add("Configure Game", panTop); //$NON-NLS-1$
+            panTabs.add("Select Map", panMap); //$NON-NLS-1$
         } else {
             c.weighty = 0.0;
             gridbag.setConstraints(panTop, c);
             panMain.add(panTop);
         }
+    }
+    
+    private void setupMap() {
+        mapSettings = (MapSettings) clientgui.getClient().getMapSettings().clone();
+        
+        randomMapDialog = new RandomMapDialog(clientgui.frame, this, mapSettings);
+        
+        butConditions.addActionListener(this);
+        //butRandomMap.addActionListener(this);
+        
+        chkIncludeGround.addActionListener(this);
+        chkIncludeSpace.addActionListener(this);
+        refreshSpaceGround();
+        setupGroundMap();
+        setupSpaceMap();
+        
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panMap.setLayout(gridbag);
+
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(butConditions, c);
+        panMap.add(butConditions);
+        
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(butRandomMap, c);
+        panMap.add(butRandomMap);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(4, 4, 4, 4);
+        c.weightx = 1.0;
+        c.weighty = 0.75;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 2;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(panGroundMap, c);
+        panMap.add(panGroundMap);
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 0.25;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 2;
+        c.gridheight = 1;
+        gridbag.setConstraints(panSpaceMap, c);
+        panMap.add(panSpaceMap);
+        
+    }
+    
+    /**
+     * Sets up the ground map selection panel
+     */
+    private void setupGroundMap() {
+        
+        panGroundMap.setBorder(BorderFactory.createTitledBorder("Planetary Map"));
+        
+        setupMapChoice();
+        refreshBoardsSelected();
+        refreshBoardsAvailable();
+        
+        butChange.addActionListener(this);
+        lisBoardsAvailable.addMouseListener(this);
+        lisBoardsAvailable.addListSelectionListener(this);
+        buttonBoardPreview.addActionListener(this);
+        butMapSize.addActionListener(this);
+        chkRotateBoard.addActionListener(this);
+
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panGroundMap.setLayout(gridbag);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(chkIncludeGround, c);
+        panGroundMap.add(chkIncludeGround);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(comboMapType, c);
+        panGroundMap.add(comboMapType);
+        
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(butMapSize, c);
+        panGroundMap.add(butMapSize);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(buttonBoardPreview, c);
+        panGroundMap.add(buttonBoardPreview);
+        
+        scrMapButtons = new JScrollPane(panMapButtons);
+        refreshMapButtons();
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(scrMapButtons, c);
+        panGroundMap.add(scrMapButtons);
+        
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(labBoardsSelected, c);
+        panGroundMap.add(labBoardsSelected);
+        
+        scrBoardsSelected = new JScrollPane(lisBoardsSelected);
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 3; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(scrBoardsSelected, c);
+        panGroundMap.add(scrBoardsSelected);
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(butChange, c);
+        panGroundMap.add(butChange);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 3;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(labBoardsAvailable, c);
+        panGroundMap.add(labBoardsAvailable);
+        
+        scrBoardsAvailable = new JScrollPane(lisBoardsAvailable);
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridx = 3;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 3; 
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(scrBoardsAvailable, c);
+        panGroundMap.add(scrBoardsAvailable);
+
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 4;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.CENTER;
+        gridbag.setConstraints(chkRotateBoard, c);
+        panGroundMap.add(chkRotateBoard);
+        
+        mapPreviewPanel = new JPanel();
+        
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridx = 4;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 3; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(mapPreviewPanel, c);
+        panGroundMap.add(mapPreviewPanel);
+        
+        
+        
+        try {
+            miniMap = new MiniMap(mapPreviewPanel, null);
+            //Set a default size for the minimap object to ensure it will have space on the screen to be drawn.
+            miniMap.setSize(160, 200);
+            miniMap.setZoom(2);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                            Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e, 
+                            Messages.getString("BoardEditor.FatalError"), 
+                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        mapPreviewPanel.add(miniMap);
+
+        //setup the board preview window.
+        gameBoardPreviewW = new JDialog(clientgui.frame, Messages.getString("BoardSelectionDialog.ViewGameBoard"), false); //$NON-NLS-1$
+
+        gameBoardPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
+                GUIPreferences.getInstance().getMinimapPosY());
+        
+        gameBoardPreviewW.setVisible(false);
+        try {
+            gameBoardMap = new MiniMap(gameBoardPreviewW, null);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, Messages
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, 
+                                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            //this.dispose();
+        }
+        gameBoardPreviewW.add(gameBoardMap);
+        
+        gameBoardPreviewW.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                gameBoardPreviewW.setVisible(false);
+            }
+        });
+    }
+    
+    private void setupSpaceMap() {
+        panSpaceMap.setBorder(BorderFactory.createTitledBorder("Space Map"));
+        
+        butSpaceSize.addActionListener(this);
+        
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panSpaceMap.setLayout(gridbag);
+
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(chkIncludeSpace, c);
+        panSpaceMap.add(chkIncludeSpace);
+        
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1; 
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(butSpaceSize, c);
+        panSpaceMap.add(butSpaceSize);
+        
+    }
+    
+    /**
+     * Set up the map chooser panel
+     */
+    private void setupMapChoice() {
+        comboMapType.addItem(MapSettings.getMediumName(MapSettings.MEDIUM_GROUND));
+        comboMapType.addItem(MapSettings
+                .getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
+        comboMapType.addActionListener(this);
+        refreshMapChoice();  
+    }
+
+    private void refreshMapChoice() {
+        comboMapType.removeActionListener(this);
+        if(mapSettings.getMedium() < MapSettings.MEDIUM_SPACE) {
+            comboMapType.setSelectedIndex(mapSettings.getMedium());
+        }
+        comboMapType.addActionListener(this);
+    }
+    
+    private void refreshSpaceGround() {
+        chkIncludeGround.removeActionListener(this);
+        chkIncludeSpace.removeActionListener(this);
+        boolean inSpace = mapSettings.getMedium() == MapSettings.MEDIUM_SPACE;
+        chkIncludeSpace.setSelected(inSpace);
+        chkIncludeGround.setSelected(!inSpace);
+        comboMapType.setEnabled(!inSpace);
+        butMapSize.setEnabled(!inSpace);
+        buttonBoardPreview.setEnabled(!inSpace);
+        lisBoardsSelected.setEnabled(!inSpace);
+        butChange.setEnabled(!inSpace);
+        lisBoardsAvailable.setEnabled(!inSpace);
+        chkRotateBoard.setEnabled(!inSpace);
+        butSpaceSize.setEnabled(inSpace);
+        chkIncludeGround.addActionListener(this);
+        chkIncludeSpace.addActionListener(this);
+    }
+
+    private void refreshBoardsAvailable() {
+        ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
+        for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext();) {
+            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i
+                    .next());
+        }
+    }
+        
+    private void refreshBoardsSelected() {
+        ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
+        int index = 0;
+        for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
+            ((DefaultListModel) lisBoardsSelected.getModel())
+                    .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
+        }
+        lisBoardsSelected.setSelectedIndex(0);
+        //refreshSelectAllCheck();
+    }
+    
+    /**
+     * Fills the Map Buttons scroll pane with the appropriate amount of buttons
+     * in the appropriate layout
+     */
+    private void refreshMapButtons() {
+        panMapButtons.removeAll();
+
+        panMapButtons.setLayout(new GridLayout(mapSettings.getMapHeight(),
+                mapSettings.getMapWidth()));
+
+        for (int i = 0; i < mapSettings.getMapHeight(); i++) {
+            for (int j = 0; j < mapSettings.getMapWidth(); j++) {
+                JButton button = new JButton(Integer.toString(i
+                        * mapSettings.getMapWidth() + j));
+                button.addActionListener(this);
+                panMapButtons.add(button);
+            }
+        }
+        
+        scrMapButtons.validate();
+        
+        labBoardsAvailable.setText(mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " " + Messages.getString("BoardSelectionDialog.mapsAvailable"));
+        
+    }
+    
+    public void previewMapsheet() {
+        String boardName = (String) lisBoardsAvailable.getSelectedValue();
+        if (lisBoardsAvailable.getSelectedIndex() > 2) {
+            IBoard board = new Board(16, 17);
+            board.load(boardName + ".board");
+            if (chkRotateBoard.isSelected()) {
+                BoardUtilities.flip(board, true, true);
+            }
+            miniMap.setBoard(board);
+        }
+    }
+    
+    public void previewGameBoard() {
+        MapSettings temp = mapSettings;
+        temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+        temp.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+        IBoard[] sheetBoards = new IBoard[temp.getMapWidth() * temp.getMapHeight()];
+        for (int i = 0; i < temp.getMapWidth() * temp.getMapHeight(); i++) {
+            sheetBoards[i] = new Board();
+            String name = temp.getBoardsSelectedVector().get(i);
+            boolean isRotated = false;
+            if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                // only rotate boards with an even width
+                if (temp.getBoardWidth() % 2 == 0) {
+                    isRotated = true;
+                }
+                name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
+            }
+            if (name.startsWith(MapSettings.BOARD_GENERATED) || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
+                sheetBoards[i] = BoardUtilities.generateRandom(temp);
+            } else {
+                sheetBoards[i].load(name + ".board");
+                BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
+            }
+        }
+        
+        IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp
+                .getMapWidth(), temp.getMapHeight(), sheetBoards, temp.getMedium());
+        gameBoardMap.setBoard(newBoard);
+        gameBoardPreviewW.setVisible(true);
+       
     }
 
     /**
@@ -720,8 +1115,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
-        gridbag.setConstraints(panBoardSettings, c);
-        panTop.add(panBoardSettings);
 
         gridbag.setConstraints(panStarts, c);
         panTop.add(panStarts);
@@ -1690,6 +2083,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private void viewGroup() {
         new MechGroupView(clientgui.getFrame(), clientgui.getClient(), entityCorrespondance).setVisible(true);
     }
+    
+
+    /**
+     * Changes all selected boards to be the specified board
+     */
+    private void changeMap(String board) {
+        int[] selected = lisBoardsSelected.getSelectedIndices();
+        for (final int newVar : selected) {
+            String name = board;
+            if (!MapSettings.BOARD_RANDOM.equals(name)
+                    && !MapSettings.BOARD_SURPRISE.equals(name)
+                    && chkRotateBoard.isSelected()) {
+                name = Board.BOARD_REQUEST_ROTATION + name;
+            }
+            ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(
+                    newVar + ": " + name, newVar); //$NON-NLS-1$
+            mapSettings.getBoardsSelectedVector().set(newVar, name);
+        }
+        lisBoardsSelected.setSelectedIndices(selected);
+        clientgui.getClient().sendMapSelection(mapSettings);
+    }
 
     //
     // GameListener
@@ -1724,7 +2138,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             refreshMinefield();
             refreshEntities();
             refreshStarts();
-            refreshBoardSettings();
         }
     }
 
@@ -1755,7 +2168,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             return;
         }
         refreshGameSettings();
-        refreshBoardSettings();
         refreshEntities();
         refreshPlayerInfo();
     }
@@ -1822,10 +2234,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 final Entity entity = entities.next();
                 clientgui.getClient().sendDeleteEntity(entity.getId());
             }
-        } else if (ev.getSource().equals(butChangeBoard) || ev.getSource().equals(lisBoardsSelected)) {
-            // board settings
-            clientgui.getBoardSelectionDialog().update(clientgui.getClient().getMapSettings(), true);
-            clientgui.getBoardSelectionDialog().setVisible(true);
         } else if (ev.getSource().equals(butOptions)) {
             // Make sure the game options dialog is editable.
             if (!clientgui.getGameOptionsDialog().isEditable()) {
@@ -1907,10 +2315,88 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             c.die();
             clientgui.getBots().remove(c.getName());
         } else if (ev.getSource() == butConditions) {
-            // Display the game options dialog.
             clientgui.getPlanetaryConditionsDialog().update(clientgui.getClient().game.getPlanetaryConditions());
             clientgui.getPlanetaryConditionsDialog().setVisible(true);
+        } else if (ev.getSource() == butRandomMap) {
+            
+            randomMapDialog.setVisible(true);
+        } else if (ev.getSource().equals(butChange)) {
+            if (lisBoardsAvailable.getSelectedIndex() != -1) {
+                changeMap((String) lisBoardsAvailable.getSelectedValue());
+            }
+        } else if (ev.getSource().equals(buttonBoardPreview)) {
+            previewGameBoard();
+        } else if (ev.getSource().equals(butMapSize) || ev.getSource().equals(butSpaceSize)) {
+            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui);
+            mdd.setVisible(true);
+        } else if(ev.getSource().equals(chkRotateBoard) && lisBoardsAvailable.getSelectedIndex() != -1) {
+            previewMapsheet();
+        } else if (ev.getSource().equals(comboMapType)) {     
+            mapSettings.setMedium(comboMapType.getSelectedIndex());
+            clientgui.getClient().sendMapSelection(mapSettings);
         }
+        else if (ev.getSource().equals(chkIncludeGround)) {
+            if(chkIncludeGround.isSelected()) {
+                mapSettings.setMedium(comboMapType.getSelectedIndex());
+            } else {
+                mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
+                //set default size for space maps
+                mapSettings.setBoardSize(50, 50);
+                mapSettings.setMapSize(1, 1);
+            }
+            clientgui.getClient().sendMapDimensions(mapSettings);
+        }
+        else if (ev.getSource().equals(chkIncludeSpace)) {           
+            if(chkIncludeSpace.isSelected()) {
+                mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
+                //set default size for space maps
+                mapSettings.setBoardSize(50, 50);
+                mapSettings.setMapSize(1, 1);
+            } else {
+                mapSettings.setMedium(comboMapType.getSelectedIndex());
+            }
+            clientgui.getClient().sendMapDimensions(mapSettings);
+        }
+    }
+    
+    public void mouseClicked(MouseEvent arg0) {
+        if ((arg0.getClickCount() == 1) && arg0.getSource().equals(lisBoardsAvailable)) {
+            previewMapsheet();
+        }
+        if ((arg0.getClickCount() == 2) && arg0.getSource().equals(lisBoardsAvailable)) {
+            if (lisBoardsAvailable.getSelectedIndex() != -1) {
+                changeMap((String) lisBoardsAvailable.getSelectedValue());
+            }
+        }
+    }
+    
+    public void mouseEntered(MouseEvent arg0) {
+        // ignore
+    }
+
+    public void mouseExited(MouseEvent arg0) {
+        // ignore
+    }
+
+    public void mousePressed(MouseEvent arg0) {
+        // ignore
+    }
+
+    public void mouseReleased(MouseEvent arg0) {
+        //ignore
+    }
+    
+    /**
+     * Updates to show the map settings that have, presumably, just been sent by
+     * the server.
+     */
+    public void updateMapSettings(MapSettings newSettings) {
+        mapSettings = (MapSettings) newSettings.clone();
+        refreshMapButtons();
+        refreshMapChoice();
+        refreshSpaceGround();
+        refreshBoardsSelected();
+        refreshBoardsAvailable();
     }
 
     @Override
@@ -2025,6 +2511,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             refreshCamos();
             choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
+        } else if (event.getSource().equals(lisBoardsAvailable)) {
+            previewMapsheet();
         }
     }
 

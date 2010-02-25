@@ -30,6 +30,7 @@ v0.35.13-dev (SVN)
 + added packaging_utils folder and jarbundler.jar for use with bundle.xml
 + packaging.xml
 + launch4j utility
++ some missing files for launch4j
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

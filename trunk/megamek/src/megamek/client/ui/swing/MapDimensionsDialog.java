@@ -48,7 +48,7 @@ import megamek.common.MapSettings;
  * @author Taharqa
  */
 
-public class MapDimensionsDialog extends JDialog implements ActionListener, IMapSettingsObserver {
+public class MapDimensionsDialog extends JDialog implements ActionListener {
 
     /**
      * 
@@ -234,13 +234,6 @@ public class MapDimensionsDialog extends JDialog implements ActionListener, IMap
         panMapSize.add(spnMapWidth);
     }
     
-    public void refreshMapSize() {
-        spnMapHeight.setValue(mapSettings.getMapHeight());
-        spnMapWidth.setValue(mapSettings.getMapWidth());
-        texBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
-        texBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));  
-    }
-    
     private void setupButtons() {
         
         butOkay.addActionListener(this);
@@ -311,11 +304,6 @@ public class MapDimensionsDialog extends JDialog implements ActionListener, IMap
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
         client.getClient().sendMapDimensions(mapSettings);
-    }
-    
-    public void updateMapSettings(MapSettings settings) {
-        mapSettings = (MapSettings) settings.clone();
-        refreshMapSize();
     }
     
     

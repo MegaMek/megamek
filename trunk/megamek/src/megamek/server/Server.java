@@ -22209,11 +22209,11 @@ public class Server implements Runnable {
                 receiveGameOptionsAux(packet, connId);
             }
             break;
-        case Packet.COMMAND_SENDING_MAP_SELECTION:
+        case Packet.COMMAND_SENDING_MAP_SETTINGS:
             if (game.getPhase().isBefore(Phase.PHASE_DEPLOYMENT)) {
                 MapSettings newSettings = (MapSettings) packet.getObject(0);
                 if (!mapSettings.equalMapGenParameters(newSettings)) {
-                    sendServerChat("Player " + player.getName() + " changed map selection");
+                    sendServerChat("Player " + player.getName() + " changed map settings");
                 }
                 mapSettings = newSettings;
                 newSettings = null;

@@ -478,7 +478,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
 
     public void boardNew() {
-        RandomMapDialog rmd = new RandomMapDialog(frame, this, mapSettings);
+        RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
         rmd.setVisible(true);
         board = BoardUtilities.generateRandom(mapSettings);
         game.setBoard(board);

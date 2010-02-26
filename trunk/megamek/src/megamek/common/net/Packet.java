@@ -66,7 +66,7 @@ public class Packet {
 
     public static final int COMMAND_SENDING_GAME_SETTINGS = 350;
     public static final int COMMAND_SENDING_MAP_DIMENSIONS = 360;
-    public static final int COMMAND_SENDING_MAP_SELECTION = 370;
+    public static final int COMMAND_SENDING_MAP_SETTINGS = 370;
 
     public static final int COMMAND_END_OF_GAME = 380;
     public static final int COMMAND_DEPLOY_MINEFIELDS = 390;
@@ -92,8 +92,6 @@ public class Packet {
     public static final int COMMAND_SENDING_PLANETARY_CONDITIONS = 530;
     public static final int COMMAND_SQUADRON_ADD = 540;
     public static final int COMMAND_ENTITY_CALLEDSHOTCHANGE = 550;
-    
-    public static final int COMMAND_SENDING_MAP_SETTINGS = 560;
     
     private int command;
 

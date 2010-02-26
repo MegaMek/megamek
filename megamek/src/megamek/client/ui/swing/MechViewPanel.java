@@ -76,27 +76,28 @@ public class MechViewPanel extends JPanel {
         scrMek.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         scrMek.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         GridBagConstraints c;
-        
-        setLayout(new GridBagLayout());
+        GridBagLayout gridbag = new GridBagLayout();
+        setLayout(gridbag);
         
         c = new GridBagConstraints();
-        c.insets = new Insets(10,10,10,10);
         c.gridx = 0;
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
         c.weighty = 1.0;
-        add(scrMek, c);
-        
-        c = new GridBagConstraints();
+        gridbag.setConstraints(scrMek, c);
+        add(scrMek);
+
+        c.insets = new Insets(20,20,20,20);
         c.gridx = 1;
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        add(lblMek, c);
+        gridbag.setConstraints(lblMek, c);
+        add(lblMek);
     }
     
     public void setMech(Entity entity) {

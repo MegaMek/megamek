@@ -387,9 +387,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
                 int realColIndex = convertColumnIndexToModel(colIndex);
+                Player player =  playerModel.getPlayerAt(rowIndex);
+                if(player == null) {
+                	return null;
+                }
+                int mines = player.getNbrMFConventional() + player.getNbrMFActive() + player.getNbrMFInferno() + player.getNbrMFVibra();
                 if (realColIndex == PlayerTableModel.COL_PLAYER) {
                     return Messages.getString("ChatLounge.tipPlayer", new Object[]
-                        { getValueAt(rowIndex, colIndex), playerModel.getPlayerAt(rowIndex).getConstantInitBonus() });
+                        { getValueAt(rowIndex, colIndex), player.getConstantInitBonus(), mines });
                 } else if (realColIndex == PlayerTableModel.COL_BV) {
                     int bv = (Integer) getValueAt(rowIndex, colIndex);
                     float ratio = playerModel.getPlayerAt(rowIndex).getForceSizeBVMod();
@@ -400,6 +405,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 } else if (realColIndex == PlayerTableModel.COL_COST) {
                     return Messages.getString("ChatLounge.tipCost", new Object[]
                         { (Integer) getValueAt(rowIndex, colIndex) });
+                } else if (realColIndex == PlayerTableModel.COL_START) {
+                        return (String) getValueAt(rowIndex, colIndex);
                 } else {
                     return Integer.toString((Integer) getValueAt(rowIndex, colIndex));
                 }
@@ -1193,7 +1200,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         String value = "<html>";
         value += "<b>" + pilot.getDesc() + "</b><br>";
-        value += "<i>" + pilot.getNickname() + "</i><br>";
+        if(pilot.getNickname().length() > 0) {
+        	value += "<i>" + pilot.getNickname() + "</i><br>";
+        }
         if (pilot.getHits() > 0) {
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
@@ -1601,7 +1610,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      */
     private void mechReadout(Entity entity) {
         final JDialog dialog = new JDialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
-        // dialog.setBackground(Color.WHITE);
         dialog.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {

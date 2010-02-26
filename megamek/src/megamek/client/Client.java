@@ -616,8 +616,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Send the new map selection to the server
      */
-    public void sendMapSelection(MapSettings settings) {
-        send(new Packet(Packet.COMMAND_SENDING_MAP_SELECTION, settings));
+    public void sendMapSettings(MapSettings settings) {
+        send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, settings));
     }
     
     /**

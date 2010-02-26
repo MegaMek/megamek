@@ -606,13 +606,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      
         mapSettings = (MapSettings) clientgui.getClient().getMapSettings().clone();
         
-        randomMapDialog = new RandomMapDialog(clientgui.frame, this, mapSettings);
+        randomMapDialog = new RandomMapDialog(clientgui.frame, this, clientgui.getClient(), mapSettings);
         
         butConditions  = new JButton(Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
         butConditions.addActionListener(this);
         
         butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
-        //butRandomMap.addActionListener(this);
+        butRandomMap.addActionListener(this);
         
         chkIncludeGround  = new JCheckBox(Messages.getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
         chkIncludeGround.addActionListener(this);
@@ -1723,7 +1723,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             mapSettings.getBoardsSelectedVector().set(newVar, name);
         }
         lisBoardsSelected.setSelectedIndices(selected);
-        clientgui.getClient().sendMapSelection(mapSettings);
+        clientgui.getClient().sendMapSettings(mapSettings);
     }
 
     //
@@ -1906,7 +1906,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             clientgui.getPlanetaryConditionsDialog().update(clientgui.getClient().game.getPlanetaryConditions());
             clientgui.getPlanetaryConditionsDialog().setVisible(true);
         } else if (ev.getSource() == butRandomMap) {
-            
             randomMapDialog.setVisible(true);
         } else if (ev.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
@@ -1921,7 +1920,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             previewMapsheet();
         } else if (ev.getSource().equals(comboMapType)) {     
             mapSettings.setMedium(comboMapType.getSelectedIndex());
-            clientgui.getClient().sendMapSelection(mapSettings);
+            clientgui.getClient().sendMapSettings(mapSettings);
         }
         else if (ev.getSource().equals(chkIncludeGround)) {
             if(chkIncludeGround.isSelected()) {

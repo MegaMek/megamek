@@ -42,6 +42,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.SimpleLine;
 import megamek.common.MapSettings;
@@ -366,16 +367,18 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     private MapSettings mapSettings;
     private JFrame frame;
     private IMapSettingsObserver bsd;
+    private Client client;
 
     private boolean advanced;
     private boolean initiated;
 
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver bsd,
+    public RandomMapDialog(JFrame parent, IMapSettingsObserver bsd, Client client,
             MapSettings mapSettings) {
         super(parent, Messages.getString("RandomMapDialog.title"), true); //$NON-NLS-1$
         this.mapSettings = mapSettings;
         frame = parent;
         this.bsd = bsd;
+        this.client = client;
         setResizable(true);
 
         createComponents();
@@ -2554,7 +2557,13 @@ public class RandomMapDialog extends JDialog implements ActionListener,
             loadValues();
         }
 
-        bsd.updateMapSettings(mapSettings);
+        //if we have a client then send an update to the server
+        if(null != client) {
+        	client.sendMapSettings(mapSettings);
+        } else {
+        	//otherwise just update the local settings
+        	bsd.updateMapSettings(mapSettings);
+        }
 
         return true;
     }

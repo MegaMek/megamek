@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
 import megamek.common.weapons.InfantryWeapon;
 
 /**
@@ -69,8 +70,10 @@ public class Infantry extends Entity implements Serializable {
      * This must be kept separate from the equipment array
      * because they are not fired as separate weapons
      */
-    private InfantryWeapon primaryW;
-    private InfantryWeapon secondW;
+    private transient InfantryWeapon primaryW;
+    private String primaryName;
+    private transient InfantryWeapon secondW;
+    private String secondName;
     private int secondn = 0;
     
     
@@ -1062,6 +1065,7 @@ public class Infantry extends Entity implements Serializable {
 
     public void setPrimaryWeapon(InfantryWeapon w) {
     	this.primaryW = w;
+    	this.primaryName = w.getName();
     }
     
     public InfantryWeapon getPrimaryWeapon() {
@@ -1070,6 +1074,7 @@ public class Infantry extends Entity implements Serializable {
     
     public void setSecondaryWeapon(InfantryWeapon w) {
     	this.secondW = w;
+    	this.secondName = w.getName();
     }
     
     public InfantryWeapon getSecondaryWeapon() {
@@ -1166,5 +1171,65 @@ public class Infantry extends Entity implements Serializable {
        
         }
     }   
+    
+    public String getArmorDesc() {
+    	StringBuffer sArmor = new StringBuffer();
+    	sArmor.append(Math.round(getDamageDivisor()));
+    	if(isArmorEncumbering()) {
+    		sArmor.append("E");
+    	}
+    	
+    	if(hasDEST()) {
+    		sArmor.append(" (DEST) ");
+    	}
+    	
+    	if(this.hasSneakCamo()) {
+    		sArmor.append(" (Camo) ");
+    	}
+    	
+    	if(this.hasSneakIR()) {
+    		sArmor.append(" (IR) ");
+    	}
+    	
+    	if(this.hasSneakECM()) {
+    		sArmor.append(" (ECM) ");
+    	}
+    	
+    	
+    	return sArmor.toString();
+    	
+    }
+    
+    /**
+     * Restores the entity after serialization
+     */
+    @Override
+    public void restore() {
+        super.restore();
+        
+        if (primaryName == null) {
+            primaryName = primaryW.getName();
+        } else {
+            primaryW = (InfantryWeapon)EquipmentType.get(primaryName);
+        }
+
+        if (primaryW == null) {
+            System.err
+            .println("Infantry.restore: could not restore equipment type \""
+                    + primaryName + "\"");
+        }
+        
+        if (secondName == null) {
+            secondName = secondW.getName();
+        } else {
+            secondW = (InfantryWeapon)EquipmentType.get(secondName);
+        }
+
+        if (secondW == null) {
+            System.err
+            .println("Infantry.restore: could not restore equipment type \""
+                    + secondName + "\"");
+        }
+    }
     
 } // End class Infantry

@@ -226,10 +226,15 @@ public class MechView {
 
     private String getInternalAndArmor() {
         StringBuffer sIntArm = new StringBuffer();
-
+        
         int maxArmor = entity.getTotalInternal() * 2 + 3;
-        sIntArm.append(Messages.getString("MechView.Internal")) //$NON-NLS-1$
-                .append(entity.getTotalInternal());
+        if(isInf && !isBA) {
+        	Infantry inf = (Infantry)entity;
+        	sIntArm.append(Messages.getString("MechView.Men")).append(entity.getTotalInternal()).append( " (" + inf.getSquadSize() + "/" + inf.getSquadN() + ")");
+        } else {
+        	sIntArm.append(Messages.getString("MechView.Internal")) //$NON-NLS-1$
+        	.append(entity.getTotalInternal());
+        }
         if (isMech) {
             sIntArm.append(Messages.getString("MechView."
                     + EquipmentType.getStructureTypeName(entity
@@ -237,8 +242,15 @@ public class MechView {
         }
         sIntArm.append("<br>"); //$NON-NLS-1$
 
-        sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
-                .append(entity.getTotalArmor());
+        if(isInf && !isBA) {
+        	Infantry inf = (Infantry)entity;
+        	sIntArm.append(Messages.getString("MechView.Armor")).append(inf.getArmorDesc());
+        }
+        else {
+        	sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+        	.append(entity.getTotalArmor());
+        	
+        }
         if (isMech) {
             sIntArm.append("/") //$NON-NLS-1$
                     .append(maxArmor);
@@ -250,32 +262,34 @@ public class MechView {
         sIntArm.append("<br>"); //$NON-NLS-1$
         // Walk through the entity's locations.
         
-        sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
-        sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Internal</th><th>&nbsp;&nbsp;Armor</th></tr>");
-        for (int loc = 0; loc < entity.locations(); loc++) {
-
-            // Skip empty sections.
-            if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
-                    || (isVehicle && !isLargeSupportVehicle && ((((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY))
-                    || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == LargeSupportTank.LOC_BODY)))))) {
-                continue;
-            }
-
-            sIntArm.append("<tr>");
-            sIntArm.append("<td>").append(entity.getLocationName(loc)).append("</td>"); //$NON-NLS-1$
-            sIntArm.append(renderArmor(entity.getInternal(loc), entity.getOInternal(loc))); //$NON-NLS-1$
-            if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
-                sIntArm.append(renderArmor(entity.getArmor(loc), entity.getOArmor(loc)));
-            }
-            sIntArm.append("</tr>"); //$NON-NLS-1$
-            if (entity.hasRearArmor(loc)) {
-                sIntArm.append("<tr>"); //$NON-NLS-1$
-                sIntArm.append("<td>").append(entity.getLocationName(loc)).append(" (rear)").append("</td>").append("<td></td>");
-                sIntArm.append(renderArmor(entity.getArmor(loc, true), entity.getOArmor(loc, true))); //$NON-NLS-1$
-                sIntArm.append("</tr>"); //$NON-NLS-1$
-            }
+        if(!(isInf && !isBA)) {
+	        sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
+	        sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Internal</th><th>&nbsp;&nbsp;Armor</th></tr>");
+	        for (int loc = 0; loc < entity.locations(); loc++) {
+	
+	            // Skip empty sections.
+	            if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
+	                    || (isVehicle && !isLargeSupportVehicle && ((((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY))
+	                    || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == LargeSupportTank.LOC_BODY)))))) {
+	                continue;
+	            }
+	
+	            sIntArm.append("<tr>");
+	            sIntArm.append("<td>").append(entity.getLocationName(loc)).append("</td>"); //$NON-NLS-1$
+	            sIntArm.append(renderArmor(entity.getInternal(loc), entity.getOInternal(loc))); //$NON-NLS-1$
+	            if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
+	                sIntArm.append(renderArmor(entity.getArmor(loc), entity.getOArmor(loc)));
+	            }
+	            sIntArm.append("</tr>"); //$NON-NLS-1$
+	            if (entity.hasRearArmor(loc)) {
+	                sIntArm.append("<tr>"); //$NON-NLS-1$
+	                sIntArm.append("<td>").append(entity.getLocationName(loc)).append(" (rear)").append("</td>").append("<td></td>");
+	                sIntArm.append(renderArmor(entity.getArmor(loc, true), entity.getOArmor(loc, true))); //$NON-NLS-1$
+	                sIntArm.append("</tr>"); //$NON-NLS-1$
+	            }
+	        }
+	        sIntArm.append("</table>");
         }
-        sIntArm.append("</table>");
         return sIntArm.toString();
     }
 
@@ -387,7 +401,29 @@ public class MechView {
     }
 
     private String getWeapons(boolean showDetail) {
-        StringBuffer sWeapons = new StringBuffer();
+    	
+    	StringBuffer sWeapons = new StringBuffer();
+    	
+    	if(isInf && !isBA) {
+    		Infantry inf = (Infantry)entity;
+    		sWeapons.append("<table cellspacing=0 cellpadding=1 border=0>");
+    		sWeapons.append("<tr><td>Primary Weapon:</td> ");
+    		if(null == inf.getPrimaryWeapon()) {
+    			sWeapons.append("<td>None</td></tr>");
+    		} else {
+    			sWeapons.append("<td>" + inf.getPrimaryWeapon().getDesc() + "</td></tr>");
+    		}
+    		sWeapons.append("<tr><td>Secondary Weapon:</td> ");
+    		if(null == inf.getSecondaryWeapon() || inf.getSecondaryN() == 0) {
+    			sWeapons.append("<td>None</td></tr>");
+    		} else {
+    			sWeapons.append("<td>" + inf.getSecondaryWeapon().getDesc() + " ("+ inf.getSecondaryN() + ")</td></tr>");
+    		}
+    		sWeapons.append("<tr><td>Damage per trooper:</td><td>").append((double)Math.round(inf.getDamagePerTrooper()*1000)/1000).append("</td></tr>");
+    		sWeapons.append("</table><p>");
+    	}
+    	
+        
         if(entity.getWeaponList().size() < 1) {
             return "";
         }

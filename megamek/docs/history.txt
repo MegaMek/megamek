@@ -34,6 +34,8 @@ v0.35.13-dev (SVN)
 + minor cosmetic fixes to chat lounge
 + fixed RandomMapDialog
 + Added units from RS 3060 unabridged
++ primary and secondary weapons for conventional infantry
++ replaced infantry data files with new ones using new format
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

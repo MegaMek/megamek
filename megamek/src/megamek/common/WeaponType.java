@@ -171,6 +171,12 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_TANK_WEAPON = BigInteger.valueOf(1).shiftLeft(47);
 
     public static final BigInteger F_INFANTRY_ATTACK = BigInteger.valueOf(1).shiftLeft(48);
+    public static final BigInteger F_INF_BURST = BigInteger.valueOf(1).shiftLeft(49);
+    public static final BigInteger F_INF_AA = BigInteger.valueOf(1).shiftLeft(50);
+    public static final BigInteger F_INF_NPEN = BigInteger.valueOf(1).shiftLeft(51);
+    public static final BigInteger F_INF_POINT_BLANK = BigInteger.valueOf(1).shiftLeft(52);
+    public static final BigInteger F_INF_SUPPORT = BigInteger.valueOf(1).shiftLeft(53);
+    public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
@@ -906,13 +912,13 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new StopSwarmAttack());
 
         // Infantry Weapons
-        EquipmentType.addType(new InfantryRifleWeapon());
-        EquipmentType.addType(new InfantrySRMWeapon());
+        EquipmentType.addType(new InfantryAutoRifleWeapon());
+        EquipmentType.addType(new InfantryLightSRMWeapon());
         EquipmentType.addType(new InfantryInfernoSRMWeapon());
         EquipmentType.addType(new InfantryLRMWeapon());
-        EquipmentType.addType(new InfantryLaserWeapon());
-        EquipmentType.addType(new InfantryFlamerWeapon());
-        EquipmentType.addType(new InfantryMGWeapon());
+        EquipmentType.addType(new InfantryLaserRifleWeapon());
+        EquipmentType.addType(new InfantryPortableFlamerWeapon());
+        EquipmentType.addType(new InfantryPortableMGWeapon());
         EquipmentType.addType(new ISFireExtinguisher());
         EquipmentType.addType(new CLFireExtinguisher());
 

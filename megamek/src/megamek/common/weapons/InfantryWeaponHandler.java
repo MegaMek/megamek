@@ -25,21 +25,19 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public abstract class InfantryWeaponHandler extends WeaponHandler {
+public class InfantryWeaponHandler extends WeaponHandler {
 
     /**
      *
      */
     private static final long serialVersionUID = 1425176802065536326L;
-
-    // damage lookup table, different for each infantry weapon
-    int[] damage;
 
     /**
      * @param t
@@ -85,7 +83,16 @@ public abstract class InfantryWeaponHandler extends WeaponHandler {
         }
         int troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod, bGlancing);
-        int damageDealt = damage[troopersHit-1];
+        double damage = ((InfantryWeapon)wtype).getInfantryDamage();
+        if(ae instanceof Infantry && !(ae instanceof BattleArmor)) {
+        	//for conventional infantry, we have to calculate primary and secondary weapons
+        	//to get damage per trooper
+        	damage = ((Infantry)ae).getDamagePerTrooper();
+        }
+        int damageDealt = (int) Math.round(damage * troopersHit);
+        if(target instanceof Infantry && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        	damageDealt += Compute.d6();
+        }
         if (target instanceof Infantry && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
         }

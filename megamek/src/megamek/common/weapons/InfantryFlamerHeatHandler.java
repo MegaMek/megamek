@@ -34,7 +34,7 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
+public class InfantryFlamerHeatHandler extends InfantryWeaponHandler {
 
     /**
      *
@@ -49,28 +49,6 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
     public InfantryFlamerHeatHandler(ToHitData t, WeaponAttackAction w,
             IGame g, Server s) {
         super(t, w, g, s);
-    }
-
-
-
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.weapons.InfantryWeaponHandler#calcDamagePerHit()
-     */
-    @Override
-    protected int calcDamagePerHit() {
-        int troopersHit = Compute.missilesHit(((Infantry) ae)
-                .getShootingStrength());
-        return damage[troopersHit - 1];
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.weapons.InfantryWeaponHandler#calcHits(java.util.Vector)
-     */
-    @Override
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        return 1;
     }
 
     @Override

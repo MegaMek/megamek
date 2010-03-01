@@ -28,9 +28,12 @@ package megamek.common.loaders;
 
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
 import megamek.common.Infantry;
+import megamek.common.LocationFullException;
 import megamek.common.MiscType;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.InfantryWeapon;
 
 public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
@@ -57,11 +60,17 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
-
-        if (!dataFile.exists("tonnage")) {
-            throw new EntityLoadingException("Could not find weight block.");
+    
+        if (!dataFile.exists("squad_size")) {
+            throw new EntityLoadingException("Could not find squad size.");
         }
-        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        t.setSquadSize(dataFile.getDataAsInt("squad_size")[0]);
+        if (!dataFile.exists("squadn")) {
+            throw new EntityLoadingException("Could not find number of squads.");
+        }
+        t.setSquadN(dataFile.getDataAsInt("squadn")[0]);
+        
+        t.autoSetInternal();
 
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");
@@ -72,26 +81,50 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
         t.setMovementMode(nMotion);
-
-        if (!dataFile.exists("cruiseMP")) {
-            throw new EntityLoadingException("Could not find cruiseMP block.");
+        
+        //get primary and secondary weapons
+        if (dataFile.exists("secondn")) {
+            t.setSecondaryN(dataFile.getDataAsInt("secondn")[0]);
         }
-        t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
-
-        if (dataFile.exists("jumpingMP")) {
-            t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
+        
+        if (!dataFile.exists("Primary")) {
+        	throw new EntityLoadingException("Could not find primary weapon.");
         }
-
-        loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);
-
-        if (dataFile.exists("troopers")) {
-            int troopers = dataFile.getDataAsInt("troopers")[0];
-            t.initializeInternal(troopers, Infantry.LOC_INFANTRY);
-            if (t.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
-                t.initializeArmor(troopers, Infantry.LOC_INFANTRY);
+        String primaryName = dataFile.getDataAsString("Primary")[0];
+        EquipmentType ptype = EquipmentType.get(primaryName);
+        if(null == ptype || !(ptype instanceof InfantryWeapon)) {
+        	throw new EntityLoadingException("primary weapon is not an infantry weapon");
+        }
+        t.setPrimaryWeapon((InfantryWeapon)ptype);
+        
+        EquipmentType stype = null;
+        if(dataFile.exists("Secondary")) {
+        	String secondName = dataFile.getDataAsString("Secondary")[0];
+        	stype = EquipmentType.get(secondName);
+            if(null == stype || !(stype instanceof InfantryWeapon)) {
+            	throw new EntityLoadingException("secondary weapon is not an infantry weapon");
             }
+            t.setSecondaryWeapon((InfantryWeapon)stype);
+        }
+        
+        //if there is more than one secondary weapon per squad, then add that to the unit
+        //otherwise add the primary weapon
+        if(t.getSecondaryN() > 1 && null != stype) {
+        	try {
+        		t.addEquipment(stype, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }     	 
         } else {
-            t.autoSetInternal();
+        	try {
+        		t.addEquipment(ptype, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        }
+        
+        if (dataFile.exists("antimek")) {
+            t.setAntiMek(true);
         }
 
         return t;

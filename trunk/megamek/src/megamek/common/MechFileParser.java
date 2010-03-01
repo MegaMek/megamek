@@ -469,6 +469,16 @@ public class MechFileParser {
                 }
             }
         }
+        //physical attacks for conventional infantry
+        else if(ent instanceof Infantry && ((Infantry)ent).canAttackMeks()) {
+        	try {
+                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY, false, false);
+                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY, false, false);
+                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY, false, false);
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        }
 
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent

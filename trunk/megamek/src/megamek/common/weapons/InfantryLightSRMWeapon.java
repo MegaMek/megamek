@@ -18,49 +18,29 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public class InfantrySRMWeapon extends InfantryWeapon {
+public class InfantryLightSRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -5311681183178942222L;
 
-    public InfantrySRMWeapon() {
+    public InfantryLightSRMWeapon() {
         super();
         techLevel = TechConstants.T_ALLOWED_ALL;
-        name = "Infantry SRM";
+        name = "Light SRM Launcher";
         setInternalName(name);
-        addLookupName("InfantrySRM");
+        addLookupName("InfantrySRMLight");
         ammoType = AmmoType.T_SRM;
-        shortRange = 2;
-        mediumRange = 4;
-        longRange = 6;
-        extremeRange = 8;
-        // SRM Launcher (Standard, two-shot), TM p. 300
         cost = 1500;
-        // SRM Launcher (Standard, two-shot) TM p. 319
-        bv = 2.63;
+        bv = 1.71;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new InfantrySRMHandler(toHit, waa, game, server);
+        infantryDamage = 0.41;
+        infantryRange = 2;
     }
 }

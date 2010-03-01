@@ -36,6 +36,7 @@ import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.InfantryWeapon;
 import megamek.server.Server;
 
 /**
@@ -629,7 +630,7 @@ public class Compute {
         WeaponType wtype = (WeaponType) weapon.getType();
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
-        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        boolean isWeaponInfantry = wtype instanceof InfantryWeapon;
         boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM) || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_10) || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
@@ -642,7 +643,7 @@ public class Compute {
         }
 
         ToHitData mods = new ToHitData();
-
+        
         Entity te = null;
         if (target instanceof Entity) {
             te = (Entity) target;
@@ -756,14 +757,14 @@ public class Compute {
                 }
             }
         }
-
+        
         // if aero and greater than max range then swith to range_out
         if ((ae instanceof Aero) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
         // short circuit if at zero range or out of range
-        if (range == RangeType.RANGE_OUT) {
+        if (range == RangeType.RANGE_OUT && !isWeaponInfantry) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
         if ((distance == 0) && !isAttackerInfantry && !(ae instanceof Aero)
@@ -838,26 +839,17 @@ public class Compute {
             }
         }
 
-        // add infantry zero-range modifier
-        // TODO: this is not the right place to hardcode these
-        if (isWeaponInfantry && (distance == 0)) {
-            // Infantry platoons attacking with infantry weapons can attack
-            // in the same hex with a base of 2, except for flamers and
-            // SRMs/LRMs, which have a base of 3.
-            if (wtype.hasFlag(WeaponType.F_FLAMER)) {
-                mods.addModifier(-1, "infantry flamer assault");
-            } else if ((wtype.getAmmoType() == AmmoType.T_SRM) || (wtype.getAmmoType() == AmmoType.T_LRM)) {
-                mods.addModifier(-1, "infantry missile assault");
-            } else {
-                mods.addModifier(-2, "infantry assault");
-            }
-        }
-
         // add minimum range modifier (only for ground-to-ground attacks)
         int minRange = weaponRanges[RangeType.RANGE_MINIMUM];
         if ((minRange > 0) && (distance <= minRange) && Compute.isGroundToGround(ae, target)) {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
+        }
+        
+        //if this is an infantry weapon then we use a whole different calculation
+        //to figure out range, so overwrite whatever we have at this point
+        if(isWeaponInfantry) {
+        	return getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
         }
 
         // add any target stealth modifier
@@ -868,6 +860,165 @@ public class Compute {
             }
         }
 
+        return mods;
+    }
+    
+    public static ToHitData getInfantryRangeMods(int distance, InfantryWeapon wpn) {
+        ToHitData mods = new ToHitData();	
+        int range = wpn.getInfantryRange();      
+        int mod = 0;
+        
+    	switch(range) {
+    	case 0:
+    		if(distance > 0) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    	case 1:
+    		if(distance > 3) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance == 0) {
+    			mod = -2;
+    		}
+    		else if(distance == 2) {
+    			mod = 2;
+    		}
+    		else if(distance == 3) {
+    			mod = 4;
+    		}
+    		break;
+    	case 2:
+    		if(distance > 6) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance > 4) {
+    			mod = 4;
+    		}
+    		else if(distance > 2) {
+    			mod = 2;
+    		}
+    		else if(distance == 0) {
+    			mod = -2;
+    		}
+    		break;
+    	case 3:
+    		if(distance > 9) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance > 6) {
+    			mod = 4;
+    		}
+    		else if(distance > 3) {
+    			mod = 2;
+    		}
+    		else if(distance == 0) {
+    			mod = -2;
+    		}
+    		break;
+    	case 4:
+    		if(distance > 12) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance > 10) {
+    			mod = 4;
+    		}
+    		else if(distance > 8) {
+    			mod = 3;
+    		}
+    		else if(distance > 6) {
+    			mod = 2;
+    		}
+    		else if(distance > 4) {
+    			mod = 1;
+    		}
+    		else if(distance == 0) {
+    			mod = -2;
+    		}
+    		break;
+    	case 5:
+    		if(distance > 15) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance > 12) {
+    			mod = 4;
+    		}
+    		else if(distance > 10) {
+    			mod = 3;
+    		}
+    		else if(distance > 7) {
+    			mod = 2;
+    		}
+    		else if(distance > 5) {
+    			mod = 1;
+    		}
+    		else if(distance == 0) {
+    			mod = -1;
+    		}
+    		break;
+    	case 6:
+    		if(distance > 18) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance > 15) {
+    			mod = 5;
+    		}
+    		else if(distance > 12) {
+    			mod = 4;
+    		}
+    		else if(distance > 9) {
+    			mod = 2;
+    		}
+    		else if(distance > 6) {
+    			mod = 1;
+    		}
+    		else if(distance == 0) {
+    			mod = -1;
+    		}
+    		break;
+    	case 7:
+    		if(distance > 21) {
+    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    		}
+    		else if(distance > 17) {
+    			mod = 6;
+    		}
+    		else if(distance > 14) {
+    			mod = 4;
+    		}
+    		else if(distance > 10) {
+    			mod = 2;
+    		}
+    		else if(distance > 7) {
+    			mod = 1;
+    		}
+    		else if(distance == 0) {
+    			mod = -1;
+    		}
+    		break;
+    	default:
+    		return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+    	}
+        
+    	//a bunch of special conditions at range 0
+    	if(distance == 0) {
+    	
+    		if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+    			mod++;
+    		}
+    	
+    		if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || wpn.getCrew() > 1) {
+    			mod++;
+    		}
+    	
+    		if(wpn.hasFlag(WeaponType.F_INF_BURST)) {
+    			mod--;
+    		}
+    	}
+    	
+    	if(mod != 0) {
+    		mods.addModifier(mod, "infantry range");
+    	}
+    	
         return mods;
     }
 

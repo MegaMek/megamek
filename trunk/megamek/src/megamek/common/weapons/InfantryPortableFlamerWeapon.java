@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -27,40 +26,35 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class InfantryMGWeapon extends InfantryWeapon {
+public class InfantryPortableFlamerWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3434311797513896108L;
+    private static final long serialVersionUID = -5741978934100309295L;
 
-    public InfantryMGWeapon() {
+    public InfantryPortableFlamerWeapon() {
         super();
         techLevel = TechConstants.T_INTRO_BOXSET;
-        name = "Infantry MG";
+        name = "Portable Flamer";
         setInternalName(name);
-        addLookupName("InfantryMG");
-        ammoType = AmmoType.T_MG;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        // machine gun (support), TM p. 300
-        cost = 1750;
-        // machine gun (support) TM p. 319
-        bv = 3.93;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        addLookupName("InfantryFlamerPortable");
+        // Flamer (man-pack), TM p. 300
+        cost = 100;
+        bv = 0.36;
+        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
+        infantryDamage = 0.45;
+        infantryRange = 1;
+        crew = 2;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
+    
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new InfantryMGHandler(toHit, waa, game, server);
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {
+            return new InfantryFlamerHeatHandler(toHit, waa, game, server);
+        }
+        return new InfantryWeaponHandler(toHit, waa, game, server);
     }
 }

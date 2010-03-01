@@ -251,7 +251,10 @@ public class BattleArmor extends Infantry {
     public BattleArmor() {
         // Instantiate the superclass.
         super();
-
+        
+        //BA are always one squad
+        squadn = 1;
+        
         // All Battle Armor squads are Clan until specified otherwise.
         setTechLevel(TechConstants.T_CLAN_TW);
 
@@ -623,7 +626,7 @@ public class BattleArmor extends Infantry {
             initializeInternal(value, loop);
         }
     }
-
+    
     /**
      * Mounts the specified equipment in the specified location.
      */
@@ -670,6 +673,11 @@ public class BattleArmor extends Infantry {
             mediumStealthMod = 1;
             longStealthMod = 0;
             stealthName = name;
+        }
+        
+        // If the BA can swarm, they're anti-mek.
+        if (Infantry.SWARM_MEK.equals(name)) {
+            setAntiMek(true);
         }
     }
 
@@ -1283,6 +1291,8 @@ public class BattleArmor extends Infantry {
 
     public void setTroopers(int troopers) {
         this.troopers = troopers;
+        //this is also squad size
+        setSquadSize(troopers);
     }
 
     public void setChassisType(int inCT) {
@@ -1670,6 +1680,4 @@ public class BattleArmor extends Infantry {
         }
         return false;
     }
-
-
 } // End public class BattleArmor extends Infantry implements Serializable

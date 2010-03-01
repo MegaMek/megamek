@@ -37,30 +37,19 @@ public class InfantryInfernoSRMWeapon extends InfantryWeapon {
     public InfantryInfernoSRMWeapon() {
         super();
         techLevel = TechConstants.T_IS_TW_NON_BOX;
-        name = "Infantry Inferno SRM";
+        name = "Light SRM (Inferno)";
         setInternalName(name);
-        addLookupName("InfantryInfernoSRM");
+        addLookupName("InfantrySRMLightInferno");
         ammoType = AmmoType.T_SRM;
-        shortRange = 2;
-        mediumRange = 4;
-        longRange = 6;
-        extremeRange = 8;
-        // SRM Launcher (Standard, two-shot), TM p. 300
         cost = 1500;
-        // SRM Launcher (Standard, two-shot) TM p. 319
-        bv = 2.63;
+        bv = 1.71;
         flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE);
+        infantryDamage = 0.41;
+        infantryRange = 2;
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
+    
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new InfantryInfernoSRMHandler(toHit, waa, game, server);
     }
 }

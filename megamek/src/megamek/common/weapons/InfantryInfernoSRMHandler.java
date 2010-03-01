@@ -34,7 +34,7 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
+public class InfantryInfernoSRMHandler extends InfantryWeaponHandler {
 
     /**
      * 
@@ -49,25 +49,6 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
     public InfantryInfernoSRMHandler(ToHitData t, WeaponAttackAction w,
             IGame g, Server s) {
         super(t, w, g, s);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
-    @Override
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        int troopersHit = Compute.missilesHit(((Infantry) ae)
-                .getShootingStrength());
-        Report r = new Report(3325);
-        r.subject = subjectId;
-        r.add(troopersHit);
-        r.add(" trooper(s) ");
-        r.add(toHit.getTableDesc() + ".");
-        r.newlines = 0;
-        vPhaseReport.addElement(r);
-        return damage[troopersHit - 1] / 2;
     }
 
     /*

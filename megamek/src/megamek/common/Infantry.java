@@ -18,6 +18,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import megamek.common.weapons.InfantryWeapon;
+
 /**
  * This class represents the lowest of the low, the ground pounders, the city
  * rats, the PBI (Poor Bloody Infantry). <p/> PLEASE NOTE!!! This class just
@@ -41,6 +43,12 @@ public class Infantry extends Entity implements Serializable {
     private static final long serialVersionUID = -8706716079307721282L;
 
     /**
+     * squad size and number
+     */
+    protected int squadn = 0;
+    private int squadsize = 0;
+    
+    /**
      * The number of men originally in this platoon.
      */
     private int menStarting = 0;
@@ -56,6 +64,16 @@ public class Infantry extends Entity implements Serializable {
      */
     private int men = 0;
 
+    /**
+     * Information on primary and secondary weapons
+     * This must be kept separate from the equipment array
+     * because they are not fired as separate weapons
+     */
+    private InfantryWeapon primaryW;
+    private InfantryWeapon secondW;
+    private int secondn = 0;
+    
+    
     /**
      * Infantry armor
      */
@@ -193,6 +211,12 @@ public class Infantry extends Entity implements Serializable {
         if(encumbering) {
             mp = Math.max(mp - 1, 1);
         }
+        if(getSecondaryN() > 1 
+        		&& null != secondW && secondW.hasFlag(WeaponType.F_INF_SUPPORT)  
+        		&& getMovementMode() != EntityMovementMode.TRACKED
+        		&& getMovementMode() != EntityMovementMode.INF_JUMP) {
+        	mp = Math.max(mp - 1, 0);
+        }
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
@@ -236,6 +260,9 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
+        if(this.getSecondaryN() > 1 && null != secondW && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
+        	mp = Math.max(mp - 1, 0);
+        }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
@@ -459,58 +486,12 @@ public class Infantry extends Entity implements Serializable {
     }
 
     /**
-     * Set the men in the platoon to the appropriate value for the platoon's
-     * movement type.
+     * Set the men in the platoon based on squad size and number
      */
     @Override
     public void autoSetInternal() {
-
-        // Clan platoons have 25 men.
-        if (isClan()) {
-            initializeInternal(INF_PLT_CLAN_MAX_MEN, LOC_INFANTRY);
-            return;
-        }
-
-        // IS platoon strength is based upon movement type.
-        switch (getMovementMode()) {
-            case INF_LEG:
-            case INF_MOTORIZED:
-                initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
-                break;
-            case INF_JUMP:
-                initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown movement type: "
-                        + getMovementMode());
-        }
-
-        if (hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
-            initializeArmor(getOInternal(LOC_INFANTRY), LOC_INFANTRY);
-        }
-        return;
-    }
-
-    /**
-     * Infantry weapons are dictated by their type.
-     */
-    @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-            throws LocationFullException {
-        EquipmentType equip = mounted.getType();
-
-        // If the infantry can swarm, they're anti-mek infantry.
-        if (Infantry.SWARM_MEK.equals(equip.getInternalName())) {
-            antiMek = true;
-        }
-        // N.B. Clan Undine BattleArmor can leg attack, but aren't
-        // classified as "anti-mek" in the BMRr, pg. 155).
-        else if (Infantry.LEG_ATTACK.equals(equip.getInternalName())
-                || Infantry.STOP_SWARM.equals(equip.getInternalName())) {
-            // Do nothing.
-        }
-        // Update our superclass.
-        super.addEquipment(mounted, loc, rearMounted);
+    	//TODO: put checks here on size
+    	initializeInternal(squadsize*squadn, LOC_INFANTRY);
     }
 
     /**
@@ -607,7 +588,7 @@ public class Infantry extends Entity implements Serializable {
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv;
    
-        dbv = this.getInternal(Entity.LOC_NONE) * 1.5 * getDamageDivisor();
+        dbv = men * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
                 .getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
@@ -645,24 +626,18 @@ public class Infantry extends Entity implements Serializable {
                     .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-        ArrayList<Mounted> weapons = getWeaponList();
         double wbv = 0;
-        for (Mounted weapon : weapons) {
-            WeaponType wtype = (WeaponType) weapon.getType();
-            if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
-                continue;
-            }
-            // infantry weapons get counted multiple times
-            if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
-                // stupid assumption to at least get a value:
-                // each weapon is carried once by each platoon member
-                // if an antiMek platoon, count twice
-                wbv += wtype.getBV(this) * this.getInternal(Entity.LOC_NONE)
-                        * (antiMek ? 2 : 0);
-            } else {
-                // field guns count only once
-                wbv += wtype.getBV(this);
-            }
+        if(null != primaryW) {
+        	wbv += primaryW.getBV(this) * (squadsize - secondn);
+        }
+        if(null != secondW) {
+        	wbv += secondW.getBV(this) * (secondn);
+        }
+        wbv = wbv * (men/squadsize);
+        //if anti-mek then double this
+        //TODO: need to factor archaic weapons out of this
+        if(isAntiMek()) {
+        	wbv *= 2;
         }
         obv = wbv * speedFactor;
         int bv = (int) Math.round(obv + dbv);
@@ -780,12 +755,10 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double multiplier = 0;
+        double multiplier = 1;
 
-        if (antiMek) {
+        if (isAntiMek()) {
             multiplier = 5;
-        } else {
-            multiplier = 1;
         }
 
         switch (getMovementMode()){
@@ -812,8 +785,17 @@ public class Infantry extends Entity implements Serializable {
         default:
             break;
         }
-
-        return Math.round(2000 * Math.sqrt(getWeaponsAndEquipmentCost(ignoreAmmo)) * multiplier * menStarting);
+        
+        int weaponCost = 0;
+        if(null != primaryW) {
+        	weaponCost += primaryW.getCost(this, false) * (squadsize - secondn);
+        }
+        if(null != secondW) {
+        	weaponCost += secondW.getCost(this, false) * secondn;
+        }
+        weaponCost = weaponCost / squadsize;
+        
+        return Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
     }
 
     @Override
@@ -929,6 +911,10 @@ public class Infantry extends Entity implements Serializable {
         setDugIn(DUG_IN_NONE);
     }
 
+    public void setAntiMek(boolean b) {
+    	this.antiMek = b;
+    }
+    
     public boolean isAntiMek() {
         return antiMek;
     }
@@ -1074,4 +1060,111 @@ public class Infantry extends Entity implements Serializable {
         return result;
     } // End public TargetRoll getStealthModifier( char )
 
+    public void setPrimaryWeapon(InfantryWeapon w) {
+    	this.primaryW = w;
+    }
+    
+    public InfantryWeapon getPrimaryWeapon() {
+    	return primaryW;
+    }
+    
+    public void setSecondaryWeapon(InfantryWeapon w) {
+    	this.secondW = w;
+    }
+    
+    public InfantryWeapon getSecondaryWeapon() {
+    	return secondW;
+    }
+    
+    public void setSquadSize(int size) {
+    	this.squadsize = size;
+    }
+    
+    public int getSquadSize() {
+    	return squadsize;
+    }
+    
+    public void setSquadN(int n) {
+    	this.squadn = n;
+    }
+    
+    public int getSquadN() {
+    	return squadn;
+    }
+    
+    public void setSecondaryN(int n) {
+    	this.secondn = n;
+    }
+    
+    public int getSecondaryN() {
+    	return secondn;
+    }
+    
+    public double getDamagePerTrooper() {
+    	
+    	if(null == primaryW) {
+    		return 0;
+    	}
+    	
+    	double damage = primaryW.getInfantryDamage() * (squadsize - secondn);
+    	if(null != secondW) {
+    		damage += secondW.getInfantryDamage() * secondn;
+    	}	
+    	return damage/squadsize;
+    }
+    
+    public boolean isSquad() {
+    	return (squadsize == 1);
+    }
+    
+    /**
+     * Set the movement type of the entity
+     */
+    @Override
+    public void setMovementMode(EntityMovementMode movementMode) {
+        super.setMovementMode(movementMode);
+        //movement mode will determine base mp
+        switch (getMovementMode()) {
+        case INF_MOTORIZED:
+        	setOriginalWalkMP(3);
+        	break;
+        case HOVER:
+        	setOriginalWalkMP(5);
+        	break;
+        case TRACKED:
+        	setOriginalWalkMP(3);
+        	break;
+        case WHEELED:
+        	setOriginalWalkMP(4);
+        	break;
+        case INF_JUMP:
+        	setOriginalJumpMP(3);
+        case INF_LEG:
+        	setOriginalWalkMP(1);
+       
+        }
+    }
+    
+    public boolean canAttackMeks() {
+    	return !isMechanized() && isAntiMek();
+    }
+    
+    @Override
+    public float getWeight() {
+        switch (getMovementMode()) {
+        case INF_MOTORIZED:
+        	return (float) (men * 0.21);
+        case HOVER:   
+        case TRACKED:
+        case WHEELED:
+        	return (float) (men * 1);
+        case INF_JUMP:
+        	return (float) (men * 0.18);
+        case INF_LEG:
+        default:
+        	return (float) (men * 0.1);
+       
+        }
+    }   
+    
 } // End class Infantry

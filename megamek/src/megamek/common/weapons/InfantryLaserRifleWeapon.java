@@ -17,48 +17,28 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public class InfantryLaserWeapon extends InfantryWeapon {
+public class InfantryLaserRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -9065123199493897216L;
 
-    public InfantryLaserWeapon() {
+    public InfantryLaserRifleWeapon() {
         super();
         techLevel = TechConstants.T_ALLOWED_ALL;
-        name = "Infantry Laser";
+        name = "Laser Rifle";
         setInternalName(name);
-        addLookupName("InfantryLaser");
-        shortRange = 2;
-        mediumRange = 4;
-        longRange = 6;
-        extremeRange = 8;
-        // laser rifle, TM p. 299
+        addLookupName("InfantryLaserRifle");
         cost = 1250;
-        // laser rifle, TM p. 319
         bv = 0.88;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new InfantryLaserHandler(toHit, waa, game, server);
+        infantryDamage = 0.28;
+        infantryRange = 2;
     }
 }

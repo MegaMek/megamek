@@ -18,49 +18,29 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public class InfantryRifleWeapon extends InfantryWeapon {
+public class InfantryAutoRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleWeapon() {
+    public InfantryAutoRifleWeapon() {
         super();
         techLevel = TechConstants.T_ALLOWED_ALL;
-        name = "Infantry Rifle";
+        name = "Auto Rifle";
         setInternalName(name);
         addLookupName("InfantryRifle");
         ammoType = AmmoType.T_AC;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 3;
-        // Auto-Rifle, TM p. 299
         cost = 80;
-        // auto-rifle from TM p. 319
         bv = 1.28;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new InfantryRifleHandler(toHit, waa, game, server);
+        infantryDamage = 0.52;
+        infantryRange = 1;
     }
 }

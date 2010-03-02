@@ -643,12 +643,18 @@ public class Tank extends Entity {
                 modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
             }
         }
+        boolean blueShield = false;
+        // a blueshield system means a +0.2 on the armor and internal modifier,
+        // like for mechs
+        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+            blueShield = true;
+        }
 
         // total armor points
-        dbv += (getTotalArmor()+modularArmor) * 2.5;
+        dbv += (getTotalArmor()+modularArmor) * 2.5 * (blueShield?1.2:1);
 
         // total internal structure
-        dbv += getTotalInternal() * 1.5;
+        dbv += getTotalInternal() * 1.5 * (blueShield?1.2:1);
 
         // add defensive equipment
         double dEquipmentBV = 0;

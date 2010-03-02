@@ -1726,6 +1726,8 @@ public class Server implements Runnable {
 
             // checks for environmental survival
             checkForConditionDeath();
+
+            checkForBlueShieldDamage();
             if (game.getBoard().inAtmosphere()) {
                 checkForAtmosphereDeath();
             }
@@ -4649,8 +4651,8 @@ public class Server implements Runnable {
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
-        
-        if (md.contains(MoveStepType.TAKEOFF) && entity instanceof Aero) {
+
+        if (md.contains(MoveStepType.TAKEOFF) && (entity instanceof Aero)) {
             Aero a = (Aero)entity;
             a.setCurrentVelocity(1);
             a.liftOff(1);
@@ -4659,11 +4661,11 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-        
-        if (md.contains(MoveStepType.VTAKEOFF) && entity instanceof Aero) {
+
+        if (md.contains(MoveStepType.VTAKEOFF) && (entity instanceof Aero)) {
             Aero a = (Aero)entity;
             rollTarget = a.checkVerticalTakeOff();
-            if (doVerticalTakeOffCheck(entity, rollTarget)) {      
+            if (doVerticalTakeOffCheck(entity, rollTarget)) {
                 a.setCurrentVelocity(0);
                 a.liftOff(1);
             }
@@ -7946,9 +7948,9 @@ public class Server implements Runnable {
         if(!(entity instanceof Aero)) {
             return false;
         }
-        
+
         Aero a = (Aero)entity;
-        
+
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             return true;
         }
@@ -7995,7 +7997,7 @@ public class Server implements Runnable {
                         damage -= 5;
                     }
                 }
-            } else if(mof < 6) { 
+            } else if(mof < 6) {
                 r = new Report(9323);
                 r.subject = entity.getId();
                 addReport(r);
@@ -8029,7 +8031,7 @@ public class Server implements Runnable {
 
         return suc;
     }
-    
+
     /**
      * Do a piloting skill check in space to do a successful maneuver Failure
      * means moving forward half velocity
@@ -13150,7 +13152,7 @@ public class Server implements Runnable {
             if(entity.getCrew().getOptions().booleanOption("hot_dog")) {
                 hotDogMod = 1;
             }
-            
+
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
 
@@ -14224,6 +14226,32 @@ public class Server implements Runnable {
         }
     }
 
+    private void checkForBlueShieldDamage() {
+        Report r;
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            if (!(entity instanceof Aero) && entity.hasActiveBlueShield() && (entity.getBlueShieldRounds() >= 6)) {
+                int roll = Compute.d6(2);
+                int target = 3 + entity.getBlueShieldRounds() - 6;
+                r = new Report(1240);
+                r.addDesc(entity);
+                r.add(target);
+                r.add(roll);
+                if (roll < target) {
+                    for (Mounted m : entity.getMisc()) {
+                        if (m.getType().hasFlag(MiscType.F_BLUE_SHIELD)) {
+                            m.setBreached(true);
+                        }
+                    }
+                    r.choose(true);
+                } else {
+                    r.choose(false);
+                }
+                vPhaseReport.add(r);
+            }
+        }
+    }
+
     /**
      * Check to see if anyone dies due to being in certain planetary conditions.
      */
@@ -14713,7 +14741,7 @@ public class Server implements Runnable {
                 //maneuvering ace
                 //TODO: pending rules query
                 //http://www.classicbattletech.com/forums/index.php/topic,63552.new.html#new
-                //for now I am assuming Man Ace applies to all out-of-control rolls, but not other 
+                //for now I am assuming Man Ace applies to all out-of-control rolls, but not other
                 //uses of control rolls (thus it doesn't go in Entity#addEntityBonuses) and
                 //furthermore it doesn't apply to recovery rolls
                 if(a.isUsingManAce()) {
@@ -19861,7 +19889,11 @@ public class Server implements Runnable {
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
                 return vDesc;
             }
+        }
 
+        // special case. Blue Shield Particle Field Damper only explodes when switched on
+        if ((mounted.getType() instanceof MiscType) && (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
+            return vDesc;
         }
 
         // Inferno ammo causes heat buildup as well as the damage
@@ -21685,7 +21717,7 @@ public class Server implements Runnable {
     private Packet createPlanetaryConditionsPacket() {
         return new Packet(Packet.COMMAND_SENDING_PLANETARY_CONDITIONS, game.getPlanetaryConditions());
     }
-    
+
     /**
      * Creates a packet containing the game settingss
      */

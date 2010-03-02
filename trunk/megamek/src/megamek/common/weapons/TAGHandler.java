@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -27,7 +27,7 @@ import megamek.server.Server;
 
 public class TAGHandler extends WeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -967656770476044773L;
 
@@ -42,7 +42,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -52,7 +52,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
@@ -78,8 +78,9 @@ public class TAGHandler extends WeaponHandler {
                     priority = 4;
                 }
             }
-            if (priority < 1)
+            if (priority < 1) {
                 priority = 1;
+            }
             // it is possible for 2 or more tags to hit the same entity
             TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(),
                     priority, false);
@@ -93,7 +94,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building, java.util.Vector)
      */
@@ -103,13 +104,13 @@ public class TAGHandler extends WeaponHandler {
         int priority = 1;
         EquipmentMode mode = (weapon.curMode());
         if (mode != null) {
-            if (mode.getName() == "1-shot") {
+            if (mode.getName().equals("1-shot")) {
                 priority = 1;
-            } else if (mode.getName() == "2-shot") {
+            } else if (mode.getName().equals("2-shot")) {
                 priority = 2;
-            } else if (mode.getName() == "3-shot") {
+            } else if (mode.getName().equals("3-shot")) {
                 priority = 3;
-            } else if (mode.getName() == "4-shot") {
+            } else if (mode.getName().equals("4-shot")) {
                 priority = 4;
             }
         }
@@ -122,7 +123,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override

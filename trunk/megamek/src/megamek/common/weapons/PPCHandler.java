@@ -22,6 +22,7 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
+import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -87,6 +88,10 @@ public class PPCHandler extends EnergyWeaponHandler {
 
         if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
             toReturn -= 1;
+        }
+
+        if ((target instanceof Entity) && ((Entity)target).hasActiveBlueShield()) {
+            toReturn = (int)Math.max(Math.floor(toReturn/2.0), 1);
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {

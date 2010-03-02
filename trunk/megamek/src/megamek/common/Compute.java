@@ -1468,7 +1468,7 @@ public class Compute {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Can't target Mech with active stealth armor as secondary target");
         }
-        
+
         int mod = 2;
         if (curInFrontArc || (attacker instanceof BattleArmor)) {
             mod--;
@@ -1928,9 +1928,9 @@ public class Compute {
 
         if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                 || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
-            if ((weapon.curMode().getName() == "Ultra") || (weapon.curMode().getName() == "2-shot")
-                    || (weapon.curMode().getName() == "3-shot") || (weapon.curMode().getName() == "4-shot")
-                    || (weapon.curMode().getName() == "5-shot") || (weapon.curMode().getName() == "6-shot")) {
+            if ((weapon.curMode().getName().equals("Ultra")) || (weapon.curMode().getName().equals("2-shot"))
+                    || (weapon.curMode().getName().equals("3-shot")) || (weapon.curMode().getName().equals("4-shot"))
+                    || (weapon.curMode().getName().equals("5-shot")) || (weapon.curMode().getName().equals("6-shot"))) {
                 use_table = true;
             }
         }
@@ -1969,19 +1969,19 @@ public class Compute {
             }
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                     || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
-                if ((weapon.curMode().getName() == "Ultra") || (weapon.curMode().getName() == "2-shot")) {
+                if ((weapon.curMode().getName().equals("Ultra")) || (weapon.curMode().getName().equals("2-shot"))) {
                     fHits = expectedHitsByRackSize[2];
                 }
-                if (weapon.curMode().getName() == "3-shot") {
+                if (weapon.curMode().getName().equals("3-shot")) {
                     fHits = expectedHitsByRackSize[3];
                 }
-                if (weapon.curMode().getName() == "4-shot") {
+                if (weapon.curMode().getName().equals("4-shot")) {
                     fHits = expectedHitsByRackSize[4];
                 }
-                if (weapon.curMode().getName() == "5-shot") {
+                if (weapon.curMode().getName().equals("5-shot")) {
                     fHits = expectedHitsByRackSize[5];
                 }
-                if (weapon.curMode().getName() == "6-shot") {
+                if (weapon.curMode().getName().equals("6-shot")) {
                     fHits = expectedHitsByRackSize[6];
                 }
             }
@@ -4854,11 +4854,11 @@ public class Compute {
         if ((attacker == null) || (target == null)) {
             return false;
         }
-        
+
         if(attacker.game.getBoard().inSpace()) {
             return false;
         }
-        
+
         return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOL();
     }
 

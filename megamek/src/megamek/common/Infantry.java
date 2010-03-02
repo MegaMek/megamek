@@ -1119,7 +1119,7 @@ public class Infantry extends Entity implements Serializable {
     }
     
     public boolean isSquad() {
-    	return (squadsize == 1);
+    	return (squadn == 1);
     }
     
     /**

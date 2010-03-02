@@ -1211,12 +1211,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
             toHit.addModifier(1, "battle armor target");
         }
+        
+
+        //infantry squads are also hard to hit
+        if(!isAttackerInfantry && (null != te) 
+                && (te instanceof Infantry && !(te instanceof BattleArmor)) 
+                && ((Infantry)te).isSquad()) {
+            toHit.addModifier(1, "infantry squad target");
+        }
 
         // Ejected MechWarriors are harder to hit
         if ((te != null) && (te instanceof MechWarrior)) {
             toHit.addModifier(2, "ejected MechWarrior target");
         }
 
+        
         // Indirect fire has a +1 mod
         if (isIndirect) {
             if(ae.getCrew().getOptions().booleanOption("oblique_attacker")) {

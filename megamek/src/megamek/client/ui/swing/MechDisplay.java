@@ -106,6 +106,7 @@ import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.InfantryWeapon;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special
@@ -612,6 +613,21 @@ public class MechDisplay extends JPanel {
         public JLabel wTargetR;
         public JLabel wRangeR;
         public JLabel wToHitR;
+        
+        private JLabel wDamageTrooperL;
+        private JLabel wDamageTrooperR;
+        private JLabel wInfantryRange0L;
+        private JLabel wInfantryRange0R;
+        private JLabel wInfantryRange1L;
+        private JLabel wInfantryRange1R;
+        private JLabel wInfantryRange2L;
+        private JLabel wInfantryRange2R;
+        private JLabel wInfantryRange3L;
+        private JLabel wInfantryRange3R;
+        private JLabel wInfantryRange4L;
+        private JLabel wInfantryRange4R;
+        private JLabel wInfantryRange5L;
+        private JLabel wInfantryRange5R;
 
         public JTextArea toHitText;
 
@@ -703,6 +719,14 @@ public class MechDisplay extends JPanel {
             wArcHeatR.setOpaque(false);
             wArcHeatR.setForeground(Color.WHITE);
 
+            wDamageTrooperL = new JLabel(
+                    Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER); //$NON-NLS-1$
+            wDamageTrooperL.setOpaque(false);
+            wDamageTrooperL.setForeground(Color.WHITE);
+            wDamageTrooperR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wDamageTrooperR.setOpaque(false);
+            wDamageTrooperR.setForeground(Color.WHITE);
+            
             add(wNameL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(0));
 
             add(wHeatL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(1));
@@ -711,6 +735,8 @@ public class MechDisplay extends JPanel {
 
             add(wArcHeatL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(3));
 
+            add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(3));
+            
             add(wNameR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(0));
 
             add(wHeatR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(1));
@@ -718,6 +744,8 @@ public class MechDisplay extends JPanel {
             add(wDamR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(2));
 
             add(wArcHeatR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(3));
+
+            add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(3));
 
             // Adding range labels
             wMinL = new JLabel(
@@ -771,6 +799,43 @@ public class MechDisplay extends JPanel {
             wExtAVR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wExtAVR.setOpaque(false);
             wExtAVR.setForeground(Color.WHITE);
+            
+            wInfantryRange0L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange0L.setOpaque(false);
+            wInfantryRange0L.setForeground(Color.WHITE);
+            wInfantryRange0R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange0R.setOpaque(false);
+            wInfantryRange0R.setForeground(Color.WHITE);
+            wInfantryRange1L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange1L.setOpaque(false);
+            wInfantryRange1L.setForeground(Color.WHITE);
+            wInfantryRange1R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange1R.setOpaque(false);
+            wInfantryRange1R.setForeground(Color.WHITE);
+            wInfantryRange2L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange2L.setOpaque(false);
+            wInfantryRange2L.setForeground(Color.WHITE);
+            wInfantryRange2R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange2R.setOpaque(false);
+            wInfantryRange2R.setForeground(Color.WHITE);
+            wInfantryRange3L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange3L.setOpaque(false);
+            wInfantryRange3L.setForeground(Color.WHITE);
+            wInfantryRange3R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange3R.setOpaque(false);
+            wInfantryRange3R.setForeground(Color.WHITE);
+            wInfantryRange4L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange4L.setOpaque(false);
+            wInfantryRange4L.setForeground(Color.WHITE);
+            wInfantryRange4R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange4R.setOpaque(false);
+            wInfantryRange4R.setForeground(Color.WHITE);
+            wInfantryRange5L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange5L.setOpaque(false);
+            wInfantryRange5L.setForeground(Color.WHITE);
+            wInfantryRange5R = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
+            wInfantryRange5R.setOpaque(false);
+            wInfantryRange5R.setForeground(Color.WHITE);
 
             add(wMinL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(0));
 
@@ -804,6 +869,30 @@ public class MechDisplay extends JPanel {
 
             add(wExtAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(4));
 
+            add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(0));
+
+            add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(1));
+
+            add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(2));
+
+            add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(3));
+
+            add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
+            
+            add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
+
+            add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(0));
+
+            add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(1));
+
+            add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(2));
+
+            add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(3));
+
+            add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(4));
+            
+            add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(5));
+            
             // target panel
             wTargetL = new JLabel(
                     Messages.getString("MechDisplay.Target"), SwingConstants.CENTER); //$NON-NLS-1$
@@ -1119,6 +1208,22 @@ public class MechDisplay extends JPanel {
                 m_chBayWeapon.setVisible(false);
                 wBayWeapon.setVisible(false);
             }
+            
+ 
+            wDamageTrooperL.setVisible(false);
+            wDamageTrooperR.setVisible(false);
+            wInfantryRange0L.setVisible(false);
+            wInfantryRange0R.setVisible(false);
+            wInfantryRange1L.setVisible(false);
+            wInfantryRange1R.setVisible(false);
+            wInfantryRange2L.setVisible(false);
+            wInfantryRange2R.setVisible(false);
+            wInfantryRange3L.setVisible(false);
+            wInfantryRange3R.setVisible(false);
+            wInfantryRange4L.setVisible(false);
+            wInfantryRange4R.setVisible(false);
+            wInfantryRange5L.setVisible(false);
+            wInfantryRange5R.setVisible(false);
 
             if (entity instanceof Aero) {
                 wAVL.setVisible(true);
@@ -1194,6 +1299,22 @@ public class MechDisplay extends JPanel {
                 wMedR.setText("---"); //$NON-NLS-1$
                 wLongR.setText("---"); //$NON-NLS-1$
                 wExtR.setText("---"); //$NON-NLS-1$
+                
+                wDamageTrooperL.setVisible(false);
+                wDamageTrooperR.setVisible(false);
+                wInfantryRange0L.setVisible(false);
+                wInfantryRange0R.setVisible(false);
+                wInfantryRange1L.setVisible(false);
+                wInfantryRange1R.setVisible(false);
+                wInfantryRange2L.setVisible(false);
+                wInfantryRange2R.setVisible(false);
+                wInfantryRange3L.setVisible(false);
+                wInfantryRange3R.setVisible(false);
+                wInfantryRange4L.setVisible(false);
+                wInfantryRange4R.setVisible(false);
+                wInfantryRange5L.setVisible(false);
+                wInfantryRange5R.setVisible(false);
+                
                 return;
             }
             Mounted mounted = entity.getWeaponList().get(
@@ -1206,6 +1327,250 @@ public class MechDisplay extends JPanel {
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
                     .getLocation(), mounted.isRearMounted())));
 
+            if(wtype instanceof InfantryWeapon) {
+                wDamageTrooperL.setVisible(true);
+                wDamageTrooperR.setVisible(true);
+                InfantryWeapon inftype = (InfantryWeapon)wtype;
+                if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+                    wDamageTrooperR.setText(Double.toString((double)Math.round(((Infantry)entity).getDamagePerTrooper()*1000)/1000));
+                } else {
+                    wDamageTrooperR.setText(Double.toString(inftype.getInfantryDamage()));
+                }
+                //what a nightmare to set up all the range info for infantry weapons
+                wMinL.setVisible(false);
+                wShortL.setVisible(false);
+                wMedL.setVisible(false);
+                wLongL.setVisible(false);
+                wExtL.setVisible(false);
+                wMinR.setVisible(false);
+                wShortR.setVisible(false);
+                wMedR.setVisible(false);
+                wLongR.setVisible(false);
+                wExtR.setVisible(false);
+                wInfantryRange0L.setVisible(false);
+                wInfantryRange0R.setVisible(false);
+                wInfantryRange1L.setVisible(false);
+                wInfantryRange1R.setVisible(false);
+                wInfantryRange2L.setVisible(false);
+                wInfantryRange2R.setVisible(false);
+                wInfantryRange3L.setVisible(false);
+                wInfantryRange3R.setVisible(false);
+                wInfantryRange4L.setVisible(false);
+                wInfantryRange4R.setVisible(false);
+                wInfantryRange5L.setVisible(false);
+                wInfantryRange5R.setVisible(false);
+                int zeromods = 0;
+                if(inftype.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+                    zeromods++;
+                }
+            
+                if(inftype.hasFlag(WeaponType.F_INF_ENCUMBER) || inftype.getCrew() > 1) {
+                    zeromods++;
+                }
+            
+                if(inftype.hasFlag(WeaponType.F_INF_BURST)) {
+                    zeromods--;
+                }
+                switch(inftype.getInfantryRange()) {
+                case 0:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText("+" + zeromods);
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    break;
+                case 1:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-2));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("2");
+                    wInfantryRange2R.setText("+2");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("3");
+                    wInfantryRange3R.setText("+4");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    break;
+                case 2:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-2));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1-2");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("3-4");
+                    wInfantryRange2R.setText("+2");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("5-6");
+                    wInfantryRange3R.setText("+4");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    break;
+                case 3:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-2));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1-3");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("4-6");
+                    wInfantryRange2R.setText("+2");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("7-9");
+                    wInfantryRange3R.setText("+4");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    break;
+                case 4:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-2));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1-4");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("5-6");
+                    wInfantryRange2R.setText("+1");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("7-8");
+                    wInfantryRange3R.setText("+2");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    wInfantryRange4L.setText("9-10");
+                    wInfantryRange4R.setText("+3");
+                    wInfantryRange4L.setVisible(true);
+                    wInfantryRange4R.setVisible(true);
+                    wInfantryRange5L.setText("11-12");
+                    wInfantryRange5R.setText("+4");
+                    wInfantryRange5L.setVisible(true);
+                    wInfantryRange5R.setVisible(true);
+                    break;
+                case 5:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-1));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1-5");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("6-7");
+                    wInfantryRange2R.setText("+1");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("8-10");
+                    wInfantryRange3R.setText("+2");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    wInfantryRange4L.setText("11-12");
+                    wInfantryRange4R.setText("+3");
+                    wInfantryRange4L.setVisible(true);
+                    wInfantryRange4R.setVisible(true);
+                    wInfantryRange5L.setText("13-15");
+                    wInfantryRange5R.setText("+4");
+                    wInfantryRange5L.setVisible(true);
+                    wInfantryRange5R.setVisible(true);
+                    break;
+                case 6:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-1));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1-6");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("7-9");
+                    wInfantryRange2R.setText("+1");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("10-12");
+                    wInfantryRange3R.setText("+2");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    wInfantryRange4L.setText("13-15");
+                    wInfantryRange4R.setText("+4");
+                    wInfantryRange4L.setVisible(true);
+                    wInfantryRange4R.setVisible(true);
+                    wInfantryRange5L.setText("16-18");
+                    wInfantryRange5R.setText("+5");
+                    wInfantryRange5L.setVisible(true);
+                    wInfantryRange5R.setVisible(true);
+                    break;
+                case 7:
+                    wInfantryRange0L.setText("0");
+                    wInfantryRange0R.setText(Integer.toString(zeromods-1));
+                    wInfantryRange0L.setVisible(true);
+                    wInfantryRange0R.setVisible(true);
+                    wInfantryRange1L.setText("1-7");
+                    wInfantryRange1R.setText("+0");
+                    wInfantryRange1L.setVisible(true);
+                    wInfantryRange1R.setVisible(true);
+                    wInfantryRange2L.setText("8-10");
+                    wInfantryRange2R.setText("+1");
+                    wInfantryRange2L.setVisible(true);
+                    wInfantryRange2R.setVisible(true);
+                    wInfantryRange3L.setText("11-14");
+                    wInfantryRange3R.setText("+2");
+                    wInfantryRange3L.setVisible(true);
+                    wInfantryRange3R.setVisible(true);
+                    wInfantryRange4L.setText("15-17");
+                    wInfantryRange4R.setText("+4");
+                    wInfantryRange4L.setVisible(true);
+                    wInfantryRange4R.setVisible(true);
+                    wInfantryRange5L.setText("18-21");
+                    wInfantryRange5R.setText("+6");
+                    wInfantryRange5L.setVisible(true);
+                    wInfantryRange5R.setVisible(true);
+                    break;
+                }         
+            } else {
+                wDamageTrooperL.setVisible(false);
+                wDamageTrooperR.setVisible(false);
+                wInfantryRange0L.setVisible(false);
+                wInfantryRange0R.setVisible(false);
+                wInfantryRange1L.setVisible(false);
+                wInfantryRange1R.setVisible(false);
+                wInfantryRange2L.setVisible(false);
+                wInfantryRange2R.setVisible(false);
+                wInfantryRange3L.setVisible(false);
+                wInfantryRange3R.setVisible(false);
+                wInfantryRange4L.setVisible(false);
+                wInfantryRange4R.setVisible(false);
+                wInfantryRange5L.setVisible(false);
+                wInfantryRange5R.setVisible(false);
+                wShortL.setVisible(true);
+                wMedL.setVisible(true);
+                wLongL.setVisible(true);
+                
+                wMinR.setVisible(true);
+                wShortR.setVisible(true);
+                wMedR.setVisible(true);
+                wLongR.setVisible(true);
+                
+                if(!(entity instanceof Aero)) {
+                    wMinL.setVisible(true);
+                    wMinR.setVisible(true);
+                }
+                if (entity.getGame().getOptions().booleanOption("tacops_range") || (entity instanceof Aero)) {
+                    wExtL.setVisible(true);
+                    wExtR.setVisible(true);
+                }
+            }
+            
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
                 wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
             } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {

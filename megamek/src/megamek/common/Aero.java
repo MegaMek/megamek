@@ -224,7 +224,7 @@ public class Aero extends Entity
 
         return j;
     }
-    
+
     /**
      * Thi is the same as getWalkMP, but does not divide by 2 when grounded
      * @return
@@ -1012,9 +1012,13 @@ public class Aero extends Entity
             }
         }
 
-        dbv += (getTotalArmor()+modularArmor) * 2.5;
+        // a blueshield system means a +0.2 on the armor and SI modifiers,
+        // like for mechs
+        boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        dbv += getSI() * 2.0;
+        dbv += (getTotalArmor()+modularArmor) * 2.5 * (blueShield?1.2:1);
+
+        dbv += getSI() * 2.0 * (blueShield?1.2:1);
 
         // add defensive equipment
         double amsBV = 0;
@@ -1987,32 +1991,32 @@ public class Aero extends Entity
         }
         return roll;
     }
-    
+
     public PilotingRollData checkVerticalTakeOff() {
         PilotingRollData roll = getBasePilotingRoll(EntityMovementType.MOVE_SAFE_THRUST);
 
         if(isGearHit()) {
             roll.addModifier(+1, "landing gear damaged");
         }
-        
+
         if((getLeftThrustHits() + getRightThrustHits()) > 0) {
             roll.addModifier(+3, "Maneuvering thrusters damaged");
         }
-        
+
         //Supposed to be -1 for lifting off from an "airfield or landing pad."
         //We will just treat this as having paved terrain
         Coords pos = getPosition();
         IHex hex = game.getBoard().getHex(pos);
-        if(null != hex && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+        if((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
-        
+
         if(!(this instanceof SmallCraft)) {
             roll.addModifier(+2, "Fighter making vertical liftoff");
         }
-        
+
         //TODO: Taking off from a crater? What constitutes a crater?
-        
+
         return roll;
     }
 
@@ -2738,18 +2742,18 @@ public class Aero extends Entity
         setCurrentVelocity(0);
         setNextVelocity(0);
     }
-    
+
     public int getTakeOffLength() {
         if(isVSTOL()) {
             return 10;
         }
         return 20;
     }
-    
+
     public boolean canTakeOffHorizontally() {
-        return !isSpheroid() && getCurrentThrust() > 0;
+        return !isSpheroid() && (getCurrentThrust() > 0);
     }
-    
+
     public boolean hasRoomForHorizontalTakeOff() {
         //walk along the hexes in the facing of the unit
         Coords pos = getPosition();
@@ -2773,8 +2777,8 @@ public class Aero extends Entity
         }
         return true;
     }
-    
-    public boolean canTakeOffVertically() {   
-        return (isVSTOL() || isSpheroid()) && getCurrentThrust() > 2;
+
+    public boolean canTakeOffVertically() {
+        return (isVSTOL() || isSpheroid()) && (getCurrentThrust() > 2);
     }
 }

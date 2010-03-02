@@ -16580,21 +16580,6 @@ public class Server implements Runnable {
             }
         }
 
-        // damage field guns on infantry platoons if there arent enough men left
-        // to man it
-        if (isPlatoon) {
-            float tons = 0.0f;
-            for (Mounted weap : te.getWeaponList()) {
-                WeaponType wtype = (WeaponType) weap.getType();
-                if (!wtype.hasFlag(WeaponType.F_INFANTRY)) {
-                    tons += wtype.getTonnage(te);
-                    if (tons > te.getInternal(Infantry.LOC_INFANTRY)) {
-                        weap.setHit(true);
-                    }
-                }
-            }
-        }
-
         // TacOps p.78 Ammo booms can hurt other units in same and adjcent hexes
         if (ammoExplosion && game.getOptions().booleanOption("tacops_ammunition") && (damage > 0)
                 && (damage_orig / 10 > 0)) {

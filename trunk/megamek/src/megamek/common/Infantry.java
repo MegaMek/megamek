@@ -89,11 +89,17 @@ public class Infantry extends Entity implements Serializable {
     private boolean sneak_ecm = false;
    
     /**
+     * The location for infantry equipment.
+     */
+    public static final int LOC_INFANTRY = 0;
+    public static final int LOC_FIELD_GUNS = 1;
+    
+    /**
      * Infantry have no critical slot limitations or locations.
      */
-    private static final int[] NUM_OF_SLOTS = { 0 };
-    private static final String[] LOCATION_ABBRS = { "Men" };
-    private static final String[] LOCATION_NAMES = { "Men" };
+    private static final int[] NUM_OF_SLOTS = { 0, 0 };
+    private static final String[] LOCATION_ABBRS = { "MEN", "FGUN" };
+    private static final String[] LOCATION_NAMES = { "Men" , "Field Guns"};
 
     /**
      * Identify this platoon as anti-mek trained.
@@ -133,12 +139,6 @@ public class Infantry extends Entity implements Serializable {
      */
     public static final int INF_PLT_CLAN_MAX_MEN = 25;
 
-
-    /**
-     * The location for infantry equipment.
-     */
-    public static final int LOC_INFANTRY = 0;
-
     /**
      * The internal names of the anti-Mek attacks.
      */
@@ -157,7 +157,7 @@ public class Infantry extends Entity implements Serializable {
     }
 
     /**
-     * Returns the number of locations in this platoon (i.e. one).
+     * Returns the number of locations in this platoon
      */
     @Override
     public int locations() {
@@ -396,7 +396,7 @@ public class Infantry extends Entity implements Serializable {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return new HitData(0);
+        return new HitData(LOC_INFANTRY);
     }
 
     /**
@@ -499,24 +499,17 @@ public class Infantry extends Entity implements Serializable {
 
     /**
      * Infantry can fire all around themselves. But field guns are set up to a
-     * facing
+     * vehicular turret facing
      */
     @Override
     public int getWeaponArc(int wn) {
-        if ((this instanceof BattleArmor) && (dugIn == DUG_IN_NONE)) {
-            return Compute.ARC_360;
-        }
         Mounted mounted = getEquipment(wn);
-        WeaponType wtype = (WeaponType) mounted.getType();
-        if ((wtype.hasFlag(WeaponType.F_INFANTRY)
-                || wtype.hasFlag(WeaponType.F_EXTINGUISHER)
-                || (wtype.getInternalName() == LEG_ATTACK)
-                || (wtype.getInternalName() == SWARM_MEK) || (wtype
-                .getInternalName() == STOP_SWARM))
-                && (dugIn == DUG_IN_NONE)) {
-            return Compute.ARC_360;
+        if(mounted.getLocation() == LOC_FIELD_GUNS) {
+            return Compute.ARC_TURRET;
         }
-        return Compute.ARC_FORWARD;
+        //This is interesting, according to TacOps rules, Dug in units no longer
+        //have to declare a facing
+        return Compute.ARC_360;
     }
 
     /**
@@ -525,15 +518,8 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public boolean isSecondaryArcWeapon(int wn) {
-        if (this instanceof BattleArmor) {
-            return false;
-        }
-        Mounted mounted = getEquipment(wn);
-        WeaponType wtype = (WeaponType) mounted.getType();
-        if (wtype.hasFlag(WeaponType.F_INFANTRY)) {
-            return false;
-        }
-        return true;
+        //nothing should be secondary arc, including field guns
+        return false;
     }
 
     /**
@@ -642,6 +628,12 @@ public class Infantry extends Entity implements Serializable {
         if(isAntiMek()) {
         	wbv *= 2;
         }
+        //add in field gun BV
+        for (Mounted mounted : getEquipment()) {
+            if(mounted.getLocation() == LOC_FIELD_GUNS) {
+                wbv += mounted.getType().getBV(this);
+            }
+        }    
         obv = wbv * speedFactor;
         int bv = (int) Math.round(obv + dbv);
         // and then factor in pilot
@@ -798,7 +790,15 @@ public class Infantry extends Entity implements Serializable {
         }
         weaponCost = weaponCost / squadsize;
         
-        return Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
+        double cost = Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
+        //add in field gun costs
+        for (Mounted mounted : getEquipment()) {
+            if(mounted.getLocation() == LOC_FIELD_GUNS) {
+                cost += mounted.getType().getCost(this, false);
+            }
+        } 
+        
+        return cost;
     }
 
     @Override
@@ -1156,20 +1156,32 @@ public class Infantry extends Entity implements Serializable {
     
     @Override
     public float getWeight() {
+        float ton;
         switch (getMovementMode()) {
         case INF_MOTORIZED:
-        	return (float) (men * 0.21);
+        	ton = (float) (men * 0.21);
+        	break;
         case HOVER:   
         case TRACKED:
         case WHEELED:
-        	return (float) (men * 1);
+        	ton = (men * 1);
+        	break;
         case INF_JUMP:
-        	return (float) (men * 0.18);
+        	ton = (float) (men * 0.18);
+        	break;
         case INF_LEG:
         default:
-        	return (float) (men * 0.1);
-       
+        	ton = (float) (men * 0.1);
         }
+        
+        //add in field gun weight
+        for (Mounted mounted : getEquipment()) {
+            if(mounted.getLocation() == LOC_FIELD_GUNS) {
+                ton += mounted.getType().getTonnage(this);
+            }
+        }    
+        return ton;
+        
     }   
     
     public String getArmorDesc() {
@@ -1207,28 +1219,12 @@ public class Infantry extends Entity implements Serializable {
     public void restore() {
         super.restore();
         
-        if (primaryName == null) {
-            primaryName = primaryW.getName();
-        } else {
+        if (null != primaryName) {
             primaryW = (InfantryWeapon)EquipmentType.get(primaryName);
         }
-
-        if (primaryW == null) {
-            System.err
-            .println("Infantry.restore: could not restore equipment type \""
-                    + primaryName + "\"");
-        }
         
-        if (secondName == null) {
-            secondName = secondW.getName();
-        } else {
+        if(null != secondName) {
             secondW = (InfantryWeapon)EquipmentType.get(secondName);
-        }
-
-        if (secondW == null) {
-            System.err
-            .println("Infantry.restore: could not restore equipment type \""
-                    + secondName + "\"");
         }
     }
     

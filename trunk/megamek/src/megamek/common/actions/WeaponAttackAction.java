@@ -2258,10 +2258,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return "Infantry fast moved this turn and so can not shoot.";
             }
             // check for trying to fire field gun after moving
-            if (!wtype.hasFlag(WeaponType.F_INFANTRY) && (ae.moved != EntityMovementType.MOVE_NONE)) {
+            if (weapon.getLocation() == Infantry.LOC_FIELD_GUNS && (ae.moved != EntityMovementType.MOVE_NONE)) {
                 return "Can't fire field guns in same turn as moving";
             }
             // check for mixing infantry and field gun attacks
+            float fieldGunWeight = 0.0f;
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
@@ -2270,9 +2271,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() == attackerId) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    if (prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) != wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                    if (prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) && weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
                         return "Can't fire field guns and small arms at the same time.";
                     }
+                    if(weapon.getLocation() == Infantry.LOC_FIELD_GUNS && weaponId != prevAttack.getWeaponId()) {
+                    	fieldGunWeight += prevWeapon.getType().getTonnage(ae);
+                    }
+                }
+            }
+            //the total tonnage of field guns fired has to be less than or equal to the men in the platoon
+            if(weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
+                if(((Infantry)ae).getShootingStrength() <  Math.ceil(fieldGunWeight + wtype.getTonnage(ae))) {
+                    return "Not enough men remaining to fire this field gun";
                 }
             }
             // BAC compact narc: we have one weapon for each trooper, but you

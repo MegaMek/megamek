@@ -553,6 +553,7 @@ public class MoveStep implements Serializable {
      */
     protected void compile(final IGame game, final Entity entity, MoveStep prev) {
         final boolean isInfantry = entity instanceof Infantry;
+        boolean isFieldArtillery = (entity instanceof Infantry) && ((Infantry)entity).hasActiveFieldArtillery();
         copy(game, prev);
 
         // Is this the first step?
@@ -582,9 +583,9 @@ public class MoveStep implements Serializable {
                 setPavementStep(false);
                 setOnlyPavement(false);
             }
-
-            // Infantry can turn for free.
-            setMp((parent.isJumping() || isHasJustStood() || isInfantry) ? 0
+            
+            // Infantry can turn for free, except for field artillery
+            setMp((parent.isJumping() || isHasJustStood() || (isInfantry && !isFieldArtillery)) ? 0
                     : 1);
             if(entity.isAirborne()) {
                 setMp(asfTurnCost(game, getType(), entity));

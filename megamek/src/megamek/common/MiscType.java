@@ -116,6 +116,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_AP_MOUNT = BigInteger.valueOf(1).shiftLeft(73);
     public static final BigInteger F_MAST_MOUNT = BigInteger.valueOf(1).shiftLeft(74);
     public static final BigInteger F_FUEL = BigInteger.valueOf(1).shiftLeft(75);
+    public static final BigInteger F_BLUE_SHIELD = BigInteger.valueOf(1).shiftLeft(76);
 
 
     // Secondary Flags for Physical Weapons
@@ -695,6 +696,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISMastMount());
         EquipmentType.addType(MiscType.createFuel1());
         EquipmentType.addType(MiscType.createFuelHalf());
+        EquipmentType.addType(MiscType.createBlueShield());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3680,6 +3682,22 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_FUEL).or(F_MECH_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.explosive = true;
+
+        return misc;
+    }
+
+    public static MiscType createBlueShield() {
+        MiscType misc = new MiscType();
+        misc.name ="Blue Shield Particle Field Damper";
+        misc.setInternalName(misc.name);
+        misc.setModes(new String[] { "Off", "On" });
+        misc.instantModeSwitch = false;
+        misc.explosive = true;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.tonnage = 3;
+        misc.criticals = 7;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_BLUE_SHIELD).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 
         return misc;
     }

@@ -180,8 +180,81 @@ public class TestMech extends TestEntity {
         return count;
     }
 
+    public boolean checkMiscSpreadAllocation(Entity entity, Mounted mounted, StringBuffer buff) {
+        MiscType mt = (MiscType)mounted.getType();
+        int eNum = entity.getEquipmentNum(mounted);
+        if (mt.hasFlag(MiscType.F_STEALTH)) {
+            // stealth needs to have 2 crits in legs arm and side torso
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    Mech.LOC_LARM) != 2) {
+                buff.append("incorrect number of stealth crits in left arm\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    Mech.LOC_RARM) != 2) {
+                buff.append("incorrect number of stealth crits in right arm\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    Mech.LOC_LLEG) != 2) {
+                buff.append("incorrect number of stealth crits in left leg\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    Mech.LOC_RLEG) != 2) {
+                buff.append("incorrect number of stealth crits in right leg\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    Mech.LOC_LT) != 2) {
+                buff.append("incorrect number of stealth crits in left torso\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                    Mech.LOC_RT) != 2) {
+                buff.append("incorrect number of stealth crits in right torso\n");
+                return false;
+            }
+        }
+        if (mt.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            // environmental sealing needs to have 1 crit per location
+            for (int locations = 0; locations < entity.locations(); locations++) {
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                        locations) != 1) {
+                    buff.append("not a environmental sealing crit in each location\n");
+                    return false;
+                }
+            }
+        }
+        if (mt.hasFlag(MiscType.F_BLUE_SHIELD)) {
+            // blue shield needs to have 1 crit per location, except head
+            for (int locations = 0; locations < entity.locations(); locations++) {
+                if (locations != Mech.LOC_HEAD) {
+                    if (countCriticalSlotsFromEquipInLocation(entity, eNum,
+                            locations) != 1) {
+                        buff.append("not a blue shield crit in each location except the head\n");
+                        return false;
+                    }
+                }
+
+            }
+        }
+        if (mt.hasFlag(MiscType.F_PARTIAL_WING)) {
+            // partial wing needs 3 crits in the side torsos
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LT) != 3) {
+                buff.append("incorrect number of partial wing crits in left torso\n");
+                return false;
+            }
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RT) != 3) {
+                buff.append("incorrect number of partial wing crits in right torso\n");
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean criticalSlotsAllocated(Entity entity, Mounted mounted,
-            Vector<Serializable> allocation) {
+            Vector<Serializable> allocation, StringBuffer buff) {
         int eNum = entity.getEquipmentNum(mounted);
         int location = mounted.getLocation();
         EquipmentType et = mounted.getType();
@@ -198,42 +271,6 @@ public class TestMech extends TestEntity {
         }
 
         if (et.isSpreadable() && !et.getName().equals("Targeting Computer")) {
-            if ((et instanceof MiscType) && et.hasFlag(MiscType.F_STEALTH)) {
-                // stealth needs to have 2 crits in legs arm and side torso
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        Mech.LOC_LARM) != 2) {
-                    return false;
-                }
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        Mech.LOC_RARM) != 2) {
-                    return false;
-                }
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        Mech.LOC_LLEG) != 2) {
-                    return false;
-                }
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        Mech.LOC_RLEG) != 2) {
-                    return false;
-                }
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        Mech.LOC_LT) != 2) {
-                    return false;
-                }
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        Mech.LOC_RT) != 2) {
-                    return false;
-                }
-            }
-            if ((et instanceof MiscType) && et.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                // environmental sealing needs to have 1 crit per location
-                for (int locations = 0; locations < entity.locations(); locations++) {
-                    if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                            locations) != 1) {
-                        return false;
-                    }
-                }
-            }
             for (int locations = 0; locations < entity.locations(); locations++) {
                 count += countCriticalSlotsFromEquipInLocation(entity, eNum,
                         locations);
@@ -292,8 +329,6 @@ public class TestMech extends TestEntity {
                     unallocated.addElement(m);
                     continue;
                 }
-
-            } else if (!criticalSlotsAllocated(entity, m, allocation)) {
             }
         }
         if ((countInternalHeatSinks > engine.integralHeatSinkCapacity())
@@ -304,33 +339,38 @@ public class TestMech extends TestEntity {
         }
     }
 
-    public void checkCriticals() {
-        Vector<Mounted> unallocated = new Vector<Mounted>();
-        Vector<Serializable> allocation = new Vector<Serializable>();
-        Vector<Integer> heatSinks = new Vector<Integer>();
-        checkCriticalSlotsForEquipment(mech, unallocated, allocation, heatSinks);
-    }
-
     public boolean correctCriticals(StringBuffer buff) {
         Vector<Mounted> unallocated = new Vector<Mounted>();
         Vector<Serializable> allocation = new Vector<Serializable>();
         Vector<Integer> heatSinks = new Vector<Integer>();
         checkCriticalSlotsForEquipment(mech, unallocated, allocation, heatSinks);
         boolean correct = true;
+        /*StringBuffer critAlloc = new StringBuffer();
+         * need to redo this, in MML, spread equipment gets one mounted per block that needs to be allocated
+        for (Mounted m : mech.getEquipment()) {
+            if ((m.getLocation() != Entity.LOC_NONE) && (m.getType() instanceof MiscType)) {
+                if (!checkMiscSpreadAllocation(mech, m, critAlloc)) {
+                    correct = false;
+                    buff.append(critAlloc.toString());
+                }
+            }
+        }
+        */
+
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
-            for (Mounted m : unallocated) {
-            buff.append(m.getType().getInternalName()).append("\n");
-         }
+            for (Mounted mount : unallocated) {
+                buff.append(mount.getType().getInternalName()).append("\n");
+            }
             correct = false;
         }
         if (!allocation.isEmpty()) {
             buff.append("Allocated Equipment:\n");
             for (Enumeration<Serializable> serializableEnum = allocation.elements();serializableEnum.hasMoreElements();) {
-                Mounted m = (Mounted) serializableEnum.nextElement();
+                Mounted mount = (Mounted) serializableEnum.nextElement();
                 int needCrits = ((Integer) serializableEnum.nextElement()).intValue();
                 int aktCrits = ((Integer) serializableEnum.nextElement()).intValue();
-                buff.append(m.getType().getInternalName()).append(" has ")
+                buff.append(mount.getType().getInternalName()).append(" has ")
                 .append(needCrits).append(" Slots, but ").append(
                         aktCrits).append(" Slots are allocated!")
                         .append("\n");
@@ -347,7 +387,6 @@ public class TestMech extends TestEntity {
         if (!checkSystemCriticals(buff)) {
             correct = false;
         }
-
         return correct;
     }
 

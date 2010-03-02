@@ -2678,7 +2678,10 @@ public abstract class Mech extends Entity implements Serializable {
             default:
                 armorMultiplier = 1.0;
                 break;
+        }
 
+        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+            armorMultiplier += 0.2;
         }
 
         bvText.append(startTable);
@@ -2723,6 +2726,9 @@ public abstract class Mech extends Entity implements Serializable {
             internalMultiplier = 0.5;
         } else if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED) {
             internalMultiplier = 2.0;
+        }
+        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+            internalMultiplier += 0.2;
         }
 
         dbv += getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier();
@@ -2895,6 +2901,11 @@ public abstract class Mech extends Entity implements Serializable {
             if (etype instanceof ISMekTaser) {
                 toSubtract = 1;
             }
+            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
+                // blue shield needs to be special cased, because it's one mounted with lots of locations,
+                // and some of those could be proteced by cas
+                toSubtract = 0;
+            }
 
             // RACs don't really count
             if ((etype instanceof WeaponType) && (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)) {
@@ -2934,6 +2945,35 @@ public abstract class Mech extends Entity implements Serializable {
             // we subtract per critical slot
             toSubtract *= etype.getCriticals(this);
             ammoPenalty += toSubtract;
+        }
+        // special case for blueshield, need to check each non-head location seperately for CASE
+        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+            int unProtectedCrits = 0;
+            for (int loc = LOC_CT; loc <= LOC_LLEG; loc++) {
+                if (isClan()) {
+                    // Clan mechs only count ammo in ct, legs or head (per BMRr).
+                    // Also count ammo in side torsos if mech has xxl engine
+                    // (extrapolated from rule intent - not covered in rules)
+                    if (((loc != LOC_CT) && (loc != LOC_RLEG) && (loc != LOC_LLEG) && (loc != LOC_HEAD)) && !(((loc == LOC_RT) || (loc == LOC_LT)) && (getEngine().getSideTorsoCriticalSlots().length > 2))) {
+                        continue;
+                    }
+                } else {
+                    // inner sphere with XL or XXL counts everywhere
+                    if (getEngine().getSideTorsoCriticalSlots().length <= 2) {
+                        // without XL or XXL, only count torsos if not CASEed,
+                        // and arms if arm & torso not CASEed
+                        if (((loc == LOC_RT) || (loc == LOC_LT)) && locationHasCase(loc)) {
+                            continue;
+                        } else if ((loc == LOC_LARM) && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
+                            continue;
+                        } else if ((loc == LOC_RARM) && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
+                            continue;
+                        }
+                    }
+                }
+                unProtectedCrits++;
+            }
+            ammoPenalty += unProtectedCrits;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 

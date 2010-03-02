@@ -44,6 +44,8 @@ v0.35.13-dev (SVN)
 + Bug: Dig-in does not require a facing per TacOps rules
 + Infantry Squads
 + Added Blue Shield Particle Field Damper
++ Better range and damage reporting for infantry weapons in MechDisplay
++ RFE 2821552: Infantry armor to be shown in MEK Display
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

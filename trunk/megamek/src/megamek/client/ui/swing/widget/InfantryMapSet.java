@@ -46,7 +46,9 @@ public class InfantryMapSet implements DisplayMapSet {
     // Main areas group that will be passing to PicMap
     private PMAreasGroup content = new PMAreasGroup();
     // JLabel
-    private PMValueLabel label;
+    private PMValueLabel label;   
+    // JLabel
+    private PMValueLabel armorLabel;
     // Set of Backgrownd drawers
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
 
@@ -81,6 +83,7 @@ public class InfantryMapSet implements DisplayMapSet {
                 .setValue(Messages
                         .getString(
                                 "InfantryMapSet.InfantryPlatoon", new Object[] { Integer.toString(men) })); //$NON-NLS-1$
+        armorLabel.setValue(Messages.getString("InfantryMapSet.Armor") + inf.getArmorDesc());
     }
 
     private void setAreas() {
@@ -97,12 +100,20 @@ public class InfantryMapSet implements DisplayMapSet {
         }
 
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
+        armorLabel = new PMValueLabel(fm, Color.white);
+        armorLabel.setValue(Messages.getString(
+                "InfantryMapSet.Armor" + "XXXXXXXXXXXX")); //$NON-NLS-1$//$NON-NLS-2$
+        Dimension d = armorLabel.getSize();
+        content.translate(0, d.height + 5);
+        armorLabel.moveTo(0, d.height);
+        content.addArea(armorLabel);
+        
         label = new PMValueLabel(fm, Color.white);
         label.setValue(Messages.getString(
                 "InfantryMapSet.InfantryPlatoon", new Object[] { "00" })); //$NON-NLS-1$//$NON-NLS-2$
-        Dimension d = label.getSize();
+        d = label.getSize();
         content.translate(0, d.height + 5);
-        label.moveTo(d.width / 2, d.height);
+        label.moveTo(0, d.height);
         content.addArea(label);
     }
 

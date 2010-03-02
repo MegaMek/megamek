@@ -161,7 +161,7 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public int locations() {
-        return 1;
+        return 2;
     }
 
     /**
@@ -441,6 +441,9 @@ public class Infantry extends Entity implements Serializable {
     public int getInternal(int loc) {
         if (!isPlatoon()) {
             return super.getInternal(loc);
+        }
+        if(loc != LOC_INFANTRY) {
+            return 0;
         }
         return (men > 0 ? men : IArmorState.ARMOR_DESTROYED);
     }

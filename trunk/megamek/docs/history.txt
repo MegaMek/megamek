@@ -38,6 +38,7 @@ v0.35.13-dev (SVN)
 + replaced infantry data files with new ones using new format
 + Bug: primary and secondary weapon fields in Infantry.java need to be transient, added restore() method
 + improved MechView for infantry
++ Bug: Awesome AWS-9Q missing
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

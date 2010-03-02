@@ -220,6 +220,10 @@ public class Infantry extends Entity implements Serializable {
         		&& getMovementMode() != EntityMovementMode.INF_JUMP) {
         	mp = Math.max(mp - 1, 0);
         }
+        if(hasActiveFieldArtillery()) {
+            //mp of 1 at the most
+            mp = Math.min(mp, 1);
+        }
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {
@@ -290,6 +294,11 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public boolean isHexProhibited(IHex hex) {
+        
+        //Taharqa: waiting to hear back from Welshie but I am goign to assume that units pulling artillery 
+        //should be treated as wheeled rather than motorized because otherwise mechanized units face fewer
+        //terrain restrictions when pulling field artillery
+        
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -305,10 +314,19 @@ public class Infantry extends Entity implements Serializable {
                 return true;
             }
             if ((getMovementMode() == EntityMovementMode.HOVER)
-                    || (getMovementMode() == EntityMovementMode.WHEELED)) {
+                    || (getMovementMode() == EntityMovementMode.WHEELED)
+                    || hasActiveFieldArtillery()) {
                 return true;
             }
         }
+        
+        if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+            if ((getMovementMode() == EntityMovementMode.WHEELED)
+                    || hasActiveFieldArtillery()) {
+                return true;
+            }
+        }
+        
         if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
             if ((getMovementMode() == EntityMovementMode.HOVER)
@@ -1229,6 +1247,26 @@ public class Infantry extends Entity implements Serializable {
         if(null != secondName) {
             secondW = (InfantryWeapon)EquipmentType.get(secondName);
         }
+    }
+    
+    public boolean hasActiveFieldArtillery() {
+        boolean hasArtillery = false;
+        float smallestGun = 100.0f;
+        for(Mounted wpn : getWeaponList()) {
+            if(wpn.getLocation() != LOC_FIELD_GUNS) {
+                continue;
+            }
+            if(wpn.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                hasArtillery = true;
+                if(wpn.getType().getTonnage(this) < smallestGun) {
+                    smallestGun = wpn.getType().getTonnage(this);
+                }
+            }
+        }
+
+        //you must have enough men to fire at least the smallest piece
+        return hasArtillery && getShootingStrength() >= smallestGun;
+        
     }
     
 } // End class Infantry

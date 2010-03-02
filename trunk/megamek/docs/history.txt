@@ -46,6 +46,7 @@ v0.35.13-dev (SVN)
 + Added Blue Shield Particle Field Damper
 + Better range and damage reporting for infantry weapons in MechDisplay
 + RFE 2821552: Infantry armor to be shown in MEK Display
++ Field Artillery
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

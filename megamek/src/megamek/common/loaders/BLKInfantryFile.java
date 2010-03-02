@@ -127,6 +127,9 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setAntiMek(true);
         }
 
+        //get field guns
+        loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
+        
         return t;
     }
 

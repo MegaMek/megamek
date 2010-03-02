@@ -1463,11 +1463,6 @@ public class Compute {
 
         // current target is secondary
 
-        // Infantry can't attack secondary targets, but BA can (TW, page 109).
-        if ((attacker instanceof Infantry) && !(attacker instanceof BattleArmor)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't have multiple targets.");
-        }
-
         // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
         if ((target instanceof Mech) && ((Entity) target).isStealthActive()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,

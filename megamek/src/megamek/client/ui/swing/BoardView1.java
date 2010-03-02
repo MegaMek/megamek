@@ -634,7 +634,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
 
         // draw the board
-        drawHexes(g);
+        drawHexes(g, g.getClipBounds());
 
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks()) {
@@ -1029,7 +1029,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     public Image getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics boardGraph = entireBoard.getGraphics();
-        drawHexes(boardGraph);
+        drawHexes(boardGraph, new Rectangle(boardSize));
         boardGraph.dispose();
         return entireBoard;
     }
@@ -1037,8 +1037,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     /**
      * Redraws all hexes in the specified rectangle
      */
-    private void drawHexes(Graphics g) {
-        Rectangle view = g.getClipBounds();
+    private void drawHexes(Graphics g, Rectangle view) {
         // only update visible hexes
         int drawX = view.x / (int) (HEX_WC * scale) - 1;
         int drawY = view.y / (int) (HEX_H * scale) - 1;

@@ -136,7 +136,7 @@
 	
 	<target name="mac-bundle" description="Bundle the project built from SVN into an Mac OSX distribution">
 		<mkdir dir="${osxdist}" />
-	    <jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/Contents/Resources/" vmoptions="-Xmx256m">
+	    <jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="../packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/Contents/Resources/" vmoptions="-Xmx256m">
 	   		<jarfileset dir="${svndir}">
 	     	 	<include name="**/*.jar" />
 	   			<exclude name="${util}/" />

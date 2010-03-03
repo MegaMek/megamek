@@ -231,7 +231,7 @@ public abstract class BotClient extends Client {
                     sendAttackData(po.attacker.getId(), po.getVector());
                 } else {
                     // Send a "no attack" to clear the game turn, if any.
-                    sendAttackData(getLocalPlayer().getId(),
+                    sendAttackData(game.getFirstEntityNum(getMyTurn()),
                             new Vector<EntityAction>(0));
                 }
             } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
@@ -530,7 +530,7 @@ public abstract class BotClient extends Client {
                         test_attack = new WeaponAttackAction(test_ent.getId(),
                                 deployed_ent.getId(), test_ent
                                         .getEquipmentNum(mounted));
-                        adjusted_damage = getDeployDamage(game, test_attack);
+                        adjusted_damage = BotClient.getDeployDamage(game, test_attack);
                         total_damage += adjusted_damage;
                     }
 
@@ -555,7 +555,7 @@ public abstract class BotClient extends Client {
                         test_attack = new WeaponAttackAction(deployed_ent
                                 .getId(), test_ent.getId(), deployed_ent
                                 .getEquipmentNum(mounted));
-                        adjusted_damage = getDeployDamage(game, test_attack);
+                        adjusted_damage = BotClient.getDeployDamage(game, test_attack);
                         if (adjusted_damage > max_damage) {
                             max_damage = adjusted_damage;
                         }

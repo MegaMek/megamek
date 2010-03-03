@@ -9156,7 +9156,8 @@ public class Server implements Runnable {
                     Report r = new Report(3033);
                     r.addDesc(entity);
                     addReport(r);
-                } else {
+                } 
+                else {
                     System.err.println("Non-Tank tried to unjam turret");
                 }
             } else if (ea instanceof RepairWeaponMalfunctionAction) {
@@ -16502,27 +16503,7 @@ public class Server implements Runnable {
             // resolve special results
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 vDesc.addAll(vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
-            } else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS) == HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS) {
-                r = new Report(6146);
-                r.subject = te_n;
-                r.indent(3);
-                vDesc.addElement(r);
-                for (Mounted mounted : te.getWeaponList()) {
-                    mounted.setHit(true);
-                }
-            } else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_TURRET) == HitData.EFFECT_GUN_EMPLACEMENT_TURRET) {
-                r = new Report(6145);
-                r.subject = te_n;
-                r.indent(3);
-                vDesc.addElement(r);
-                ((GunEmplacement) te).setTurretLocked(true);
-            } else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_CREW) == HitData.EFFECT_GUN_EMPLACEMENT_CREW) {
-                r = new Report(6148);
-                r.subject = te_n;
-                r.indent(3);
-                vDesc.addElement(r);
-                ((GunEmplacement) te).getCrew().setDoomed(true);
-            }
+            } 
             // roll all critical hits against this location
             // unless the section destroyed in a previous phase?
             // Cause a crit.
@@ -21156,7 +21137,7 @@ public class Server implements Runnable {
             Server.entityVerifier = new EntityVerifier(new File(VERIFIER_CONFIG_FILENAME));
         }
         // we can only test meks and vehicles right now
-        if ((entity instanceof Mech) || (entity instanceof Tank)) {
+        if ((entity instanceof Mech) || (entity instanceof Tank && !(entity instanceof GunEmplacement))) {
             TestEntity testEntity = null;
             entity.restore();
             if (entity instanceof Mech) {
@@ -23254,7 +23235,8 @@ public class Server implements Runnable {
                 final int startingCF = curCF;
                 curCF -= Math.min(curCF, damage);
                 bldg.setCurrentCF(curCF, coords);
-
+                final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
+                
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
                     if (bldg instanceof FuelTank) {
@@ -23288,11 +23270,200 @@ public class Server implements Runnable {
                         r.indent(0);
                         vPhaseReport.add(r);
                     }
-                }
+                } else if(curCF < startingCF && damage > damageThresh) {
+                    //need to check for crits
+                    //don't bother unless we have some gun emplacements
+                    Vector<GunEmplacement> guns = game.getGunEmplacements(coords);                 
+                    if(guns.size() > 0) {
+                        vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
+                    }
+                }           
             }
         }
         Report.indentAll(vPhaseReport, 2);
         return vPhaseReport;
+    }
+    
+    private Vector<Report> criticalGunEmplacement(Vector<GunEmplacement> guns, Building bldg, Coords coords) {
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
+        r = new Report(3800);
+        r.type = Report.PUBLIC;
+        r.indent(0);
+        vDesc.add(r);
+        
+        
+        int critroll = Compute.d6(2);
+        if(critroll < 6) {
+            r = new Report(3805);
+            r.type = Report.PUBLIC;
+            r.indent(1);
+            vDesc.add(r);
+        }
+        else if(critroll == 6) {
+            //weapon malfunction
+            //lets just randomly determine which weapon gets hit
+            Vector<Mounted> wpns = new Vector<Mounted>();
+            for(GunEmplacement gun : guns) {
+                for(Mounted wpn : gun.getWeaponList()) {
+                    if(!wpn.isHit() && !wpn.isJammed()) {
+                        wpns.add(wpn);
+                    }
+                }
+            }
+            if(wpns.size() > 0) {
+                Mounted weapon = wpns.elementAt(Compute.randomInt(wpns.size()));
+                weapon.setJammed(true);
+                ((GunEmplacement)weapon.getEntity()).addJammedWeapon(weapon);
+                r = new Report(3845);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                r.add(weapon.getDesc());
+                vDesc.add(r);
+            } else {
+                r = new Report(3846);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                vDesc.add(r);
+            }
+        }
+        else if(critroll == 7) {
+            //gunners stunned
+            for(GunEmplacement gun : guns) {
+                gun.stunCrew();
+                r = new Report(3810);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                vDesc.add(r);
+            }
+        }
+        else if(critroll == 8) {
+            //weapon destroyed
+            //lets just randomly determine which weapon gets hit
+            Vector<Mounted> wpns = new Vector<Mounted>();
+            for(GunEmplacement gun : guns) {
+                for(Mounted wpn : gun.getWeaponList()) {
+                    if(!wpn.isHit()) {
+                        wpns.add(wpn);
+                    }
+                }
+            }
+            if(wpns.size() > 0) {
+                Mounted weapon = wpns.elementAt(Compute.randomInt(wpns.size()));
+                weapon.setHit(true);   
+                r = new Report(3840);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                r.add(weapon.getDesc());
+                vDesc.add(r);
+            } else {
+                r = new Report(3841);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                vDesc.add(r);
+            }
+        }
+        else if(critroll == 9) {
+            //gunners killed
+            r = new Report(3815);
+            r.type = Report.PUBLIC;
+            r.indent(1);
+            vDesc.add(r);
+            for(GunEmplacement gun : guns) {
+                gun.getCrew().setDoomed(true);
+            }
+        }
+        else if(critroll == 10) {
+            if(Compute.d6() > 3) {
+                //turret lock
+                r = new Report(3820);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                vDesc.add(r);
+                for(GunEmplacement gun : guns) {
+                    gun.lockTurret();
+                }
+            } else {
+                //turret jam
+                r = new Report(3825);
+                r.type = Report.PUBLIC;
+                r.indent(1);
+                vDesc.add(r);
+                for(GunEmplacement gun : guns) {
+                    if(gun.isTurretEverJammed()) {
+                        gun.lockTurret();
+                    } else {
+                        gun.jamTurret();
+                    }
+                }
+            }
+        }
+        else if(critroll == 11) {
+            r = new Report(3830);
+            r.type = Report.PUBLIC;
+            r.indent(1);
+            r.add(bldg.getName());
+            int boom = 0;
+            for(GunEmplacement gun : guns) {
+                for(Mounted ammo : gun.getAmmo()) {
+                    ammo.setHit(true);
+                    if(ammo.getType().isExplosive()) {
+                        boom += ammo.getShotsLeft() * ((AmmoType) ammo.getType()).getDamagePerShot() * ((AmmoType) ammo.getType()).getRackSize();
+                    }
+                }
+            } 
+            boom = (int) Math.floor(bldg.getDamageToScale() * boom);
+            r.add(boom);
+            int curCF = bldg.getCurrentCF(coords);
+            curCF -= Math.min(curCF, boom);
+            bldg.setCurrentCF(curCF, coords);
+            r.add(bldg.getCurrentCF(coords));
+            vDesc.add(r);
+            // If the CF is zero, the building should fall.
+            if ((curCF == 0) && (bldg.getPhaseCF(coords) != 0)) {
+                if (bldg instanceof FuelTank) {
+                    // If this is a fuel tank, we'll give it its own
+                    // message.
+                    r = new Report(3441);
+                    r.type = Report.PUBLIC;
+                    r.indent(0);
+                    vDesc.add(r);
+                    // ...But we ALSO need to blow up everything nearby.
+                    // Bwahahahahaha...
+                    r = new Report(3560);
+                    r.type = Report.PUBLIC;
+                    r.newlines = 1;
+                    vDesc.add(r);
+                    Vector<Report> vRep = new Vector<Report>();
+                    doExplosion(((FuelTank) bldg).getMagnitude(), 10, false, bldg.getCoords().nextElement(), true,
+                            vRep, null);
+                    Report.indentAll(vRep, 2);
+                    vDesc.addAll(vRep);
+                    return vPhaseReport;
+                }
+                if (bldg.getType() == Building.WALL) {
+                    r = new Report(3442);
+                    r.type = Report.PUBLIC;
+                    r.indent(0);
+                    vDesc.add(r);
+                } else {
+                    r = new Report(3440);
+                    r.type = Report.PUBLIC;
+                    r.indent(0);
+                    vDesc.add(r);
+                }
+            }
+        }
+        else if(critroll == 12) {
+            //other
+            r = new Report(3835);
+            r.type = Report.PUBLIC;
+            r.indent(1);
+            vDesc.add(r);
+        }
+        
+        return vDesc;
+        
     }
 
     public void sendChangedCFBuildings(Vector<Building> buildings) {

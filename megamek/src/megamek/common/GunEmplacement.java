@@ -24,15 +24,12 @@ import java.util.Vector;
  * GunEmplacements will not simply be the weapon loadouts that can be attached to buildings.
  * They will not be targetable in game, but will be destroyed if their building hex is reduced.
  */
-public class GunEmplacement extends Entity implements Serializable {
+public class GunEmplacement extends Tank implements Serializable {
 
     /**
      *
      */
     private static final long serialVersionUID = 8561738092216598248L;
-    private boolean turret = false;
-    private boolean turretLocked = false;
-    private int turretOffset = 0;
 
     // locations
     public static final int LOC_GUNS = 0;
@@ -48,19 +45,7 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     public boolean isTurret() {
-        return turret;
-    }
-
-    public void setTurret(boolean turret) {
-        this.turret = turret;
-    }
-
-    public boolean isTurretLocked() {
-        return turretLocked;
-    }
-
-    public void setTurretLocked(boolean locked) {
-        turretLocked = locked;
+        return !hasNoTurret();
     }
 
     @Override
@@ -97,40 +82,6 @@ public class GunEmplacement extends Entity implements Serializable {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         return 0;
-    }
-
-    @Override
-    public boolean canChangeSecondaryFacing() {
-        return isTurret() && !turretLocked;
-    }
-
-    @Override
-    public boolean isValidSecondaryFacing(int n) {
-        return isTurret() && !turretLocked;
-    }
-
-    @Override
-    public int clipSecondaryFacing(int n) {
-        return n;
-    }
-
-    @Override
-    public void setSecondaryFacing(int sec_facing) {
-        if (!turretLocked) {
-            super.setSecondaryFacing(sec_facing);
-            if (turret) {
-                turretOffset = sec_facing - getFacing();
-            }
-        }
-    }
-
-    @Override
-    public void setFacing(int facing) {
-        super.setFacing(facing);
-        if (isTurretLocked()) {
-            int nTurretFacing = (facing + turretOffset + 6) % 6;
-            super.setSecondaryFacing(nTurretFacing);
-        }
     }
 
     @Override

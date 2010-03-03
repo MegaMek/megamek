@@ -58,7 +58,9 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("Turret")) {
-            e.setTurret(dataFile.getDataAsInt("Turret")[0] == 1);
+            if(dataFile.getDataAsInt("Turret")[0] != 1) {
+                e.setHasNoTurret(true);
+            }
         }
 
         loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);

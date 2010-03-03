@@ -3111,15 +3111,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 // Determine if the entity has a locked turret,
                 // and if it is a gun emplacement
                 boolean turretLocked = false;
+                boolean turretJammed = false;
                 int crewStunned = 0;
                 boolean ge = false;
                 if (entity instanceof Tank) {
                     turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
                     crewStunned = ((Tank) entity).getStunnedTurns();
-                } else if (entity instanceof GunEmplacement) {
-                    turretLocked = ((GunEmplacement) entity).isTurret()
-                            && !entity.canChangeSecondaryFacing();
-                    ge = true;
+                    ge = entity instanceof GunEmplacement;
                 }
 
                 // draw condition strings

@@ -55,6 +55,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
+import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
@@ -1065,7 +1066,7 @@ public class CustomFighterSquadronDialog
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
             }
-            if (entity instanceof Tank) {
+            if (entity instanceof Tank && !(entity instanceof GunEmplacement)) {
                 testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
             }
             if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game.getOptions().booleanOption("is_eq_limits"))) {

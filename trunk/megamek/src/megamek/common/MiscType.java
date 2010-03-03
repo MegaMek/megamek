@@ -2968,9 +2968,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_BA_EQUIPMENT);
-        // can't enter BV here, because it's location dependendent,
-        // and MiscType has no idea where a certain equipment may be
-        // mounted
         misc.bv = 0;
 
         return misc;
@@ -2986,9 +2983,6 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_BA_EQUIPMENT);
-        // can't enter BV here, because it's location dependendent,
-        // and MiscType has no idea where a certain equipment may be
-        // mounted
         misc.bv = 0;
 
         return misc;

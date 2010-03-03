@@ -15,10 +15,8 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import megamek.client.ui.Messages;
 import megamek.common.weapons.InfantryWeapon;
 
 /**
@@ -48,7 +46,7 @@ public class Infantry extends Entity implements Serializable {
      */
     protected int squadn = 0;
     private int squadsize = 0;
-    
+
     /**
      * The number of men originally in this platoon.
      */
@@ -75,8 +73,8 @@ public class Infantry extends Entity implements Serializable {
     private transient InfantryWeapon secondW;
     private String secondName;
     private int secondn = 0;
-    
-    
+
+
     /**
      * Infantry armor
      */
@@ -87,13 +85,13 @@ public class Infantry extends Entity implements Serializable {
     private boolean sneak_camo = false;
     private boolean sneak_ir = false;
     private boolean sneak_ecm = false;
-   
+
     /**
      * The location for infantry equipment.
      */
     public static final int LOC_INFANTRY = 0;
     public static final int LOC_FIELD_GUNS = 1;
-    
+
     /**
      * Infantry have no critical slot limitations or locations.
      */
@@ -112,9 +110,9 @@ public class Infantry extends Entity implements Serializable {
     public static final int DUG_IN_WORKING = 1; // no protection, can't attack
     public static final int DUG_IN_COMPLETE = 2; // protected, restricted arc
     public static final int DUG_IN_FORTIFYING1 = 3; // no protection, can't
-                                                    // attack
+    // attack
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't
-                                                    // attack
+    // attack
     private int dugIn = DUG_IN_NONE;
 
     // Public and Protected constants, constructors, and methods.
@@ -214,11 +212,11 @@ public class Infantry extends Entity implements Serializable {
         if(encumbering) {
             mp = Math.max(mp - 1, 1);
         }
-        if(getSecondaryN() > 1 
-        		&& null != secondW && secondW.hasFlag(WeaponType.F_INF_SUPPORT)  
-        		&& getMovementMode() != EntityMovementMode.TRACKED
-        		&& getMovementMode() != EntityMovementMode.INF_JUMP) {
-        	mp = Math.max(mp - 1, 0);
+        if((getSecondaryN() > 1)
+                && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
+                && (getMovementMode() != EntityMovementMode.TRACKED)
+                && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
+            mp = Math.max(mp - 1, 0);
         }
         if(hasActiveFieldArtillery()) {
             //mp of 1 at the most
@@ -241,7 +239,7 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-        if( game != null
+        if( (game != null)
                 && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
             if(getWalkMP(gravity, ignoreheat) > 0) {
                 return getWalkMP(gravity, ignoreheat) + 1;
@@ -267,8 +265,8 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
-        if(this.getSecondaryN() > 1 && null != secondW && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
-        	mp = Math.max(mp - 1, 0);
+        if((getSecondaryN() > 1) && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
+            mp = Math.max(mp - 1, 0);
         }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
@@ -294,11 +292,11 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public boolean isHexProhibited(IHex hex) {
-        
-        //Taharqa: waiting to hear back from Welshie but I am goign to assume that units pulling artillery 
+
+        //Taharqa: waiting to hear back from Welshie but I am goign to assume that units pulling artillery
         //should be treated as wheeled rather than motorized because otherwise mechanized units face fewer
         //terrain restrictions when pulling field artillery
-        
+
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -319,14 +317,14 @@ public class Infantry extends Entity implements Serializable {
                 return true;
             }
         }
-        
+
         if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
             if ((getMovementMode() == EntityMovementMode.WHEELED)
                     || hasActiveFieldArtillery()) {
                 return true;
             }
         }
-        
+
         if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
             if ((getMovementMode() == EntityMovementMode.HOVER)
@@ -514,8 +512,8 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public void autoSetInternal() {
-    	//TODO: put checks here on size
-    	initializeInternal(squadsize*squadn, LOC_INFANTRY);
+        //TODO: put checks here on size
+        initializeInternal(squadsize*squadn, LOC_INFANTRY);
     }
 
     /**
@@ -597,10 +595,10 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
         double dbv;
-   
+
         dbv = men * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
-                .getValue();
+        .getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
                 true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
@@ -627,34 +625,34 @@ public class Infantry extends Entity implements Serializable {
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
         double speedFactorTableLookup = getRunMP(false, true)
-                + Math.round((double) getJumpMP(false) / 2);
+        + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + (((double) walkMP
                     + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
         } else {
             speedFactor = Math
-                    .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+            .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         double wbv = 0;
         if(null != primaryW) {
-        	wbv += primaryW.getBV(this) * (squadsize - secondn);
+            wbv += primaryW.getBV(this) * (squadsize - secondn);
         }
         if(null != secondW) {
-        	wbv += secondW.getBV(this) * (secondn);
+            wbv += secondW.getBV(this) * (secondn);
         }
         wbv = wbv * (men/squadsize);
         //if anti-mek then double this
         //TODO: need to factor archaic weapons out of this
         if(isAntiMek()) {
-        	wbv *= 2;
+            wbv *= 2;
         }
         //add in field gun BV
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
                 wbv += mounted.getType().getBV(this);
             }
-        }    
+        }
         obv = wbv * speedFactor;
         int bv = (int) Math.round(obv + dbv);
         // and then factor in pilot
@@ -756,7 +754,7 @@ public class Infantry extends Entity implements Serializable {
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
         PilotingRollData roll = new PilotingRollData(getId(), 5,
-                "entering boggy terrain");
+        "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (getMovementMode() != EntityMovementMode.HOVER) && (getMovementMode() != EntityMovementMode.VTOL) && (getMovementMode() != EntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
@@ -778,47 +776,47 @@ public class Infantry extends Entity implements Serializable {
         }
 
         switch (getMovementMode()){
-        case INF_UMU:
-            multiplier *= 2.0;
-        case INF_LEG:
-            multiplier *= 1.0;
-            break;
-        case INF_MOTORIZED:
-            multiplier *= 1.6;
-            break;
-        case INF_JUMP:
-            multiplier *= 2.6;
-            break;
-        case HOVER:
-            multiplier *= 3.2;
-            break;
-        case WHEELED:
-            multiplier *= 3.2;
-            break;
-        case TRACKED:
-            multiplier *= 3.2;
-            break;
-        default:
-            break;
+            case INF_UMU:
+                multiplier *= 2.0;
+            case INF_LEG:
+                multiplier *= 1.0;
+                break;
+            case INF_MOTORIZED:
+                multiplier *= 1.6;
+                break;
+            case INF_JUMP:
+                multiplier *= 2.6;
+                break;
+            case HOVER:
+                multiplier *= 3.2;
+                break;
+            case WHEELED:
+                multiplier *= 3.2;
+                break;
+            case TRACKED:
+                multiplier *= 3.2;
+                break;
+            default:
+                break;
         }
-        
+
         int weaponCost = 0;
         if(null != primaryW) {
-        	weaponCost += primaryW.getCost(this, false) * (squadsize - secondn);
+            weaponCost += primaryW.getCost(this, false) * (squadsize - secondn);
         }
         if(null != secondW) {
-        	weaponCost += secondW.getCost(this, false) * secondn;
+            weaponCost += secondW.getCost(this, false) * secondn;
         }
         weaponCost = weaponCost / squadsize;
-        
+
         double cost = Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
                 cost += mounted.getType().getCost(this, false);
             }
-        } 
-        
+        }
+
         return cost;
     }
 
@@ -856,7 +854,7 @@ public class Infantry extends Entity implements Serializable {
         }
         return super.isEligibleFor(phase);
     }
-    
+
     @Override
     public boolean isEligibleForFiring() {
         if(game.getOptions().booleanOption("tacops_fast_infantry_move")) {
@@ -873,7 +871,7 @@ public class Infantry extends Entity implements Serializable {
             turnsLayingExplosives++;
             if (!(Compute.isInBuilding(game, this))) {
                 turnsLayingExplosives = -1; // give up if no longer in a
-                                            // building
+                // building
             }
         }
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
@@ -936,9 +934,9 @@ public class Infantry extends Entity implements Serializable {
     }
 
     public void setAntiMek(boolean b) {
-    	this.antiMek = b;
+        antiMek = b;
     }
-    
+
     public boolean isAntiMek() {
         return antiMek;
     }
@@ -960,63 +958,63 @@ public class Infantry extends Entity implements Serializable {
     public int getTotalCommGearTons() {
         return 0;
     }
-    
+
     public double getDamageDivisor() {
         return damageDivisor;
     }
-    
+
     public void setDamageDivisor(double d) {
-        this.damageDivisor = d;
+        damageDivisor = d;
     }
-    
+
     public boolean isArmorEncumbering() {
         return encumbering;
     }
-    
+
     public void setArmorEncumbering(boolean b) {
-        this.encumbering = b;
+        encumbering = b;
     }
-    
+
     public boolean hasSpaceSuit() {
         return spaceSuit;
     }
-    
+
     public void setSpaceSuit(boolean b) {
-        this.spaceSuit = b;
+        spaceSuit = b;
     }
-    
+
     public boolean hasDEST() {
         return dest;
     }
-    
+
     public void setDEST(boolean b) {
-        this.dest = b;
+        dest = b;
     }
-    
+
     public boolean hasSneakCamo() {
         return sneak_camo;
     }
-    
+
     public void setSneakCamo(boolean b) {
-        this.sneak_camo = b;
+        sneak_camo = b;
     }
-    
+
     public boolean hasSneakIR() {
         return sneak_ir;
     }
-    
+
     public void setSneakIR(boolean b) {
-        this.sneak_ir = b;
+        sneak_ir = b;
     }
-    
+
     public boolean hasSneakECM() {
         return sneak_ecm;
     }
-    
+
     public void setSneakECM(boolean b) {
-        this.sneak_ecm = b;
+        sneak_ecm = b;
     }
-    
+
     /**
      * Determine the stealth modifier for firing at this unit from the given
      * range. If the value supplied for <code>range</code> is not one of the
@@ -1036,26 +1034,26 @@ public class Infantry extends Entity implements Serializable {
 
         // Note: infantry are immune to stealth, but not camoflage
         // or mimetic armor
-        
-        if ((sneak_ir || dest) 
+
+        if ((sneak_ir || dest)
                 && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
             switch (range) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-            case RangeType.RANGE_MEDIUM:
-                result = new TargetRoll(+1, "Sneak, IR/DEST suit");
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                // modifier?
-                result = new TargetRoll(+2, "Sneak, IR/DEST suit");
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown range constant: " + range);
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                case RangeType.RANGE_MEDIUM:
+                    result = new TargetRoll(+1, "Sneak, IR/DEST suit");
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                    // modifier?
+                    result = new TargetRoll(+2, "Sneak, IR/DEST suit");
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Unknown range constant: " + range);
             }
         }
-            
+
         // Simple camo modifier is on top of the movement modifier
         // This can also be in addition to IR/DEST stealth mods!
         if (sneak_camo && (delta_distance < 3)) {
@@ -1066,7 +1064,7 @@ public class Infantry extends Entity implements Serializable {
                 result.append(new TargetRoll(mod, "sneak, Camo"));
             }
         }
-        
+
         if (dest && (delta_distance == 0)) {
             if (result == null) {
                 result = new TargetRoll(1, "DEST suit");
@@ -1074,7 +1072,7 @@ public class Infantry extends Entity implements Serializable {
                 result.append(new TargetRoll(1, "DEST Suit"));
             }
         }
-        
+
 
         if (result == null) {
             result = new TargetRoll(0, "no sneak mods");
@@ -1085,64 +1083,64 @@ public class Infantry extends Entity implements Serializable {
     } // End public TargetRoll getStealthModifier( char )
 
     public void setPrimaryWeapon(InfantryWeapon w) {
-    	this.primaryW = w;
-    	this.primaryName = w.getName();
+        primaryW = w;
+        primaryName = w.getName();
     }
-    
+
     public InfantryWeapon getPrimaryWeapon() {
-    	return primaryW;
+        return primaryW;
     }
-    
+
     public void setSecondaryWeapon(InfantryWeapon w) {
-    	this.secondW = w;
-    	this.secondName = w.getName();
+        secondW = w;
+        secondName = w.getName();
     }
-    
+
     public InfantryWeapon getSecondaryWeapon() {
-    	return secondW;
+        return secondW;
     }
-    
+
     public void setSquadSize(int size) {
-    	this.squadsize = size;
+        squadsize = size;
     }
-    
+
     public int getSquadSize() {
-    	return squadsize;
+        return squadsize;
     }
-    
+
     public void setSquadN(int n) {
-    	this.squadn = n;
+        squadn = n;
     }
-    
+
     public int getSquadN() {
-    	return squadn;
+        return squadn;
     }
-    
+
     public void setSecondaryN(int n) {
-    	this.secondn = n;
+        secondn = n;
     }
-    
+
     public int getSecondaryN() {
-    	return secondn;
+        return secondn;
     }
-    
+
     public double getDamagePerTrooper() {
-    	
-    	if(null == primaryW) {
-    		return 0;
-    	}
-    	
-    	double damage = primaryW.getInfantryDamage() * (squadsize - secondn);
-    	if(null != secondW) {
-    		damage += secondW.getInfantryDamage() * secondn;
-    	}	
-    	return damage/squadsize;
+
+        if(null == primaryW) {
+            return 0;
+        }
+
+        double damage = primaryW.getInfantryDamage() * (squadsize - secondn);
+        if(null != secondW) {
+            damage += secondW.getInfantryDamage() * secondn;
+        }
+        return damage/squadsize;
     }
-    
+
     public boolean isSquad() {
-    	return (squadn == 1);
+        return (squadn == 1);
     }
-    
+
     /**
      * Set the movement type of the entity
      */
@@ -1151,104 +1149,104 @@ public class Infantry extends Entity implements Serializable {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp
         switch (getMovementMode()) {
-        case INF_MOTORIZED:
-        	setOriginalWalkMP(3);
-        	break;
-        case HOVER:
-        	setOriginalWalkMP(5);
-        	break;
-        case TRACKED:
-        	setOriginalWalkMP(3);
-        	break;
-        case WHEELED:
-        	setOriginalWalkMP(4);
-        	break;
-        case INF_JUMP:
-        	setOriginalJumpMP(3);
-        case INF_LEG:
-        	setOriginalWalkMP(1);
-       
+            case INF_MOTORIZED:
+                setOriginalWalkMP(3);
+                break;
+            case HOVER:
+                setOriginalWalkMP(5);
+                break;
+            case TRACKED:
+                setOriginalWalkMP(3);
+                break;
+            case WHEELED:
+                setOriginalWalkMP(4);
+                break;
+            case INF_JUMP:
+                setOriginalJumpMP(3);
+            case INF_LEG:
+                setOriginalWalkMP(1);
+
         }
     }
-    
+
     public boolean canAttackMeks() {
-    	return !isMechanized() && isAntiMek();
+        return !isMechanized() && isAntiMek();
     }
-    
+
     @Override
     public float getWeight() {
         float ton;
         switch (getMovementMode()) {
-        case INF_MOTORIZED:
-        	ton = (float) (men * 0.21);
-        	break;
-        case HOVER:   
-        case TRACKED:
-        case WHEELED:
-        	ton = (men * 1);
-        	break;
-        case INF_JUMP:
-        	ton = (float) (men * 0.18);
-        	break;
-        case INF_LEG:
-        default:
-        	ton = (float) (men * 0.1);
+            case INF_MOTORIZED:
+                ton = (float) (men * 0.21);
+                break;
+            case HOVER:
+            case TRACKED:
+            case WHEELED:
+                ton = (men * 1);
+                break;
+            case INF_JUMP:
+                ton = (float) (men * 0.18);
+                break;
+            case INF_LEG:
+            default:
+                ton = (float) (men * 0.1);
         }
-        
+
         //add in field gun weight
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
                 ton += mounted.getType().getTonnage(this);
             }
-        }    
+        }
         return ton;
-        
-    }   
-    
-    public String getArmorDesc() {
-    	StringBuffer sArmor = new StringBuffer();
-    	sArmor.append(Math.round(getDamageDivisor()));
-    	if(isArmorEncumbering()) {
-    		sArmor.append("E");
-    	}
-    	
-    	if(hasDEST()) {
-    		sArmor.append(" (DEST) ");
-    	}
-    	
-    	if(this.hasSneakCamo()) {
-    		sArmor.append(" (Camo) ");
-    	}
-    	
-    	if(this.hasSneakIR()) {
-    		sArmor.append(" (IR) ");
-    	}
-    	
-    	if(this.hasSneakECM()) {
-    		sArmor.append(" (ECM) ");
-    	}
-    	
-    	
-    	return sArmor.toString();
-    	
+
     }
-    
+
+    public String getArmorDesc() {
+        StringBuffer sArmor = new StringBuffer();
+        sArmor.append(Math.round(getDamageDivisor()));
+        if(isArmorEncumbering()) {
+            sArmor.append("E");
+        }
+
+        if(hasDEST()) {
+            sArmor.append(" (DEST) ");
+        }
+
+        if(hasSneakCamo()) {
+            sArmor.append(" (Camo) ");
+        }
+
+        if(hasSneakIR()) {
+            sArmor.append(" (IR) ");
+        }
+
+        if(hasSneakECM()) {
+            sArmor.append(" (ECM) ");
+        }
+
+
+        return sArmor.toString();
+
+    }
+
     /**
      * Restores the entity after serialization
      */
     @Override
     public void restore() {
         super.restore();
-        
+
         if (null != primaryName) {
             primaryW = (InfantryWeapon)EquipmentType.get(primaryName);
         }
-        
+
         if(null != secondName) {
             secondW = (InfantryWeapon)EquipmentType.get(secondName);
         }
     }
-    
+
     public boolean hasActiveFieldArtillery() {
         boolean hasArtillery = false;
         float smallestGun = 100.0f;
@@ -1265,8 +1263,8 @@ public class Infantry extends Entity implements Serializable {
         }
 
         //you must have enough men to fire at least the smallest piece
-        return hasArtillery && getShootingStrength() >= smallestGun;
-        
+        return hasArtillery && (getShootingStrength() >= smallestGun);
+
     }
-    
+
 } // End class Infantry

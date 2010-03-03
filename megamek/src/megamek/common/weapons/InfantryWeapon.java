@@ -31,12 +31,12 @@ public abstract class InfantryWeapon extends Weapon {
      *
      */
     private static final long serialVersionUID = -4437093890717853422L;
-    
+
     protected double infantryDamage;
     protected int infantryRange;
     protected int crew;
-    
-    
+
+
     public InfantryWeapon() {
         super();
         damage = DAMAGE_VARIABLE;
@@ -53,19 +53,19 @@ public abstract class InfantryWeapon extends Weapon {
         crew = 1;
         infantryRange = 0;
     }
-    
+
     public double getInfantryDamage() {
-    	return infantryDamage;
+        return infantryDamage;
     }
-    
+
     public int getInfantryRange() {
-    	return infantryRange;
+        return infantryRange;
     }
-    
+
     public double getCrew() {
-    	return crew;
+        return crew;
     }
-    
+
     /*
      * (non-Javadoc)
      *

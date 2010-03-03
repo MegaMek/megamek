@@ -48,6 +48,8 @@ v0.35.13-dev (SVN)
 + RFE 2821552: Infantry armor to be shown in MEK Display
 + Field Artillery
 + Bug: Map editor - save as image not working
++ Bug: bot stops when no physical attack possible
++ Bug 2933876: HMV loader doesn't set cruise MP
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

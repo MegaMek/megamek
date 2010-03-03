@@ -551,6 +551,7 @@ public class HmvFile implements IMechLoader {
                             .getEngineTypeByString(engineType.toString()),
                             engineFlags));
 
+            vehicle.setOriginalWalkMP(cruiseMP);
             vehicle.setOriginalJumpMP(jumpMP);
 
             // hmmm...

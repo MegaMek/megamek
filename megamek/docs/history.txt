@@ -50,6 +50,7 @@ v0.35.13-dev (SVN)
 + Bug: Map editor - save as image not working
 + Bug: bot stops when no physical attack possible
 + Bug 2933876: HMV loader doesn't set cruise MP
++ Bug: HarJel shouldn't have BV since TO
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

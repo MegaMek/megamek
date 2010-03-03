@@ -84,16 +84,16 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod, bGlancing);
         double damage = ((InfantryWeapon)wtype).getInfantryDamage();
-        if(ae instanceof Infantry && !(ae instanceof BattleArmor)) {
-        	//for conventional infantry, we have to calculate primary and secondary weapons
-        	//to get damage per trooper
-        	damage = ((Infantry)ae).getDamagePerTrooper();
+        if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+            //for conventional infantry, we have to calculate primary and secondary weapons
+            //to get damage per trooper
+            damage = ((Infantry)ae).getDamagePerTrooper();
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if(target instanceof Infantry && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
-        	damageDealt += Compute.d6();
+        if((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+            damageDealt += Compute.d6();
         }
-        if (target instanceof Infantry && ((Infantry)target).isMechanized()) {
+        if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
         }
         Report r = new Report(3325);
@@ -104,7 +104,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        if(target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             //this is a little strange, but I cant just do this in calcDamagePerHit because
             //that is called up before misses are determined and will lead to weird reporting
             nDamPerHit = damageDealt;

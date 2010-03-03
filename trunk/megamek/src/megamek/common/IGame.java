@@ -646,6 +646,11 @@ public interface IGame {
     public abstract Vector<Entity> getEntitiesVector(Coords c);
 
     /**
+     * Returns a Vector of the gun emplacements at the given coordinates.
+     */
+    public abstract Vector<GunEmplacement> getGunEmplacements(Coords c);
+    
+    /**
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
      *

@@ -23,6 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.EntityMovementMode;
+import megamek.common.GunEmplacement;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SupportTank;
@@ -73,7 +74,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean isTank() {
-        return true;
+        return !(tank instanceof GunEmplacement);
     }
 
     @Override

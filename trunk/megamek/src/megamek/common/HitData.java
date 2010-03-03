@@ -21,9 +21,6 @@ public class HitData {
     public static final int EFFECT_NONE = 0;
     public static final int EFFECT_CRITICAL = 0x0001;
     public static final int EFFECT_VEHICLE_MOVE_DAMAGED = 0x0002;
-    public static final int EFFECT_GUN_EMPLACEMENT_WEAPONS = 0x0004;
-    public static final int EFFECT_GUN_EMPLACEMENT_TURRET = 0x0008;
-    public static final int EFFECT_GUN_EMPLACEMENT_CREW = 0x0010;
     public static final int EFFECT_NO_CRITICALS = 0x0020;
 
     public static final int DAMAGE_NONE = -1;

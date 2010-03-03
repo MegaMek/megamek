@@ -472,6 +472,12 @@ public class MechDisplay extends JPanel {
                 minTopMargin = minMechTopMargin;
                 minBottomMargin = minMechBottomMargin;
                 minRightMargin = minMechRightMargin;
+            } else if (en instanceof GunEmplacement) {
+                ams = gunEmplacement;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
             } else if (en instanceof VTOL) {
                 ams = vtol;
                 minLeftMargin = minVTOLLeftMargin;
@@ -504,12 +510,6 @@ public class MechDisplay extends JPanel {
                 minRightMargin = minInfLeftMargin;
             } else if (en instanceof Protomech) {
                 ams = proto;
-                minLeftMargin = minTankLeftMargin;
-                minTopMargin = minTankTopMargin;
-                minBottomMargin = minTankTopMargin;
-                minRightMargin = minTankLeftMargin;
-            } else if (en instanceof GunEmplacement) {
-                ams = gunEmplacement;
                 minLeftMargin = minTankLeftMargin;
                 minTopMargin = minTankTopMargin;
                 minBottomMargin = minTankTopMargin;

@@ -82,7 +82,7 @@ public class GunEmplacementEncoder {
 
             if (childName.equals("turretLocked")) {
                 String facing = child.getAttribute("facing");
-                ge.setTurretLocked(true);
+                ge.lockTurret();
                 try {
                     ge.setSecondaryFacing(Integer.parseInt(facing));
                 } catch (NumberFormatException nfe) {

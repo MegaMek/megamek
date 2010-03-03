@@ -30,6 +30,7 @@ import java.util.Vector;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.swing.MechView;
 import megamek.common.Entity;
+import megamek.common.GunEmplacement;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -479,7 +480,7 @@ public class MegaMek {
                             if (entity instanceof Mech) {
                                 testEntity = new TestMech((Mech) entity, entityVerifier.mechOption, null);
                             }
-                            if (entity instanceof Tank) {
+                            if (entity instanceof Tank && !(entity instanceof GunEmplacement)) {
                                 testEntity = new TestTank((Tank) entity, entityVerifier.tankOption, null);
                             }
 

@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.util.Enumeration;
 
 import megamek.common.Entity;
+import megamek.common.GunEmplacement;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -78,7 +79,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         TestEntity testEntity = null;
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
-        } else if (entity instanceof Tank) {
+        } else if (entity instanceof Tank && !(entity instanceof GunEmplacement)) {
             testEntity = new TestTank((Tank) entity, tankOption, fileString);
         } else {
             System.err.println("UnknownType: " + entity.getDisplayName());

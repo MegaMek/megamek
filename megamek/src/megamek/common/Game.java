@@ -1364,6 +1364,26 @@ public class Game implements Serializable, IGame {
 
         return vector;
     }
+    
+    /**
+     * Return a Vector of gun emplacements at Coords <code>c</code>
+     * @param c
+     * @return <code>Vector<Entity></code>
+     */
+    public Vector<GunEmplacement> getGunEmplacements(Coords c) {
+        Vector<GunEmplacement> vector = new Vector<GunEmplacement>();
+
+        // Only build the list if the coords are on the board.
+        if (board.contains(c)) {
+            for (Entity entity : entities) {
+                if (c.equals(entity.getPosition()) && entity instanceof GunEmplacement) {
+                    vector.addElement((GunEmplacement)entity);
+                }
+            }
+        }
+
+        return vector;
+    }
 
     /**
      * Returns a Target for an Accidental Fall From above, or null if no

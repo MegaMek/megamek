@@ -1183,4 +1183,8 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean isRepairable() {
         return repairable;
     }
+    
+    public Entity getEntity() {
+        return entity;
+    }
 }

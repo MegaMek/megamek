@@ -52,6 +52,7 @@ v0.35.13-dev (SVN)
 + Bug 2933876: HMV loader doesn't set cruise MP
 + Bug: HarJel shouldn't have BV since TO
 + Advanced Building critical hits (i.e. Gun Emplacements)
++ fixed packaging of mac-bundle on non-OSX
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

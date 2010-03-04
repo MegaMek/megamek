@@ -2741,7 +2741,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(getTotalInternal());
         bvText.append(" x ");
         bvText.append(internalMultiplier);
-
+        bvText.append(" x ");
         bvText.append("1.5 x ");
         bvText.append(getEngine().getBVMultiplier());
         bvText.append(endColumn);
@@ -2885,9 +2885,9 @@ public abstract class Mech extends Entity implements Serializable {
                     // and arms if arm & torso not CASEed
                     if (((loc == LOC_RT) || (loc == LOC_LT)) && locationHasCase(loc)) {
                         continue;
-                    } else if ((loc == LOC_LARM) && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
+                    } else if ((loc == LOC_LARM) && (locationHasCase(loc) || locationHasCase(LOC_LT) || hasCASEII(LOC_LT))) {
                         continue;
-                    } else if ((loc == LOC_RARM) && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
+                    } else if ((loc == LOC_RARM) && (locationHasCase(loc) || locationHasCase(LOC_RT) || hasCASEII(LOC_RT))) {
                         continue;
                     }
                 }
@@ -2934,13 +2934,9 @@ public abstract class Mech extends Entity implements Serializable {
                 toSubtract = 1;
             }
 
-            // PPC capacitors should subtract 1 per slot of capacitor and linked
-            // PPC
+            // PPC capacitors shouldn't count
             if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR) && (mounted.getLinked() != null)) {
-                // because the PPC Capacitor has only 1 crit, we can use the
-                // number of crits
-                // of PPC and capacitor together as toSubtract
-                toSubtract = 1 + mounted.getLinked().getType().getCriticals(this);
+                toSubtract = 0;
             }
             // we subtract per critical slot
             toSubtract *= etype.getCriticals(this);

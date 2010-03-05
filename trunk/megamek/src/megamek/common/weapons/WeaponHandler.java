@@ -569,7 +569,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
         }
 
-        if (hit.hitAimedLocation()) {
+        // for non-salvo shots, report that the aimed shot was successfull
+        // before applying damage
+        if (hit.hitAimedLocation() && !bSalvo) {
             Report r = new Report(3410);
             r.subject = subjectId;
             r.newlines = 0;
@@ -619,6 +621,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront, underWater, nukeS2S));
+            // for salvo shots, report that the aimed location was hit after
+            // applying damage, because the location is first reported when
+            // dealing the damage
+            if (hit.hitAimedLocation() && bSalvo) {
+                Report r = new Report(3410);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
         }
     }
 

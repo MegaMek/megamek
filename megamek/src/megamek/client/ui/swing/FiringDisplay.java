@@ -86,6 +86,7 @@ import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.weapons.HAGWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
 KeyListener, ItemListener, ListSelectionListener {
@@ -2013,6 +2014,7 @@ KeyListener, ItemListener, ListSelectionListener {
                     case AmmoType.T_PXLRM:
                     case AmmoType.T_HSRM:
                     case AmmoType.T_MRM_STREAK:
+                    case AmmoType.T_HAG:
                         return false;
                     }
                     if (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
@@ -2024,7 +2026,8 @@ KeyListener, ItemListener, ListSelectionListener {
             break;
             case (IAimingModes.AIM_MODE_TARG_COMP):
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                        || wtype.hasFlag(WeaponType.F_PULSE)) {
+                        || wtype.hasFlag(WeaponType.F_PULSE)
+                        || (wtype instanceof HAGWeapon)) {
                     return false;
                 }
             if (weapon.getCurrentShots() > 1) {

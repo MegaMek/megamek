@@ -55,6 +55,7 @@ v0.35.13-dev (SVN)
 + fixed packaging of mac-bundle on non-OSX
 + Bug 2934959: (hit aimed location) report too early for HAGs
 + HAGs should not able to make aimed shots
++ Added prototype weapons from Historicals: Operation Klondike
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

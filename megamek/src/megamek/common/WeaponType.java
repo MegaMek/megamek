@@ -550,10 +550,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLargePulseLaser());
         EquipmentType.addType(new CLERLargePulseLaser());
         EquipmentType.addType(new CLERMediumLaser());
+        EquipmentType.addType(new CLERMediumLaserPrototype());
         EquipmentType.addType(new CLHeavyMediumLaser());
         EquipmentType.addType(new CLMediumPulseLaser());
         EquipmentType.addType(new CLERMediumPulseLaser());
         EquipmentType.addType(new CLERSmallLaser());
+        EquipmentType.addType(new CLERSmallLaserPrototype());
         EquipmentType.addType(new CLSmallPulseLaser());
         EquipmentType.addType(new CLERSmallPulseLaser());
         EquipmentType.addType(new CLHeavySmallLaser());
@@ -602,9 +604,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISTHBUAC10());
         EquipmentType.addType(new ISTHBUAC20());
         EquipmentType.addType(new CLUAC2());
+        EquipmentType.addType(new CLUAC2Prototype());
         EquipmentType.addType(new CLUAC5());
         EquipmentType.addType(new CLUAC10());
+        EquipmentType.addType(new CLUAC10Prototype());
         EquipmentType.addType(new CLUAC20());
+        EquipmentType.addType(new CLUAC20Prototype());
         // LBXs
         EquipmentType.addType(new ISLB2XAC());
         EquipmentType.addType(new ISLB5XAC());
@@ -612,9 +617,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLB10XACPrototype());
         EquipmentType.addType(new ISLB20XAC());
         EquipmentType.addType(new CLLB2XAC());
-        EquipmentType.addType(new CLLB5XAC());
+        EquipmentType.addType(new CLLB2XACPrototype());
+        EquipmentType.addType(new CLLB5XACPrototype());
         EquipmentType.addType(new CLLB10XAC());
-        EquipmentType.addType(new CLLB20XAC());
+        EquipmentType.addType(new CLLB20XACPrototype());
         EquipmentType.addType(new ISTHBLB2XAC());
         EquipmentType.addType(new ISTHBLB5XAC());
         EquipmentType.addType(new ISTHBLB20XAC());
@@ -793,8 +799,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLStreakSRM2());
         EquipmentType.addType(new CLStreakSRM3());
         EquipmentType.addType(new CLStreakSRM4());
+        EquipmentType.addType(new CLStreakSRM4Prototype());
         EquipmentType.addType(new CLStreakSRM5());
         EquipmentType.addType(new CLStreakSRM6());
+        EquipmentType.addType(new CLStreakSRM6Prototype());
         EquipmentType.addType(new CLStreakSRM2OS());
         EquipmentType.addType(new CLStreakSRM4OS());
         EquipmentType.addType(new CLStreakSRM6OS());
@@ -820,6 +828,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISRL10());
         EquipmentType.addType(new ISRL15());
         EquipmentType.addType(new ISRL20());
+        EquipmentType.addType(new CLPrototypeRL10());
+        EquipmentType.addType(new CLPrototypeRL15());
+        EquipmentType.addType(new CLPrototypeRL20());
         // ATMs
         EquipmentType.addType(new CLATM3());
         EquipmentType.addType(new CLATM6());

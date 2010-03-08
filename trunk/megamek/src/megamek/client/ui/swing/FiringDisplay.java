@@ -1987,6 +1987,9 @@ KeyListener, ItemListener, ListSelectionListener {
             case (IAimingModes.AIM_MODE_NONE):
                 return false;
             case (IAimingModes.AIM_MODE_IMMOBILE):
+                if (weapon.getCurrentShots() > 1) {
+                    return false;
+                }
                 if (atype != null) {
                     switch (atype.getAmmoType()) {
                     case (AmmoType.T_SRM_STREAK):

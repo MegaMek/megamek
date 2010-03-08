@@ -70,7 +70,7 @@ public class ISUAC5Prototype extends UACWeapon {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
-            return new PrototypeUltraWeaponHandler(toHit, waa, game, server);
+            return new PrototypeISUltraWeaponHandler(toHit, waa, game, server);
         }
         return super.getCorrectHandler(toHit, waa, game, server);
     }

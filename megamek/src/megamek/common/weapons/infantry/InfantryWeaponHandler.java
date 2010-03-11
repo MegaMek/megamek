@@ -15,7 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 
@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 
 /**

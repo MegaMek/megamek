@@ -106,7 +106,7 @@ import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.InfantryWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special

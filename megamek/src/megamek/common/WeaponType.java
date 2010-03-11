@@ -17,6 +17,13 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.weapons.*;
+import megamek.common.weapons.infantry.InfantryAutoRifleWeapon;
+import megamek.common.weapons.infantry.InfantryInfernoSRMWeapon;
+import megamek.common.weapons.infantry.InfantryLRMWeapon;
+import megamek.common.weapons.infantry.InfantryLaserRifleWeapon;
+import megamek.common.weapons.infantry.InfantryLightSRMWeapon;
+import megamek.common.weapons.infantry.InfantryPortableFlamerWeapon;
+import megamek.common.weapons.infantry.InfantryPortableMGWeapon;
 
 // TODO add XML support back in.
 

@@ -60,6 +60,7 @@ v0.35.13-dev (SVN)
 + Added new icons
 + added OS X version of launch4j bin files for packaging on OS X
 + legacy look-up names for infantry weapons
++ put infantry weapons in a subfolder
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

@@ -33,7 +33,7 @@ import megamek.common.Infantry;
 import megamek.common.LocationFullException;
 import megamek.common.MiscType;
 import megamek.common.util.BuildingBlock;
-import megamek.common.weapons.InfantryWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class BLKInfantryFile extends BLKFile implements IMechLoader {
 

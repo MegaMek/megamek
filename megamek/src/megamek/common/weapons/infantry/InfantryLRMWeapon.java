@@ -15,32 +15,33 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+
 /**
  * @author Sebastian Brocks
  */
-public class InfantryPortableMGWeapon extends InfantryWeapon {
+public class InfantryLRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3434311797513896108L;
+    private static final long serialVersionUID = -966926675003846938L;
 
-    public InfantryPortableMGWeapon() {
+    public InfantryLRMWeapon() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
-        name = "Portable MG";
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "LRM Launcher";
         setInternalName(name);
-        addLookupName("InfantryMGPortable");
-        addLookupName("InfantryMG");
-        ammoType = AmmoType.T_MG;
-        cost = 1000;
-        bv = 1.6;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-        infantryDamage = 0.65;
-        infantryRange = 1;
+        addLookupName("InfantryLRM");
+        ammoType = AmmoType.T_LRM;
+        cost = 2000;
+        bv = 1.15;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        setModes(new String[] { "", "Indirect" });
+        infantryDamage = 0.19;
+        infantryRange = 3;
     }
 }

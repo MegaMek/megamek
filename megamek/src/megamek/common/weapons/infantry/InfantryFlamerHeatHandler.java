@@ -15,7 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.infantry;
 
 import java.util.Vector;
 

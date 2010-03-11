@@ -17,7 +17,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Vector;
 
-import megamek.common.weapons.InfantryWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * This class represents the lowest of the low, the ground pounders, the city

@@ -39,6 +39,7 @@ public class InfantryPortableFlamerWeapon extends InfantryWeapon {
         name = "Portable Flamer";
         setInternalName(name);
         addLookupName("InfantryFlamerPortable");
+        addLookupName("InfantryFlamer");
         // Flamer (man-pack), TM p. 300
         cost = 100;
         bv = 0.36;

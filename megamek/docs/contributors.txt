@@ -146,6 +146,8 @@
      Zoltan 'Nyrond' Kollar
      Adgar76 <adgar76@users.sourceforge.net>
      archonlomendil@hotmail.com
+     Punakettu
+     Michael "Bedwyr" Mullins
 
   Translations
      Jörg Harder <joergharder@t-online.de>

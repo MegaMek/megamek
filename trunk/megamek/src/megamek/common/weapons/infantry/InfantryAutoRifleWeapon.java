@@ -15,30 +15,32 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.infantry;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
  */
-public class InfantryLaserRifleWeapon extends InfantryWeapon {
+public class InfantryAutoRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -9065123199493897216L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryLaserRifleWeapon() {
+    public InfantryAutoRifleWeapon() {
         super();
         techLevel = TechConstants.T_ALLOWED_ALL;
-        name = "Laser Rifle";
+        name = "Auto Rifle";
         setInternalName(name);
-        addLookupName("InfantryLaserRifle");
-        cost = 1250;
-        bv = 0.88;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.28;
-        infantryRange = 2;
+        addLookupName("InfantryRifle");
+        ammoType = AmmoType.T_AC;
+        cost = 80;
+        bv = 1.28;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.52;
+        infantryRange = 1;
     }
 }

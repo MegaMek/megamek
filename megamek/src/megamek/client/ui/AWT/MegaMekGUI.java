@@ -34,7 +34,9 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 
 import megamek.MegaMek;
@@ -66,7 +68,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     private CommonHelpDialog help = null;
     private GameOptionsDialog optdlg = null;
     private CommonSettingsDialog setdlg = null;
-    
+
     public void start(String[] args) {
         createGUI();
     }
@@ -75,7 +77,7 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
-        this.frame = new Frame("MegaMek"); //$NON-NLS-1$
+        frame = new Frame("MegaMek"); //$NON-NLS-1$
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -86,8 +88,12 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage(
-                "data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
+        List<Image> iconList = new ArrayList<Image>();
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-16x16.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-32x32.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-48x48.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-256x256.png")); //$NON-NLS-1$
+        frame.setIconImages(iconList);
 
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
@@ -109,7 +115,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // tell the user about the readme...
         if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame, Messages
-                    .getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$ 
+                    .getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$
                     Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
                     true);
             confirm.setVisible(true);
@@ -269,7 +275,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         hd = new HostDialog(frame);
         hd.setVisible(true);
         // verify dialog data
-        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if ((hd.name == null) || (hd.serverPass == null) || (hd.port == 0)) {
             return;
         }
 
@@ -291,7 +297,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.name.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -348,7 +354,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // limit file-list to savedgames only
         fd.setFilenameFilter(new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
+                return ((null != name) && name.endsWith(".sav")); //$NON-NLS-1$
             }
         });
         // Using the FilenameFilter class would be the appropriate way to
@@ -366,14 +372,14 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         HostDialog hd = new HostDialog(frame);
         hd.setVisible(true);
-        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if ((hd.name == null) || (hd.serverPass == null) || (hd.port == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.name.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -487,12 +493,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         // host with the scenario. essentially copied from host()
         HostDialog hd = new HostDialog(frame);
         boolean hasSlot = false;
-        if (!(sd.localName.equals("")))
+        if (!(sd.localName.equals(""))) {
             hasSlot = true;
+        }
         hd.yourNameF.setText(sd.localName);
         hd.setVisible(true);
         // verify dialog data
-        if (hd.name == null || hd.serverPass == null || hd.port == 0) {
+        if ((hd.name == null) || (hd.serverPass == null) || (hd.port == 0)) {
             return;
         }
         sd.localName = hd.name;
@@ -500,7 +507,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.name.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -576,8 +583,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             Enumeration<Player> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
                 Player tmpP = pE.nextElement();
-                if (tmpP.getName().equals(sd.localName))
+                if (tmpP.getName().equals(sd.localName)) {
                     tmpP.setObserver(true);
+                }
             }
         }
 
@@ -595,14 +603,14 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if (cd.name == null || cd.serverAddr == null || cd.port == 0) {
+        if ((cd.name == null) || (cd.serverAddr == null) || (cd.port == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = cd.name.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -637,14 +645,14 @@ public class MegaMekGUI implements IMegaMekGUI {
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
         // verify dialog data
-        if (cd.name == null || cd.serverAddr == null || cd.port == 0) {
+        if ((cd.name == null) || (cd.serverAddr == null) || (cd.port == 0)) {
             return;
         }
 
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = cd.name.toCharArray();
-        for (int loop = 0; !foundValid && loop < nameChars.length; loop++) {
+        for (int loop = 0; !foundValid && (loop < nameChars.length); loop++) {
             if (!Character.isWhitespace(nameChars[loop])) {
                 foundValid = true;
             }
@@ -686,23 +694,23 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     void showAbout() {
         // Do we need to create the "about" dialog?
-        if (this.about == null) {
-            this.about = new CommonAboutDialog(this.frame);
+        if (about == null) {
+            about = new CommonAboutDialog(frame);
         }
 
         // Show the about dialog.
-        this.about.setVisible(true);
+        about.setVisible(true);
     }
 
     /**
      * Called when the user selects the "Help->Contents" menu item.
      */
     void showHelp() {
-        if (this.help == null) {
-            help = showHelp(this.frame, "readme"); //$NON-NLS-1$
+        if (help == null) {
+            help = showHelp(frame, "readme"); //$NON-NLS-1$
         }
         // Show the help dialog.
-        this.help.setVisible(true);
+        help.setVisible(true);
     }
 
     /**
@@ -723,12 +731,12 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     void showSettings() {
         // Do we need to create the "settings" dialog?
-        if (this.setdlg == null) {
-            this.setdlg = new CommonSettingsDialog(this.frame);
+        if (setdlg == null) {
+            setdlg = new CommonSettingsDialog(frame);
         }
 
         // Show the settings dialog.
-        this.setdlg.setVisible(true);
+        setdlg.setVisible(true);
     }
 
     /**

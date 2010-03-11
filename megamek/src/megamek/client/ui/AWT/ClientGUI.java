@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -276,7 +277,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage("data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
+        List<Image> iconList = new ArrayList<Image>();
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-16x16.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-32x32.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-48x48.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-256x256.png")); //$NON-NLS-1$
+        frame.setIconImages(iconList);
     }
 
     /**

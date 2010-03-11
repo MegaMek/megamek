@@ -238,6 +238,7 @@
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="MegaMek.exe" />
+				<include name="${util}/megamek.l4j.ini" />
 			</fileset>
 		</copy>
 	</target>

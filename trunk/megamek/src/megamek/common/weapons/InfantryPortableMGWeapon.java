@@ -35,6 +35,7 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
         name = "Portable MG";
         setInternalName(name);
         addLookupName("InfantryMGPortable");
+        addLookupName("InfantryMG");
         ammoType = AmmoType.T_MG;
         cost = 1000;
         bv = 1.6;

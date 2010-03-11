@@ -41,7 +41,7 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
         extremeRange = 18;
         tonnage = 1.0f;
         criticals = 2;
-        bv = 23;
+        bv = 21;
         cost = 30000;
         shortAV = 9;
         medAV = 9;

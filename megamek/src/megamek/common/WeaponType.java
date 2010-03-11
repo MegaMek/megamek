@@ -618,8 +618,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLB20XAC());
         EquipmentType.addType(new CLLB2XAC());
         EquipmentType.addType(new CLLB2XACPrototype());
+        EquipmentType.addType(new CLLB5XAC());
         EquipmentType.addType(new CLLB5XACPrototype());
         EquipmentType.addType(new CLLB10XAC());
+        EquipmentType.addType(new CLLB20XAC());
         EquipmentType.addType(new CLLB20XACPrototype());
         EquipmentType.addType(new ISTHBLB2XAC());
         EquipmentType.addType(new ISTHBLB5XAC());

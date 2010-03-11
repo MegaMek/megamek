@@ -29,7 +29,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
@@ -114,8 +116,12 @@ public class MegaMekGUI implements IMegaMekGUI {
         });
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
-        frame.setIconImage(frame.getToolkit().getImage(
-                "data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
+        List<Image> iconList = new ArrayList<Image>();
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-16x16.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-32x32.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-48x48.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-256x256.png")); //$NON-NLS-1$
+        frame.setIconImages(iconList);
         CommonMenuBar menuBar = new CommonMenuBar();
         menuBar.addActionListener(actionListener);
         frame.setJMenuBar(menuBar);

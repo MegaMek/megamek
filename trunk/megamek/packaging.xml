@@ -29,7 +29,6 @@
 	<property name="util" value="packaging_utils" />
 	
 	<!-- Version and packaging properties -->
-	<property name="version" value="0.35.13" />
 	<property name="project.name" value="megamek" />
 	<property name="osxdist" value="${project.name}-${version}-mac" />
 	<property name="windist" value="${project.name}-${version}-windows" />
@@ -81,6 +80,7 @@
 	<target name="svndev-init">
 		<tstamp />
 		<delete dir="${svndir}" />
+		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>
 	</target>
 	
 	<!-- following svndev-* tasks get, build & package the current version from svn -->
@@ -238,9 +238,9 @@
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="MegaMek.exe" />
-				<include name="${util}/megamek.l4j.ini" />
 			</fileset>
 		</copy>
+		<copy file="${util}/megamek.l4j.ini" todir="${windist}"/>
 	</target>
 	
 	<target name="win-zip" description="Create a zipfile of the Windows distribution">

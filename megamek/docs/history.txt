@@ -69,6 +69,7 @@ v0.35.13-dev (SVN)
 + Bug 2939613: HVACs bugged
 + Bug 2933054: Aimed shots with Rocket Launchers
 + Bug 2932450: DHS and Laser Heat Sinks not loading correctly on mixed tech unit
++ Bug 2923177: Warrior H-7C has wrong image
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

@@ -15881,6 +15881,7 @@ public class Server implements Runnable {
                     tmpDamageHold = damage;
                     damage = (int) Math.floor((((double) damage) * 4) / 5);
                     if (damage <= 0) {
+                        isHeadHit = false;
                         crits = 0;
                     }
                     r = new Report(6073);
@@ -16538,10 +16539,6 @@ public class Server implements Runnable {
             // resolve Aero crits
             if (te instanceof Aero) {
                 checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
-            }
-            // check 0 damage to Ferro-Lamellor armor
-            if ((damage <= 0) && ferroLamellorArmor) {
-                isHeadHit = false;
             }
 
             if (isHeadHit && !te.crew.getOptions().booleanOption("dermal_armor")) {

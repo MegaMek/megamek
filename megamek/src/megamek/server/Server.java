@@ -5061,7 +5061,10 @@ public class Server implements Runnable {
             rollTarget = entity.checkGetUp(step);
 
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                entity.heatBuildup += 1;
+                if ((entity.getEngine().getEngineType() != Engine.FUEL_CELL) &&
+                        (entity.getEngine().getEngineType() != Engine.COMBUSTION_ENGINE)) {
+                    entity.heatBuildup += 1;
+                }
                 entity.setProne(false);
                 // entity.setHullDown(false);
                 wasProne = false;

@@ -450,6 +450,7 @@ public class Engine implements Serializable {
     public int getWalkHeat() {
         switch (engineType) {
             case COMBUSTION_ENGINE:
+            case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
                 return 4;
@@ -461,6 +462,7 @@ public class Engine implements Serializable {
     public int getRunHeat() {
         switch (engineType) {
             case COMBUSTION_ENGINE:
+            case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
                 return 6;
@@ -476,6 +478,7 @@ public class Engine implements Serializable {
     public int getSprintHeat() {
         switch (engineType) {
             case COMBUSTION_ENGINE:
+            case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
                 return 8;

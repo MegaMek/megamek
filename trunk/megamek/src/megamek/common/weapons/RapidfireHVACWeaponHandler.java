@@ -30,10 +30,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
-/**
- * @author Jason Tighe
- */
-public class HVACWeaponHandler extends ACWeaponHandler {
+public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /**
      *
@@ -46,7 +43,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
      * @param g
      * @param s
      */
-    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
 
@@ -106,7 +103,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
             vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation), wtype.getDamage(), true, DamageType.NONE, true));
             r.choose(false);
             vPhaseReport.addElement(r);
-            return true;
+            return false;
         } else {
             return super.doChecks(vPhaseReport);
         }

@@ -1958,6 +1958,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     case AmmoType.T_HSRM:
                     case AmmoType.T_MRM_STREAK:
                     case AmmoType.T_HAG:
+                    case AmmoType.T_ROCKET_LAUNCHER:
                         return false;
                     }
                     if (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype

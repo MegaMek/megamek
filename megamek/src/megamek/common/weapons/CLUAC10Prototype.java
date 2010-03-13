@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 /**
  * @author Andrew Hunter
  */
@@ -32,7 +31,7 @@ public class CLUAC10Prototype extends CLPrototypeUACWeapon {
      */
     public CLUAC10Prototype() {
         super();
-        name = "Ultra AC/10 Prototype";
+        name = "Ultra AC/10 (CP)";
         setInternalName("CLUltraAC10Prototype");
         heat = 4;
         damage = 10;

@@ -30,8 +30,8 @@ public class CLPrototypeRL10 extends PrototypeRLWeapon {
      */
     public CLPrototypeRL10() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        name = "Rocket Launcher 10 Protoytpe";
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        name = "Rocket Launcher 10 (CP)";
         setInternalName("CLRL10Prototype");
         heat = 3;
         rackSize = 10;

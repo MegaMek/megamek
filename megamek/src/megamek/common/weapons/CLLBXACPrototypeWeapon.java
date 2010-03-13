@@ -40,7 +40,7 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
@@ -57,6 +57,6 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
 
     public CLLBXACPrototypeWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
     }
 }

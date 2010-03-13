@@ -39,12 +39,12 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      */
     public CLPrototypeUACWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)

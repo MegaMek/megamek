@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 /**
  * @author Andrew Hunter
  */
@@ -33,7 +32,7 @@ public class CLLB5XACPrototype extends CLLBXACPrototypeWeapon {
      */
     public CLLB5XACPrototype() {
         super();
-        name = "LB 5-X AC Prototype";
+        name = "LB 5-X AC (CP)";
         setInternalName("CLLBXAC5Prototype");
         heat = 1;
         damage = 5;

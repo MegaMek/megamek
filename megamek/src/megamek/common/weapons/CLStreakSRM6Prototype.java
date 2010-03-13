@@ -28,7 +28,7 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
      */
     public CLStreakSRM6Prototype() {
         super();
-        name = "Streak SRM 6 (CP)";
+        name = "Streak SRM 6 (PP)";
         setInternalName("CLStreakSRM6Prototype");
         heat = 4;
         rackSize = 6;

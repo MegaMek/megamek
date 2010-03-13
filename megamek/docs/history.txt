@@ -64,6 +64,7 @@ v0.35.13-dev (SVN)
 + Bug 2967104: MFUK Plasma Rifle not working correctly
 + Bug 2960996: fuel cell heat when moving
 +´Bug: standing up with ICE or fuel cell engine should not cost heat
++ Bug 2959992: [RANDOM] Map is the same as [SURPRISE] Map
 
 v0.35.12 (2010-02-14, 00:12 UTC+1)
 + Added View Game Board button to Map Selection Dialog

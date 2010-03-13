@@ -9159,7 +9159,7 @@ public class Server implements Runnable {
                     Report r = new Report(3033);
                     r.addDesc(entity);
                     addReport(r);
-                } 
+                }
                 else {
                     System.err.println("Non-Tank tried to unjam turret");
                 }
@@ -16506,7 +16506,7 @@ public class Server implements Runnable {
             // resolve special results
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
                 vDesc.addAll(vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
-            } 
+            }
             // roll all critical hits against this location
             // unless the section destroyed in a previous phase?
             // Cause a crit.
@@ -21140,7 +21140,7 @@ public class Server implements Runnable {
             Server.entityVerifier = new EntityVerifier(new File(VERIFIER_CONFIG_FILENAME));
         }
         // we can only test meks and vehicles right now
-        if ((entity instanceof Mech) || (entity instanceof Tank && !(entity instanceof GunEmplacement))) {
+        if ((entity instanceof Mech) || ((entity instanceof Tank) && !(entity instanceof GunEmplacement))) {
             TestEntity testEntity = null;
             entity.restore();
             if (entity instanceof Mech) {
@@ -22217,6 +22217,7 @@ public class Server implements Runnable {
                     sendServerChat("Player " + player.getName() + " changed map settings");
                 }
                 mapSettings = newSettings;
+                mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                 newSettings = null;
                 resetPlayersDone();
                 transmitAllPlayerDones();
@@ -23239,7 +23240,7 @@ public class Server implements Runnable {
                 curCF -= Math.min(curCF, damage);
                 bldg.setCurrentCF(curCF, coords);
                 final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
-                
+
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
                     if (bldg instanceof FuelTank) {
@@ -23273,20 +23274,20 @@ public class Server implements Runnable {
                         r.indent(0);
                         vPhaseReport.add(r);
                     }
-                } else if(curCF < startingCF && damage > damageThresh) {
+                } else if((curCF < startingCF) && (damage > damageThresh)) {
                     //need to check for crits
                     //don't bother unless we have some gun emplacements
-                    Vector<GunEmplacement> guns = game.getGunEmplacements(coords);                 
+                    Vector<GunEmplacement> guns = game.getGunEmplacements(coords);
                     if(guns.size() > 0) {
                         vPhaseReport.addAll(criticalGunEmplacement(guns, bldg, coords));
                     }
-                }           
+                }
             }
         }
         Report.indentAll(vPhaseReport, 2);
         return vPhaseReport;
     }
-    
+
     private Vector<Report> criticalGunEmplacement(Vector<GunEmplacement> guns, Building bldg, Coords coords) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -23294,8 +23295,8 @@ public class Server implements Runnable {
         r.type = Report.PUBLIC;
         r.indent(0);
         vDesc.add(r);
-        
-        
+
+
         int critroll = Compute.d6(2);
         if(critroll < 6) {
             r = new Report(3805);
@@ -23353,7 +23354,7 @@ public class Server implements Runnable {
             }
             if(wpns.size() > 0) {
                 Mounted weapon = wpns.elementAt(Compute.randomInt(wpns.size()));
-                weapon.setHit(true);   
+                weapon.setHit(true);
                 r = new Report(3840);
                 r.type = Report.PUBLIC;
                 r.indent(1);
@@ -23414,7 +23415,7 @@ public class Server implements Runnable {
                         boom += ammo.getShotsLeft() * ((AmmoType) ammo.getType()).getDamagePerShot() * ((AmmoType) ammo.getType()).getRackSize();
                     }
                 }
-            } 
+            }
             boom = (int) Math.floor(bldg.getDamageToScale() * boom);
             r.add(boom);
             int curCF = bldg.getCurrentCF(coords);
@@ -23464,9 +23465,9 @@ public class Server implements Runnable {
             r.indent(1);
             vDesc.add(r);
         }
-        
+
         return vDesc;
-        
+
     }
 
     public void sendChangedCFBuildings(Vector<Building> buildings) {

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 /**
  * @author Sebastian Brocks
  */
@@ -29,7 +28,7 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
      */
     public CLStreakSRM6Prototype() {
         super();
-        name = "Streak SRM 6 Prototype";
+        name = "Streak SRM 6 (CP)";
         setInternalName("CLStreakSRM6Prototype");
         heat = 4;
         rackSize = 6;

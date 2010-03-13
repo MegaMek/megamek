@@ -30,9 +30,6 @@
 	
 	<!-- Version and packaging properties -->
 	<property name="project.name" value="megamek" />
-	<property name="osxdist" value="${project.name}-${version}-mac" />
-	<property name="windist" value="${project.name}-${version}-windows" />
-	<property name="nixdist" value="${project.name}-${version}" />
 	
 	<!-- same as builddir but under svn -->
 	<property name="svnbuilddir" value="${svndir}/${builddir}" />
@@ -81,6 +78,9 @@
 		<tstamp />
 		<delete dir="${svndir}" />
 		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>
+		<property name="osxdist" value="${project.name}-${version}-mac" />
+		<property name="windist" value="${project.name}-${version}-windows" />
+		<property name="nixdist" value="${project.name}-${version}" />
 	</target>
 	
 	<!-- following svndev-* tasks get, build & package the current version from svn -->

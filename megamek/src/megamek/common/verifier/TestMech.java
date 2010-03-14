@@ -25,6 +25,7 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.CriticalSlot;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Mech;
@@ -32,6 +33,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.EnergyWeapon;
 
 public class TestMech extends TestEntity {
     private Mech mech = null;
@@ -78,6 +80,23 @@ public class TestMech extends TestEntity {
     @Override
     public float getWeightMisc() {
         return 0.0f;
+    }
+
+    @Override
+    public float getWeightPowerAmp() {
+        if (mech.isIndustrial() && ((mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
+            float powerAmpWeight = 0;
+            for (Mounted mount : mech.getWeaponList()) {
+                if (mount.getType() instanceof EnergyWeapon) {
+                    // power amplifier weighs 10% of energyweapons weight,
+                    // rounded to the next half ton
+                    powerAmpWeight += TestEntity.ceilMaxHalf(mount.getType().getTonnage(mech)/10, TestEntity.CEIL_HALFTON);
+                }
+            }
+            return powerAmpWeight;
+        }
+        return 0;
     }
 
     public float getWeightCockpit() {

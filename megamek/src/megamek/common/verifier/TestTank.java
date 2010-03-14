@@ -20,9 +20,10 @@
 package megamek.common.verifier;
 
 import megamek.common.AmmoType;
+import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -32,6 +33,7 @@ import megamek.common.TechConstants;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.EnergyWeapon;
 
 public class TestTank extends TestEntity {
     private Tank tank = null;
@@ -272,5 +274,22 @@ public class TestTank extends TestEntity {
     @Override
     public String getName() {
         return "Tank: " + tank.getDisplayName();
+    }
+
+    @Override
+    public float getWeightPowerAmp() {
+        if ((tank.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                || (tank.getEngine().getEngineType() == Engine.FUEL_CELL)) {
+            float powerAmpWeight = 0;
+            for (Mounted mount : tank.getWeaponList()) {
+                if (mount.getType() instanceof EnergyWeapon) {
+                    // power amplifier weighs 10% of energyweapons weight,
+                    // rounded to the next tenth of a ton
+                    powerAmpWeight += TestEntity.ceilMaxHalf(mount.getType().getTonnage(tank)/10, TestEntity.CEIL_TENTHTON);
+                }
+            }
+            return powerAmpWeight;
+        }
+        return 0;
     }
 }

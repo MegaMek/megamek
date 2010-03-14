@@ -383,6 +383,8 @@ public abstract class TestEntity implements TestEntityOption {
         return weight;
     }
 
+    public abstract float getWeightPowerAmp();
+
     public StringBuffer printAmmo() {
         return printAmmo(new StringBuffer());
     }
@@ -525,6 +527,7 @@ public abstract class TestEntity implements TestEntityOption {
         weight += getWeightMiscEquip();
         weight += getWeightWeapon();
         weight += getWeightAmmo();
+        weight += getWeightPowerAmp();
 
         weight += getWeightCarryingSpace();
 

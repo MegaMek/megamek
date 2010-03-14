@@ -3,6 +3,7 @@
 v0.35.14-dev (SVN)
 + Change Clan Prototype weapons tech type and naming convention.
 + Added Ammo to Clan RL ProtoType as well as tohit mod and oneshot flag
++ Bug 2970076: Leg/swarm attacks not working
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

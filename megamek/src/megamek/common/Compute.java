@@ -643,7 +643,7 @@ public class Compute {
         }
 
         ToHitData mods = new ToHitData();
-        
+
         Entity te = null;
         if (target instanceof Entity) {
             te = (Entity) target;
@@ -757,14 +757,14 @@ public class Compute {
                 }
             }
         }
-        
+
         // if aero and greater than max range then swith to range_out
         if ((ae instanceof Aero) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
         // short circuit if at zero range or out of range
-        if (range == RangeType.RANGE_OUT && !isWeaponInfantry) {
+        if ((range == RangeType.RANGE_OUT) && !isWeaponInfantry) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
         if ((distance == 0) && !isAttackerInfantry && !(ae instanceof Aero)
@@ -845,7 +845,7 @@ public class Compute {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
-        
+
         //if this is an infantry weapon then we use a whole different calculation
         //to figure out range, so overwrite whatever we have at this point
         if(isWeaponInfantry) {
@@ -862,12 +862,12 @@ public class Compute {
 
         return mods;
     }
-    
+
     public static ToHitData getInfantryRangeMods(int distance, InfantryWeapon wpn) {
-        ToHitData mods = new ToHitData();	
-        int range = wpn.getInfantryRange();      
+        ToHitData mods = new ToHitData();
+        int range = wpn.getInfantryRange();
         int mod = 0;
-        
+
     	switch(range) {
     	case 0:
     		if(distance > 0) {
@@ -998,27 +998,27 @@ public class Compute {
     	default:
     		return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
     	}
-        
+
     	//a bunch of special conditions at range 0
     	if(distance == 0) {
-    	
+
     		if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
     			mod++;
     		}
-    	
-    		if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || wpn.getCrew() > 1) {
+
+    		if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
     			mod++;
     		}
-    	
+
     		if(wpn.hasFlag(WeaponType.F_INF_BURST)) {
     			mod--;
     		}
     	}
-    	
+
     	if(mod != 0) {
     		mods.addModifier(mod, "infantry range");
     	}
-    	
+
         return mods;
     }
 
@@ -3883,19 +3883,38 @@ public class Compute {
      *            - the <code>Entity</code> being attacked.
      * @return The base <code>ToHitData</code> of the attack.
      */
-    public static ToHitData getLegAttackBaseToHit(Entity attacker, Entity defender) {
+    public static ToHitData getLegAttackBaseToHit(Entity attacker, Entity defender, IGame game) {
         int men = 0;
         int base = TargetRoll.IMPOSSIBLE;
         String reason = "Non Infantry not allowed to do AM attacks.";
 
+        boolean alreadyPerformingOther = false;
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+            EntityAction ea = actions.nextElement();
+            if (ea instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) ea;
+                if (waa.getEntity(game).equals(attacker)) {
+                    // impossible if alraedy doing a swarm attack
+                    if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
+                            Infantry.SWARM_MEK)) {
+                        alreadyPerformingOther = true;
+
+                    }
+                }
+            }
+        }
+
+        if (alreadyPerformingOther) {
+            reason = "already performing a swarm attack";
+        }
         // Can only attack a Mek's legs.
-        if (!(defender instanceof Mech)) {
-            reason="Defender is not a Mech.";
+        else if (!(defender instanceof Mech)) {
+            reason = "Defender is not a Mech.";
         }
 
         // Can't attack if flying
         else if (attacker.getElevation() > defender.getElevation()) {
-            reason="Cannot do leg attack while flying.";
+            reason = "Cannot do leg attack while flying.";
         }
 
         // Handle BattleArmor attackers.
@@ -3912,7 +3931,7 @@ public class Compute {
             } else if (men >= 1) {
                 base = inf.getCrew().getPiloting() + 7;
             }
-            reason= men+" trooper(s) active";
+            reason = men+" trooper(s) active";
 
         } else if (attacker instanceof Infantry) {
             // Non-BattleArmor infantry need many more men.
@@ -3927,7 +3946,7 @@ public class Compute {
             } else if (men >= 5) {
                 base = inf.getCrew().getPiloting() + 7;
             }
-            reason=men+" men alive";
+            reason = men+" men alive";
         }
         ToHitData toReturn = new ToHitData(base, reason.toString(), ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
         if (base == TargetRoll.IMPOSSIBLE) {
@@ -3947,13 +3966,31 @@ public class Compute {
      *            - the <code>Entity</code> being swarmed.
      * @return The base <code>ToHitData</code> of the mek.
      */
-    public static ToHitData getSwarmMekBaseToHit(Entity attacker, Entity defender) {
+    public static ToHitData getSwarmMekBaseToHit(Entity attacker, Entity defender, IGame game) {
         int men = 0;
         int base = TargetRoll.IMPOSSIBLE;
         String reason = "Non Infantry not allowed to do AM attacks.";
 
+        boolean alreadyPerformingOther = false;
+        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+            EntityAction ea = actions.nextElement();
+            if (ea instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) ea;
+                if (waa.getEntity(game).equals(attacker)) {
+                    // impossible if alraedy doing a swarm attack
+                    if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
+                            Infantry.LEG_ATTACK)) {
+                        alreadyPerformingOther = true;
+
+                    }
+                }
+            }
+        }
+        if (alreadyPerformingOther) {
+            reason = "attacker is already performing a leg attack";
+        }
         // Can only swarm a Mek.
-        if (!(defender instanceof Mech) && !(defender instanceof Tank)) {
+        else if (!(defender instanceof Mech) && !(defender instanceof Tank)) {
             reason="Defender is not a Mech or vehicle.";
         }
         // Can't swarm a friendly Mek. See

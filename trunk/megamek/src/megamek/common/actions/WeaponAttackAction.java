@@ -421,13 +421,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
-            toHit = Compute.getLegAttackBaseToHit(ae, te);
+            toHit = Compute.getLegAttackBaseToHit(ae, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
             }
 
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
-            toHit = Compute.getSwarmMekBaseToHit(ae, te);
+            toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
             if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 return toHit;
             }
@@ -1211,11 +1211,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (!isAttackerInfantry && (te != null) && (te instanceof BattleArmor)) {
             toHit.addModifier(1, "battle armor target");
         }
-        
+
 
         //infantry squads are also hard to hit
-        if(!isAttackerInfantry && (null != te) 
-                && (te instanceof Infantry && !(te instanceof BattleArmor)) 
+        if(!isAttackerInfantry && (null != te)
+                && ((te instanceof Infantry) && !(te instanceof BattleArmor))
                 && ((Infantry)te).isSquad()) {
             toHit.addModifier(1, "infantry squad target");
         }
@@ -1225,7 +1225,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(2, "ejected MechWarrior target");
         }
 
-        
+
         // Indirect fire has a +1 mod
         if (isIndirect) {
             if(ae.getCrew().getOptions().booleanOption("oblique_attacker")) {
@@ -2267,7 +2267,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return "Infantry fast moved this turn and so can not shoot.";
             }
             // check for trying to fire field gun after moving
-            if (weapon.getLocation() == Infantry.LOC_FIELD_GUNS && (ae.moved != EntityMovementType.MOVE_NONE)) {
+            if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (ae.moved != EntityMovementType.MOVE_NONE)) {
                 return "Can't fire field guns in same turn as moving";
             }
             // check for mixing infantry and field gun attacks
@@ -2280,10 +2280,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() == attackerId) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-                    if (prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) && weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
+                    if (prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS)) {
                         return "Can't fire field guns and small arms at the same time.";
                     }
-                    if(weapon.getLocation() == Infantry.LOC_FIELD_GUNS && weaponId != prevAttack.getWeaponId()) {
+                    if((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (weaponId != prevAttack.getWeaponId())) {
                     	fieldGunWeight += prevWeapon.getType().getTonnage(ae);
                     }
                 }
@@ -2638,14 +2638,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return toHit.getDesc();
             }
         }
-        if ((ae instanceof Infantry) && isDoingInfantryAttack(game, ae)) {
-            return "Attacker is already performing an attack that must be the only attack";
-        }
 
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
         if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
-            toHit = Compute.getLegAttackBaseToHit(ae, te);
+            toHit = Compute.getLegAttackBaseToHit(ae, te, game);
 
             // Return if the attack is impossible.
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
@@ -2655,7 +2652,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return "Leg attack must be an unit's only attack, and there must not be multiple Leg Attacks.";
             }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
-            toHit = Compute.getSwarmMekBaseToHit(ae, te);
+            toHit = Compute.getSwarmMekBaseToHit(ae, te, game);
 
             // Return if the attack is impossible.
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
@@ -2781,25 +2778,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         return true;
-    }
-
-    private static boolean isDoingInfantryAttack(IGame game, Entity ae) {
-        for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
-            EntityAction ea = actions.nextElement();
-            if (ea instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) ea;
-                if (waa.getEntity(game).equals(ae)) {
-                    // return true if ae is already doing a leg or swarm attack
-                    if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
-                            Infantry.LEG_ATTACK) ||
-                            waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(
-                                    Infantry.SWARM_MEK)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     /**

@@ -85,7 +85,7 @@ public class BattleArmor extends Infantry {
      * the number of troopers of this squad, dead or alive
      */
     private int troopers = -1;
-    
+
     /**
      * The weight of a single trooper
      */
@@ -251,10 +251,10 @@ public class BattleArmor extends Infantry {
     public BattleArmor() {
         // Instantiate the superclass.
         super();
-        
+
         //BA are always one squad
         squadn = 1;
-        
+
         // All Battle Armor squads are Clan until specified otherwise.
         setTechLevel(TechConstants.T_CLAN_TW);
 
@@ -626,7 +626,7 @@ public class BattleArmor extends Infantry {
             initializeInternal(value, loop);
         }
     }
-    
+
     /**
      * Mounts the specified equipment in the specified location.
      */
@@ -674,7 +674,7 @@ public class BattleArmor extends Infantry {
             longStealthMod = 0;
             stealthName = name;
         }
-        
+
         // If the BA can swarm, they're anti-mek.
         if (Infantry.SWARM_MEK.equals(name)) {
             setAntiMek(true);
@@ -1271,7 +1271,7 @@ public class BattleArmor extends Infantry {
                 break;
         }
     }
-    
+
     public float getTrooperWeight() {
         return trooperWeight;
     }
@@ -1279,7 +1279,7 @@ public class BattleArmor extends Infantry {
     public void setTrooperWeight(float trooperWeight) {
         this.trooperWeight = trooperWeight;
     }
-    
+
     @Override
     public int getWeightClass() {
         return weightClass;
@@ -1679,5 +1679,12 @@ public class BattleArmor extends Infantry {
             }
         }
         return false;
+    }
+
+    @Override
+    public float getWeight() {
+        // this is for loading into transportes, for that purpose, each trooper
+        // weighs a ton
+        return troopers;
     }
 } // End public class BattleArmor extends Infantry implements Serializable

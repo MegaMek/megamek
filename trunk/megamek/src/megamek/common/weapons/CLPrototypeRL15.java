@@ -32,7 +32,6 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
         super();
         techLevel = TechConstants.T_IS_EXPERIMENTAL;
         name = "Rocket Launcher 15 (PP)";
-        ;
         setInternalName("CLRocketLauncher15Prototype");
         heat = 5;
         rackSize = 15;

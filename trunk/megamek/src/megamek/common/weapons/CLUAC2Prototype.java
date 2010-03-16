@@ -32,7 +32,7 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
      */
     public CLUAC2Prototype() {
         super();
-        name = "Ultra AC/2 (PP)";
+        name = "Ultra AC/2 (CP)";
         setInternalName("CLUltraAC2Prototype");
         heat = 1;
         damage = 2;

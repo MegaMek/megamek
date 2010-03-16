@@ -32,7 +32,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
      */
     public CLLB20XACPrototype() {
         super();
-        name = "LB 20-X AC (PP)";
+        name = "LB 20-X AC (CP)";
         setInternalName("CLLBXAC20Prototype");
         heat = 6;
         damage = 20;

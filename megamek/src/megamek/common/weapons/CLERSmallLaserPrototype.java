@@ -35,7 +35,7 @@ public class CLERSmallLaserPrototype extends LaserWeapon {
     public CLERSmallLaserPrototype() {
         super();
         techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        name = "ER Small Laser (PP)";
+        name = "ER Small Laser (CP)";
         setInternalName("CLERSmallLaserPrototype");
         heat = 2;
         damage = 3;

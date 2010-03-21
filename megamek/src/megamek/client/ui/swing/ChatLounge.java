@@ -111,11 +111,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private static final long serialVersionUID = 1454736776730903786L;
 
     private JButton butOptions;
-    
+
     private JTabbedPane panTabs;
     private JPanel panMain;
     private JPanel panMap;
-    
+
     /*Unit Configuration Panel*/
     private JPanel panUnitInfo;
     JButton butLoad;
@@ -125,7 +125,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private JButton butLoadList;
     private JButton butSaveList;
     private JButton butDeleteAll;
-    
+
     /*Unit Table*/
     JTable tableEntities;
     private JScrollPane scrEntities;
@@ -142,8 +142,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private JButton butChangeStart;
     private JTable tablePlayers;
     private JScrollPane scrPlayers;
-    private PlayerTableModel playerModel;   
-    
+    private PlayerTableModel playerModel;
+
     /*Map Settings Panel*/
     private MapSettings mapSettings;
     private JButton butConditions;
@@ -167,9 +167,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private JCheckBox chkIncludeGround;
     private JCheckBox chkIncludeSpace;
     private JButton butSpaceSize;
-    
+
     JPanel mapPreviewPanel;
-    MiniMap miniMap = null;   
+    MiniMap miniMap = null;
     JDialog gameBoardPreviewW;
     MiniMap gameBoardMap = null;
 
@@ -213,7 +213,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
         butCompact.addActionListener(this);
-        
+
         butDone.setText(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
         Font font = null;
         try {
@@ -371,7 +371,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         gridbag.setConstraints(butDeleteAll, c);
         panUnitInfo.add(butDeleteAll);
     }
-    
+
     /**
      * Sets up the player info (team, camo) panel
      */
@@ -423,15 +423,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 column.setPreferredWidth(100);
             } else if (i == PlayerTableModel.COL_TEAM) {
                 column.setPreferredWidth(5);
-            } else if (i == PlayerTableModel.COL_COST || i == PlayerTableModel.COL_START) {
+            } else if ((i == PlayerTableModel.COL_COST) || (i == PlayerTableModel.COL_START)) {
                 column.setPreferredWidth(50);
             } else {
                 column.setPreferredWidth(30);
             }
         }
-        
+
         tablePlayers.addMouseListener(new PlayerTableMouseAdapter());
-        
+
         scrPlayers = new JScrollPane(tablePlayers);
         scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -523,10 +523,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         refreshPlayerInfo();
     }
 
-    
+
     private void setupMainPanel() {
         setupMap();
-        
+
         panMain = new JPanel();
 
         // layout
@@ -543,7 +543,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridwidth = 1;
         gridbag.setConstraints(butOptions, c);
         panMain.add(butOptions);
-        
+
         c.fill = GridBagConstraints.VERTICAL;
         c.gridx = 1;
         c.gridy = 0;
@@ -595,35 +595,35 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridheight = 1;
         gridbag.setConstraints(scrPlayers, c);
         panMain.add(scrPlayers);
-  
+
         panTabs.add("Select Units", panMain); //$NON-NLS-1$
         panTabs.add("Select Map", panMap); //$NON-NLS-1$
     }
-    
+
     private void setupMap() {
-        
+
         panMap = new JPanel();
-     
+
         mapSettings = (MapSettings) clientgui.getClient().getMapSettings().clone();
-        
+
         randomMapDialog = new RandomMapDialog(clientgui.frame, this, clientgui.getClient(), mapSettings);
-        
+
         butConditions  = new JButton(Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
         butConditions.addActionListener(this);
-        
+
         butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
         butRandomMap.addActionListener(this);
-        
+
         chkIncludeGround  = new JCheckBox(Messages.getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
         chkIncludeGround.addActionListener(this);
-        
+
         chkIncludeSpace = new JCheckBox(Messages.getString("ChatLounge.IncludeSpace")); //$NON-NLS-1$
         chkIncludeSpace.addActionListener(this);
-        
+
         setupGroundMap();
         setupSpaceMap();
         refreshSpaceGround();
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panMap.setLayout(gridbag);
@@ -639,7 +639,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(butConditions, c);
         panMap.add(butConditions);
-        
+
         c.fill = GridBagConstraints.NONE;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -650,7 +650,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(butRandomMap, c);
         panMap.add(butRandomMap);
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
         c.weightx = 1.0;
@@ -662,7 +662,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(panGroundMap, c);
         panMap.add(panGroundMap);
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 0.25;
@@ -672,41 +672,41 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridheight = 1;
         gridbag.setConstraints(panSpaceMap, c);
         panMap.add(panSpaceMap);
-        
+
     }
-    
+
     /**
      * Sets up the ground map selection panel
      */
     private void setupGroundMap() {
-        
+
         panGroundMap = new JPanel();
         panGroundMap.setBorder(BorderFactory.createTitledBorder("Planetary Map"));
-        
+
         panMapButtons = new JPanel();
-        
+
         comboMapType = new JComboBox();
         setupMapChoice();
- 
+
         butMapSize = new JButton(Messages.getString("ChatLounge.MapSize")); //$NON-NLS-1$
         butMapSize.addActionListener(this);
-        
+
         buttonBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
         buttonBoardPreview.addActionListener(this);
-        
+
         butChange = new JButton("<<"); //$NON-NLS-1$
         butChange.addActionListener(this);
-        
+
         labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
         labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
-        
+
         lisBoardsSelected = new JList(new DefaultListModel());
         lisBoardsAvailable = new JList(new DefaultListModel());
         refreshBoardsSelected();
-        refreshBoardsAvailable();  
+        refreshBoardsAvailable();
         lisBoardsAvailable.addMouseListener(this);
         lisBoardsAvailable.addListSelectionListener(this);
-        
+
         chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
         chkRotateBoard.addActionListener(this);
 
@@ -714,7 +714,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panGroundMap.setLayout(gridbag);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -722,11 +722,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(chkIncludeGround, c);
         panGroundMap.add(chkIncludeGround);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -734,12 +734,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(comboMapType, c);
         panGroundMap.add(comboMapType);
-        
-        
+
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -747,11 +747,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(butMapSize, c);
         panGroundMap.add(butMapSize);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
@@ -759,11 +759,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(buttonBoardPreview, c);
         panGroundMap.add(buttonBoardPreview);
-        
+
         scrMapButtons = new JScrollPane(panMapButtons);
         refreshMapButtons();
         c.fill = GridBagConstraints.BOTH;
@@ -773,23 +773,23 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(scrMapButtons, c);
         panGroundMap.add(scrMapButtons);
-        
-        
+
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(labBoardsSelected, c);
         panGroundMap.add(labBoardsSelected);
-        
+
         scrBoardsSelected = new JScrollPane(lisBoardsSelected);
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
@@ -797,18 +797,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 1;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 3; 
+        c.gridheight = 3;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(scrBoardsSelected, c);
         panGroundMap.add(scrBoardsSelected);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridx = 2;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(butChange, c);
         panGroundMap.add(butChange);
@@ -819,11 +819,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 3;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(labBoardsAvailable, c);
         panGroundMap.add(labBoardsAvailable);
-        
+
         scrBoardsAvailable = new JScrollPane(lisBoardsAvailable);
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
@@ -831,7 +831,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 3;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 3; 
+        c.gridheight = 3;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(scrBoardsAvailable, c);
@@ -843,26 +843,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 4;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(chkRotateBoard, c);
         panGroundMap.add(chkRotateBoard);
-        
+
         mapPreviewPanel = new JPanel();
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridx = 4;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 3; 
+        c.gridheight = 3;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(mapPreviewPanel, c);
         panGroundMap.add(mapPreviewPanel);
-        
-        
-        
+
+
+
         try {
             miniMap = new MiniMap(mapPreviewPanel, null);
             //Set a default size for the minimap object to ensure it will have space on the screen to be drawn.
@@ -870,8 +870,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             miniMap.setZoom(2);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
-                            Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e, 
-                            Messages.getString("BoardEditor.FatalError"), 
+                            Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e,
+                            Messages.getString("BoardEditor.FatalError"),
                             JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
         }
         mapPreviewPanel.add(miniMap);
@@ -881,18 +881,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         gameBoardPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
                 GUIPreferences.getInstance().getMinimapPosY());
-        
+
         gameBoardPreviewW.setVisible(false);
         try {
             gameBoardMap = new MiniMap(gameBoardPreviewW, null);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, Messages
-                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, 
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e,
                                     Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             //this.dispose();
         }
         gameBoardPreviewW.add(gameBoardMap);
-        
+
         gameBoardPreviewW.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -900,15 +900,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
         });
     }
-    
+
     private void setupSpaceMap() {
-        
+
         panSpaceMap = new JPanel();
         panSpaceMap.setBorder(BorderFactory.createTitledBorder("Space Map"));
-        
+
         butSpaceSize = new JButton(Messages.getString("ChatLounge.MapSize"));
         butSpaceSize.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -921,11 +921,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(chkIncludeSpace, c);
         panSpaceMap.add(chkIncludeSpace);
-        
+
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 1.0;
@@ -933,13 +933,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 0;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 1; 
+        c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(butSpaceSize, c);
         panSpaceMap.add(butSpaceSize);
-        
+
     }
-    
+
     /**
      * Set up the map chooser panel
      */
@@ -948,7 +948,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         comboMapType.addItem(MapSettings
                 .getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
         comboMapType.addActionListener(this);
-        refreshMapChoice();  
+        refreshMapChoice();
     }
 
     private void refreshMapChoice() {
@@ -958,7 +958,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         comboMapType.addActionListener(this);
     }
-    
+
     private void refreshSpaceGround() {
         chkIncludeGround.removeActionListener(this);
         chkIncludeSpace.removeActionListener(this);
@@ -984,7 +984,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     .next());
         }
     }
-        
+
     private void refreshBoardsSelected() {
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
@@ -994,7 +994,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         lisBoardsSelected.setSelectedIndex(0);
     }
-    
+
     /**
      * Fills the Map Buttons scroll pane with the appropriate amount of buttons
      * in the appropriate layout
@@ -1013,13 +1013,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 panMapButtons.add(button);
             }
         }
-        
+
         scrMapButtons.validate();
-        
+
         labBoardsAvailable.setText(mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " " + Messages.getString("BoardSelectionDialog.mapsAvailable"));
-        
+
     }
-    
+
     public void previewMapsheet() {
         String boardName = (String) lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
@@ -1031,7 +1031,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             miniMap.setBoard(board);
         }
     }
-    
+
     public void previewGameBoard() {
         MapSettings temp = mapSettings;
         temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
@@ -1055,15 +1055,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
         }
-        
+
         IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp
                 .getMapWidth(), temp.getMapHeight(), sheetBoards, temp.getMedium());
         gameBoardMap.setBoard(newBoard);
         gameBoardPreviewW.setVisible(true);
-       
+
     }
 
-    
+
 
     /**
      * Refreshes the game settings with new info from the client
@@ -1171,7 +1171,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         return value;
 
     }
-    
+
     public static String formatPilotHTML(Pilot pilot, boolean blindDrop) {
 
         int crewAdvCount = pilot.countOptions(PilotOptions.LVL3_ADVANTAGES);
@@ -1272,14 +1272,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         return value;
 
     }
-    
+
     public static String formatUnitCompact(Entity entity, boolean blindDrop) {
 
         String value = "";
         // Reset the tree strings.
         String strTreeSet = ""; //$NON-NLS-1$
         String strTreeView = ""; //$NON-NLS-1$
-        
+
         if(blindDrop) {
             if (entity instanceof Infantry) {
                 value += Messages.getString("ChatLounge.0"); //$NON-NLS-1$
@@ -1319,7 +1319,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
 
         value += strTreeSet + entity.getShortName() + strTreeView;
-        
+
         if (entity.isOffBoard()) {
             value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         } else if (entity.getDeployRound() > 0) {
@@ -1604,7 +1604,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             psd.setVisible(true);
         }
     }
-    
+
     /**
      * Pop up the view mech dialog
      */
@@ -1832,7 +1832,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else if (ev.getSource().equals(tableEntities)) {
             customizeMech();
         } else if (ev.getSource().equals(tablePlayers)) {
-                customizePlayer();
+            customizePlayer();
         } else if (ev.getSource().equals(butDeleteAll)) {
             // Build a Vector of this player's entities.
             ArrayList<Entity> currentUnits = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false);
@@ -1916,9 +1916,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else if (ev.getSource().equals(butMapSize) || ev.getSource().equals(butSpaceSize)) {
             MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui);
             mdd.setVisible(true);
-        } else if(ev.getSource().equals(chkRotateBoard) && lisBoardsAvailable.getSelectedIndex() != -1) {
+        } else if(ev.getSource().equals(chkRotateBoard) && (lisBoardsAvailable.getSelectedIndex() != -1)) {
             previewMapsheet();
-        } else if (ev.getSource().equals(comboMapType)) {     
+        } else if (ev.getSource().equals(comboMapType)) {
             mapSettings.setMedium(comboMapType.getSelectedIndex());
             clientgui.getClient().sendMapSettings(mapSettings);
         }
@@ -1933,7 +1933,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             clientgui.getClient().sendMapDimensions(mapSettings);
         }
-        else if (ev.getSource().equals(chkIncludeSpace)) {           
+        else if (ev.getSource().equals(chkIncludeSpace)) {
             if(chkIncludeSpace.isSelected()) {
                 mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
                 //set default size for space maps
@@ -1945,7 +1945,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             clientgui.getClient().sendMapDimensions(mapSettings);
         }
     }
-    
+
     public void mouseClicked(MouseEvent arg0) {
         if ((arg0.getClickCount() == 1) && arg0.getSource().equals(lisBoardsAvailable)) {
             previewMapsheet();
@@ -1956,7 +1956,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
         }
     }
-    
+
     public void mouseEntered(MouseEvent arg0) {
         // ignore
     }
@@ -1972,7 +1972,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public void mouseReleased(MouseEvent arg0) {
         //ignore
     }
-    
+
     /**
      * Updates to show the map settings that have, presumably, just been sent by
      * the server.
@@ -2214,7 +2214,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             return players.get(row);
         }
     }
-    
+
     public class PlayerTableMouseAdapter extends MouseInputAdapter implements ActionListener {
 
         @Override
@@ -2231,7 +2231,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
             }
         }
-        
+
         @Override
         public void mousePressed(MouseEvent e) {
             maybeShowPopup(e);
@@ -2251,7 +2251,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
                 // JMenu menu = null;
-                menuItem = new JMenuItem("Configure unit...");
+                menuItem = new JMenuItem("Configure ...");
                 menuItem.setActionCommand("CONFIGURE|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
@@ -2265,7 +2265,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             String command = st.nextToken();
             if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizePlayer();
-            } 
+            }
         }
 
     }
@@ -2410,9 +2410,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         } else {
                             setPortrait(entity.crew);
                         }
-                        setToolTipText(formatPilotTooltip(entity.crew, 
-                                clientgui.getClient().game.getOptions().booleanOption("command_init"), 
-                                clientgui.getClient().game.getOptions().booleanOption("individual_initiative"), 
+                        setToolTipText(formatPilotTooltip(entity.crew,
+                                clientgui.getClient().game.getOptions().booleanOption("command_init"),
+                                clientgui.getClient().game.getOptions().booleanOption("individual_initiative"),
                                 clientgui.getClient().game.getOptions().booleanOption("toughness")));
                     }
                 }
@@ -2613,11 +2613,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             lblImage.setText("<html><font size='2' color='" + color + "'>" + s + "</font></html>");
         }
-        
+
         public void clearImage() {
             lblImage.setIcon(null);
         }
-        
+
         public void setImage(Image img) {
             lblImage.setIcon(new ImageIcon(img));
         }

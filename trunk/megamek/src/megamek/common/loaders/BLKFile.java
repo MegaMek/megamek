@@ -140,7 +140,7 @@ public class BLKFile {
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 5")) {
             e.setTechLevel(TechConstants.T_CLAN_UNOFFICIAL);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
-            e.setTechLevel(TechConstants.T_IS_ADVANCED);
+            e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis) Experimental")) {
             e.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
@@ -149,7 +149,7 @@ public class BLKFile {
             e.setTechLevel(TechConstants.T_IS_UNOFFICIAL);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
-            e.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+            e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis) Experimental")) {
             e.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);

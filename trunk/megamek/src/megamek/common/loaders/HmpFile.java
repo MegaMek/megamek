@@ -33,8 +33,8 @@ import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -478,11 +478,11 @@ implements IMechLoader
                 }
             } else if ((techType == TechType.MIXED)
                     && (mixedBaseTechType == TechType.INNER_SPHERE)) {
-                mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
                 mech.setMixedTech(true);
             } else if ((techType == TechType.MIXED)
                     && (mixedBaseTechType == TechType.CLAN)) {
-                mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
                 mech.setMixedTech(true);
             } else {
                 throw new EntityLoadingException("Unsupported tech base: "

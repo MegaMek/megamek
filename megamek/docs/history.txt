@@ -9,6 +9,7 @@ v0.35.14-dev (SVN)
 + Fixed naming issues with Prototype weapons
 + Klondike Mech images added (thanks Ladob)
 + A whole lot of units was missing
++ Fix Grenadier Hunter Killer Narc variant
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

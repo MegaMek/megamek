@@ -4461,8 +4461,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case HYDROFOIL:
                 return "Hydrofoil";
             case SUBMARINE:
-            case INF_UMU:
                 return "Submarine";
+            case INF_UMU:
+                return "UMU";
             case INF_LEG:
                 return "Leg";
             case INF_MOTORIZED:

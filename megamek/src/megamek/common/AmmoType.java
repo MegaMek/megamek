@@ -5031,7 +5031,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_NARC;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR).or(F_ENCUMBERING);
-        ammo.shots = 2;
+        ammo.shots = 1;
         ammo.explosive = false;
         ammo.bv = 0;
         ammo.kgPerShot = 10;

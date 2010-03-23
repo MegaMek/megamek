@@ -21,7 +21,7 @@
 /**
  *
  * @author  taharqa
- * @version 
+ * @version
  */
 package megamek.common.loaders;
 
@@ -58,7 +58,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find name block.");
         }
         a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
             a.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             a.setModel("");
@@ -67,11 +67,11 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
-        
+
         setTechLevel(a);
 
         if (!dataFile.exists("tonnage")) {
-            throw new EntityLoadingException("Could not find weight block.");
+            throw new EntityLoadingException("Could not find tonnage block.");
         }
         a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
@@ -86,7 +86,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
         if (!dataFile.exists("motion_type")) {
-            throw new EntityLoadingException("Could not find movement block.");
+            throw new EntityLoadingException("Could not find motion_type block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
@@ -102,17 +102,17 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
 
         // figure out structural integrity
         if (!dataFile.exists("structural_integrity")) {
-            throw new EntityLoadingException("Could not find structual integrity block.");
+            throw new EntityLoadingException("Could not find structual_integrity block.");
         }
         a.set0SI(dataFile.getDataAsInt("structural_integrity")[0]);
 
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
-            throw new EntityLoadingException("Could not find weight block.");
+            throw new EntityLoadingException("Could not find heatsinks block.");
         }
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (!dataFile.exists("sink_type")) {
-            throw new EntityLoadingException("Could not find weight block.");
+            throw new EntityLoadingException("Could not find sink_type block.");
         }
         a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
 
@@ -125,7 +125,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         // figure out engine stuff
         // not done for small craft and up
         if (!dataFile.exists("SafeThrust")) {
-            throw new EntityLoadingException("Could not find Safe Thrust block.");
+            throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
 

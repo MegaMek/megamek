@@ -267,8 +267,8 @@ public class MtfFile implements IMechLoader {
                     .equals("Mixed (IS Chassis)")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 3:
-                    mech.setTechLevel(TechConstants.T_IS_ADVANCED);
-                    break;
+                    throw new EntityLoadingException(
+                            "Mixed tech units must be experimental");
                 case 4:
                     mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
                     break;
@@ -285,8 +285,8 @@ public class MtfFile implements IMechLoader {
                     "Mixed (Clan Chassis)")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                 case 3:
-                    mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
-                    break;
+                    throw new EntityLoadingException(
+                            "Mixed tech units must be experimental");
                 case 4:
                     mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
                     break;

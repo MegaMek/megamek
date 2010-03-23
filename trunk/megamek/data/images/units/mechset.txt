@@ -471,7 +471,7 @@ exact "J. Edgar Light Hover Tank II" "jedgar.gif"
 chassis "J-27 Ordance Transport" "j27t.gif
 #chassis "Jagd Tiger" " .gif"
 chassis "Jeep" "jeep.gif"
-chassis "JES Tactical Missile Carrier" "jes.gif"
+chassis "JES I Tactical Missile Carrier" "jes.gif"
 #chassis "JESII Strategic Missile  Carrier" " .gif"
 #chassis "Jet Sled" " .gif"
 #chassis "Joust Medium Tank" " .gif"

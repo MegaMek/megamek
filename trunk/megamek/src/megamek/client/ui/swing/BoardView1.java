@@ -2985,10 +2985,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
             if (secondaryPos == -1) {
-                Coords pos = entity.getPosition();
-                if (pos == null) {
-                    System.out.println("argh");
-                }
                 tempBounds.setLocation(getHexLocation(entity.getPosition()));
             } else {
                 tempBounds.setLocation(getHexLocation(entity.getSecondaryPositions().get(secondaryPos)));

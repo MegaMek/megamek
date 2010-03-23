@@ -1757,6 +1757,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = BattleArmor.SIMPLE_CAMO;
         misc.setInternalName(BattleArmor.SIMPLE_CAMO);
+        misc.addLookupName("Simple Camo");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;

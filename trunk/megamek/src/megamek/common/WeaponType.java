@@ -851,6 +851,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMRM3());
         EquipmentType.addType(new ISMRM4());
         EquipmentType.addType(new ISMRM5());
+        EquipmentType.addType(new ISMRM1OS());
+        EquipmentType.addType(new ISMRM2OS());
+        EquipmentType.addType(new ISMRM3OS());
+        EquipmentType.addType(new ISMRM4OS());
+        EquipmentType.addType(new ISMRM5OS());
         EquipmentType.addType(new ISMRM10());
         EquipmentType.addType(new ISMRM20());
         EquipmentType.addType(new ISMRM30());

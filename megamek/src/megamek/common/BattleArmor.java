@@ -177,7 +177,7 @@ public class BattleArmor extends Infantry {
     /**
      * The internal name for Simple Camo equipment.
      */
-    public static final String SIMPLE_CAMO = "Simple Camo";
+    public static final String SIMPLE_CAMO = "Camo System";
 
     /**
      * The internal name for Single-Hex ECM equipment.

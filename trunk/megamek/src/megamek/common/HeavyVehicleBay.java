@@ -48,6 +48,7 @@ public final class HeavyVehicleBay extends Bay {
         this.totalSpace = space;
         this.currentSpace = space;
         this.doors = doors;
+        this.doorsNext = doors;
     }
     
  

@@ -987,6 +987,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setJoinEnabled(false);
         setTakeOffEnabled(false);
         setVTakeOffEnabled(false);
+        setLowerEnabled(false);
+        setRecklessEnabled(false);
+        setEvadeAeroEnabled(false);
+        setEvadeEnabled(false);
+        setGoProneEnabled(false);
+        butClimbMode.setEnabled(false);
+        butDigIn.setEnabled(false);
     }
 
     /**

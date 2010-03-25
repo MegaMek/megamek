@@ -15,6 +15,14 @@ v0.35.14-dev (SVN)
 + Atmospheric drops
 + Bug: airborne aeros getting hit by crashing units
 + Bug: dropping units on atmospheric map should exit the game when they land
++ falling damage for infantry and BattleArmor
++ check building collapse on assault drop
++ Bug: bay doors reseting to 1 after first drop
++ Bug: drop is from starting position rather than current step position
++ disable Select All button in choice dialog if more choices are available than allowed
++ do not auto-select the first choice in choice dialog
++ Bug: some movement buttons are not disabled by MovementDisplay#disableButtons()
+
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

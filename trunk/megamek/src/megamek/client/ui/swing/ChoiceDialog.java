@@ -150,7 +150,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
             else {
                 checkboxes = new JCheckBox[choices.length];
                 for (int loop = 0; loop < choices.length; loop++) {
-                    checkboxes[loop] = new JCheckBox(choices[loop], loop == 0);
+                    checkboxes[loop] = new JCheckBox(choices[loop], false);
                     checkboxes[loop].addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent evt) {
                             checkDisableChoices();
@@ -167,13 +167,16 @@ public class ChoiceDialog extends JDialog implements ActionListener {
                 JPanel panAllButtons = new JPanel(grid);
                 panAllButtons.add(butSelectAll);
                 butSelectAll.addActionListener(this);
+                if(maxChoices != -1 && maxChoices < choices.length) {
+                    butSelectAll.setEnabled(false);
+                }
                 panAllButtons.add(butClearAll);
                 butClearAll.addActionListener(this);
                 getContentPane().add(panAllButtons, center);
             }
 
         } // End have-choices
-
+        
         // Allow the player to confirm or abort the choice.
         setupButtons();
         c.gridy++;

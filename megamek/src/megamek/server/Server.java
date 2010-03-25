@@ -3342,48 +3342,77 @@ public class Server implements Runnable {
         // The unloaded unit is no longer being carried.
         drop.setTransportId(Entity.NONE);
         
-        //The rules are a little unclear on this, but when using the ground map
-        //this results in all dropped units in the same hex, which can cause a problem
-        //when landing. Since dropships take up the surrounding six hexes when grounded,
-        //I am going to allow units in the six surrounding hexes of the dropship. 
-        //Units will deploy first in the central hex and then clockwise around the dropper.
-        //do not deploy into a hex if the ground hex is dangerous (water or magma).
+        //OK accordind to Welshman's pending ruling, when on the ground map
+        //units should be deployed in the ring two hexes away from the dropshp
+        //optimally, we should let people choose here, but that would be complicated
+        //so for now I am just going to distribute them. I will give each unit the first 
+        //emptiest hex that has no water or magma in it.
+        //I will start the circle based on the facing of the dropper
+        //Spheroid - facing
+        //Aerodyne - opposite of facing
+        //http://www.classicbattletech.com/forums/index.php?topic=65600.msg1568089#new
         if(game.getBoard().onGround() && null != curPos) {
             boolean selected = false;
             int count = 0;
             int max = 0;
+            int facing = entity.getFacing();
+            if(entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                //no real rule for this but it seems to make sense that units would drop behind an
+                //aerodyne rather than in front of it
+                facing = (facing + 3) % 6;
+            }
+            boolean checkDanger = true;
             while(!selected) {
-                count = 0;
-                for(Entity unit : game.getEntitiesVector(curPos)) {
-                    if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
-                        count++;
-                    }
-                }
-                if(count <= max) {
-                    selected = true;
-                }
-                else  {
-                    for(int i = 0; i < 6; i++) {
-                        Coords newPos = curPos.translated(i);
-                        count = 0;
-                        if(game.getBoard().contains(newPos)) {
-                            for(Entity unit : game.getEntitiesVector(newPos)) {
-                                if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
-                                    count++;
-                                }
+                //we can get caught in an infinite loop if all available hexes are dangerous, so check for this              
+                boolean allDanger = true;
+                for(int i = 0; i < 6; i++) {
+                    int dir = (facing + i) % 6;
+                    Coords newPos = curPos.translated(dir, 2);
+                    count = 0;
+                    if(game.getBoard().contains(newPos)) {
+                        IHex newHex = game.getBoard().getHex(newPos);
+                        Building bldg = game.getBoard().getBuildingAt(newPos);
+                        boolean danger = newHex.containsTerrain(Terrains.WATER) || newHex.containsTerrain(Terrains.MAGMA) || null != bldg;
+                        for(Entity unit : game.getEntitiesVector(newPos)) {
+                            if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
+                                count++;
                             }
-                            IHex hex = game.getBoard().getHex(newPos);
-                            if(count == 0 && !hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.MAGMA)) {
-                                curPos = newPos;
-                                selected = true;
-                                break;
+                        }
+                        if(count <= max && (!danger || !checkDanger)) {
+                            selected = true;
+                            curPos = newPos;
+                            break;
+                        }
+                        if(!danger) {
+                            allDanger = false;
+                        }
+                    }              
+                    newPos = newPos.translated((dir + 2) % 6);
+                    count = 0;
+                    if(game.getBoard().contains(newPos)) {
+                        IHex newHex = game.getBoard().getHex(newPos);
+                        Building bldg = game.getBoard().getBuildingAt(newPos);
+                        boolean danger = newHex.containsTerrain(Terrains.WATER) || newHex.containsTerrain(Terrains.MAGMA) || null != bldg;
+                        for(Entity unit : game.getEntitiesVector(newPos)) {
+                            if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
+                                count++;
                             }
+                        }
+                        if(count <= max && (!danger || !checkDanger)) {
+                            selected = true;
+                            curPos = newPos;
+                            break;
+                        }
+                        if(!danger) {
+                            allDanger = false;
                         }
                     }
                 }
-                //if we got here then nothing was selected, increment the maximum other units allowed 
-                //and do it again
-                max++;
+                if(allDanger && checkDanger) {
+                    checkDanger = false;
+                } else {
+                    max++;
+                }
             }
         }
         

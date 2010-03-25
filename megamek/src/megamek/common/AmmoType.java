@@ -7293,6 +7293,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 50;
         ammo.cost = 30000;
+        ammo.ammoRatio = 18;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
@@ -7312,6 +7313,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 40;
         ammo.cost = 25000;
         ammo.capital = true;
+        ammo.ammoRatio = 15;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
@@ -7329,6 +7331,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 62;
         ammo.cost = 19000;
+        ammo.ammoRatio = 12;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
@@ -7347,6 +7350,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 84;
         ammo.cost = 15000;
+        ammo.ammoRatio = 10;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 

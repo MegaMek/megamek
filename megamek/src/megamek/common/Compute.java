@@ -796,7 +796,7 @@ public class Compute {
          * Extreme then C3 uses the next highest range bracket, i.e. medium
          * instead of short.
          */
-        if (range == RangeType.RANGE_EXTREME) {
+        if (range == RangeType.RANGE_EXTREME && c3range < range) {
             c3range++;
         }
 

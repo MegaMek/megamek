@@ -25,6 +25,7 @@ v0.35.14-dev (SVN)
 + combat drop rolls failed by more than 7 mean instant death
 + Bug 2970152: Loading infantry from MUL results in 0 troopers
 + Infantry Squads had wrong images linked
++ dropping units on ground map should be in the ring two hexes away from dropship
 
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)

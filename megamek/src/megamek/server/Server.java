@@ -14414,7 +14414,7 @@ public class Server implements Runnable {
                 // example...
                 continue;
             }
-            if (entity.doomedInAtmosphere()) {
+            if (entity.doomedInAtmosphere() && entity.getAltitude() == 0) {
                 r = new Report(6016);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -24970,8 +24970,23 @@ public class Server implements Runnable {
      */
     public void doAssaultDrop(Entity entity) {
         
+        Report r = new Report(2380);
+        
         //whatever else happens, this entity is on the ground now
         entity.setAltitude(0);
+        
+        if(game.getBoard().inAtmosphere()) {
+            //then just remove the entity
+            //TODO: for this and when the unit scatters off the board, we should really still roll for a successful
+            //landing and apply damage before we remove
+            r = new Report(2388);
+            addReport(r);
+            r.subject = entity.getId();
+            r.add(entity.getDisplayName(), true);
+            game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+            return;
+        }
+        
         
         PilotingRollData psr;
         if (entity instanceof Mech) {
@@ -24981,7 +24996,6 @@ public class Server implements Runnable {
         }
         int roll = Compute.d6(2);
         // check for a safe landing
-        Report r = new Report(2380);
         r.subject = entity.getId();
         r.add(entity.getDisplayName(), true);
         r.add(psr.getValueAsString());
@@ -25002,7 +25016,7 @@ public class Server implements Runnable {
             if ((fallHeight >= 5) || !game.getBoard().contains(c)) {
                 r = new Report(2386);
                 addReport(r);
-                game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+                game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 return;
             }
             entity.setPosition(c);

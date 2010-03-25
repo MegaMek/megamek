@@ -28,6 +28,7 @@ v0.35.14-dev (SVN)
 + dropping units on ground map should be in the ring two hexes away from dropship
 + Bug 2972075: (Aero) S-A Fire range constant error
 + Bug 2878964: active probe errata
++ corrected sub-cap missile data
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

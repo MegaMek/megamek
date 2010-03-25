@@ -25037,6 +25037,14 @@ public class Server implements Runnable {
         
         if (roll < psr.getValue()) {
             int fallHeight = psr.getValue() - roll;
+            
+            //if you fail by more than 7, you automatically fail
+            if(fallHeight > 7) {
+                addReport(destroyEntity(entity, "failed assault drop", false, false));
+                entityUpdate(entity.getId());
+                return;
+            }
+            
             // determine where we really land
             int distance = Compute.d6(fallHeight);
             Coords c = Compute.scatterAssaultDrop(entity.getPosition(), fallHeight);

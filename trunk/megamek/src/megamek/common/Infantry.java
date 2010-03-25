@@ -481,7 +481,9 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public void setInternal(int val, int loc) {
         super.setInternal(val, loc);
-        men = val;
+        if(loc == LOC_INFANTRY) {
+            men = val;
+        }
     }
 
     /**

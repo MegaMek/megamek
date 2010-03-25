@@ -1156,7 +1156,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     minAlt = 1;
                 }
                 // if sensors are damaged then, one higher
-                if ((this instanceof Aero) && ((Aero) this).getSensorHits() > 0) {
+                if ((this instanceof Aero) && (((Aero) this).getSensorHits() > 0)) {
                     minAlt++;
                 }
                 break;
@@ -3512,13 +3512,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberBonus + quirkBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) || (m.getType()).getInternalName().equals(Sensor.WATCHDOG) || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP))) {
+                if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP) || (m.getType()).getInternalName().equals(Sensor.WATCHDOG)) {
                     return 5 + cyberBonus + quirkBonus;
                 }
-                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) || m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
+                if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP) || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP)) || (m.getType().getInternalName().equals(Sensor.ISBALIGHT_AP))) {
                     return 3 + cyberBonus + quirkBonus;
                 }
-                if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
+                if (m.getType().getInternalName().equals(Sensor.ISIMPROVED) || (m.getType().getInternalName().equals(Sensor.CLIMPROVED))) {
                     return 2 + cyberBonus + quirkBonus;
                 }
                 return 4 + cyberBonus + quirkBonus;// everthing else should be
@@ -4105,11 +4105,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (hasActiveBlueShield()) {
             blueShieldRounds++;
         }
-        
+
         //for dropping troops, check to see if they are going to land
         //this turn, if so, then set their assault drop status to true
-        if(isAirborne() && !(this instanceof Aero) 
-                && getAltitude() <= game.getPlanetaryConditions().getDropRate()) {
+        if(isAirborne() && !(this instanceof Aero)
+                && (getAltitude() <= game.getPlanetaryConditions().getDropRate())) {
             setAssaultDropInProgress(true);
         }
 
@@ -5616,9 +5616,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // I should only add entities in bays that are functional
         for (Transporter next : transports) {
-            if ((next instanceof Bay) && ((Bay)next).getDoors() > 0) {
+            if ((next instanceof Bay) && (((Bay)next).getDoors() > 0)) {
                 Bay nextbay = (Bay) next;
-                for (Entity e : nextbay.getDroppableUnits()) {                   
+                for (Entity e : nextbay.getDroppableUnits()) {
                     result.addElement(e);
                 }
             }
@@ -5627,7 +5627,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Return the list.
         return result;
     }
-    
+
     public Bay getLoadedBay(int bayID) {
 
         Vector<Bay> bays = getFighterBays();
@@ -8870,7 +8870,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean isAirborne() {
-        return getAltitude() > 0 || (getMovementMode() == EntityMovementMode.AERODYNE) || (getMovementMode() == EntityMovementMode.SPHEROID);
+        return (getAltitude() > 0) || (getMovementMode() == EntityMovementMode.AERODYNE) || (getMovementMode() == EntityMovementMode.SPHEROID);
     }
 
     /**
@@ -9226,7 +9226,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getBlueShieldRounds() {
         return blueShieldRounds;
     }
-    
+
     public boolean isDropping() {
         return isAirborne() && !(this instanceof Aero);
     }

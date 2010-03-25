@@ -14,6 +14,7 @@ v0.35.14-dev (SVN)
 + Changed how the seed is used by the Hex Tileset to improve 'randomness' of tile images.
 + Atmospheric drops
 + Bug: airborne aeros getting hit by crashing units
++ Bug: dropping units on atmospheric map should exit the game when they land
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

@@ -48,7 +48,7 @@ public class MantaRayWeapon extends SubCapitalMissileWeapon {
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 200.0f;
+        this.tonnage = 160.0f;
         this.bv = 396;
         this.cost = 150000;
         this.shortAV = 5;

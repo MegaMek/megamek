@@ -48,7 +48,7 @@ public class StingrayWeapon extends SubCapitalMissileWeapon {
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 125.0f;
+        this.tonnage = 120.0f;
         this.bv = 496;
         this.cost = 85000;
         this.shortAV = 3.5;

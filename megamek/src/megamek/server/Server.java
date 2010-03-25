@@ -3336,13 +3336,11 @@ public class Server implements Runnable {
 
     }
     
-    public void dropUnit(Entity drop, Entity entity, int altitude) {
+    public void dropUnit(Entity drop, Entity entity, Coords curPos, int altitude) {
      // Unload the unit.
         entity.unload(drop);
         // The unloaded unit is no longer being carried.
         drop.setTransportId(Entity.NONE);
-
-        Coords curPos = entity.getPosition();
         
         //The rules are a little unclear on this, but when using the ground map
         //this results in all dropped units in the same hex, which can cause a problem
@@ -5171,7 +5169,7 @@ public class Server implements Runnable {
                                 currentBay.destroyDoorNext();
                             }
                             Entity drop = game.getEntity(unitId);
-                            dropUnit(drop, entity, step.getAltitude());
+                            dropUnit(drop, entity, curPos, step.getAltitude());
                         }
                     }
                     // now apply any damage to bay doors
@@ -20275,6 +20273,23 @@ public class Server implements Runnable {
 
         // calculate damage for hitting the surface
         int damage = (int) Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
+        //different rules (pg. 151 of TW) for battle armor and infantry
+        if(entity instanceof Infantry) {
+            damage = (int)Math.ceil(damageHeight / 2.0);
+            //no damage for fall from less than 2 levels
+            if(damageHeight < 2) {
+                damage = 0;
+            }
+            if(!(entity instanceof BattleArmor)) {
+                int dice = 3;
+                if(entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
+                    dice = 2;
+                } else if(entity.getMovementMode() == EntityMovementMode.INF_JUMP || ((Infantry)entity).isMechanized()) {
+                    dice = 1;
+                }
+                damage = damage * Compute.d6(dice);
+            }
+        }
         // calculate damage for hitting the ground, but only if we actually fell
         // into water
         // if we fell onto the water surface, that damage is halved.
@@ -20356,14 +20371,27 @@ public class Server implements Runnable {
         }
 
         // standard damage loop
-        while (damage > 0) {
-            int cluster = Math.min(5, damage);
-            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
-            hit.makeFallDamage(true);
-            vPhaseReport.addAll(damageEntity(entity, hit, cluster));
-            damage -= cluster;
+        if(entity instanceof Infantry && damage > 0) {
+            if(entity instanceof BattleArmor) {
+                for (int i = 1; i < entity.locations(); i++) {
+                    HitData h = new HitData(i);
+                    vPhaseReport.addAll(damageEntity(entity, h, damage));
+                    addNewLines();
+                }
+            } else {
+                HitData h = new HitData(Infantry.LOC_INFANTRY);
+                vPhaseReport.addAll(damageEntity(entity, h, damage));
+            }
+        } else {       
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
+                hit.makeFallDamage(true);
+                vPhaseReport.addAll(damageEntity(entity, hit, cluster));
+                damage -= cluster;
+            }
         }
-
+        
         // check for location exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false, -waterDepth));
 
@@ -24963,7 +24991,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * resolve an assault drop
+     * resolve the landing of an assault drop
      *
      * @param entity
      *            the <code>Entity</code> for which to resolve it
@@ -24975,10 +25003,30 @@ public class Server implements Runnable {
         //whatever else happens, this entity is on the ground now
         entity.setAltitude(0);
         
+        
+        PilotingRollData psr;
+        if (entity instanceof Protomech || entity instanceof BattleArmor) {
+            psr = new PilotingRollData(entity.getId(), 5, "landing assault drop");
+          
+        } else {
+            psr = entity.getBasePilotingRoll();
+        }
+        int roll = Compute.d6(2);
+        // check for a safe landing
+        addNewLines();
+        r.subject = entity.getId();
+        r.add(entity.getDisplayName(), true);
+        r.add(psr.getValueAsString());
+        r.add(roll);
+        r.newlines = 1;
+        r.choose(roll >= psr.getValue());
+        addReport(r);
+        
         if(game.getBoard().inAtmosphere()) {
             //then just remove the entity
-            //TODO: for this and when the unit scatters off the board, we should really still roll for a successful
-            //landing and apply damage before we remove
+            //TODO: for this and when the unit scatters off the board, we should really still apply damage 
+            //before we remove, but this causes all kinds of problems for doEntityFallsInto
+            //and related methods which expect a coord on the board - need to make those more robust
             r = new Report(2388);
             addReport(r);
             r.subject = entity.getId();
@@ -24987,21 +25035,6 @@ public class Server implements Runnable {
             return;
         }
         
-        
-        PilotingRollData psr;
-        if (entity instanceof Mech) {
-            psr = entity.getBasePilotingRoll();
-        } else {
-            psr = new PilotingRollData(entity.getId(), 4, "landing assault drop");
-        }
-        int roll = Compute.d6(2);
-        // check for a safe landing
-        r.subject = entity.getId();
-        r.add(entity.getDisplayName(), true);
-        r.add(psr.getValueAsString());
-        r.add(roll);
-        r.choose(roll >= psr.getValue());
-        addReport(r);
         if (roll < psr.getValue()) {
             int fallHeight = psr.getValue() - roll;
             // determine where we really land
@@ -25013,7 +25046,7 @@ public class Server implements Runnable {
             r.indent(3);
             r.newlines = 0;
             addReport(r);
-            if ((fallHeight >= 5) || !game.getBoard().contains(c)) {
+            if (!game.getBoard().contains(c)) {
                 r = new Report(2386);
                 addReport(r);
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
@@ -25022,24 +25055,19 @@ public class Server implements Runnable {
             entity.setPosition(c);
 
             // do fall damage
-            if ((entity instanceof Mech) || (entity instanceof Protomech)) {
-                entity.setElevation(fallHeight);
-                addReport(doEntityFallsInto(entity, c, c, psr, true));
-            } else if (entity instanceof BattleArmor) {
-                for (int i = 1; i < entity.locations(); i++) {
-                    HitData h = new HitData(i);
-                    addReport(damageEntity(entity, h, Compute.d6(fallHeight)));
-                    addNewLines();
-                }
-            } else if (entity instanceof Infantry) {
-                HitData h = new HitData(Infantry.LOC_INFANTRY);
-                addReport(damageEntity(entity, h, 1));
-                addNewLines();
-            }
+            entity.setElevation(fallHeight);
+            addReport(doEntityFallsInto(entity, c, c, psr, true));
         }
         // set entity to expected elevation
         IHex hex = game.getBoard().getHex(entity.getPosition());
         entity.setElevation(entity.elevationOccupied(hex) - hex.floor());
+        
+        Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
+        if (bldg != null) {
+            //whoops we step on the roof
+            checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
+        }
+        
         // finally, check for any stacking violations
         Entity violated = Compute.stackingViolation(game, entity, entity.getPosition(), null);
         if (violated != null) {

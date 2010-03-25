@@ -22,6 +22,7 @@ v0.35.14-dev (SVN)
 + disable Select All button in choice dialog if more choices are available than allowed
 + do not auto-select the first choice in choice dialog
 + Bug: some movement buttons are not disabled by MovementDisplay#disableButtons()
++ combat drop rolls failed by more than 7 mean instant death
 
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)

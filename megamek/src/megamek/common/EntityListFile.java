@@ -141,7 +141,8 @@ public class EntityListFile {
         for (int loc = 0; loc < entity.locations(); loc++) {
 
             // Record destroyed locations.
-            if (!(entity instanceof Aero) && entity.getOInternal(loc) != IArmorState.ARMOR_NA
+            if (!(entity instanceof Aero) && !(entity instanceof Infantry && !(entity instanceof BattleArmor)) 
+                    && entity.getOInternal(loc) != IArmorState.ARMOR_NA
                     && entity.getInternal(loc) <= 0) {
                 isDestroyed = true;
             }

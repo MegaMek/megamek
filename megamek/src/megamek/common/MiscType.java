@@ -3656,7 +3656,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createFuel1() {
         MiscType misc = new MiscType();
 
-        misc.name = "Extendend Fuel Tank(1 ton)";
+        misc.name = "Extendend Fuel Tank (1 ton)";
         misc.setInternalName(misc.name);
         misc.tonnage = 1;
         misc.criticals = 1;

@@ -146,7 +146,7 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type) {
         this.type = type;
         parent = path;
-        if ((type == MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH)) {
+        if ((type == MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH) || (type==MoveStepType.DROP)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -165,7 +165,7 @@ public class MoveStep implements Serializable {
         this(path, type);
         targetId = target.getTargetId();
         targetType = target.getTargetType();
-        if ((type == MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH)) {
+        if ((type == MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH) || (type==MoveStepType.DROP)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -187,7 +187,7 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * Create a step with the units to launch.
+     * Create a step with the units to launch or drop.
      *
      * @param path
      * @param type - should match one of the MovePath constants, but this is not
@@ -197,7 +197,7 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, TreeMap<Integer, Vector<Integer>> targets) {
         this(path, type);
         launched = targets;
-        if ((type==MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH)) {
+        if ((type==MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH) || (type==MoveStepType.DROP)) {
             hasEverUnloaded=true;
         } else {
             hasEverUnloaded=false;
@@ -587,7 +587,7 @@ public class MoveStep implements Serializable {
             // Infantry can turn for free, except for field artillery
             setMp((parent.isJumping() || isHasJustStood() || (isInfantry && !isFieldArtillery)) ? 0
                     : 1);
-            if(entity.isAirborne()) {
+            if(entity.isAirborne() && entity instanceof Aero) {
                 setMp(asfTurnCost(game, getType(), entity));
                 setNTurns(getNTurns() + 1);
 
@@ -596,6 +596,9 @@ public class MoveStep implements Serializable {
                     setFreeTurn(false);
                 }
 
+            }
+            if(entity.isDropping()) {
+                setMp(0);
             }
             adjustFacing(getType());
             break;
@@ -785,6 +788,7 @@ public class MoveStep implements Serializable {
             }
             break;
         case LAUNCH:
+        case DROP:
             hasEverUnloaded=true;
             setMp(0);
             break;
@@ -1182,7 +1186,7 @@ public class MoveStep implements Serializable {
         } else if (parent.isJumping() && (distance == 0)) {
             // Can't jump zero hexes.
             legal = false;
-        } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD) && (type != MoveStepType.LAUNCH)) {
+        } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD) && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)) {
             // Can't be after unloading BA/inf
             legal = false;
         }
@@ -1461,10 +1465,23 @@ public class MoveStep implements Serializable {
         // guilty until proven innocent
         movementType = EntityMovementType.MOVE_ILLEGAL;
 
+        
+        
         //AERO STUFF
         //I am going to put in a whole seperate section for Aeros and just return from it
         //only if Aeros are airborne, otherwise they should move like other units
         if (entity.isAirborne()) {
+            
+          //If airborne and not an Aero then everything is illegal, except turns
+            if(!(entity instanceof Aero)) {
+                switch (type) {
+                case TURN_LEFT:
+                case TURN_RIGHT:
+                    movementType = EntityMovementType.MOVE_WALK;
+                }
+                return;
+            }
+            
             int tmpSafeTh = entity.getWalkMP();
             Aero a = (Aero)entity;
 

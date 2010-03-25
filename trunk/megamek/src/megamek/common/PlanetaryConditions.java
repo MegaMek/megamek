@@ -744,6 +744,23 @@ public class PlanetaryConditions implements Serializable {
 
     }
 
+    public int getDropRate() {
+
+        //atmospheric pressure mods
+        switch(atmosphere) {
+        case(ATMO_TRACE):
+            return 8;
+        case(ATMO_THIN):
+            return 5;
+        case(ATMO_HIGH):
+            return 2;
+        case(ATMO_VHIGH):
+            return 1;
+        default:
+            return 3;
+        }
+    }
+    
     public void setLight(int type) {
         lightConditions = type;
     }

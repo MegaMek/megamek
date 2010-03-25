@@ -126,6 +126,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_ROLL = "MoveRoll"; //$NON-NLS-1$
     public static final String MOVE_LAUNCH = "MoveLaunch"; //$NON-NLS-1$
     public static final String MOVE_RECOVER = "MoveRecover"; //$NON-NLS-1$
+    public static final String MOVE_DROP = "MoveDrop"; //$NON-NLS-1$
     public static final String MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
     public static final String MOVE_RAM = "MoveRam"; //$NON-NLS-1$
     public static final String MOVE_HOVER = "MoveHover"; //$NON-NLS-1$
@@ -182,6 +183,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butRoll;
     private JButton butLaunch;
     private JButton butRecover;
+    private JButton butDrop;
     private JButton butDump;
     private JButton butRam;
     private JButton butHover;
@@ -443,6 +445,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butRecover.setActionCommand(MOVE_RECOVER);
         butRecover.addKeyListener(this);
 
+        butDrop = new JButton(Messages.getString("MovementDisplay.butDrop")); //$NON-NLS-1$
+        butDrop.addActionListener(this);
+        butDrop.setEnabled(false);
+        butDrop.setActionCommand(MOVE_DROP);
+        butDrop.addKeyListener(this);
+        
         butJoin = new JButton(Messages.getString("MovementDisplay.butJoin")); //$NON-NLS-1$
         butJoin.addActionListener(this);
         butJoin.setEnabled(false);
@@ -595,7 +603,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
 
-        buttonsAero = new ArrayList<JButton>(20);
+        buttonsAero = new ArrayList<JButton>(21);
         if (!clientgui.getClient().game.useVectorMove()) {
             buttonsAero.add(butWalk);
             buttonsAero.add(butAcc);
@@ -614,6 +622,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butEject);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
+            buttonsAero.add(butDrop);
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
@@ -630,6 +639,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butFlyOff);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
+            buttonsAero.add(butDrop);
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
@@ -849,6 +859,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkAtmosphere();
         updateFlyOffButton();
         updateLaunchButton();
+        updateDropButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -882,6 +893,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     && ce.isActive()
                     && !ce.getQuirks().booleanOption("no_eject"));
         }
+        
+        if(ce.isDropping()) {
+            disableButtons();
+            setNextEnabled(true);
+            butDone.setEnabled(true);
+        }
+        
         setupButtonPanel();
     }
 
@@ -957,6 +975,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setDecNEnabled(false);
         setRollEnabled(false);
         setLaunchEnabled(false);
+        setDropEnabled(false);
         setThrustEnabled(false);
         setYawEnabled(false);
         setEndOverEnabled(false);
@@ -993,7 +1012,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
-
+        
         // update some GUI elements
         clientgui.bv.clearMovementData();
         butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
@@ -1004,6 +1023,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateTakeOffButtons();
         updateFlyOffButton();
         updateLaunchButton();
+        updateDropButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -1019,6 +1039,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkFuel();
         checkOOC();
         checkAtmosphere();
+        
+      //if dropping unit only allow turning
+        if(ce.isDropping()) {
+            gear = MovementDisplay.GEAR_TURN;
+            disableButtons();
+            setNextEnabled(true);
+            butDone.setEnabled(true);
+        }
     }
 
     private void removeLastStep() {
@@ -1131,7 +1159,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        if (ce().isAirborne()) {
+        if (ce().isAirborne() && ce() instanceof Aero) {
             if (!clientgui.getClient().game.useVectorMove()
                     && !((Aero) ce()).isOutControlTotal()) {
                 // check for underuse of velocity
@@ -1494,6 +1522,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateEvadeButton();
             updateFlyOffButton();
             updateLaunchButton();
+            updateDropButton();
             updateRecklessButton();
             updateHoverButton();
             updateManeuverButton();
@@ -1839,6 +1868,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0)
                 || (ce.getLaunchableSmallCraft().size() > 0));
+
+    }
+    
+    private void updateDropButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        setDropEnabled(ce.isAirborne() 
+                && (ce.getDroppableUnits().size() > 0));
 
     }
 
@@ -2217,6 +2259,75 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
                 bayNum++;
             }
+        }// End have-choices
+        // Return the chosen unit.
+        return choices;
+    }
+    
+    /**
+     * Get the unit that the player wants to drop. This method will remove the
+     * unit from our local copy of loaded units.
+     *
+     * @return The <code>Entity</code> that the player wants to unload. This
+     *         value will not be <code>null</code>.
+     */
+    private TreeMap<Integer, Vector<Integer>> getDroppedUnits() {
+        Entity ce = ce();
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+        
+        Vector<Entity> droppableUnits = ce.getDroppableUnits();
+
+        // Handle error condition.
+        if (droppableUnits.size() <= 0) {
+            System.err
+                    .println("MovementDisplay#getDroppedUnits() called without loaded units."); //$NON-NLS-1$
+
+        } else {
+            // cycle through the bays
+            int bayNum = 1;
+            Bay currentBay;
+            Vector<Entity> currentUnits = new Vector<Entity>();
+            int doors = 0;
+            Vector<Bay> Bays = ce.getTransportBays();
+            for (int i = 0; i < Bays.size(); i++) {
+                currentBay = Bays.elementAt(i);
+                Vector<Integer> bayChoices = new Vector<Integer>();
+                currentUnits = currentBay.getDroppableUnits();
+                doors = currentBay.getDoors();
+                if (currentUnits.size() > 0 && doors > 0) {
+                    String[] names = new String[currentUnits.size()];
+                    String question = Messages
+                            .getString(
+                                    "MovementDisplay.DropUnitDialog.message", new Object[] { //$NON-NLS-1$
+                                     doors, bayNum });
+                    for (int loop = 0; loop < names.length; loop++) {
+                        names[loop] = currentUnits.elementAt(loop)
+                                .getShortName();
+                    }
+                    ChoiceDialog choiceDialog = new ChoiceDialog(
+                            clientgui.frame,
+                            Messages
+                                    .getString(
+                                            "MovementDisplay.DropUnitDialog.title", new Object[] { //$NON-NLS-1$
+                                            currentBay.getType(), bayNum }),
+                            question, names, false, doors);
+                    choiceDialog.setVisible(true);
+                    if (choiceDialog.getAnswer() == true) {
+                        // load up the choices
+                        int[] unitsLaunched = choiceDialog.getChoices();
+                        for (int element : unitsLaunched) {
+                            bayChoices.add(currentUnits.elementAt(element)
+                                    .getId());
+                        }
+                        choices.put(i, bayChoices);
+                        // now remove them (must be a better way?)
+                        for (int l = unitsLaunched.length; l > 0; l--) {
+                            currentUnits.remove(unitsLaunched[l - 1]);
+                        }
+                    }
+                }
+                bayNum++;
+            }      
         }// End have-choices
         // Return the chosen unit.
         return choices;
@@ -3075,6 +3186,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 cmd.addStep(MoveStepType.RECOVER, recoverer, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
+        } else if (ev.getActionCommand().equals(MOVE_DROP)) {
+            TreeMap<Integer, Vector<Integer>> dropped = getDroppedUnits();
+            if (!dropped.isEmpty()) {
+                cmd.addStep(MoveStepType.DROP, dropped);
+                clientgui.bv.drawMovementData(ce, cmd);
+            }
         } else if (ev.getActionCommand().equals(MOVE_JOIN)) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
@@ -3130,6 +3247,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateTakeOffButtons();
         updateFlyOffButton();
         updateLaunchButton();
+        updateDropButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -3491,6 +3609,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setRecoverEnabled(boolean enabled) {
         butRecover.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
+    }
+    
+    private void setDropEnabled(boolean enabled) {
+        butDrop.setEnabled(enabled);
+        //clientgui.getMenuBar().setMoveDropEnabled(enabled);
     }
 
     private void setJoinEnabled(boolean enabled) {

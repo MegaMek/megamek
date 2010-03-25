@@ -1658,7 +1658,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             addC3Link(entity);
         }
 
-        if(entity.isAirborne()) {
+        if(entity.isAirborne() && entity.getPassedThrough().size() > 1) {
             addFlyOverPath(entity);
         }
 
@@ -3690,6 +3690,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(col);
                 graph.drawString(launch, launchX - 1, launchY);
                 break;
+            case DROP:
+                // announce drop
+                String drop = Messages.getString("BoardView1.Drop"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    drop = "(" + drop + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int dropX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(drop) / 2);
+                int dropY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(drop, dropX, dropY + 1);
+                graph.setColor(col);
+                graph.drawString(drop, dropX - 1, dropY);
+                break;
             case RECOVER:
                 // announce launch
                 String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
@@ -3843,7 +3858,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 return;
             }
 
-            if(!step.getParent().getEntity().isAirborne()) {
+            if(!step.getParent().getEntity().isAirborne() || !(step.getParent().getEntity() instanceof Aero)) {
                 return;
             }
 

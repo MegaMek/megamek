@@ -1156,7 +1156,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     minAlt = 1;
                 }
                 // if sensors are damaged then, one higher
-                if (((Aero) this).getSensorHits() > 0) {
+                if ((this instanceof Aero) && ((Aero) this).getSensorHits() > 0) {
                     minAlt++;
                 }
                 break;
@@ -4105,6 +4105,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (hasActiveBlueShield()) {
             blueShieldRounds++;
         }
+        
+        //for dropping troops, check to see if they are going to land
+        //this turn, if so, then set their assault drop status to true
+        if(isAirborne() && !(this instanceof Aero) 
+                && getAltitude() <= game.getPlanetaryConditions().getDropRate()) {
+            setAssaultDropInProgress(true);
+        }
 
         for (Mounted m : getEquipment()) {
             m.newRound(roundNumber);
@@ -5598,6 +5605,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return result;
     }
 
+    /**
+     * @return only entities in that can be combat dropped
+     */
+    public Vector<Entity> getDroppableUnits() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+
+        // I should only add entities in bays that are functional
+        for (Transporter next : transports) {
+            if ((next instanceof Bay) && ((Bay)next).getDoors() > 0) {
+                Bay nextbay = (Bay) next;
+                for (Entity e : nextbay.getDroppableUnits()) {                   
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
     public Bay getLoadedBay(int bayID) {
 
         Vector<Bay> bays = getFighterBays();
@@ -6566,7 +6596,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // if you're charging or finding a club, it's already declared
-        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isFindingClub() || isOffBoard() || isAssaultDropInProgress()) {
+        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isFindingClub() || isOffBoard() || isAssaultDropInProgress() || isDropping()) {
             return false;
         }
 
@@ -7920,6 +7950,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * What coords were passed through previous to the given one
      */
     public Coords passedThroughPrevious(Coords c) {
+        if(passedThrough.size() == 0) {
+            getPosition();
+        }
         Coords prevCrd = passedThrough.get(0);
         for (Coords crd : passedThrough) {
             if (crd.equals(c)) {
@@ -8837,7 +8870,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean isAirborne() {
-        return (getMovementMode() == EntityMovementMode.AERODYNE) || (getMovementMode() == EntityMovementMode.SPHEROID);
+        return getAltitude() > 0 || (getMovementMode() == EntityMovementMode.AERODYNE) || (getMovementMode() == EntityMovementMode.SPHEROID);
     }
 
     /**
@@ -9192,5 +9225,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getBlueShieldRounds() {
         return blueShieldRounds;
+    }
+    
+    public boolean isDropping() {
+        return isAirborne() && !(this instanceof Aero);
     }
 }

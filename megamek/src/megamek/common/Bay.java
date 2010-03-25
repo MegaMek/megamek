@@ -208,6 +208,23 @@ public class Bay implements Transporter {
         
         return launchable;
     }
+    
+    /**
+     * get a vector of droppable units.
+     */
+    public Vector<Entity> getDroppableUnits() {
+        
+        Vector<Entity> droppable = new Vector<Entity>();
+        
+        for(int i = 0; i < this.troops.size(); i++) {
+            Entity nextUnit = this.troops.elementAt(i);
+            if(nextUnit.canAssaultDrop()) {
+                droppable.add(nextUnit);
+            }
+        }
+        
+        return droppable;
+    }
 
     /**
      * Unload the given unit.
@@ -290,7 +307,9 @@ public class Bay implements Transporter {
     //destroy a door for next turn
     public void destroyDoorNext() {
         
-        setDoorsNext(getDoorsNext() - 1);
+        if(getDoorsNext() > 0) {
+            setDoorsNext(getDoorsNext() - 1);
+        }
         
     }
     

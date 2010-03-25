@@ -1225,7 +1225,7 @@ public class MechDisplay extends JPanel {
             wInfantryRange5L.setVisible(false);
             wInfantryRange5R.setVisible(false);
 
-            if (entity instanceof Aero) {
+            if (entity.isAirborne()) {
                 wAVL.setVisible(true);
                 wShortAVR.setVisible(true);
                 wMedAVR.setVisible(true);
@@ -1244,7 +1244,7 @@ public class MechDisplay extends JPanel {
             }
 
             // If MaxTech range rules are in play, display the extreme range.
-            if (game.getOptions().booleanOption("tacops_range") || (entity instanceof Aero)) { //$NON-NLS-1$
+            if (game.getOptions().booleanOption("tacops_range") || (entity.isAirborne())) { //$NON-NLS-1$
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             } else {
@@ -1561,11 +1561,11 @@ public class MechDisplay extends JPanel {
                 wMedR.setVisible(true);
                 wLongR.setVisible(true);
                 
-                if(!(entity instanceof Aero)) {
+                if(!(entity.isAirborne())) {
                     wMinL.setVisible(true);
                     wMinR.setVisible(true);
                 }
-                if (entity.getGame().getOptions().booleanOption("tacops_range") || (entity instanceof Aero)) {
+                if (entity.getGame().getOptions().booleanOption("tacops_range") || (entity.isAirborne())) {
                     wExtL.setVisible(true);
                     wExtR.setVisible(true);
                 }
@@ -1641,7 +1641,7 @@ public class MechDisplay extends JPanel {
                 updateRangeDisplayForAmmo(mounted.getLinked());
             }
 
-            if (entity instanceof Aero) {
+            if (entity.isAirborne()) {
                 // change damage report to a statement of standard or capital
                 if (wtype.isCapital()) {
                     wDamR.setText(Messages.getString("MechDisplay.CapitalD")); //$NON-NLS-1$
@@ -2156,7 +2156,7 @@ public class MechDisplay extends JPanel {
                 // Update the range display to account for the weapon's loaded
                 // ammo.
                 updateRangeDisplayForAmmo(mAmmo);
-                if (entity instanceof Aero) {
+                if (entity.isAirborne()) {
                     WeaponType wtype = (WeaponType) mWeap.getType();
                     if (isBay) {
                         compileWeaponBay(oldWeap, wtype.isCapital());

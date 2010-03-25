@@ -99,7 +99,7 @@ public class SharedUtility {
                 break;
             }
 
-            if (entity.isAirborne()) {
+            if (entity.isAirborne() && entity instanceof Aero) {
                 // check for more than one roll
                 Aero a = (Aero) entity;
                 rollTarget = a.checkRolls(step, overallMoveType);
@@ -319,7 +319,7 @@ public class SharedUtility {
 
         }
 
-        if (entity.isAirborne()) {
+        if (entity.isAirborne() && entity instanceof Aero) {
             // check to see if thrust exceeded SI
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();

@@ -750,8 +750,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && (target instanceof Entity) && (te.getWeight() < 500)) {
             toHit.addModifier(4, "Anti-ship missile at a small target");
         }
-
-        if (target.isAirborne()) {
+        
+        if (target.isAirborne() && target instanceof Aero) {
 
             Aero a = (Aero) target;
 
@@ -1070,6 +1070,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
+        if(ae.isAirborne() && !(ae instanceof Aero)) {
+            toHit.addModifier(+2, "dropping");
+            toHit.addModifier(+3, "jumping");
+        }
+        
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
             if (!isArtilleryFLAK) {
@@ -1611,7 +1616,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.setHitTable(ToHitData.HIT_BELOW);
         }
 
-        if (target.isAirborne()) {
+        if (target.isAirborne() && target instanceof Aero) {
             if (!(((Aero) target).isSpheroid() && !game.getBoard().inSpace())) {
                 // get mods for direction of attack
                 int side = toHit.getSideTable();

@@ -98,7 +98,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
             //can't target airborne aeros
             if(te.isAirborne()) {
-                return "can't target airborne aero units";
+                return "can't target airborne units";
             }
 
             // Can't target a entity conducting a swarm attack.

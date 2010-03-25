@@ -1399,6 +1399,7 @@ public class Game implements Serializable, IGame {
         if (board.contains(c)) {
             for (Entity entity : entities) {
                 if (c.equals(entity.getPosition()) && entity.isTargetable()
+                        && entity.getElevation() == 0 && entity.getAltitude() == 0
                         && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);
                 }

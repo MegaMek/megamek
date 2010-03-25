@@ -631,13 +631,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // yeech. handle damage. . different weapons do this in very different
         // ways
         int hits = 1;
-        if(!(ae instanceof Aero)) {
+        if(!(ae.isAirborne())) {
             hits = calcHits(vPhaseReport);
         }
         int nCluster = calcnCluster();
 
         //Now I need to adjust this for aero based attack because they use attack value
-        if(ae instanceof Aero) {
+        if(ae.isAirborne()) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(ae.isCapitalFighter()) {
                 bSalvo = true;

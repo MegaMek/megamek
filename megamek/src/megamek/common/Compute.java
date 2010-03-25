@@ -638,7 +638,7 @@ public class Compute {
                 && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption("tacops_range");
 
-        if (ae instanceof Aero) {
+        if (ae.isAirborne()) {
             useExtremeRange = true;
         }
 
@@ -738,7 +738,7 @@ public class Compute {
         }
 
         // if Aero then adjust to stanard ranges
-        if (ae instanceof Aero) {
+        if (ae.isAirborne()) {
             weaponRanges = wtype.getATRanges();
         }
 
@@ -759,7 +759,7 @@ public class Compute {
         }
 
         // if aero and greater than max range then swith to range_out
-        if ((ae instanceof Aero) && (range > maxRange)) {
+        if ((ae.isAirborne()) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
@@ -767,7 +767,7 @@ public class Compute {
         if ((range == RangeType.RANGE_OUT) && !isWeaponInfantry) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
-        if ((distance == 0) && !isAttackerInfantry && !(ae instanceof Aero)
+        if ((distance == 0) && !isAttackerInfantry && !(ae.isAirborne())
                 && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target.getTargetId()))) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }

@@ -3098,8 +3098,8 @@ public class Server implements Runnable {
             send(createTurnVectorPacket());
         }
 
-        // Load the unit.
-        loader.load(unit);
+        // Load the unit. Do not check for elevation during deployment
+        loader.load(unit, game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT);
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3217,7 +3217,7 @@ public class Server implements Runnable {
     }
 
     private boolean launchUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int velocity,
-            int elevation, int[] moveVec, int bonus) {
+            int altitude, int[] moveVec, int bonus) {
 
         Entity unit = null;
         if (unloaded instanceof Entity) {
@@ -3241,6 +3241,9 @@ public class Server implements Runnable {
             return false;
         }
 
+        //pg. 86 of TW: launched fighters can move in fire in the turn they are unloaded
+        unit.setUnloaded(false);
+        
         // The unloaded unit is no longer being carried.
         unit.setTransportId(Entity.NONE);
 
@@ -3263,7 +3266,7 @@ public class Server implements Runnable {
         // if using advanced movement then set vectors
         a.setVectors(moveVec);
 
-        unit.setElevation(elevation);
+        unit.setAltitude(altitude);
 
         // it seems that the done button is still being set and I can't figure
         // out where
@@ -3331,6 +3334,75 @@ public class Server implements Runnable {
 
         return true;
 
+    }
+    
+    public void dropUnit(Entity drop, Entity entity, int altitude) {
+     // Unload the unit.
+        entity.unload(drop);
+        // The unloaded unit is no longer being carried.
+        drop.setTransportId(Entity.NONE);
+
+        Coords curPos = entity.getPosition();
+        
+        //The rules are a little unclear on this, but when using the ground map
+        //this results in all dropped units in the same hex, which can cause a problem
+        //when landing. Since dropships take up the surrounding six hexes when grounded,
+        //I am going to allow units in the six surrounding hexes of the dropship. 
+        //Units will deploy first in the central hex and then clockwise around the dropper.
+        //do not deploy into a hex if the ground hex is dangerous (water or magma).
+        if(game.getBoard().onGround() && null != curPos) {
+            boolean selected = false;
+            int count = 0;
+            int max = 0;
+            while(!selected) {
+                count = 0;
+                for(Entity unit : game.getEntitiesVector(curPos)) {
+                    if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
+                        count++;
+                    }
+                }
+                if(count <= max) {
+                    selected = true;
+                }
+                else  {
+                    for(int i = 0; i < 6; i++) {
+                        Coords newPos = curPos.translated(i);
+                        count = 0;
+                        if(game.getBoard().contains(newPos)) {
+                            for(Entity unit : game.getEntitiesVector(newPos)) {
+                                if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
+                                    count++;
+                                }
+                            }
+                            IHex hex = game.getBoard().getHex(newPos);
+                            if(count == 0 && !hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.MAGMA)) {
+                                curPos = newPos;
+                                selected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                //if we got here then nothing was selected, increment the maximum other units allowed 
+                //and do it again
+                max++;
+            }
+        }
+        
+        // Place the unloaded unit onto the screen.
+        drop.setPosition(curPos);
+
+        // Units unloaded onto the screen are deployed.
+        if (curPos != null) {
+            drop.setDeployed(true);
+        }
+
+        // Point the unloaded unit in the given direction.
+        drop.setFacing(entity.getFacing());
+        drop.setSecondaryFacing(entity.getFacing());
+
+        drop.setAltitude(altitude);
+        entityUpdate(drop.getId());
     }
 
     /**
@@ -4397,7 +4469,7 @@ public class Server implements Runnable {
             if (victim.getId() == entity.getId()) {
                 continue;
             }
-            if (victim.getElevation() > 0) {
+            if (victim.getElevation() > 0 || victim.getAltitude() > 0) {
                 continue;
             }
             // if the crasher is a dropship and the victim is not a mech, then
@@ -4623,7 +4695,7 @@ public class Server implements Runnable {
         Report r;
         boolean sideslipped = false; // for VTOL sideslipping
         PilotingRollData rollTarget;
-
+        
         // check for fleeing
         if (md.contains(MoveStepType.FLEE)) {
             addReport(processLeaveMap(entity, entity.getPosition(), false, -1));
@@ -4737,6 +4809,20 @@ public class Server implements Runnable {
             Aero a = (Aero) entity;
             a.setAccLast(false);
         }
+        
+      //check for dropping troops and drop them
+        if(entity.isDropping()) {
+            entity.setAltitude(entity.getAltitude() - game.getPlanetaryConditions().getDropRate());
+            //they may have changed their facing
+            if(md.length() > 0) {
+                entity.setFacing(md.getFinalFacing());
+            }
+            passedThrough.add(entity.getPosition());
+            entity.setPassedThrough(passedThrough);
+            entity.setDone(true);
+            entityUpdate(entity.getId());
+            return;
+        }
 
         // iterate through steps
         firstStep = true;
@@ -4792,7 +4878,7 @@ public class Server implements Runnable {
             didMove = step.getDistance() > distance;
 
             // check for aero stuff
-            if (entity.isAirborne()) {
+            if (entity.isAirborne() && entity instanceof Aero) {
                 Aero a = (Aero) entity;
                 j++;
 
@@ -5046,10 +5132,46 @@ public class Server implements Runnable {
                             }
                             Entity fighter = game.getEntity(fighterId);
                             if (!launchUnit(entity, fighter, curPos, curFacing, step.getVelocity(),
-                                    step.getElevation(), step.getVectors(), bonus)) {
+                                    step.getAltitude(), step.getVectors(), bonus)) {
                                 System.err.println("Error! Server was told to unload " + fighter.getDisplayName()
                                         + " from " + entity.getDisplayName() + " into " + curPos.getBoardNum());
                             }
+                        }
+                    }
+                    // now apply any damage to bay doors
+                    entity.resetBayDoors();
+                }
+                
+             // handle combat drops
+                if (step.getType() == MoveStepType.DROP) {
+                    TreeMap<Integer, Vector<Integer>> dropped = step.getLaunched();
+                    Set<Integer> bays = dropped.keySet();
+                    Iterator<Integer> bayIter = bays.iterator();
+                    Bay currentBay;
+                    while (bayIter.hasNext()) {
+                        int bayId = bayIter.next();
+                        currentBay = entity.getTransportBays().elementAt(bayId);
+                        Vector<Integer> drops = dropped.get(bayId);
+                        int nDropped = drops.size();
+                        // ok, now lets drop them
+                        r = new Report(9380);
+                        r.add(entity.getDisplayName());
+                        r.subject = entity.getId();
+                        r.newlines = 0;
+                        r.add(nDropped);
+                        addReport(r);
+                        for (int unitId : drops) {
+                            if(Compute.d6(2) == 2) {
+                                r = new Report(9390);
+                                r.subject = entity.getId();
+                                r.indent(1);
+                                r.newlines = 0;
+                                r.add(currentBay.getType());
+                                addReport(r);
+                                currentBay.destroyDoorNext();
+                            }
+                            Entity drop = game.getEntity(unitId);
+                            dropUnit(drop, entity, step.getAltitude());
                         }
                     }
                     // now apply any damage to bay doors
@@ -6023,7 +6145,7 @@ public class Server implements Runnable {
             doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
 
-        if (entity.isAirborne()) {
+        if (entity.isAirborne() && entity instanceof Aero) {
 
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
@@ -14542,7 +14664,7 @@ public class Server implements Runnable {
                     && (entity.getElevation() != -hex.depth())
                     && ((entity.getElevation() < 0) || ((entity.getElevation() == 0)
                             && (hex.terrainLevel(Terrains.BRIDGE_ELEV) != 0) && !hex.containsTerrain(Terrains.ICE)))
-                    && !entity.isMakingDfa()) {
+                    && !entity.isMakingDfa() && !entity.isDropping()) {
                 // mech is floating in water....
                 if (entity.hasUMU()) {
                     return vPhaseReport;
@@ -24847,6 +24969,10 @@ public class Server implements Runnable {
      *            the <code>Entity</code> for which to resolve it
      */
     public void doAssaultDrop(Entity entity) {
+        
+        //whatever else happens, this entity is on the ground now
+        entity.setAltitude(0);
+        
         PilotingRollData psr;
         if (entity instanceof Mech) {
             psr = entity.getBasePilotingRoll();
@@ -24903,14 +25029,18 @@ public class Server implements Runnable {
         // finally, check for any stacking violations
         Entity violated = Compute.stackingViolation(game, entity, entity.getPosition(), null);
         if (violated != null) {
-            // handle this as accidental fall from above
-            entity.setElevation(violated.getElevation() + 2);
+            //StratOps explicitly says that this is not treated as an accident fall from above
+            //so we just need to displace the violating unit
             r = new Report(2390);
             r.subject = entity.getId();
             r.add(entity.getDisplayName(), true);
             r.add(violated.getDisplayName(), true);
             addReport(r);
-            addReport(doEntityFallsInto(entity, entity.getPosition(), entity.getPosition(), psr));
+            Coords targetDest = Compute.getValidDisplacement(game, violated.getId(), violated.getPosition(), Compute.d6()-1);
+            addReport(doEntityDisplacement(violated, violated.getPosition(), targetDest, new PilotingRollData(violated
+                    .getId(), 0, "assault drop")));
+            // Update the violating entity's postion on the client.
+            entityUpdate(violated.getId());
         }
     }
 

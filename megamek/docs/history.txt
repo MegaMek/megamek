@@ -30,6 +30,7 @@ v0.35.14-dev (SVN)
 + Bug 2878964: active probe errata
 + corrected sub-cap missile data
 + StratOps fatigue points
++ Bug: NPE when DFAin a building
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

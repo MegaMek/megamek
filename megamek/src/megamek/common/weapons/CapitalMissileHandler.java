@@ -63,7 +63,8 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY
                 || atype.getAmmoType() == AmmoType.T_ALAMO) {
             return 10;
-        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T) {
+        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
+                || atype.getAmmoType() == AmmoType.T_KRAKENM) {
             return 8;
         } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
             return 12;

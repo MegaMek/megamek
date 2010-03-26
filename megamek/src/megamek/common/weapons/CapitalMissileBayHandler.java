@@ -74,7 +74,8 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE) 
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY) {
             return 10;
-        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T) {
+        } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
+        	    || atype.getAmmoType() == AmmoType.T_KRAKENM) {
             return 8;
         } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
             return 12;

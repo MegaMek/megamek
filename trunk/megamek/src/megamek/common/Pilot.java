@@ -41,6 +41,8 @@ public class Pilot implements Serializable {
     private boolean dead;
     private boolean ejected;
 
+    //StratOps fatigue points
+    private int fatigue;
     
     /***Additional RPG Skills***/
     // MW3e uses 3 different gunnery skills
@@ -113,6 +115,7 @@ public class Pilot implements Serializable {
         unconscious = false;
         dead = false;
         koThisRound = false;
+        fatigue = 0;
 
         options.initialize();
     }
@@ -133,6 +136,7 @@ public class Pilot implements Serializable {
         unconscious = false;
         dead = false;
         koThisRound = false;
+        fatigue = 0;
 
         options.initialize();
     }
@@ -608,35 +612,52 @@ public class Pilot implements Serializable {
         return gunnery;
     }
     
-    public boolean isPilotingFatigued(int turn) {
+    
+    private int getPilotingFatigueTurn() {
+        int turn = 20;
+        if(piloting > 5) { 
+            turn = 10;
+        }
+        else if(piloting > 3) {
+            turn = 14;
+        }
+        else if(piloting > 1) {
+            turn = 17;
+        }
         
-        if(piloting > 5 && turn > 9) {
-            return true;
+        //get fatigue point modifiers
+        int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
+        turn = turn - mod;
+        
+        return turn;     
+    }
+    
+    public boolean isPilotingFatigued(int turn) {
+        return turn >= getPilotingFatigueTurn();
+    }
+    
+    private int getGunneryFatigueTurn() {
+        int turn = 20;
+        if(piloting > 5) { 
+            turn = 14;
         }
-        if(piloting > 3 && turn > 13) {
-            return true;
+        else if(piloting > 3) {
+            turn = 17;
         }
-        if(piloting > 1 && turn > 16) {
-            return true;
-        }
-        if(turn > 19) {
-            return true;
-        }
-        return false;
+        
+        //get fatigue point modifiers
+        int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
+        turn = turn - mod;
+        
+        return turn;
+        
     }
     
     public boolean isGunneryFatigued(int turn) {
-        
-        if(piloting > 5 && turn > 13) {
-            return true;
+        if(piloting < 2) {
+            return false;
         }
-        if(piloting > 3 && turn > 16) {
-            return true;
-        }
-        if(piloting > 1 && turn > 19) {
-            return true;
-        }
-        return false;
+        return turn >= getGunneryFatigueTurn();
     }
     
     public String getStatusDesc() {
@@ -682,6 +703,14 @@ public class Pilot implements Serializable {
     
     public void setToughness(int t) {
         this.toughness = t;
+    }
+    
+    public int getFatigue() {
+        return fatigue;
+    }
+    
+    public void setFatigue(int i) {
+        this.fatigue = i;
     }
     
 

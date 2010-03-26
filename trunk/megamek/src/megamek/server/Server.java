@@ -3243,7 +3243,7 @@ public class Server implements Runnable {
 
         //pg. 86 of TW: launched fighters can move in fire in the turn they are unloaded
         unit.setUnloaded(false);
-        
+
         // The unloaded unit is no longer being carried.
         unit.setTransportId(Entity.NONE);
 
@@ -3335,23 +3335,23 @@ public class Server implements Runnable {
         return true;
 
     }
-    
+
     public void dropUnit(Entity drop, Entity entity, Coords curPos, int altitude) {
      // Unload the unit.
         entity.unload(drop);
         // The unloaded unit is no longer being carried.
         drop.setTransportId(Entity.NONE);
-        
+
         //OK accordind to Welshman's pending ruling, when on the ground map
         //units should be deployed in the ring two hexes away from the dropshp
         //optimally, we should let people choose here, but that would be complicated
-        //so for now I am just going to distribute them. I will give each unit the first 
+        //so for now I am just going to distribute them. I will give each unit the first
         //emptiest hex that has no water or magma in it.
         //I will start the circle based on the facing of the dropper
         //Spheroid - facing
         //Aerodyne - opposite of facing
         //http://www.classicbattletech.com/forums/index.php?topic=65600.msg1568089#new
-        if(game.getBoard().onGround() && null != curPos) {
+        if(game.getBoard().onGround() && (null != curPos)) {
             boolean selected = false;
             int count = 0;
             int max = 0;
@@ -3363,7 +3363,7 @@ public class Server implements Runnable {
             }
             boolean checkDanger = true;
             while(!selected) {
-                //we can get caught in an infinite loop if all available hexes are dangerous, so check for this              
+                //we can get caught in an infinite loop if all available hexes are dangerous, so check for this
                 boolean allDanger = true;
                 for(int i = 0; i < 6; i++) {
                     int dir = (facing + i) % 6;
@@ -3372,13 +3372,13 @@ public class Server implements Runnable {
                     if(game.getBoard().contains(newPos)) {
                         IHex newHex = game.getBoard().getHex(newPos);
                         Building bldg = game.getBoard().getBuildingAt(newPos);
-                        boolean danger = newHex.containsTerrain(Terrains.WATER) || newHex.containsTerrain(Terrains.MAGMA) || null != bldg;
+                        boolean danger = newHex.containsTerrain(Terrains.WATER) || newHex.containsTerrain(Terrains.MAGMA) || (null != bldg);
                         for(Entity unit : game.getEntitiesVector(newPos)) {
-                            if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
+                            if((unit.getAltitude() == altitude) && !(unit instanceof Aero)) {
                                 count++;
                             }
                         }
-                        if(count <= max && (!danger || !checkDanger)) {
+                        if((count <= max) && (!danger || !checkDanger)) {
                             selected = true;
                             curPos = newPos;
                             break;
@@ -3386,19 +3386,19 @@ public class Server implements Runnable {
                         if(!danger) {
                             allDanger = false;
                         }
-                    }              
+                    }
                     newPos = newPos.translated((dir + 2) % 6);
                     count = 0;
                     if(game.getBoard().contains(newPos)) {
                         IHex newHex = game.getBoard().getHex(newPos);
                         Building bldg = game.getBoard().getBuildingAt(newPos);
-                        boolean danger = newHex.containsTerrain(Terrains.WATER) || newHex.containsTerrain(Terrains.MAGMA) || null != bldg;
+                        boolean danger = newHex.containsTerrain(Terrains.WATER) || newHex.containsTerrain(Terrains.MAGMA) || (null != bldg);
                         for(Entity unit : game.getEntitiesVector(newPos)) {
-                            if(unit.getAltitude() == altitude && !(unit instanceof Aero)) {
+                            if((unit.getAltitude() == altitude) && !(unit instanceof Aero)) {
                                 count++;
                             }
                         }
-                        if(count <= max && (!danger || !checkDanger)) {
+                        if((count <= max) && (!danger || !checkDanger)) {
                             selected = true;
                             curPos = newPos;
                             break;
@@ -3415,7 +3415,7 @@ public class Server implements Runnable {
                 }
             }
         }
-        
+
         // Place the unloaded unit onto the screen.
         drop.setPosition(curPos);
 
@@ -4496,7 +4496,7 @@ public class Server implements Runnable {
             if (victim.getId() == entity.getId()) {
                 continue;
             }
-            if (victim.getElevation() > 0 || victim.getAltitude() > 0) {
+            if ((victim.getElevation() > 0) || (victim.getAltitude() > 0)) {
                 continue;
             }
             // if the crasher is a dropship and the victim is not a mech, then
@@ -4722,7 +4722,7 @@ public class Server implements Runnable {
         Report r;
         boolean sideslipped = false; // for VTOL sideslipping
         PilotingRollData rollTarget;
-        
+
         // check for fleeing
         if (md.contains(MoveStepType.FLEE)) {
             addReport(processLeaveMap(entity, entity.getPosition(), false, -1));
@@ -4836,7 +4836,7 @@ public class Server implements Runnable {
             Aero a = (Aero) entity;
             a.setAccLast(false);
         }
-        
+
       //check for dropping troops and drop them
         if(entity.isDropping()) {
             entity.setAltitude(entity.getAltitude() - game.getPlanetaryConditions().getDropRate());
@@ -4905,7 +4905,7 @@ public class Server implements Runnable {
             didMove = step.getDistance() > distance;
 
             // check for aero stuff
-            if (entity.isAirborne() && entity instanceof Aero) {
+            if (entity.isAirborne() && (entity instanceof Aero)) {
                 Aero a = (Aero) entity;
                 j++;
 
@@ -5168,7 +5168,7 @@ public class Server implements Runnable {
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
-                
+
              // handle combat drops
                 if (step.getType() == MoveStepType.DROP) {
                     TreeMap<Integer, Vector<Integer>> dropped = step.getLaunched();
@@ -6172,7 +6172,7 @@ public class Server implements Runnable {
             doSkillCheckInPlace(entity, entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
 
-        if (entity.isAirborne() && entity instanceof Aero) {
+        if (entity.isAirborne() && (entity instanceof Aero)) {
 
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();
@@ -13080,18 +13080,7 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         addReport(r);
 
-        // Target entities are pushed away or destroyed.
-        Coords dest = te.getPosition();
-        Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
-        if (targetDest != null) {
-            addReport(doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2,
-                    "hit by death from above")));
-        } else {
-            // ack! automatic death! Tanks
-            // suffer an ammo/power plant hit.
-            // TODO : a Mech suffers a Head Blown Off crit.
-            addReport(destroyEntity(te, "impossible displacement", te instanceof Mech, te instanceof Mech));
-        }
+        Coords dest = target.getPosition();
 
         // Can't DFA a target inside of a building.
         int damageTaken = DfaAttackAction.getDamageTakenBy(ae);
@@ -13111,6 +13100,18 @@ public class Server implements Runnable {
             damageInfantryIn(bldg, damage, target.getPosition());
 
         } else { // Target isn't building.
+
+            // Target entities are pushed away or destroyed.
+            Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
+            if (targetDest != null) {
+                addReport(doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2,
+                        "hit by death from above")));
+            } else {
+                // ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                addReport(destroyEntity(te, "impossible displacement", te instanceof Mech, te instanceof Mech));
+            }
             if (glancing) {
                 damage = (int) Math.floor(damage / 2.0);
             }
@@ -14441,7 +14442,7 @@ public class Server implements Runnable {
                 // example...
                 continue;
             }
-            if (entity.doomedInAtmosphere() && entity.getAltitude() == 0) {
+            if (entity.doomedInAtmosphere() && (entity.getAltitude() == 0)) {
                 r = new Report(6016);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -20313,7 +20314,7 @@ public class Server implements Runnable {
                 int dice = 3;
                 if(entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
                     dice = 2;
-                } else if(entity.getMovementMode() == EntityMovementMode.INF_JUMP || ((Infantry)entity).isMechanized()) {
+                } else if((entity.getMovementMode() == EntityMovementMode.INF_JUMP) || ((Infantry)entity).isMechanized()) {
                     dice = 1;
                 }
                 damage = damage * Compute.d6(dice);
@@ -20400,7 +20401,7 @@ public class Server implements Runnable {
         }
 
         // standard damage loop
-        if(entity instanceof Infantry && damage > 0) {
+        if((entity instanceof Infantry) && (damage > 0)) {
             if(entity instanceof BattleArmor) {
                 for (int i = 1; i < entity.locations(); i++) {
                     HitData h = new HitData(i);
@@ -20411,7 +20412,7 @@ public class Server implements Runnable {
                 HitData h = new HitData(Infantry.LOC_INFANTRY);
                 vPhaseReport.addAll(damageEntity(entity, h, damage));
             }
-        } else {       
+        } else {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, table);
@@ -20420,7 +20421,7 @@ public class Server implements Runnable {
                 damage -= cluster;
             }
         }
-        
+
         // check for location exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity, fallHex, false, -waterDepth));
 
@@ -25026,17 +25027,17 @@ public class Server implements Runnable {
      *            the <code>Entity</code> for which to resolve it
      */
     public void doAssaultDrop(Entity entity) {
-        
+
         Report r = new Report(2380);
-        
+
         //whatever else happens, this entity is on the ground now
         entity.setAltitude(0);
-        
-        
+
+
         PilotingRollData psr;
-        if (entity instanceof Protomech || entity instanceof BattleArmor) {
+        if ((entity instanceof Protomech) || (entity instanceof BattleArmor)) {
             psr = new PilotingRollData(entity.getId(), 5, "landing assault drop");
-          
+
         } else {
             psr = entity.getBasePilotingRoll();
         }
@@ -25050,10 +25051,10 @@ public class Server implements Runnable {
         r.newlines = 1;
         r.choose(roll >= psr.getValue());
         addReport(r);
-        
+
         if(game.getBoard().inAtmosphere()) {
             //then just remove the entity
-            //TODO: for this and when the unit scatters off the board, we should really still apply damage 
+            //TODO: for this and when the unit scatters off the board, we should really still apply damage
             //before we remove, but this causes all kinds of problems for doEntityFallsInto
             //and related methods which expect a coord on the board - need to make those more robust
             r = new Report(2388);
@@ -25063,17 +25064,17 @@ public class Server implements Runnable {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
             return;
         }
-        
+
         if (roll < psr.getValue()) {
             int fallHeight = psr.getValue() - roll;
-            
+
             //if you fail by more than 7, you automatically fail
             if(fallHeight > 7) {
                 addReport(destroyEntity(entity, "failed assault drop", false, false));
                 entityUpdate(entity.getId());
                 return;
             }
-            
+
             // determine where we really land
             int distance = Compute.d6(fallHeight);
             Coords c = Compute.scatterAssaultDrop(entity.getPosition(), fallHeight);
@@ -25098,13 +25099,13 @@ public class Server implements Runnable {
         // set entity to expected elevation
         IHex hex = game.getBoard().getHex(entity.getPosition());
         entity.setElevation(entity.elevationOccupied(hex) - hex.floor());
-        
+
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if (bldg != null) {
             //whoops we step on the roof
             checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
         }
-        
+
         // finally, check for any stacking violations
         Entity violated = Compute.stackingViolation(game, entity, entity.getPosition(), null);
         if (violated != null) {

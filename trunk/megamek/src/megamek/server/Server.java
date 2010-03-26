@@ -730,7 +730,7 @@ public class Server implements Runnable {
                 break;
             default:
                 send(connId, new Packet(Packet.COMMAND_ROUND_UPDATE, new Integer(game.getRoundCount())));
-                // send(connId, createReportPacket(player));
+                send(connId, createBoardPacket());
                 send(connId, createAllReportsPacket(player));
 
                 // Send entities *before* other phase changes.
@@ -740,7 +740,6 @@ public class Server implements Runnable {
                     send(connId, createFullEntitiesPacket());
                 }
                 player.setDone(game.getEntitiesOwnedBy(player) <= 0);
-                send(connId, createBoardPacket());
                 send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, game.getPhase()));
                 break;
             }

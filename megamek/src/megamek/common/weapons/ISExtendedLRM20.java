@@ -48,5 +48,9 @@ public class ISExtendedLRM20 extends ExtendedLRMWeapon {
         this.criticals = 8;
         this.bv = 236;
         this.cost = 450000;
+        this.shortAV = 12;
+        this.medAV = 12;
+        this.longAV = 12;
+        this.maxRange = RANGE_LONG;
     }
 }

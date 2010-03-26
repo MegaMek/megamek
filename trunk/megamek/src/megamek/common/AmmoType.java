@@ -114,7 +114,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_LONG_TOM_CANNON = 86;
     public static final int T_NAIL_RIVET_GUN = 87;
     public static final int T_ACi = 88;
-    public static final int NUM_TYPES = 89;
+    public static final int T_KRAKENM = 89;
+    public static final int NUM_TYPES = 90;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -860,6 +861,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createSwordfishAmmo());
         EquipmentType.addType(AmmoType.createStingrayAmmo());
         EquipmentType.addType(AmmoType.createPiranhaAmmo());
+        EquipmentType.addType(AmmoType.createKrakenMAmmo());
 
         base = AmmoType.createISAPMortar1Ammo();
         mortarAmmos.add(base);
@@ -6905,7 +6907,24 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    
+    private static AmmoType createKrakenMAmmo() {
+        AmmoType ammo = new AmmoType();
 
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "Kraken Ammo";
+        ammo.setInternalName("Ammo Kraken");
+        ammo.addLookupName("Kraken Ammo");
+        ammo.damagePerShot = 10;
+        ammo.ammoType = AmmoType.T_KRAKENM;
+        ammo.shots = 1;
+        ammo.bv = 288;
+        ammo.cost = 55000;
+        ammo.capital = true;
+        ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+
+        return ammo;
+    }     
     private static AmmoType createKrakenAmmo() {
         AmmoType ammo = new AmmoType();
 

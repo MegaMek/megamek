@@ -7921,24 +7921,6 @@ public class AmmoType extends EquipmentType {
         }
 
         /**
-         * Create a mutator that will transform the <code>AmmoType</code> of a
-         * base round into one of its muntions.
-         *
-         * @param munitionName
-         *            - the <code>String</code> name of this munition type.
-         * @param weightRatio
-         *            - the <code>int</code> ratio of a round of this munition
-         *            to a round of the standard type.
-         * @param munitionType
-         *            - the <code>int</code> munition flag(s) of this type.
-         */
-        public MunitionMutator(String munitionName, int weightRatio, long munitionType) {
-            name = munitionName;
-            weight = weightRatio;
-            type = munitionType;
-        }
-
-        /**
          * Create the <code>AmmoType</code> for this munition type for the given
          * rack size.
          *

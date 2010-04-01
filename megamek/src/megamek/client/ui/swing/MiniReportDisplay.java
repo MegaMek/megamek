@@ -45,7 +45,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         butOkay.addActionListener(this);
         taData = new JTextPane();
         taData.setContentType("text/html");
-        taData.setText(sReport);
+        taData.setText("<pre>"+sReport+"</pre>");
         taData.setEditable(false);
         taData.setOpaque(false);
 

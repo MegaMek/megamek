@@ -985,7 +985,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         textArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        textArea.setText(message);
+        textArea.setText("<pre>"+message+"</pre>");
         JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 

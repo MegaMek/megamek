@@ -34,19 +34,19 @@ import megamek.client.ui.AWT.util.PlayerColors;
  * <p>
  * Example:
  * <p>
- * <code>Report r = new Report(3455);<br>
- * r.subject = entity.getId();<br>
- * r.indent();<br>
- * r.addDesc(entity);<br>
- * r.add(6);<br>
- * r.choose(true);<br>
+ * <code>Report r = new Report(3455);\n
+ * r.subject = entity.getId();\n
+ * r.indent();\n
+ * r.addDesc(entity);\n
+ * r.add(6);\n
+ * r.choose(true);\n
  * vPhaseReport.addElement(r);</code>
  * <p>
  * Then the following line would be added to <i>report-messages.properties</i>:
  * <p>
  * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the
- * &lt;msg:3456,3457&gt;.<br>
- * 3456::tank<br>
+ * &lt;msg:3456,3457&gt;.\n
+ * 3456::tank\n
  * 3457::building
  * <p>
  * When the client parses the report, it will fill in the &lt;data&gt; tags with
@@ -425,7 +425,7 @@ public class Report implements Serializable {
                         }
                     } else if (raw.substring(i + 1, endTagIdx)
                             .equals("newline")) {
-                        text.append("<br>");
+                        text.append("\n");
                     } else {
                         // not a special tag, so treat as literal text
                         text.append(raw.substring(i, endTagIdx + 1));
@@ -452,7 +452,7 @@ public class Report implements Serializable {
             return;
         }
         int i = 0;
-        while (sb.substring(i, i+4).equals("<br>")) {
+        while (sb.substring(i, i+4).equals("\n")) {
             i+=4;
             if (i == sb.length()) {
                 continue;
@@ -472,7 +472,7 @@ public class Report implements Serializable {
     private String getNewlines() {
         StringBuffer sbNewlines = new StringBuffer();
         for (int i = 0; i < newlines; i++) {
-            sbNewlines.append("<br>");
+            sbNewlines.append("\n");
         }
         return sbNewlines.toString();
     }

@@ -76,8 +76,7 @@ public class GameLog {
         }
         
         try {
-          //replace any newline characters with a <br>.
-            writer.write(toLog+"<br>");
+            writer.write("<pre>"+toLog+"</pre>");
             writer.newLine();
             writer.flush();
         } catch (IOException ex) {

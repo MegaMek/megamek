@@ -1477,7 +1477,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     Coords c1 = new Coords(x, i);
                     Point pAlt = getHexLocation(c1);
                     IHex hexAlt = game.getBoard().getHex(c1);
-                    if((p.y > pAlt.y) && (p.y < (pAlt.y + HEX_H)) && (hexAlt.getElevation() == elev)) {
+                    if((p.y > pAlt.y) && (p.y < (pAlt.y + HEX_H)) && (hexAlt != null) && (hexAlt.getElevation() == elev)) {
                         //This hex's location falls under the point the user selected.
                         return c1;
                     }
@@ -1658,7 +1658,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             addC3Link(entity);
         }
 
-        if(entity.isAirborne() && entity.getPassedThrough().size() > 1) {
+        if(entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
 

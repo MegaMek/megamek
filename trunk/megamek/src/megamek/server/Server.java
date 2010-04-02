@@ -1970,6 +1970,8 @@ public class Server implements Runnable {
             applyBoardSettings();
             game.getPlanetaryConditions().determineWind();
             send(createPlanetaryConditionsPacket());
+            // transmit the board to everybody
+            send(createBoardPacket());
             game.setupRoundDeployment();
             game.setVictoryContext(new HashMap<String, Object>());
             game.createVictoryConditions();
@@ -1980,8 +1982,6 @@ public class Server implements Runnable {
             }
             // some entities may need to be checked and updated
             checkEntityExchange();
-            // transmit the board to everybody
-            send(createBoardPacket());
             break;
         case PHASE_MOVEMENT:
             // write Movement Phase header to report

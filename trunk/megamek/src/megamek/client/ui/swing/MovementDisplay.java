@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -34,6 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
@@ -450,7 +450,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butDrop.setEnabled(false);
         butDrop.setActionCommand(MOVE_DROP);
         butDrop.addKeyListener(this);
-        
+
         butJoin = new JButton(Messages.getString("MovementDisplay.butJoin")); //$NON-NLS-1$
         butJoin.addActionListener(this);
         butJoin.setEnabled(false);
@@ -474,13 +474,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butHover.setEnabled(false);
         butHover.setActionCommand(MOVE_HOVER);
         butHover.addKeyListener(this);
-        
+
         butTakeOff = new JButton(Messages.getString("MovementDisplay.butTakeOff")); //$NON-NLS-1$
         butTakeOff.addActionListener(this);
         butTakeOff.setEnabled(false);
         butTakeOff.setActionCommand(MOVE_TAKE_OFF);
         butTakeOff.addKeyListener(this);
-        
+
         butVTakeOff = new JButton(Messages.getString("MovementDisplay.butVTakeOff")); //$NON-NLS-1$
         butVTakeOff.addActionListener(this);
         butVTakeOff.setEnabled(false);
@@ -548,7 +548,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
-        
+
         buttonsTank = new ArrayList<JButton>(19);
         buttonsTank.add(butWalk);
         buttonsTank.add(butBackup);
@@ -569,7 +569,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butShakeOff);
         buttonsTank.add(butTakeOff);
         buttonsTank.add(butVTakeOff);
-      
+
         buttonsVtol = new ArrayList<JButton>(15);
         buttonsVtol.add(butWalk);
         buttonsVtol.add(butBackup);
@@ -678,7 +678,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 6));
+        panButtons.setLayout(new GridBagLayout());
 
         // choose button order based on entity type
         ArrayList<JButton> buttonList = buttonsMech;
@@ -716,25 +716,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
             }
         }
-        panButtons.add(butNext);
-        int added = 1;
+        int x = 0;
+        int y = 0;
+        panButtons.add(butNext, GBC.std().gridx(x).gridy(y).fill());
+
         for (int i = buttonLayout * 9; (i < (buttonLayout + 1) * 9)
                 && (i < buttonList.size()); i++) {
-            if (added == 5) {
-                panButtons.add(butMore);
-                added++;
+            if (x == 5) {
+                y++;
+                x = 0;
             }
-            panButtons.add(buttonList.get(i));
-            added++;
+            panButtons.add(buttonList.get(i), GBC.std().gridx(x).gridy(y).fill());
+            x++;
         }
-        while (added < 11) {
-            JButton space = new JButton("");
-            space.setEnabled(false);
-            space.setVisible(false);
-            panButtons.add(space);
-            added++;
-        }
-        panButtons.add(butDone);
+        panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
+        panButtons.add(butDone, GBC.std().gridx(5).gridy(0).gridheight(2).fill());
         panButtons.validate();
         panButtons.repaint();
     }
@@ -893,13 +889,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     && ce.isActive()
                     && !ce.getQuirks().booleanOption("no_eject"));
         }
-        
+
         if(ce.isDropping()) {
             disableButtons();
             setNextEnabled(true);
             butDone.setEnabled(true);
         }
-        
+
         setupButtonPanel();
     }
 
@@ -1019,7 +1015,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
-        
+
         // update some GUI elements
         clientgui.bv.clearMovementData();
         butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
@@ -1046,7 +1042,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkFuel();
         checkOOC();
         checkAtmosphere();
-        
+
       //if dropping unit only allow turning
         if(ce.isDropping()) {
             gear = MovementDisplay.GEAR_TURN;
@@ -1166,7 +1162,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        if (ce().isAirborne() && ce() instanceof Aero) {
+        if (ce().isAirborne() && (ce() instanceof Aero)) {
             if (!clientgui.getClient().game.useVectorMove()
                     && !((Aero) ce()).isOutControlTotal()) {
                 // check for underuse of velocity
@@ -1613,22 +1609,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setLowerEnabled(ce.canGoDown(cmd.getFinalElevation(), cmd
                 .getFinalCoords()));
     }
-    
+
     private synchronized void updateTakeOffButtons() {
-        
-        if(null != cmd && cmd.length() > 0) {
+
+        if((null != cmd) && (cmd.length() > 0)) {
             //you can't take off if you have already moved
             //http://www.classicbattletech.com/forums/index.php?topic=54112.0
             setTakeOffEnabled(false);
             setVTakeOffEnabled(false);
             return;
         }
-        
+
         final Entity ce = ce();
         if (null == ce) {
             return;
         }
-        
+
         if(ce instanceof Aero) {
             if(ce.isAirborne()) {
                 setTakeOffEnabled(false);
@@ -1877,7 +1873,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 || (ce.getLaunchableSmallCraft().size() > 0));
 
     }
-    
+
     private void updateDropButton() {
 
         final Entity ce = ce();
@@ -1886,7 +1882,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        setDropEnabled(ce.isAirborne() 
+        setDropEnabled(ce.isAirborne()
                 && (ce.getDroppableUnits().size() > 0));
 
     }
@@ -2270,7 +2266,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // Return the chosen unit.
         return choices;
     }
-    
+
     /**
      * Get the unit that the player wants to drop. This method will remove the
      * unit from our local copy of loaded units.
@@ -2281,7 +2277,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private TreeMap<Integer, Vector<Integer>> getDroppedUnits() {
         Entity ce = ce();
         TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
-        
+
         Vector<Entity> droppableUnits = ce.getDroppableUnits();
 
         // Handle error condition.
@@ -2301,7 +2297,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 Vector<Integer> bayChoices = new Vector<Integer>();
                 currentUnits = currentBay.getDroppableUnits();
                 doors = currentBay.getDoors();
-                if (currentUnits.size() > 0 && doors > 0) {
+                if ((currentUnits.size() > 0) && (doors > 0)) {
                     String[] names = new String[currentUnits.size()];
                     String question = Messages
                             .getString(
@@ -2334,7 +2330,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     }
                 }
                 bayNum++;
-            }      
+            }
         }// End have-choices
         // Return the chosen unit.
         return choices;
@@ -3226,8 +3222,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_DUMP)) {
             dumpBombs();
         }
-        else if (ev.getActionCommand().equals(MOVE_TAKE_OFF)) {          
-            if(ce() instanceof Aero && !((Aero)ce()).hasRoomForHorizontalTakeOff()) {
+        else if (ev.getActionCommand().equals(MOVE_TAKE_OFF)) {
+            if((ce() instanceof Aero) && !((Aero)ce()).hasRoomForHorizontalTakeOff()) {
                 String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
                 String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).getTakeOffLength()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
@@ -3239,7 +3235,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
             }
         }
-        else if (ev.getActionCommand().equals(MOVE_VERT_TAKE_OFF)) {          
+        else if (ev.getActionCommand().equals(MOVE_VERT_TAKE_OFF)) {
             if(clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"), Messages.getString("MovementDisplay.TakeOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 clear();
                 cmd.addStep(MoveStepType.VTAKEOFF);
@@ -3617,7 +3613,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butRecover.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecoverEnabled(enabled);
     }
-    
+
     private void setDropEnabled(boolean enabled) {
         butDrop.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveDropEnabled(enabled);
@@ -3642,12 +3638,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butHover.setEnabled(enabled);
         clientgui.getMenuBar().setMoveHoverEnabled(enabled);
     }
-    
+
     private void setTakeOffEnabled(boolean enabled) {
         butTakeOff.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveTakeOffEnabled(enabled);
     }
-    
+
     private void setVTakeOffEnabled(boolean enabled) {
         butVTakeOff.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);

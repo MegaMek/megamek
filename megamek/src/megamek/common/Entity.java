@@ -7679,7 +7679,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
         if (getMovementMode() == EntityMovementMode.VTOL) {
-            if ((game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation())) {
+            if ((game != null) && (game.getBoard() != null) && (getPosition() != null) && (game.getBoard().getHex(getPosition()) != null) && ((game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation()))) {
                 return false;
             }
             return getElevation() > 0;

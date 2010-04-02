@@ -1043,7 +1043,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Mul Files", "mul");
 
-            dlgSaveList.setFileFilter(filter);
+            dlgLoadList.setFileFilter(filter);
         }
         // Default to the player's name.
         dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$

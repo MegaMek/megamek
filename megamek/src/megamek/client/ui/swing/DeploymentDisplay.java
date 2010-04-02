@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -29,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
@@ -58,6 +58,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public static final String DEPLOY_UNLOAD = "deployUnload"; //$NON-NLS-1$
     public static final String DEPLOY_REMOVE = "deployRemove"; //$NON-NLS-1$
     public static final String DEPLOY_ASSAULTDROP = "assaultDrop"; //$NON-NLS-1$
+    public static final String DEPLOY_DOCK = "deployDock"; //$NON-NLS-1$
 
     // buttons
     private JPanel panButtons;
@@ -67,6 +68,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private JButton butUnload;
     private JButton butRemove;
     private JButton butAssaultDrop;
+    private JButton butDock;
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
     private boolean turnMode = false;
@@ -117,19 +119,26 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         butAssaultDrop.addActionListener(this);
         butAssaultDrop.setActionCommand(DEPLOY_ASSAULTDROP);
         butAssaultDrop.setEnabled(false);
-        butDone.setText(Messages.getString("DeploymentDisplay.Deploy")); //$NON-NLS-1$
+        butDock = new JButton(Messages
+                .getString("DeploymentDisplay.Dock"));  //$NON-NLS-1$
+        butDock.addActionListener(this);
+        butDock.setActionCommand(DEPLOY_DOCK);
+        butDock.setEnabled(false);
+
+        butDone.setText("<html><b>"+Messages.getString("DeploymentDisplay.Deploy")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         // layout button grid
         panButtons = new JPanel();
-        panButtons.setLayout(new GridLayout(0, 7));
-        panButtons.add(butNext);
-        panButtons.add(butTurn);
-        panButtons.add(butLoad);
-        panButtons.add(butUnload);
-        panButtons.add(butRemove);
-        panButtons.add(butAssaultDrop);
-        panButtons.add(butDone);
+        panButtons.setLayout(new GridBagLayout());
+        panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill(GridBagConstraints.BOTH));
+        panButtons.add(butTurn, GBC.std().gridx(1).gridy(0).fill(GridBagConstraints.BOTH));
+        panButtons.add(butLoad, GBC.std().gridx(2).gridy(0).fill(GridBagConstraints.BOTH));
+        panButtons.add(butUnload, GBC.std().gridx(3).gridy(0).fill(GridBagConstraints.BOTH));
+        panButtons.add(butRemove, GBC.std().gridx(4).gridy(0).fill(GridBagConstraints.BOTH));
+        panButtons.add(butAssaultDrop, GBC.std().gridx(5).gridy(0).fill(GridBagConstraints.BOTH));
+        panButtons.add(butDock, GBC.std().gridx(0).gridy(1).fill(GridBagConstraints.BOTH));
+        panButtons.add(butDone, GBC.std().gridx(6).gridy(0).gridheight(2).fill(GridBagConstraints.BOTH));
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();

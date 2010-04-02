@@ -324,7 +324,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
         butNext.addKeyListener(this);
-        butDone.setText(Messages.getString("MovementDisplay.butDone")); //$NON-NLS-1$
+        butDone.setText("<html><b>"+Messages.getString("MovementDisplay.butDone")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
         butLoad = new JButton(Messages.getString("MovementDisplay.butLoad")); //$NON-NLS-1$
         butLoad.addActionListener(this);
@@ -905,7 +905,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void beginMyTurn() {
         setStatusBarText(Messages.getString("MovementDisplay.its_your_turn")); //$NON-NLS-1$
         selectEntity(clientgui.getClient().getFirstEntityNum());
-        butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
+        butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(true);
         setNextEnabled(true);
         butMore.setEnabled(true);
@@ -1018,7 +1018,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         // update some GUI elements
         clientgui.bv.clearMovementData();
-        butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
+        butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -1064,7 +1064,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
+                butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Done")+"</b></html>"); //$NON-NLS-1$
             }
         }
     }
@@ -1288,14 +1288,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             clientgui.bv.drawMovementData(ce(), cmd);
             clientgui.getBoardView().select(b.getCoords());
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
-                butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+                butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Move")+"</b></html>"); //$NON-NLS-1$
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
                 MovePath possible = cmd.clone();
                 possible.clipToPossible();
                 if (possible.length() == 0) {
-                    butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
+                    butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Done")+"</b></html>"); //$NON-NLS-1$
                 }
                 return;
             }
@@ -1515,7 +1515,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clear();
                 return;
             }
-            butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+            butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Move")+"</b></html>"); //$NON-NLS-1$
             updateProneButtons();
             updateRACButton();
             updateSearchlightButton();
@@ -2994,7 +2994,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     }
                 }
             } else {
-                butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+                butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Move")+"</b></html"); //$NON-NLS-1$
                 if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                     cmd.addStep(MoveStepType.GET_UP);
                 }
@@ -3007,14 +3007,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 cmd.addStep(MoveStepType.GO_PRONE);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
-            butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+            butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Move")+"</b></html>"); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_HULL_DOWN)) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalHullDown()) {
                 cmd.addStep(MoveStepType.HULL_DOWN);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
-            butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
+            butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Move")+"</b></html>"); //$NON-NLS-1$
         } else if (ev.getActionCommand().equals(MOVE_FLEE)
                 && clientgui
                         .doYesNoDialog(

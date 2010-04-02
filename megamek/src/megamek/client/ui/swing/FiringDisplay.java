@@ -17,7 +17,6 @@ package megamek.client.ui.swing;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,6 +42,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
@@ -275,7 +275,7 @@ KeyListener, ItemListener, ListSelectionListener {
         butFireClearWeaponJam.setActionCommand(FIRE_CLEAR_WEAPON);
         butFireClearWeaponJam.setEnabled(false);
 
-        butDone.setText(Messages.getString("FiringDisplay.Done")); //$NON-NLS-1$
+        butDone.setText("<html><b>"+Messages.getString("FiringDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         butNext = new JButton(Messages.getString("FiringDisplay.NextUnit")); //$NON-NLS-1$
@@ -333,36 +333,33 @@ KeyListener, ItemListener, ListSelectionListener {
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 6));
+        panButtons.setLayout(new GridBagLayout());
 
         switch (buttonLayout) {
         case 0:
-            panButtons.add(butNext);
-            panButtons.add(butFire);
-            panButtons.add(butSkip);
-            panButtons.add(butNextTarg);
-            panButtons.add(butTwist);
-            panButtons.add(butMore);
-            panButtons.add(butFlipArms);
-            panButtons.add(butFireMode);
-            panButtons.add(butFireCalled);
-            panButtons.add(butFireClearWeaponJam);
-            panButtons.add(butFireClearTurret);
-            panButtons.add(butDone);
+            panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
+            panButtons.add(butFire, GBC.std().gridx(1).gridy(0).fill());
+            panButtons.add(butSkip, GBC.std().gridx(2).gridy(0).fill());
+            panButtons.add(butNextTarg, GBC.std().gridx(3).gridy(0).fill());
+            panButtons.add(butTwist, GBC.std().gridx(4).gridy(0).fill());
+            panButtons.add(butFlipArms, GBC.std().gridx(0).gridy(1).fill());
+            panButtons.add(butFireMode, GBC.std().gridx(1).gridy(1).fill());
+            panButtons.add(butFireClearWeaponJam, GBC.std().gridx(2).gridy(1).fill());
+            panButtons.add(butFireClearTurret, GBC.std().gridx(3).gridy(1).fill());
+            panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
+            panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill().gridheight(2));
             break;
         case 1:
-            panButtons.add(butNext);
-            panButtons.add(butFire);
-            panButtons.add(butSkip);
-            panButtons.add(butNextTarg);
-            panButtons.add(butFindClub);
-            panButtons.add(butMore);
-            panButtons.add(butSpot);
-            panButtons.add(butSearchlight);
-            panButtons.add(butSpace);
-            panButtons.add(butSpace2);
-            panButtons.add(butSpace3);
-            panButtons.add(butDone);
+            panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
+            panButtons.add(butFire, GBC.std().gridx(1).gridy(0).fill());
+            panButtons.add(butSkip, GBC.std().gridx(2).gridy(0).fill());
+            panButtons.add(butNextTarg, GBC.std().gridx(3).gridy(0).fill());
+            panButtons.add(butFindClub, GBC.std().gridx(4).gridy(0).fill());
+            panButtons.add(butSpot, GBC.std().gridx(0).gridy(1).fill());
+            panButtons.add(butSearchlight, GBC.std().gridx(1).gridy(1).fill());
+            panButtons.add(butFireCalled, GBC.std().gridx(2).gridy(1).fill());
+            panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());;
+            panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill().gridheight(2));
             break;
         }
 

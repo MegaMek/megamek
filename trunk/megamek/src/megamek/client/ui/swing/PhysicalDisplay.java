@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +34,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
@@ -232,7 +232,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         butExplosives.setEnabled(false);
         butExplosives.setActionCommand(PHYSICAL_EXPLOSIVES);
 
-        butDone.setText(Messages.getString("PhysicalDisplay.Done")); //$NON-NLS-1$
+        butDone.setText("<html><b>"+Messages.getString("PhysicalDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
 
         butNext = new JButton(Messages.getString("PhysicalDisplay.NextUnit")); //$NON-NLS-1$
@@ -284,36 +284,32 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     private void setupButtonPanel() {
         panButtons.removeAll();
-        panButtons.setLayout(new GridLayout(2, 6));
+        panButtons.setLayout(new GridBagLayout());
 
         switch (buttonLayout) {
         case 0:
-            panButtons.add(butNext);
-            panButtons.add(butPunch);
-            panButtons.add(butKick);
-            panButtons.add(butPush);
-            panButtons.add(butClub);
-            panButtons.add(butMore);
-            panButtons.add(butBrush);
-            panButtons.add(butThrash);
-            panButtons.add(butVibro);
-            panButtons.add(butProto);
-            panButtons.add(butJumpJet);
-            panButtons.add(butDone);
+            panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
+            panButtons.add(butPunch, GBC.std().gridx(1).gridy(0).fill());
+            panButtons.add(butKick, GBC.std().gridx(2).gridy(0).fill());
+            panButtons.add(butPush, GBC.std().gridx(3).gridy(0).fill());
+            panButtons.add(butClub, GBC.std().gridx(4).gridy(0).fill());
+            panButtons.add(butBrush, GBC.std().gridx(0).gridy(1).fill());
+            panButtons.add(butThrash, GBC.std().gridx(1).gridy(1).fill());
+            panButtons.add(butJumpJet, GBC.std().gridx(3).gridy(1).fill());
+            panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
+            panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill().gridheight(2));
             break;
         case 1:
-            panButtons.add(butNext);
-            panButtons.add(butDodge);
-            panButtons.add(butTrip);
-            panButtons.add(butGrapple);
-            panButtons.add(butSearchlight);
-            panButtons.add(butMore);
-            panButtons.add(butExplosives);
-            panButtons.add(butSpace);
-            panButtons.add(butSpace2);
-            panButtons.add(butSpace3);
-            panButtons.add(butSpace4);
-            panButtons.add(butDone);
+            panButtons.add(butNext, GBC.std().gridx(0).gridy(0).fill());
+            panButtons.add(butDodge, GBC.std().gridx(1).gridy(0).fill());
+            panButtons.add(butTrip, GBC.std().gridx(2).gridy(0).fill());
+            panButtons.add(butGrapple, GBC.std().gridx(3).gridy(0).fill());
+            panButtons.add(butSearchlight, GBC.std().gridx(4).gridy(0).fill());
+            panButtons.add(butExplosives, GBC.std().gridx(0).gridy(1).fill());
+            panButtons.add(butVibro, GBC.std().gridx(1).gridy(1).fill());
+            panButtons.add(butProto, GBC.std().gridx(2).gridy(1).fill());
+            panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
+            panButtons.add(butDone, GBC.std().gridx(5).gridy(0).fill().gridheight(2));
             break;
         }
         panButtons.validate();

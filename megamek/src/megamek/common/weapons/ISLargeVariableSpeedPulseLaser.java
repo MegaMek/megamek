@@ -35,7 +35,7 @@ public class ISLargeVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
     public ISLargeVariableSpeedPulseLaser() {
         super();
         techLevel = TechConstants.T_IS_ADVANCED;
-        name = "Large VSP";
+        name = "Large VSP Laser";
         setInternalName("ISLargeVSPLaser");
         setInternalName("ISLVSPL");
         setInternalName("ISLargeVariableSpeedLaser");

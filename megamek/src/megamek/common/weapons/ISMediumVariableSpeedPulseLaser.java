@@ -34,7 +34,7 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
     public ISMediumVariableSpeedPulseLaser() {
         super();
         techLevel = TechConstants.T_IS_ADVANCED;
-        name = "Medium VSP";
+        name = "Medium VSP Laser";
         setInternalName("ISMediumVSPLaser");
         setInternalName("ISMVSPL");
         setInternalName("ISMediumVariableSpeedLaser");

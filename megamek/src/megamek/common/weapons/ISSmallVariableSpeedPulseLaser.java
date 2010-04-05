@@ -35,7 +35,7 @@ public class ISSmallVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
     public ISSmallVariableSpeedPulseLaser() {
         super();
         techLevel = TechConstants.T_IS_ADVANCED;
-        name = "Small VSP";
+        name = "Small VSP Laser";
         setInternalName("ISSmallVSPLaser");
         setInternalName("ISSVSPL");
         setInternalName("ISSmallVariableSpeedLaser");

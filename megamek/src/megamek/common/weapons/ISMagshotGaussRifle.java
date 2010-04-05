@@ -35,7 +35,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
     public ISMagshotGaussRifle() {
         super();
         techLevel = TechConstants.T_IS_ADVANCED;
-        name = "Magshot";
+        name = "MagShot";
         setInternalName("ISMagshotGR");
         heat = 1;
         damage = 2;

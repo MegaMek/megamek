@@ -40,6 +40,7 @@ v0.35.14-dev (SVN)
 + Improved button layout for deployment and movement (rest coming soon)
 + Updated VSP and MagShot External Names
 + Bug 2980974: weapons report truncated
++ unofficial game option to modify maximum to-hit penalty for Ghost Targets
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

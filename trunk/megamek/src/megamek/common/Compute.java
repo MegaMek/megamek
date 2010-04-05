@@ -3417,6 +3417,8 @@ public class Compute {
         // loop through all intervening coords, if they are not ecm'ed by
         // friendlys then add any Ghost Targets
         // to the hashlist
+        //TODO: Currently ECM cancels Ghost Targets, but waiting for rules clarification
+        //http://www.classicbattletech.com/forums/index.php/topic,66035.new.html#new
         for (Coords c : coords) {
             // >0: in friendly ECM
             // <=0: not in friendly ECM

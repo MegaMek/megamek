@@ -565,7 +565,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod)
                         - (ae.getGhostTargetOverride() + bapMod + tcMod);
                 if (ghostTargetMoF > 1) {
-                    toHit.addModifier(Math.min(4, ghostTargetMoF / 2), "ghost targets");
+                    int max = Math.max(1, game.getOptions().intOption("ghost_target_max"));
+                    toHit.addModifier(Math.min(max, ghostTargetMoF / 2), "ghost targets");
                 }
             }
         }

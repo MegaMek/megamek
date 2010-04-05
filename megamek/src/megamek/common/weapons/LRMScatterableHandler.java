@@ -65,6 +65,7 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
         if (!bMissed) {
             Report r = new Report(3190, whoReport);
             r.subject = subjectId;
+            r.player = ae.getOwnerId();
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {

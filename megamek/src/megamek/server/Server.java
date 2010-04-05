@@ -25935,17 +25935,16 @@ public class Server implements Runnable {
             case Mounted.MINE_CONVENTIONAL:
                 deliverThunderMinefield(coords, entity.getOwnerId(), 10, entity.getId());
                 mine.setMissing(true);
-                r = new Report(3500, Report.PLAYER);
+                r = new Report(3500);
                 r.subject = entity.getId();
                 r.addDesc(entity);
-                r.type = Report.PLAYER;
                 r.add(coords.getBoardNum());
                 addReport(r);
                 break;
             case Mounted.MINE_VIBRABOMB:
                 deliverThunderVibraMinefield(coords, entity.getOwnerId(), 10, mine.getVibraSetting(), entity.getId());
                 mine.setMissing(true);
-                r = new Report(3505, Report.PLAYER);
+                r = new Report(3505);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(coords.getBoardNum());
@@ -25954,7 +25953,7 @@ public class Server implements Runnable {
             case Mounted.MINE_ACTIVE:
                 deliverThunderActiveMinefield(coords, entity.getOwnerId(), 10, entity.getId());
                 mine.setMissing(true);
-                r = new Report(3510, Report.PLAYER);
+                r = new Report(3510);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(coords.getBoardNum());
@@ -25963,7 +25962,7 @@ public class Server implements Runnable {
             case Mounted.MINE_INFERNO:
                 deliverThunderInfernoMinefield(coords, entity.getOwnerId(), 10, entity.getId());
                 mine.setMissing(true);
-                r = new Report(3515, Report.PLAYER);
+                r = new Report(3515);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(coords.getBoardNum());

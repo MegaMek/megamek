@@ -17,7 +17,56 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.weapons.*;
-import megamek.common.weapons.infantry.*;
+import megamek.common.weapons.infantry.InfantryAutoRifleWeapon;
+import megamek.common.weapons.infantry.InfantryInfernoSRMWeapon;
+import megamek.common.weapons.infantry.InfantryLRMWeapon;
+import megamek.common.weapons.infantry.InfantryLaserRifleWeapon;
+import megamek.common.weapons.infantry.InfantryLightSRMWeapon;
+import megamek.common.weapons.infantry.InfantryPistolAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolBlazerPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolClanERLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolClanGaussPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolClanPulseLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolCoventryHandrocketGyrojetPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolDartGunWeapon;
+import megamek.common.weapons.infantry.InfantryPistolFlamerPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolFlarePistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolGyrojetPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolHawkEagleAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolHoldOutLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolHoldoutGyrojetPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolHoldoutNeedlerPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolHoldoutPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMagnumAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMagnumRevolverWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMakeshiftPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMandrakeGaussPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMartialEagleMachinePistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMauserAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMauserNeedlerPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolMydronAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolNakjimaLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolNambuAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolNeedlerPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolPaintGunPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolPulseLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolRevolverWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSeaEagleNeedlerPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSerrekAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSonicStunnerWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSpitballGasPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSternsnachtPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSternsnachtPythonAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolStettaAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSunbeamLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolSunbeamNovaLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolTKEnforcerAutoPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPistolTranqGunWeapon;
+import megamek.common.weapons.infantry.InfantryPistolWhiteDwarfLaserPistolWeapon;
+import megamek.common.weapons.infantry.InfantryPortableMGWeapon;
+import megamek.common.weapons.infantry.InfantryRifleThunderstrokeIIWeapon;
+import megamek.common.weapons.infantry.InfantrySupportPortablePlasmaWeapon;
 
 // TODO add XML support back in.
 
@@ -1197,6 +1246,15 @@ public class WeaponType extends EquipmentType {
     @Override
     public double getBV(Entity entity) {
         double returnBV = bv;
+        if (entity instanceof SupportTank) {
+            if (!entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)  &&
+                    !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                returnBV *= 0.8;
+            } else if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
+                    !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                returnBV *= 0.9;
+            }
+        }
         return returnBV;
     }
 }

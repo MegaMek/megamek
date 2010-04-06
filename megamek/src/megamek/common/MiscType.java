@@ -109,14 +109,17 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_MECH_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(66);
     public static final BigInteger F_TANK_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(67);
     public static final BigInteger F_AERO_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(68);
-    public static final BigInteger F_PROTOMECH_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(69);
-    public static final BigInteger F_ARMORED_GLOVE = BigInteger.valueOf(1).shiftLeft(70);
-    public static final BigInteger F_BASIC_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(71);
-    public static final BigInteger F_BATTLE_CLAW = BigInteger.valueOf(1).shiftLeft(72);
-    public static final BigInteger F_AP_MOUNT = BigInteger.valueOf(1).shiftLeft(73);
-    public static final BigInteger F_MAST_MOUNT = BigInteger.valueOf(1).shiftLeft(74);
-    public static final BigInteger F_FUEL = BigInteger.valueOf(1).shiftLeft(75);
-    public static final BigInteger F_BLUE_SHIELD = BigInteger.valueOf(1).shiftLeft(76);
+    public static final BigInteger F_SUPPORT_TANK_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(69);
+    public static final BigInteger F_PROTOMECH_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(70);
+    public static final BigInteger F_ARMORED_GLOVE = BigInteger.valueOf(1).shiftLeft(71);
+    public static final BigInteger F_BASIC_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(72);
+    public static final BigInteger F_BATTLE_CLAW = BigInteger.valueOf(1).shiftLeft(73);
+    public static final BigInteger F_AP_MOUNT = BigInteger.valueOf(1).shiftLeft(74);
+    public static final BigInteger F_MAST_MOUNT = BigInteger.valueOf(1).shiftLeft(75);
+    public static final BigInteger F_FUEL = BigInteger.valueOf(1).shiftLeft(76);
+    public static final BigInteger F_BLUE_SHIELD = BigInteger.valueOf(1).shiftLeft(77);
+    public static final BigInteger F_BASIC_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(78);
+    public static final BigInteger F_ADVANCED_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(79);
 
 
     // Secondary Flags for Physical Weapons
@@ -355,6 +358,24 @@ public class MiscType extends EquipmentType {
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
             return (float) (Math.ceil(entity.getWeight() / 40) * 2.0);
+        } else if (hasFlag(F_BASIC_FIRECONTROL)) {
+            // 5% of weapon weight
+            float weaponWeight = 0;
+            for (Mounted mount : entity.getWeaponList()) {
+                weaponWeight += mount.getType().getTonnage(entity);
+            }
+            // round to half ton TODO: round to kilograms for small support
+            // vees, but we don't support them yet
+            return (float) (Math.ceil(weaponWeight / 40) * 2.0);
+        } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
+            // 10% of weapon weight
+            float weaponWeight = 0;
+            for (Mounted mount : entity.getWeaponList()) {
+                weaponWeight += mount.getType().getTonnage(entity);
+            }
+            // round to half ton TODO: round to kilograms for small support
+            // vees, but we don't support them yet
+            return (float) (Math.ceil(weaponWeight / 20) * 2.0);
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -3695,6 +3716,29 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_BLUE_SHIELD).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createBasicFireControl() {
+        MiscType misc = new MiscType();
+        misc.name ="Basic Fire Control";
+        misc.setInternalName(misc.name);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(MiscType.F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createAdvancedFireControl() {
+        MiscType misc = new MiscType();
+        misc.name ="Advanced Fire Control";
+        misc.setInternalName(misc.name);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(MiscType.F_SUPPORT_TANK_EQUIPMENT);
 
         return misc;
     }

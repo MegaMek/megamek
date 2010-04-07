@@ -566,8 +566,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 int ghostTargetMoF = (ae.getCrew().getSensorOps() + ghostTargetMod)
                         - (ae.getGhostTargetOverride() + bapMod + tcMod);
                 if (ghostTargetMoF > 1) {
-                    int max = Math.max(1, game.getOptions().intOption("ghost_target_max"));
-                    toHit.addModifier(Math.min(max, ghostTargetMoF / 2), "ghost targets");
+                    //according to this rules clarification the +4 max is on the PSR not on the to-hit roll
+                    //http://www.classicbattletech.com/forums/index.php?topic=66036.0
+                    //unofficial rule to cap the ghost target to-hit penalty    
+                    int mod = ghostTargetMoF / 2;
+                    if(game.getOptions().intOption("ghost_target_max") > 0) {
+                        mod = Math.min(mod, game.getOptions().intOption("ghost_target_max"));
+                    }
+                    toHit.addModifier(mod, "ghost targets");
                 }
             }
         }

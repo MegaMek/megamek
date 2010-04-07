@@ -752,6 +752,8 @@ public class MiscType extends EquipmentType {
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
+        EquipmentType.addType(MiscType.createBasicFireControl());
+        EquipmentType.addType(MiscType.createAdvancedFireControl());
     }
 
     public static MiscType createHeatSink() {

@@ -3417,7 +3417,7 @@ public class Compute {
         // loop through all intervening coords, if they are not ecm'ed by
         // friendlys then add any Ghost Targets
         // to the hashlist
-        //TODO: Currently ECM cancels Ghost Targets, but waiting for rules clarification
+        //According to the rules clarification below ECM cancels Ghost Targets
         //http://www.classicbattletech.com/forums/index.php/topic,66035.new.html#new
         for (Coords c : coords) {
             // >0: in friendly ECM
@@ -3477,7 +3477,10 @@ public class Compute {
                 }
             }
         }
-        return highestMod + totalGT;
+        
+        //according to the following rules clarification, this should be maxed out at +4
+        //http://www.classicbattletech.com/forums/index.php?topic=66036.0
+        return Math.max(4, highestMod + totalGT);
     }
 
     /**

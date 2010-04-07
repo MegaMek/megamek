@@ -53,7 +53,6 @@ import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.RangeType;
-import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -758,8 +757,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasFlag(WeaponType.F_ANTI_SHIP) && (target instanceof Entity) && (te.getWeight() < 500)) {
             toHit.addModifier(4, "Anti-ship missile at a small target");
         }
-
-        if (target.isAirborne() && (target instanceof Aero)) {
+        
+        if (target.isAirborne() && target instanceof Aero) {
 
             Aero a = (Aero) target;
 
@@ -969,13 +968,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, "primitive industrial cockpit with advanced fire control");
         }
 
-        if (ae instanceof SupportTank) {
-            if (!(ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)))) {
-                toHit.addModifier(2, "support vehicle without fire control");
-            } else if (ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
-                toHit.addModifier(1, "support vehicle with basic fire control");
-            }
-        }
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected
                 && (atype != null)
@@ -1089,7 +1081,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(+2, "dropping");
             toHit.addModifier(+3, "jumping");
         }
-
+        
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
             if (!isArtilleryFLAK) {
@@ -1631,7 +1623,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.setHitTable(ToHitData.HIT_BELOW);
         }
 
-        if (target.isAirborne() && (target instanceof Aero)) {
+        if (target.isAirborne() && target instanceof Aero) {
             if (!(((Aero) target).isSpheroid() && !game.getBoard().inSpace())) {
                 // get mods for direction of attack
                 int side = toHit.getSideTable();

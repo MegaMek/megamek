@@ -8902,9 +8902,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getAltitude() {
-        if (isAirborneVTOL()) {
-            return 1;
-        }
         return altitude;
     }
 

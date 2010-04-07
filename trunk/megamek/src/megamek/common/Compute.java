@@ -743,7 +743,7 @@ public class Compute {
         }
 
         // determine base distance & range bracket
-        int distance = Compute.effectiveDistance(game, ae, target);
+        int distance = Compute.effectiveDistance(game, ae, target, false);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange);
 
         int maxRange = wtype.getMaxRange();
@@ -788,7 +788,7 @@ public class Compute {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
         }
 
-        int c3dist = Compute.effectiveDistance(game, c3spotter, target);
+        int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
         int c3range = RangeType.rangeBracket(c3dist, weaponRanges, useExtremeRange);
 
         /*
@@ -1030,6 +1030,17 @@ public class Compute {
      * @return the effective distance
      */
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
+        return effectiveDistance(game, attacker, target, false);
+    }
+    
+    /**
+     * Finds the effective distance between an attacker and a target. Includes
+     * the distance bonus if the attacker and target are in the same building
+     * and on different levels. Also takes account of altitude differences
+     *
+     * @return the effective distance
+     */
+    public static int effectiveDistance(IGame game, Entity attacker, Targetable target, boolean useGroundDistance) {
 
         if (Compute.isAirToGround(attacker, target)) {
             // always a distance of zero
@@ -1057,7 +1068,7 @@ public class Compute {
 
         // if this is an air-to-air attack on the ground map, then divide
         // distance by 16
-        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround()) {
+        if (Compute.isAirToAir(attacker, target) && game.getBoard().onGround() && !useGroundDistance) {
             distance = (int) Math.ceil(distance / 16.0);
         }
 
@@ -1074,6 +1085,9 @@ public class Compute {
         if (Compute.isAirToAir(attacker, target)) {
             int aAlt = attacker.getAltitude();
             int tAlt = target.getAltitude();
+            if(target.isAirborneVTOL()) {
+                tAlt++;
+            }
             distance += Math.abs(aAlt - tAlt);
         }
 
@@ -1112,7 +1126,7 @@ public class Compute {
                 continue; // useless to us...
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target);
+            int buddyRange = Compute.effectiveDistance(game, friend, target, false);
             if (buddyRange < c3range) {
                 c3range = buddyRange;
                 c3spotter = friend;
@@ -1144,12 +1158,12 @@ public class Compute {
                 continue; // useless to us...
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target);
+            int buddyRange = Compute.effectiveDistance(game, friend, target, false);
 
             boolean added = false;
             // but everyone in the C3i network into a list and sort it by range.
             for (int pos = 0; pos < network.size(); pos++) {
-                if (Compute.effectiveDistance(game, network.get(pos), target) >= buddyRange) {
+                if (Compute.effectiveDistance(game, network.get(pos), target, false) >= buddyRange) {
                     network.add(pos, friend);
                     added = true;
                     break;
@@ -4965,8 +4979,13 @@ public class Compute {
         }
         // Account for "dead zones" between Aeros at different altitudes
         if (Compute.isAirToAir(ae, target)) {
-            int distance = Compute.effectiveDistance(game, ae, target);
-            int altDiff = Math.abs(ae.getAltitude() - target.getAltitude());
+            int distance = Compute.effectiveDistance(game, ae, target, target.isAirborneVTOL());
+            int aAlt = ae.getAltitude();
+            int tAlt = target.getAltitude();
+            if(target.isAirborneVTOL()) {
+                tAlt++;
+            }
+            int altDiff = Math.abs(aAlt - tAlt);
             if (altDiff >= (distance - altDiff)) {
                 return true;
             }

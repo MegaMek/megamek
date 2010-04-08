@@ -1246,7 +1246,7 @@ public class WeaponType extends EquipmentType {
     @Override
     public double getBV(Entity entity) {
         double returnBV = bv;
-        if (entity instanceof SupportTank) {
+        if ((entity instanceof SupportTank) || (entity instanceof SupportVTOL)) {
             if (!entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)  &&
                     !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 returnBV *= 0.8;

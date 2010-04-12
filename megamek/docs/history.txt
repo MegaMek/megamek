@@ -44,6 +44,7 @@ v0.35.14-dev (SVN)
 + added support vehicle targeting systems
 + Ghost Targets +4 maximum is for PSR modifier not to-hit modifier
 + Bug: VTOLs assault-dropping on deployment
++ Bug: Mechs cannot go hull-down even with option enabled
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

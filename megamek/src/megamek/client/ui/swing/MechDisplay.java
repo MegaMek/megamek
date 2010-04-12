@@ -613,7 +613,7 @@ public class MechDisplay extends JPanel {
         public JLabel wTargetR;
         public JLabel wRangeR;
         public JLabel wToHitR;
-        
+
         private JLabel wDamageTrooperL;
         private JLabel wDamageTrooperR;
         private JLabel wInfantryRange0L;
@@ -669,12 +669,12 @@ public class MechDisplay extends JPanel {
 
             add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(1).gridx(0));
 
-            add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 1, 15, 1).gridy(1).gridx(1));
+            add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 1, 15, 1).gridy(1).gridx(1));
 
             add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(2).gridx(0));
 
 
-            add(m_chAmmo, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 15, 1).gridy(2).gridx(1));
+            add(m_chAmmo, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 15, 1).gridy(2).gridx(1));
 
             // Adding Heat Buildup
 
@@ -686,9 +686,9 @@ public class MechDisplay extends JPanel {
             currentHeatBuildupR.setOpaque(false);
             currentHeatBuildupR.setForeground(Color.WHITE);
 
-            add(currentHeatBuildupL, GBC.std().fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9).gridy(3).gridx(0));
+            add(currentHeatBuildupL, GBC.std().fill(GridBagConstraints.HORIZONTAL).anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9).gridy(3).gridx(0));
 
-            add(currentHeatBuildupR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 1, 9, 9).gridy(3).gridx(1));
+            add(currentHeatBuildupR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 1, 9, 9).gridy(3).gridx(1));
 
             // Adding weapon display labels
             wNameL = new JLabel(
@@ -727,26 +727,26 @@ public class MechDisplay extends JPanel {
             wDamageTrooperR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wDamageTrooperR.setOpaque(false);
             wDamageTrooperR.setForeground(Color.WHITE);
-            
-            add(wNameL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(0));
 
-            add(wHeatL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(1));
+            add(wNameL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(4).gridx(0));
 
-            add(wDamL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(2));
+            add(wHeatL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(4).gridx(1));
 
-            add(wArcHeatL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(3));
+            add(wDamL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(4).gridx(2));
 
-            add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(4).gridx(3));
-            
-            add(wNameR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(0));
+            add(wArcHeatL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(4).gridx(3));
 
-            add(wHeatR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(1));
+            add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(4).gridx(3));
 
-            add(wDamR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(2));
+            add(wNameR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(5).gridx(0));
 
-            add(wArcHeatR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(3));
+            add(wHeatR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(5).gridx(1));
 
-            add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(5).gridx(3));
+            add(wDamR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(5).gridx(2));
+
+            add(wArcHeatR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(5).gridx(3));
+
+            add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(5).gridx(3));
 
             // Adding range labels
             wMinL = new JLabel(
@@ -800,7 +800,7 @@ public class MechDisplay extends JPanel {
             wExtAVR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wExtAVR.setOpaque(false);
             wExtAVR.setForeground(Color.WHITE);
-            
+
             wInfantryRange0L = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wInfantryRange0L.setOpaque(false);
             wInfantryRange0L.setForeground(Color.WHITE);
@@ -838,62 +838,62 @@ public class MechDisplay extends JPanel {
             wInfantryRange5R.setOpaque(false);
             wInfantryRange5R.setForeground(Color.WHITE);
 
-            add(wMinL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(0));
+            add(wMinL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(0));
 
-            add(wShortL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(1));
+            add(wShortL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(1));
 
-            add(wMedL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(2));
+            add(wMedL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(2));
 
-            add(wLongL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(3));
+            add(wLongL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(3));
 
-            add(wExtL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
+            add(wExtL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(4));
             // ----------------
 
-            add(wMinR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(0));
+            add(wMinR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(0));
 
-            add(wShortR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(1));
+            add(wShortR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(1));
 
-            add(wMedR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(2));
+            add(wMedR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(2));
 
-            add(wLongR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(3));
+            add(wLongR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(3));
 
-            add(wExtR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(4));
+            add(wExtR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(4));
 
             // ----------------
-            add(wAVL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(0));
+            add(wAVL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(8).gridx(0));
 
-            add(wShortAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(1));
+            add(wShortAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(8).gridx(1));
 
-            add(wMedAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(2));
+            add(wMedAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(8).gridx(2));
 
-            add(wLongAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(3));
+            add(wLongAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(8).gridx(3));
 
-            add(wExtAVR, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(8).gridx(4));
+            add(wExtAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(8).gridx(4));
 
-            add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(0));
+            add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(0));
 
-            add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(1));
+            add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(1));
 
-            add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(2));
+            add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(2));
 
-            add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(3));
+            add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(3));
 
-            add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
-            
-            add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(6).gridx(4));
+            add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(4));
 
-            add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(0));
+            add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(6).gridx(4));
 
-            add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(1));
+            add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(0));
 
-            add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(2));
+            add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(1));
 
-            add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(3));
+            add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(2));
 
-            add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(4));
-            
-            add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 9, 1).gridy(7).gridx(5));
-            
+            add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(3));
+
+            add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(4));
+
+            add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 9, 1).gridy(7).gridx(5));
+
             // target panel
             wTargetL = new JLabel(
                     Messages.getString("MechDisplay.Target"), SwingConstants.CENTER); //$NON-NLS-1$
@@ -918,17 +918,17 @@ public class MechDisplay extends JPanel {
             wToHitR.setOpaque(false);
             wToHitR.setForeground(Color.WHITE);
 
-            add(wTargetL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(0));
+            add(wTargetL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(9).gridx(0));
 
-            add(wTargetR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(9).gridx(1));
+            add(wTargetR, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(9).gridx(1));
 
-            add(wRangeL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(0));
+            add(wRangeL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(10).gridx(0));
 
-            add(wRangeR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(10).gridx(1));
+            add(wRangeR, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(10).gridx(1));
 
-            add(wToHitL, GBC.std().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(0));
+            add(wToHitL, GBC.std().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(11).gridx(0));
 
-            add(wToHitR, GBC.eol().fill(GridBagConstraints.BOTH).insets(1, 9, 1, 1).gridy(11).gridx(1));
+            add(wToHitR, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(1, 9, 1, 1).gridy(11).gridx(1));
 
             // to-hit text
             toHitText = new JTextArea("", 2, 20); //$NON-NLS-1$
@@ -1209,8 +1209,8 @@ public class MechDisplay extends JPanel {
                 m_chBayWeapon.setVisible(false);
                 wBayWeapon.setVisible(false);
             }
-            
- 
+
+
             wDamageTrooperL.setVisible(false);
             wDamageTrooperR.setVisible(false);
             wInfantryRange0L.setVisible(false);
@@ -1300,7 +1300,7 @@ public class MechDisplay extends JPanel {
                 wMedR.setText("---"); //$NON-NLS-1$
                 wLongR.setText("---"); //$NON-NLS-1$
                 wExtR.setText("---"); //$NON-NLS-1$
-                
+
                 wDamageTrooperL.setVisible(false);
                 wDamageTrooperR.setVisible(false);
                 wInfantryRange0L.setVisible(false);
@@ -1315,7 +1315,7 @@ public class MechDisplay extends JPanel {
                 wInfantryRange4R.setVisible(false);
                 wInfantryRange5L.setVisible(false);
                 wInfantryRange5R.setVisible(false);
-                
+
                 return;
             }
             Mounted mounted = entity.getWeaponList().get(
@@ -1332,7 +1332,7 @@ public class MechDisplay extends JPanel {
                 wDamageTrooperL.setVisible(true);
                 wDamageTrooperR.setVisible(true);
                 InfantryWeapon inftype = (InfantryWeapon)wtype;
-                if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+                if((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
                     wDamageTrooperR.setText(Double.toString((double)Math.round(((Infantry)entity).getDamagePerTrooper()*1000)/1000));
                 } else {
                     wDamageTrooperR.setText(Double.toString(inftype.getInfantryDamage()));
@@ -1364,11 +1364,11 @@ public class MechDisplay extends JPanel {
                 if(inftype.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
                     zeromods++;
                 }
-            
-                if(inftype.hasFlag(WeaponType.F_INF_ENCUMBER) || inftype.getCrew() > 1) {
+
+                if(inftype.hasFlag(WeaponType.F_INF_ENCUMBER) || (inftype.getCrew() > 1)) {
                     zeromods++;
                 }
-            
+
                 if(inftype.hasFlag(WeaponType.F_INF_BURST)) {
                     zeromods--;
                 }
@@ -1537,7 +1537,7 @@ public class MechDisplay extends JPanel {
                     wInfantryRange5L.setVisible(true);
                     wInfantryRange5R.setVisible(true);
                     break;
-                }         
+                }
             } else {
                 wDamageTrooperL.setVisible(false);
                 wDamageTrooperR.setVisible(false);
@@ -1556,12 +1556,12 @@ public class MechDisplay extends JPanel {
                 wShortL.setVisible(true);
                 wMedL.setVisible(true);
                 wLongL.setVisible(true);
-                
+
                 wMinR.setVisible(true);
                 wShortR.setVisible(true);
                 wMedR.setVisible(true);
                 wLongR.setVisible(true);
-                
+
                 if(!(entity.isAirborne())) {
                     wMinL.setVisible(true);
                     wMinR.setVisible(true);
@@ -1571,7 +1571,7 @@ public class MechDisplay extends JPanel {
                     wExtR.setVisible(true);
                 }
             }
-            
+
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
                 wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
             } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {

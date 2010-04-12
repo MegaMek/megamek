@@ -20,6 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.GunEmplacement;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -139,6 +140,10 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             return true;
+        }
+        
+        if(en instanceof GunEmplacement) {
+            return false;
         }
         
         if(en instanceof Tank) {

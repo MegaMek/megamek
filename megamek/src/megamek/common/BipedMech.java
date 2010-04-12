@@ -771,7 +771,7 @@ public class BipedMech extends Mech {
         if (getGyroType() != Mech.GYRO_HEAVY_DUTY) {
             gyroHits++;
         }
-        return (gyroHits >= 3);
+        return (gyroHits < 3);
     }
 
     @Override

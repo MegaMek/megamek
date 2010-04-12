@@ -42,6 +42,9 @@ public class GunEmplacement extends Tank implements Serializable {
 
     public GunEmplacement() {
         initializeInternal(IArmorState.ARMOR_NA, LOC_GUNS);
+        //give it an engine just to avoid NPE on calls to Tank
+        this.engine = new Engine(0, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE);
+        
     }
 
     public boolean isTurret() {

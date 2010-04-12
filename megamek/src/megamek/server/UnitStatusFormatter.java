@@ -134,6 +134,8 @@ public abstract class UnitStatusFormatter {
     private static String formatArmor(Entity e) {
         if (e instanceof Mech) {
             return formatArmorMech((Mech) e);
+        } else if (e instanceof GunEmplacement) {
+            return formatArmorGunEmplacement((GunEmplacement) e);
         } else if (e instanceof Tank) {
             return formatArmorTank((Tank) e);
         } else if (e instanceof BattleArmor) {
@@ -142,9 +144,7 @@ public abstract class UnitStatusFormatter {
             return formatArmorInfantry((Infantry) e);
         } else if (e instanceof Protomech) {
             return formatArmorProtomech((Protomech) e);
-        } else if (e instanceof GunEmplacement) {
-            return formatArmorGunEmplacement((GunEmplacement) e);
-        }
+        } 
         return "";
     }
 

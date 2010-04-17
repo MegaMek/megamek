@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.Client;
-import megamek.client.bot.TestBot.CalculateEntityMove;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;

@@ -79,6 +79,35 @@ public class TestBot extends BotClient {
         return PhysicalCalculator.calculatePhysicalTurn(this);
     }
 
+    /**
+     * Used by the function calculateMoveTurn to run each entities movement calculation in a separate thread.
+     * @author Mike Kiscaden
+     *
+     */
+    public class CalculateEntityMove implements Runnable {
+        private Entity entity;
+        private MoveOption[] result;
+        
+        CalculateEntityMove(Entity entity) {
+            this.entity = entity;
+        }
+
+        @Override
+        public void run() {
+            result = calculateMove(entity);
+        }
+        
+        public Entity getEntity() {
+            return entity;
+        }
+        
+        public MoveOption[] getResult() {
+            return result;
+        }
+            
+    }
+
+    
     @Override
     public MovePath calculateMoveTurn() {
         long enter = System.currentTimeMillis();
@@ -128,9 +157,11 @@ public class TestBot extends BotClient {
             Iterator<Entity> i = getEntitiesOwned().iterator();
             boolean short_circuit = false;
 
+            List<Thread> threads = new ArrayList<Thread>();
+            List<CalculateEntityMove> tasks = new ArrayList<CalculateEntityMove>();
             while (i.hasNext() && !short_circuit) {
                 Entity entity = i.next();
-
+                
                 // ignore loaded units
                 // (not really necessary unless bot manages to load units)
                 if (entity.getPosition() == null) {
@@ -141,14 +172,37 @@ public class TestBot extends BotClient {
                 if (!game.getTurn().isValidEntity(entity, game)) {
                     continue;
                 }
+                
+                CalculateEntityMove task = new CalculateEntityMove(entity);
+                tasks.add(task);
+                Thread worker = new Thread(task);
+                worker.setName("Entity:"+entity.getId());
+                worker.start();
+                threads.add(worker);
 
-                CEntity cen = centities.get(entity);
-
-                System.out.println("Contemplating movement of "
-                        + entity.getShortName() + " " + entity.getId());
-
-                MoveOption[] result = calculateMove(entity);
-
+            }
+            int running = 0;
+            synchronized (this) {
+                do {
+                    running = 0;
+                    for (Thread thread : threads) {
+                        if (thread.isAlive()) {
+                            running++;
+                        }
+                    }
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e1) {
+                        System.out.println("Interrupted waiting for Bot to move.");
+                        e1.printStackTrace();
+                    } //Technically we should be using wait() but its not waking up reliably.
+                    sendChat("Calculating the move for " + running + " units. ");
+                } while (running > 0);
+            }
+            //Threads are done running. Process the results.
+            for (CalculateEntityMove task : tasks) {
+                MoveOption[] result = task.getResult();
+                CEntity cen = centities.get(task.getEntity());
                 if (game.getOptions().booleanOption("skip_ineligable_movement")
                         && cen.getEntity().isImmobile()) {
                     cen.moved = true;

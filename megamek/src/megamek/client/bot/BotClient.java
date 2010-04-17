@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.Client;
+import megamek.client.bot.TestBot.CalculateEntityMove;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -54,6 +55,15 @@ import megamek.common.event.GameTurnChangeEvent;
 
 public abstract class BotClient extends Client {
 
+    
+    public class CalculateBotTurn implements Runnable {
+        @Override
+        public void run() {
+            calculateMyTurn();
+            flushConn();
+        } 
+    }
+    
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
         game.addGameListener(new GameListenerAdapter() {
@@ -67,8 +77,10 @@ public abstract class BotClient extends Client {
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 if (isMyTurn()) {
-                    calculateMyTurn();
-                    flushConn();
+                    //Run bot's turn processing in a separate thread.
+                    //This way the server's thread is free to process the other client actions.
+                    Thread worker = new Thread(new CalculateBotTurn());
+                    worker.start();
                 }
             }
 

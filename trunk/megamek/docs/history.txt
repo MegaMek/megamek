@@ -48,6 +48,9 @@ v0.35.14-dev (SVN)
 + Bug 2984063: Gun Emplacements/ Configuring in the Lobby & Freeze
 + set preferred size for tWeaponScroll in MechDisplay.java
 + Multi-threaded bot code for improved performance.
++ Bug 2988920: ProtoMech AC ammo
++ Bug: Angel ECM has wrong tonnage
++ Bug: Watchdog has wrong tonnage
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

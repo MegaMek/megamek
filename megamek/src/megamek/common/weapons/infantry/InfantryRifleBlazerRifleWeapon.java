@@ -21,26 +21,25 @@ import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantryAutoRifleWeapon extends InfantryWeapon {
+public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryAutoRifleWeapon() {
+    public InfantryRifleBlazerRifleWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
-        name = "Auto Rifle";
+        techLevel = TechConstants.T_TW_ALL;
+        name = "Infantry Blazer Rifle";
         setInternalName(name);
-        addLookupName("InfantryRifle");
-        ammoType = AmmoType.T_AC;
-        cost = 80;
-        bv = 1.28;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.52;
-        infantryRange = 1;
+        addLookupName("InfantryBlazerRifle");
+        cost = 2190;
+        bv = 1.46;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+        infantryDamage = 0.35;
+        infantryRange = 2;
     }
 }

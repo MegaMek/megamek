@@ -38,7 +38,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
         addLookupName("InfantrySonicStunnerpistol");
         cost = 100;
         bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NPEN).or(F_DIRECT_FIRE).or(F_ENERGY);
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.07;
         infantryRange = 0;
     }

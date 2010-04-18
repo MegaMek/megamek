@@ -51,7 +51,7 @@ public class InfantryPortableFlamerWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 2;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {

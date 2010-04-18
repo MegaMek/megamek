@@ -39,7 +39,7 @@ public class InfantryPistolDartGunWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_AC;
         cost = 40;
         bv = 0.01;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NPEN).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.01;
         infantryRange = 0;
     }

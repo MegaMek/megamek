@@ -610,8 +610,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
              *
              */
             private static final long serialVersionUID = -5457068129532709857L;
-            private final static int COL_MODEL = 0;
-            private final static int COL_CHASSIS = 1;
+            private final static int COL_CHASSIS = 0;
+            private final static int COL_MODEL = 1;
             private final static int COL_WEIGHT = 2;
             private final static int COL_BV = 3;
             private final static int COL_YEAR = 4;
@@ -749,10 +749,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         for (int i = 0; i < mechs.length; i++) {
             if (mechs[i].getName().toLowerCase().startsWith(search)) {
                 int selected = tableUnits.convertRowIndexToView(i);
-                if (i > -1) {
+                if (selected > -1) {
                     tableUnits.changeSelection(selected, 0, false, false);
+                    break;
                 }
-                break;
             }
         }
     }

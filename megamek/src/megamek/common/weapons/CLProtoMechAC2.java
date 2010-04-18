@@ -22,7 +22,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jason Tighe
  */
-public class CLProtoMechAC2 extends ACWeapon {
+public class CLProtoMechAC2 extends ProtoMechACWeapon {
     /**
      *
      */
@@ -37,7 +37,6 @@ public class CLProtoMechAC2 extends ACWeapon {
         name = "ProtoMech AC/2";
         setInternalName("CLProtoMechAC2");
         addLookupName("Clan ProtoMech AC/2");
-        flags = flags.or(F_PROTO_WEAPON);
         heat = 1;
         damage = 2;
         rackSize = 2;

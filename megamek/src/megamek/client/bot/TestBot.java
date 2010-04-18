@@ -87,27 +87,26 @@ public class TestBot extends BotClient {
     public class CalculateEntityMove implements Runnable {
         private Entity entity;
         private MoveOption[] result;
-        
+
         CalculateEntityMove(Entity entity) {
             this.entity = entity;
         }
 
-        @Override
         public void run() {
             result = calculateMove(entity);
         }
-        
+
         public Entity getEntity() {
             return entity;
         }
-        
+
         public MoveOption[] getResult() {
             return result;
         }
-            
+
     }
 
-    
+
     @Override
     public MovePath calculateMoveTurn() {
         long enter = System.currentTimeMillis();
@@ -161,7 +160,7 @@ public class TestBot extends BotClient {
             List<CalculateEntityMove> tasks = new ArrayList<CalculateEntityMove>();
             while (i.hasNext() && !short_circuit) {
                 Entity entity = i.next();
-                
+
                 // ignore loaded units
                 // (not really necessary unless bot manages to load units)
                 if (entity.getPosition() == null) {
@@ -172,7 +171,7 @@ public class TestBot extends BotClient {
                 if (!game.getTurn().isValidEntity(entity, game)) {
                     continue;
                 }
-                
+
                 CalculateEntityMove task = new CalculateEntityMove(entity);
                 tasks.add(task);
                 Thread worker = new Thread(task);

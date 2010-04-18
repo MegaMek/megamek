@@ -723,6 +723,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISExtendedLRM10());
         EquipmentType.addType(new ISExtendedLRM15());
         EquipmentType.addType(new ISExtendedLRM20());
+        EquipmentType.addType(new ISEnhancedLRM5());
+        EquipmentType.addType(new ISEnhancedLRM10());
+        EquipmentType.addType(new ISEnhancedLRM15());
+        EquipmentType.addType(new ISEnhancedLRM20());
         // LRTs
         EquipmentType.addType(new ISLRT5());
         EquipmentType.addType(new ISLRT10());

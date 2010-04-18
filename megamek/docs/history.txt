@@ -53,6 +53,9 @@ v0.35.14-dev (SVN)
 + Bug: Watchdog has wrong tonnage
 + Patch 2985670, 2985669, 2985667: additional infantry weapons
 + Added 10-ton cargo containers
++ Improved keyboard support in MechSelectorDialog: Press Enter to add current
+   unit, select a unit in the list by just starting to type its name
+
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

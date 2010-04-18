@@ -116,7 +116,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_ACi = 88;
     public static final int T_KRAKENM = 89;
     public static final int T_PAC = 90;
-    public static final int NUM_TYPES = 91;
+    public static final int T_NLRM = 91;
+    public static final int NUM_TYPES = 92;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -336,6 +337,7 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> isBaLrmAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> lrmAmmos = new ArrayList<AmmoType>(26);
         ArrayList<AmmoType> clanLrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> enhancedlrmAmmos = new ArrayList<AmmoType>(26);
         ArrayList<AmmoType> acAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> arrowAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanArrowAmmos = new ArrayList<AmmoType>(4);
@@ -389,6 +391,14 @@ public class AmmoType extends EquipmentType {
 
         // Level 3 Ammo
         // Note, some level 3 stuff is mixed into level 2.
+        base = AmmoType.createISEnhancedLRM5Ammo();
+        enhancedlrmAmmos.add(base);
+        base = AmmoType.createISEnhancedLRM10Ammo();
+        enhancedlrmAmmos.add(base);
+        base = AmmoType.createISEnhancedLRM15Ammo();
+        enhancedlrmAmmos.add(base);
+        base = AmmoType.createISEnhancedLRM20Ammo();
+        enhancedlrmAmmos.add(base);
         base = AmmoType.createISLAC2Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
@@ -983,6 +993,7 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(lrmAmmos, munitions);
+        AmmoType.createMunitions(enhancedlrmAmmos, munitions);
 
         // Create the munition types for Clan LRM launchers.
         munitions.clear();
@@ -7804,6 +7815,83 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISEnhancedLRM5Ammo() {
+            AmmoType ammo = new AmmoType();
+
+            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+            ammo.name = "Enhanced LRM 5 Ammo";
+            ammo.shortName = "Enhanced LRM 5";
+            ammo.setInternalName("ISEnhancedLRM5 Ammo");
+            ammo.damagePerShot = 1;
+            ammo.rackSize = 5;
+            ammo.ammoType = AmmoType.T_NLRM;
+            ammo.shots = 24;
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
+            ammo.setModes(new String[] { "", "HotLoad" });
+            ammo.bv = 7;
+            ammo.cost = 31000;
+
+            return ammo;
+        }
+
+        private static AmmoType createISEnhancedLRM10Ammo() {
+            AmmoType ammo = new AmmoType();
+
+            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+            ammo.name = "Enhanced LRM 10 Ammo";
+            ammo.shortName = "Enhanced LRM 10";
+            ammo.setInternalName("ISEnhancedLRM10 Ammo");
+            ammo.damagePerShot = 1;
+            ammo.rackSize = 10;
+            ammo.ammoType = AmmoType.T_NLRM;
+            ammo.shots = 12;
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
+            ammo.setModes(new String[] { "", "HotLoad" });
+            ammo.bv = 13;
+            ammo.cost = 31000;
+
+            return ammo;
+        }
+
+        private static AmmoType createISEnhancedLRM15Ammo() {
+            AmmoType ammo = new AmmoType();
+
+            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+            ammo.name = "Enhanced LRM 15 Ammo";
+            ammo.shortName = "Enhanced LRM 15";
+            ammo.setInternalName("ISEnhancedLRM15 Ammo");
+            ammo.damagePerShot = 1;
+            ammo.rackSize = 15;
+            ammo.ammoType = AmmoType.T_NLRM;
+            ammo.shots = 8;
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
+            ammo.setModes(new String[] { "", "HotLoad" });
+            ammo.bv = 20;
+            ammo.cost = 31000;
+
+            return ammo;
+        }
+
+        private static AmmoType createISEnhancedLRM20Ammo() {
+            AmmoType ammo = new AmmoType();
+
+            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+            ammo.name = "Enhanced LRM 20 Ammo";
+            ammo.shortName = "Enhanced LRM 20";
+            ammo.setInternalName("ISEnhancedLRM20 Ammo");
+            ammo.damagePerShot = 1;
+            ammo.rackSize = 20;
+            ammo.ammoType = AmmoType.T_NLRM;
+            ammo.shots = 6;
+            ammo.flags = ammo.flags.or(F_HOTLOAD);
+            ammo.setModes(new String[] { "", "HotLoad" });
+            ammo.bv = 26;
+            ammo.cost = 31000;
+
+            return ammo;
+        }
+
+
     @Override
     public String toString() {
         return "Ammo: " + name;
@@ -7995,6 +8083,7 @@ public class AmmoType extends EquipmentType {
             case AmmoType.T_MRM:
             case AmmoType.T_LRM:
             case AmmoType.T_MML:
+            case AmmoType.T_NLRM:
                 // Add the munition name to the end of some of the ammo names.
                 nameBuf = new StringBuffer(" ");
                 nameBuf.append(name);
@@ -8086,40 +8175,40 @@ public class AmmoType extends EquipmentType {
                     cost *= 6;
                 }
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && (munition.getMunitionType() == AmmoType.M_AX_HEAD)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_AX_HEAD)) {
                 cost *= .5;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && (munition.getMunitionType() == AmmoType.M_INCENDIARY_LRM)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_INCENDIARY_LRM)) {
                 cost *= 1.5;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_INFERNO)) {
                 cost = 13500;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 cost *= 3;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_SWARM)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_SWARM)) {
                 cost *= 2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_SWARM_I)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_SWARM_I)) {
                 cost *= 3;
                 bv *= .2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_THUNDER)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_THUNDER)) {
                 cost *= 2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)) {
                 cost *= 4;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_THUNDER_INFERNO)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_THUNDER_INFERNO)) {
                 cost *= 1;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)) {
                 cost *= 2.5;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)) && (munition.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)) {
                 cost *= 3;
             }
             if (munition.getMunitionType() == AmmoType.M_HOMING) {
@@ -8141,16 +8230,16 @@ public class AmmoType extends EquipmentType {
                 cost *= 50;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && (munition.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 cost *= 2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && (munition.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                 cost *= 2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && (munition.getMunitionType() == AmmoType.M_LISTEN_KILL)) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_LISTEN_KILL)) {
                 cost *= 1.1;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && ((munition.getMunitionType() == AmmoType.M_ANTI_TSM) || (munition.getMunitionType() == AmmoType.M_DEAD_FIRE) || (munition.getMunitionType() == AmmoType.M_FRAGMENTATION))) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && ((munition.getMunitionType() == AmmoType.M_ANTI_TSM) || (munition.getMunitionType() == AmmoType.M_DEAD_FIRE) || (munition.getMunitionType() == AmmoType.M_FRAGMENTATION))) {
                 cost *= 2;
             }
 
@@ -8158,7 +8247,7 @@ public class AmmoType extends EquipmentType {
                 cost *= 5;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)) && ((munition.getMunitionType() == AmmoType.M_HEAT_SEEKING) || (munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER))) {
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && ((munition.getMunitionType() == AmmoType.M_HEAT_SEEKING) || (munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER))) {
                 cost *= 2;
                 bv *= .5;
             }

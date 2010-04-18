@@ -702,6 +702,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createPartialWing());
         EquipmentType.addType(MiscType.createCargo1());
         EquipmentType.addType(MiscType.createHalfCargo());
+        EquipmentType.addType(MiscType.createCargoContainer());
         EquipmentType.addType(MiscType.createMechSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
@@ -3512,6 +3513,20 @@ public class MiscType extends EquipmentType {
         misc.name = "Cargo (0.5 tons)";
         misc.setInternalName(misc.name);
         misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createCargoContainer() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Cargo Container (10 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 10;
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);

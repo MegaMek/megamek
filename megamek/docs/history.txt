@@ -52,6 +52,7 @@ v0.35.14-dev (SVN)
 + Bug: Angel ECM has wrong tonnage
 + Bug: Watchdog has wrong tonnage
 + Patch 2985670, 2985669, 2985667: additional infantry weapons
++ Added 10-ton cargo containers
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

@@ -1304,7 +1304,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Angel ECM Suite");
         misc.addLookupName("CLAngelECM");
         misc.addLookupName("Clan Angel ECM Suite");
-        misc.tonnage = 1.5f;
+        misc.tonnage = 2;
         misc.criticals = 2;
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -1324,7 +1324,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Watchdog ECM Suite");
         misc.addLookupName("WatchdogECM");
         misc.addLookupName("CLWatchdogECM");
-        misc.tonnage = 1;
+        misc.tonnage = 1.5f;
         misc.criticals = 1;
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);

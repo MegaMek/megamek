@@ -54,15 +54,14 @@ import megamek.common.event.GameTurnChangeEvent;
 
 public abstract class BotClient extends Client {
 
-    
+
     public class CalculateBotTurn implements Runnable {
-        @Override
         public void run() {
             calculateMyTurn();
             flushConn();
-        } 
+        }
     }
-    
+
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
         game.addGameListener(new GameListenerAdapter() {

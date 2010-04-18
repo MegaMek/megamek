@@ -115,7 +115,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_NAIL_RIVET_GUN = 87;
     public static final int T_ACi = 88;
     public static final int T_KRAKENM = 89;
-    public static final int NUM_TYPES = 90;
+    public static final int T_PAC = 90;
+    public static final int NUM_TYPES = 91;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -5129,7 +5130,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLProtoAC2Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_PAC;
         ammo.shots = 40;
         ammo.bv = 4;
         ammo.cost = 1200;
@@ -5148,7 +5149,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLProtoAC4Ammo");
         ammo.damagePerShot = 4;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_PAC;
         ammo.shots = 20;
         ammo.bv = 6;
         ammo.cost = 4800;
@@ -5167,7 +5168,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLProtoAC8Ammo");
         ammo.damagePerShot = 8;
         ammo.rackSize = 8;
-        ammo.ammoType = AmmoType.T_AC;
+        ammo.ammoType = AmmoType.T_PAC;
         ammo.shots = 10;
         ammo.bv = 8;
         ammo.cost = 6300;
@@ -6907,7 +6908,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     private static AmmoType createKrakenMAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -6924,7 +6925,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
 
         return ammo;
-    }     
+    }
     private static AmmoType createKrakenAmmo() {
         AmmoType ammo = new AmmoType();
 

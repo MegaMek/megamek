@@ -51,6 +51,7 @@ v0.35.14-dev (SVN)
 + Bug 2988920: ProtoMech AC ammo
 + Bug: Angel ECM has wrong tonnage
 + Bug: Watchdog has wrong tonnage
++ Patch 2985670, 2985669, 2985667: additional infantry weapons
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

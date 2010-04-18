@@ -17,14 +17,29 @@
  */
 package megamek.common.weapons.infantry;
 
+import java.math.BigInteger;
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ConvFighter;
+import megamek.common.Dropship;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.LandAirMech;
+import megamek.common.LargeSupportTank;
+import megamek.common.Mech;
+import megamek.common.Protomech;
+import megamek.common.QuadMech;
 import megamek.common.Report;
+import megamek.common.SmallCraft;
+import megamek.common.SupportTank;
+import megamek.common.SupportVTOL;
+import megamek.common.Tank;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.WeaponHandler;
@@ -97,6 +112,52 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
         }
+        // not terribly graceful, but does keep Non Penetrating weapons frame affecting non-conventional Infantry
+        if((target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if(target instanceof Mech && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof Tank) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof Aero) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof VTOL) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof SmallCraft) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof Protomech) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof QuadMech) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof SupportVTOL) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof SupportTank) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof ConvFighter) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof Dropship) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof LandAirMech) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof LargeSupportTank) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
+        if((target instanceof Building) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageDealt = 0;
+        }
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);
@@ -112,5 +173,10 @@ public class InfantryWeaponHandler extends WeaponHandler {
             return 1;
         }
         return damageDealt;
+   // }
+
+    // private BigInteger (boolean b) {
+        // TODO Auto-generated method stub
+        //return null;
     }
 }

@@ -39,7 +39,7 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_AC;
         cost = 20;
         bv = 0.03;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NPEN).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
         infantryDamage = 0.06;
         infantryRange = 0;
     }

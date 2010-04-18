@@ -462,7 +462,7 @@ public class MechFileParser {
                 // if it has AP mount, also add an infantry rifle
                 if (ent.countWorkingMisc(MiscType.F_AP_MOUNT) > 0) {
                     try {
-                        ent.addEquipment(EquipmentType.get("InfantryRifle"), BattleArmor.LOC_SQUAD, false, false);
+                        ent.addEquipment(EquipmentType.get("InfantryAssaultRifle"), BattleArmor.LOC_SQUAD, false, false);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
@@ -470,8 +470,8 @@ public class MechFileParser {
             }
         }
         //physical attacks for conventional infantry
-        else if(ent instanceof Infantry && ((Infantry)ent).canAttackMeks()) {
-        	try {
+        else if((ent instanceof Infantry) && ((Infantry)ent).canAttackMeks()) {
+            try {
                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY, false, false);
                 ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY, false, false);
                 ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY, false, false);

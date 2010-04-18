@@ -796,7 +796,7 @@ public class Compute {
          * Extreme then C3 uses the next highest range bracket, i.e. medium
          * instead of short.
          */
-        if (range == RangeType.RANGE_EXTREME && c3range < range) {
+        if ((range == RangeType.RANGE_EXTREME) && (c3range < range)) {
             c3range++;
         }
 
@@ -868,156 +868,159 @@ public class Compute {
         int range = wpn.getInfantryRange();
         int mod = 0;
 
-    	switch(range) {
-    	case 0:
-    		if(distance > 0) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    	case 1:
-    		if(distance > 3) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance == 0) {
-    			mod = -2;
-    		}
-    		else if(distance == 2) {
-    			mod = 2;
-    		}
-    		else if(distance == 3) {
-    			mod = 4;
-    		}
-    		break;
-    	case 2:
-    		if(distance > 6) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance > 4) {
-    			mod = 4;
-    		}
-    		else if(distance > 2) {
-    			mod = 2;
-    		}
-    		else if(distance == 0) {
-    			mod = -2;
-    		}
-    		break;
-    	case 3:
-    		if(distance > 9) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance > 6) {
-    			mod = 4;
-    		}
-    		else if(distance > 3) {
-    			mod = 2;
-    		}
-    		else if(distance == 0) {
-    			mod = -2;
-    		}
-    		break;
-    	case 4:
-    		if(distance > 12) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance > 10) {
-    			mod = 4;
-    		}
-    		else if(distance > 8) {
-    			mod = 3;
-    		}
-    		else if(distance > 6) {
-    			mod = 2;
-    		}
-    		else if(distance > 4) {
-    			mod = 1;
-    		}
-    		else if(distance == 0) {
-    			mod = -2;
-    		}
-    		break;
-    	case 5:
-    		if(distance > 15) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance > 12) {
-    			mod = 4;
-    		}
-    		else if(distance > 10) {
-    			mod = 3;
-    		}
-    		else if(distance > 7) {
-    			mod = 2;
-    		}
-    		else if(distance > 5) {
-    			mod = 1;
-    		}
-    		else if(distance == 0) {
-    			mod = -1;
-    		}
-    		break;
-    	case 6:
-    		if(distance > 18) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance > 15) {
-    			mod = 5;
-    		}
-    		else if(distance > 12) {
-    			mod = 4;
-    		}
-    		else if(distance > 9) {
-    			mod = 2;
-    		}
-    		else if(distance > 6) {
-    			mod = 1;
-    		}
-    		else if(distance == 0) {
-    			mod = -1;
-    		}
-    		break;
-    	case 7:
-    		if(distance > 21) {
-    			return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    		}
-    		else if(distance > 17) {
-    			mod = 6;
-    		}
-    		else if(distance > 14) {
-    			mod = 4;
-    		}
-    		else if(distance > 10) {
-    			mod = 2;
-    		}
-    		else if(distance > 7) {
-    			mod = 1;
-    		}
-    		else if(distance == 0) {
-    			mod = -1;
-    		}
-    		break;
-    	default:
-    		return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
-    	}
+        switch (range) {
+            case 0:
+                if(distance > 0) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance == 0) {
+                    mod = 0;
+                }
+            case 1:
+                if(distance > 3) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance == 0) {
+                    mod = -2;
+                }
+                else if(distance == 2) {
+                    mod = 2;
+                }
+                else if(distance == 3) {
+                    mod = 4;
+                }
+                break;
+            case 2:
+                if(distance > 6) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance > 4) {
+                    mod = 4;
+                }
+                else if(distance > 2) {
+                    mod = 2;
+                }
+                else if(distance == 0) {
+                    mod = -2;
+                }
+                break;
+            case 3:
+                if(distance > 9) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance > 6) {
+                    mod = 4;
+                }
+                else if(distance > 3) {
+                    mod = 2;
+                }
+                else if(distance == 0) {
+                    mod = -2;
+                }
+                break;
+            case 4:
+                if(distance > 12) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance > 10) {
+                    mod = 4;
+                }
+                else if(distance > 8) {
+                    mod = 3;
+                }
+                else if(distance > 6) {
+                    mod = 2;
+                }
+                else if(distance > 4) {
+                    mod = 1;
+                }
+                else if(distance == 0) {
+                    mod = -2;
+                }
+                break;
+            case 5:
+                if(distance > 15) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance > 12) {
+                    mod = 4;
+                }
+                else if(distance > 10) {
+                    mod = 3;
+                }
+                else if(distance > 7) {
+                    mod = 2;
+                }
+                else if(distance > 5) {
+                    mod = 1;
+                }
+                else if(distance == 0) {
+                    mod = -1;
+                }
+                break;
+            case 6:
+                if(distance > 18) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance > 15) {
+                    mod = 5;
+                }
+                else if(distance > 12) {
+                    mod = 4;
+                }
+                else if(distance > 9) {
+                    mod = 2;
+                }
+                else if(distance > 6) {
+                    mod = 1;
+                }
+                else if(distance == 0) {
+                    mod = -1;
+                }
+                break;
+            case 7:
+                if(distance > 21) {
+                    return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+                }
+                else if(distance > 17) {
+                    mod = 6;
+                }
+                else if(distance > 14) {
+                    mod = 4;
+                }
+                else if(distance > 10) {
+                    mod = 2;
+                }
+                else if(distance > 7) {
+                    mod = 1;
+                }
+                else if(distance == 0) {
+                    mod = -1;
+                }
+                break;
+            default:
+                return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
+        }
 
-    	//a bunch of special conditions at range 0
-    	if(distance == 0) {
+        //a bunch of special conditions at range 0
+        if(distance == 0) {
 
-    		if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
-    			mod++;
-    		}
+            if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+                mods.addModifier(1, "melee weapon penalty");
+            }
 
-    		if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
-    			mod++;
-    		}
+            if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
+                mod++;
+            }
 
-    		if(wpn.hasFlag(WeaponType.F_INF_BURST)) {
-    			mod--;
-    		}
-    	}
+            if(wpn.hasFlag(WeaponType.F_INF_BURST)) {
+                mod--;
+            }
+        }
 
-    	if(mod != 0) {
-    		mods.addModifier(mod, "infantry range");
-    	}
+        if(mod != 0) {
+            mods.addModifier(mod, "infantry range");
+        }
 
         return mods;
     }
@@ -1032,7 +1035,7 @@ public class Compute {
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
         return effectiveDistance(game, attacker, target, false);
     }
-    
+
     /**
      * Finds the effective distance between an attacker and a target. Includes
      * the distance bonus if the attacker and target are in the same building
@@ -1246,7 +1249,7 @@ public class Compute {
             // can't fire rear leg weapons
             if ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon.getLocation() == Mech.LOC_RLEG)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
+                "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
             mods.addModifier(2, "attacker prone");
         } else {
@@ -1336,23 +1339,23 @@ public class Compute {
 
             // Arm mounted (and main gun) weapons get DRMs from arm crits.
             switch (weapon.getLocation()) {
-            case Protomech.LOC_LARM:
-            case Protomech.LOC_RARM:
-                hits = ((Protomech) attacker).getCritsHit(weapon.getLocation());
-                if (hits > 0) {
-                    mods.addModifier(hits, hits + " arm critical(s)");
-                }
-                break;
-            case Protomech.LOC_MAINGUN:
-                // Main gun is affected by crits in *both* arms.
-                hits = ((Protomech) attacker).getCritsHit(Protomech.LOC_LARM);
-                hits += ((Protomech) attacker).getCritsHit(Protomech.LOC_RARM);
-                if (4 == hits) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE, "Cannot fire main gun with no arms.");
-                } else if (hits > 0) {
-                    mods.addModifier(hits, hits + " arm critical(s)");
-                }
-                break;
+                case Protomech.LOC_LARM:
+                case Protomech.LOC_RARM:
+                    hits = ((Protomech) attacker).getCritsHit(weapon.getLocation());
+                    if (hits > 0) {
+                        mods.addModifier(hits, hits + " arm critical(s)");
+                    }
+                    break;
+                case Protomech.LOC_MAINGUN:
+                    // Main gun is affected by crits in *both* arms.
+                    hits = ((Protomech) attacker).getCritsHit(Protomech.LOC_LARM);
+                    hits += ((Protomech) attacker).getCritsHit(Protomech.LOC_RARM);
+                    if (4 == hits) {
+                        mods.addModifier(TargetRoll.IMPOSSIBLE, "Cannot fire main gun with no arms.");
+                    } else if (hits > 0) {
+                        mods.addModifier(hits, hits + " arm critical(s)");
+                    }
+                    break;
             }
 
         } // End attacker-is-Protomech
@@ -1367,13 +1370,13 @@ public class Compute {
             int location = weapon.getLocation();
             if (weapon.isSplit()) {
                 switch (location) {
-                case Mech.LOC_LT:
-                    location = Mech.LOC_LARM;
-                    break;
-                case Mech.LOC_RT:
-                    location = Mech.LOC_RARM;
-                    break;
-                default:
+                    case Mech.LOC_LT:
+                        location = Mech.LOC_LARM;
+                        break;
+                    case Mech.LOC_RT:
+                        location = Mech.LOC_RARM;
+                        break;
+                    default:
                 }
             }
             if (attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, location) > 0) {
@@ -1458,7 +1461,7 @@ public class Compute {
                 // not anything else (BMRr, pg. 147)
                 if ((pte instanceof Mech) && ((Entity) pte).isStealthActive() && (pte != target) && !isSwarm) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
-                            "When targeting a stealthed Mech, can not attack secondary targets");
+                    "When targeting a stealthed Mech, can not attack secondary targets");
                 }
                 if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), attacker
                         .getForwardArc())) {
@@ -1480,7 +1483,7 @@ public class Compute {
         // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
         if ((target instanceof Mech) && ((Entity) target).isStealthActive()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Can't target Mech with active stealth armor as secondary target");
+            "Can't target Mech with active stealth armor as secondary target");
         }
 
         int mod = 2;
@@ -1625,13 +1628,13 @@ public class Compute {
         }
 
         ToHitData toHit = Compute
-                .getTargetMovementModifier(
-                        entity.delta_distance,
-                        ((entity.moved == EntityMovementType.MOVE_JUMP)
-                                || (entity.moved == EntityMovementType.MOVE_VTOL_RUN) || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)),
+        .getTargetMovementModifier(
+                entity.delta_distance,
+                ((entity.moved == EntityMovementType.MOVE_JUMP)
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_RUN) || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)),
                         (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                                || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                                || (entity.getMovementMode() == EntityMovementMode.VTOL));
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                        || (entity.getMovementMode() == EntityMovementMode.VTOL));
 
         // Did the target skid this turn?
         if (entity.moved == EntityMovementType.MOVE_SKID) {
@@ -1840,7 +1843,7 @@ public class Compute {
 
     // store these as constants since the tables will never change
     private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f, 2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f,
-            6.31f, 7.23f, 8.14f, 8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f };
+        6.31f, 7.23f, 8.14f, 8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f };
 
     /*
      * | No Modifier | +2 (Artemis, Narc) | -2 (HAG, AMS v Art)| -4 (AMS) | |
@@ -2299,9 +2302,9 @@ public class Compute {
                             // should be tested for here
                             if (((((abin_type.getAmmoType() == AmmoType.T_LRM)
                                     || (abin_type.getAmmoType() == AmmoType.T_MML) || (abin_type.getAmmoType() == AmmoType.T_SRM))) && (abin_type
-                                    .getMunitionType() == AmmoType.M_FRAGMENTATION))
-                                    || (((abin_type.getAmmoType() == AmmoType.T_AC) || (abin_type.getAmmoType() == AmmoType.T_LAC)) && (abin_type
-                                            .getMunitionType() == AmmoType.M_FLECHETTE))) {
+                                            .getMunitionType() == AmmoType.M_FRAGMENTATION))
+                                            || (((abin_type.getAmmoType() == AmmoType.T_AC) || (abin_type.getAmmoType() == AmmoType.T_LAC)) && (abin_type
+                                                    .getMunitionType() == AmmoType.M_FLECHETTE))) {
                                 ammo_multiple = 0.0;
                                 if (target instanceof Infantry) {
                                     if (!(target instanceof BattleArmor)) {
@@ -2590,60 +2593,60 @@ public class Compute {
         }
         // is it in the specifed arc?
         switch (arc) {
-        case ARC_FORWARD:
-            return (fa >= 300) || (fa <= 60);
-        case Compute.ARC_RIGHTARM:
-            return (fa >= 300) || (fa <= 120);
-        case Compute.ARC_LEFTARM:
-            return (fa >= 240) || (fa <= 60);
-        case ARC_REAR:
-            return (fa > 120) && (fa < 240);
-        case ARC_RIGHTSIDE:
-            return (fa > 60) && (fa <= 120);
-        case ARC_LEFTSIDE:
-            return (fa < 300) && (fa >= 240);
-        case ARC_MAINGUN:
-            return (fa >= 240) || (fa <= 120);
-        case ARC_360:
-            return true;
-        case ARC_NORTH:
-            return (fa >= 270) || (fa <= 30);
-        case ARC_EAST:
-            return (fa >= 30) && (fa <= 150);
-        case ARC_WEST:
-            return (fa >= 150) && (fa <= 270);
-        case ARC_NOSE:
-            return (fa > 300) || (fa < 60);
-        case ARC_LWING:
-            return (fa > 300) || (fa <= 0);
-        case ARC_RWING:
-            return (fa >= 0) && (fa < 60);
-        case ARC_LWINGA:
-            return (fa >= 180) && (fa < 240);
-        case ARC_RWINGA:
-            return (fa > 120) && (fa <= 180);
-        case ARC_AFT:
-            return (fa > 120) && (fa < 240);
-        case ARC_LEFTSIDE_SPHERE:
-            return (fa > 240) || (fa < 0);
-        case ARC_RIGHTSIDE_SPHERE:
-            return (fa > 0) && (fa < 120);
-        case ARC_LEFTSIDEA_SPHERE:
-            return (fa > 180) && (fa < 300);
-        case ARC_RIGHTSIDEA_SPHERE:
-            return (fa > 60) && (fa < 180);
-        case ARC_LEFT_BROADSIDE:
-            return (fa >= 240) && (fa <= 300);
-        case ARC_RIGHT_BROADSIDE:
-            return (fa >= 60) && (fa <= 120);
-        case ARC_LEFT_SPHERE_GROUND:
-            return (fa >= 180) && (fa < 360);
-        case ARC_RIGHT_SPHERE_GROUND:
-            return (fa >= 0) && (fa < 180);
-        case ARC_TURRET:
-            return (fa >= 330) || (fa <= 30);
-        default:
-            return false;
+            case ARC_FORWARD:
+                return (fa >= 300) || (fa <= 60);
+            case Compute.ARC_RIGHTARM:
+                return (fa >= 300) || (fa <= 120);
+            case Compute.ARC_LEFTARM:
+                return (fa >= 240) || (fa <= 60);
+            case ARC_REAR:
+                return (fa > 120) && (fa < 240);
+            case ARC_RIGHTSIDE:
+                return (fa > 60) && (fa <= 120);
+            case ARC_LEFTSIDE:
+                return (fa < 300) && (fa >= 240);
+            case ARC_MAINGUN:
+                return (fa >= 240) || (fa <= 120);
+            case ARC_360:
+                return true;
+            case ARC_NORTH:
+                return (fa >= 270) || (fa <= 30);
+            case ARC_EAST:
+                return (fa >= 30) && (fa <= 150);
+            case ARC_WEST:
+                return (fa >= 150) && (fa <= 270);
+            case ARC_NOSE:
+                return (fa > 300) || (fa < 60);
+            case ARC_LWING:
+                return (fa > 300) || (fa <= 0);
+            case ARC_RWING:
+                return (fa >= 0) && (fa < 60);
+            case ARC_LWINGA:
+                return (fa >= 180) && (fa < 240);
+            case ARC_RWINGA:
+                return (fa > 120) && (fa <= 180);
+            case ARC_AFT:
+                return (fa > 120) && (fa < 240);
+            case ARC_LEFTSIDE_SPHERE:
+                return (fa > 240) || (fa < 0);
+            case ARC_RIGHTSIDE_SPHERE:
+                return (fa > 0) && (fa < 120);
+            case ARC_LEFTSIDEA_SPHERE:
+                return (fa > 180) && (fa < 300);
+            case ARC_RIGHTSIDEA_SPHERE:
+                return (fa > 60) && (fa < 180);
+            case ARC_LEFT_BROADSIDE:
+                return (fa >= 240) && (fa <= 300);
+            case ARC_RIGHT_BROADSIDE:
+                return (fa >= 60) && (fa <= 120);
+            case ARC_LEFT_SPHERE_GROUND:
+                return (fa >= 180) && (fa < 360);
+            case ARC_RIGHT_SPHERE_GROUND:
+                return (fa >= 0) && (fa < 180);
+            case ARC_TURRET:
+                return (fa >= 330) || (fa <= 30);
+            default:
+                return false;
         }
     }
 
@@ -2733,7 +2736,7 @@ public class Compute {
         }
 
         return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && Compute.inVisualRange(game, ae, target))
-                || Compute.inSensorRange(game, ae, target);
+        || Compute.inSensorRange(game, ae, target);
     }
 
     private static int getSensorRangeBracket(Entity ae, Targetable target) {
@@ -2963,7 +2966,7 @@ public class Compute {
         for (int i = clusterHitsTable.length - 1; i >= 0; i--) {
             if (missiles > clusterHitsTable[i][0]) {
                 return clusterHitsTable[i][nRoll - 1]
-                        + Compute.missilesHit(missiles - clusterHitsTable[i][0], nMod, hotloaded, streak, advancedAMS);
+                                           + Compute.missilesHit(missiles - clusterHitsTable[i][0], nMod, hotloaded, streak, advancedAMS);
             }
         }
         throw new RuntimeException("Could not find number of missiles in hit table");
@@ -2990,20 +2993,20 @@ public class Compute {
      */
     public static int getConsciousnessNumber(int hit) {
         switch (hit) {
-        case 0:
-            return 2;
-        case 1:
-            return 3;
-        case 2:
-            return 5;
-        case 3:
-            return 7;
-        case 4:
-            return 10;
-        case 5:
-            return 11;
-        default:
-            return Integer.MAX_VALUE;
+            case 0:
+                return 2;
+            case 1:
+                return 3;
+            case 2:
+                return 5;
+            case 3:
+                return 7;
+            case 4:
+                return 10;
+            case 5:
+                return 11;
+            default:
+                return Integer.MAX_VALUE;
         }
     }
 
@@ -3491,7 +3494,7 @@ public class Compute {
                 }
             }
         }
-        
+
         //according to the following rules clarification, this should be maxed out at +4
         //http://www.classicbattletech.com/forums/index.php?topic=66036.0
         return Math.max(4, highestMod + totalGT);
@@ -4184,7 +4187,7 @@ public class Compute {
         else if (srcHex.containsTerrain(Terrains.PAVEMENT)
                 && (destHex.containsTerrain(Terrains.PAVEMENT)
                         || destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) || (destHex.containsTerrainExit(
-                        Terrains.BRIDGE, dest2srcDir) && movePath.getFinalClimbMode()))) {
+                                Terrains.BRIDGE, dest2srcDir) && movePath.getFinalClimbMode()))) {
             result = true;
         }
 
@@ -4193,10 +4196,10 @@ public class Compute {
         // pavement or a corresponding exit to the src hex
         else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || (srcHex.containsTerrainExit(
                 Terrains.BRIDGE, src2destDir) && (movePath.getLastStep().getElevation() == srcHex
-                .terrainLevel(Terrains.BRIDGE_ELEV))))
-                && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
-                        || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir) && movePath.getFinalClimbMode()) || destHex
-                        .containsTerrain(Terrains.PAVEMENT))) {
+                        .terrainLevel(Terrains.BRIDGE_ELEV))))
+                        && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
+                                || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir) && movePath.getFinalClimbMode()) || destHex
+                                .containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }
 
@@ -4538,27 +4541,27 @@ public class Compute {
         int plevel = 0;
 
         switch (level) {
-        case LEVEL_REGULAR:
-            glevel = (int) Math.ceil(gunroll / 2.0) + 2;
-            plevel = (int) Math.ceil(pilotroll / 2.0) + 2;
-            break;
-        case LEVEL_VETERAN:
-            glevel = (int) Math.ceil(gunroll / 2.0) + 3;
-            plevel = (int) Math.ceil(pilotroll / 2.0) + 3;
-            break;
-        case LEVEL_ELITE:
-            glevel = (int) Math.ceil(gunroll / 2.0) + 4;
-            plevel = (int) Math.ceil(pilotroll / 2.0) + 4;
-            break;
-        default:
-            glevel = (int) Math.ceil((gunroll + 0.5) / 2.0);
-            plevel = (int) Math.ceil((pilotroll + 0.5) / 2.0);
-            if (gunroll <= 0) {
-                glevel = 0;
-            }
-            if (pilotroll <= 0) {
-                plevel = 0;
-            }
+            case LEVEL_REGULAR:
+                glevel = (int) Math.ceil(gunroll / 2.0) + 2;
+                plevel = (int) Math.ceil(pilotroll / 2.0) + 2;
+                break;
+            case LEVEL_VETERAN:
+                glevel = (int) Math.ceil(gunroll / 2.0) + 3;
+                plevel = (int) Math.ceil(pilotroll / 2.0) + 3;
+                break;
+            case LEVEL_ELITE:
+                glevel = (int) Math.ceil(gunroll / 2.0) + 4;
+                plevel = (int) Math.ceil(pilotroll / 2.0) + 4;
+                break;
+            default:
+                glevel = (int) Math.ceil((gunroll + 0.5) / 2.0);
+                plevel = (int) Math.ceil((pilotroll + 0.5) / 2.0);
+                if (gunroll <= 0) {
+                    glevel = 0;
+                }
+                if (pilotroll <= 0) {
+                    plevel = 0;
+                }
         }
 
         skills[0] = skillLevels[0][glevel];
@@ -4746,14 +4749,14 @@ public class Compute {
         int angle = te.sideTableRam(src);
 
         switch (angle) {
-        case Aero.RAM_TOWARD_DIR:
-            return Math.max(avel + tvel, 1);
-        case Aero.RAM_TOWARD_OBL:
-            return Math.max(avel + (tvel / 2), 1);
-        case Aero.RAM_AWAY_OBL:
-            return Math.max(avel - (tvel / 2), 1);
-        case Aero.RAM_AWAY_DIR:
-            return Math.max(avel - tvel, 1);
+            case Aero.RAM_TOWARD_DIR:
+                return Math.max(avel + tvel, 1);
+            case Aero.RAM_TOWARD_OBL:
+                return Math.max(avel + (tvel / 2), 1);
+            case Aero.RAM_AWAY_OBL:
+                return Math.max(avel - (tvel / 2), 1);
+            case Aero.RAM_AWAY_DIR:
+                return Math.max(avel - tvel, 1);
         }
         return 0;
     }
@@ -4774,32 +4777,32 @@ public class Compute {
         damageType += mos;
 
         switch (damageType) {
-        case Compute.WEAPON_DIRECT_FIRE:
-            damage /= 10;
-            break;
-        case Compute.WEAPON_CLUSTER_BALLISTIC:
-            damage /= 10;
-            damage++;
-            break;
-        case Compute.WEAPON_PULSE:
-            damage /= 10;
-            damage += 2;
-            break;
-        case Compute.WEAPON_CLUSTER_MISSILE:
-            damage /= 5;
-            break;
-        case Compute.WEAPON_CLUSTER_MISSILE_1D6:
-            damage /= 5;
-            damage += Compute.d6();
-            break;
-        case Compute.WEAPON_CLUSTER_MISSILE_2D6:
-            damage /= 5;
-            damage += Compute.d6(2);
-            break;
-        case Compute.WEAPON_CLUSTER_MISSILE_3D6:
-            damage /= 5;
-            damage += Compute.d6(3);
-            break;
+            case Compute.WEAPON_DIRECT_FIRE:
+                damage /= 10;
+                break;
+            case Compute.WEAPON_CLUSTER_BALLISTIC:
+                damage /= 10;
+                damage++;
+                break;
+            case Compute.WEAPON_PULSE:
+                damage /= 10;
+                damage += 2;
+                break;
+            case Compute.WEAPON_CLUSTER_MISSILE:
+                damage /= 5;
+                break;
+            case Compute.WEAPON_CLUSTER_MISSILE_1D6:
+                damage /= 5;
+                damage += Compute.d6();
+                break;
+            case Compute.WEAPON_CLUSTER_MISSILE_2D6:
+                damage /= 5;
+                damage += Compute.d6(2);
+                break;
+            case Compute.WEAPON_CLUSTER_MISSILE_3D6:
+                damage /= 5;
+                damage += Compute.d6(3);
+                break;
         }
         damage = Math.ceil(damage);
         if (isNonInfantryAgainstMechanized) {
@@ -4923,7 +4926,7 @@ public class Compute {
             return false;
         }
         return (attacker.isAirborne() && target.isAirborne()) || (attacker.isAirborne() && target.isAirborneVTOL())
-                || (attacker.isAirborneVTOL() && target.isAirborne());
+        || (attacker.isAirborneVTOL() && target.isAirborne());
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {

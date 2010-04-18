@@ -195,7 +195,11 @@ public class TestBot extends BotClient {
                         System.out.println("Interrupted waiting for Bot to move.");
                         e1.printStackTrace();
                     } //Technically we should be using wait() but its not waking up reliably.
-                    sendChat("Calculating the move for " + running + " units. ");
+                    if(running > 0) {
+                        sendChat("Calculating the move for " + running + " units. ");
+                    } else {
+                        sendChat("Finalizing move.");
+                    }
                 } while (running > 0);
             }
             //Threads are done running. Process the results.

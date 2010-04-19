@@ -393,12 +393,16 @@ public class AmmoType extends EquipmentType {
         // Note, some level 3 stuff is mixed into level 2.
         base = AmmoType.createISEnhancedLRM5Ammo();
         enhancedlrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISEnhancedLRM10Ammo();
         enhancedlrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISEnhancedLRM15Ammo();
         enhancedlrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISEnhancedLRM20Ammo();
         enhancedlrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLAC2Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
@@ -6148,7 +6152,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "ExtendedLRM 5 Ammo";
-        ammo.shortName = "Extended LRM 5";
+        ammo.shortName = "ELRM 5";
         ammo.setInternalName("IS Ammo ExtendedLRM-5");
         ammo.addLookupName("ISExtendedLRM5 Ammo");
         ammo.addLookupName("IS ExtendedLRM 5 Ammo");
@@ -6171,7 +6175,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "ExtendedLRM 10 Ammo";
-        ammo.shortName = "Extended LRM 10";
+        ammo.shortName = "ELRM 10";
         ammo.setInternalName("IS Ammo ExtendedLRM-10");
         ammo.addLookupName("ISExtendedLRM10 Ammo");
         ammo.addLookupName("IS ExtendedLRM 10 Ammo");
@@ -6194,7 +6198,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "ExtendedLRM 15 Ammo";
-        ammo.shortName = "Extended LRM 15";
+        ammo.shortName = "ELRM 15";
         ammo.setInternalName("IS Ammo ExtendedLRM-15");
         ammo.addLookupName("ISExtendedLRM15 Ammo");
         ammo.addLookupName("IS ExtendedLRM 15 Ammo");
@@ -6217,7 +6221,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         ammo.name = "ExtendedLRM 20 Ammo";
-        ammo.shortName = "Extended LRM 20";
+        ammo.shortName = "ELRM 20";
         ammo.setInternalName("IS Ammo ExtendedLRM-20");
         ammo.addLookupName("ISExtendedLRM20 Ammo");
         ammo.addLookupName("IS ExtendedLRM 20 Ammo");
@@ -7816,80 +7820,80 @@ public class AmmoType extends EquipmentType {
     }
 
     private static AmmoType createISEnhancedLRM5Ammo() {
-            AmmoType ammo = new AmmoType();
+        AmmoType ammo = new AmmoType();
 
-            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-            ammo.name = "Enhanced LRM 5 Ammo";
-            ammo.shortName = "Enhanced LRM 5";
-            ammo.setInternalName("ISEnhancedLRM5 Ammo");
-            ammo.damagePerShot = 1;
-            ammo.rackSize = 5;
-            ammo.ammoType = AmmoType.T_NLRM;
-            ammo.shots = 24;
-            ammo.flags = ammo.flags.or(F_HOTLOAD);
-            ammo.setModes(new String[] { "", "HotLoad" });
-            ammo.bv = 7;
-            ammo.cost = 31000;
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Enhanced LRM 5 Ammo";
+        ammo.shortName = "NLRM 5";
+        ammo.setInternalName("ISEnhancedLRM5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 24;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.bv = 7;
+        ammo.cost = 31000;
 
-            return ammo;
-        }
+        return ammo;
+    }
 
-        private static AmmoType createISEnhancedLRM10Ammo() {
-            AmmoType ammo = new AmmoType();
+    private static AmmoType createISEnhancedLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
 
-            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-            ammo.name = "Enhanced LRM 10 Ammo";
-            ammo.shortName = "Enhanced LRM 10";
-            ammo.setInternalName("ISEnhancedLRM10 Ammo");
-            ammo.damagePerShot = 1;
-            ammo.rackSize = 10;
-            ammo.ammoType = AmmoType.T_NLRM;
-            ammo.shots = 12;
-            ammo.flags = ammo.flags.or(F_HOTLOAD);
-            ammo.setModes(new String[] { "", "HotLoad" });
-            ammo.bv = 13;
-            ammo.cost = 31000;
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Enhanced LRM 10 Ammo";
+        ammo.shortName = "NLRM 10";
+        ammo.setInternalName("ISEnhancedLRM10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 12;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.bv = 13;
+        ammo.cost = 31000;
 
-            return ammo;
-        }
+        return ammo;
+    }
 
-        private static AmmoType createISEnhancedLRM15Ammo() {
-            AmmoType ammo = new AmmoType();
+    private static AmmoType createISEnhancedLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
 
-            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-            ammo.name = "Enhanced LRM 15 Ammo";
-            ammo.shortName = "Enhanced LRM 15";
-            ammo.setInternalName("ISEnhancedLRM15 Ammo");
-            ammo.damagePerShot = 1;
-            ammo.rackSize = 15;
-            ammo.ammoType = AmmoType.T_NLRM;
-            ammo.shots = 8;
-            ammo.flags = ammo.flags.or(F_HOTLOAD);
-            ammo.setModes(new String[] { "", "HotLoad" });
-            ammo.bv = 20;
-            ammo.cost = 31000;
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Enhanced LRM 15 Ammo";
+        ammo.shortName = "NLRM 15";
+        ammo.setInternalName("ISEnhancedLRM15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 8;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.bv = 20;
+        ammo.cost = 31000;
 
-            return ammo;
-        }
+        return ammo;
+    }
 
-        private static AmmoType createISEnhancedLRM20Ammo() {
-            AmmoType ammo = new AmmoType();
+    private static AmmoType createISEnhancedLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
 
-            ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-            ammo.name = "Enhanced LRM 20 Ammo";
-            ammo.shortName = "Enhanced LRM 20";
-            ammo.setInternalName("ISEnhancedLRM20 Ammo");
-            ammo.damagePerShot = 1;
-            ammo.rackSize = 20;
-            ammo.ammoType = AmmoType.T_NLRM;
-            ammo.shots = 6;
-            ammo.flags = ammo.flags.or(F_HOTLOAD);
-            ammo.setModes(new String[] { "", "HotLoad" });
-            ammo.bv = 26;
-            ammo.cost = 31000;
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Enhanced LRM 20 Ammo";
+        ammo.shortName = "NLRM 20";
+        ammo.setInternalName("ISEnhancedLRM20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 6;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.bv = 26;
+        ammo.cost = 31000;
 
-            return ammo;
-        }
+        return ammo;
+    }
 
 
     @Override

@@ -57,7 +57,7 @@ v0.35.14-dev (SVN)
    unit, select a unit in the list by just starting to type its name
 + Added Enhanced LRMs
 + Bug: Fuel Tanks not working
-
++ Prevent Bot from Jumping onto a building where CF < Mass.
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

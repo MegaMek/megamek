@@ -190,7 +190,15 @@ public class MoveOption extends MovePath {
             getStep(0).setDanger(true);
             current.setDanger(true);
         }
-
+        
+        //Don't jump onto a building with CF < weight
+        IHex h = game.getBoard().getHex(getFinalCoords());
+        if(h != null && h.getTerrain(Terrains.BLDG_CF) != null) {
+            int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
+            if(cf < entity.getWeight()) {
+                current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
         if (current.isDanger()) {
             if (getCEntity().base_psr_odds < .1) {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);

@@ -2753,11 +2753,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endRow);
 
         // add gyro
-        double gyroMultiplier = 0.5;
-        if (getGyroType() == GYRO_HEAVY_DUTY) {
-            gyroMultiplier = 1.0;
-        }
-        dbv += getWeight() * gyroMultiplier;
+        dbv += getWeight() * getGyroMultiplier();
 
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -2766,12 +2762,12 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endColumn + startColumn);
         bvText.append(getWeight());
         bvText.append(" x ");
-        bvText.append(gyroMultiplier);
+        bvText.append(getGyroMultiplier());
         bvText.append(endColumn);
         bvText.append(startColumn);
 
         bvText.append("= ");
-        bvText.append(getWeight() * gyroMultiplier);
+        bvText.append(getWeight() * getGyroMultiplier());
         bvText.append(endColumn);
         bvText.append(endRow);
 
@@ -2822,7 +2818,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        double armoredBVCal = getArmoredCritBV();
+        double armoredBVCal = getArmoredComponentBV();
 
         if (armoredBVCal > 0) {
             bvText.append("Armored Components BV Modification");
@@ -6036,18 +6032,43 @@ public abstract class Mech extends Entity implements Serializable {
         return (loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM);
     }
 
-    public double getArmoredCritBV() {
+    public double getArmoredComponentBV() {
         double bv = 0.0f;
 
-        for (int loc = Mech.LOC_HEAD; loc <= Mech.LOC_LLEG; loc++) {
-            for (int slot = 0; slot < getNumberOfCriticals(loc); slot++) {
-                CriticalSlot cs = getCritical(loc, slot);
-                if ((cs != null) && cs.isArmored()) {
-                    bv += 5;
-                }
+        // all equipment gets 5% of BV cost per slot, or a flat +5 per slot
+        // if BV is 0
+        for (Mounted mount : getEquipment()) {
+            if (!mount.isArmored()) {
+                continue;
+            }
+            double mountBv = mount.getType().getBV(this);
+            if (mountBv > 0) {
+                bv += mountBv * 0.05 * mount.getType().getCriticals(this);
+            } else {
+                bv += 5;
+            }
+        }
+
+        // gyro is the only system that has it's own BV and can only be in CT
+        // so check all CT crits for being armored and gyro, and add 5%
+        // of gyro BV for each slot
+        for (int slot = 0; slot < getNumberOfCriticals(Mech.LOC_CT); slot++) {
+            CriticalSlot cs = getCritical(Mech.LOC_CT, slot);
+            if ((cs != null)
+                    && cs.isArmored()
+                    && (cs.getType() == CriticalSlot.TYPE_SYSTEM)
+                    && (cs.getIndex() == Mech.SYSTEM_GYRO)) {
+                bv += getWeight() * getGyroMultiplier() * 0.05;
             }
         }
         return bv;
+    }
+
+    public double getGyroMultiplier() {
+        if (getGyroType() == GYRO_HEAVY_DUTY) {
+            return 1.0;
+        }
+        return 0.5;
     }
 
     /**

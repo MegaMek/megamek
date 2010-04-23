@@ -912,22 +912,6 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
-     * does this mech have stealth armor?
-     *
-     * @return
-     */
-    public boolean hasStealth() {
-        for (Mounted mEquip : getMisc()) {
-            MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
-                // The Mek has Stealth Armor
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * does this mech have a null-sig-system?
      *
      * @return
@@ -4426,9 +4410,7 @@ public abstract class Mech extends Entity implements Serializable {
             return 999;
         }
         return getMaxElevationChange();
-    }
-
-    /**
+    }    /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
      * <p/>

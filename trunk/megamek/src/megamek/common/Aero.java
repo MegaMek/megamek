@@ -1015,8 +1015,12 @@ public class Aero extends Entity
         // a blueshield system means a +0.2 on the armor and SI modifiers,
         // like for mechs
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
+        double armorMod = 1.0;
+        if (blueShield) {
+            armorMod += 0.2;
+        }
 
-        dbv += (getTotalArmor()+modularArmor) * 2.5 * (blueShield?1.2:1);
+        dbv += (getTotalArmor()+modularArmor) * 2.5 * armorMod;
 
         dbv += getSI() * 2.0 * (blueShield?1.2:1);
 
@@ -1101,7 +1105,7 @@ public class Aero extends Entity
         dbv = Math.max(1, dbv - ammoPenalty);
 
         //unit type multiplier
-        dbv *= getBVTypeModifier();
+        dbv *= (getBVTypeModifier() + (hasStealth()?0.2:0));
 
         // calculate heat efficiency
         int aeroHeatEfficiency = 6 + getHeatCapacity();

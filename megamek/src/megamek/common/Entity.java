@@ -9227,4 +9227,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isDropping() {
         return isAirborne() && !(this instanceof Aero);
     }
+
+    /**
+     * does this unit have stealth armor?
+     *
+     * @return
+     */
+    public boolean hasStealth() {
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+                // The unit has Stealth Armor
+                return true;
+            }
+        }
+        return false;
+    }
 }

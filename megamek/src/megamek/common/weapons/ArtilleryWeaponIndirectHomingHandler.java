@@ -322,12 +322,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             "no targets tagged this turn");
             return;
         }
-        
+
         //get TAGs that hit
         v = new Vector<TagInfo>();
         for (TagInfo ti : allowed) {
             entityTarget = game.getEntity(ti.targetId);
-            if (!ti.missed && entityTarget != null) {
+            if (!ti.missed && (entityTarget != null)) {
                 v.add(ti);
             }
         }
@@ -357,44 +357,45 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             aaa.setTargetType(entityTarget.getTargetType());
             target = entityTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no tag on the same mapsheet");
-        }
-        //find the TAG hit with the most shots left, and closest
-        int bestDistance = Integer.MAX_VALUE;
-        TagInfo targetTag = allowed.firstElement();
-        for (TagInfo ti : allowed) {
-            int distance = tc.distance(entityTarget.getPosition());
-            
-            //higher # of shots left
-            if (ti.shots> targetTag.shots) {
-                bestDistance = distance;
-                targetTag = ti;
-                continue;
-            }
-            //same # of shots left
-            if (ti.shots == targetTag.shots) {
-                //higher priority
-                if (ti.priority > targetTag.priority) {
+        } else {
+            //find the TAG hit with the most shots left, and closest
+            int bestDistance = Integer.MAX_VALUE;
+            TagInfo targetTag = allowed.firstElement();
+            for (TagInfo ti : allowed) {
+                int distance = tc.distance(entityTarget.getPosition());
+
+                //higher # of shots left
+                if (ti.shots> targetTag.shots) {
                     bestDistance = distance;
                     targetTag = ti;
                     continue;
                 }
-                //same priority and closer
-                if (ti.priority == targetTag.priority && bestDistance > distance) {
-                    bestDistance = distance;
-                    targetTag = ti;
+                //same # of shots left
+                if (ti.shots == targetTag.shots) {
+                    //higher priority
+                    if (ti.priority > targetTag.priority) {
+                        bestDistance = distance;
+                        targetTag = ti;
+                        continue;
+                    }
+                    //same priority and closer
+                    if ((ti.priority == targetTag.priority) && (bestDistance > distance)) {
+                        bestDistance = distance;
+                        targetTag = ti;
+                    }
                 }
             }
+
+            //if the best TAG has no shots left
+            if (targetTag.shots == 0) {
+                game.clearTagInfoShots(ae, tc);
+            }
+
+            targetTag.shots--;
+            target = game.getEntity(targetTag.targetId);
+            aaa.setTargetId(targetTag.targetId);
+            aaa.setTargetType(target.getTargetType());
         }
-        
-        //if the best TAG has no shots left
-        if (targetTag.shots == 0) {
-            game.clearTagInfoShots(ae, tc);
-        }
-        
-        targetTag.shots--;
-        target = game.getEntity(targetTag.targetId);
-        aaa.setTargetId(targetTag.targetId);
-        aaa.setTargetType(target.getTargetType());
     }
 
     /*

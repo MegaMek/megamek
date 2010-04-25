@@ -337,6 +337,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             aaa.setTargetType(Targetable.TYPE_ENTITY);
             target = entityTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
+            return;
         }
         //get TAGs that are on the same map
         allowed = new Vector<TagInfo>();

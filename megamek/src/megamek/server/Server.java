@@ -1307,7 +1307,7 @@ public class Server implements Runnable {
                 r.messageId = 7005;
             } else {
                 r.messageId = 7010;
-                r.add(getColorForPlayer(player));
+                r.add(Server.getColorForPlayer(player));
             }
         } else {
             // Team victory
@@ -1323,7 +1323,7 @@ public class Server implements Runnable {
             r = new Report();
             r.type = Report.PUBLIC;
             r.messageId = 7016;
-            r.add(getColorForPlayer(player));
+            r.add(Server.getColorForPlayer(player));
             r.add(player.getBV());
             r.add(player.getInitialBV());
             r.add(player.getFledBV());
@@ -1863,7 +1863,7 @@ public class Server implements Runnable {
                     r.player = player.getId();
                 }
                 r.messageId = 7016;
-                r.add(getColorForPlayer(player));
+                r.add(Server.getColorForPlayer(player));
                 r.add(player.getBV());
                 r.add(player.getInitialBV());
                 r.add(player.getFledBV());
@@ -2428,7 +2428,7 @@ public class Server implements Runnable {
 
             if (wonPlayer != Player.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
-                r.add(getColorForPlayer(game.getPlayer(wonPlayer)));
+                r.add(Server.getColorForPlayer(game.getPlayer(wonPlayer)));
                 addReport(r);
             }
             if (wonTeam != Player.TEAM_NONE) {
@@ -2961,7 +2961,7 @@ public class Server implements Runnable {
                     Player player = getPlayer(t.getPlayerNum());
                     if (null != player) {
                         r = new Report(1050, Report.PUBLIC);
-                        r.add(getColorForPlayer(player));
+                        r.add(Server.getColorForPlayer(player));
                         addReport(r);
                     }
                 }
@@ -2975,7 +2975,7 @@ public class Server implements Runnable {
                 if (team.getSize() == 1) {
                     final Player player = team.getPlayers().nextElement();
                     r = new Report(1015, Report.PUBLIC);
-                    r.add(getColorForPlayer(player));
+                    r.add(Server.getColorForPlayer(player));
                     r.add(team.getInitiative().toString());
                     addReport(r);
                 } else {
@@ -20160,6 +20160,10 @@ public class Server implements Runnable {
                 }
                 AmmoType atype = (AmmoType) mounted.getType();
                 if (!atype.isExplosive()) {
+                    continue;
+                }
+                // coolant pods don't explode from heat
+                if (atype.getAmmoType() == AmmoType.T_COOLANT_POD) {
                     continue;
                 }
                 // ignore empty bins

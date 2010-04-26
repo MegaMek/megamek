@@ -64,6 +64,7 @@ v0.35.14-dev (SVN)
 + Bug 2975147: Homing artillery crash, thanks for including a patch in the bug
     report!
 + Bug 2980855: Coolant pods shouldn't explode from high heat
++ Fixed some movement display button issues
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

@@ -561,14 +561,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butHullDown);
         buttonsTank.add(butEvade);
         buttonsTank.add(butReckless);
-        buttonsTank.add(butSwim);
         buttonsTank.add(butEject);
         buttonsTank.add(butFlee);
         buttonsTank.add(butRAC);
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
-        buttonsTank.add(butTakeOff);
-        buttonsTank.add(butVTakeOff);
+        buttonsTank.add(butRaise);
+        buttonsTank.add(butLower);
 
         buttonsVtol = new ArrayList<JButton>(15);
         buttonsVtol.add(butWalk);
@@ -626,6 +625,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
+            buttonsAero.add(butTakeOff);
+            buttonsAero.add(butVTakeOff);
         } else {
             buttonsAero.add(butThrust);
             buttonsAero.add(butTurnLeft);
@@ -643,6 +644,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
+            buttonsAero.add(butTakeOff);
+            buttonsAero.add(butVTakeOff);
         }
         // TODO: allow Aeros to taxi if on the ground
 

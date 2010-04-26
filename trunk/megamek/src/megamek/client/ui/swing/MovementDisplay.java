@@ -704,7 +704,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
         while (!ok && (buttonLayout != 0)) {
-            for (int i = buttonLayout * 9; (i < (buttonLayout + 1) * 9)
+            for (int i = buttonLayout * 8; (i < (buttonLayout + 1) * 8)
                     && (i < buttonList.size()); i++) {
                 if (buttonList.get(i).isEnabled()) {
                     ok = true;
@@ -714,7 +714,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (!ok) {
                 // skip as nothing was enabled
                 buttonLayout++;
-                if (buttonLayout * 9 >= buttonList.size()) {
+                if (buttonLayout * 8 >= buttonList.size()) {
                     buttonLayout = 0;
                 }
             }
@@ -722,8 +722,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         int x = 0;
         int y = 0;
         panButtons.add(butNext, GBC.std().gridx(x).gridy(y).fill());
+        x++;
 
-        for (int i = buttonLayout * 9; (i < (buttonLayout + 1) * 9)
+        for (int i = buttonLayout * 8; (i < (buttonLayout + 1) * 8)
                 && (i < buttonList.size()); i++) {
             if (x == 5) {
                 y++;

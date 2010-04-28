@@ -21,7 +21,7 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class PrototypeStreakHandler extends MissileWeaponHandler {
+public class PrototypeStreakHandler extends SRMHandler {
 
 
     /**

@@ -66,6 +66,7 @@ v0.35.14-dev (SVN)
 + Bug 2980855: Coolant pods shouldn't explode from high heat
 + Fixed some movement display button issues
 + Bug: prototype streak SRMs from operation klondike not working correctly
++ Bug: NPE when a dropship flies off the ground map
 
 v0.35.13 (2010-03-13, 02:15 UTC+1)
 + Added scroll bars to Map selection preview.

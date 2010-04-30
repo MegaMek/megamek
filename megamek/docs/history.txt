@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.35.15-dev (SVN)
+
 v0.35.14 (2010-04-31, 21:20 UTC+2)
 + Change Clan Prototype weapons tech type and naming convention.
 + Added Ammo to Clan RL ProtoType as well as tohit mod and oneshot flag

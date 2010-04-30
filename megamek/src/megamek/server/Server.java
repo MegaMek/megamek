@@ -25747,10 +25747,7 @@ public class Server implements Runnable {
                     r = new Report(3100);
                     r.subject = aId;
                     Entity ae = game.getEntity(aId);
-                    if (ae == null) {
-                        System.err.println("ae null in handleattacks, entityId " + aId);
-                    }
-                    r.addDesc(game.getEntity(aId));
+                    r.addDesc(ae);
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                 }
@@ -25782,10 +25779,7 @@ public class Server implements Runnable {
                     if (ae == null) {
                         ae = game.getOutOfGameEntity(aId);
                     }
-                    if (ae == null) {
-                        System.err.println("ae null in handleattacks, entityId " + aId);
-                    }
-                    r.addDesc(game.getEntity(aId));
+                    r.addDesc(ae);
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                 }

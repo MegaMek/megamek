@@ -4711,6 +4711,10 @@ public abstract class Mech extends Entity implements Serializable {
         return sinksOn;
     }
 
+    public void resetSinks() {
+        sinksOn = getNumberOfSinks();
+    }
+
     public int getActiveSinksNextRound() {
         if (sinksOnNextRound < 0) {
             return getActiveSinks();

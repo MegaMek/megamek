@@ -830,6 +830,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private void drawDeploymentForHex( Coords c, Graphics g) {
         IBoard board = game.getBoard();
         Point p = getHexLocation(c);
+        if (useIsometric()) {
+            p.x = p.x - drawRect.x;
+            p.y = p.y - drawRect.y;
+        }
         if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
             g.setColor(Color.yellow);
             int[] xcoords = { p.x + (int) (21 * scale), p.x + (int) (62 * scale),
@@ -5744,6 +5748,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         drawIsometric = !drawIsometric;
         updateBoard();
         repaint();
+        redrawWholeBoard = true;
         return drawIsometric;
     }
 
@@ -5811,6 +5816,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 boardGraph.dispose();
             }
             boardGraph = boardImage.getGraphics();
+            boardGraph.setClip(0, 0, drawRect.width, drawRect.height);
             drawHexes(boardGraph, drawRect);
             redrawWholeBoard = false;
         }

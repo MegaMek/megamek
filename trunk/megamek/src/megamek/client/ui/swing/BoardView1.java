@@ -204,6 +204,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     private Dimension boardSize;
 
+    // we keep track of the rectangle we drew, and keep a seperate image of just
+    // the hexes, so we don't have to paint each hex individually during each
+    // redraw, but only when the visible hexes actually change
+    private Rectangle drawRect;
+    private Image boardImage;
+    private Graphics boardGraph;
+    private boolean redrawWholeBoard = false;
+
     // scrolly stuff:
     private JScrollPane scrollpane = null;
     private JScrollBar vbar;
@@ -632,9 +640,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             repaint(1000);
             return;
         }
-
-        // draw the board
-        drawHexes(g, g.getClipBounds());
+        updateBoardImage();
+        g.drawImage(boardImage, scrollpane.getViewport().getViewPosition().x, scrollpane.getViewport().getViewPosition().y, this);
 
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks()) {
@@ -1039,13 +1046,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     private void drawHexes(Graphics g, Rectangle view) {
         // only update visible hexes
-        int drawX = view.x / (int) (HEX_WC * scale) - 1;
-        int drawY = view.y / (int) (HEX_H * scale) - 1;
+        int drawX = (int) (view.x / (HEX_WC * scale)) - 1;
+        int drawY = (int) (view.y / (HEX_H * scale)) - 1;
 
-        int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
-        int drawHeight = view.height / (int) (HEX_H * scale) + 3;
+        int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
+        int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
 
-        g.clearRect(view.x, view.y, view.width, view.height);
+        // clear, if we need to
+        if (view.x < (21 * scale)) {
+            boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
+                    (int) (21 * scale) - view.x, view.height);
+        }
+        if (view.y < (36 * scale)) {
+            boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
+                    view.width, (int) (36 * scale) - view.y);
+        }
+        if (view.x > boardSize.width - view.width - (21 * scale)) {
+            boardGraph.clearRect(drawRect.width - (int) (21 * scale), view.y
+                    - drawRect.y, (int) (21 * scale), view.height);
+        }
+        if (view.y > boardSize.height - view.height - (int) (36 * scale)) {
+            boardGraph.clearRect(view.x - drawRect.x, drawRect.height
+                    - (int) (36 * scale), view.width, (int) (36 * scale));
+        }
+
         // draw some hexes.
         if (useIsometric()) {
             //When using isometric rendering, all hexes must be drawn from
@@ -1079,8 +1103,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     /**
-     * Draws a hex onto the board buffer. This assumes that boardRect is current, and does not check
-     * if the hex is visible.
+     * Draws a hex onto the board buffer. This assumes that drawRect is current,
+     *  and does not check if the hex is visible.
      */
     private void drawHex(Coords c, Graphics boardGraph) {
         if (!game.getBoard().contains(c)) {
@@ -1097,8 +1121,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
         // offset drawing point
-        int drawX = hexLoc.x; // - boardRect.x;
-        int drawY = hexLoc.y; // - boardRect.y;
+        int drawX = hexLoc.x - drawRect.x;
+        int drawY = hexLoc.y - drawRect.y;
 
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
@@ -4967,6 +4991,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     public synchronized void boardChangedAllHexes(BoardEvent b) {
         tileManager.loadAllHexes();
+        redrawWholeBoard = true;
         repaint();
     }
 
@@ -5204,6 +5229,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
         synchronized (this) {
             ecmHexes = table;
+            redrawWholeBoard = true;
         }
         repaint();
     }
@@ -5634,6 +5660,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         updateFontSizes();
         updateBoard();
         this.setSize(boardSize);
+        redrawWholeBoard = true;
 
 
         repaint();
@@ -5732,6 +5759,64 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         g2d.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
         g2d.dispose();
         return mask;
+    }
+
+    /**
+     * Moves the board view to another area.
+     */
+    private void moveBoardImage() {
+        Rectangle viewRect = scrollpane.getViewport().getViewRect();
+        // salvage the old
+        boardGraph.setClip(0, 0, drawRect.width, drawRect.height);
+
+        boardGraph.copyArea(0, 0, drawRect.width, drawRect.height,
+                drawRect.x - viewRect.x, drawRect.y - viewRect.y);
+
+        // what's left to paint?
+        int midX = Math.max(viewRect.x, drawRect.x);
+        int midWidth = viewRect.width - Math.abs(viewRect.x - drawRect.x);
+        Rectangle unLeft = new Rectangle(viewRect.x, viewRect.y, drawRect.x - viewRect.x,
+                viewRect.height);
+        Rectangle unRight = new Rectangle(drawRect.x + drawRect.width,
+                viewRect.y, viewRect.x - drawRect.x, viewRect.height);
+        Rectangle unTop = new Rectangle(midX, viewRect.y, midWidth, drawRect.y
+                - viewRect.y);
+        Rectangle unBottom = new Rectangle(midX,
+                drawRect.y + drawRect.height, midWidth, viewRect.y - drawRect.y);
+
+        // update drawRect
+        drawRect = new Rectangle(viewRect);
+
+        // paint needed areas
+        if (unLeft.width > 0) {
+            drawHexes(boardGraph, unLeft);
+        } else if (unRight.width > 0) {
+            drawHexes(boardGraph, unRight);
+        }
+        if (unTop.height > 0) {
+            drawHexes(boardGraph, unTop);
+        } else if (unBottom.height > 0) {
+            drawHexes(boardGraph, unBottom);
+        }
+    }
+
+    private void updateBoardImage() {
+        // draw bord only if we moved the viewport
+        Rectangle viewRect = scrollpane.getViewport().getViewRect();
+        if ((boardGraph == null) || (viewRect.width > drawRect.width)
+                || (viewRect.height > drawRect.height) || redrawWholeBoard) {
+            drawRect = scrollpane.getViewport().getViewRect();
+            boardImage = createImage(drawRect.width, drawRect.height);
+            if (boardGraph != null) {
+                boardGraph.dispose();
+            }
+            boardGraph = boardImage.getGraphics();
+            drawHexes(boardGraph, drawRect);
+            redrawWholeBoard = false;
+        }
+        if (!drawRect.union(viewRect).equals(drawRect)) {
+            moveBoardImage();
+        }
     }
 
 }

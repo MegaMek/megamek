@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.15-dev (SVN)
++ Improve swing board drawing performance by a huuge margin
 
 v0.35.14 (2010-04-31, 21:20 UTC+2)
 + Change Clan Prototype weapons tech type and naming convention.

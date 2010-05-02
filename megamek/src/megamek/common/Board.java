@@ -29,7 +29,6 @@ import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -60,11 +59,11 @@ public class Board implements Serializable, IBoard {
     public static final int START_W = 8;
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
-    
-    
+
+
     protected int width;
     protected int height;
-    
+
 
     //MapType
     public static final int T_GROUND = 0;
@@ -77,11 +76,11 @@ public class Board implements Serializable, IBoard {
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 
-    //The min and max elevation values for this board. 
+    //The min and max elevation values for this board.
     //set when getMinElevation/getMax is called for the first time.
     private int minElevation = UNDEFINED_MIN_ELEV;
     private int maxElevation = UNDEFINED_MAX_ELEV;
-    
+
     private int mapType = T_GROUND;
 
     private IHex[] data;
@@ -283,7 +282,7 @@ public class Board implements Serializable, IBoard {
             for (int x = 0; x < width; x++) {
                 // Does this hex contain a building?
                 IHex curHex = getHex(x, y);
-                if (curHex != null
+                if ((curHex != null)
                         && (curHex.containsTerrain(Terrains.BUILDING))) {
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x, y);
@@ -309,7 +308,7 @@ public class Board implements Serializable, IBoard {
                         }
                     } // End building-is-new
                 } // End hex-has-building
-                if (curHex != null
+                if ((curHex != null)
                         && (curHex.containsTerrain(Terrains.FUEL_TANK))) {
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x, y);
@@ -337,7 +336,7 @@ public class Board implements Serializable, IBoard {
                         }
                     } // End building-is-new
                 } // End hex-has-building
-                if (curHex != null && curHex.containsTerrain(Terrains.BRIDGE)) {
+                if ((curHex != null) && curHex.containsTerrain(Terrains.BRIDGE)) {
 
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x, y);
@@ -431,7 +430,7 @@ public class Board implements Serializable, IBoard {
      * @param y the y Coords.
      */
     public boolean contains(int x, int y) {
-        return x >= 0 && y >= 0 && x < width && y < height;
+        return (x >= 0) && (y >= 0) && (x < width) && (y < height);
     }
 
     /**
@@ -498,7 +497,7 @@ public class Board implements Serializable, IBoard {
             st.quoteChar('"');
             st.wordChars('_', '_');
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
-                if (st.ttype == StreamTokenizer.TT_WORD
+                if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("size")) {
                     st.nextToken();
                     boardx = (int) st.nval;
@@ -513,7 +512,7 @@ public class Board implements Serializable, IBoard {
         }
 
         // check and return
-        return boardx == x && boardy == y;
+        return (boardx == x) && (boardy == y);
     }
 
     /**
@@ -521,7 +520,7 @@ public class Board implements Serializable, IBoard {
      * deployment phase (?!). I'm using 3 hexes from map edge.
      */
     public boolean isLegalDeployment(Coords c, int nDir) {
-        if (c == null || !contains(c)) {
+        if ((c == null) || !contains(c)) {
             return false;
         }
 
@@ -538,41 +537,41 @@ public class Board implements Serializable, IBoard {
             maxx -= width / 5;
             miny = height / 5;
             maxy -= height / 5;
-            if (c.x < minx || c.y < miny || c.x >= maxx || c.y >= maxy) {
+            if ((c.x < minx) || (c.y < miny) || (c.x >= maxx) || (c.y >= maxy)) {
                 return false;
             }
         }
         switch (nDir) {
             case START_ANY:
                 return true;
-            case START_NW: 
-                return (c.x < minx + nLimit && c.x >= minx && c.y < height / 2)
-                        || (c.y < miny + nLimit && c.y >= miny && c.x < width / 2);
+            case START_NW:
+                return ((c.x < minx + nLimit) && (c.x >= minx) && (c.y < height / 2))
+                        || ((c.y < miny + nLimit) && (c.y >= miny) && (c.x < width / 2));
             case START_N:
-                return c.y < miny + nLimit && c.y >= miny;
+                return (c.y < miny + nLimit) && (c.y >= miny);
             case START_NE:
-                return (c.x > (maxx - nLimit) && c.x < maxx && c.y < height / 2)
-                        || (c.y < miny + nLimit && c.y >= miny && c.x > width / 2);
+                return ((c.x > (maxx - nLimit)) && (c.x < maxx) && (c.y < height / 2))
+                        || ((c.y < miny + nLimit) && (c.y >= miny) && (c.x > width / 2));
             case START_E:
-                return c.x >= (maxx - nLimit) && c.x < maxx;
+                return (c.x >= (maxx - nLimit)) && (c.x < maxx);
             case START_SE:
-                return (c.x >= (maxx - nLimit) && c.x < maxx && c.y > height / 2)
-                        || (c.y >= (maxy - nLimit) && c.y < maxy && c.x > width / 2);
+                return ((c.x >= (maxx - nLimit)) && (c.x < maxx) && (c.y > height / 2))
+                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy) && (c.x > width / 2));
             case START_S:
-                return c.y >= (maxy - nLimit) && c.y < maxy;
+                return (c.y >= (maxy - nLimit)) && (c.y < maxy);
             case START_SW:
-                return (c.x < minx + nLimit && c.x >= minx && c.y > height / 2)
-                        || (c.y >= (maxy - nLimit) && c.y < maxy && c.x < width / 2);
+                return ((c.x < minx + nLimit) && (c.x >= minx) && (c.y > height / 2))
+                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy) && (c.x < width / 2));
             case START_W:
-                return c.x < minx + nLimit && c.x >= minx;
+                return (c.x < minx + nLimit) && (c.x >= minx);
             case START_EDGE:
-                return (c.x < minx + nLimit && c.x >= minx)
-                        || (c.y < miny + nLimit && c.y >= miny)
-                        || (c.x >= (maxx - nLimit) && c.x < maxx)
-                        || (c.y >= (maxy - nLimit) && c.y < maxy);
+                return ((c.x < minx + nLimit) && (c.x >= minx))
+                        || ((c.y < miny + nLimit) && (c.y >= miny))
+                        || ((c.x >= (maxx - nLimit)) && (c.x < maxx))
+                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy));
             case START_CENTER:
-                return c.x >= width / 3 && c.x <= 2 * width / 3
-                        && c.y >= height / 3 && c.y <= 2 * height / 3;
+                return (c.x >= width / 3) && (c.x <= 2 * width / 3)
+                        && (c.y >= height / 3) && (c.y <= 2 * height / 3);
             default: // ummm. .
                 return false;
         }
@@ -613,14 +612,14 @@ public class Board implements Serializable, IBoard {
             int x_pos = 1;
             int y_pos = 1;
             while (st.nextToken() != StreamTokenizer.TT_EOF) {
-                if (st.ttype == StreamTokenizer.TT_WORD
+                if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("size")) {
                     // read rest of line
                     String[] args = { "0", "0" };
                     int i = 0;
-                    while (st.nextToken() == StreamTokenizer.TT_WORD
-                            || st.ttype == '"'
-                            || st.ttype == StreamTokenizer.TT_NUMBER) {
+                    while ((st.nextToken() == StreamTokenizer.TT_WORD)
+                            || (st.ttype == '"')
+                            || (st.ttype == StreamTokenizer.TT_NUMBER)) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval
                                 + ""
                                 : st.sval;
@@ -629,14 +628,14 @@ public class Board implements Serializable, IBoard {
                     nh = Integer.parseInt(args[1]);
                     nd = new IHex[nw * nh];
                     di = 0;
-                } else if (st.ttype == StreamTokenizer.TT_WORD
+                } else if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("option")) {
                     // read rest of line
                     String[] args = { "", "" };
                     int i = 0;
-                    while (st.nextToken() == StreamTokenizer.TT_WORD
-                            || st.ttype == '"'
-                            || st.ttype == StreamTokenizer.TT_NUMBER) {
+                    while ((st.nextToken() == StreamTokenizer.TT_WORD)
+                            || (st.ttype == '"')
+                            || (st.ttype == StreamTokenizer.TT_NUMBER)) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval
                                 + ""
                                 : st.sval;
@@ -649,14 +648,14 @@ public class Board implements Serializable, IBoard {
                             roadsAutoExit = true;
                         }
                     } // End exit_roads_to_pavement-option
-                } else if (st.ttype == StreamTokenizer.TT_WORD
+                } else if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("hex")) {
                     // read rest of line
                     String[] args = { "", "0", "", "" };
                     int i = 0;
-                    while (st.nextToken() == StreamTokenizer.TT_WORD
-                            || st.ttype == '"'
-                            || st.ttype == StreamTokenizer.TT_NUMBER) {
+                    while ((st.nextToken() == StreamTokenizer.TT_WORD)
+                            || (st.ttype == '"')
+                            || (st.ttype == StreamTokenizer.TT_NUMBER)) {
                         args[i++] = st.ttype == StreamTokenizer.TT_NUMBER ? (int) st.nval
                                 + ""
                                 : st.sval;
@@ -669,7 +668,7 @@ public class Board implements Serializable, IBoard {
                         y_pos++;
                         x_pos = 1;
                     }
-                } else if (st.ttype == StreamTokenizer.TT_WORD
+                } else if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("end")) {
                     break;
                 }
@@ -678,7 +677,6 @@ public class Board implements Serializable, IBoard {
             System.err.println("i/o error reading board");
             System.err.println(ex);
         }
-        System.out.println("loading board,loaded, processing" + new Date());
 
         // fill nulls with blank hexes
         for (int i = 0; i < nd.length; i++) {
@@ -688,7 +686,7 @@ public class Board implements Serializable, IBoard {
         }
 
         // check data integrity
-        if (nw > 1 || nh > 1 || di == nw * nh) {
+        if ((nw > 1) || (nh > 1) || (di == nw * nh)) {
             newData(nw, nh, nd);
         } else {
             System.err.println("board data invalid");
@@ -738,7 +736,7 @@ public class Board implements Serializable, IBoard {
                         // Do something funky to save building exits.
                         if (((Terrains.BUILDING == j) || (j == Terrains.FUEL_TANK))
                                 && !terrain.hasExitsSpecified()
-                                && terrain.getExits() != 0) {
+                                && (terrain.getExits() != 0)) {
                             hexBuff.append(":").append(terrain.getExits());
                         }
                         firstTerrain = false;
@@ -1325,28 +1323,32 @@ public class Board implements Serializable, IBoard {
     }
 
     public int getMaxElevation() {
-        if(maxElevation != UNDEFINED_MAX_ELEV)
+        if(maxElevation != UNDEFINED_MAX_ELEV) {
             return maxElevation;
-        
+        }
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int elevation = data[y * width + x].getElevation();
-                if(maxElevation < elevation) 
+                if(maxElevation < elevation) {
                     maxElevation = elevation;
+                }
             }
         }
         return maxElevation;
     }
 
     public int getMinElevation() {
-        if(minElevation != UNDEFINED_MIN_ELEV)
+        if(minElevation != UNDEFINED_MIN_ELEV) {
             return minElevation;
-        
+        }
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int elevation = data[y * width + x].getElevation();
-                if(minElevation > elevation) 
+                if(minElevation > elevation) {
                     minElevation = elevation;
+                }
             }
         }
         return minElevation;

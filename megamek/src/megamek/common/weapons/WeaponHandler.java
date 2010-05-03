@@ -565,7 +565,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.subject = subjectId;
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
 

@@ -53,7 +53,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     * 
+     *
      * @param entityTarget
      * @param vPhaseReport
      * @param bldg
@@ -92,7 +92,6 @@ public class SRMTandemChargeHandler extends SRMHandler {
             r.subject = subjectId;
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.
@@ -118,7 +117,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         if(null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
-        
+
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);
@@ -168,7 +167,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

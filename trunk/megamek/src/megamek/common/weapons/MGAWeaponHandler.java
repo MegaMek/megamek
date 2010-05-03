@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -35,7 +35,7 @@ import megamek.server.Server.DamageType;
  */
 public class MGAWeaponHandler extends MGHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8675420566952393440L;
     int howManyShots;
@@ -52,7 +52,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -83,7 +83,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -119,7 +119,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -131,7 +131,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -141,10 +141,11 @@ public class MGAWeaponHandler extends MGHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         int nDamage;
-        if (hit == null)
+        if (hit == null) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable(), waa.getAimedLocation(), waa
                     .getAimingMode());
+        }
         hit.setGeneralDamageType(generalDamageType);
         if (!bSalvo) {
             // Each hit in the salvo get's its own hit location.
@@ -152,14 +153,12 @@ public class MGAWeaponHandler extends MGHandler {
             r.subject = subjectId;
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
 
         if (hit.hitAimedLocation()) {
             Report r = new Report(3410);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.
@@ -185,7 +184,7 @@ public class MGAWeaponHandler extends MGHandler {
         if(null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
-        
+
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             Report r = new Report(3415);

@@ -120,12 +120,10 @@ public class ACAPHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(toHit.getTableDesc());
         r.add(entityTarget.getLocationAbbr(hit));
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         if (hit.hitAimedLocation()) {
             r = new Report(3410);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.

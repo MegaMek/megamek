@@ -20347,7 +20347,6 @@ public class Server implements Runnable {
             r = new Report(2310);
             r.subject = entity.getId();
             r.indent();
-            r.newlines = 0;
             r.addDesc(entity);
             r.add(side); // international issue
             r.add(damage);
@@ -20355,7 +20354,6 @@ public class Server implements Runnable {
             r = new Report(2315);
             r.subject = entity.getId();
             r.indent();
-            r.newlines = 0;
             r.addDesc(entity);
             r.add(side); // international issue
             r.add(damage);
@@ -20364,7 +20362,6 @@ public class Server implements Runnable {
             r = new Report(2310);
             r.subject = entity.getId();
             r.indent();
-            r.newlines = 0;
             r.addDesc(entity);
             r.add(side); // international issue
             r.add(waterDamage);

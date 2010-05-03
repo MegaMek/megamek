@@ -19355,7 +19355,6 @@ public class Server implements Runnable {
             r.subject = en.getId();
             r.indent(3);
             r.add(en.getLocationAbbr(loc));
-            r.newlines = 0;
             vDesc.addElement(r);
         }
 
@@ -19367,7 +19366,6 @@ public class Server implements Runnable {
                 r = new Report(6340);
                 r.subject = en.getId();
                 r.indent(3);
-                r.newlines = 0;
                 vDesc.addElement(r);
                 break;
             }
@@ -19385,7 +19383,6 @@ public class Server implements Runnable {
                     r = new Report(6710);
                     r.subject = en.getId();
                     r.add(en.getLocationName(loc));
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     slot.setArmored(false);
                     hits--;

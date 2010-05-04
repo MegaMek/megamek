@@ -640,9 +640,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             repaint(1000);
             return;
         }
-        updateBoardImage();
-        g.drawImage(boardImage, scrollpane.getViewport().getViewPosition().x, scrollpane.getViewport().getViewPosition().y, this);
-
+        
+        if(useIsometric()) {
+            drawHexes(g, g.getClipBounds());
+        } else {
+            updateBoardImage();
+            g.drawImage(boardImage, scrollpane.getViewport().getViewPosition().x, scrollpane.getViewport().getViewPosition().y, this);
+        }
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks()) {
             drawSprites(g, wreckSprites);
@@ -675,14 +679,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         //draw flyover routes
         if(game.getBoard().onGround()) {
             drawSprites(g, flyOverSprites);
-        }
-
-
-        if(useIsometric()) {
-          //If we are using Isometric rendering, redraw the entity
-          //sprites at 50% transparent so sprites hidden behind hills can
-          //still be seen by the user.
-            drawIsometricSprites(g, isometricSprites);
         }
 
         //draw onscreen entities
@@ -830,10 +826,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private void drawDeploymentForHex( Coords c, Graphics g) {
         IBoard board = game.getBoard();
         Point p = getHexLocation(c);
-        if (useIsometric()) {
-            p.x = p.x - drawRect.x;
-            p.y = p.y - drawRect.y;
-        }
+        
         if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
             g.setColor(Color.yellow);
             int[] xcoords = { p.x + (int) (21 * scale), p.x + (int) (62 * scale),
@@ -1056,26 +1049,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
         int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
 
-        // clear, if we need to
-        if (view.x < (21 * scale)) {
-            boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
-                    (int) (21 * scale) - view.x, view.height);
+        if (!useIsometric()) {
+            // clear, if we need to
+            if (view.x < (21 * scale)) {
+                boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
+                        (int) (21 * scale) - view.x, view.height);
+            }
+            if (view.y < (36 * scale)) {
+                boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
+                        view.width, (int) (36 * scale) - view.y);
+            }
+            if (view.x > boardSize.width - view.width - (21 * scale)) {
+                boardGraph.clearRect(drawRect.width - (int) (21 * scale),
+                        view.y - drawRect.y, (int) (21 * scale), view.height);
+            }
+            if (view.y > boardSize.height - view.height - (int) (36 * scale)) {
+                boardGraph.clearRect(view.x - drawRect.x, drawRect.height
+                        - (int) (36 * scale), view.width, (int) (36 * scale));
+            }
         }
-        if (view.y < (36 * scale)) {
-            boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
-                    view.width, (int) (36 * scale) - view.y);
-        }
-        if (view.x > boardSize.width - view.width - (21 * scale)) {
-            boardGraph.clearRect(drawRect.width - (int) (21 * scale), view.y
-                    - drawRect.y, (int) (21 * scale), view.height);
-        }
-        if (view.y > boardSize.height - view.height - (int) (36 * scale)) {
-            boardGraph.clearRect(view.x - drawRect.x, drawRect.height
-                    - (int) (36 * scale), view.width, (int) (36 * scale));
-        }
-
         // draw some hexes.
         if (useIsometric()) {
+            g.clearRect(view.x, view.y, view.width, view.height);
             //When using isometric rendering, all hexes must be drawn from
             //lowest to highest elevation.
             final int minElev = game.getBoard().getMinElevation();
@@ -1094,6 +1089,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     }
                 }
             }
+            //If we are using Isometric rendering, redraw the entity
+            //sprites at 50% transparent so sprites hidden behind hills can
+            //still be seen by the user.
+            drawIsometricSprites(g, isometricSprites);
         } else {
             //Draw hexes without regard to elevation when
             //not using Isometric, since it does not matter.
@@ -1125,9 +1124,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
         // offset drawing point
-        int drawX = hexLoc.x - drawRect.x;
-        int drawY = hexLoc.y - drawRect.y;
-
+        int drawX = hexLoc.x;
+        int drawY = hexLoc.y;
+        if(!useIsometric()) {
+            drawX -= drawRect.x;
+            drawY -= drawRect.y;
+        }
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage);

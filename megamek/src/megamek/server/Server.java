@@ -2134,6 +2134,8 @@ public class Server implements Runnable {
             changePhase(IGame.Phase.PHASE_OFFBOARD);
             break;
         case PHASE_FIRING:
+            // write Weapon Attack Phase header
+            addReport(new Report(3000, Report.PUBLIC));
             resolveAllButWeaponAttacks();
             reportGhostTargetRolls();
             reportLargeCraftECCMRolls();

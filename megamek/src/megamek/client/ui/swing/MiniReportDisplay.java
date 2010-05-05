@@ -44,11 +44,12 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         butOkay.addActionListener(this);
         taData = new JTextPane();
-        taData.setContentType("text/html");
+        ReportDisplay.setupStylesheet(taData);
         taData.setText("<pre>"+sReport+"</pre>");
         taData.setEditable(false);
         taData.setOpaque(false);
-
+        
+        
         getContentPane().setLayout(new BorderLayout());
 
         getContentPane().add(BorderLayout.SOUTH, butOkay);

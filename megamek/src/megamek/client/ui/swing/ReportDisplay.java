@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
+import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -184,21 +186,21 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
                     text = clientgui.getClient().receiveReport(clientgui.getClient().game.getReports(catchup));
                 }
                 ta = new JTextPane();
-                ta.setContentType("text/html");
+                setupStylesheet(ta);
                 ta.setText("<pre>" + text + "</pre>");
                 ta.setEditable(false);
                 ta.setOpaque(false);
-                ta.setFont(new Font("Sans Serif", Font.PLAIN, 12));
                 tabs.add("Round " + catchup, new JScrollPane(ta));
             }
 
             // add the new current phase tab
             ta = new JTextPane();
-            ta.setContentType("text/html");
+            setupStylesheet(ta);
             ta.setText("<pre>" + phaseText + "</pre>");
             ta.setEditable(false);
             ta.setOpaque(false);
-            ta.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+            
+            
             JScrollPane sp = new JScrollPane(ta);
             tabs.add("Phase", sp);
             tabs.setSelectedComponent(sp);
@@ -209,6 +211,13 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    public static void setupStylesheet(JTextPane pane) {
+        pane.setContentType("text/html");
+        Font font = UIManager.getFont("Label.font");
+        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
+               "pre { font-family: " + font.getFamily() + "; font-size: 12pt; font-style:normal;}");
+    }
+    
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {

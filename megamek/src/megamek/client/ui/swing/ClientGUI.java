@@ -53,7 +53,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
@@ -981,8 +983,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
-        textArea.setContentType("text/html");
-        textArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+        ReportDisplay.setupStylesheet(textArea);
+        
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         textArea.setText("<pre>"+message+"</pre>");

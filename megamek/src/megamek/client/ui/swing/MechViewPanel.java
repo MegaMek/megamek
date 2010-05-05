@@ -62,7 +62,7 @@ public class MechViewPanel extends JPanel {
         icon = null;
         
         txtMek = new JTextPane();
-        txtMek.setContentType("text/html");
+        ReportDisplay.setupStylesheet(txtMek);
         txtMek.setText("");
         txtMek.setEditable(false);
         txtMek.setBorder(null);

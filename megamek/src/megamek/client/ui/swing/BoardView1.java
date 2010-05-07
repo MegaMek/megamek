@@ -4987,6 +4987,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         IHex hex = game.getBoard().getHex(b.getCoords());
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
+        redrawWholeBoard = true;
         repaint();
     }
 

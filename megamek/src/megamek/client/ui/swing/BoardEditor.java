@@ -365,6 +365,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Apply the current Hex to the Board at the specified location.
      */
     void paintHex(Coords c) {
+        board.resetStoredElevation();
         board.setHex(c, curHex.duplicate());
     }
 
@@ -375,6 +376,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
             newHex.setElevation(board.getHex(c).getElevation());
+            board.resetStoredElevation();
             board.setHex(c, newHex);
         }
     }
@@ -392,6 +394,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                     newHex.addTerrain(oldHex.getTerrain(i));
                 }
             }
+            board.resetStoredElevation();
             board.setHex(c, newHex);
         }
     }

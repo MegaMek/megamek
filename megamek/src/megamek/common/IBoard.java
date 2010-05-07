@@ -369,4 +369,9 @@ public interface IBoard {
      * @return
      */
     public abstract int getMaxElevation();
+    
+    /**
+     * Resets the Min and Max elevations to their default values.
+     */
+    public abstract void resetStoredElevation();
 }

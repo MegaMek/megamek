@@ -1353,5 +1353,8 @@ public class Board implements Serializable, IBoard {
         }
         return minElevation;
     }
-
+    public void resetStoredElevation() {
+        minElevation = UNDEFINED_MIN_ELEV;
+        maxElevation = UNDEFINED_MAX_ELEV;
+    }
 }

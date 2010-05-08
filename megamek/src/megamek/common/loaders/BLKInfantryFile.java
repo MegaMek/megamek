@@ -71,7 +71,6 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
 
-
         if (dataFile.exists("InfantryArmor")) {
             t.setDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
         }
@@ -86,7 +85,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         t.setMovementMode(nMotion);
 
-        //get primary and secondary weapons
+        // get primary and secondary weapons
         if (dataFile.exists("secondn")) {
             t.setSecondaryN(dataFile.getDataAsInt("secondn")[0]);
         }
@@ -96,24 +95,25 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
         EquipmentType ptype = EquipmentType.get(primaryName);
-        if((null == ptype) || !(ptype instanceof InfantryWeapon)) {
+        if ((null == ptype) || !(ptype instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
-        t.setPrimaryWeapon((InfantryWeapon)ptype);
+        t.setPrimaryWeapon((InfantryWeapon) ptype);
 
         EquipmentType stype = null;
-        if(dataFile.exists("Secondary")) {
+        if (dataFile.exists("Secondary")) {
             String secondName = dataFile.getDataAsString("Secondary")[0];
             stype = EquipmentType.get(secondName);
-            if((null == stype) || !(stype instanceof InfantryWeapon)) {
+            if ((null == stype) || !(stype instanceof InfantryWeapon)) {
                 throw new EntityLoadingException("secondary weapon is not an infantry weapon");
             }
-            t.setSecondaryWeapon((InfantryWeapon)stype);
+            t.setSecondaryWeapon((InfantryWeapon) stype);
         }
 
-        //if there is more than one secondary weapon per squad, then add that to the unit
-        //otherwise add the primary weapon
-        if((t.getSecondaryN() > 1) && (null != stype)) {
+        // if there is more than one secondary weapon per squad, then add that
+        // to the unit
+        // otherwise add the primary weapon
+        if ((t.getSecondaryN() > 1) && (null != stype)) {
             try {
                 t.addEquipment(stype, Infantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {
@@ -145,15 +145,23 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("sneakecm")) {
             t.setSneakECM(true);
         }
-        //get field guns
+        // get field guns
         loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
 
         if (dataFile.exists("antimek")) {
             t.setAntiMek(true);
         }
 
-        //get field guns
+        // get field guns
         loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
+
+        if (dataFile.exists("history")) {
+            t.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            t.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
+        }
 
         return t;
     }

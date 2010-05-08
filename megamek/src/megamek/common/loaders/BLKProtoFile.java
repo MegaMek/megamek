@@ -28,8 +28,8 @@ package megamek.common.loaders;
 
 import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Protomech;
 import megamek.common.TechConstants;
@@ -130,6 +130,15 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         for (int loop = 0; loop < t.locations(); loop++) {
             loadEquipment(t, abbrs[loop], loop);
         }
+
+        if (dataFile.exists("history")) {
+            t.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            t.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
+        }
+
         return t;
     }
 

@@ -67,7 +67,6 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         }
         t.setMovementMode(nMotion);
 
-
         if (dataFile.exists("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");
             // Walk the array of transporters.
@@ -136,6 +135,14 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
         if (dataFile.exists("omni")) {
             t.setOmni(true);
+        }
+
+        if (dataFile.exists("history")) {
+            t.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            t.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
         }
 
         return t;

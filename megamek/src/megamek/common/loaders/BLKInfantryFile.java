@@ -71,6 +71,11 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
 
+
+        if (dataFile.exists("InfantryArmor")) {
+            t.setDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
+        }
+
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");
         }
@@ -87,12 +92,12 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
 
         if (!dataFile.exists("Primary")) {
-        	throw new EntityLoadingException("Could not find primary weapon.");
+            throw new EntityLoadingException("Could not find primary weapon.");
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
         EquipmentType ptype = EquipmentType.get(primaryName);
         if((null == ptype) || !(ptype instanceof InfantryWeapon)) {
-        	throw new EntityLoadingException("primary weapon is not an infantry weapon");
+            throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
         t.setPrimaryWeapon((InfantryWeapon)ptype);
 
@@ -122,6 +127,27 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             }
         }
 
+        if (dataFile.exists("dest")) {
+            t.setDEST(true);
+        }
+        if (dataFile.exists("encumberingarmor")) {
+            t.setArmorEncumbering(true);
+        }
+        if (dataFile.exists("spacesuit")) {
+            t.setSpaceSuit(true);
+        }
+        if (dataFile.exists("sneakcamo")) {
+            t.setSneakCamo(true);
+        }
+        if (dataFile.exists("sneakir")) {
+            t.setSneakIR(true);
+        }
+        if (dataFile.exists("sneakecm")) {
+            t.setSneakECM(true);
+        }
+        //get field guns
+        loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
+
         if (dataFile.exists("antimek")) {
             t.setAntiMek(true);
         }
@@ -131,5 +157,4 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         return t;
     }
-
 }

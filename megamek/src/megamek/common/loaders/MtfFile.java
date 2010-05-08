@@ -77,8 +77,8 @@ public class MtfFile implements IMechLoader {
 
     String[][] critData;
 
-    String history;
-    String imagePath;
+    String history = "";
+    String imagePath = "";
 
     Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
     Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
@@ -771,12 +771,12 @@ public class MtfFile implements IMechLoader {
         }
 
         if (line.trim().toLowerCase().startsWith("history:")) {
-            history = line;
+            history = line.substring("history:".length());
             return true;
         }
 
         if (line.trim().toLowerCase().startsWith("imagefile:")) {
-            imagePath = line;
+            imagePath = line.substring("imagefile:".length());
             return true;
         }
 

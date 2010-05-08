@@ -48,7 +48,7 @@ import megamek.common.WeaponType;
  * Based on the hmpread.c program and the MtfFile object. Note that this class
  * doubles as both a MM Heavy Metal Pro parser and a HMP to MTF file converter
  * (when the "main" method is used).
- *
+ * 
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
  *          help from Ian Hamilton.
@@ -155,7 +155,8 @@ implements IMechLoader
             // String version = new String(buffer); //never used
 
             // this next one no longer seems accurate...
-            //DesignType designType = DesignType.getType(readUnsignedByte(dis));
+            // DesignType designType =
+            // DesignType.getType(readUnsignedByte(dis));
             readUnsignedByte(dis);
 
             // ??
@@ -187,7 +188,7 @@ implements IMechLoader
 
             rulesLevel = readUnsignedShort(dis);
 
-            //long cost = readUnsignedInt(dis);
+            // long cost = readUnsignedInt(dis);
             readUnsignedInt(dis);
 
             // ??
@@ -210,18 +211,15 @@ implements IMechLoader
                 // whether the specific equipment exists on the mech or not.
                 engineTechType = TechType.getType(readUnsignedShort(dis));
                 heatSinkTechType = TechType.getType(readUnsignedShort(dis));
-                physicalWeaponTechType = TechType
-                        .getType(readUnsignedShort(dis));
+                physicalWeaponTechType = TechType.getType(readUnsignedShort(dis));
                 myomerTechType = TechType.getType(readUnsignedShort(dis));
-                targetingComputerTechType = TechType
-                        .getType(readUnsignedShort(dis));
+                targetingComputerTechType = TechType.getType(readUnsignedShort(dis));
                 armorTechType = TechType.getType(readUnsignedShort(dis));
             }
 
             chassisType = ChassisType.getType(readUnsignedShort(dis));
 
-            internalStructureType = InternalStructureType
-                    .getType(readUnsignedShort(dis));
+            internalStructureType = InternalStructureType.getType(readUnsignedShort(dis));
 
             engineRating = readUnsignedShort(dis);
             engineType = EngineType.getType(readUnsignedShort(dis));
@@ -432,8 +430,7 @@ implements IMechLoader
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech = null;
-            if ((chassisType == ChassisType.QUADRAPED_OMNI)
-                    || (chassisType == ChassisType.QUADRAPED)) {
+            if ((chassisType == ChassisType.QUADRAPED_OMNI) || (chassisType == ChassisType.QUADRAPED)) {
                 mech = new QuadMech(gyroType, cockpitType);
             } else if (chassisType == ChassisType.ARMLESS) {
                 mech = new ArmlessMech(gyroType, cockpitType);
@@ -444,10 +441,9 @@ implements IMechLoader
             mech.setChassis(name);
             mech.setModel(model);
             mech.setYear(year);
-            mech.setFluff(fluff);
+            mech.getFluff().setHistory(fluff);
 
-            mech.setOmni((chassisType == ChassisType.BIPED_OMNI)
-                    || (chassisType == ChassisType.QUADRAPED_OMNI));
+            mech.setOmni((chassisType == ChassisType.BIPED_OMNI) || (chassisType == ChassisType.QUADRAPED_OMNI));
 
             if (techType == TechType.INNER_SPHERE) {
                 switch (rulesLevel) {
@@ -461,8 +457,7 @@ implements IMechLoader
                         mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                         break;
                     default:
-                        throw new EntityLoadingException(
-                                "Unsupported tech level: " + rulesLevel);
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
             } else if (techType == TechType.CLAN) {
                 switch (rulesLevel) {
@@ -473,20 +468,16 @@ implements IMechLoader
                         mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                         break;
                     default:
-                        throw new EntityLoadingException(
-                                "Unsupported tech level: " + rulesLevel);
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
-            } else if ((techType == TechType.MIXED)
-                    && (mixedBaseTechType == TechType.INNER_SPHERE)) {
+            } else if ((techType == TechType.MIXED) && (mixedBaseTechType == TechType.INNER_SPHERE)) {
                 mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
                 mech.setMixedTech(true);
-            } else if ((techType == TechType.MIXED)
-                    && (mixedBaseTechType == TechType.CLAN)) {
+            } else if ((techType == TechType.MIXED) && (mixedBaseTechType == TechType.CLAN)) {
                 mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
                 mech.setMixedTech(true);
             } else {
-                throw new EntityLoadingException("Unsupported tech base: "
-                        + techType);
+                throw new EntityLoadingException("Unsupported tech base: " + techType);
             }
 
             mech.setWeight(tonnage);
@@ -495,9 +486,7 @@ implements IMechLoader
             if ((techType == TechType.CLAN) || (engineTechType == TechType.CLAN)) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
-            mech.setEngine(new Engine(engineRating, Engine
-                            .getEngineTypeByString(engineType.toString()),
-                            engineFlags));
+            mech.setEngine(new Engine(engineRating, Engine.getEngineTypeByString(engineType.toString()), engineFlags));
 
             mech.setOriginalJumpMP(jumpMP);
 
@@ -507,30 +496,28 @@ implements IMechLoader
             mech.setArmorType(armorType.toString());
             if (armorTechType == TechType.CLAN) {
                 switch (rulesLevel) {
-                case 2:
-                    mech.setArmorTechLevel(TechConstants.T_CLAN_TW);
-                    break;
-                case 3:
-                    mech.setArmorTechLevel(TechConstants.T_CLAN_ADVANCED);
-                    break;
-                default:
-                    throw new EntityLoadingException(
-                            "Unsupported tech level: " + rulesLevel);
+                    case 2:
+                        mech.setArmorTechLevel(TechConstants.T_CLAN_TW);
+                        break;
+                    case 3:
+                        mech.setArmorTechLevel(TechConstants.T_CLAN_ADVANCED);
+                        break;
+                    default:
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
             } else {
                 switch (rulesLevel) {
-                case 1:
-                    mech.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
-                    break;
-                case 2:
-                    mech.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
-                    break;
-                case 3:
-                    mech.setArmorTechLevel(TechConstants.T_IS_ADVANCED);
-                    break;
-                default:
-                    throw new EntityLoadingException(
-                            "Unsupported tech level: " + rulesLevel);
+                    case 1:
+                        mech.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
+                        break;
+                    case 2:
+                        mech.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                        break;
+                    case 3:
+                        mech.setArmorTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
+                    default:
+                        throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
                 }
             }
             mech.initializeArmor(laArmor, Mech.LOC_LARM);
@@ -555,8 +542,7 @@ implements IMechLoader
             }
 
             // add any heat sinks not allocated
-            mech.addEngineSinks(heatSinks - mech.heatSinks(),
-                    heatSinkType == HeatSinkType.DOUBLE);
+            mech.addEngineSinks(heatSinks - mech.heatSinks(), heatSinkType == HeatSinkType.DOUBLE);
 
             return mech;
         } catch (Exception e) {
@@ -609,8 +595,7 @@ implements IMechLoader
     }
 
     private String mutateLBXAmmo(String crit) {
-        if ((crit.startsWith("CLLBX") || crit.startsWith("ISLBX"))
-                && crit.endsWith("Ammo")) {
+        if ((crit.startsWith("CLLBX") || crit.startsWith("ISLBX")) && crit.endsWith("Ammo")) {
             lbxCounter++;
             if (lbxCounter % 2 == 1) {
                 return crit.substring(0, crit.indexOf("Ammo")) + "CL Ammo";
@@ -631,8 +616,7 @@ implements IMechLoader
         return crit;
     }
 
-    private void setupCriticals(Mech mech, long[] criticals, int location)
-            throws EntityLoadingException {
+    private void setupCriticals(Mech mech, long[] criticals, int location) throws EntityLoadingException {
         // Use pass-by-value in case we need the original criticals
         // later (getMtf for example).
         long[] crits = criticals.clone();
@@ -643,34 +627,24 @@ implements IMechLoader
                 String criticalName = getCriticalName(critical);
 
                 if (isFusionEngine(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                 } else if (isGyro(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
                 } else if (isCockpit(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
                 } else if (isLifeSupport(critical)) {
-                    mech
-                            .setCritical(location, i, new CriticalSlot(
-                                    CriticalSlot.TYPE_SYSTEM,
-                                    Mech.SYSTEM_LIFE_SUPPORT));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
                 } else if (isSensor(critical)) {
-                    mech.setCritical(location, i, new CriticalSlot(
-                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                    mech.setCritical(location, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
                 } else if (isJumpJet(critical)) {
                     try {
                         if (jjType == 0) {
-                            mech.addEquipment(EquipmentType.get("Jump Jet"),
-                                    location, false);
+                            mech.addEquipment(EquipmentType.get("Jump Jet"), location, false);
                         } else if (jjType == 1) {
-                            mech.addEquipment(EquipmentType
-                                    .get("Improved Jump Jet"), location, false);
+                            mech.addEquipment(EquipmentType.get("Improved Jump Jet"), location, false);
                         }
                     } catch (LocationFullException ex) {
-                        System.err
-                                .print("Location was full when adding jump jets to slot #");
+                        System.err.print("Location was full when adding jump jets to slot #");
                         System.err.print(i);
                         System.err.print(" of location ");
                         System.err.println(location);
@@ -686,36 +660,26 @@ implements IMechLoader
                             // for experimental or unofficial equipment, we need
                             // to adjust the mech's techlevel, because HMP only
                             // knows lvl1/2/3
-                            if ((equipment.getTechLevel() > mech.getTechLevel())
-                                    && (mech.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
+                            if ((equipment.getTechLevel() > mech.getTechLevel()) && (mech.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
                                 boolean isClan = mech.isClan();
-                                if ((equipment.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) ||
-                                        (equipment.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
-                                    mech.setTechLevel(isClan?TechConstants.T_CLAN_EXPERIMENTAL:TechConstants.T_IS_EXPERIMENTAL);
-                                } else if ((equipment.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) ||
-                                        (equipment.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
-                                    mech.setTechLevel(isClan?TechConstants.T_CLAN_UNOFFICIAL:TechConstants.T_IS_UNOFFICIAL);
+                                if ((equipment.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (equipment.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+                                    mech.setTechLevel(isClan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL);
+                                } else if ((equipment.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) || (equipment.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                                    mech.setTechLevel(isClan ? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL);
                                 }
                             }
-                            boolean rearMounted = (equipment instanceof WeaponType)
-                                    && isRearMounted(critical);
+                            boolean rearMounted = (equipment instanceof WeaponType) && isRearMounted(critical);
                             if (equipment.isSpreadable()) {
                                 Mounted m = spreadEquipment.get(equipment);
                                 if (m != null) {
-                                    CriticalSlot criticalSlot = new CriticalSlot(
-                                            CriticalSlot.TYPE_EQUIPMENT, mech
-                                                    .getEquipmentNum(m),
-                                            equipment.isHittable(), m);
+                                    CriticalSlot criticalSlot = new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, mech.getEquipmentNum(m), equipment.isHittable(), m);
                                     mech.addCritical(location, criticalSlot);
 
                                 } else {
-                                    m = mech.addEquipment(equipment, location,
-                                            rearMounted);
+                                    m = mech.addEquipment(equipment, location, rearMounted);
                                     spreadEquipment.put(equipment, m);
                                 }
-                            } else if ((equipment instanceof WeaponType)
-                                    && equipment
-                                            .hasFlag(WeaponType.F_SPLITABLE)) {
+                            } else if ((equipment instanceof WeaponType) && equipment.hasFlag(WeaponType.F_SPLITABLE)) {
                                 // do we already have this one in this or an
                                 // outer location?
                                 Mounted m = null;
@@ -723,17 +687,14 @@ implements IMechLoader
                                 for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                                     m = vSplitWeapons.elementAt(x);
                                     int nLoc = m.getLocation();
-                                    if (((nLoc == location) || (location == Mech
-                                            .getInnerLocation(nLoc)))
-                                            && m.getType().equals(equipment)) {
+                                    if (((nLoc == location) || (location == Mech.getInnerLocation(nLoc))) && m.getType().equals(equipment)) {
                                         bFound = true;
                                         break;
                                     }
                                 }
                                 if (bFound) {
                                     m.setFoundCrits(m.getFoundCrits() + 1);
-                                    if (m.getFoundCrits() >= equipment
-                                            .getCriticals(mech)) {
+                                    if (m.getFoundCrits() >= equipment.getCriticals(mech)) {
                                         vSplitWeapons.removeElement(m);
                                     }
                                     // if we're in a new location, set the
@@ -744,12 +705,9 @@ implements IMechLoader
                                     // give the most restrictive location for
                                     // arcs
                                     int help = m.getLocation();
-                                    m.setLocation(Mech.mostRestrictiveLoc(
-                                            location, help));
+                                    m.setLocation(Mech.mostRestrictiveLoc(location, help));
                                     if (location != help) {
-                                        m.setSecondLocation(Mech
-                                                .leastRestrictiveLoc(location,
-                                                        help));
+                                        m.setSecondLocation(Mech.leastRestrictiveLoc(location, help));
                                     }
                                 } else {
                                     // make a new one
@@ -759,8 +717,7 @@ implements IMechLoader
                                 }
                                 mech.addEquipment(m, location, rearMounted);
                             } else {
-                                mech.addEquipment(equipment, location,
-                                        rearMounted);
+                                mech.addEquipment(equipment, location, rearMounted);
                             }
                         } else {
                             if (!criticalName.equals("-Empty-")) {
@@ -1041,15 +998,15 @@ implements IMechLoader
         isCriticals.put(new Long(0x51), "ISLAC5");
         isCriticals.put(new Long(0x52), "ISHeavyFlamer");
         isCriticals.put(new Long(0x53), "ISPPCCapacitor"); // HMP uses this
-                                                            // code for ERPPC
+        // code for ERPPC
         isCriticals.put(new Long(0x54), "ISUltraAC2");
         isCriticals.put(new Long(0x55), "ISUltraAC5");
         isCriticals.put(new Long(0x56), "ISUltraAC10");
         isCriticals.put(new Long(0x57), "ISUltraAC20");
         isCriticals.put(new Long(0x58), "CLERMicroLaser");
         isCriticals.put(new Long(0x59), "ISPPCCapacitor"); // HMP uses this
-                                                            // code for standard
-                                                            // PPC
+        // code for standard
+        // PPC
         isCriticals.put(new Long(0x5A), "ISERMediumLaser");
         isCriticals.put(new Long(0x5B), "ISERSmallLaser");
         isCriticals.put(new Long(0x5C), "ISAntiPersonnelPod");
@@ -1448,15 +1405,15 @@ implements IMechLoader
         clanCriticals.put(new Long(0xA1), "ISLAC5");
 
         clanCriticals.put(new Long(0xA3), "ISPPCCapacitor"); // HMP uses this
-                                                                // code for
-                                                                // ERPPC
+        // code for
+        // ERPPC
         clanCriticals.put(new Long(0xA4), "ISUltraAC2");
         clanCriticals.put(new Long(0xA5), "ISUltraAC5");
         clanCriticals.put(new Long(0xA6), "ISUltraAC10");
         clanCriticals.put(new Long(0xA7), "ISUltraAC20");
         clanCriticals.put(new Long(0xA8), "CLMicroPulseLaser");
         clanCriticals.put(new Long(0xA9), "ISPPCCapacitor"); // HMP uses this
-                                                                // code for PPC
+        // code for PPC
 
         clanCriticals.put(new Long(0xAA), "ISERMediumLaser");
         clanCriticals.put(new Long(0xAB), "ISERSmallLaser");
@@ -1716,8 +1673,7 @@ implements IMechLoader
             if (tType == TechType.MIXED) {
                 if (critical.intValue() == 0x0A) {
                     tType = heatSinkTechType;
-                } else if ((critical.intValue() == 0x11)
-                        || (critical.intValue() == 0x1F)) {
+                } else if ((critical.intValue() == 0x11) || (critical.intValue() == 0x1F)) {
                     tType = physicalWeaponTechType;
                 } else if (critical.intValue() == 0x12) {
                     tType = targetingComputerTechType;
@@ -1733,7 +1689,7 @@ implements IMechLoader
 
             // Attempt to lookup equipment using the appropriate
             // tech type.
-            Hashtable<?,?> techCriticals = (Hashtable<?,?>) criticals.get(tType);
+            Hashtable<?, ?> techCriticals = (Hashtable<?, ?>) criticals.get(tType);
             if (techCriticals != null) {
                 critName = (String) techCriticals.get(critical);
             }
@@ -1753,8 +1709,7 @@ implements IMechLoader
         // Unexpected parsing failures should be passed on so that
         // they can be dealt with properly.
         if (critName == null) {
-            critName = "UnknownCritical(0x"
-                    + Integer.toHexString(critical.intValue()) + ")";
+            critName = "UnknownCritical(0x" + Integer.toHexString(critical.intValue()) + ")";
         }
 
         if (ammoCount > 0) {
@@ -1826,8 +1781,7 @@ implements IMechLoader
         sb.append(nl);
 
         sb.append("Mass:").append(tonnage).append(nl);
-        sb.append("Engine:").append(engineRating).append(" ")
-                .append(engineType).append(" Engine");
+        sb.append("Engine:").append(engineRating).append(" ").append(engineType).append(" Engine");
         if (mixedBaseTechType != engineTechType) {
             sb.append(" (").append(engineTechType).append(")");
         }
@@ -1835,17 +1789,14 @@ implements IMechLoader
         sb.append("Structure:").append(internalStructureType).append(nl);
         sb.append("Myomer:").append(myomerType).append(nl);
         if (gyroType != Mech.GYRO_STANDARD) {
-            sb.append("Gyro:").append(Mech.getGyroTypeString(gyroType)).append(
-                    nl);
+            sb.append("Gyro:").append(Mech.getGyroTypeString(gyroType)).append(nl);
         }
         if (cockpitType != Mech.COCKPIT_STANDARD) {
-            sb.append("Cockpit:")
-                    .append(Mech.getCockpitTypeString(cockpitType)).append(nl);
+            sb.append("Cockpit:").append(Mech.getCockpitTypeString(cockpitType)).append(nl);
         }
         sb.append(nl);
 
-        sb.append("Heat Sinks:").append(heatSinks).append(" ").append(
-                heatSinkType).append(nl);
+        sb.append("Heat Sinks:").append(heatSinks).append(" ").append(heatSinkType).append(nl);
         sb.append("Walk MP:").append(walkMP).append(nl);
         sb.append("Jump MP:").append(jumpMP).append(nl);
         sb.append(nl);
@@ -1918,9 +1869,7 @@ implements IMechLoader
 
         sb.append("Weapons:").append(totalWeaponCount).append(nl);
         for (int x = 0; x < totalWeaponCount; x++) {
-            sb.append(weaponArray[x][0]).append(" ").append(
-                    getCriticalName(weaponArray[x][1])).append(", ").append(
-                    WeaponLocation.getType(weaponArray[x][2]));
+            sb.append(weaponArray[x][0]).append(" ").append(getCriticalName(weaponArray[x][1])).append(", ").append(WeaponLocation.getType(weaponArray[x][2]));
             if (weaponArray[x][3] > 0) {
                 sb.append(", Ammo:").append(weaponArray[x][3]);
             }
@@ -1983,8 +1932,7 @@ implements IMechLoader
             System.out.println("Hmpread (Java Edition) version 1.3");
             System.out.println("--------------------------------------");
             System.out.println();
-            System.out
-                    .println("Drag and drop \".hmp\" files onto this exe to convert them to \".mtf\" files.\nMultiple files may be processed at once.  Files may also be specified on\nthe command line.");
+            System.out.println("Drag and drop \".hmp\" files onto this exe to convert them to \".mtf\" files.\nMultiple files may be processed at once.  Files may also be specified on\nthe command line.");
             System.out.println();
             System.out.println("Press <enter> to quit...");
             try {
@@ -1997,8 +1945,7 @@ implements IMechLoader
         for (int i = 0; i < args.length; i++) {
             String filename = args[i];
             if (!filename.endsWith(".hmp")) {
-                System.out
-                        .println("Error: Input file must have Heavy Metal Pro extension '.hmp'");
+                System.out.println("Error: Input file must have Heavy Metal Pro extension '.hmp'");
                 System.out.println();
                 System.out.println("Press <enter> to quit...");
                 try {
@@ -2099,15 +2046,12 @@ class ArmorType extends HMPType {
     public static final Hashtable<Integer, ArmorType> types = new Hashtable<Integer, ArmorType>();
 
     public static final ArmorType STANDARD = new ArmorType("Standard", 0);
-    public static final ArmorType FERRO_FIBROUS = new ArmorType(
-            "Ferro-Fibrous", 1);
+    public static final ArmorType FERRO_FIBROUS = new ArmorType("Ferro-Fibrous", 1);
     public static final ArmorType REACTIVE = new ArmorType("Reactive", 2);
     public static final ArmorType REFLECTIVE = new ArmorType("Reflective", 3);
     public static final ArmorType HARDENED = new ArmorType("Hardened", 4);
-    public static final ArmorType LIGHT_FERRO_FIBROUS = new ArmorType(
-            "Light Ferro-Fibrous", 5);
-    public static final ArmorType HEAVY_FERRO_FIBROUS = new ArmorType(
-            "Heavy Ferro-Fibrous", 6);
+    public static final ArmorType LIGHT_FERRO_FIBROUS = new ArmorType("Light Ferro-Fibrous", 5);
+    public static final ArmorType HEAVY_FERRO_FIBROUS = new ArmorType("Heavy Ferro-Fibrous", 6);
     public static final ArmorType PATCHWORK = new ArmorType("Patchwork", 7);
     public static final ArmorType STEALTH = new ArmorType("Stealth", 8);
 
@@ -2166,10 +2110,8 @@ class ChassisType extends HMPType {
     public static final ChassisType QUADRAPED = new ChassisType("Quadraped", 1);
     public static final ChassisType LAM = new ChassisType("LAM", 2);
     public static final ChassisType ARMLESS = new ChassisType("Armless", 3);
-    public static final ChassisType BIPED_OMNI = new ChassisType("Biped Omni",
-            10);
-    public static final ChassisType QUADRAPED_OMNI = new ChassisType(
-            "Quadraped Omni", 11);
+    public static final ChassisType BIPED_OMNI = new ChassisType("Biped Omni", 10);
+    public static final ChassisType QUADRAPED_OMNI = new ChassisType("Quadraped Omni", 11);
 
     private ChassisType(String name, int id) {
         super(name, id);
@@ -2184,24 +2126,11 @@ class ChassisType extends HMPType {
 class InternalStructureType extends HMPType {
     public static final Hashtable<Integer, InternalStructureType> types = new Hashtable<Integer, InternalStructureType>();
 
-    public static final InternalStructureType STANDARD = new InternalStructureType(
-            EquipmentType
-                    .getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD),
-            0);
-    public static final InternalStructureType ENDO_STEEL = new InternalStructureType(
-            EquipmentType
-                    .getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL),
-            1);
-    public static final InternalStructureType COMPOSITE = new InternalStructureType(
-            EquipmentType
-                    .getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE),
-            2);
-    public static final InternalStructureType REINFORCED = new InternalStructureType(
-            EquipmentType
-                    .getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED),
-            3);
-    public static final InternalStructureType UTILITY = new InternalStructureType(
-            "Utility", 4);
+    public static final InternalStructureType STANDARD = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD), 0);
+    public static final InternalStructureType ENDO_STEEL = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL), 1);
+    public static final InternalStructureType COMPOSITE = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE), 2);
+    public static final InternalStructureType REINFORCED = new InternalStructureType(EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED), 3);
+    public static final InternalStructureType UTILITY = new InternalStructureType("Utility", 4);
 
     private InternalStructureType(String name, int id) {
         super(name, id);
@@ -2234,10 +2163,9 @@ class MyomerType extends HMPType {
     public static final Hashtable<Integer, MyomerType> types = new Hashtable<Integer, MyomerType>();
 
     public static final MyomerType STANDARD = new MyomerType("Standard", 0);
-    public static final MyomerType TRIPLE_STRENGTH = new MyomerType(
-            "Triple-Strength", 1);
+    public static final MyomerType TRIPLE_STRENGTH = new MyomerType("Triple-Strength", 1);
     public static final MyomerType MASC = new MyomerType("MASC", 2);
-    public static final MyomerType INDUSTRIAL_TRIPLE_STRENGTH =new MyomerType("Industrial Triple-Strength", 3);
+    public static final MyomerType INDUSTRIAL_TRIPLE_STRENGTH = new MyomerType("Industrial Triple-Strength", 3);
 
     private MyomerType(String name, int id) {
         super(name, id);
@@ -2252,33 +2180,20 @@ class MyomerType extends HMPType {
 class WeaponLocation extends HMPType {
     public static final Hashtable<Integer, WeaponLocation> types = new Hashtable<Integer, WeaponLocation>();
 
-    public static final WeaponLocation LEFT_ARM = new WeaponLocation(
-            "Left Arm", 1);
-    public static final WeaponLocation LEFT_TORSO = new WeaponLocation(
-            "Left Torso", 2);
-    public static final WeaponLocation LEFT_LEG = new WeaponLocation(
-            "Left Leg", 3);
-    public static final WeaponLocation RIGHT_ARM = new WeaponLocation(
-            "Right Arm", 4);
-    public static final WeaponLocation RIGHT_TORSO = new WeaponLocation(
-            "Right Torso", 5);
-    public static final WeaponLocation RIGHT_LEG = new WeaponLocation(
-            "Right Leg", 6);
+    public static final WeaponLocation LEFT_ARM = new WeaponLocation("Left Arm", 1);
+    public static final WeaponLocation LEFT_TORSO = new WeaponLocation("Left Torso", 2);
+    public static final WeaponLocation LEFT_LEG = new WeaponLocation("Left Leg", 3);
+    public static final WeaponLocation RIGHT_ARM = new WeaponLocation("Right Arm", 4);
+    public static final WeaponLocation RIGHT_TORSO = new WeaponLocation("Right Torso", 5);
+    public static final WeaponLocation RIGHT_LEG = new WeaponLocation("Right Leg", 6);
     public static final WeaponLocation HEAD = new WeaponLocation("Head", 7);
-    public static final WeaponLocation CENTER_TORSO = new WeaponLocation(
-            "Center Torso", 8);
-    public static final WeaponLocation LEFT_TORSO_R = new WeaponLocation(
-            "Left Torso (R)", 11);
-    public static final WeaponLocation LEFT_LEG_R = new WeaponLocation(
-            "Left Leg (R)", 12);
-    public static final WeaponLocation RIGHT_TORSO_R = new WeaponLocation(
-            "Right Torso (R)", 14);
-    public static final WeaponLocation RIGHT_LEG_R = new WeaponLocation(
-            "Right Leg (R)", 15);
-    public static final WeaponLocation HEAD_R = new WeaponLocation("Head (R)",
-            16);
-    public static final WeaponLocation CENTER_TORSO_R = new WeaponLocation(
-            "Center Torso (R)", 17);
+    public static final WeaponLocation CENTER_TORSO = new WeaponLocation("Center Torso", 8);
+    public static final WeaponLocation LEFT_TORSO_R = new WeaponLocation("Left Torso (R)", 11);
+    public static final WeaponLocation LEFT_LEG_R = new WeaponLocation("Left Leg (R)", 12);
+    public static final WeaponLocation RIGHT_TORSO_R = new WeaponLocation("Right Torso (R)", 14);
+    public static final WeaponLocation RIGHT_LEG_R = new WeaponLocation("Right Leg (R)", 15);
+    public static final WeaponLocation HEAD_R = new WeaponLocation("Head (R)", 16);
+    public static final WeaponLocation CENTER_TORSO_R = new WeaponLocation("Center Torso (R)", 17);
 
     private WeaponLocation(String name, int id) {
         super(name, id);

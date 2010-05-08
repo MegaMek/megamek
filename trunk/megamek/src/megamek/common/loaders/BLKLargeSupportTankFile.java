@@ -158,6 +158,15 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("omni")) {
             t.setOmni(true);
         }
+
+        if (dataFile.exists("history")) {
+            t.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            t.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
+        }
+
         return t;
     }
 
@@ -178,22 +187,22 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             }
         } else {
             switch (t.getTechLevel()) {
-            case TechConstants.T_INTRO_BOXSET:
-                type = "IS Level 1";
-                break;
-            case TechConstants.T_IS_TW_NON_BOX:
-                type = "IS Level 2";
-                break;
-            case TechConstants.T_IS_ADVANCED:
-            default:
-                type = "IS Level 3";
-                break;
-            case TechConstants.T_CLAN_TW:
-                type = "Clan Level 2";
-                break;
-            case TechConstants.T_CLAN_ADVANCED:
-                type = "Clan Level 3";
-                break;
+                case TechConstants.T_INTRO_BOXSET:
+                    type = "IS Level 1";
+                    break;
+                case TechConstants.T_IS_TW_NON_BOX:
+                    type = "IS Level 2";
+                    break;
+                case TechConstants.T_IS_ADVANCED:
+                default:
+                    type = "IS Level 3";
+                    break;
+                case TechConstants.T_CLAN_TW:
+                    type = "Clan Level 2";
+                    break;
+                case TechConstants.T_CLAN_ADVANCED:
+                    type = "Clan Level 3";
+                    break;
             }
         }
         blk.writeBlockData("type", type);
@@ -204,24 +213,24 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         }
         int engineCode = BLKFile.FUSION;
         switch (t.getEngine().getEngineType()) {
-        case Engine.COMBUSTION_ENGINE:
-            engineCode = BLKFile.ICE;
-            break;
-        case Engine.LIGHT_ENGINE:
-            engineCode = BLKFile.LIGHT;
-            break;
-        case Engine.XL_ENGINE:
-            engineCode = BLKFile.XL;
-            break;
-        case Engine.XXL_ENGINE:
-            engineCode = BLKFile.XXL;
-            break;
-        case Engine.FUEL_CELL:
-            engineCode = BLKFile.FUELCELL;
-            break;
-        case Engine.FISSION:
-            engineCode = BLKFile.FISSION;
-            break;
+            case Engine.COMBUSTION_ENGINE:
+                engineCode = BLKFile.ICE;
+                break;
+            case Engine.LIGHT_ENGINE:
+                engineCode = BLKFile.LIGHT;
+                break;
+            case Engine.XL_ENGINE:
+                engineCode = BLKFile.XL;
+                break;
+            case Engine.XXL_ENGINE:
+                engineCode = BLKFile.XXL;
+                break;
+            case Engine.FUEL_CELL:
+                engineCode = BLKFile.FUELCELL;
+                break;
+            case Engine.FISSION:
+                engineCode = BLKFile.FISSION;
+                break;
         }
         blk.writeBlockData("engine_type", engineCode);
         blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
@@ -257,6 +266,15 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
         blk.writeBlockData("barrating", t.getBARRating());
+
+        if (t.getFluff().getHistory().trim().length() > 0) {
+            blk.writeBlockData("history", t.getFluff().getHistory());
+        }
+
+        if (t.getFluff().getMMLImagePath().trim().length() > 0) {
+            blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
+        }
+
         blk.writeBlockFile(fileName);
     }
 }

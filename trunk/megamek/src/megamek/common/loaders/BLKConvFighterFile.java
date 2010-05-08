@@ -55,7 +55,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find name block.");
         }
         a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
             a.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             a.setModel("");
@@ -155,6 +155,14 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
 
         if (a.isClan()) {
             a.addClanCase();
+        }
+
+        if (dataFile.exists("history")) {
+            a.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            a.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
         }
 
         return a;

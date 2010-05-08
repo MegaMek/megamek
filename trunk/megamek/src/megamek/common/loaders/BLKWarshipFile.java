@@ -70,7 +70,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find name block.");
         }
         a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
             a.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             a.setModel("");
@@ -172,6 +172,14 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         }
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+        }
+
+        if (dataFile.exists("history")) {
+            a.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            a.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
         }
 
         if (!dataFile.exists("armor")) {
@@ -362,10 +370,10 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                         WeaponType weap = (WeaponType) newmount.getType();
                         if (bayMount == null) {
                             try {
-                            	bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
-                            	newBay = false;
+                                bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                newBay = false;
                             } catch (LocationFullException ex) {
-                            	throw new EntityLoadingException(ex.getMessage());
+                                throw new EntityLoadingException(ex.getMessage());
                             }
                         }
 
@@ -373,15 +381,15 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                         if (weap.isCapital()) {
                             damage *= 10;
                         }
-                        if (!newBay && (bayDamage + damage) <= 700 && bayMount.isRearMounted() == rearMount && weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass() && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
+                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount) && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;
                         } else {
                             try {
-                            	bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
+                                bayMount = a.addEquipment(weap.getBayType(), nLoc, rearMount);
                             } catch (LocationFullException ex) {
-                            	throw new EntityLoadingException(ex.getMessage());
+                                throw new EntityLoadingException(ex.getMessage());
                             }
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             // reset bay damage

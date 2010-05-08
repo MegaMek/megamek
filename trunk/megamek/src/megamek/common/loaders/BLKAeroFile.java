@@ -166,6 +166,14 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             a.addClanCase();
         }
 
+        if (dataFile.exists("history")) {
+            a.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            a.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
+        }
+
         return a;
     }
 

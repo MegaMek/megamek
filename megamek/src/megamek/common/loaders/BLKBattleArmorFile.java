@@ -84,7 +84,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         } else if (chassis.toLowerCase().equals("quad")) {
             t.setChassisType(BattleArmor.CHASSIS_TYPE_QUAD);
         } else {
-            throw new EntityLoadingException("Unsupported chassis type: "+chassis);
+            throw new EntityLoadingException("Unsupported chassis type: " + chassis);
         }
 
         if (!dataFile.exists("motion_type")) {
@@ -139,6 +139,15 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
         for (int loop = 1; loop < t.locations(); loop++) {
             loadEquipment(t, abbrs[loop], loop);
         }
+
+        if (dataFile.exists("history")) {
+            t.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            t.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
+        }
+
         return t;
     }
 

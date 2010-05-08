@@ -45,7 +45,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         }
         e.setChassis(dataFile.getDataAsString("Name")[0]);
 
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
             e.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             e.setModel("");
@@ -58,9 +58,17 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("Turret")) {
-            if(dataFile.getDataAsInt("Turret")[0] != 1) {
+            if (dataFile.getDataAsInt("Turret")[0] != 1) {
                 e.setHasNoTurret(true);
             }
+        }
+
+        if (dataFile.exists("history")) {
+            e.getFluff().setHistory(dataFile.getDataAsString("history").toString());
+        }
+
+        if (dataFile.exists("imagepath")) {
+            e.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
         }
 
         loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);

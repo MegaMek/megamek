@@ -148,6 +148,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
         }
 
+        if (dataFile.exists("cost")) {
+            t.setCost(dataFile.getDataAsInt("cost")[0]);
+        }
+
         return t;
     }
 

@@ -29,6 +29,7 @@ public abstract class ProtoMechACWeapon extends ACWeapon {
     public ProtoMechACWeapon() {
         super();
         ammoType = AmmoType.T_PAC;
+        explosive = false;
         flags = flags.or(F_PROTO_WEAPON);
     }
 }

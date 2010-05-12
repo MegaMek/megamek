@@ -3197,7 +3197,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         // account for coolant pods
         if (coolantPods > 0) {
-            mechHeatEfficiency += getHeatCapacity(false) * Math.ceil(coolantPods / 5);
+            mechHeatEfficiency += Math.ceil(getNumberOfSinks() * coolantPods / 5);
             bvText.append(" + Coolant Pods ");
         }
 
@@ -3215,7 +3215,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         if (coolantPods > 0) {
             bvText.append(" + ");
-            bvText.append(Math.min(2 * getNumberOfSinks(), Math.ceil((getNumberOfSinks() * coolantPods) / 5)));
+            bvText.append(Math.ceil((getNumberOfSinks() * coolantPods) / 5));
         }
 
         bvText.append(" - ");

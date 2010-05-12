@@ -341,9 +341,12 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> acAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> arrowAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanArrowAmmos = new ArrayList<AmmoType>(4);
-        ArrayList<AmmoType> thumperAmmos = new ArrayList<AmmoType>(6);
-        ArrayList<AmmoType> sniperAmmos = new ArrayList<AmmoType>(6);
-        ArrayList<AmmoType> longTomAmmos = new ArrayList<AmmoType>(6);
+        ArrayList<AmmoType> thumperAmmos = new ArrayList<AmmoType>(3);
+        ArrayList<AmmoType> thumperCannonAmmos = new ArrayList<AmmoType>(3);
+        ArrayList<AmmoType> sniperAmmos = new ArrayList<AmmoType>(3);
+        ArrayList<AmmoType> sniperCannonAmmos = new ArrayList<AmmoType>(3);
+        ArrayList<AmmoType> longTomAmmos = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> longTomCannonAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanArtyAmmos = new ArrayList<AmmoType>(6);
         ArrayList<AmmoType> mortarAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanMortarAmmos = new ArrayList<AmmoType>(4);
@@ -536,19 +539,19 @@ public class AmmoType extends EquipmentType {
         longTomAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISLongTomCannonAmmo();
-        longTomAmmos.add(base);
+        longTomCannonAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISSniperAmmo();
         sniperAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISSniperCannonAmmo();
-        sniperAmmos.add(base);
+        sniperCannonAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISThumperAmmo();
         thumperAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISThumperCannonAmmo();
-        thumperAmmos.add(base);
+        thumperCannonAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISArrowIVAmmo();
         arrowAmmos.add(base);
@@ -1079,6 +1082,23 @@ public class AmmoType extends EquipmentType {
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
         AmmoType.createMunitions(longTomAmmos, munitions);
+        
+        // Create the munition types for Artillery Cannons.
+        // These were taken out in TacOps errata, so are unofficial.
+        munitions.clear();
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, TechConstants.T_IS_UNOFFICIAL));
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(sniperCannonAmmos, munitions);
+        AmmoType.createMunitions(thumperCannonAmmos, munitions);
+
+        // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, TechConstants.T_IS_UNOFFICIAL));
+        AmmoType.createMunitions(longTomCannonAmmos, munitions);
 
         // Create the munition types for Clan Artillery launchers.
         munitions.clear();

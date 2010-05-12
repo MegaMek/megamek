@@ -35,6 +35,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
@@ -631,11 +632,12 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype instanceof InfantryWeapon;
-        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_MML)
+        boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM) || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_10) || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_20) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
-                && weapon.curMode().equals("Indirect");
+                && weapon.curMode().equals("Indirect"))
+                || wtype instanceof ArtilleryCannonWeapon;
         boolean useExtremeRange = game.getOptions().booleanOption("tacops_range");
 
         if (ae.isAirborne()) {
@@ -784,7 +786,8 @@ public class Compute {
         }
         if (isIndirect && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
-                && LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+                && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+                && !(wtype instanceof ArtilleryCannonWeapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
         }
 

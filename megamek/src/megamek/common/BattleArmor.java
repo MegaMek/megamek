@@ -783,10 +783,12 @@ public class BattleArmor extends Infantry {
             }
 
             for (Mounted misc : getMisc()) {
-                if (misc.getLocation() == LOC_SQUAD) {
+                if (misc.getType().hasFlag(MiscType.F_MINE)) {
+                    if (misc.getLocation() == LOC_SQUAD) {
                         oBV += misc.getType().getBV(this);
-                } else {
-                    oBV += misc.getType().getBV(this) / getTotalOInternal();
+                    } else {
+                        oBV += misc.getType().getBV(this) / getTotalOInternal();
+                    }
                 }
             }
             for (Mounted ammo : getAmmo()) {

@@ -62,6 +62,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISHGaussRifle;
@@ -243,7 +244,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae instanceof Mech) {
             bMekStealthActive = ae.isStealthActive();
         }
-        boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
+        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect")) || (wtype instanceof ArtilleryCannonWeapon);
         boolean isInferno = ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_MML)) && (atype
                 .getMunitionType() == AmmoType.M_INFERNO))
@@ -1368,11 +1369,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.append(Compute.getDamageWeaponMods(ae, weapon));
 
         // target immobile
-        ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
-        if (immobileMod != null) {
-            toHit.append(immobileMod);
-            toSubtract += immobileMod.getValue();
-        }
+        if (!(wtype instanceof ArtilleryCannonWeapon)) {
+            ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+            if (immobileMod != null) {
+                toHit.append(immobileMod);
+	        toSubtract += immobileMod.getValue();
+	    }
+	}
 
         // attacker prone
         toHit.append(Compute.getProneMods(game, ae, weaponId));
@@ -1785,7 +1788,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (isIndirect && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
-                && (!game.getOptions().booleanOption("double_blind") || Compute.canSee(game, ae, target))) {
+                && (!game.getOptions().booleanOption("double_blind") || Compute.canSee(game, ae, target))
+                && !(wtype instanceof ArtilleryCannonWeapon)) {
             return new String("Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
         }
 
@@ -2357,7 +2361,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (isIndirect && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
-                && LosEffects.calculateLos(game, attackerId, target).canSee()) {
+                && LosEffects.calculateLos(game, attackerId, target).canSee()
+                && !(wtype instanceof ArtilleryCannonWeapon)) {
             return "Indirect fire impossible with direct LOS";
         }
 
@@ -2426,7 +2431,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 spotter = Compute.findSpotter(game, ae, target);
             }
 
-            if ((spotter == null) && !(wtype instanceof MekMortarWeapon)) {
+            if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)) {
                 return "No available spotter";
             }
         }

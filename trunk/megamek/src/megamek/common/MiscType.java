@@ -1732,8 +1732,9 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAMagneticClamp() {
         MiscType misc = new MiscType();
 
-        misc.name = "Magnetic Clamp";
+        misc.name = "Magnetic Clamps";
         misc.setInternalName("BA-Magnetic Clamp");
+        misc.addLookupName("Magnetic Clamp");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -1741,7 +1742,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "On", "Off" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
-        misc.bv = 0;
+        misc.bv = 1;
 
         return misc;
     }
@@ -2722,7 +2723,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BATTLE_CLAW);
-        misc.bv = 1;
+        misc.bv = 0;
 
         return misc;
     }

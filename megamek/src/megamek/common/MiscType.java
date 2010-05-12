@@ -1742,7 +1742,7 @@ public class MiscType extends EquipmentType {
         String[] saModes = { "On", "Off" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
-        misc.bv = 1;
+        misc.bv = 0;
 
         return misc;
     }

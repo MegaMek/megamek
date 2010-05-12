@@ -824,8 +824,7 @@ public class BattleArmor extends Infantry {
                 for (Mounted misc : getMisc()) {
                     if ((misc.getLocation() == LOC_SQUAD) || (misc.getLocation() == i)) {
                         if (misc.getType().hasFlag(MiscType.F_MAGNET_CLAW)
-                                || misc.getType().hasFlag(MiscType.F_VIBROCLAW)
-                                || misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                                || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
                             oBV += misc.getType().getBV(this);
                         }
                     }

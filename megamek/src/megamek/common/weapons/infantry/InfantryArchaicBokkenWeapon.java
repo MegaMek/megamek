@@ -36,9 +36,10 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
         name = "Bokken";
         setInternalName(name);
         addLookupName("InfantryBokken");
+        ammoType = AmmoType.T_NA;
         cost = 15;
         bv = 0.03;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;
     }

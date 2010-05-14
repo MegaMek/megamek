@@ -37,9 +37,10 @@ public class InfantryArchaicHatchetWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryHatchet");
         addLookupName("InfantryTomahawk");
+        ammoType = AmmoType.T_NA;
         cost = 10;
         bv = 0.03;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;
     }

@@ -17,28 +17,34 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
+import megamek.common.Infantry;
 import megamek.common.TechConstants;
 
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantryLaserRifleWeapon extends InfantryWeapon {
+public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -9065123199493897216L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryLaserRifleWeapon() {
+    public InfantrySupportMk2PortableAAWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
-        name = "Laser Rifle";
+        techLevel = TechConstants.T_TW_ALL;
+        name = "Infantry Mk 2 Man-Portable AA Weapon";
         setInternalName(name);
-        addLookupName("InfantryLaserRifle");
-        cost = 1250;
-        bv = 0.88;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.28;
+        addLookupName("InfantryMk2PortableAA");
+        ammoType = AmmoType.T_NA;
+        cost = 3500;
+        bv = 3.38;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+        infantryDamage = 0.81;
         infantryRange = 2;
+        crew = 2;
     }
 }

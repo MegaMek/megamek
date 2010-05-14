@@ -36,6 +36,7 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
         name = "Infantry Clan ER Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryClanERLaserRifle");
+        ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 1.69;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);

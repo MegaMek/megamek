@@ -36,6 +36,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
         name = "Federated Barrett M61A";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM61A");
+        ammoType = AmmoType.T_NA;
         cost = 2150;
         bv = 1.17;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);

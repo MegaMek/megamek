@@ -66,6 +66,8 @@
      bobtehpwnz0r <bobtehpwnz0r@users.sourceforge.net>
      fle <galatnm@users.sourceforge.net>
      Mike Kiscaden <eldragon@users.sourceforge.net>
+     Magnus Kerensky <mkerensky@users.sourceforge.net>
+     Numien Deathwyrm <numien@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

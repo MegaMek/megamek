@@ -36,9 +36,10 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
         name = "Clan Vibro Sword";
         setInternalName(name);
         addLookupName("InfantryClanVibroSword");
+        ammoType = AmmoType.T_NA;
         cost = 500;
         bv = 0.26;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.32;
         infantryRange = 0;
     }

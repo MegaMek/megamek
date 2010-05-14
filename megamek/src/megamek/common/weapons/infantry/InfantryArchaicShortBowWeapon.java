@@ -39,7 +39,7 @@ public class InfantryArchaicShortBowWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 10;
         bv = 0.01;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
         infantryDamage = 0.0;
         infantryRange = 0;
     }

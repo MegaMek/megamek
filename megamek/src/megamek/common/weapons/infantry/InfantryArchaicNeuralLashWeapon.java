@@ -36,9 +36,10 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
         name = "Neural Lash";
         setInternalName(name);
         addLookupName("InfantryNeuralLash");
+        ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.07;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.09;
         infantryRange = 0;
     }

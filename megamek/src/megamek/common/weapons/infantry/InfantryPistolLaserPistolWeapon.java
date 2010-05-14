@@ -36,6 +36,7 @@ public class InfantryPistolLaserPistolWeapon extends InfantryWeapon {
         name = "Laser Pistol";
         setInternalName(name);
         addLookupName("InfantryLaserpistol");
+        ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.52;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);

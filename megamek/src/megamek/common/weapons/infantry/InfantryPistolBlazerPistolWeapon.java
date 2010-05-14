@@ -36,6 +36,7 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
         name = "Blazer Pistol";
         setInternalName(name);
         addLookupName("InfantryBlazerPistol");
+        ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 0.64;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);

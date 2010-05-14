@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
@@ -35,9 +36,10 @@ public class InfantryArchaicWhipWeapon extends InfantryWeapon {
         name = "Whip";
         setInternalName(name);
         addLookupName("InfantryWhip");
+        ammoType = AmmoType.T_NA;
         cost = 18;
         bv = 0.04;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.05;
         infantryRange = 0;
     }

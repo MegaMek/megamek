@@ -36,9 +36,10 @@ public class InfantryArchaicVibroKatanaWeapon extends InfantryWeapon {
         name = "Vibro Katana";
         setInternalName(name);
         addLookupName("InfantryVibroKatana");
+        ammoType = AmmoType.T_NA;
         cost = 350;
         bv = 0.21;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.26;
         infantryRange = 0;
     }

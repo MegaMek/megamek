@@ -36,6 +36,7 @@ public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
         name = "Marx XX Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryMarxXXLaser");
+        ammoType = AmmoType.T_NA;
         cost = 1750;
         bv = 1.57;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);

@@ -36,9 +36,10 @@ public class InfantryArchaicShurikenWeapon extends InfantryWeapon {
         name = "Shuriken";
         setInternalName(name);
         addLookupName("InfantryShuriken");
+        ammoType = AmmoType.T_NA;
         cost = 5;
         bv = 0;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0;
         infantryRange = 0;
     }

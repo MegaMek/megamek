@@ -36,9 +36,10 @@ public class InfantryArchaicNunchakuWeapon extends InfantryWeapon {
         name = "Nunchaku";
         setInternalName(name);
         addLookupName("InfantryNunchaku");
+        ammoType = AmmoType.T_NA;
         cost = 10;
         bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
     }

@@ -36,6 +36,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
         name = "Radium Sniper Rifle";
         setInternalName(name);
         addLookupName("InfantryRadiumSniper");
+        ammoType = AmmoType.T_NA;
         cost = 9500;
         bv = 1.09;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);

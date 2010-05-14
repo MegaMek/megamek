@@ -37,9 +37,10 @@ public class InfantryArchaicAxeWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryAxe");
         addLookupName("InfantryBladeAxe");
+        ammoType = AmmoType.T_NA;
         cost = 25;
         bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.07;
         infantryRange = 0;
     }

@@ -39,7 +39,7 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 30;
         bv = 0.01;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
         infantryDamage = 0.01;
         infantryRange = 0;
     }

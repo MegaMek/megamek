@@ -20,6 +20,7 @@ package megamek.common.weapons.infantry;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -29,6 +30,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -97,9 +99,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
         }
-        // not terribly graceful, but does keep Non Penetrating weapons frame affecting non-conventional Infantry
-        if((!(target instanceof Infantry) || (target instanceof BattleArmor)) && wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+        // this doesn't work...
+        if ((target instanceof Building) && (wtype.hasFlag(WeaponType.F_INF_NONPENETRATING))) {
             damageDealt = 0;
+        }
+        if (wtype.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
+            damageType = DamageType.NONPENETRATING;
         }
         Report r = new Report(3325);
         r.subject = subjectId;

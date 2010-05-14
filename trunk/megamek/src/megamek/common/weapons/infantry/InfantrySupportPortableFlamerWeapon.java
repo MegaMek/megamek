@@ -27,36 +27,28 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class InfantryPortableFlamerWeapon extends InfantryWeapon {
+public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -5741978934100309295L;
 
-    public InfantryPortableFlamerWeapon() {
+    public InfantrySupportPortableFlamerWeapon() {
         super();
         techLevel = TechConstants.T_INTRO_BOXSET;
         name = "Portable Flamer";
         setInternalName(name);
-        addLookupName("InfantryFlamerPortable");
+        addLookupName("InfantryPortableFlamer");
         addLookupName("InfantryFlamer");
-        // Flamer (man-pack), TM p. 300
+        // Flamer (man-portable), TM p. 300
         cost = 100;
         bv = 0.36;
-        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT);
+        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 0.45;
-        infantryRange = 1;
-        crew = 2;
-    }
-
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {
-            return new InfantryFlamerHeatHandler(toHit, waa, game, server);
-        }
-        return new InfantryWeaponHandler(toHit, waa, game, server);
+        infantryRange = 0;
+        crew = 1;
     }
 }

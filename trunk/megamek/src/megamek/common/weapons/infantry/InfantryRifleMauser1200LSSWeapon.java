@@ -36,6 +36,7 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
         name = "Mauser 1200 LSS";
         setInternalName(name);
         addLookupName("InfantryMauser1200");
+        ammoType = AmmoType.T_NA;
         cost = 10000;
         bv = 1.5;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);

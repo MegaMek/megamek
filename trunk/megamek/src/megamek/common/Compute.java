@@ -871,6 +871,7 @@ public class Compute {
         int range = wpn.getInfantryRange();
         int mod = 0;
 
+
         switch (range) {
             case 0:
                 if(distance > 0) {
@@ -1005,13 +1006,14 @@ public class Compute {
                 return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
 
+
         //a bunch of special conditions at range 0
         if(distance == 0) {
 
-            if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
-                mods.addModifier(1, "melee weapon penalty");
-            }
 
+            if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+                mod +=3;
+            }
             if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
                 mod++;
             }

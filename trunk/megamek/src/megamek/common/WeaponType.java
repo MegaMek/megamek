@@ -178,6 +178,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_INF_POINT_BLANK = BigInteger.valueOf(1).shiftLeft(52);
     public static final BigInteger F_INF_SUPPORT = BigInteger.valueOf(1).shiftLeft(53);
     public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
+    public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
@@ -937,12 +938,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new StopSwarmAttack());
 
         // Infantry Level 1 Weapons
+        EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
+        EquipmentType.addType(new InfantryRifleLaserWeapon());
+        EquipmentType.addType(new InfantryLRMWeapon());
         EquipmentType.addType(new InfantryLightSRMWeapon());
         EquipmentType.addType(new InfantryInfernoSRMWeapon());
         EquipmentType.addType(new InfantryLRMWeapon());
-        EquipmentType.addType(new InfantryLaserRifleWeapon());
-        EquipmentType.addType(new InfantryPortableFlamerWeapon());
-        EquipmentType.addType(new InfantryPortableFlamerWeapon());
+        EquipmentType.addType(new InfantryRifleLaserWeapon());
+        EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         //Infantry Archaic Weapons
         EquipmentType.addType(new InfantryArchaicAxeWeapon());
         EquipmentType.addType(new InfantryArchaicBasicCrossbowWeapon());
@@ -1118,11 +1121,78 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunSawnoffDoubleBarrelWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
         // Infantry Support Weapons
-        EquipmentType.addType(new InfantryPortableMGWeapon());
+        EquipmentType.addType(new InfantrySupportMk1LightAAWeapon());
+        EquipmentType.addType(new InfantrySupportMk2PortableAAWeapon());
+        EquipmentType.addType(new InfantrySupportClanBearhunterAutocannonWeapon());
+        EquipmentType.addType(new InfantrySupportPortableAutocannonWeapon());
         EquipmentType.addType(new InfantrySupportHeavyFlamerWeapon());
-        EquipmentType.addType(new InfantrySupportHeavySRMWeapon());
+        EquipmentType.addType(new InfantrySupportGrandMaulerGaussCannonWeapon());
+        EquipmentType.addType(new InfantrySupportMagshotGaussRifleWeapon());
+        EquipmentType.addType(new InfantrySupportTsunamiHeavyGaussRifleWeapon());
+        EquipmentType.addType(new InfantrySupportDavidLightGaussRifleWeapon());
+        EquipmentType.addType(new InfantrySupportKingDavidLightGaussRifleWeapon());
+        EquipmentType.addType(new InfantrySupportGrenadeLauncherWeapon());
+        EquipmentType.addType(new InfantrySupportGrenadeLauncherInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportAutoGrenadeLauncherWeapon());
+        EquipmentType.addType(new InfantrySupportAutoGrenadeLauncherInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportCompactGrenadeLauncherWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyGrenadeLauncherWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyGrenadeLauncherInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyAutoGrenadeLauncherWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportHellboreAssaultLaserWeapon());
+        EquipmentType.addType(new InfantrySupportLightMachineGunWeapon());
+        EquipmentType.addType(new InfantryPortableMGWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyMachineGunWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyMortarWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyMortarInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportLightMortarWeapon());
+        EquipmentType.addType(new InfantrySupportLightMortarInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportOneShotMRMWeapon());
+        EquipmentType.addType(new InfantrySupportFiredrakeNeedlerWeapon());
+        EquipmentType.addType(new InfantrySupportPortablePPCWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyPPCWeapon());
         EquipmentType.addType(new InfantrySupportPortablePlasmaWeapon());
-        EquipmentType.addType(new InfantrySupportSemiPortableMachineGunWeapon());
+
+        EquipmentType.addType(new InfantrySupportDragonsbaneDisposablePulseLaserWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyRecoillessRifleWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyRecoillessRifleInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportLightRecoillessRifleWeapon());
+        EquipmentType.addType(new InfantrySupportLightRecoillessRifleInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportMediumRecoillessRifleWeapon());
+        EquipmentType.addType(new InfantrySupportMediumRecoillessRifleInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportLAWWeapon());
+        EquipmentType.addType(new InfantrySupportVLAWWeapon());
+        EquipmentType.addType(new InfantrySupportStandardSRMWeapon());
+        EquipmentType.addType(new InfantryLightSRMWeapon());
+        EquipmentType.addType(new InfantrySupportLaserWeapon());
+        EquipmentType.addType(new InfantrySupportERLaserWeapon());
+        EquipmentType.addType(new InfantrySupportClanERLaserWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyLaserWeapon());
+        EquipmentType.addType(new InfantrySupportERHeavyLaserWeapon());
+        EquipmentType.addType(new InfantrySupportClanERHeavyLaserWeapon());
+        EquipmentType.addType(new InfantrySupportClanSemiPortableHeavyLaserWeapon());
+        EquipmentType.addType(new InfantrySupportClanSemiPortableERLaserWeapon());
+        EquipmentType.addType(new InfantrySupportSemiPortableLaserWeapon());
+        EquipmentType.addType(new InfantrySupportPulseLaserWeapon());
+        EquipmentType.addType(new InfantrySupportHeavyPulseLaserWeapon());
+        EquipmentType.addType(new InfantrySupportClanSemiPortablePulseLaserWeapon());
+        // Infantry Grenade Weapons
+        EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
+        EquipmentType.addType(new InfantryGrenadeMicroWeapon());
+        EquipmentType.addType(new InfantryGrenadeMiniInfernoWeapon());
+        EquipmentType.addType(new InfantryGrenadeRAGWeapon());
+        EquipmentType.addType(new InfantryGrenadeStandardWeapon());
+        // Infantry SMG Weapons
+        EquipmentType.addType(new InfantrySMGClanGaussWeapon());
+        EquipmentType.addType(new InfantrySMGGuntherMP20Weapon());
+        EquipmentType.addType(new InfantrySMGImperator2894A1Weapon());
+        EquipmentType.addType(new InfantrySMGKA23SubgunWeapon());
+        EquipmentType.addType(new InfantrySMGRorynexRM3XXIWeapon());
+        EquipmentType.addType(new InfantrySMGRuganWeapon());
+        EquipmentType.addType(new InfantrySMGWeapon());
+
+
         EquipmentType.addType(new ISFireExtinguisher());
         EquipmentType.addType(new CLFireExtinguisher());
 

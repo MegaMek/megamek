@@ -36,9 +36,10 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         name = "Medusa Whip";
         setInternalName(name);
         addLookupName("InfantryClanMedusaWhip");
+        ammoType = AmmoType.T_NA;
         cost = 2200;
         bv = 0.13;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
         infantryDamage = 0.16;
         infantryRange = 0;
     }

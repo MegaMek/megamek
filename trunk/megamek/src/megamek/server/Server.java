@@ -224,7 +224,7 @@ public class Server implements Runnable {
      * The DamageType enumeration is used for the damageEntity function.
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM, ANTI_INFANTRY, NAIL_RIVET, NONPENETRATING
     }
 
     // public final static String LEGAL_CHARS =
@@ -15609,6 +15609,23 @@ public class Server implements Runnable {
             if (!isPlatoon) {
                 damage = 0;
                 r = new Report(6050);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.addElement(r);
+            } else if (isPlatoon) {
+                    damage *= 2;
+                    r = new Report(6045);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+            }            
+            break;
+        case NONPENETRATING:
+            if (!isPlatoon) {
+                damage = 0;
+                r = new Report(6051);
                 r.subject = te_n;
                 r.indent(2);
                 r.newlines = 0;

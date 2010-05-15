@@ -17,6 +17,7 @@ v0.36.16-dev (SVN)
 + Bug: BA mines and misc equipment not counting for BV
 + Patch 3000277, Bugs 2995326, 2956157, 2956087: Artillery cannons
 + Patch 2995669: more infantry weapons
++ Typo: Misspelled Heavy Battle Claw
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huuge margin

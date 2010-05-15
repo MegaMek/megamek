@@ -121,7 +121,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BASIC_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(78);
     public static final BigInteger F_ADVANCED_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(79);
 
-
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
     public static final long S_TREE_CLUB = 1L << 1;// BMR
@@ -508,10 +507,7 @@ public class MiscType extends EquipmentType {
         if (bv != BV_VARIABLE) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
-            if ((entity instanceof VTOL)
-                    && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR)
-                    && (location == VTOL.LOC_ROTOR)
-                    && (hasFlag(MiscType.F_ECM) || hasFlag(MiscType.F_BAP) || hasFlag(MiscType.F_C3S) || hasFlag(MiscType.F_C3I))) {
+            if ((entity instanceof VTOL) && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) && (location == VTOL.LOC_ROTOR) && (hasFlag(MiscType.F_ECM) || hasFlag(MiscType.F_BAP) || hasFlag(MiscType.F_C3S) || hasFlag(MiscType.F_C3I))) {
                 returnBV += 10;
             }
             return returnBV;
@@ -1007,7 +1003,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MASC).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
 
-        String[] saModes = { "Armed", "Off" };
+        String[] saModes =
+            { "Armed", "Off" };
         misc.setModes(saModes);
 
         return misc;
@@ -1025,7 +1022,8 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_MASC).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
-        String[] saModes = { "Armed", "Off" };
+        String[] saModes =
+            { "Armed", "Off" };
         misc.setModes(saModes);
 
         return misc;
@@ -1061,7 +1059,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SUPERCHARGER;
         misc.bv = 0;
 
-        String[] saModes = { "Armed", "Off" };
+        String[] saModes =
+            { "Armed", "Off" };
         misc.setModes(saModes);
 
         return misc;
@@ -1081,7 +1080,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SUPERCHARGER;
         misc.bv = 0;
 
-        String[] saModes = { "Armed", "Off" };
+        String[] saModes =
+            { "Armed", "Off" };
         misc.setModes(saModes);
 
         return misc;
@@ -1231,7 +1231,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 61;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1249,7 +1250,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 61;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1269,7 +1271,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1289,7 +1292,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 1000000;
         misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1310,7 +1314,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 100;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1330,7 +1335,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 73;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1381,7 +1387,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_RETRACTABLE_BLADE;
         misc.bv = BV_VARIABLE;
         misc.setInstantModeSwitch(true);
-        String[] modes = { "retracted", "extended" };
+        String[] modes =
+            { "retracted", "extended" };
         misc.setModes(modes);
 
         return misc;
@@ -1614,7 +1621,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TARGCOMP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         // see note above
         misc.spreadable = true;
-        String[] modes = { "Normal", "Aimed shot" };
+        String[] modes =
+            { "Normal", "Aimed shot" };
         misc.setModes(modes);
 
         return misc;
@@ -1634,14 +1642,14 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TARGCOMP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         // see note above
         misc.spreadable = true;
-        String[] modes = { "Normal", "Aimed shot" };
+        String[] modes =
+            { "Normal", "Aimed shot" };
         misc.setModes(modes);
 
         return misc;
     }
 
     // Start BattleArmor equipment
-
 
     public static MiscType createBAFireResistantArmor() {
         MiscType misc = new MiscType();
@@ -1739,7 +1747,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_MAGNETIC_CLAMP).or(F_BA_EQUIPMENT);
-        String[] saModes = { "On", "Off" };
+        String[] saModes =
+            { "On", "Off" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
         misc.bv = 0;
@@ -1757,7 +1766,8 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_ECM).or(F_SINGLE_HEX_ECM).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.setModes(new String[] { "ECM" });
+        misc.setModes(new String[]
+            { "ECM" });
         misc.setInstantModeSwitch(false);
 
         return misc;
@@ -1800,7 +1810,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_PARAFOIL).or(F_BA_EQUIPMENT);;
+        misc.flags = misc.flags.or(F_PARAFOIL).or(F_BA_EQUIPMENT);
+        ;
         misc.bv = 0;
 
         return misc;
@@ -1818,7 +1829,8 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.flags = misc.flags.or(F_STEALTH).or(F_MECH_EQUIPMENT);
-        String[] saModes = { "Off", "On" };
+        String[] saModes =
+            { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.bv = 0;
@@ -1837,7 +1849,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_NULLSIG).or(F_MECH_EQUIPMENT);
-        String[] saModes = { "Off", "On" };
+        String[] saModes =
+            { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.bv = 0;
@@ -1856,7 +1869,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
-        String[] saModes = { "Off", "On" };
+        String[] saModes =
+            { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.flags = misc.flags.or(F_VOIDSIG).or(F_MECH_EQUIPMENT);
@@ -1876,7 +1890,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 6;
         misc.spreadable = true;
-        String[] saModes = { "Off", "On" };
+        String[] saModes =
+            { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.flags = misc.flags.or(F_CHAMELEON_SHIELD).or(F_MECH_EQUIPMENT);
@@ -2081,7 +2096,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2099,7 +2115,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2117,7 +2134,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2135,7 +2153,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2153,7 +2172,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2171,7 +2191,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2189,7 +2210,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2207,7 +2229,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2225,7 +2248,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2243,7 +2267,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2261,7 +2286,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2279,7 +2305,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2297,7 +2324,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2315,7 +2343,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2333,7 +2362,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        String[] modes = { "Default", "ECCM", "Ghost Targets" };
+        String[] modes =
+            { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
         misc.setInstantModeSwitch(false);
 
@@ -2717,7 +2747,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClaw() {
         MiscType misc = new MiscType();
 
-        misc.name = "Heavy Battle Vlaw";
+        misc.name = "Heavy Battle Claw";
         misc.setInternalName("BAHeavyBattleClaw");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2909,7 +2939,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SHIELD_SMALL;
         misc.bv = 50;
         misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
+        String[] modes =
+            { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 3;
@@ -2920,7 +2951,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -2954,7 +2985,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SHIELD_MEDIUM;
         misc.bv = 135;
         misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
+        String[] modes =
+            { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 5;
@@ -2977,7 +3009,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_SHIELD_LARGE;
         misc.bv = 263;
         misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
+        String[] modes =
+            { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
         misc.setModes(modes);
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 7;
@@ -3161,7 +3194,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_VIBRO_SMALL;
         misc.bv = 12;
         misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
+        String[] modes =
+            { "Inactive", "Active" };
         misc.setModes(modes);
 
         return misc;
@@ -3181,7 +3215,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_VIBRO_MEDIUM;
         misc.bv = 17;
         misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
+        String[] modes =
+            { "Inactive", "Active" };
         misc.setModes(modes);
 
         return misc;
@@ -3201,7 +3236,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_VIBRO_LARGE;
         misc.bv = 24;
         misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
+        String[] modes =
+            { "Inactive", "Active" };
         misc.setModes(modes);
 
         return misc;
@@ -3334,7 +3370,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 150000;
-        misc.setModes(new String[] { "Off", "Charge" });
+        misc.setModes(new String[]
+            { "Off", "Charge" });
         misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
@@ -3724,9 +3761,10 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createBlueShield() {
         MiscType misc = new MiscType();
-        misc.name ="Blue Shield Particle Field Damper";
+        misc.name = "Blue Shield Particle Field Damper";
         misc.setInternalName(misc.name);
-        misc.setModes(new String[] { "Off", "On" });
+        misc.setModes(new String[]
+            { "Off", "On" });
         misc.instantModeSwitch = false;
         misc.explosive = true;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
@@ -3740,7 +3778,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createBasicFireControl() {
         MiscType misc = new MiscType();
-        misc.name ="Basic Fire Control";
+        misc.name = "Basic Fire Control";
         misc.setInternalName(misc.name);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.tonnage = TONNAGE_VARIABLE;
@@ -3751,7 +3789,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createAdvancedFireControl() {
         MiscType misc = new MiscType();
-        misc.name ="Advanced Fire Control";
+        misc.name = "Advanced Fire Control";
         misc.setInternalName(misc.name);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.tonnage = TONNAGE_VARIABLE;

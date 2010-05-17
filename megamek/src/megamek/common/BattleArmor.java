@@ -300,6 +300,9 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat) {
+        if (getMovementMode() == EntityMovementMode.INF_UMU) {
+            return getOriginalJumpMP();
+        }
         return getWalkMP(gravity, ignoreheat);
     }
 
@@ -329,6 +332,9 @@ public class BattleArmor extends Infantry {
             }
         }
         int mp = getOriginalJumpMP();
+        if (getMovementMode() == EntityMovementMode.INF_UMU) {
+            mp = 0;
+        }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
@@ -747,7 +753,8 @@ public class BattleArmor extends Infantry {
                     break;
                 }
             }
-            int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, false), false, false).getValue();
+            int runMP = getRunMP(false, false);
+            int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
             // get jump MP, ignoring burden
             int rawJump = getJumpMP(false, true);
             int tmmJumped = Compute.getTargetMovementModifier(rawJump, true, false).getValue();
@@ -1697,4 +1704,5 @@ public class BattleArmor extends Infantry {
         // weighs a ton
         return troopers;
     }
+
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -946,6 +946,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryLRMWeapon());
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
+        EquipmentType.addType(new InfantryTWFlamerWeapon());
         //Infantry Archaic Weapons
         EquipmentType.addType(new InfantryArchaicAxeWeapon());
         EquipmentType.addType(new InfantryArchaicBasicCrossbowWeapon());
@@ -1121,6 +1122,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunSawnoffDoubleBarrelWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
         // Infantry Support Weapons
+        EquipmentType.addType(new InfantryPortableMGWeapon());
         EquipmentType.addType(new InfantrySupportMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportMk2PortableAAWeapon());
         EquipmentType.addType(new InfantrySupportClanBearhunterAutocannonWeapon());
@@ -1142,7 +1144,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon());
         EquipmentType.addType(new InfantrySupportHellboreAssaultLaserWeapon());
         EquipmentType.addType(new InfantrySupportLightMachineGunWeapon());
-        EquipmentType.addType(new InfantryPortableMGWeapon());
         EquipmentType.addType(new InfantrySupportHeavyMachineGunWeapon());
         EquipmentType.addType(new InfantrySupportHeavyMortarWeapon());
         EquipmentType.addType(new InfantrySupportHeavyMortarInfernoWeapon());
@@ -1164,6 +1165,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportLAWWeapon());
         EquipmentType.addType(new InfantrySupportVLAWWeapon());
         EquipmentType.addType(new InfantrySupportStandardSRMWeapon());
+        EquipmentType.addType(new InfantrySupportHeavySRMWeapon());
         EquipmentType.addType(new InfantryLightSRMWeapon());
         EquipmentType.addType(new InfantrySupportLaserWeapon());
         EquipmentType.addType(new InfantrySupportERLaserWeapon());

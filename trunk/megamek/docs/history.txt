@@ -18,7 +18,8 @@ v0.36.16-dev (SVN)
 + Patch 3000277, Bugs 2995326, 2956157, 2956087: Artillery cannons
 + Patch 2995669: more infantry weapons
 + Typo: Misspelled Heavy Battle Claw
-+ Bug: BA UMU not working
++ Bug 3000641: BA UMU not working
++ Patch 3002539: Infantry TW Flamer fix
 + Added Remote Sensor Dispensor Equipment.
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)

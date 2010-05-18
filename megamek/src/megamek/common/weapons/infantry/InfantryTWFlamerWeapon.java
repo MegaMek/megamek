@@ -17,30 +17,31 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantrySupportHeavySRMWeapon extends InfantryWeapon {
+public class InfantryTWFlamerWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -5741978934100309295L;
 
-    public InfantrySupportHeavySRMWeapon() {
+    public InfantryTWFlamerWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
-        name = "Infantry Heavy SRM Launcher";
+        //Range 1, reduced damage flamer for TW Platoon support
+        techLevel = TechConstants.T_INTRO_BOXSET;
+        name = "Total Warfare Flamer";
         setInternalName(name);
-        addLookupName("InfantryHeavySRM");
-        ammoType = AmmoType.T_NA;
-        cost = 3000;
-        bv = 1.71;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.41;
-        infantryRange = 2;
+        addLookupName("InfantryTWFlamer");
+        addLookupName("InfantryTWPortableFlamer");
+        cost = 100;
+        bv = 0.36;
+        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        infantryDamage = 0.35;
+        infantryRange = 1;
+        crew = 1;
     }
 }

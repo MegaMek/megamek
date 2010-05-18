@@ -2747,7 +2747,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClaw() {
         MiscType misc = new MiscType();
 
-        misc.name = "Heavy Battle Claw";
+        misc.name = "(Heavy) Battle Claw";
+        misc.addLookupName("Heavy Battle Claw");
         misc.setInternalName("BAHeavyBattleClaw");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2761,7 +2762,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClawMagnet() {
         MiscType misc = new MiscType();
 
-        misc.name = "Heavy Battle Claw (w/ Magnets)";
+        misc.name = "(Heavy) Battle Claw (w/ Magnets)";
+        misc.addLookupName("Heavy Battle Claw (w/ Magnets)");
         misc.setInternalName("BAHeavyBattleClawMagnets");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2775,7 +2777,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClawVibro() {
         MiscType misc = new MiscType();
 
-        misc.name = "Heavy Battle Claw (w/ Vibro-Claws)";
+        misc.name = "(Heavy) Battle Claw (w/ Vibro-Claws)";
+        misc.addLookupName("Heavy Battle Claw (w/ Vibro-Claws)");
         misc.setInternalName("BAHeavyBattleClawVibro");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2921,6 +2924,24 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_BRIDGE_KIT;
         misc.toHitModifier = 1;
         misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createRemoteSensorDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Remote Sensor Dispenser";
+        misc.addLookupName("BAReportSensorDispenser");
+        misc.setInternalName("RemoteSensorDispenser");
+        misc.tonnage = 0;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.toHitModifier = 0;
+        misc.bv = 30;
+        misc.cost = 21000;
 
         return misc;
     }

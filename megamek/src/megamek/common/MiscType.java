@@ -2940,7 +2940,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = true;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.toHitModifier = 0;
-        misc.bv = 30;
+        misc.bv = 0;
         misc.cost = 21000;
 
         return misc;
@@ -2972,7 +2972,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {

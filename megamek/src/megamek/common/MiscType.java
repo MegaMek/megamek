@@ -745,6 +745,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLImprovedSensors());
         EquipmentType.addType(MiscType.createCLBALightActiveProbe());
         EquipmentType.addType(MiscType.createISBALightActiveProbe());
+        EquipmentType.addType(MiscType.createRemoteSensorDispenser());
 
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
@@ -2932,7 +2933,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Remote Sensor Dispenser";
-        misc.addLookupName("BAReportSensorDispenser");
+        misc.addLookupName("BARemoteSensorDispenser");
         misc.setInternalName("RemoteSensorDispenser");
         misc.tonnage = 0;
         misc.criticals = 1;

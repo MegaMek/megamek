@@ -2705,7 +2705,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABattleClawMagnets() {
         MiscType misc = new MiscType();
 
-        misc.name = "Battle Claw (w/ Magnets)";
+        misc.name = "Battle Magnetic Claw";
         misc.setInternalName("BABattleClawMagnets");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2719,7 +2719,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABattleClawVibro() {
         MiscType misc = new MiscType();
 
-        misc.name = "Battle Claw (w/ Vibro Claw)";
+        misc.name = "Battle Vibro Claw";
         misc.setInternalName("BABattleClawVibro");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2747,8 +2747,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClaw() {
         MiscType misc = new MiscType();
 
-        misc.name = "(Heavy) Battle Claw";
-        misc.addLookupName("Heavy Battle Claw");
+        misc.name = "Heavy Battle Claw";
         misc.setInternalName("BAHeavyBattleClaw");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
@@ -2762,7 +2761,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClawMagnet() {
         MiscType misc = new MiscType();
 
-        misc.name = "(Heavy) Battle Claw (w/ Magnets)";
+        misc.name = "Heavy Battle Magnetic Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Magnets)");
         misc.setInternalName("BAHeavyBattleClawMagnets");
         misc.tonnage = 0.0f;
@@ -2777,7 +2776,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClawVibro() {
         MiscType misc = new MiscType();
 
-        misc.name = "(Heavy) Battle Claw (w/ Vibro-Claws)";
+        misc.name = "Heavy Battle Vibro Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Vibro-Claws)");
         misc.setInternalName("BAHeavyBattleClawVibro");
         misc.tonnage = 0.0f;

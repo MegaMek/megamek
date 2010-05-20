@@ -2931,14 +2931,14 @@ public class MiscType extends EquipmentType {
     public static MiscType createRemoteSensorDispenser() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Remote Sensor Dispenser";
         misc.addLookupName("BARemoteSensorDispenser");
         misc.setInternalName("RemoteSensorDispenser");
-        misc.tonnage = 0;
+        misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.toHitModifier = 0;
         misc.bv = 0;
         misc.cost = 21000;

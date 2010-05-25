@@ -31,9 +31,9 @@ public class Pilot implements Serializable {
     private int gunnery;
     private int piloting;
     private int hits; // hits taken
-    
+
     private String nickname;
-    
+
     private int externalId = Entity.NONE;
 
     private boolean unconscious;
@@ -41,76 +41,76 @@ public class Pilot implements Serializable {
     private boolean dead;
     private boolean ejected;
 
-    //StratOps fatigue points
+    // StratOps fatigue points
     private int fatigue;
-    
-    /***Additional RPG Skills***/
+
+    /*** Additional RPG Skills ***/
     // MW3e uses 3 different gunnery skills
     private int gunneryL;
     private int gunneryM;
-    private int gunneryB; 
-    
-    //Separate artillery skill
+    private int gunneryB;
+
+    // Separate artillery skill
     private int artillery;
-    
-    //init bonuses
-    //bonus for individual initiative
+
+    // init bonuses
+    // bonus for individual initiative
     private int initBonus;
-    //commander bonus
+    // commander bonus
     private int commandBonus;
-    
-    //a toughness bonus that is applied to all KO checks
+
+    // a toughness bonus that is applied to all KO checks
     private int toughness;
-    
-    /***End RPG Skills***/
-    
+
+    /*** End RPG Skills ***/
+
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
 
     private PilotOptions options = new PilotOptions();
-    
-    //pathway to pilot portrait
+
+    // pathway to pilot portrait
     public static final String ROOT_PORTRAIT = "-- General --";
     public static final String PORTRAIT_NONE = "None";
     private String portraitCategory = ROOT_PORTRAIT;
     private String portraitFileName = PORTRAIT_NONE;
-    
+
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_LASER = "Laser";
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
-    
-    private static double[][] bvMod = new double[][] {
-            {2.8,  2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59},
-            {2.56, 2.4,  2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44},
-            {2.24, 2.1,  1.96, 1.82, 1.61, 1.4,  1.33, 1.31, 1.25},
-            {1.92, 1.8,  1.68, 1.56, 1.38, 1.2,  1.14, 1.08, 1.06},
-            {1.6,  1.5,  1.4,  1.3,  1.15, 1.0,  0.95, 0.9,  0.85},
-            {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
-            {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
-            {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
-            {1.28, 1.19, 1.1,  1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
-    };
+
+    private static double[][] bvMod = new double[][]
+        {
+            { 2.8, 2.63, 2.45, 2.28, 2.01, 1.82, 1.75, 1.67, 1.59 },
+            { 2.56, 2.4, 2.24, 2.08, 1.84, 1.60, 1.58, 1.51, 1.44 },
+            { 2.24, 2.1, 1.96, 1.82, 1.61, 1.4, 1.33, 1.31, 1.25 },
+            { 1.92, 1.8, 1.68, 1.56, 1.38, 1.2, 1.14, 1.08, 1.06 },
+            { 1.6, 1.5, 1.4, 1.3, 1.15, 1.0, 0.95, 0.9, 0.85 },
+            { 1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77 },
+            { 1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72 },
+            { 1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68 },
+            { 1.28, 1.19, 1.1, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64 }, };
 
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH = 6;
-    
+
     public Pilot() {
         this("Unnamed", 4, 5);
     }
 
     public Pilot(String name, int gunnery, int piloting) {
         this.name = name;
-        this.nickname = "";
+        nickname = "";
         this.gunnery = gunnery;
-        this.gunneryL = gunnery;
-        this.gunneryM = gunnery;
-        this.gunneryB = gunnery;
-        this.artillery = gunnery;
+        gunneryL = gunnery;
+        gunneryM = gunnery;
+        gunneryB = gunnery;
+        artillery = gunnery;
         this.piloting = piloting;
-        this.initBonus = 0;
-        this.commandBonus = 0;
-        this.toughness = 0;
+        initBonus = 0;
+        commandBonus = 0;
+        toughness = 0;
         hits = 0;
         unconscious = false;
         dead = false;
@@ -120,18 +120,17 @@ public class Pilot implements Serializable {
         options.initialize();
     }
 
-    public Pilot(String name, int gunneryL, int gunneryM, int gunneryB,
-            int piloting) {
+    public Pilot(String name, int gunneryL, int gunneryM, int gunneryB, int piloting) {
         this.name = name;
-        this.nickname = "";
-        this.gunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
+        nickname = "";
+        gunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
         this.gunneryL = gunneryL;
         this.gunneryM = gunneryM;
         this.gunneryB = gunneryB;
-        this.artillery = this.gunnery;
+        artillery = gunnery;
         this.piloting = piloting;
-        this.initBonus = 0;
-        this.commandBonus = 0;
+        initBonus = 0;
+        commandBonus = 0;
         hits = 0;
         unconscious = false;
         dead = false;
@@ -144,7 +143,7 @@ public class Pilot implements Serializable {
     public String getName() {
         return name;
     }
-    
+
     public String getNickname() {
         return nickname;
     }
@@ -164,9 +163,9 @@ public class Pilot implements Serializable {
     public int getGunneryB() {
         return gunneryB;
     }
-    
+
     public int getArtillery() {
-    	return artillery;
+        return artillery;
     }
 
     public int getPiloting() {
@@ -180,33 +179,33 @@ public class Pilot implements Serializable {
     public int getInitBonus() {
         return initBonus;
     }
-    
+
     public int getCommandBonus() {
         return commandBonus;
     }
-    
+
     public void setNickname(String nick) {
-        this.nickname = nick;
+        nickname = nick;
     }
-    
+
     public void setGunnery(int gunnery) {
         this.gunnery = gunnery;
     }
 
     public void setGunneryL(int gunnery) {
-        this.gunneryL = gunnery;
+        gunneryL = gunnery;
     }
 
     public void setGunneryM(int gunnery) {
-        this.gunneryM = gunnery;
+        gunneryM = gunnery;
     }
 
     public void setGunneryB(int gunnery) {
-        this.gunneryB = gunnery;
+        gunneryB = gunnery;
     }
-    
+
     public void setArtillery(int artillery) {
-    	this.artillery = artillery;
+        this.artillery = artillery;
     }
 
     public void setPiloting(int piloting) {
@@ -221,13 +220,13 @@ public class Pilot implements Serializable {
     }
 
     public void setInitBonus(int bonus) {
-        this.initBonus = bonus;
+        initBonus = bonus;
     }
-    
+
     public void setCommandBonus(int bonus) {
-        this.commandBonus = bonus;
+        commandBonus = bonus;
     }
-    
+
     public boolean isUnconscious() {
         return unconscious;
     }
@@ -285,12 +284,10 @@ public class Pilot implements Serializable {
     }
 
     public void clearOptions() {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 option.clearValue();
@@ -298,17 +295,16 @@ public class Pilot implements Serializable {
         }
 
     }
-    
+
     public void clearOptions(String grpKey) {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            if (!group.getKey().equalsIgnoreCase(grpKey))
+            if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
-            
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            }
+
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
                 option.clearValue();
@@ -320,37 +316,36 @@ public class Pilot implements Serializable {
     public int countOptions() {
         int count = 0;
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
-                if (option.booleanValue())
+                if (option.booleanValue()) {
                     count++;
+                }
             }
         }
 
         return count;
     }
-    
+
     public int countOptions(String grpKey) {
         int count = 0;
 
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            if (!group.getKey().equalsIgnoreCase(grpKey))
+            if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
+            }
 
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
-                if (option.booleanValue())
+                if (option.booleanValue()) {
                     count++;
+                }
             }
         }
 
@@ -361,12 +356,12 @@ public class Pilot implements Serializable {
      * Returns the options of the given category that this pilot has
      */
     public Enumeration<IOption> getOptions(String grpKey) {
-        for (Enumeration<IOptionGroup> i = options.getGroups(); i
-                .hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            if (group.getKey().equalsIgnoreCase(grpKey))
+            if (group.getKey().equalsIgnoreCase(grpKey)) {
                 return group.getOptions();
+            }
         }
 
         // no pilot advantages -- return an empty Enumeration
@@ -374,8 +369,8 @@ public class Pilot implements Serializable {
     }
 
     /**
-     * Returns a string of all the option "codes" for this pilot, for a given group,
-     * using sep as the separator
+     * Returns a string of all the option "codes" for this pilot, for a given
+     * group, using sep as the separator
      */
     public String getOptionList(String sep, String grpKey) {
         StringBuffer adv = new StringBuffer();
@@ -386,20 +381,19 @@ public class Pilot implements Serializable {
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-            if (!group.getKey().equalsIgnoreCase(grpKey))
+            if (!group.getKey().equalsIgnoreCase(grpKey)) {
                 continue;
+            }
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
-    
+
                 if (option.booleanValue()) {
                     if (adv.length() > 0) {
                         adv.append(sep);
                     }
-    
+
                     adv.append(option.getName());
-                    if (option.getType() == IOption.STRING
-                            || option.getType() == IOption.CHOICE
-                            || option.getType() == IOption.INTEGER) {
+                    if ((option.getType() == IOption.STRING) || (option.getType() == IOption.CHOICE) || (option.getType() == IOption.INTEGER)) {
                         adv.append(" ").append(option.stringValue());
                     }
                 }
@@ -413,8 +407,9 @@ public class Pilot implements Serializable {
     public static String parseAdvantageName(String s) {
         s = s.trim();
         int index = s.indexOf(" ");
-        if (index == -1)
+        if (index == -1) {
             index = s.length();
+        }
         return s.substring(0, index);
     }
 
@@ -422,8 +417,9 @@ public class Pilot implements Serializable {
     public static Object parseAdvantageValue(String s) {
         s = s.trim();
         int index = s.indexOf(" ");
-        if (index == -1)
+        if (index == -1) {
             return new Boolean(true);
+        }
         String t = s.substring(index + 1, s.length());
         Object result;
         try {
@@ -468,7 +464,7 @@ public class Pilot implements Serializable {
             r.add(getPiloting());
         }
 
-        if (hits > 0 || isUnconscious() || isDead()) {
+        if ((hits > 0) || isUnconscious() || isDead()) {
             Report r2 = new Report();
             r2.type = Report.PUBLIC;
             if (hits > 0) {
@@ -501,7 +497,7 @@ public class Pilot implements Serializable {
      * Returns whether this pilot has non-standard piloting or gunnery values
      */
     public boolean isCustom() {
-        return gunnery != 4 || piloting != 5;
+        return (gunnery != 4) || (piloting != 5);
     }
 
     /**
@@ -510,21 +506,22 @@ public class Pilot implements Serializable {
     public double getBVSkillMultiplier() {
         return getBVSkillMultiplier(true);
     }
-    
+
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
      * 
-     * @param usePiloting whether or not to use the default value
-     *      non-anti-mech infantry/BA should not use the anti-mech skill
+     * @param usePiloting
+     *            whether or not to use the default value non-anti-mech
+     *            infantry/BA should not use the anti-mech skill
      */
     public double getBVSkillMultiplier(boolean usePiloting) {
         int pilotVal = piloting;
         if (!usePiloting) {
             pilotVal = 5;
         }
-        return getBVImplantMultiplier()
-                * getBVSkillMultiplier(gunnery, pilotVal);
+        return getBVImplantMultiplier() * getBVSkillMultiplier(gunnery, pilotVal);
     }
+
     public double getBVImplantMultiplier() {
 
         // get highest level
@@ -550,17 +547,20 @@ public class Pilot implements Serializable {
      * static to evaluate the BV of a unit, even when they have not yet been
      * assinged a pilot.
      * 
-     * @param gunnery the gunnery skill of the pilot
-     * @param piloting the piloting skill of the pilot
+     * @param gunnery
+     *            the gunnery skill of the pilot
+     * @param piloting
+     *            the piloting skill of the pilot
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        return bvMod[gunnery][piloting];
+        return bvMod[Math.min(9, gunnery)][Math.min(9, piloting)];
     }
 
     public int modifyPhysicalDamagaForMeleeSpecialist() {
-        if (!getOptions().booleanOption("melee_specialist"))
+        if (!getOptions().booleanOption("melee_specialist")) {
             return 0;
+        }
 
         return 1;
     }
@@ -581,88 +581,83 @@ public class Pilot implements Serializable {
      *         <code>false</code> if the pilot is still in the vehicle.
      */
     public boolean isEjected() {
-        return this.ejected;
+        return ejected;
     }
 
     /**
      * Specify if this pilot has abandoned her vehicle.
      * 
-     * @param abandoned the <code>boolean</code> value to set.
+     * @param abandoned
+     *            the <code>boolean</code> value to set.
      */
     public void setEjected(boolean abandoned) {
-        this.ejected = abandoned;
+        ejected = abandoned;
     }
 
     /**
-     *  @return a string description of the gunnery skills when
-     * using RPG
+     * @return a string description of the gunnery skills when using RPG
      */
     public String getGunneryRPG() {
         return "" + gunneryL + "(L)/" + gunneryM + "(M)/" + gunneryB + "(B)";
     }
-    
-    
+
     /**
      * for sensor ops, so these might be easily expanded later for rpg
      */
     public int getSensorOps() {
-        if(piloting > -1) {
+        if (piloting > -1) {
             return piloting;
         }
         return gunnery;
     }
-    
-    
+
     private int getPilotingFatigueTurn() {
         int turn = 20;
-        if(piloting > 5) { 
+        if (piloting > 5) {
             turn = 10;
-        }
-        else if(piloting > 3) {
+        } else if (piloting > 3) {
             turn = 14;
-        }
-        else if(piloting > 1) {
+        } else if (piloting > 1) {
             turn = 17;
         }
-        
-        //get fatigue point modifiers
+
+        // get fatigue point modifiers
         int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
         turn = turn - mod;
-        
-        return turn;     
+
+        return turn;
     }
-    
+
     public boolean isPilotingFatigued(int turn) {
         return turn >= getPilotingFatigueTurn();
     }
-    
+
     private int getGunneryFatigueTurn() {
         int turn = 20;
-        if(piloting > 5) { 
+        if (piloting > 5) {
             turn = 14;
-        }
-        else if(piloting > 3) {
+        } else if (piloting > 3) {
             turn = 17;
         }
-        
-        //get fatigue point modifiers
+
+        // get fatigue point modifiers
         int mod = (int) Math.min(Math.max(0, Math.ceil(fatigue / 4.0) - 1), 4);
         turn = turn - mod;
-        
+
         return turn;
-        
+
     }
-    
+
     public boolean isGunneryFatigued(int turn) {
-        if(piloting < 2) {
+        if (piloting < 2) {
             return false;
         }
         return turn >= getGunneryFatigueTurn();
     }
-    
+
     public String getStatusDesc() {
         String s = new String("");
-        if(hits > 0) {
+        if (hits > 0) {
             s += hits + " hits";
             if (isUnconscious()) {
                 s += " (KO)";
@@ -672,11 +667,11 @@ public class Pilot implements Serializable {
         }
         return s;
     }
-    
+
     public void setExternalId(int i) {
-        this.externalId = i;
+        externalId = i;
     }
-    
+
     public int getExternalId() {
         return externalId;
     }
@@ -696,22 +691,21 @@ public class Pilot implements Serializable {
     public String getPortraitFileName() {
         return portraitFileName;
     }
-    
+
     public int getToughness() {
         return toughness;
     }
-    
+
     public void setToughness(int t) {
-        this.toughness = t;
+        toughness = t;
     }
-    
+
     public int getFatigue() {
         return fatigue;
     }
-    
+
     public void setFatigue(int i) {
-        this.fatigue = i;
+        fatigue = i;
     }
-    
 
 }

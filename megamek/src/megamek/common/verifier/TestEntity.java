@@ -248,6 +248,9 @@ public abstract class TestEntity implements TestEntityOption {
         if (mt.hasFlag(MiscType.F_ENDO_STEEL)) {
             return 0f;
         }
+        if (mt.hasFlag(MiscType.F_ENDO_COMPOSITE)) {
+            return 0f;
+        }
         if (mt.hasFlag(MiscType.F_FERRO_LAMELLOR)) {
             return 0f;
         }
@@ -501,6 +504,11 @@ public abstract class TestEntity implements TestEntityOption {
             return 14;
         } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE).equals(mt.getInternalName())) {
             return 16;
+        } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE).equals(mt.getInternalName())) {
+            if (isClan()) {
+                return 4;
+            }
+            return 7;
         } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE).equals(mt.getInternalName())) {
             if (isClanArmor()) {
                 return 7;
@@ -879,6 +887,8 @@ class Structure {
             return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
             return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+        } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
+            return TestEntity.ceilMaxHalf(weight / 10.0f * 0.75f, roundWeight);
         }
         return weight / 10.0f;
     }

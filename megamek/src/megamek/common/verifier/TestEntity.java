@@ -777,7 +777,7 @@ public abstract class TestEntity implements TestEntityOption {
         return buff;
     }
 
-    public int getWeightCarryingSpace() {
+    public float getWeightCarryingSpace() {
         return getEntity().getTroopCarryingSpace();
     }
 

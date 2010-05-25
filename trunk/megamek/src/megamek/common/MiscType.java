@@ -237,7 +237,11 @@ public class MiscType extends EquipmentType {
                 return 2.0f;
             }
         } else if (hasFlag(F_PARTIAL_WING)) {
-            return (float) (Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
+            if (getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) {
+                return (float) (Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
+            } else if (getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) {
+                return (float) (Math.ceil(entity.getWeight() * 0.15) / 2.0);
+            }
         } else if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
             return (float) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
@@ -695,7 +699,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCommsGear13());
         EquipmentType.addType(MiscType.createCommsGear14());
         EquipmentType.addType(MiscType.createCommsGear15());
-        EquipmentType.addType(MiscType.createPartialWing());
+        EquipmentType.addType(MiscType.createCLPartialWing());
+        EquipmentType.addType(MiscType.createISPartialWing());
         EquipmentType.addType(MiscType.createCargo1());
         EquipmentType.addType(MiscType.createHalfCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
@@ -3536,11 +3541,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createPartialWing() {
+    public static MiscType createCLPartialWing() {
         MiscType misc = new MiscType();
 
         misc.name = "Partial Wing";
-        misc.setInternalName(misc.name);
+        misc.setInternalName("CLPartialWing");
         misc.addLookupName("PartialWing");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 6;
@@ -3548,6 +3553,21 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+
+        return misc;
+    }
+
+    public static MiscType createISPartialWing() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Partial Wing";
+        misc.setInternalName("ISPartialWing");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 8;
+        misc.spreadable = true;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
     }
@@ -3753,7 +3773,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createFuel1() {
         MiscType misc = new MiscType();
 
-        misc.name = "Extendend Fuel Tank (1 ton)";
+        misc.name = "Extended Fuel Tank (1 ton)";
         misc.setInternalName(misc.name);
         misc.tonnage = 1;
         misc.criticals = 1;

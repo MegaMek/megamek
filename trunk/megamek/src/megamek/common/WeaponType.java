@@ -1387,11 +1387,6 @@ public class WeaponType extends EquipmentType {
 
     }
 
-    @Override
-    public String toString() {
-        return "WeaponType: " + name;
-    }
-
     public int getExplosionDamage() {
         return explosionDamage;
     }

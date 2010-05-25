@@ -6683,8 +6683,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
-    public int getTroopCarryingSpace() {
-        int space = 0;
+    public float getTroopCarryingSpace() {
+        float space = 0;
         for (Transporter t : transports) {
             if (t instanceof TroopSpace) {
                 space += ((TroopSpace) t).totalSpace;

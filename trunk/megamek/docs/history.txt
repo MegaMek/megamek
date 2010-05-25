@@ -23,6 +23,7 @@ v0.36.16-dev (SVN)
 + Added Remote Sensor Dispensor Equipment.
 + Added code to use a max of 9 for pilot/gunnery skills.
 + Half ton troop carrying space not working correctly
++ added endo-composite structure
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

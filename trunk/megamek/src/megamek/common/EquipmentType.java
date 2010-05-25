@@ -64,19 +64,17 @@ public class EquipmentType {
     public static final int T_STRUCTURE_ENDO_PROTOTYPE = 3;
     public static final int T_STRUCTURE_REINFORCED = 4;
     public static final int T_STRUCTURE_COMPOSITE = 5;
+    public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
     public static final String[] armorNames =
         { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth", "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide", "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial", "Ferro-Lamellor" };
 
     public static final String[] structureNames =
-        { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite" };
-
-    public static final int[] structureLevels =
-        { 1, 2, 2, 3, 3, 3 };
+        { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Endo-Composite" };
 
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts =
-        { 400, 300, 1600, 1600, 6400, 3200 };
+        { 400, 300, 1600, 1600, 6400, 3200, 3200 };
 
     // Assume for now that prototype is not more expensive
     public static final double[] armorCosts =

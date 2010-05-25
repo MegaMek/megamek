@@ -120,6 +120,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BLUE_SHIELD = BigInteger.valueOf(1).shiftLeft(77);
     public static final BigInteger F_BASIC_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(78);
     public static final BigInteger F_ADVANCED_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(79);
+    public static final BigInteger F_ENDO_COMPOSITE = BigInteger.valueOf(1).shiftLeft(80);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -310,6 +311,11 @@ public class MiscType extends EquipmentType {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE).equals(internalName)) {
+            double tons = 0.0;
+            tons = entity.getWeight() / 10.0;
+            tons = Math.ceil(tons * 1.5) / 2.0;
+            return (float) tons;
         } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED).equals(internalName)) {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) * 2.0;
@@ -444,6 +450,11 @@ public class MiscType extends EquipmentType {
                 return 7;
             }
             return 14;
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE).equals(internalName)) {
+            if (entity.isClan()) {
+                return 4;
+            }
+            return 8;
         } else if (hasFlag(F_JUMP_BOOSTER) || hasFlag(F_TALON)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all
             // legs
@@ -720,6 +731,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFuel1());
         EquipmentType.addType(MiscType.createFuelHalf());
         EquipmentType.addType(MiscType.createBlueShield());
+        EquipmentType.addType(MiscType.createEndoComposite());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -2053,6 +2065,23 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createEndoComposite() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
+        misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
+        misc.addLookupName("Endo-Composite");
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
         misc.bv = 0;
 
         return misc;

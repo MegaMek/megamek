@@ -3868,4 +3868,9 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+
+    @Override
+    public String toString() {
+        return "MiscType: "+name;
+    }
 }

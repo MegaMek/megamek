@@ -700,7 +700,7 @@ public class EquipmentType {
 
     @Override
     public String toString() {
-        return name;
+        return "EquipmentType: "+name;
     }
 
 }

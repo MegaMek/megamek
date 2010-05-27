@@ -61,7 +61,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int SYSTEM_GYRO = 4;
 
-    // actutors are systems too, for now
+    // actuators are systems too, for now
     public static final int ACTUATOR_SHOULDER = 7;
 
     public static final int ACTUATOR_UPPER_ARM = 8;

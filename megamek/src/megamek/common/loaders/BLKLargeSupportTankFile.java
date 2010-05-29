@@ -111,6 +111,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         }
         int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight() - t.getSuspensionFactor();
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
+        t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
         if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);

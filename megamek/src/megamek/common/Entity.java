@@ -2234,7 +2234,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     }
 
-    /*
+    /**
      * indicate whether this is a bomb mount
      */
     public Mounted addBomb(EquipmentType etype, int loc) throws LocationFullException {

@@ -563,7 +563,7 @@ public class MiscType extends EquipmentType {
             // according to an email from TPTB, Talon BV is the extra damage
             // they
             // do for kicks, so 50% of normal kick damage
-            returnBV = entity.getWeight() / 5 * 0.5;
+            returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5);
         }
 
         return returnBV;

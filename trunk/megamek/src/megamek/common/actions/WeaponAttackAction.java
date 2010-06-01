@@ -2541,13 +2541,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // for air to ground attacks, the target's position must be within
-            // the flight path
+            // the flight path, unless it is an artillery weapon in the nose.
+            // http://www.classicbattletech.com/forums/index.php?topic=65110.0
             if (!ae.passedThrough(target.getPosition())) {
-                return "target not along flight path";
+                if (!wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                    return "target not along flight path";
+                } else if (weapon.getLocation() != Aero.LOC_NOSE){
+                    return "target not along flight path";
+                }
             }
             if (ae.isNOE()) {
-                return "attacker if flying NOE";
+                return "attacker is flying NOE";
             }
+
+
             // can only make a strike attack against a single target
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();

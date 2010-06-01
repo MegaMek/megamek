@@ -29,6 +29,7 @@ v0.36.16-dev (SVN)
 + Bug: Chameleon Light Polarization Shield name
 + Bug 3009995: Improved Heavy Small Laser range
 + Bug 3008861: minor fix for aero units mounting artillery
++ Bug 3008960: Engine rating rounding wrong
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

@@ -659,7 +659,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createArmoredCowl());
         EquipmentType.addType(MiscType.createNullSignatureSystem());
         EquipmentType.addType(MiscType.createVoidSignatureSystem());
-        EquipmentType.addType(MiscType.createChameleonLightPolarizationField());
+        EquipmentType.addType(MiscType.createChameleonLightPolarizationShield());
         EquipmentType.addType(MiscType.createLightMinesweeper());
         EquipmentType.addType(MiscType.createBridgeKit());
         EquipmentType.addType(MiscType.createVibroShovel());
@@ -1898,12 +1898,13 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createChameleonLightPolarizationField() {
+    public static MiscType createChameleonLightPolarizationShield() {
         MiscType misc = new MiscType();
 
-        misc.name = "Chameleon Light Polarization Field";
-        misc.setInternalName("Chameleon Light Polarization Field");
+        misc.name = "Chameleon Light Polarization Shield";
+        misc.setInternalName("Chameleon Light Polarization Shield");
         misc.addLookupName("Chameleon Light Polarization Field");
+        misc.addLookupName("ChameleonLightPolarizationShield");
         misc.addLookupName("ChameleonLightPolarizationField");
         misc.tonnage = 0;
         misc.criticals = 6;

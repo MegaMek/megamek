@@ -26,6 +26,8 @@ v0.36.16-dev (SVN)
 + added endo-composite structure
 + Bug: Large Support Vehicles not loading cruiseMP
 + Bug: Allowing for pilots with greater then 9 piloting/gunnery
++ Bug: Chameleon Light Polarization Shield name
++ Bug 3009995: Improved Heavy Small Laser range
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

@@ -45,9 +45,9 @@ public class CLImprovedHeavyMediumLaser extends LaserWeapon {
         longRange = 9;
         extremeRange = 12;
         waterShortRange = 2;
-        waterMediumRange = 5;
-        waterLongRange = 8;
-        waterExtremeRange = 10;
+        waterMediumRange = 4;
+        waterLongRange = 6;
+        waterExtremeRange = 8;
         tonnage = 1.0f;
         criticals = 2;
         bv = 93;

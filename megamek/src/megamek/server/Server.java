@@ -5153,7 +5153,6 @@ public class Server implements Runnable {
                                 r = new Report(9390);
                                 r.subject = entity.getId();
                                 r.indent(1);
-                                r.newlines = 0;
                                 r.add(currentBay.getType());
                                 addReport(r);
                                 currentBay.destroyDoorNext();
@@ -5185,7 +5184,6 @@ public class Server implements Runnable {
                         r = new Report(9380);
                         r.add(entity.getDisplayName());
                         r.subject = entity.getId();
-                        r.newlines = 0;
                         r.add(nDropped);
                         addReport(r);
                         for (int unitId : drops) {
@@ -5193,7 +5191,6 @@ public class Server implements Runnable {
                                 r = new Report(9390);
                                 r.subject = entity.getId();
                                 r.indent(1);
-                                r.newlines = 0;
                                 r.add(currentBay.getType());
                                 addReport(r);
                                 currentBay.destroyDoorNext();
@@ -7203,7 +7200,7 @@ public class Server implements Runnable {
                     if (hit.getLocation() == Protomech.LOC_NMISS) {
                         r = new Report(6035);
                         r.subject = te.getId();
-                        r.newlines = 0;
+                        r.indent(2);
                         vPhaseReport.add(r);
                     } else {
                         r = new Report(6690);
@@ -11668,7 +11665,6 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(te.getLocationAbbr(hit));
             r.add(roll);
-            r.newlines = 1;
             addReport(r);
             if (roll >= 10) {
                 hit.makeGlancingBlow();
@@ -15445,7 +15441,6 @@ public class Server implements Runnable {
             r = new Report(6500);
             r.subject = te_n;
             r.indent(2);
-            r.newlines = 0;
             r.addDesc(te);
             r.add(te.getLocationAbbr(undoneLocation));
             vDesc.addElement(r);
@@ -15456,7 +15451,6 @@ public class Server implements Runnable {
             r = new Report(6510);
             r.subject = te_n;
             r.indent(2);
-            r.newlines = 0;
             r.addDesc(te);
             r.add(te.crew.getOptions().intOption("edge"));
             vDesc.addElement(r);
@@ -15522,7 +15516,6 @@ public class Server implements Runnable {
             r = new Report(6035);
             r.subject = te_n;
             r.indent(2);
-            r.newlines = 0;
             vDesc.addElement(r);
             return vDesc;
         }
@@ -15535,7 +15528,6 @@ public class Server implements Runnable {
                 r.add(hit.getLocation());
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
                 return vDesc;
             }
@@ -15544,7 +15536,6 @@ public class Server implements Runnable {
             r.add(te.getLocationAbbr(hit));
             r.subject = te_n;
             r.indent(2);
-            r.newlines = 0;
             vDesc.addElement(r);
 
             crits = 0;
@@ -15572,7 +15563,6 @@ public class Server implements Runnable {
                 r = new Report(6040);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
         }
@@ -15584,7 +15574,6 @@ public class Server implements Runnable {
             r = new Report(6041);
             r.subject = te_n;
             r.indent(2);
-            r.newlines = 0;
             vDesc.addElement(r);
         }
         // If dealing with fragmentation missiles,
@@ -15601,7 +15590,6 @@ public class Server implements Runnable {
                 r.add(reduce);
                 r.add(damage);
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -15611,16 +15599,14 @@ public class Server implements Runnable {
                 r = new Report(6050);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             } else if (isPlatoon) {
                     damage *= 2;
                     r = new Report(6045);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     vDesc.addElement(r);
-            }            
+            }
             break;
         case NONPENETRATING:
             if (!isPlatoon) {
@@ -15628,7 +15614,6 @@ public class Server implements Runnable {
                 r = new Report(6051);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -15638,13 +15623,11 @@ public class Server implements Runnable {
                 r = new Report(6060);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             } else if (isPlatoon && !isBattleArmor) {
                 r = new Report(6055);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -15654,14 +15637,12 @@ public class Server implements Runnable {
                 r = new Report(6061);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 r.add(damage);
                 vDesc.addElement(r);
             } else {
                 r = new Report(6062);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -15672,7 +15653,6 @@ public class Server implements Runnable {
                 r = new Report(6064);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
             break;
@@ -15686,7 +15666,6 @@ public class Server implements Runnable {
                 r = new Report(6065);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.add(r);
             }
             break;
@@ -15718,7 +15697,6 @@ public class Server implements Runnable {
                 r.subject = te_n;
                 r.add(damage);
                 r.indent(3);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
         }
@@ -15728,7 +15706,6 @@ public class Server implements Runnable {
             r = new Report(6074);
             r.subject = te_n;
             r.indent(2);
-            r.newlines = 0;
             r.add(damage);
             damage = (int) Math.ceil((damage) / ((Infantry) te).getDamageDivisor());
             r.add(damage);
@@ -16023,7 +16000,6 @@ public class Server implements Runnable {
                     r = new Report(6069);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (isPlatoon) {
@@ -16055,7 +16031,6 @@ public class Server implements Runnable {
                     r = new Report(6073);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
@@ -16064,7 +16039,6 @@ public class Server implements Runnable {
                     r = new Report(6066);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
@@ -16073,7 +16047,6 @@ public class Server implements Runnable {
                     r = new Report(6067);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reactiveArmor
@@ -16083,7 +16056,6 @@ public class Server implements Runnable {
                     r = new Report(6068);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 }
@@ -16094,7 +16066,6 @@ public class Server implements Runnable {
                     r = new Report(6081);
                     r.subject = te_n;
                     r.indent(2);
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     for (Mounted mount : te.getMisc()) {
                         if (mount.getLocation() == VTOL.LOC_ROTOR) {
@@ -16155,7 +16126,6 @@ public class Server implements Runnable {
                         te.destroyLocation(hit.getLocation());
                         r = new Report(6115);
                         r.subject = te_n;
-                        r.newlines = 0;
                         vDesc.addElement(r);
 
                         if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
@@ -16282,7 +16252,6 @@ public class Server implements Runnable {
                     r.subject = te_n;
                     r.add(damage);
                     r.indent(3);
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     boolean rearArmor = te.hasRearArmor(hit.getLocation());
                     if (damage > te.getArmor(hit.getLocation(), rearArmor)) {
@@ -16302,7 +16271,6 @@ public class Server implements Runnable {
                     r = new Report(6127);
                     r.subject = te.getId();
                     r.add(roll);
-                    r.newlines = 0;
                     vDesc.add(r);
                     if (roll >= 8) {
                         hit.setEffect(HitData.EFFECT_NO_CRITICALS);
@@ -16326,7 +16294,6 @@ public class Server implements Runnable {
                         r.add(te.getArmor(Tank.LOC_REAR));
                     }
                     r.subject = te_n;
-                    r.newlines = 0;
                     r.indent(2);
                     vDesc.add(r);
                     damage = 0;
@@ -16424,7 +16391,6 @@ public class Server implements Runnable {
                             r = new Report(6120);
                             r.subject = te_n;
                             r.add(te.getLocationName(blownOffLocation));
-                            r.newlines = 0;
                             vDesc.addElement(r);
                             IHex h = game.getBoard().getHex(te.getPosition());
                             if (te instanceof BipedMech) {
@@ -16620,7 +16586,6 @@ public class Server implements Runnable {
                         r.subject = te_n;
                         r.add(damage);
                         r.indent(3);
-                        r.newlines = 0;
                         vDesc.addElement(r);
 
                         // ... but page 21 of the Ask The Precentor Martial FAQ
@@ -16635,7 +16600,6 @@ public class Server implements Runnable {
                         r = new Report(6130);
                         r.subject = te_n;
                         r.indent(2);
-                        r.newlines = 0;
                         r.add(damage);
                         r.add(te.getLocationAbbr(nextHit));
                         vDesc.addElement(r);
@@ -16659,7 +16623,6 @@ public class Server implements Runnable {
                             r = new Report(6065);
                             r.subject = te_n;
                             r.indent(2);
-                            r.newlines = 0;
                             vDesc.add(r);
                         }
                     }
@@ -17074,7 +17037,6 @@ public class Server implements Runnable {
             r.indent(2);
             r.addDesc(entity);
             r.add(damage);
-            r.newlines = 0;
             vDesc.addElement(r);
 
             while (damage > 0) {
@@ -17127,7 +17089,6 @@ public class Server implements Runnable {
                 r.indent(2);
                 r.addDesc(e);
                 r.add(damage);
-                r.newlines = 0;
                 vDesc.addElement(r);
 
                 while (damage > 0) {

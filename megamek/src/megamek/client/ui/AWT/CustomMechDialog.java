@@ -56,12 +56,12 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
-import megamek.common.OffBoardDirection;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.OffBoardDirection;
 import megamek.common.Pilot;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
@@ -664,14 +664,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         "allow_advanced_ammo")) {
                     if (!clientgui.getClient().game.getOptions().booleanOption(
                             "is_eq_limits")) {
-                        if ((entity.getTechLevel() == TechConstants.T_CLAN_TW)
+                        if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity.getTechLevel() == TechConstants.T_CLAN_ADVANCED))
                                 && ((atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)
                                         || (atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
                                         .getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
-                        if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (entity
-                                .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))
+                        if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || ((entity
+                                .getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity.getTechLevel() == TechConstants.T_IS_ADVANCED)))
                                 && ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
                                         || (atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
                                         .getTechLevel() == TechConstants.T_IS_UNOFFICIAL))) {

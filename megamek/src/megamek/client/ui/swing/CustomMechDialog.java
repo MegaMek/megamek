@@ -64,12 +64,12 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
-import megamek.common.OffBoardDirection;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.OffBoardDirection;
 import megamek.common.Pilot;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
@@ -160,13 +160,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             .getString("CustomMechDialog.labFatigue"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldFatigue = new JTextField(3);
-    
+
     private JLabel labTough = new JLabel(Messages
             .getString("CustomMechDialog.labTough"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldTough = new JTextField(3);
 
-    
+
     private JLabel labInit = new JLabel(Messages
             .getString("CustomMechDialog.labInit"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -294,7 +294,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private OffBoardDirection direction = OffBoardDirection.NONE;
 
     private int distance = 17;
-    
+
     private JButton butPortrait;
     PortraitChoiceDialog portraitDialog;
 
@@ -355,7 +355,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             labPiloting.setText(Messages
                     .getString("CustomMechDialog.labPiloting"));
         }
-        
+
         butPortrait = new JButton();
         butPortrait.setPreferredSize(new Dimension(72, 72));
         butPortrait.setText(Messages.getString("CustomMechDialog.labPortrait"));
@@ -398,17 +398,17 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panPilot.add(labArtillery, GBC.std());
             panPilot.add(fldArtillery, GBC.eop());
         }
-        
+
         if (client.game.getOptions().booleanOption("tacops_fatigue")) {
             panPilot.add(labFatigue, GBC.std());
             panPilot.add(fldFatigue, GBC.eop());
         }
-        
+
         if(client.game.getOptions().booleanOption("toughness")) {
             panPilot.add(labTough, GBC.std());
             panPilot.add(fldTough, GBC.eop());
         }
-        
+
         if (client.game.getOptions().booleanOption("individual_initiative")) {
             panPilot.add(labInit, GBC.std());
             panPilot.add(fldInit, GBC.eop());
@@ -688,7 +688,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         butCancel.addActionListener(this);
         butNext.addActionListener(this);
         butPrev.addActionListener(this);
-        
+
         // layout
         panButtons.setLayout(new GridLayout(1, 4, 10, 0));
         panButtons.add(butPrev);
@@ -816,14 +816,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         "allow_advanced_ammo")) {
                     if (!clientgui.getClient().game.getOptions().booleanOption(
                             "is_eq_limits")) {
-                        if ((entity.getTechLevel() == TechConstants.T_CLAN_TW)
+                        if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity.getTechLevel() == TechConstants.T_CLAN_ADVANCED))
                                 && ((atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)
                                         || (atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
                                         .getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                         if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (entity
-                                .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))
+                                .getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity.getTechLevel() == TechConstants.T_IS_ADVANCED))
                                 && ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
                                         || (atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
                                         .getTechLevel() == TechConstants.T_IS_UNOFFICIAL))) {
@@ -1602,13 +1602,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             optionComp.setSelected(option.stringValue());
         }
-        
-        if ("specialist".equals(option.getName())) { //$NON-NLS-1$           
+
+        if ("specialist".equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Pilot.SPECIAL_NONE);
             optionComp.addValue(Pilot.SPECIAL_LASER);
             optionComp.addValue(Pilot.SPECIAL_BALLISTIC);
             optionComp.addValue(Pilot.SPECIAL_MISSILE);
-            optionComp.setSelected(option.stringValue()); 
+            optionComp.setSelected(option.stringValue());
         }
 
         gridbag.setConstraints(optionComp, c);

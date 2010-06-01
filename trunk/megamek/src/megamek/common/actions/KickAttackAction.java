@@ -95,12 +95,14 @@ public class KickAttackAction extends PhysicalAttackAction {
             multiplier *= 2.0f;
         }
 
+        double talonMultiplier = 0;
         if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ){
-            multiplier *= 1.5;
+            talonMultiplier *= 1.5;
         }
 
-        int toReturn = (int) Math.floor(damage * multiplier)
-                + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        int toReturn = (int) Math.floor(damage * multiplier);
+        toReturn = (int) Math.round(toReturn * talonMultiplier);
+        toReturn += entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);

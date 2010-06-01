@@ -32,6 +32,7 @@ v0.36.16-dev (SVN)
 + Bug 3008960: Engine rating rounding wrong
 + Bug 3005912: advanced units should be able to use experimental/unofficial ammo
     when option is set
++ Talon BV/damage fix
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

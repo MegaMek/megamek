@@ -95,9 +95,9 @@ public class KickAttackAction extends PhysicalAttackAction {
             multiplier *= 2.0f;
         }
 
-        double talonMultiplier = 0;
+        double talonMultiplier = 1;
         if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ){
-            talonMultiplier *= 1.5;
+            talonMultiplier += 0.5;
         }
 
         int toReturn = (int) Math.floor(damage * multiplier);

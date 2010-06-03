@@ -454,7 +454,7 @@ public class MiscType extends EquipmentType {
             if (entity.isClan()) {
                 return 4;
             }
-            return 8;
+            return 7;
         } else if (hasFlag(F_JUMP_BOOSTER) || hasFlag(F_TALON)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all
             // legs
@@ -3007,7 +3007,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -3872,6 +3872,6 @@ public class MiscType extends EquipmentType {
 
     @Override
     public String toString() {
-        return "MiscType: "+name;
+        return "MiscType: " + name;
     }
 }

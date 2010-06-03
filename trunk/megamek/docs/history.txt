@@ -34,6 +34,7 @@ v0.36.16-dev (SVN)
     when option is set
 + Talon BV/damage fix
 + Bug 3010633: kicks do no damage
++ Bug: Fixed number of crits for Endo-Composite
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

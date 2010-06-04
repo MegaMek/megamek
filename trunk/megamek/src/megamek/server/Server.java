@@ -15757,7 +15757,6 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 r = new Report(6085);
                 r.subject = te_n;
-                r.newlines = 0;
                 r.add(Math.max(a.getCapArmor(), 0));
                 vDesc.addElement(r);
                 // check to see if this detroyed the entity
@@ -16086,7 +16085,6 @@ public class Server implements Runnable {
                     damage = 0;
                     r = new Report(6085);
                     r.subject = te_n;
-                    r.newlines = 0;
                     if (spotlightHittable) {
                         r.indent(3);
                     }

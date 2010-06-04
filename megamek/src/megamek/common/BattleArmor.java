@@ -913,7 +913,13 @@ public class BattleArmor extends Infantry {
     @Override
     public void applyDamage() {
         super.applyDamage();
-        troopersShooting = getTotalInternal();
+        int troopersAlive = 0;
+        for (int i = 0; i < locations(); i++) {
+            if (getInternal(i) > 0) {
+                troopersAlive++;
+            }
+        }
+        troopersShooting = troopersAlive;
     }
 
     /**

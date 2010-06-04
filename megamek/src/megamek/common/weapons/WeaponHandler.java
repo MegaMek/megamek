@@ -164,7 +164,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.add(toReturn);
             r.add(" troopers ");
             r.add(toHit.getTableDesc());
-            r.newlines = 0;
             vPhaseReport.add(r);
             return toReturn;
         }

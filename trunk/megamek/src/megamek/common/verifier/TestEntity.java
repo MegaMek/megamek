@@ -22,6 +22,7 @@ package megamek.common.verifier;
 import java.util.Iterator;
 
 import megamek.common.AmmoType;
+import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -30,6 +31,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -609,7 +611,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     *
+     * 
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal
@@ -697,80 +699,140 @@ public abstract class TestEntity implements TestEntityOption {
             }
             if (mech.isIndustrial()) {
                 if (mech.hasTSM()) {
-                    buff.append("industrial mech can't mount normal TSM");
+                    buff.append("industrial mech can't mount normal TSM\n");
                     illegal = true;
                 }
                 if (mech.hasMASC()) {
-                    buff.append("industrial mech can't mount MASC");
+                    buff.append("industrial mech can't mount MASC\n");
                     illegal = true;
                 }
                 if ((mech.getCockpitType() == Mech.COCKPIT_INDUSTRIAL) || (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
                     if (mech.hasC3()) {
-                        buff.append("industrial mech without advanced fire control can't use c3 computer");
+                        buff.append("industrial mech without advanced fire control can't use c3 computer\n");
                         illegal = true;
                     }
                     if (mech.hasTargComp()) {
-                        buff.append("industrial mech without advanced fire control can't use targeting computer");
+                        buff.append("industrial mech without advanced fire control can't use targeting computer\n");
                         illegal = true;
                     }
                     if (mech.hasBAP()) {
-                        buff.append("industrial mech without advanced fire control can't use BAP");
+                        buff.append("industrial mech without advanced fire control can't use BAP\n");
                         illegal = true;
                     }
                     for (Mounted mounted : mech.getMisc()) {
                         if (mounted.getType().hasFlag(MiscType.F_ARTEMIS) || mounted.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                            buff.append("industrial mech without advanced fire control can't use artemis");
+                            buff.append("industrial mech without advanced fire control can't use artemis\n");
                             illegal = true;
                         }
                     }
                     if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE)) {
-                        buff.append("industrial mechs can only mount standard jump jets");
+                        buff.append("industrial mechs can only mount standard jump jets\n");
                         illegal = true;
                     }
                     if (mech.getGyroType() != Mech.GYRO_STANDARD) {
-                        buff.append("industrial mechs can only mount standard gyros");
+                        buff.append("industrial mechs can only mount standard gyros\n");
                         illegal = true;
                     }
                 }
             } else {
                 if (mech.hasIndustrialTSM()) {
-                    buff.append("standard mech can't mount industrial TSM");
+                    buff.append("standard mech can't mount industrial TSM\n");
                     illegal = true;
                 }
                 if (mech.hasEnvironmentalSealing()) {
-                    buff.append("standard mech can't mount environmental sealing");
+                    buff.append("standard mech can't mount environmental sealing\n");
                     illegal = true;
                 }
             }
             if (mech.isPrimitive()) {
                 if (mech.isOmni()) {
-                    buff.append("primitive mechs can't be omnis");
+                    buff.append("primitive mechs can't be omnis\n");
                     illegal = true;
                 }
                 if (!((mech.getStructureType() == EquipmentType.T_STRUCTURE_STANDARD) || (mech.getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL))) {
-                    buff.append("primitive mechs can't mount advanced inner structure");
+                    buff.append("primitive mechs can't mount advanced inner structure\n");
                     illegal = true;
                 }
                 if ((mech.getEngine().getEngineType() == Engine.XL_ENGINE) || (mech.getEngine().getEngineType() == Engine.LIGHT_ENGINE) || (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE) || mech.getEngine().hasFlag(Engine.LARGE_ENGINE) || (mech.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
-                    buff.append("primitive mechs can't mount XL, Light, Compact, XXL or Large Engines");
+                    buff.append("primitive mechs can't mount XL, Light, Compact, XXL or Large Engines\n");
                     illegal = true;
                 }
                 if (mech.hasMASC() || mech.hasTSM()) {
-                    buff.append("primitive mechs can't mount advanced myomers");
+                    buff.append("primitive mechs can't mount advanced myomers\n");
                     illegal = true;
                 }
                 if (mech.isIndustrial()) {
                     if (mech.getArmorType() != EquipmentType.T_ARMOR_COMMERCIAL) {
-                        buff.append("primitive industrialmechs must mount commercial armor");
+                        buff.append("primitive industrialmechs must mount commercial armor\n");
                         illegal = true;
                     }
                 } else {
                     if (mech.getArmorType() != EquipmentType.T_ARMOR_INDUSTRIAL) {
-                        buff.append("primitive battlemechs must mount primitive battlemech (industrial) armor");
+                        buff.append("primitive battlemechs must mount primitive battlemech (industrial) armor\n");
                         illegal = true;
                     }
                 }
             }
+
+            for (Mounted mounted : mech.getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+
+                    if (mech.hasTargComp() || mech.hasTSM() || (mech.hasMASC() && !mech.hasWorkingMisc(MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
+                        illegal = true;
+                        buff.append("Unable to load AES due to incompatible systems\n");
+                    }
+
+                    if ((mounted.getLocation() != Mech.LOC_LARM) && (mounted.getLocation() != Mech.LOC_LLEG) && (mounted.getLocation() != Mech.LOC_RARM) && (mounted.getLocation() != Mech.LOC_RLEG)) {
+                        illegal = true;
+                        buff.append("Unable to load AES due to incompatible location\n");
+                    }
+
+                }
+
+                if (mounted.getType().hasFlag(MiscType.F_HARJEL) && (mounted.getLocation() == Mech.LOC_HEAD)) {
+                    illegal = true;
+                    buff.append("Unable to load harjel in head.\n");
+                }
+
+                if (mounted.getType().hasFlag(MiscType.F_MASS) && ((mounted.getLocation() != Mech.LOC_HEAD) || ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (mounted.getLocation() != Mech.LOC_CT)))) {
+                    illegal = true;
+                    buff.append("Unable to load MASS!  Must be located in the same location as the cockpit.\n");
+                }
+
+                if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == Mech.LOC_HEAD)) {
+                    illegal = true;
+                    buff.append("Unable to load Modular Armor in Rotor/Head location\n");
+                }
+
+                if (mounted.getType().hasFlag(MiscType.F_TALON)) {
+                    if (mech instanceof BipedMech) {
+                        if ((mounted.getLocation() != Mech.LOC_LLEG) && (mounted.getLocation() != Mech.LOC_RLEG)) {
+                            illegal = true;
+                            buff.append("Talons are only legal in the Legs\n");
+                        }
+
+                        if (!mech.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) || !mech.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG)) {
+                            illegal = true;
+                            buff.append("Talons must be in all legs\n");
+                        }
+                    } else if (mech instanceof QuadMech) {
+                        if ((mounted.getLocation() != Mech.LOC_LLEG) && (mounted.getLocation() != Mech.LOC_RLEG) && (mounted.getLocation() != Mech.LOC_LARM) && (mounted.getLocation() != Mech.LOC_RARM)) {
+                            buff.append("Talons are only legal in the Legs\n");
+                            illegal = true;
+                        }
+
+                        if (!mech.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) || !mech.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) || !mech.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) || !mech.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM)) {
+                            buff.append("Talons must be in all legs\n");
+                            illegal = true;
+                        }
+
+                    } else {
+                        buff.append("Unable to load talons in non-Mek entity\n");
+                        illegal = true;
+                    }
+                }
+            }
+
         }
         return illegal;
     }

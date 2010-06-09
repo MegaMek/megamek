@@ -37,6 +37,8 @@ v0.36.16-dev (SVN)
 + Bug: Fixed number of crits for Endo-Composite
 + Bug 3009238: dermal armor BA have too many troopers shooting
 + Updated TestMech to check for new illegal equipment combos.
++ Bug: XXL Engine weight sometimes wrong
++ Bug: Mace has wrong weight in verifier
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

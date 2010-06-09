@@ -63,6 +63,7 @@ public class MtfFile implements IMechLoader {
     String myomerType;
     String gyroType;
     String cockpitType;
+    String ejectionType;
 
     String heatSinks;
     String walkMP;
@@ -99,7 +100,8 @@ public class MtfFile implements IMechLoader {
             version = r.readLine();
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
-            if (!version.trim().equalsIgnoreCase("Version:1.0") && !version.trim().equalsIgnoreCase("Version:1.1")) {
+            // version 1.2: added full head ejection
+            if (!version.trim().equalsIgnoreCase("Version:1.0") && !version.trim().equalsIgnoreCase("Version:1.1") && !version.trim().equalsIgnoreCase("Version:1.2")) {
                 throw new EntityLoadingException("Wrong MTF file version.");
             }
 
@@ -194,6 +196,11 @@ public class MtfFile implements IMechLoader {
             } catch (Exception e) {
                 iCockpitType = Mech.COCKPIT_STANDARD;
             }
+            boolean fullHead = false;
+            try {
+                fullHead = ejectionType.substring(9).equals(Mech.FULL_HEAD_EJECT_STRING);
+            } catch (Exception e) {
+            }
             if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
@@ -201,6 +208,7 @@ public class MtfFile implements IMechLoader {
             } else {
                 mech = new BipedMech(iGyroType, iCockpitType);
             }
+            mech.setFullHeadEject(fullHead);
 
             // aarg! those stupid sub-names in parenthesis screw everything up
             // we may do something different in the future, but for now, I'm
@@ -698,6 +706,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("gyro:")) {
             gyroType = line;
+            return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith("ejection:")) {
+            ejectionType = line;
             return true;
         }
 

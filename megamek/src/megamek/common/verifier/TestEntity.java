@@ -30,7 +30,6 @@ import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
@@ -240,76 +239,19 @@ public abstract class TestEntity implements TestEntityOption {
         return armor.getWeightArmor(getTotalOArmor(), getWeightCeilingArmor());
     }
 
-    public float getWeightMiscEquip(MiscType mt) {
-        if (mt.hasFlag(MiscType.F_HEAT_SINK) || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-            return 0f;
-        }
-        if (mt.hasFlag(MiscType.F_FERRO_FIBROUS)) {
-            return 0f;
-        }
-        if (mt.hasFlag(MiscType.F_ENDO_STEEL)) {
-            return 0f;
-        }
-        if (mt.hasFlag(MiscType.F_ENDO_COMPOSITE)) {
-            return 0f;
-        }
-        if (mt.hasFlag(MiscType.F_FERRO_LAMELLOR)) {
-            return 0f;
-        }
-
-        if (mt.hasFlag(MiscType.F_JUMP_JET)) {
-            return mt.getTonnage(getEntity());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && (mt.hasSubType(MiscType.S_HATCHET) || mt.hasSubType(MiscType.S_MACE_THB))) {
-            return TestEntity.ceil(getWeight() / 15.0f, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && (mt.hasSubType(MiscType.S_SWORD) || mt.hasSubType(MiscType.S_CHAIN_WHIP))) {
-            return TestEntity.ceilMaxHalf(getWeight() / 20.0f, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-            return TestEntity.ceilMaxHalf(0.5f + getWeight() / 20.0f, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_MACE)) {
-            return TestEntity.ceilMaxHalf(getWeight() / 10.0f, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_PILE_DRIVER)) {
-            return TestEntity.ceilMaxHalf(10, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_CHAINSAW)) {
-            return TestEntity.ceilMaxHalf(5, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_DUAL_SAW)) {
-            return TestEntity.ceilMaxHalf(7, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_CLUB) && mt.hasSubType(MiscType.S_BACKHOE)) {
-            return TestEntity.ceilMaxHalf(5, getWeightCeilingWeapons());
-        } else if (mt.hasFlag(MiscType.F_MASC) && !(getEntity() instanceof Protomech)) {
-            if (mt.hasSubType(MiscType.S_SUPERCHARGER)) {
-                return TestEntity.ceilMaxHalf(getWeightEngine() / 10.0f, TestEntity.CEIL_HALFTON);
-            }
-            if (mt.getInternalName().equals("ISMASC")) {
-                return Math.round(getWeight() / 20.0f);
-            } else if (mt.getInternalName().equals("CLMASC")) {
-                return Math.round(getWeight() / 25.0f);
-            }
-        } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
-            float fTons = 0.0f;
-            for (Mounted mo : getEntity().getWeaponList()) {
-                WeaponType wt = (WeaponType) mo.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    fTons += wt.getTonnage(getEntity());
-                }
-            }
-            if (mt.getInternalName().equals("ISTargeting Computer")) {
-                return TestEntity.ceil(fTons / 4.0f, getWeightCeilingTargComp());
-            } else if (mt.getInternalName().equals("CLTargeting Computer")) {
-                return TestEntity.ceil(fTons / 5.0f, getWeightCeilingTargComp());
-            }
-        } else if (mt.hasFlag(MiscType.F_VACUUM_PROTECTION)) {
-            return Math.round(getWeight() / 10.0f);
-        } else {
-            return mt.getTonnage(getEntity());
-        }
-        return 0f;
-    }
-
     public float getWeightMiscEquip() {
         float weightSum = 0.0f;
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
-            weightSum += getWeightMiscEquip(mt);
+            if (mt.hasFlag(MiscType.F_ENDO_STEEL) ||
+                    mt.hasFlag(MiscType.F_FERRO_FIBROUS) ||
+                    mt.hasFlag(MiscType.F_FERRO_LAMELLOR) ||
+                    mt.hasFlag(MiscType.F_ENDO_COMPOSITE) ||
+                    mt.hasFlag(MiscType.F_HEAT_SINK) ||
+                    mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                continue;
+            }
+            weightSum += mt.getTonnage(getEntity());
         }
         return weightSum;
     }
@@ -330,12 +272,12 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            if (getWeightMiscEquip(mt) == 0f) {
+            if (mt.getTonnage(getEntity()) == 0f) {
                 continue;
             }
 
             buff.append(StringUtil.makeLength(mt.getName(), 20));
-            buff.append(StringUtil.makeLength(getLocationAbbr(m.getLocation()), getPrintSize() - 5 - 20)).append(TestEntity.makeWeightString(getWeightMiscEquip(mt)));
+            buff.append(StringUtil.makeLength(getLocationAbbr(m.getLocation()), getPrintSize() - 5 - 20)).append(TestEntity.makeWeightString(mt.getTonnage(getEntity())));
             buff.append("\n");
         }
         return buff;
@@ -344,8 +286,8 @@ public abstract class TestEntity implements TestEntityOption {
     public float getWeightWeapon() {
         float weight = 0.0f;
         for (Mounted m : getEntity().getWeaponList()) {
-            WeaponType mt = (WeaponType) m.getType();
-            weight += mt.getTonnage(getEntity());
+            WeaponType wt = (WeaponType) m.getType();
+            weight += wt.getTonnage(getEntity());
         }
         return weight;
     }
@@ -611,7 +553,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     * 
+     *
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal

@@ -233,7 +233,7 @@ public class Engine implements Serializable {
                 weight *= 0.75f;
                 break;
             case XXL_ENGINE:
-                weight *= 0.33f;
+                weight /= 3f;
                 break;
             case COMPACT_ENGINE:
                 weight *= 1.5f;

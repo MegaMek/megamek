@@ -39,6 +39,7 @@ v0.36.16-dev (SVN)
 + Updated TestMech to check for new illegal equipment combos.
 + Bug: XXL Engine weight sometimes wrong
 + Bug: Mace has wrong weight in verifier
++ Added full-head ejection system (no game rules yet)
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

@@ -147,6 +147,8 @@ public abstract class Mech extends Entity implements Serializable {
     public static final String[] COCKPIT_SHORT_STRING =
         { "Standard", "Industrial", "Primitive", "Primitive Industrial", "Small", "Command Console", "Torso Mounted", "Dual" };
 
+    public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
+
     // jump types
     public static final int JUMP_UNKNOWN = -1;
 
@@ -220,6 +222,8 @@ public abstract class Mech extends Entity implements Serializable {
     private boolean checkForCrit = false;
 
     private int levelsFallen = 0;
+
+    private boolean fullHeadEject = false;
 
     /**
      * Construct a new, blank, mech.
@@ -4133,7 +4137,7 @@ public abstract class Mech extends Entity implements Serializable {
      * @return The cost in C-Bills of the 'Mech in question.
      */
     public double getCost(StringBuffer detail, boolean ignoreAmmo) {
-        double[] costs = new double[14];
+        double[] costs = new double[15];
         int i = 0;
 
         double cockpitCost = 0;
@@ -4186,10 +4190,12 @@ public abstract class Mech extends Entity implements Serializable {
             }
             costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight * jumpBaseCost;
         }
-        int freeSinks = hasDoubleHeatSinks() ? 0 : 10;// num of sinks we don't
-        // pay for
+        // num of sinks we don't pay for
+        int freeSinks = hasDoubleHeatSinks() ? 0 : 10;
         int sinkCost = hasDoubleHeatSinks() ? 6000 : 2000;
-        costs[i++] = sinkCost * (heatSinks() - freeSinks);// cost of sinks
+        // cost of sinks
+        costs[i++] = sinkCost * (heatSinks() - freeSinks);
+        costs[i++] = hasFullHeadEject()?1725000:0;
         costs[i++] = getArmorWeight() * EquipmentType.getArmorCost(armorType);
         costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
 
@@ -4216,7 +4222,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     private void addCostDetails(double cost, StringBuffer detail, double[] costs) {
         String[] left =
-            { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators", "Engine", "Gyro", "Jump Jets", "Heatsinks", "Armor", "Equipment", "Omni Multiplier", "Weight Multiplier" };
+            { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators", "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System", "Armor", "Equipment", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -4242,7 +4248,7 @@ public abstract class Mech extends Entity implements Serializable {
         // find the maximum length of the columns.
         for (int l = 0; l < left.length; l++) {
 
-            if (l == 11) {
+            if (l == 12) {
                 getWeaponsAndEquipmentCost(detail, true);
             } else {
                 detail.append(startRow);
@@ -5017,10 +5023,13 @@ public abstract class Mech extends Entity implements Serializable {
         String nl = "\r\n"; // DOS friendly
 
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD) && (getGyroType() == Mech.GYRO_STANDARD);
-        if (standard) {
+        boolean fullHead = hasFullHeadEject();
+        if (standard && !fullHead) {
             sb.append("Version:1.0").append(nl);
-        } else {
+        } else if (!fullHead){
             sb.append("Version:1.1").append(nl);
+        } else {
+            sb.append("Version:1.2").append(nl);
         }
         sb.append(chassis).append(nl);
         sb.append(model).append(nl);
@@ -5082,6 +5091,11 @@ public abstract class Mech extends Entity implements Serializable {
 
             sb.append("Gyro:");
             sb.append(getGyroTypeString());
+            sb.append(nl);
+        }
+        if (hasFullHeadEject()) {
+            sb.append("Ejection:");
+            sb.append(Mech.FULL_HEAD_EJECT_STRING);
             sb.append(nl);
         }
         sb.append(nl);
@@ -6071,6 +6085,14 @@ public abstract class Mech extends Entity implements Serializable {
             return 1.0;
         }
         return 0.5;
+    }
+
+    public void setFullHeadEject(boolean fullHeadEject) {
+        this.fullHeadEject = fullHeadEject;
+    }
+
+    public boolean hasFullHeadEject() {
+        return fullHeadEject;
     }
 
     /**

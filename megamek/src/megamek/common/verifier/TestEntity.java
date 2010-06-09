@@ -584,6 +584,12 @@ public abstract class TestEntity implements TestEntityOption {
                         break;
                 }
             }
+            if (mech.hasFullHeadEject()) {
+                if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) || (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE)) {
+                    buff.append("full head ejection system incompatible with cockpit type");
+                    illegal = true;
+                }
+            }
 
             // TODO: disallow the weapons on quads, except unless it's one per
             // side torso

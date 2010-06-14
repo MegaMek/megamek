@@ -185,7 +185,7 @@ public class MechFileParser {
         }
 
         m_entity = loader.getEntity();
-        postLoadInit(m_entity);
+        MechFileParser.postLoadInit(m_entity);
     }
 
     /**
@@ -219,6 +219,29 @@ public class MechFileParser {
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
 
+            // link laser insulators
+            if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR))) {
+                // get the mount directly before the insulator, this is the
+                // weapon
+                Mounted weapon = ent.getEquipment().get(ent.getEquipment().indexOf(m)-1);
+                // already linked?
+                if (weapon.getLinkedBy() != null) {
+                    continue;
+                }
+                if (!(weapon.getType() instanceof WeaponType) && !(weapon.getType().hasFlag(WeaponType.F_LASER))) {
+                    continue;
+                }
+                // check location
+                if (weapon.getLocation() == m.getLocation()) {
+                    m.setLinked(weapon);
+                    break;
+                }
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException("Unable to match laser insulator to laser");
+                }
+            }
+
             // Link Artemis IV fire-control systems to their missle racks.
             if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))) && (m.getLinked() == null)) {
 
@@ -238,11 +261,6 @@ public class MechFileParser {
 
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
-                        m.setLinked(mWeapon);
-                        break;
-                    }
-                    // also, mechs have a special location rule
-                    else if ((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD) && (mWeapon.getLocation() == Mech.LOC_CT)) {
                         m.setLinked(mWeapon);
                         break;
                     }

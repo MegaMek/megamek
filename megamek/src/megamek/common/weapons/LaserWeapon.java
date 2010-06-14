@@ -18,6 +18,12 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.IGame;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -34,5 +40,22 @@ public abstract class LaserWeapon extends EnergyWeapon {
         ammoType = AmmoType.T_NA;
 
         atClass = CLASS_LASER;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
+     */
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        Mounted linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
+        if (linkedBy != null && !linkedBy.isInoperable() && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+            return new InsulatedLaserWeaponHandler(toHit, waa, game, server);
+        }
+        return new EnergyWeaponHandler(toHit, waa, game, server);
     }
 }

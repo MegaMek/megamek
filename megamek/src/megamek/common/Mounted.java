@@ -1014,7 +1014,7 @@ public class Mounted implements Serializable, RoundUpdated {
         return false;
     }
 
-    /*
+    /**
      * returns the heat for this weapon taking account of rapid-fire weapon status
      */
     public int getCurrentHeat() {
@@ -1035,6 +1035,14 @@ public class Mounted implements Serializable, RoundUpdated {
             }
             if(hasChargedCapacitor()) {
                 heat += 5;
+            }
+            if (getLinkedBy() != null && !getLinkedBy().isInoperable()
+                    && getLinkedBy().getType() instanceof MiscType
+                    && getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                heat -= 1;
+                if (heat == 0) {
+                    heat++;
+                }
             }
             return heat;
         }
@@ -1183,7 +1191,7 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean isRepairable() {
         return repairable;
     }
-    
+
     public Entity getEntity() {
         return entity;
     }

@@ -3442,6 +3442,16 @@ public abstract class Mech extends Entity implements Serializable {
                 weaponHeat *= 6;
             }
 
+            // laser insulator reduce heat by 1, to a minimum of 1
+            if (wtype.hasFlag(WeaponType.F_LASER) && mounted.getLinkedBy() != null
+                    && !mounted.getLinkedBy().isInoperable()
+                    && mounted.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                weaponHeat -= 1;
+                if (weaponHeat == 0) {
+                    weaponHeat++;
+                }
+            }
+
             // half heat for streaks
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;

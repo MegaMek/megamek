@@ -39,7 +39,7 @@ public class TestTank extends TestEntity {
     private Tank tank = null;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
-        super(options, tank.getEngine(), getArmor(tank), getStructure(tank));
+        super(options, tank.getEngine(), TestTank.getArmor(tank), TestTank.getStructure(tank));
         this.tank = tank;
         this.fileString = fileString;
     }
@@ -91,7 +91,7 @@ public class TestTank extends TestEntity {
                 weight += ((WeaponType) m.getType()).getTonnage(tank);
             }
         }
-        return ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
+        return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
     }
 
     public float getTankWeightLifting() {
@@ -123,7 +123,7 @@ public class TestTank extends TestEntity {
                     weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
                 }
             }
-            return ceil(weight / 10f, getWeightCeilingPowerAmp());
+            return TestEntity.ceil(weight / 10f, getWeightCeilingPowerAmp());
         }
         return 0f;
     }
@@ -147,6 +147,16 @@ public class TestTank extends TestEntity {
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)) {
                 heat += wt.getHeat();
             }
+            // laser insulator reduce heat by 1, to a minimum of 1
+            if (wt.hasFlag(WeaponType.F_LASER) && m.getLinkedBy() != null
+                    && !m.getLinkedBy().isInoperable()
+                    && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+                heat -= 1;
+                if (heat == 0) {
+                    heat++;
+                }
+            }
+
             if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
                     MiscType) && m.getLinkedBy().getType().
                     hasFlag(MiscType.F_PPC_CAPACITOR)) {
@@ -194,19 +204,19 @@ public class TestTank extends TestEntity {
     public String printWeightMisc() {
         return (!tank.hasNoTurret() ? StringUtil.makeLength("Turret:",
                 getPrintSize() - 5)
-                + makeWeightString(getTankWeightTurret()) + "\n" : "")
+                + TestEntity.makeWeightString(getTankWeightTurret()) + "\n" : "")
                 + (getTankWeightLifting() != 0 ? StringUtil.makeLength(
                         "Lifting Equip:", getPrintSize() - 5)
-                        + makeWeightString(getTankWeightLifting()) + "\n" : "")
+                        + TestEntity.makeWeightString(getTankWeightLifting()) + "\n" : "")
                 + (getTankPowerAmplifier() != 0 ? StringUtil.makeLength(
                         "Power Amp:", getPrintSize() - 5)
-                        + makeWeightString(getTankPowerAmplifier()) + "\n" : "");
+                        + TestEntity.makeWeightString(getTankPowerAmplifier()) + "\n" : "");
     }
 
     @Override
     public String printWeightControls() {
         return StringUtil.makeLength("Controls:", getPrintSize() - 5)
-                + makeWeightString(getWeightControls()) + "\n";
+                + TestEntity.makeWeightString(getWeightControls()) + "\n";
     }
 
     public Tank getTank() {

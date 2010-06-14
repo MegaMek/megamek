@@ -121,6 +121,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BASIC_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(78);
     public static final BigInteger F_ADVANCED_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(79);
     public static final BigInteger F_ENDO_COMPOSITE = BigInteger.valueOf(1).shiftLeft(80);
+    public static final BigInteger F_LASER_INSULATOR = BigInteger.valueOf(1).shiftLeft(81);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -732,6 +733,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFuelHalf());
         EquipmentType.addType(MiscType.createBlueShield());
         EquipmentType.addType(MiscType.createEndoComposite());
+        EquipmentType.addType(MiscType.createCLLaserInsulator());
+        EquipmentType.addType(MiscType.createISLaserInsulator());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3007,7 +3010,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -3866,6 +3869,32 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(MiscType.F_SUPPORT_TANK_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createISLaserInsulator() {
+        MiscType misc = new MiscType();
+        misc.name = "Laser Insulator";
+        misc.setInternalName("ISLaserInsulator");
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 3500;
+        misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createCLLaserInsulator() {
+        MiscType misc = new MiscType();
+        misc.name = "Laser Insulator";
+        misc.setInternalName("CLLaserInsulator");
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 3500;
+        misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
 
         return misc;
     }

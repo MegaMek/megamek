@@ -26,7 +26,7 @@ Unit_1stSomersetStrikers_11=Foot Platoon (Laser),B3,4,4,N,09,13
 # Unit_1stSomersetStrikers_12=Banshee BSE-X2,Franklin Sakamoto,3,4
 # Black Vision, Redmond's Star: 
 Unit_BlackVision_1=Mad Dog Prime,Star Colonel Kristen Redmond,2,2,S,08,01
-Unit_BlackVision_2=Hunchback IIC HBK-IIC,Mechwarrior Pytor,2,2,S,09,01
+Unit_BlackVision_2=Hunchback IIC,Mechwarrior Pytor,2,2,S,09,01
 Unit_BlackVision_3=Timber Wolf Prime,Mechwarrior Jentry,3,4,S,10,01
 Unit_BlackVision_4=Timber Wolf Prime,Mechwarrior Elston,3,4,S,06,01
 Unit_BlackVision_5=Timber Wolf Prime,Mechwarrior Althea,3,4,S,07,01

@@ -12,7 +12,7 @@ Location_1stSomersetStrikers=any
 # Command Star:
 Unit_FalconsClaws_1=Summoner M,Star Colonel Nicolai Malthus,1,2,N,08,33
 Unit_FalconsClaws_2=Timber Wolf Prime,Mechwarrior Ciro,4,5,N,07,34
-Unit_FalconsClaws_3=Hunchback IIC HBK-IIC,Mechwarrior Ross,3,4,N,09,34
+Unit_FalconsClaws_3=Hunchback IIC,Mechwarrior Ross,3,4,N,09,34
 Unit_FalconsClaws_4=Mad Dog Prime,Mechwarrior Uri,3,4,N,06,34
 Unit_FalconsClaws_5=Mad Dog Prime,Mechwarrior Elaine,3,4,N,10,34
 # Elemental Star:

@@ -12,12 +12,12 @@ Location_1stSomersetStrikers=any
 # Malthus's Star:
 Unit_MalthusStar_1=Summoner M,Star Colonel Nicolai Malthus,1,2,N,14,12
 Unit_MalthusStar_2=Timber Wolf Prime,Mechwarrior Ciro,4,5,N,14,11
-Unit_MalthusStar_3=Hunchback IIC HBK-IIC,Mechwarrior Ross,3,4,N,14,13
-Unit_MalthusStar_4=Hunchback IIC HBK-IIC,Mechwarrior Uri,3,4,N,15,12
-Unit_MalthusStar_5=Hunchback IIC HBK-IIC,Mechwarrior Elaine,3,4,N,13,12
+Unit_MalthusStar_3=Hunchback IIC,Mechwarrior Ross,3,4,N,14,13
+Unit_MalthusStar_4=Hunchback IIC,Mechwarrior Uri,3,4,N,15,12
+Unit_MalthusStar_5=Hunchback IIC,Mechwarrior Elaine,3,4,N,13,12
 # Redmond's Star: 
 Unit_RedmondStar_1=Mad Dog Prime,Star Colonel Kristen Redmond,2,2,NE,01,10
-Unit_RedmondStar_2=Hunchback IIC HBK-IIC,Mechwarrior Pytor,2,2,NE,01,09
+Unit_RedmondStar_2=Hunchback IIC,Mechwarrior Pytor,2,2,NE,01,09
 Unit_RedmondStar_3=Timber Wolf Prime,Mechwarrior Jentry,3,4,NE,01,11
 Unit_RedmondStar_4=Timber Wolf Prime,Mechwarrior Elston,3,4,NE,02,10
 Unit_RedmondStar_5=Timber Wolf Prime,Mechwarrior Althea,3,4,NE,02,09

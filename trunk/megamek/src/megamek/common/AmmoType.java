@@ -1082,7 +1082,7 @@ public class AmmoType extends EquipmentType {
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
         AmmoType.createMunitions(longTomAmmos, munitions);
-        
+
         // Create the munition types for Artillery Cannons.
         // These were taken out in TacOps errata, so are unofficial.
         munitions.clear();
@@ -6339,7 +6339,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_TBOLT_20;
         ammo.shots = 3;
-        ammo.bv = 35;
+        ammo.bv = 38;
         ammo.cost = 50000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[] { "", "HotLoad" });

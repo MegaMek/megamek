@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.36.16-dev (SVN)
+v0.36.16 (2010-06-19. 16:28 UTC+2)
 + isometric rendering fixes
 + weapons fire report newline fix
 + unitoverview drawing fix when window wider than board image

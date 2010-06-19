@@ -41,6 +41,7 @@ v0.36.16-dev (SVN)
 + Bug: Mace has wrong weight in verifier
 + Added full-head ejection system (no game rules yet)
 + Added laser insulators
++ Bug: armor weight sometimes not correct, stupid floating point inaccuracy
 
 v0.35.15 (2010-05-02, 21:11 UTC+2)
 + Improve swing board drawing performance by a huge margin

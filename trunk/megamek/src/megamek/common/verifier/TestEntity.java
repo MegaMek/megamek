@@ -849,21 +849,21 @@ class Armor {
     }
 
     public static float getWeightArmor(int armorType, int armorFlags, int totalOArmor, float roundWeight) {
-        float points = totalOArmor;
+        double points = totalOArmor;
         int techLevel;
         if ((armorFlags & CLAN_ARMOR) != 0) {
             techLevel = TechConstants.T_CLAN_TW;
         } else {
             techLevel = TechConstants.T_IS_TW_NON_BOX;
         }
-        float multiplier = (float) EquipmentType.getArmorPointMultiplier(armorType, techLevel);
+        double multiplier = EquipmentType.getArmorPointMultiplier(armorType, techLevel);
         points /= multiplier;
-        float pointsPerTon = 16.0f;
+        double pointsPerTon = 16.0f;
         if (armorType == EquipmentType.T_ARMOR_HARDENED) {
             pointsPerTon = 8.0f;
         }
-        float armorWeight = points / pointsPerTon;
-        return TestEntity.ceilMaxHalf(armorWeight, roundWeight);
+        double armorWeight = points / pointsPerTon;
+        return TestEntity.ceilMaxHalf((float)armorWeight, roundWeight);
     }
 
     public String getShortName() {

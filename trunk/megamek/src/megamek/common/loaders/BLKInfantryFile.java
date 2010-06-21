@@ -145,6 +145,9 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("sneakecm")) {
             t.setSneakECM(true);
         }
+        if (dataFile.exists("armordivisor")) {
+            t.setDamageDivisor(Double.valueOf(dataFile.getDataAsString("armordivisor")[0]));
+        }
         // get field guns
         loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
 

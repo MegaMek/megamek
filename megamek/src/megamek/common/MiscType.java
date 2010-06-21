@@ -122,6 +122,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_ADVANCED_FIRECONTROL = BigInteger.valueOf(1).shiftLeft(79);
     public static final BigInteger F_ENDO_COMPOSITE = BigInteger.valueOf(1).shiftLeft(80);
     public static final BigInteger F_LASER_INSULATOR = BigInteger.valueOf(1).shiftLeft(81);
+    public static final BigInteger F_LIQUID_CARGO = BigInteger.valueOf(1).shiftLeft(82);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -715,6 +716,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISPartialWing());
         EquipmentType.addType(MiscType.createCargo1());
         EquipmentType.addType(MiscType.createHalfCargo());
+        EquipmentType.addType(MiscType.createLiquidCargo1());
+        EquipmentType.addType(MiscType.createHalfLiquidCargo());
         EquipmentType.addType(MiscType.createCargoContainer());
         EquipmentType.addType(MiscType.createMechSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
@@ -3628,6 +3631,34 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createLiquidCargo1() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Liquid Storage (1 ton)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+
+        return misc;
+    }
+
+    public static MiscType createHalfLiquidCargo() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Liquid Storage (0.5 tons)";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;

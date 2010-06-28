@@ -71,14 +71,22 @@ public class MechFileParser {
     private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
 
     public MechFileParser(File f) throws EntityLoadingException {
-        this(f, null);
+        this(f, null, false);
     }
 
     public MechFileParser(File f, String entryName) throws EntityLoadingException {
+        this(f, entryName, false);
+    }
+
+    public MechFileParser(File f, boolean MMLoaded) throws EntityLoadingException {
+        this(f, null, MMLoaded);
+    }
+
+    public MechFileParser(File f, String entryName, boolean MMLLoaded) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try {
-                parse(new FileInputStream(f.getAbsolutePath()), f.getName());
+                parse(new FileInputStream(f.getAbsolutePath()), f.getName(), MMLLoaded);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
@@ -92,7 +100,7 @@ public class MechFileParser {
             ZipFile zFile;
             try {
                 zFile = new ZipFile(f.getAbsolutePath());
-                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
+                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName, MMLLoaded);
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
             } catch (NullPointerException npe) {
@@ -121,6 +129,10 @@ public class MechFileParser {
     }
 
     public void parse(InputStream is, String fileName) throws EntityLoadingException {
+        parse(is, fileName, false);
+    }
+
+    public void parse(InputStream is, String fileName, boolean MMLLoaded) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -185,7 +197,9 @@ public class MechFileParser {
         }
 
         m_entity = loader.getEntity();
-        MechFileParser.postLoadInit(m_entity);
+        if (!MMLLoaded) {
+            MechFileParser.postLoadInit(m_entity);
+        }
     }
 
     /**
@@ -223,7 +237,7 @@ public class MechFileParser {
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR))) {
                 // get the mount directly before the insulator, this is the
                 // weapon
-                Mounted weapon = ent.getEquipment().get(ent.getEquipment().indexOf(m)-1);
+                Mounted weapon = ent.getEquipment().get(ent.getEquipment().indexOf(m) - 1);
                 // already linked?
                 if (weapon.getLinkedBy() != null) {
                     continue;
@@ -487,8 +501,8 @@ public class MechFileParser {
                 }
             }
         }
-        //physical attacks for conventional infantry
-        else if((ent instanceof Infantry) && ((Infantry)ent).canAttackMeks()) {
+        // physical attacks for conventional infantry
+        else if ((ent instanceof Infantry) && ((Infantry) ent).canAttackMeks()) {
             try {
                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY, false, false);
                 ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY, false, false);

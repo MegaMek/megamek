@@ -858,7 +858,7 @@ public class BattleArmor extends Infantry {
         if (singleTrooper) {
             return (int) Math.round(squadBV);
         }
-        switch (getTotalOInternal()) {
+        switch (getShootingStrength()) {
         case 1:
             break;
         case 2:

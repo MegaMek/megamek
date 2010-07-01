@@ -637,7 +637,7 @@ public class Compute {
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_10) || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
                 || (wtype.getAmmoType() == AmmoType.T_TBOLT_20) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
                 && weapon.curMode().equals("Indirect"))
-                || wtype instanceof ArtilleryCannonWeapon;
+                || (wtype instanceof ArtilleryCannonWeapon);
         boolean useExtremeRange = game.getOptions().booleanOption("tacops_range");
 
         if (ae.isAirborne()) {
@@ -3502,7 +3502,7 @@ public class Compute {
 
         //according to the following rules clarification, this should be maxed out at +4
         //http://www.classicbattletech.com/forums/index.php?topic=66036.0
-        return Math.max(4, highestMod + totalGT);
+        return Math.min(4, highestMod + totalGT);
     }
 
     /**

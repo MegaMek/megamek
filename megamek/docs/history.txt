@@ -6,6 +6,7 @@ v0.36.17-dev (SVN)
 + Added MegaMekLab flags for unit loading
 + Bug 3023810: BA should lose BV when losing troopers
 + Bug 3019719: Artemis IV + Indirect fire shouldn't get +2 on cluster hit table
++ Bug 3022131: Ghost target bug
 
 v0.36.16 (2010-06-19. 16:28 UTC+2)
 + isometric rendering fixes

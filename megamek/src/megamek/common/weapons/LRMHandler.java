@@ -148,7 +148,8 @@ public class LRMHandler extends MissileWeaponHandler {
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
+                && !weapon.curMode().equals("Indirect")) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 Report r = new Report(3330);

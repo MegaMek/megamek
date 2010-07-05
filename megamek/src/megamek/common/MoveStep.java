@@ -583,11 +583,11 @@ public class MoveStep implements Serializable {
                 setPavementStep(false);
                 setOnlyPavement(false);
             }
-            
+
             // Infantry can turn for free, except for field artillery
             setMp((parent.isJumping() || isHasJustStood() || (isInfantry && !isFieldArtillery)) ? 0
                     : 1);
-            if(entity.isAirborne() && entity instanceof Aero) {
+            if(entity.isAirborne() && (entity instanceof Aero)) {
                 setMp(asfTurnCost(game, getType(), entity));
                 setNTurns(getNTurns() + 1);
 
@@ -632,7 +632,7 @@ public class MoveStep implements Serializable {
             compileMove(game, entity, prev);
             if(entity.isAirborne()) {
                 setMp(0);
-            } else if(entity.isUsingManAce() & entity instanceof QuadMech) {
+            } else if(entity.isUsingManAce() & (entity instanceof QuadMech)) {
                 setMp(getMp());
             } else {
                 setMp(getMp() + 1); //+1 for side step
@@ -646,7 +646,7 @@ public class MoveStep implements Serializable {
             compileMove(game, entity, prev);
             if(entity.isAirborne()) {
                 setMp(0);
-            } else if(entity.isUsingManAce() & entity instanceof QuadMech) {
+            } else if(entity.isUsingManAce() & (entity instanceof QuadMech)) {
                 setMp(getMp());
             } else {
                 setMp(getMp() + 1); //+1 for side step
@@ -1465,13 +1465,13 @@ public class MoveStep implements Serializable {
         // guilty until proven innocent
         movementType = EntityMovementType.MOVE_ILLEGAL;
 
-        
-        
+
+
         //AERO STUFF
         //I am going to put in a whole seperate section for Aeros and just return from it
         //only if Aeros are airborne, otherwise they should move like other units
         if (entity.isAirborne()) {
-            
+
           //If airborne and not an Aero then everything is illegal, except turns
             if(!(entity instanceof Aero)) {
                 switch (type) {
@@ -1481,7 +1481,7 @@ public class MoveStep implements Serializable {
                 }
                 return;
             }
-            
+
             int tmpSafeTh = entity.getWalkMP();
             Aero a = (Aero)entity;
 
@@ -1867,10 +1867,10 @@ public class MoveStep implements Serializable {
         }
 
 
-        if (isFirstStep() && (stepType == MoveStepType.TAKEOFF || stepType == MoveStepType.VTAKEOFF)) {
+        if (isFirstStep() && ((stepType == MoveStepType.TAKEOFF) || (stepType == MoveStepType.VTAKEOFF))) {
             movementType = EntityMovementType.MOVE_SAFE_THRUST;
-        } else 
-        
+        } else
+
         // VTOLs with a damaged flight stabiliser can't flank
         if ((entity instanceof VTOL)
                 && (movementType == EntityMovementType.MOVE_VTOL_RUN)
@@ -1992,8 +1992,9 @@ public class MoveStep implements Serializable {
         }
 
         // do not allow to move onto a bridge if there's no exit in lastPos's
-        // direction
+        // direction, unless jumping
         if (!isFirstStep() && !curPos.equals(lastPos) && climbMode &&
+                (movementType != EntityMovementType.MOVE_JUMP) &&
                 game.getBoard().getHex(curPos).containsTerrain(Terrains.BRIDGE) &&
                 !game.getBoard().getHex(curPos).containsTerrainExit(
                         Terrains.BRIDGE, curPos.direction(lastPos))) {

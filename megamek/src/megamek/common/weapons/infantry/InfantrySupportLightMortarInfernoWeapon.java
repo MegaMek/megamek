@@ -18,9 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Infantry;
 import megamek.common.TechConstants;
 
 /**

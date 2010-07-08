@@ -23,7 +23,6 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;

@@ -18,9 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Infantry;
 import megamek.common.TechConstants;
 
 /**
@@ -38,8 +35,6 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
         techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Infantry David Light Gauss Rifle";
         setInternalName(name);
-        addLookupName("InfantryFiredrake");
-        addLookupName("InfantrySupportNeedler");
         ammoType = AmmoType.T_NA;
         cost = 6000;
         bv = 3.39;

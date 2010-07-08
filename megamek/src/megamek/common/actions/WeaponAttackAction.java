@@ -1279,7 +1279,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toSubtract += thTemp.getValue();
 
             // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML))
+            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML) || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) && (te.getTaggedBy() != -1)) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
@@ -1306,7 +1306,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // spotter movement, if applicable
         if (isIndirect) {
             // semiguided ammo negates this modifier, if TAG succeeded
-            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML))
+            if ((atype != null) && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML) || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) && (te.getTaggedBy() != -1)) {
                 toHit.addModifier(-1, "semiguided ignores spotter movement & indirect fire penalties");
             } else if (!narcSpotter && (spotter != null)) {

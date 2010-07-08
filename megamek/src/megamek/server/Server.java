@@ -1928,7 +1928,7 @@ public class Server implements Runnable {
             Entity entity = e.nextElement();
             for (Mounted m : entity.getAmmo()) {
                 AmmoType atype = (AmmoType) m.getType();
-                if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML))
+                if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_MML) || (atype.getAmmoType() == AmmoType.T_NLRM))
                         && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                     return true;
                 }
@@ -25611,7 +25611,7 @@ public class Server implements Runnable {
      * @param e
      *            the <code>Entity</code> to check
      * @param loc
-     *            the <code>int</code location
+     *            the <code>int</code> location
      */
     private void checkBreakSpikes(Entity e, int loc) {
         int roll = Compute.d6(2);

@@ -123,6 +123,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_ENDO_COMPOSITE = BigInteger.valueOf(1).shiftLeft(80);
     public static final BigInteger F_LASER_INSULATOR = BigInteger.valueOf(1).shiftLeft(81);
     public static final BigInteger F_LIQUID_CARGO = BigInteger.valueOf(1).shiftLeft(82);
+    public static final BigInteger F_WATCHDOG = BigInteger.valueOf(1).shiftLeft(83);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1349,16 +1350,18 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        misc.name = "Watchdog ECM Suite";
+        misc.name = "Watchdog CEWS";
         misc.setInternalName(Sensor.WATCHDOG);
         misc.addLookupName("Watchdog ECM Suite");
         misc.addLookupName("WatchdogECM");
         misc.addLookupName("CLWatchdogECM");
         misc.tonnage = 1.5f;
-        misc.criticals = 1;
+        misc.criticals = 2;
         misc.cost = 500000;
-        misc.flags = misc.flags.or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
-        misc.bv = 73;
+        misc.flags = misc.flags.or(F_WATCHDOG).or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        // ugh, special handling needed: 7 offensive BV, 61 defensive
+        // we'll have to hardcode these in calculate BV
+        misc.bv = 0;
         misc.setModes(new String[]
             { "ECM" });
         misc.setInstantModeSwitch(false);

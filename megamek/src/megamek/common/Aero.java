@@ -1144,7 +1144,7 @@ public class Aero extends Entity
             }
 
             // laser insulator reduce heat by 1, to a minimum of 1
-            if (wtype.hasFlag(WeaponType.F_LASER) && mounted.getLinkedBy() != null
+            if (wtype.hasFlag(WeaponType.F_LASER) && (mounted.getLinkedBy() != null)
                     && !mounted.getLinkedBy().isInoperable()
                     && mounted.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
                 weaponHeat -= 1;
@@ -1409,6 +1409,11 @@ public class Aero extends Entity
                 continue;
             }
             double bv = mtype.getBV(this);
+            // we need to special case watchdog, because it has both offensive
+            // and defensive BV
+            if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
+                bv = 68;
+            }
             oEquipmentBV += bv;
         }
         weaponBV += oEquipmentBV;

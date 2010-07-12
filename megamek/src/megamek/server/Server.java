@@ -19193,6 +19193,10 @@ public class Server implements Runnable {
             if ((en instanceof Mech) && ((Mech) en).isIndustrial()) {
                 critMod += 2;
             }
+            // reinforced structure gets a -1 mod
+            if ((en instanceof Mech) && ((Mech)en).hasReinforcedStructure()) {
+                critMod -= 1;
+            }
             if (critMod != 0) {
                 rollString = "(" + roll;
                 if (critMod > 0) {

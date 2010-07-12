@@ -1359,9 +1359,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_WATCHDOG).or(F_ECM).or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
-        // ugh, special handling needed: 7 offensive BV, 61 defensive
-        // we'll have to hardcode these in calculate BV
-        misc.bv = 0;
+        misc.bv = 68;
         misc.setModes(new String[]
             { "ECM" });
         misc.setInstantModeSwitch(false);

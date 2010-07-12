@@ -516,7 +516,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             @Override
             public void run() {
                 try {
-                    SwingUtilities.invokeAndWait(redrawWorker);
+                    SwingUtilities.invokeLater(redrawWorker);
                 } catch (Exception ie) {
                 }
             }
@@ -640,7 +640,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             repaint(1000);
             return;
         }
-        
+
         if(useIsometric()) {
             drawHexes(g, g.getClipBounds());
         } else {
@@ -826,7 +826,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private void drawDeploymentForHex( Coords c, Graphics g) {
         IBoard board = game.getBoard();
         Point p = getHexLocation(c);
-        
+
         if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
             g.setColor(Color.yellow);
             int[] xcoords = { p.x + (int) (21 * scale), p.x + (int) (62 * scale),

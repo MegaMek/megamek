@@ -677,7 +677,13 @@ public class Tank extends Entity {
                             // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                             || etype.hasFlag(MiscType.F_BAP))) {
                 MiscType mtype = (MiscType)etype;
-                dEquipmentBV += mtype.getBV(this, mounted.getLocation());
+                double bv = mtype.getBV(this, mounted.getLocation());
+                // special case: Watchdog has both offensive and defensive BV,
+                // so we need to hardcode it
+                if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
+                    bv = 61;
+                }
+                dEquipmentBV += bv;
             }
         }
         dbv += dEquipmentBV;
@@ -886,7 +892,7 @@ public class Tank extends Entity {
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_ECM)
+            if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG))
                     || mtype.hasFlag(MiscType.F_AP_POD)
                     // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || mtype.hasFlag(MiscType.F_BAP)
@@ -894,7 +900,13 @@ public class Tank extends Entity {
                 // weapons
                 continue;
             }
-            oEquipmentBV += mtype.getBV(this, mounted.getLocation());
+            double bv = mtype.getBV(this, mounted.getLocation());
+            // we need to special case watchdog, because it has both offensive
+            // and defensive BV
+            if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
+                bv = 7;
+            }
+            oEquipmentBV += bv;
         }
 
         weaponBV += oEquipmentBV;

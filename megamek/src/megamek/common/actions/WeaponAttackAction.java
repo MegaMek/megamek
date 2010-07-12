@@ -972,7 +972,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
-            if (!(ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)))) {
+            if (!ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 toHit.addModifier(2, "support vehicle without fire control");
             } else if (ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !(ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL))) {
                 toHit.addModifier(1, "support vehicle with basic fire control");

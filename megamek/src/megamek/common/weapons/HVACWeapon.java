@@ -28,7 +28,7 @@ import megamek.server.Server;
 /**
  * @author Jason Tighe
  */
-public class HVACWeapon extends ACWeapon {
+public abstract class HVACWeapon extends ACWeapon {
 
     /**
      *

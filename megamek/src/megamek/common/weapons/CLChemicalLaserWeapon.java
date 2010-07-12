@@ -27,7 +27,7 @@ import megamek.server.Server;
 /**
  * @author Jason Tighe
  */
-public class CLChemicalLaserWeapon extends AmmoWeapon {
+public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
 
     /**
      *

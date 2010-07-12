@@ -1409,11 +1409,6 @@ public class Aero extends Entity
                 continue;
             }
             double bv = mtype.getBV(this);
-            // we need to special case watchdog, because it has both offensive
-            // and defensive BV
-            if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
-                bv = 68;
-            }
             oEquipmentBV += bv;
         }
         weaponBV += oEquipmentBV;

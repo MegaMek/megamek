@@ -678,11 +678,6 @@ public class Tank extends Entity {
                             || etype.hasFlag(MiscType.F_BAP))) {
                 MiscType mtype = (MiscType)etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
-                // special case: Watchdog has both offensive and defensive BV,
-                // so we need to hardcode it
-                if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
-                    bv = 61;
-                }
                 dEquipmentBV += bv;
             }
         }

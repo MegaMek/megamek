@@ -57,7 +57,6 @@ public class ISHeavyPPC extends PPCWeapon {
         shortAV = 15;
         medAV = 15;
         maxRange = RANGE_MED;
+        cost = 250000;
     }
-
-
 }

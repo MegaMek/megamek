@@ -57,6 +57,7 @@ public class ISLightPPC extends PPCWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
+        cost = 150000;
     }
 
 

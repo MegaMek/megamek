@@ -11,6 +11,7 @@ v0.36.17-dev (SVN)
 + Bug 3026769: tech base comparison not working correctly
 + Bug 3026820: infantry David Light Gauss has wrong lookupnames
 + Bug 3026433: Semi-guided NLRMs don't work
++ Bug: Advanced firing control for support tanks not working correctly
 
 v0.36.16 (2010-06-19. 16:28 UTC+2)
 + isometric rendering fixes

@@ -2785,11 +2785,6 @@ public abstract class Mech extends Entity implements Serializable {
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || etype.hasFlag(MiscType.F_MASS) || etype.hasFlag(MiscType.F_BAP) || etype.hasFlag(MiscType.F_SPIKES) || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE) || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(this);
-                // special case: Watchdog has both offensive and defensive BV,
-                // so we need to hardcode it
-                if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_WATCHDOG)) {
-                    bv = 61;
-                }
                 dEquipmentBV += bv;
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -3760,17 +3755,12 @@ public abstract class Mech extends Entity implements Serializable {
                 continue;
             }
 
-            if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG)) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
+            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_SPIKES) || (mtype.hasFlag(MiscType.F_CLUB) && (mtype.hasSubType(MiscType.S_SHIELD_LARGE) || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype.hasSubType(MiscType.S_SHIELD_SMALL)))) {
                 continue;
             }
             double bv = mtype.getBV(this);
-            // special case: Watchdog has both offensive and defensive BV,
-            // so we need to hardcode it
-            if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
-                bv = 7;
-            }
             // if physical weapon linked to AES, multiply by 1.5
             if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON)) && hasFunctionalArmAES(mounted.getLocation())) {
                 bv *= 1.5;

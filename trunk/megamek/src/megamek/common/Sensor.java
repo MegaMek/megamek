@@ -19,11 +19,11 @@ import java.io.Serializable;
  * This class will hold all the information about a particular active sensor, including its rolls
  */
 public class Sensor implements Serializable {
-    
+
     private static final long serialVersionUID = 6838624193286089782L;
 
     private int type;
-    
+
     //types of sensors
     public static final int TYPE_MEK_RADAR   = 0;
     public static final int TYPE_VEE_RADAR   = 1;
@@ -40,7 +40,8 @@ public class Sensor implements Serializable {
     public static final int TYPE_BA_IMPROVED = 12;
     public static final int TYPE_MEK_SEISMIC = 13;
     public static final int TYPE_VEE_SEISMIC = 14;
-    
+    public static final int TYPE_EW_EQUIPMENT =15;
+
     public static final String WATCHDOG = "WatchdogECMSuite";
     public static final String BAP = "BeagleActiveProbe";
     public static final String CLAN_AP = "CLActiveProbe";
@@ -50,40 +51,41 @@ public class Sensor implements Serializable {
     public static final String CLIMPROVED = "CLImprovedSensors";
     public static final String CLBALIGHT_AP = "CLBALightActiveProbe";
     public static final String ISBALIGHT_AP = "ISBALightActiveProbe";
-    
+    public static final String EW_EQUIPMENT = "ISElectronicWarfareEquipment";
+
     private static String[] sensorNames = {"Mech Radar", "Vehicle Radar", "Beagle Active Probe", "Clan BAP", "Bloodhound AP",
                                     "Watchdog", "Light AP", "Mech IR", "Vehicle IR", "Mech Magscan", "Vehicle Magscan",
-                                    "Heat Sensors", "Improved Sensors", "Mech Seismic", "Vehicle Seismic"};
+                                    "Heat Sensors", "Improved Sensors", "Mech Seismic", "Vehicle Seismic", "EW Equipment"};
     public static final int SIZE = sensorNames.length;
-    
-    
-    
+
+
+
     /**
      * Constructor
      */
     public Sensor(int type) {
         this.type = type;
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     public String getDisplayName() {
-        if (type >= 0 && type < SIZE) {
+        if ((type >= 0) && (type < SIZE)) {
             return sensorNames[type];
         }
         throw new IllegalArgumentException("Unknown sensor type");
     }
-    
+
     public boolean isBAP() {
-        return type == TYPE_BAP || type == TYPE_BLOODHOUND 
-            || type == TYPE_CLAN_BAP || type == TYPE_WATCHDOG 
-            || type == TYPE_LIGHT_AP;
+        return (type == TYPE_BAP) || (type == TYPE_BLOODHOUND)
+            || (type == TYPE_CLAN_BAP) || (type == TYPE_WATCHDOG)
+            || (type == TYPE_LIGHT_AP) || (type == TYPE_EW_EQUIPMENT);
     }
-    
+
     public int getRangeByBracket() {
-        
+
         switch(type) {
         case TYPE_BAP:
             return 12;
@@ -105,72 +107,75 @@ public class Sensor implements Serializable {
         case TYPE_VEE_RADAR:
         case TYPE_BA_IMPROVED:
             return 6;
+        case TYPE_EW_EQUIPMENT:
+            return 3;
         case TYPE_MEK_SEISMIC:
             return 2;
         case TYPE_VEE_SEISMIC:
             return 1;
-        default: 
+        default:
             return 0;
         }
     }
-    
+
     public int adjustRange(int range, IGame game, LosEffects los) {
-        
-        if((type == TYPE_MEK_RADAR || type == TYPE_VEE_RADAR
-                || type == TYPE_VEE_MAGSCAN || type == TYPE_MEK_MAGSCAN) 
-                && (los.getHardBuildings() + los.getSoftBuildings()) > 0) {
+
+        if(((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
+                || (type == TYPE_VEE_MAGSCAN) || (type == TYPE_MEK_MAGSCAN))
+                && ((los.getHardBuildings() + los.getSoftBuildings()) > 0)) {
             return 0;
         }
-        
-        if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC 
-                && type != TYPE_MEK_MAGSCAN && type != TYPE_VEE_MAGSCAN
+
+        if((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)
+                && (type != TYPE_MEK_MAGSCAN) && (type != TYPE_VEE_MAGSCAN)
                 && !isBAP()
                 && los.isBlockedByHill()) {
             return 0;
         }
-        
-        if(type != TYPE_MEK_SEISMIC && type != TYPE_VEE_SEISMIC) {
+
+        if((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)) {
             if(game.getPlanetaryConditions().hasEMI()) {
                 range -= 4;
             }
             //TODO: add lightning
         }
-        
-        if(type == TYPE_MEK_RADAR || type == TYPE_VEE_RADAR 
-                || type == TYPE_VEE_IR || type == TYPE_MEK_IR || type == TYPE_BA_HEAT) {
+
+        if((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
+                || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR) || (type == TYPE_BA_HEAT)) {
             range -= los.getHeavyWoods() + los.getSoftBuildings();
             range -= 2*(los.getUltraWoods() + los.getHardBuildings());
         }
-        
-        if(type == TYPE_MEK_IR || type == TYPE_VEE_IR) {
+
+        if((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
             range -= game.getPlanetaryConditions().getTemperatureDifference(50, -30);
         }
-        
+
         return range;
-        
+
     }
-    
+
     public int getModsForStealth(Entity te) {
-        
+
         int mod = 0;
-        
+
         //first if we have seismic/magscan/IR we don't have to mod anything
-        if(type == TYPE_MEK_SEISMIC || type == TYPE_VEE_SEISMIC 
-                || type == TYPE_VEE_IR || type == TYPE_MEK_IR || type == TYPE_BA_HEAT
-                || type == TYPE_MEK_MAGSCAN || type == TYPE_VEE_MAGSCAN) {
+        if((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC)
+                || (type == TYPE_VEE_IR) || (type == TYPE_MEK_IR) || (type == TYPE_BA_HEAT)
+                || (type == TYPE_MEK_MAGSCAN) || (type == TYPE_VEE_MAGSCAN)) {
             return mod;
         }
-        
+
         boolean hasSneak = (te instanceof Infantry) && !(te instanceof BattleArmor) && (((Infantry)te).hasSneakCamo() || ((Infantry)te).hasSneakIR() || ((Infantry)te).hasDEST());
         boolean hasSneakECM = (te instanceof Infantry) && !(te instanceof BattleArmor) && ((Infantry)te).hasSneakECM();
-        
+
         //these are cumulative, so lets just plow through the table on pg. 224 (ick)
         //null sig
         switch(type) {
         case (TYPE_BAP):
+        case (TYPE_EW_EQUIPMENT):
             if(te.isVoidSigActive()) {
                 mod += 6;
-            } 
+            }
             if(te.isNullSigActive()) {
                 mod += 5;
             }
@@ -187,7 +192,7 @@ public class Sensor implements Serializable {
         case (TYPE_WATCHDOG):
             if(te.isVoidSigActive()) {
                 mod += 6;
-            } 
+            }
             if(te.isNullSigActive()) {
                 mod += 5;
             }
@@ -204,7 +209,7 @@ public class Sensor implements Serializable {
         case (TYPE_CLAN_BAP):
             if(te.isVoidSigActive()) {
                 mod += 5;
-            } 
+            }
             if(te.isNullSigActive()) {
                 mod += 5;
             }
@@ -308,17 +313,18 @@ public class Sensor implements Serializable {
         }
         return mod;
     }
-    
+
     public int getModForECM(Entity en) {
-        
+
         //how many ECM fields are affecting the entity?
         double ecm = Math.max(0,Compute.getECMFieldSize(en, en.getPosition(), en.getPosition()));
         double ecmAngel = Math.max(0, Compute.getAngelECMFieldSize(en, en.getPosition(), en.getPosition()));
-        
+
         switch(type) {
         case (TYPE_BAP):
         case (TYPE_CLAN_BAP):
         case (TYPE_WATCHDOG):
+        case (TYPE_EW_EQUIPMENT):
             return (int)Math.floor(ecm * 4 + ecmAngel * 5);
         case (TYPE_BLOODHOUND):
             return (int)Math.floor(ecm * 2 + ecmAngel * 3);
@@ -329,34 +335,35 @@ public class Sensor implements Serializable {
         case (TYPE_BA_IMPROVED):
             return (int)Math.floor(ecm * 6 + ecmAngel * 7);
         default:
-            return 0;    
-        }
-    }
-    
-    public int entityAdjustments(int range, Entity target, IGame game) {
-        
-        //you need to have moved to be detected by sesmic and be on the ground
-        if((type == TYPE_MEK_SEISMIC || type == TYPE_VEE_SEISMIC) 
-                && (target.mpUsed == 0 || target.getElevation() > 0)) {
             return 0;
         }
-        
+    }
+
+    public int entityAdjustments(int range, Entity target, IGame game) {
+
+        //you need to have moved to be detected by sesmic and be on the ground
+        if(((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC))
+                && ((target.mpUsed == 0) || (target.getElevation() > 0))) {
+            return 0;
+        }
+
         //if you have infrared, then each increment of 5 heat will increase the range
-        if(type == TYPE_MEK_IR || type == TYPE_VEE_IR) {
-            
+        if((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
+
             //if the target isn't overheating then you can't detect it
-            if(target.heat < 1)
+            if(target.heat < 1) {
                 return 0;
-            
+            }
+
             range += target.heat / 5;
-            
-            if(null != game.getBoard().getHex(target.getPosition())
+
+            if((null != game.getBoard().getHex(target.getPosition()))
                     && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE)) {
                 range += 1;
-            }       
+            }
         }
-        
-        if(type == TYPE_MEK_MAGSCAN || type == TYPE_VEE_MAGSCAN) {
+
+        if((type == TYPE_MEK_MAGSCAN) || (type == TYPE_VEE_MAGSCAN)) {
             if(target.getWeight() > 1000) {
                 range += 3;
             } else if(target.getWeight() > 100) {
@@ -366,14 +373,14 @@ public class Sensor implements Serializable {
             } else if(target.getWeight() < 20) {
                 range = 0;
             }
-                       
-            if(null != game.getBoard().getHex(target.getPosition())
+
+            if((null != game.getBoard().getHex(target.getPosition()))
                     && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.INDUSTRIAL)) {
                 return 0;
             }
         }
-        
+
         return range;
     }
-    
+
 }

@@ -124,6 +124,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LASER_INSULATOR = BigInteger.valueOf(1).shiftLeft(81);
     public static final BigInteger F_LIQUID_CARGO = BigInteger.valueOf(1).shiftLeft(82);
     public static final BigInteger F_WATCHDOG = BigInteger.valueOf(1).shiftLeft(83);
+    public static final BigInteger F_EW_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(84);
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -739,6 +741,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createEndoComposite());
         EquipmentType.addType(MiscType.createCLLaserInsulator());
         EquipmentType.addType(MiscType.createISLaserInsulator());
+        EquipmentType.addType(MiscType.createISEWEquipment());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3927,6 +3930,20 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 3500;
         misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createISEWEquipment() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Electronic Warfare Equipment";
+        misc.setInternalName(Sensor.EW_EQUIPMENT);
+        misc.tonnage = 7.5f;
+        misc.criticals = 4;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_EW_EQUIPMENT).or(F_BAP).or(F_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 39;
 
         return misc;
     }

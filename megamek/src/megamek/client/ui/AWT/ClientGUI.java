@@ -396,6 +396,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
+            e.printStackTrace();
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }

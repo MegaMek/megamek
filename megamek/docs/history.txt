@@ -16,6 +16,7 @@ v0.36.17-dev (SVN)
 + Bug 3027038: reinforced structure crit mod
 + Bug: Watchdog ECM has wrong crits
 + Bug 3028005: slow redraw causes chatterbox2 to take a long time to go up and down
++ Added TO Electronic Warfare Equipment
 
 v0.36.16 (2010-06-19. 16:28 UTC+2)
 + isometric rendering fixes

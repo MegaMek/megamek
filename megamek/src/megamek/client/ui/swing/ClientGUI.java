@@ -19,7 +19,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -53,9 +52,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.html.HTMLDocument;
 
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
@@ -395,6 +392,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
+            e.printStackTrace();
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }
@@ -984,7 +982,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
         ReportDisplay.setupStylesheet(textArea);
-        
+
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         textArea.setText("<pre>"+message+"</pre>");

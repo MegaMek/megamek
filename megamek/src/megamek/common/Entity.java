@@ -3279,6 +3279,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
+        return hasActiveECM(false);
+    }
+
+    /**
+     * check if we have an active ECM unit for stealth armor purposes
+     * @param stealth
+     * @return
+     */
+    public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace() && !game.getOptions().booleanOption("stratops_ecm")) {
             return false;
@@ -3286,6 +3295,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
+                // EQ equipment does not count for stealth armor
+                if (stealth && type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
+                    continue;
+                }
                 // TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same
                 // time
                 if ((type instanceof MiscType) && type.hasFlag(MiscType.F_ECM) && (m.curMode().equals("ECM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets"))) {

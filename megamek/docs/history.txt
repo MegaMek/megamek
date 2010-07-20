@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.36.18-dev (SVN)
+
 v0.36.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file
 + Added liquid storage

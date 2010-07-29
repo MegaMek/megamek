@@ -743,7 +743,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLLaserInsulator());
         EquipmentType.addType(MiscType.createISLaserInsulator());
         EquipmentType.addType(MiscType.createISEWEquipment());
-        EquipmentType.addType(MiscType.createISCollapsibleCommandModual());
+        EquipmentType.addType(MiscType.createISCollapsibleCommandModule());
         EquipmentType.addType(MiscType.createHitch());
 
         // Start BattleArmor equipment
@@ -3951,13 +3951,13 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISCollapsibleCommandModual() {
+    public static MiscType createISCollapsibleCommandModule() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Collapsible Command Modual";
-        misc.setInternalName("ISCollapsibleCommandModual");
+        misc.setInternalName("ISCollapsibleCommandModule");
         misc.addLookupName("ISCCM");
-        misc.addLookupName("CollapsibleCommandModual");
+        misc.addLookupName("CollapsibleCommandModule");
         misc.tonnage = 16f;
         misc.criticals = 12;
         misc.cost = 500000;

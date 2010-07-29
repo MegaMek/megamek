@@ -3961,7 +3961,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 16f;
         misc.criticals = 12;
         misc.cost = 500000;
-        misc.spreadable = true;
         misc.flags = misc.flags.or(F_CCM).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
 

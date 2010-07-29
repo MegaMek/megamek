@@ -125,7 +125,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LIQUID_CARGO = BigInteger.valueOf(1).shiftLeft(82);
     public static final BigInteger F_WATCHDOG = BigInteger.valueOf(1).shiftLeft(83);
     public static final BigInteger F_EW_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(84);
-
+    public static final BigInteger F_CCM = BigInteger.valueOf(1).shiftLeft(85);
+    public static final BigInteger F_HITCH = BigInteger.valueOf(1).shiftLeft(86);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -742,6 +743,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLLaserInsulator());
         EquipmentType.addType(MiscType.createISLaserInsulator());
         EquipmentType.addType(MiscType.createISEWEquipment());
+        EquipmentType.addType(MiscType.createISCollapsibleCommandModual());
+        EquipmentType.addType(MiscType.createHitch());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3017,7 +3020,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -3944,6 +3947,38 @@ public class MiscType extends EquipmentType {
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_EW_EQUIPMENT).or(F_BAP).or(F_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 39;
+
+        return misc;
+    }
+
+    public static MiscType createISCollapsibleCommandModual() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Collapsible Command Modual";
+        misc.setInternalName("ISCollapsibleCommandModual");
+        misc.addLookupName("ISCCM");
+        misc.addLookupName("CollapsibleCommandModual");
+        misc.tonnage = 16f;
+        misc.criticals = 12;
+        misc.cost = 500000;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_CCM).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createHitch() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Hitch";
+        misc.setInternalName("Hitch");
+        misc.tonnage = 0f;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_HITCH).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
 
         return misc;
     }

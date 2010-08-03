@@ -2321,7 +2321,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return "Not enough men remaining to fire this field gun";
                 }
             }
-            // BAC compact narc: we have one weapon for each trooper, but you
+            // BA compact narc: we have one weapon for each trooper, but you
             // can fire only at one target at a time
             if (wtype.getName().equals("Compact Narc")) {
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {

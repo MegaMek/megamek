@@ -47,8 +47,8 @@ public class EntityListFile {
      */
     private static String formatArmor(int points) {
         // Is the armor destroyed or doomed?
-        if (points == IArmorState.ARMOR_DOOMED
-                || points == IArmorState.ARMOR_DESTROYED) {
+        if ((points == IArmorState.ARMOR_DOOMED)
+                || (points == IArmorState.ARMOR_DESTROYED)) {
             return "Destroyed";
         }
 
@@ -95,7 +95,7 @@ public class EntityListFile {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getShotsLeft()));
             }
-            if (mount.getType() instanceof WeaponType
+            if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
@@ -141,9 +141,9 @@ public class EntityListFile {
         for (int loc = 0; loc < entity.locations(); loc++) {
 
             // Record destroyed locations.
-            if (!(entity instanceof Aero) && !(entity instanceof Infantry && !(entity instanceof BattleArmor)) 
-                    && entity.getOInternal(loc) != IArmorState.ARMOR_NA
-                    && entity.getInternal(loc) <= 0) {
+            if (!(entity instanceof Aero) && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+                    && (entity.getOInternal(loc) != IArmorState.ARMOR_NA)
+                    && (entity.getInternal(loc) <= 0)) {
                 isDestroyed = true;
             }
 
@@ -163,8 +163,8 @@ public class EntityListFile {
                     thisLoc.append(CommonConstants.NL);
                 }
                 if (entity.hasRearArmor(loc)
-                        && entity.getOArmor(loc, true) != entity.getArmor(loc,
-                                true)) {
+                        && (entity.getOArmor(loc, true) != entity.getArmor(loc,
+                                true))) {
                     thisLoc.append("         <armor points=\"");
                     thisLoc.append(EntityListFile.formatArmor(entity.getArmor(loc, true)));
                     thisLoc.append("\" type=\"Rear\"/>");
@@ -183,8 +183,8 @@ public class EntityListFile {
 
                     // Nope. Record missing actuators on Biped Mechs.
                     if (isMech && !entity.entityIsQuad()
-                            && (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM)
-                            && (loop == 2 || loop == 3)) {
+                            && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))
+                            && ((loop == 2) || (loop == 3))) {
                         thisLoc.append("         <slot index=\"");
                         thisLoc.append(String.valueOf(loop + 1));
                         thisLoc.append("\" type=\"Empty\"/>");
@@ -219,7 +219,7 @@ public class EntityListFile {
                     }
 
                     //record any quirks
-                    else if (null != mount && mount.countQuirks() > 0) {
+                    else if ((null != mount) && (mount.countQuirks() > 0)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
                         haveSlot = true;
@@ -227,8 +227,8 @@ public class EntityListFile {
 
                     // Record ammunition slots in undestroyed locations.
                     // N.B. the slot CAN\"T be damaged at this point.
-                    else if (!isDestroyed && mount != null
-                            && mount.getType() instanceof AmmoType) {
+                    else if (!isDestroyed && (mount != null)
+                            && (mount.getType() instanceof AmmoType)) {
                         thisLoc.append("         <slot index=\"");
                         thisLoc.append(String.valueOf(loop + 1));
                         thisLoc.append("\" type=\"");
@@ -241,8 +241,8 @@ public class EntityListFile {
                     }
 
                     // Record the munition type of oneshot launchers
-                    else if (!isDestroyed && mount != null
-                            && mount.getType() instanceof WeaponType
+                    else if (!isDestroyed && (mount != null)
+                            && (mount.getType() instanceof WeaponType)
                             && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
@@ -255,7 +255,7 @@ public class EntityListFile {
 
             // Tanks don't have slots, and Protomechs only have
             // system slots, so we have to handle the ammo specially.
-            if (entity instanceof Tank || entity instanceof Protomech) {
+            if ((entity instanceof Tank) || (entity instanceof Protomech)) {
                 for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
@@ -385,6 +385,8 @@ public class EntityListFile {
             output.write(entity.getMovementModeAsString());
             output.write("\" commander=\"");
             output.write(String.valueOf(entity.isCommander()));
+            output.write("\" deployment=\"");
+            output.write(String.valueOf(entity.getDeployRound()));
             if(entity.getExternalId() != Entity.NONE) {
                 output.write("\" externalId=\"");
                 output.write(String.valueOf(entity.getExternalId()));
@@ -404,7 +406,7 @@ public class EntityListFile {
             output.write(crew.getNickname().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");
             output.write(String.valueOf(crew.getGunnery()));
-            if (null != entity.getGame() && entity.getGame().getOptions().booleanOption("rpg_gunnery")) {
+            if ((null != entity.getGame()) && entity.getGame().getOptions().booleanOption("rpg_gunnery")) {
                 output.write("\" gunneryL=\"");
                 output.write(String.valueOf(crew.getGunneryL()));
                 output.write("\" gunneryM=\"");
@@ -414,11 +416,11 @@ public class EntityListFile {
             }
             output.write("\" piloting=\"");
             output.write(String.valueOf(crew.getPiloting()));
-            if(null != entity.getGame() && entity.getGame().getOptions().booleanOption("artillery_skill")) {               
+            if((null != entity.getGame()) && entity.getGame().getOptions().booleanOption("artillery_skill")) {
                 output.write("\" artillery=\"");
                 output.write(String.valueOf(crew.getArtillery()));
             }
-            if(crew.getToughness() != 0) {               
+            if(crew.getToughness() != 0) {
                 output.write("\" toughness=\"");
                 output.write(String.valueOf(crew.getToughness()));
             }
@@ -430,7 +432,7 @@ public class EntityListFile {
                 output.write("\" commandB=\"");
                 output.write(String.valueOf(crew.getCommandBonus()));
             }
-            if (crew.isDead() || crew.getHits() > 5) {
+            if (crew.isDead() || (crew.getHits() > 5)) {
                 output.write("\" hits=\"Dead");
             } else if (crew.getHits() > 0) {
                 output.write("\" hits=\"");

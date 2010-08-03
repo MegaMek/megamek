@@ -1370,7 +1370,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choDeployment.select(0);
         }
 
-        for (int i = 1; i <= 15; i++) {
+        for (int i = 1; i <= 40; i++) {
             choDeployment
                     .add(Messages.getString("CustomMechDialog.AfterRound") + i); //$NON-NLS-1$
 

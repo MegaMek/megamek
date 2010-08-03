@@ -37,10 +37,9 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
     public InfantrySupportHeavyFlamerWeapon() {
         super();
         techLevel = TechConstants.T_INTRO_BOXSET;
-        name = "Man Portable Flamer";
+        name = "Flamer (Heavy)";
         setInternalName(name);
-        addLookupName("InfantryFlamer");
-        addLookupName("InfantryPortableFlamer");
+        addLookupName("InfantryHeavyFlamer");
         // Flamer (Heavy), TM p. 300
         cost = 200;
         bv = 0.51;
@@ -51,7 +50,7 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
         infantryRange = 0;
         crew = 2;
     }
-    
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {

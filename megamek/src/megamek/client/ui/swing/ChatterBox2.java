@@ -39,13 +39,18 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
-// A graphical chatterbox within the boardview.
+/**
+ *  A graphical chatterbox within the boardview.
+ * @author beerockxs2
+ *
+ */
 public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
     private static final Color COLOR_TEXT_BACK = Color.black;
     private static final Color COLOR_TEXT_FRONT = Color.white;
     private static final Color COLOR_BACKGROUND;
+    private ChatterBox cb;
 
     static {
         Color temp;
@@ -67,7 +72,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private static final int DIST_BOTTOM = 5;
     private static final int DIST_SIDE = 5;
 
-    private static final int MAX_NBR_ROWS = 6;
+    private static final int MAX_NBR_ROWS = 7;
 
     private static final int SCROLLBAR_MAX_HEIGHT = 110;
     private static final int SCROLLBAR_OUTER_HEIGHT = 114;
@@ -166,7 +171,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         slidingUp = false;
         slidingDown = true;
-        clearMessageBox();
     }
 
     private void stopSliding() {
@@ -181,11 +185,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private boolean isUp() {
         return !isSliding() && (slideOffset == MIN_SLIDE_OFFSET);
-    }
-
-    private void clearMessageBox() {
-        message = null;
-        visibleMessage = null;
     }
 
     public synchronized void setIdleTime(long timeIdle, boolean add) {
@@ -295,7 +294,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         }
 
         if (message != null) {
-            clearMessageBox();
             bv.refreshDisplayables();
         }
 
@@ -357,8 +355,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         // Message box
         if ((x > 10) && (x < WIDTH - 40) && (y > ((size.height) - 25))
                 && (y < ((size.height) - 11))) {
-            message = "";
-            visibleMessage = "";
             bv.refreshDisplayables();
             return true;
         }
@@ -616,7 +612,13 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             case KeyEvent.VK_CAPS_LOCK:
             case KeyEvent.VK_CONTROL:
             case KeyEvent.VK_UP:
+                cb.historyBookmark++;
+                cb.fetchHistory();
+                return;
             case KeyEvent.VK_DOWN:
+                cb.historyBookmark--;
+                cb.fetchHistory();
+                return;
             case KeyEvent.VK_RIGHT:
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_PAGE_UP:
@@ -655,6 +657,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_ENTER:
                 if ((message != null) && (message.length() > 0)) {
+                    cb.history.addFirst(message);
+                    cb.historyBookmark = -1;
+
+                    if (cb.history.size() > ChatterBox.MAX_HISTORY) {
+                        cb.history.removeLast();
+                    }
                     client.sendChat(message);
                     visibleMessage = "";
                     message = "";
@@ -678,7 +686,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     }
                 }
                 visibleMessage = message.substring(i);
-
+                cb.setMessage(message);
                 break;
             default:
                 if (message == null) {
@@ -686,7 +694,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 } else {
                     message += ke.getKeyChar();
                 }
-
+                cb.setMessage(message);
                 i = 0;
                 if (fm.stringWidth(message) > 240) {
                     boolean noFit = true;
@@ -705,6 +713,28 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     }
 
     public void keyTyped(KeyEvent ke) {
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+        int i = 0;
+        if (fm.stringWidth(message) > 240) {
+            boolean noFit = true;
+            while (noFit) {
+                i++;
+                String s = message.substring(i);
+                noFit = fm.stringWidth(s) > 240;
+            }
+        }
+        visibleMessage = message.substring(i);
+    }
+
+    public void setChatterBox(ChatterBox cb) {
+        this.cb = cb;
     }
 
 }

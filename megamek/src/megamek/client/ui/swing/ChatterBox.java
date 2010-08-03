@@ -47,7 +47,7 @@ import megamek.common.preference.PreferenceManager;
  * it is not an AWT component, it keeps one that it will gladly supply.
  */
 public class ChatterBox implements KeyListener {
-    private static final int MAX_HISTORY = 10;
+    public static final int MAX_HISTORY = 10;
     Client client;
 
     private JPanel chatPanel;
@@ -57,8 +57,10 @@ public class ChatterBox implements KeyListener {
     private JTextField inputField;
     private JButton butDone;
 
-    private LinkedList<String> history;
-    private int historyBookmark = -1;
+    public LinkedList<String> history;
+    public int historyBookmark = -1;
+
+    private ChatterBox2 cb2;
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
@@ -200,17 +202,20 @@ public class ChatterBox implements KeyListener {
             historyBookmark--;
             fetchHistory();
         }
+        //cb2.setMessage(inputField.getText()+ev.getKeyChar());
         moveToEnd();
     }
 
     /**
      *
      */
-    private void fetchHistory() {
+    public void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
+            cb2.setMessage(inputField.getText());
         } catch (IndexOutOfBoundsException ioobe) {
             inputField.setText(""); //$NON-NLS-1$
+            cb2.setMessage(""); //$NON-NLS-1$
             historyBookmark = -1;
         }
     }
@@ -222,5 +227,15 @@ public class ChatterBox implements KeyListener {
     public void keyTyped(KeyEvent ev) {
         //ignored
     }
+
+    public void setMessage(String message) {
+        inputField.setText(message);
+    }
+
+    public void setChatterBox2(ChatterBox2 cb2) {
+        this.cb2 = cb2;
+    }
+
+
 
 }

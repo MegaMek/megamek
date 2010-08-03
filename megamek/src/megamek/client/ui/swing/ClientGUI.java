@@ -408,6 +408,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         minimapW.addWindowListener(this);
         minimapW.add(minimap);
         cb = new ChatterBox(this);
+        cb.setChatterBox2(cb2);
+        cb2.setChatterBox(cb);
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         // customBADialog = new CustomBattleArmorDialog(this);

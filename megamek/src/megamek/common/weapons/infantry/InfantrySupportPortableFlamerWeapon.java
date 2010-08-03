@@ -17,7 +17,12 @@
  */
 package megamek.common.weapons.infantry;
 
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
@@ -32,10 +37,10 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
     public InfantrySupportPortableFlamerWeapon() {
         super();
         techLevel = TechConstants.T_INTRO_BOXSET;
-        name = "Portable Flamer";
+        name = "Flamer (Man Portable)";
         setInternalName(name);
         addLookupName("InfantryPortableFlamer");
-        addLookupName("InfantryFlamer");
+        addLookupName("Portable Flamer");
         // Flamer (man-portable), TM p. 300
         cost = 100;
         bv = 0.36;
@@ -45,5 +50,13 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
         infantryDamage = 0.45;
         infantryRange = 0;
         crew = 1;
+    }
+
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {
+            return new InfantryFlamerHeatHandler(toHit, waa, game, server);
+        }
+        return new InfantryWeaponHandler(toHit, waa, game, server);
     }
 }

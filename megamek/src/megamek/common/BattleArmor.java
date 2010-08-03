@@ -1711,4 +1711,9 @@ public class BattleArmor extends Infantry {
         return troopers;
     }
 
+    @Override
+    public int getWeaponArc(int wn) {
+        return Compute.ARC_360;
+    }
+
 } // End public class BattleArmor extends Infantry implements Serializable

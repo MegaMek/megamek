@@ -10578,6 +10578,7 @@ public class Server implements Runnable {
         if ((te instanceof Infantry) && !(te instanceof BattleArmor)) {
             r = new Report(4149);
             r.subject = ae.getId();
+            r.add(hits);
         } else {
             r = new Report(4148);
             r.subject = ae.getId();

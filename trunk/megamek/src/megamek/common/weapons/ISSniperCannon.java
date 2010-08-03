@@ -38,7 +38,7 @@ public class ISSniperCannon extends ArtilleryCannonWeapon {
         addLookupName("ISSniperArtilleryCannon");
         addLookupName("IS Sniper Cannon");
         heat = 10;
-        rackSize = 20;
+        rackSize = 10;
         ammoType = AmmoType.T_SNIPER_CANNON;
         minimumRange = 2;
         shortRange = 4;

@@ -38,7 +38,7 @@ public class ISLongTomCannon extends ArtilleryCannonWeapon {
         addLookupName("ISLongTomArtilleryCannon");
         addLookupName("IS Long Tom Cannon");
         heat = 20;
-        rackSize = 25;
+        rackSize = 20;
         ammoType = AmmoType.T_LONG_TOM_CANNON;
         tonnage = 20f;
         criticals = 15;

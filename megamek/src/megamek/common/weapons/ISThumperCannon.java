@@ -39,7 +39,7 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         addLookupName("ISThumperArtilleryCannon");
         addLookupName("IS Thumper Cannon");
         heat = 5;
-        rackSize = 15;
+        rackSize = 5;
         ammoType = AmmoType.T_THUMPER_CANNON;
         minimumRange = 3;
         shortRange = 4;

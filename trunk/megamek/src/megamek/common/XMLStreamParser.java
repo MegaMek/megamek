@@ -55,7 +55,7 @@ public class XMLStreamParser implements XMLResponder {
      * pilots may need to be read separately
      */
     private Vector<Pilot> pilots = new Vector<Pilot>();
-    
+
     /**
      * The parser for this object.
      */
@@ -168,6 +168,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String IMPLANTS = "implants";
     public static final String QUIRKS = "quirks";
     public static final String COMMANDER = "commander";
+    public static final String DEPLOYMENT = "deployment";
     public static final String AUTOEJECT = "autoeject";
     public static final String EJECTED = "ejected";
     public static final String INDEX = "index";
@@ -181,18 +182,18 @@ public class XMLStreamParser implements XMLResponder {
     public static final String MUNITION = "munition";
     public static final String SPEED = "speed";
     public static final String DIRECTION = "direction";
-    public static final String  INTEGRITY = "integrity";
-    public static final String  SINK = "sinks";
-    public static final String  LEFT = "left";
-    public static final String  AVIONICS = "avionics";
-    public static final String  SENSORS = "sensors";
-    public static final String  ENGINE = "engine";
-    public static final String  FCS = "fcs";
-    public static final String  CIC = "cic";
-    public static final String  LEFT_THRUST = "leftThrust";
-    public static final String  RIGHT_THRUST = "rightThrust";
-    public static final String  LIFE_SUPPORT = "lifeSupport";
-    public static final String  GEAR = "gear";
+    public static final String INTEGRITY = "integrity";
+    public static final String SINK = "sinks";
+    public static final String LEFT = "left";
+    public static final String AVIONICS = "avionics";
+    public static final String SENSORS = "sensors";
+    public static final String ENGINE = "engine";
+    public static final String FCS = "fcs";
+    public static final String CIC = "cic";
+    public static final String LEFT_THRUST = "leftThrust";
+    public static final String RIGHT_THRUST = "rightThrust";
+    public static final String LIFE_SUPPORT = "lifeSupport";
+    public static final String GEAR = "gear";
 
     /**
      * Special values recognized by this parser.
@@ -287,7 +288,7 @@ public class XMLStreamParser implements XMLResponder {
         // vector. If assumption is wrong, clone the vector.
         return entities;
     }
-    
+
     public Vector<Pilot> getPilots() {
         // ASSUMPTION : it is safe to return a modifiable reference to the
         // vector. If assumption is wrong, clone the vector.
@@ -378,7 +379,7 @@ public class XMLStreamParser implements XMLResponder {
                 String model = (String) attr.get(MODEL);
 
                 // Did we find required attributes?
-                if (chassis == null || chassis.length() == 0) {
+                if ((chassis == null) || (chassis.length() == 0)) {
                     warning.append("Could not find chassis for Entity.\n");
                 } else {
 
@@ -386,7 +387,7 @@ public class XMLStreamParser implements XMLResponder {
                     MechSummary ms = null;
                     StringBuffer key = new StringBuffer(chassis);
                     ms = MechSummaryCache.getInstance().getMech(key.toString());
-                    if (model != null && model.length() > 0) {
+                    if ((model != null) && (model.length() > 0)) {
                         key.append(" ").append(model);
                         ms = MechSummaryCache.getInstance().getMech(
                                 key.toString());
@@ -404,7 +405,7 @@ public class XMLStreamParser implements XMLResponder {
                         warning
                         .append("Could not find Entity with chassis: ");
                         warning.append(chassis);
-                        if (model != null && model.length() > 0) {
+                        if ((model != null) && (model.length() > 0)) {
                             warning.append(", and model: ");
                             warning.append(model);
                         }
@@ -428,15 +429,23 @@ public class XMLStreamParser implements XMLResponder {
                 } // End have-chassis
 
                 if(null != entity) {
-                    
+
                     //commander
                     boolean commander = Boolean.parseBoolean((String)attr.get(COMMANDER));
                     entity.setCommander(commander);
-                    
+
+                    // deployment round
+                    try {
+                        int deployround = Integer.parseInt( (String) attr.get( DEPLOYMENT ) );
+                        entity.setDeployRound( deployround );
+                    } catch( Exception e ) {
+                        entity.setDeployRound( 0 );
+                    }
+
                     //external id
                     String extId = (String) attr.get(EXT_ID);
                     int id = Entity.NONE;
-                    if (null != extId && extId.length() > 0) {
+                    if ((null != extId) && (extId.length() > 0)) {
                         try {
                             id = Integer.parseInt(extId);
                         } catch (NumberFormatException excep) {
@@ -444,7 +453,7 @@ public class XMLStreamParser implements XMLResponder {
                         }
                     }
                     entity.setExternalId(id);
-    
+
                     //quirks
                     String quirks = (String) attr.get(QUIRKS);
                     if ((null != quirks)
@@ -455,7 +464,7 @@ public class XMLStreamParser implements XMLResponder {
                             String quirk = st.nextToken();
                             String quirkName = Pilot.parseAdvantageName(quirk);
                             Object value = Pilot.parseAdvantageValue(quirk);
-    
+
                             try {
                                 entity.getQuirks().getOption(quirkName).setValue(
                                         value);
@@ -513,9 +522,9 @@ public class XMLStreamParser implements XMLResponder {
                 String portraitFile = (String) attr.get(FILE_PORTRAIT);
 
                 // Did we find required attributes?
-                if (gunnery == null || gunnery.length() == 0) {
+                if ((gunnery == null) || (gunnery.length() == 0)) {
                     warning.append("Could not find gunnery for pilot.\n");
-                } else if (piloting == null || piloting.length() == 0) {
+                } else if ((piloting == null) || (piloting.length() == 0)) {
                     warning.append("Could not find piloting for pilot.\n");
                 } else {
 
@@ -526,7 +535,7 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if (gunVal < 0 || gunVal > 7) {
+                    if ((gunVal < 0) || (gunVal > 7)) {
                         warning.append("Found invalid gunnery value: ")
                                 .append(gunnery).append(".\n");
                         return;
@@ -539,7 +548,7 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if (pilotVal < 0 || pilotVal > 7) {
+                    if ((pilotVal < 0) || (pilotVal > 7)) {
                         warning.append("Found invalid piloting value: ")
                                 .append(piloting).append(".\n");
                         return;
@@ -547,17 +556,17 @@ public class XMLStreamParser implements XMLResponder {
 
                     //toughness
                     int toughVal = 0;
-                    if (null != tough && tough.length() > 0) {
+                    if ((null != tough) && (tough.length() > 0)) {
                         try {
                             toughVal = Integer.parseInt(tough);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
                     }
-                    
+
                     //init bonus
                     int initBVal = 0;
-                    if (null != initB && initB.length() > 0) {
+                    if ((null != initB) && (initB.length() > 0)) {
                         try {
                             initBVal = Integer.parseInt(initB);
                         } catch (NumberFormatException excep) {
@@ -565,7 +574,7 @@ public class XMLStreamParser implements XMLResponder {
                         }
                     }
                     int commandBVal = 0;
-                    if (null != commandB && commandB.length() > 0) {
+                    if ((null != commandB) && (commandB.length() > 0)) {
                         try {
                             commandBVal = Integer.parseInt(commandB);
                         } catch (NumberFormatException excep) {
@@ -576,54 +585,54 @@ public class XMLStreamParser implements XMLResponder {
                     int gunneryLVal = gunVal;
                     int gunneryMVal = gunVal;
                     int gunneryBVal = gunVal;
-                    if (null != gunneryL && gunneryL.length() > 0) {
+                    if ((null != gunneryL) && (gunneryL.length() > 0)) {
                         try {
                             gunneryLVal = Integer.parseInt(gunneryL);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if (gunneryLVal < 0 || gunneryLVal > 7) {
+                        if ((gunneryLVal < 0) || (gunneryLVal > 7)) {
                             warning.append(
                                     "Found invalid piloting value: ").append(
                                     gunneryL).append(".\n");
                             return;
                         }
                     }
-                    if (null != gunneryM && gunneryM.length() > 0) {
+                    if ((null != gunneryM) && (gunneryM.length() > 0)) {
                         try {
                             gunneryMVal = Integer.parseInt(gunneryM);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if (gunneryMVal < 0 || gunneryMVal > 7) {
+                        if ((gunneryMVal < 0) || (gunneryMVal > 7)) {
                             warning.append(
                                     "Found invalid piloting value: ").append(
                                     gunneryM).append(".\n");
                             return;
                         }
                     }
-                    if (null != gunneryB && gunneryB.length() > 0) {
+                    if ((null != gunneryB) && (gunneryB.length() > 0)) {
                         try {
                             gunneryBVal = Integer.parseInt(gunneryB);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if (gunneryBVal < 0 || gunneryBVal > 7) {
+                        if ((gunneryBVal < 0) || (gunneryBVal > 7)) {
                             warning.append(
                                     "Found invalid piloting value: ").append(
                                     gunneryB).append(".\n");
                             return;
                         }
                     }
-                    
+
                     int artVal = gunVal;
-                    if (null != artillery && artillery.length() > 0) {
+                    if ((null != artillery) && (artillery.length() > 0)) {
                         try {
                             artVal = Integer.parseInt(artillery);
                         } catch (NumberFormatException excep) {
                             // Handled by the next if test.
                         }
-                        if (artVal < 0 || artVal > 7) {
+                        if ((artVal < 0) || (artVal > 7)) {
                             warning.append(
                                     "Found invalid artillery value: ").append(
                                     artillery).append(".\n");
@@ -631,20 +640,20 @@ public class XMLStreamParser implements XMLResponder {
                         }
                     }
 
-                    if (null == pilotName || pilotName.length() == 0) {
+                    if ((null == pilotName) || (pilotName.length() == 0)) {
                             pilotName = "Unnamed";
                     }
-                    
+
                     Pilot crew = new Pilot(pilotName, gunneryLVal, gunneryMVal,
                             gunneryBVal, pilotVal);
 
-                    if (null != pilotNickname && pilotNickname.length() > 0) {
+                    if ((null != pilotNickname) && (pilotNickname.length() > 0)) {
                        crew.setNickname(pilotNickname);
                     }
-                    if (null != portraitCategory && portraitCategory.length() > 0) {
+                    if ((null != portraitCategory) && (portraitCategory.length() > 0)) {
                         crew.setPortraitCategory(portraitCategory);
                      }
-                    if (null != portraitFile && portraitFile.length() > 0) {
+                    if ((null != portraitFile) && (portraitFile.length() > 0)) {
                         crew.setPortraitFileName(portraitFile);
                      }
                     crew.setArtillery(artVal);
@@ -705,7 +714,7 @@ public class XMLStreamParser implements XMLResponder {
                             crew.setDead(true);
                             warning.append("The pilot, ")
                                     .append(pilotName).append(", is dead.\n");
-                        } else if (hitVal < 0 || hitVal > 5) {
+                        } else if ((hitVal < 0) || (hitVal > 5)) {
                             warning.append("Found invalid hits value: ")
                                     .append(hits).append(".\n");
                         } else {
@@ -717,9 +726,9 @@ public class XMLStreamParser implements XMLResponder {
                     if (ejected != null) {
                         crew.setEjected(Boolean.parseBoolean(ejected));
                     }
-                    
+
                     int id = Entity.NONE;
-                    if (null != extId && extId.length() > 0) {
+                    if ((null != extId) && (extId.length() > 0)) {
                         try {
                             id = Integer.parseInt(extId);
                         } catch (NumberFormatException excep) {
@@ -727,12 +736,12 @@ public class XMLStreamParser implements XMLResponder {
                         }
                     }
                     crew.setExternalId(id);
-                    
+
                     pilots.add(crew);
                     if(null != entity) {
                         // Set the crew for this entity.
                         entity.setCrew(crew);
-    
+
                         if (autoeject != null) {
                             if (autoeject.equals("true")) {
                                 ((Mech) entity).setAutoEject(true);
@@ -765,7 +774,7 @@ public class XMLStreamParser implements XMLResponder {
                 String destroyed = (String) attr.get(IS_DESTROYED);
 
                 // Did we find required attributes?
-                if (index == null || index.length() == 0) {
+                if ((index == null) || (index.length() == 0)) {
                     warning.append("Could not find index for location.\n");
                 } else {
 
@@ -776,7 +785,7 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (NumberFormatException excep) {
                         // Handled by the next if test.
                     }
-                    if (indexVal < 0 || indexVal > 7) {
+                    if ((indexVal < 0) || (indexVal > 7)) {
                         warning.append(
                                 "Found invalid index value for location: ")
                                 .append(index).append(".\n");
@@ -872,7 +881,7 @@ public class XMLStreamParser implements XMLResponder {
                 String type = (String) attr.get(TYPE);
 
                 // Did we find required attributes?
-                if (points == null || points.length() == 0) {
+                if ((points == null) || (points.length() == 0)) {
                     warning.append("Could not find points for armor.\n");
                 } else {
 
@@ -887,7 +896,7 @@ public class XMLStreamParser implements XMLResponder {
                         pointsVal = IArmorState.ARMOR_NA;
                     } else if (points.equals(DESTROYED)) {
                         pointsVal = IArmorState.ARMOR_DESTROYED;
-                    } else if (pointsVal < 0 || pointsVal > 2000) {
+                    } else if ((pointsVal < 0) || (pointsVal > 2000)) {
                         warning.append("Found invalid points value: ")
                                 .append(points).append(".\n");
                         return;
@@ -895,7 +904,7 @@ public class XMLStreamParser implements XMLResponder {
 
                     // Assign the points to the correct location.
                     // Sanity check the armor value before setting it.
-                    if (type == null || type.equals(FRONT)) {
+                    if ((type == null) || type.equals(FRONT)) {
                         if (entity.getOArmor(loc) < pointsVal) {
                             warning.append("The entity, ").append(
                                     entity.getShortName()).append(
@@ -1110,9 +1119,9 @@ public class XMLStreamParser implements XMLResponder {
                 String quirks = (String) attr.get(QUIRKS);
 
                 // Did we find required attributes?
-                if (index == null || index.length() == 0) {
+                if ((index == null) || (index.length() == 0)) {
                     warning.append("Could not find index for slot.\n");
-                } else if (type == null || type.length() == 0) {
+                } else if ((type == null) || (type.length() == 0)) {
                     warning.append("Could not find type for slot.\n");
                 } else {
 
@@ -1131,8 +1140,8 @@ public class XMLStreamParser implements XMLResponder {
                         // Tanks don't have slots, and Protomechs only have
                         // system slots, so we have to handle the ammo
                         // specially.
-                        if (entity instanceof Tank
-                                || entity instanceof Protomech) {
+                        if ((entity instanceof Tank)
+                                || (entity instanceof Protomech)) {
 
                             // Get the saved ammo load.
                             EquipmentType newLoad = EquipmentType.get(type);
@@ -1141,7 +1150,7 @@ public class XMLStreamParser implements XMLResponder {
                                 Iterator<Mounted> ammo = entity.getAmmo()
                                         .iterator();
                                 while (ammo.hasNext()
-                                        && counter < locAmmoCount) {
+                                        && (counter < locAmmoCount)) {
 
                                     // Is this mounted in the current location?
                                     Mounted mounted = ammo.next();
@@ -1177,8 +1186,8 @@ public class XMLStreamParser implements XMLResponder {
                                                                 ", but found ")
                                                         .append(shots).append(
                                                                 " instead.\n");
-                                            } else if (shotsVal < 0
-                                                    || shotsVal > 200) {
+                                            } else if ((shotsVal < 0)
+                                                    || (shotsVal > 200)) {
                                                 warning
                                                         .append(
                                                                 "Found invalid shots value for slot: ")
@@ -1218,7 +1227,7 @@ public class XMLStreamParser implements XMLResponder {
 
                         // TODO: handle slotless equipment.
                         return;
-                    } else if (indexVal < 0 || indexVal > 12) {
+                    } else if ((indexVal < 0) || (indexVal > 12)) {
                         warning.append(
                                 "Found invalid index value for slot: ").append(
                                 index).append(".\n");
@@ -1257,7 +1266,7 @@ public class XMLStreamParser implements XMLResponder {
                                 .append("Found invalid isDestroyed value: ")
                                 .append(destroyed).append(".\n");
                     }
-                    
+
                     // Is the location repairable?
                     boolean repairFlag = true;
                     try {
@@ -1333,7 +1342,7 @@ public class XMLStreamParser implements XMLResponder {
                         mounted.setDestroyed(hitFlag || destFlag);
 
                         mounted.setRepairable(repairFlag);
-                        
+
                         // Is the mounted a type of ammo?
                         if (mounted.getType() instanceof AmmoType) {
 
@@ -1357,7 +1366,7 @@ public class XMLStreamParser implements XMLResponder {
                                             .append(", but found ").append(
                                                     shots)
                                             .append(" instead.\n");
-                                } else if (shotsVal < 0 || shotsVal > 200) {
+                                } else if ((shotsVal < 0) || (shotsVal > 200)) {
                                     warning
                                             .append(
                                                     "Found invalid shots value for slot: ")

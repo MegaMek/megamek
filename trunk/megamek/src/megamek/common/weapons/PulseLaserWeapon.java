@@ -21,7 +21,7 @@ import megamek.server.Server;
 /**
  * @author beerockxs
  */
-public class PulseLaserWeapon extends LaserWeapon {
+public abstract class PulseLaserWeapon extends LaserWeapon {
 
     /**
      *

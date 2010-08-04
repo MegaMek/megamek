@@ -50,6 +50,7 @@ public class ISHeavyRecoillessRifle extends Weapon {
         extremeRange = 10;
         bv = 22;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        cost = 5000;
     }
 
     /*

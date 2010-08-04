@@ -18,6 +18,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -27,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextPane;
+import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.html.HTMLEditorKit;
 
@@ -199,8 +202,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
             ta.setText("<pre>" + phaseText + "</pre>");
             ta.setEditable(false);
             ta.setOpaque(false);
-            
-            
+
+
             JScrollPane sp = new JScrollPane(ta);
             tabs.add("Phase", sp);
             tabs.setSelectedComponent(sp);
@@ -217,7 +220,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
                "pre { font-family: " + font.getFamily() + "; font-size: 12pt; font-style:normal;}");
     }
-    
+
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
         if (phaseTab > 0) {
@@ -252,6 +255,18 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
         setReportTab(clientgui.getClient().game.getRoundCount(), clientgui.getClient().roundReport, clientgui.getClient().phaseReport);
         resetButtons();
         rerolled = false;
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                int phaseTab = tabs.indexOfTab("Phase");
+                if (phaseTab > 0) {
+                    JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport();
+                    vp.setViewPosition(new Point());
+                }
+                JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport();
+                vp.setViewPosition(new Point());
+            }
+        });
     }
 
     @Override

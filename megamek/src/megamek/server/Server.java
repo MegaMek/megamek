@@ -4628,10 +4628,17 @@ public class Server implements Runnable {
         }
 
         if (returnable > -1) {
+
             entity.setDeployed(false);
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
             entity.setDone(true);
+            if (entity instanceof Aero) {
+                //If we're flying off because we're OOC, when we come back we should no longer be OOC
+                //If we don't, this causes a major problem as aeros tend to return, re-deploy then
+                //fly off again instantly.
+                ((Aero)entity).setOutControl(false);
+            }
             switch (fleeDirection) {
             case WEST:
                 entity.setStartingPos(Board.START_W);

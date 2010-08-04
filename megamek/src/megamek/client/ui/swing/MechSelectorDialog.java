@@ -403,12 +403,26 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                             (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) &&
                             /*Technology Level*/
                             ((nType == TechConstants.T_ALL)
-                                    || (nType == mech.getType())
-                                    || ((nType == TechConstants.T_IS_TW_ALL)
-                                            && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX) || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
-                                            || ((nType == TechConstants.T_TW_ALL) && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                                    || (mech.getType() <= TechConstants.T_INTRO_BOXSET) || (mech.getType() <= TechConstants.T_CLAN_TW))))
-                                                    && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))) {
+                                || (nType == mech.getType())
+                                || ((nType == TechConstants.T_IS_TW_ALL) 
+                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
+                                || ((nType == TechConstants.T_TW_ALL) 
+                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                     || (mech.getType() <= TechConstants.T_INTRO_BOXSET) 
+                                     || (mech.getType() <= TechConstants.T_CLAN_TW)))
+                                || ((nType == TechConstants.T_ALL_IS) 
+                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)
+                                     || (mech.getType() == TechConstants.T_IS_ADVANCED)
+                                     || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL)
+                                     || (mech.getType() == TechConstants.T_IS_UNOFFICIAL)))
+                                || ((nType == TechConstants.T_ALL_CLAN) 
+                                    && ((mech.getType() == TechConstants.T_CLAN_TW)
+                                     || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
+                                     || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
+                                     || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
+                            && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))) {
                         //yuck, I have to pull up a full Entity to get MechView to search in
                         //TODO: why not put mechview into the mech summary itself?
                         if(txtFilter.getText().length() > 0) {

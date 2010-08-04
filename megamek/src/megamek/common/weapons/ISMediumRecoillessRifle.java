@@ -50,6 +50,7 @@ public class ISMediumRecoillessRifle extends Weapon {
         extremeRange = 8;
         bv = 19;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        cost = 3000;
     }
 
     /*

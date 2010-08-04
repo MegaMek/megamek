@@ -8,6 +8,7 @@ v0.36.18-dev (SVN)
 + Bug: Not all infantry flamers able to deal heat
 + Patch 3014518: Show reports from top
 + Patch 3014527: "All IS" and "All Clan" techlevels
++ Patch 3029802: Some BA weapons missing cost
 
 v0.36.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

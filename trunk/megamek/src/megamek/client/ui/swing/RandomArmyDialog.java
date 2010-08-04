@@ -319,7 +319,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             return;
         }
         includeMaxTech = maxTechOption;
-        m_chType.removeAll();
+        m_chType.removeAllItems();
         for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }

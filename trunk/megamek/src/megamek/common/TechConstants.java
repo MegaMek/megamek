@@ -50,7 +50,9 @@ public class TechConstants {
     public static final int T_IS_UNOFFICIAL = 9;
     public static final int T_CLAN_UNOFFICIAL = 10;
 
-    public static final int T_ALL = 11;
+    public static final int T_ALL_IS = 11;
+    public static final int T_ALL_CLAN = 12;
+    public static final int T_ALL = 13;
 
     // Number of legal level 2 choices
     public static final int SIZE_LEVEL_2 = 5;
@@ -59,7 +61,8 @@ public class TechConstants {
     // It must match the index to the constant's value.
     public static final String[] T_NAMES = { "IS_Box_Set", "IS_TW_Non_Box",
             "Clan_TW", "IS_TW", "All_TW", "IS_Advanced",
-            "Clan_Advanced", "IS_Experimental", "Clan_Experimental", "IS_Unofficial", "Clan_Unofficial", "All" };
+            "Clan_Advanced", "IS_Experimental", "Clan_Experimental", "IS_Unofficial", "Clan_Unofficial", 
+            "All_IS", "All_Clan", "All" };
 
     public static final int SIZE = T_NAMES.length;
 
@@ -67,7 +70,7 @@ public class TechConstants {
     // The "all" selections return -1, since they don't apply to
     // individual units.
     public static final String[] T_SIMPLE_LEVEL = { "1", "2", "2", "-1", "-1",
-            "3", "3", "4", "4", "5", "5", "-1" };
+            "3", "3", "4", "4", "5", "5", "-1", "-1", "-1" };
 
     public static String getLevelName(int level) {
         if(level == T_ALLOWED_ALL)

@@ -3786,7 +3786,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 }
                 if (entity.isMakingDfa()) {
                     buffer.append(" ") //$NON-NLS-1$
-                    .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
+                    .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
                 }
             } else if (ge == null) {
                 buffer.append( Messages.getString("BoardView1.move") ) //$NON-NLS-1$

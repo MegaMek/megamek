@@ -2644,7 +2644,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
                 if (entity.isMakingDfa()) {
                     buffer.append(" ") //$NON-NLS-1$
-                            .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
+                            .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
                 }
             } else {
                 if (ge.hasTurret() && ge.isTurretLocked()) {

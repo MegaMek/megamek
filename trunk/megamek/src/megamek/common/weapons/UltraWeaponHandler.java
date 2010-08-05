@@ -96,7 +96,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount UACS/RACs
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
 
@@ -132,7 +132,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > ranges[RangeType.RANGE_LONG])) {
             nMod -= 2;
         }
 
@@ -173,7 +173,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (roll == 2 && howManyShots == 2) {
+        if ((roll == 2) && (howManyShots == 2)) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
@@ -198,12 +198,14 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = wtype.getDamage() * howManyShots;
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            toReturn = 0;
+            for (int i = 0; i < howManyShots; i++) {
+                toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+            }
+            // possibly plus 1 for cluster
             if (howManyShots > 1) {
-                // ok, more than 1 shot, +1 for cluster
-                toReturn += 1;
+                toReturn++;
             }
         } else if ( bDirect ){
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
@@ -213,7 +215,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         return (int) toReturn;

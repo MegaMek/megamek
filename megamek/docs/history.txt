@@ -11,6 +11,7 @@ v0.36.18-dev (SVN)
 + Patch 3029802: Some BA weapons missing cost
 + Bug 3004670: OOC aero units that fly off and return should then be no longer
     OOC
++ Bug 3028714: rac against infantry damage wrong
 
 v0.36.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

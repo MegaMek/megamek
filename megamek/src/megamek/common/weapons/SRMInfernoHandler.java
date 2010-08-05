@@ -258,7 +258,6 @@ public class SRMInfernoHandler extends SRMHandler {
                         * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
-                r.newlines = 0;
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength()*wtype.getRackSize();
             }
@@ -267,7 +266,6 @@ public class SRMInfernoHandler extends SRMHandler {
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
             r.add(toHit.getTableDesc());
-            r.newlines = 0;
             vPhaseReport.add(r);
             return wtype.getRackSize();
         }
@@ -336,7 +334,6 @@ public class SRMInfernoHandler extends SRMHandler {
             }
         }
         Report r = new Report(3345);
-        r.newlines = 0;
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;

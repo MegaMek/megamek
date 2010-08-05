@@ -57,7 +57,7 @@ public class StreakHandler extends MissileWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             int toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             return toReturn;
         }
@@ -83,7 +83,7 @@ public class StreakHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
                 return ((BattleArmor) ae).getShootingStrength();
@@ -96,7 +96,7 @@ public class StreakHandler extends MissileWeaponHandler {
         }
         int nMissilesModifier = nSalvoBonus;
 
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
             nMissilesModifier -= 2;
         }
 
@@ -139,7 +139,6 @@ public class StreakHandler extends MissileWeaponHandler {
         }
         Report r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
@@ -192,7 +191,7 @@ public class StreakHandler extends MissileWeaponHandler {
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)
-                && roll >= toHit.getValue()) {
+                && (roll >= toHit.getValue())) {
             super.addHeat();
         }
     }

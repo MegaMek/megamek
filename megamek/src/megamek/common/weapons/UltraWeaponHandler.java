@@ -160,7 +160,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             }
             r = new Report(3345);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         return shotsHit;

@@ -394,11 +394,9 @@ public class LRMSwarmHandler extends LRMHandler {
         r.add(missilesHit);
         r.add(sSalvoType);
         r.add(toHit.getTableDesc());
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;

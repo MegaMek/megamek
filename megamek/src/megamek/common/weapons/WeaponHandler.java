@@ -369,7 +369,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.add(nhit);
                     r.add(" weapon(s) ");
                     r.add(" ");
-                    r.newlines = 0;
                     vPhaseReport.add(r);
                 }
                 nDamPerHit = attackValue * nhit;
@@ -710,6 +709,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Report the miss.
         Report r = new Report(3220);
         r.subject = subjectId;
+        r.newlines = 2;
         vPhaseReport.addElement(r);
     }
 

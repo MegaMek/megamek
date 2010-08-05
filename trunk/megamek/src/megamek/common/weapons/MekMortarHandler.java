@@ -58,12 +58,12 @@ public class MekMortarHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
 
-        boolean targetHex = target.getTargetType() == Targetable.TYPE_HEX_CLEAR
-                            || target.getTargetType() == Targetable.TYPE_HEX_IGNITE;
+        boolean targetHex = (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                            || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
         int missilesHit;
         int nMissilesModifier = 0;
 
@@ -71,7 +71,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
             missilesHit = wtype.getRackSize();
         }
         else {
-            if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 nMissilesModifier -= 2;
             }
 
@@ -106,7 +106,6 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         }
         Report r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
@@ -148,7 +147,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE, ((Infantry)target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;

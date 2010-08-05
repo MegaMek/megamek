@@ -177,7 +177,6 @@ public class ATMHandler extends MissileWeaponHandler {
                         * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
-                r.newlines = 0;
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
             }
@@ -186,7 +185,6 @@ public class ATMHandler extends MissileWeaponHandler {
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
             r.add(toHit.getTableDesc());
-            r.newlines = 0;
             vPhaseReport.add(r);
             return 1;
         }
@@ -327,7 +325,6 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         Report r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;

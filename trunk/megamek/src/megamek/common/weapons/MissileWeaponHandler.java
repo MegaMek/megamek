@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -83,7 +82,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(" ");
-                r.newlines = 0;
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
             }
@@ -92,7 +90,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
             r.add(" ");
-            r.newlines = 0;
             vPhaseReport.add(r);
             return 1;
         }
@@ -274,7 +271,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         Report r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
@@ -649,7 +645,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     r.add(nhit);
                     r.add(" weapon(s) ");
                     r.add(" ");
-                    r.newlines = 0;
                     vPhaseReport.add(r);
                 }
                 nDamPerHit = attackValue * nhit;

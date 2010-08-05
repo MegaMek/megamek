@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -33,7 +33,7 @@ import megamek.server.Server;
  */
 public class PrototypeLBXHandler extends LBXHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5200908977142584431L;
 
@@ -50,7 +50,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      *      vPhaseReport)
      */
@@ -58,10 +58,10 @@ public class PrototypeLBXHandler extends LBXHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
-        
+
         int shotMod = -1;
         if (bGlancing) {
             shotMod -= 4;
@@ -71,7 +71,7 @@ public class PrototypeLBXHandler extends LBXHandler {
         }
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
                 .missilesHit(wtype.getRackSize(), shotMod);
-        
+
         Report r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);
@@ -81,7 +81,6 @@ public class PrototypeLBXHandler extends LBXHandler {
         vPhaseReport.addElement(r);
         r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return shotsHit;
@@ -89,7 +88,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

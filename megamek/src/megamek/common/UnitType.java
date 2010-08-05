@@ -36,8 +36,8 @@ public class UnitType {
     public static final int SPACE_STATION = 14;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter", 
-            "Aero", "Small Craft", "Dropship", 
+            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
+            "Aero", "Small Craft", "Dropship",
             "Jumpship", "Warship", "Space Station" };
 
     public static final int SIZE = names.length;
@@ -56,14 +56,14 @@ public class UnitType {
                 || (mm == EntityMovementMode.HYDROFOIL)
                 || (mm == EntityMovementMode.SUBMARINE)) {
             return NAVAL;
+        } else if (e instanceof GunEmplacement) {
+            return GUN_EMPLACEMENT;
         } else if (e instanceof Tank) {
             return TANK;
         } else if (e instanceof Mech) {
             return MEK;
         } else if (e instanceof Protomech) {
             return PROTOMEK;
-        } else if (e instanceof GunEmplacement) {
-            return GUN_EMPLACEMENT;
         } else if (e instanceof Warship) {
             return WARSHIP;
         } else if (e instanceof Jumpship) {
@@ -82,14 +82,14 @@ public class UnitType {
     }
 
     public static String getTypeName(int type) {
-        if (type >= 0 && type < SIZE) {
+        if ((type >= 0) && (type < SIZE)) {
             return names[type];
         }
         throw new IllegalArgumentException("Unknown unit type");
     }
 
     public static String getTypeDisplayableName(int type) {
-        if (type >= 0 && type < SIZE) {
+        if ((type >= 0) && (type < SIZE)) {
             return Messages.getString("UnitType." + names[type]);
         }
         throw new IllegalArgumentException("Unknown unit type");

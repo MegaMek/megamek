@@ -56,7 +56,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_BALLISTIC, ((Infantry)target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
@@ -88,7 +88,7 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
 
@@ -97,7 +97,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
         if (allShotsHit()) {
             shotsHit = wtype.getRackSize();
-            if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
         } else {
@@ -112,7 +112,7 @@ public class LBXHandler extends AmmoWeaponHandler {
                     nHitsModifier -= 1;
                 }
             }
-            if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 nHitsModifier -= 2;
             }
 
@@ -152,7 +152,6 @@ public class LBXHandler extends AmmoWeaponHandler {
         }
         r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return shotsHit;

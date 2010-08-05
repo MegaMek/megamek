@@ -65,7 +65,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = wtype.getRackSize();
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_BALLISTIC, ((Infantry)target).isMechanized());
             if ( bGlancing ) {
@@ -86,7 +86,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount HAGs
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
         int nHits;
@@ -108,7 +108,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nHitsModifier -= 2;
         }
 
@@ -125,7 +125,6 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(nHits);
         r.add(" projectiles ");
-        r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
         if (nHitsModifier != 0) {
@@ -140,7 +139,6 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         }
         r = new Report(3345);
         r.subject = subjectId;
-        r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return nHits;

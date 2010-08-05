@@ -89,7 +89,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
         if (roll == 2) {
             Report r = new Report(3162);
             r.subject = subjectId;
-            weapon.setJammed(false);
+            weapon.setJammed(true);
             weapon.setHit(true);
             int wlocation = weapon.getLocation();
             for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {

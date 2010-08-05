@@ -44,6 +44,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean hit = false;
     private boolean missing = false;
     private boolean jammed = false;
+    private boolean jammedThisTurn = false;
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff.
     private boolean rapidfire = false; // MGs in rapid-fire mode
@@ -295,6 +296,9 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
+        if (jammedThisTurn) {
+            jammed = true;
+        }
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
             pendingMode = -1;
@@ -443,8 +447,9 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public void setJammed(boolean j) {
-        jammed = j;
+        jammedThisTurn = j;
     }
+
 
     public int getShotsLeft() {
         return shotsLeft;
@@ -1036,8 +1041,8 @@ public class Mounted implements Serializable, RoundUpdated {
             if(hasChargedCapacitor()) {
                 heat += 5;
             }
-            if (getLinkedBy() != null && !getLinkedBy().isInoperable()
-                    && getLinkedBy().getType() instanceof MiscType
+            if ((getLinkedBy() != null) && !getLinkedBy().isInoperable()
+                    && (getLinkedBy().getType() instanceof MiscType)
                     && getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
                 heat -= 1;
                 if (heat == 0) {

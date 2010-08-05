@@ -17919,7 +17919,9 @@ public class Server implements Runnable {
                 r.add(weapon.getName());
                 vDesc.add(r);
                 // explosive weapons e.g. gauss now explode
-                vDesc.addAll(explodeEquipment(t, loc, weapon));
+                if (weapon.getType().isExplosive()) {
+                    vDesc.addAll(explodeEquipment(t, loc, weapon));
+                }
                 break;
             }
             case Tank.CRIT_WEAPON_JAM: {

@@ -85,14 +85,14 @@ public class MechSummary implements Serializable {
             return "VTOL";
         } else if ((mm == EntityMovementMode.NAVAL) || (mm == EntityMovementMode.HYDROFOIL) || (mm == EntityMovementMode.SUBMARINE)) {
             return "Naval";
+        } else if (e instanceof GunEmplacement) {
+            return "Gun Emplacement";
         } else if (e instanceof Tank) {
             return "Tank";
         } else if (e instanceof Mech) {
             return "Mek";
         } else if (e instanceof Protomech) {
             return "ProtoMek";
-        } else if (e instanceof GunEmplacement) {
-            return "Gun Emplacement";
         } else if (e instanceof SpaceStation) {
             return "Space Station";
         } else if (e instanceof Warship) {

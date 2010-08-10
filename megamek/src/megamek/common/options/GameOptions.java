@@ -194,7 +194,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
-        addOption(advAeroRules,"aero_ground_move", false); //$NON-NLS-1$
+        addOption(advAeroRules,"aero_ground_move", true); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_capital_fighter", false); //$NON-NLS-1$
         addOption(advAeroRules,"fuel_consumption", false); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_conv_fusion_bonus", false); //$NON-NLS-1$

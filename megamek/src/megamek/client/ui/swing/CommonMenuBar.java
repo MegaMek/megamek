@@ -763,14 +763,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         if (hasUnitList) {
             fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
             fileUnitsClear.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
-            fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
+          //  fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
         }
         // If we don't have a unit list, but we are in the lounge,
         // then we can open a unit list.
         else {
             fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
             fileUnitsClear.setEnabled(false);
-            fileUnitsSave.setEnabled(false);
+          //  fileUnitsSave.setEnabled(false);
         }
 
         // If an entity has been selected, we can view it.

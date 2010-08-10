@@ -77,7 +77,6 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameMapQueryEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
@@ -195,7 +194,7 @@ public class Client implements IClientCommandHandler {
             @Override
             public void run() {
                 try {
-                    SwingUtilities.invokeAndWait(packetUpdate);
+                    SwingUtilities.invokeLater(packetUpdate);
                 } catch (Exception ie) {
                     //should never get here
                 }
@@ -619,7 +618,7 @@ public class Client implements IClientCommandHandler {
     public void sendMapSettings(MapSettings settings) {
         send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, settings));
     }
-    
+
     /**
      * Send the new map dimensions to the server
      */

@@ -4871,9 +4871,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex, EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, boolean isInfantry, int distance) {
+
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         addPilotingModifierForTerrain(roll, lastPos);
 
+        if(isAirborne() || isAirborneVTOL()) {
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: flyinge entities don't skid");
+            return roll;
+        }
+        
+        
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
         if ((moveType != EntityMovementType.MOVE_JUMP) && (prevHex != null)

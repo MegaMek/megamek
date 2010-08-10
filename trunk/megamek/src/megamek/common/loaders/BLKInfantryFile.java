@@ -155,9 +155,6 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setAntiMek(true);
         }
 
-        // get field guns
-        loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
-
         if (dataFile.exists("history")) {
             t.getFluff().setHistory(dataFile.getDataAsString("history").toString());
         }

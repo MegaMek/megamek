@@ -49,6 +49,7 @@ import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
+import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.WeaponHandler;
 
 /**
@@ -8131,7 +8132,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     modes.add("Bracket 60%");
                     modes.add("Bracket 40%");
                 }
-                if ((mounted.getType() instanceof CapitalLaserBayWeapon) && game.getOptions().booleanOption("stratops_aaa_laser")) {
+                if (((mounted.getType() instanceof CapitalLaserBayWeapon) || (mounted.getType() instanceof SCLBayWeapon)) && game.getOptions().booleanOption("stratops_aaa_laser")) {
                     modes.add("AAA");
                     ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }

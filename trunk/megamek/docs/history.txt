@@ -18,6 +18,7 @@ v0.35.18-dev (SVN)
 + Added option to save units to .mul at any time, thanks Jason Smyrloglou!
 + Bug 3027240: Field Gun Infantry
 + "Aero on ground maps" option defaults as true
++ Bug 3012093: Sub Capital NLs
 
 v0.35.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

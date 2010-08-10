@@ -528,6 +528,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ("helpContents".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showHelp();
         }
+        if ("fileUnitsSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            doSaveUnit();
+        }
         if ("viewClientSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showSettings();
         }
@@ -556,6 +559,57 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
         }
     }
+
+    /**
+     * Save all the current in use Entities each grouped by
+     * player name
+     *
+     * and a file for salvage
+     */
+     public void doSaveUnit()
+        {
+            for(Enumeration<Player> iter= getClient().game.getPlayers();iter.hasMoreElements();){
+                Player p=iter.nextElement();
+                ArrayList<Entity> l = getClient().game.getPlayerEntities(p, false);
+                // Be sure to include all units that have retreated.
+                for (Enumeration<Entity> iter2 = getClient().game.getRetreatedEntities(); iter2.hasMoreElements();) {
+                  Entity e= iter2.nextElement();
+                  if(e.getOwnerId()==p.getId())
+                      l.add(e);
+              }
+                saveListFile(l,p.getName());
+            }
+
+            // save all destroyed units in a separate "salvage MUL"
+            ArrayList<Entity> destroyed = new ArrayList<Entity>();
+            Enumeration<Entity> graveyard = getClient().game.getGraveyardEntities();
+            while (graveyard.hasMoreElements()) {
+                Entity entity = graveyard.nextElement();
+                if (entity.isSalvage()) {
+                    destroyed.add(entity);
+                }
+            }
+            if (destroyed.size() > 0) {
+                String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+                File logDir = new File(sLogDir);
+                if (!logDir.exists()) {
+                    logDir.mkdir();
+                }
+                String fileName = "salvage.mul";
+                if (PreferenceManager.getClientPreferences().stampFilenames()) {
+                    fileName = StringUtil.addDateTimeStamp(fileName);
+                }
+                File unitFile = new File(sLogDir + File.separator + fileName);
+                try {
+                    // Save the destroyed entities to the file.
+                    EntityListFile.saveTo(unitFile, destroyed);
+                } catch (IOException excep) {
+                    excep.printStackTrace(System.err);
+                    doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+                }
+            }
+        }
+
 
     /**
      * Saves the current settings to the cfg file.
@@ -1089,6 +1143,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *            "Save As" dialog will not be displayed.
      */
     protected void saveListFile(ArrayList<Entity> unitList) {
+         saveListFile(unitList,client.getLocalPlayer().getName());
+    }
+    protected void saveListFile(ArrayList<Entity> unitList,String filename) {
+    
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
             return;
@@ -1100,11 +1158,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgSaveList.setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
             FileNameExtensionFilter filter = new FileNameExtensionFilter("Mul Files", "mul");
-
             dlgSaveList.setFileFilter(filter);
         }
         // Default to the player's name.
-        dlgSaveList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
+        dlgSaveList.setSelectedFile(new File(filename + ".mul")); //$NON-NLS-1$
 
         int returnVal = dlgSaveList.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveList.getSelectedFile() == null)) {
@@ -1275,6 +1332,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
 
+       
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();

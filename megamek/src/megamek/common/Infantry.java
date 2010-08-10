@@ -183,7 +183,7 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public boolean canChangeSecondaryFacing() {
-        return (dugIn == DUG_IN_NONE);
+        return (dugIn == DUG_IN_NONE) && !hasActiveFieldArtillery();
     }
 
     /**
@@ -539,7 +539,9 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public boolean isSecondaryArcWeapon(int wn) {
-        //nothing should be secondary arc, including field guns
+        if (getEquipment(wn).getLocation() == LOC_FIELD_GUNS && !hasActiveFieldArtillery()) {
+            return true;
+        }
         return false;
     }
 

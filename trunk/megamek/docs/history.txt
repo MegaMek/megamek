@@ -15,6 +15,7 @@ v0.36.18-dev (SVN)
 + Bug 3011684: non-explosive tank weapons explode on weapon destroyed crit
 + Bug 2891636: RAC shouldn't be explosive the turn it jammed
 + Bug 3026402: gun emplacement appear as tanks in unit selector dialog
++ Added option to save units to .mul at any time, thanks Jason Smyrloglou!
 
 v0.36.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

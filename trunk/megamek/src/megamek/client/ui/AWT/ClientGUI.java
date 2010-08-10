@@ -546,6 +546,9 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         if (event.getActionCommand().equalsIgnoreCase("helpContents")) { //$NON-NLS-1$
             showHelp();
         }
+        if (event.getActionCommand().equalsIgnoreCase("fileUnitsSave")) { //$NON-NLS-1$
+            doSaveUnit();
+        }
         if (event.getActionCommand().equalsIgnoreCase("viewClientSettings")) { //$NON-NLS-1$
             showSettings();
         }
@@ -570,6 +573,50 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             bv.zoomOut();
         } else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
             showLOSSettingDialog();
+        }
+    }
+
+    public void doSaveUnit() {
+        for (Enumeration<Player> iter = getClient().game.getPlayers(); iter.hasMoreElements();) {
+            Player p = iter.nextElement();
+            ArrayList<Entity> l = getClient().game.getPlayerEntities(p, false);
+            // Be sure to include all units that have retreated.
+            for (Enumeration<Entity> iter2 = getClient().game.getRetreatedEntities(); iter2.hasMoreElements();) {
+                Entity e = iter2.nextElement();
+                if (e.getOwnerId() == p.getId()) {
+                    l.add(e);
+                }
+            }
+            saveListFile(l, p.getName());
+        }
+
+        // save all destroyed units in a separate "salvage MUL"
+        ArrayList<Entity> destroyed = new ArrayList<Entity>();
+        Enumeration<Entity> graveyard = getClient().game.getGraveyardEntities();
+        while (graveyard.hasMoreElements()) {
+            Entity entity = graveyard.nextElement();
+            if (entity.isSalvage()) {
+                destroyed.add(entity);
+            }
+        }
+        if (destroyed.size() > 0) {
+            String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+            File logDir = new File(sLogDir);
+            if (!logDir.exists()) {
+                logDir.mkdir();
+            }
+            String fileName = "salvage.mul";
+            if (PreferenceManager.getClientPreferences().stampFilenames()) {
+                fileName = StringUtil.addDateTimeStamp(fileName);
+            }
+            File unitFile = new File(sLogDir + File.separator + fileName);
+            try {
+                // Save the destroyed entities to the file.
+                EntityListFile.saveTo(unitFile, destroyed);
+            } catch (IOException excep) {
+                excep.printStackTrace(System.err);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+            }
         }
     }
 
@@ -1095,12 +1142,33 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
      * non-standard munitions selected, and ammunition expended during the
      * course of the current engagement.
      *
+     * File name default will be that of current player
+     *
      * @param unitList
      *            - the <code>Vector</code> of <code>Entity</code>s to be saved
      *            to a file. If this value is <code>null</code> or empty, the
      *            "Save As" dialog will not be displayed.
      */
     protected void saveListFile(ArrayList<Entity> unitList) {
+         saveListFile(unitList,client.getLocalPlayer().getName());
+    }
+
+     /**
+     * Allow the player to save a list of entities to a MegaMek Unit List file.
+     * A "Save As" dialog will be displayed that allows the user to select the
+     * file's name and directory. The player can later load this file to quickly
+     * select the units for a new game. The file will record damage sustained,
+     * non-standard munitions selected, and ammunition expended during the
+     * course of the current engagement.
+     *
+     * @param unitList
+     *            - the <code>Vector</code> of <code>Entity</code>s to be saved
+     *            to a file. If this value is <code>null</code> or empty, the
+     *            "Save As" dialog will not be displayed.
+     * @param filename
+     *          Filename that list will be saved under
+     */
+    protected void saveListFile(ArrayList<Entity> unitList,String filename) {
 
         // Handle empty lists.
         if ((null == unitList) || unitList.isEmpty()) {
@@ -1122,7 +1190,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             dlgSaveList.setDirectory("."); //$NON-NLS-1$
 
             // Default to the player's name.
-            dlgSaveList.setFile(client.getLocalPlayer().getName() + ".mul"); //$NON-NLS-1$
+            dlgSaveList.setFile(filename + ".mul"); //$NON-NLS-1$
         }
 
         // Display the "save unit" dialog.

@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.36.18-dev (SVN)
+v0.35.18-dev (SVN)
 + allow to set deployment time in MUL
 + Bug 3038007: artillery cannon damage
 + new chatbox now keeps text from report chatbox, and vice versa
@@ -17,7 +17,7 @@ v0.36.18-dev (SVN)
 + Bug 3026402: gun emplacement appear as tanks in unit selector dialog
 + Added option to save units to .mul at any time, thanks Jason Smyrloglou!
 
-v0.36.17 (2010-07-20, 23:28 UTC+2)
+v0.35.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file
 + Added liquid storage
 + Added MegaMekLab flags for unit loading
@@ -37,7 +37,7 @@ v0.36.17 (2010-07-20, 23:28 UTC+2)
 + Added hitch
 + Added Collapsible Command Module
 
-v0.36.16 (2010-06-19. 16:28 UTC+2)
+v0.35.16 (2010-06-19. 16:28 UTC+2)
 + isometric rendering fixes
 + weapons fire report newline fix
 + unitoverview drawing fix when window wider than board image

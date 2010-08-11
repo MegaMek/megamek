@@ -344,6 +344,12 @@ public class PilotMapSet implements DisplayMapSet {
         Image portrait = null;
         try {
             portrait = (Image) portraits.getItem(category, file);
+            if(null == portrait) {
+                //the image could not be found so switch to default one
+                category = "";
+                file = "default.gif";
+                portrait = (Image) portraits.getItem(category, file);
+            }
             //make sure no images are longer than 72 pixels
             if(null != portrait) {
                 portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);

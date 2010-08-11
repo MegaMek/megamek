@@ -2451,6 +2451,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 Image portrait = null;
                 try {
                     portrait = (Image) portraits.getItem(category, file);
+                    if(null == portrait) {
+                        //the image could not be found so switch to default one
+                        pilot.setPortraitCategory(Pilot.ROOT_PORTRAIT);
+                        category = "";
+                        pilot.setPortraitFileName(Pilot.PORTRAIT_NONE);
+                        file = "default.gif";
+                        portrait = (Image) portraits.getItem(category, file);
+                    }
                     // make sure no images are longer than 72 pixels
                     if (null != portrait) {
                         portrait = portrait.getScaledInstance(-1, 50, Image.SCALE_DEFAULT);

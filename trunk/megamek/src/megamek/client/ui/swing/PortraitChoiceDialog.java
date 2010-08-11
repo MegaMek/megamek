@@ -263,6 +263,14 @@ public class PortraitChoiceDialog extends JDialog {
         try {
             // We need to copy the image to make it appear.
             Image image = (Image) portraits.getItem(actualCat, actualItem);
+            if(null == image) {
+                //the image could not be found so switch to default one
+                category = Pilot.ROOT_PORTRAIT;
+                actualCat = "";
+                filename = Pilot.PORTRAIT_NONE;
+                actualItem = "default.gif";
+                image = (Image) portraits.getItem(actualCat, actualItem);
+            }
             image = image.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
             return new ImageIcon(image);
         } catch (Exception err) {

@@ -87,6 +87,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     private JButton btnSelect;
     private JButton btnClose;
     private JButton btnShowBV;
+    private JButton btnAdvSearch;
+    private JButton btnResetSearch;
     private JComboBox comboType;
     private JComboBox comboUnitType;
     private JComboBox comboWeight;
@@ -96,6 +98,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     private JLabel lblUnitType;
     private JLabel lblWeight;
     private JPanel panelFilterBtns;
+    private JPanel panelSearchBtns;
     private JPanel panelOKBtns;
     private JScrollPane scrTableUnits;
     private JTable tableUnits;
@@ -117,6 +120,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     Client client;
     private ClientGUI clientgui;
     private UnitLoadingDialog unitLoadingDialog;
+    AdvancedSearchDialog asd;
 
     private TableRowSorter<MechTableModel> sorter;
 
@@ -130,12 +134,14 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         unitModel = new MechTableModel();
         initComponents();
         setLocationRelativeTo(cl.frame);
+        asd = new AdvancedSearchDialog(this, clientgui);
     }
 
     private void initComponents() {
         GridBagConstraints c;
 
         panelFilterBtns = new JPanel();
+        panelSearchBtns = new JPanel();
         panelOKBtns = new JPanel();
 
         scrTableUnits = new JScrollPane();
@@ -152,6 +158,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         btnSelectClose = new JButton();
         btnClose = new JButton();
         btnShowBV = new JButton();
+        btnAdvSearch = new JButton();
+        btnResetSearch = new JButton();
 
         lblType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
         lblWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
@@ -198,7 +206,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         c.fill = GridBagConstraints.VERTICAL;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
@@ -208,7 +216,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
-        c.gridheight = 2;
+        c.gridheight = 3;
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -332,6 +340,37 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.insets = new java.awt.Insets(10, 10, 10, 0);
         getContentPane().add(panelFilterBtns, c);
 
+        panelSearchBtns.setLayout(new GridBagLayout());
+        
+        btnAdvSearch.setText(Messages.getString("MechSelectorDialog.AdvSearch")); //$NON-NLS-1$
+        btnAdvSearch.addActionListener(this);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.WEST;
+        panelSearchBtns.add(btnAdvSearch, c);
+        
+        btnResetSearch.setText(Messages.getString("MechSelectorDialog.Reset")); //$NON-NLS-1$
+        btnResetSearch.addActionListener(this);
+        btnResetSearch.setEnabled(false);
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        c.anchor = GridBagConstraints.WEST;
+        panelSearchBtns.add(btnResetSearch, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.insets = new java.awt.Insets(10, 10, 10, 0);
+        getContentPane().add(panelSearchBtns, c);
+
+        
         panelOKBtns.setLayout(new GridBagLayout());
 
 
@@ -357,7 +396,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
         getContentPane().add(panelOKBtns, c);
@@ -422,7 +461,9 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                                      || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
                                      || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
                                      || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
-                            && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))) {
+                            && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
+                            /*Advanced Search*/
+                            && (asd.isAdvancedSearchOff() || asd.isMatch(mech))) {
                         //yuck, I have to pull up a full Entity to get MechView to search in
                         //TODO: why not put mechview into the mech summary itself?
                         if(txtFilter.getText().length() > 0) {
@@ -608,6 +649,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
      @Override
      public void setVisible(boolean visible) {
+         asd.clearValues();
          updatePlayerChoice();
          //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
          filterUnits();
@@ -756,6 +798,11 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             Dimension size = new Dimension(550, 300);
             tScroll.setPreferredSize(size);
             JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
+        } else if(ev.getSource().equals(btnAdvSearch)) {
+            asd.setVisible(true);
+        } else if(ev.getSource().equals(btnResetSearch)) {
+            asd.clearValues();
+            filterUnits();
         }
     }
 
@@ -770,4 +817,16 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             }
         }
     }
-}
+    
+    public int getType() {
+        return comboType.getSelectedIndex();
+    }
+    
+    public int getUnitType() {
+        return comboUnitType.getSelectedIndex();
+    }
+    
+    public void enableResetButton(boolean b) {
+        btnResetSearch.setEnabled(b);
+    }
+ }

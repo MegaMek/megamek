@@ -127,6 +127,10 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_EW_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(84);
     public static final BigInteger F_CCM = BigInteger.valueOf(1).shiftLeft(85);
     public static final BigInteger F_HITCH = BigInteger.valueOf(1).shiftLeft(86);
+    public static final BigInteger F_FLOTATION_HULL = BigInteger.valueOf(1).shiftLeft(87);
+    public static final BigInteger F_LIMITED_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(88);
+    public static final BigInteger F_FULLY_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(89);
+    public static final BigInteger F_DUNE_BUGGY = BigInteger.valueOf(1).shiftLeft(90);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -336,7 +340,7 @@ public class MiscType extends EquipmentType {
             return (float) tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0);
-        } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
+        } else if (hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil(entity.getWeight() * entity.getOriginalJumpMP() / 10.0) / 2.0);
@@ -362,6 +366,8 @@ public class MiscType extends EquipmentType {
             return (float) (Math.floor(tonnage) + 0.5);
         } else if (hasFlag(F_TRACKS)) {
             return entity.getWeight() / 10;
+        } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
+            return (float) (Math.floor(entity.getWeight() / 10) + 0.5);
         } else if (hasFlag(F_DUMPER)) {
             // 5% of cargo
             float cargoTonnage = 0;
@@ -398,6 +404,18 @@ public class MiscType extends EquipmentType {
 
     @Override
     public double getCost(Entity entity, boolean isArmored) {
+
+        if (cost == EquipmentType.COST_VARIABLE) {
+            if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING)) {
+                cost = 0;
+            } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
+                cost = getTonnage(entity) * 10000;
+            } else if (hasFlag(F_DUNE_BUGGY)) {
+                float totalTons = getTonnage(entity);
+                cost = 10 * totalTons * totalTons;
+            }
+        }
+
         if (isArmored) {
             double armoredCost = cost;
 
@@ -745,6 +763,14 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISEWEquipment());
         EquipmentType.addType(MiscType.createISCollapsibleCommandModule());
         EquipmentType.addType(MiscType.createHitch());
+        EquipmentType.addType(MiscType.createISFlotationHull());
+        EquipmentType.addType(MiscType.createISLimitedAmphibiousChassis());
+        EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());
+        EquipmentType.addType(MiscType.createISDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createClanFlotationHull());
+        EquipmentType.addType(MiscType.createClanLimitedAmphibiousChassis());
+        EquipmentType.addType(MiscType.createClanFullyAmphibiousChassis());
+        EquipmentType.addType(MiscType.createClanDuneBuggyChassis());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -2901,7 +2927,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 8;
-        misc.cost = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
         misc.spreadable = true;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
@@ -3969,14 +3995,131 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createHitch() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Hitch";
         misc.setInternalName("Hitch");
         misc.tonnage = 0f;
         misc.criticals = 1;
         misc.cost = 0;
-        misc.spreadable = true;
         misc.flags = misc.flags.or(F_HITCH).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISFlotationHull() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Flotation Hull";
+        misc.setInternalName("ISFlotationHull");
+        misc.tonnage = 0f;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISLimitedAmphibiousChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Limited Amphibious Chassis";
+        misc.setInternalName("ISLimitedAmphibiousChassis");
+        misc.addLookupName("ISLimitedAmphibious");
+        misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISFullyAmphibiousChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Fully Amphibious Chassis";
+        misc.setInternalName("ISFullyAmphibiousChassis");
+        misc.addLookupName("ISFullyAmphibious");
+        misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISDuneBuggyChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Dune Buggy Chassis";
+        misc.setInternalName("ISDuneBuggyChassis");
+        misc.addLookupName("ISDuneBuggy");
+        misc.tonnage = 0f;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createClanFlotationHull() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Flotation Hull";
+        misc.setInternalName("ClanFlotationHull");
+        misc.tonnage = 0f;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createClanLimitedAmphibiousChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Limited Amphibious Chassis";
+        misc.setInternalName("ClanLimitedAmphibiousChassis");
+        misc.addLookupName("ClanLimitedAmphibious");
+        misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createClanFullyAmphibiousChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Fully Amphibious Chassis";
+        misc.setInternalName("ClanFullyAmphibiousChassis");
+        misc.addLookupName("ClanFullyAmphibious");
+        misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createClanDuneBuggyChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Dune Buggy Chassis";
+        misc.setInternalName("ClanDuneBuggyChassis");
+        misc.addLookupName("ClanDuneBuggy");
+        misc.tonnage = 0f;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
 
         return misc;

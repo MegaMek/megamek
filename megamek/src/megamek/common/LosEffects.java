@@ -655,14 +655,19 @@ public class LosEffects {
         for (int i = 1; i < in.size() - 2; i += 3) {
             // get effects of the side that is better
             LosEffects toUse;
+            LosEffects notUsing;
             boolean usingLeft;
             // we'll use left if both are equal
             if ((leftBetter == 1) || (leftBetter == 2)) {
                 toUse = losForCoords(game, ai, in.get(i), los
                         .getThruBldg());
+                notUsing = losForCoords(game, ai, in.get(i + 1), los
+                        .getThruBldg());
                 usingLeft = true;
             } else {
                 toUse = losForCoords(game, ai, in.get(i + 1), los
+                        .getThruBldg());
+                notUsing = losForCoords(game, ai, in.get(i), los
                         .getThruBldg());
                 usingLeft = false;
             }
@@ -674,12 +679,6 @@ public class LosEffects {
 
             if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
                 los.blocked = true;
-            }
-
-            if (targetInBuilding && isElevDiff) {
-                if (null != toUse.getThruBldg()) {
-                    toUse.setTargetCover(COVER_HORIZONTAL);
-                }
             }
 
             // Include all previous LOS effects.
@@ -695,15 +694,50 @@ public class LosEffects {
             los = toUse;
 
             if (game.getOptions().booleanOption("tacops_partial_cover")) {
-                int cover;
+                int cover = toUse.targetCover;
+                if((cover == COVER_HORIZONTAL && notUsing.targetCover == COVER_NONE) 
+                        || (cover == COVER_NONE && notUsing.targetCover == COVER_HORIZONTAL)) {
+                    //25% cover
+                    if (usingLeft) {
+                        cover = COVER_LOWLEFT;
+                    } else {
+                        cover = COVER_LOWRIGHT;
+                    }
+                } else if((cover == COVER_FULL && notUsing.targetCover == COVER_NONE)
+                        || (cover == COVER_NONE && notUsing.targetCover == COVER_FULL)) {
+                    //vertical cover
+                    if (usingLeft) {
+                        cover = COVER_LEFT;
+                    } else {
+                        cover = COVER_RIGHT;
+                    }
+                } else if((cover == COVER_FULL && notUsing.targetCover == COVER_HORIZONTAL)
+                        || (cover == COVER_HORIZONTAL && notUsing.targetCover == COVER_FULL)) { 
+                    //75% cover
+                    if (usingLeft) {
+                        cover = COVER_75LEFT;
+                    } else {
+                        cover = COVER_75RIGHT;
+                    }
+                }
+                /*
+                 * I don't fully understand all the bit stuff here so I am just going
+                 * to go through the cases the old-fashioned way
                 if (usingLeft) {
                     cover = (toUse.targetCover & (COVER_LEFT | COVER_LOWLEFT));
                 } else {
                     cover = (toUse.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
                 }
+                */
                 if ((cover < COVER_FULL) && !(toUse.blocked)) {
                     los.blocked = false;
                     los.targetCover = cover;
+                }
+            }
+            
+            if (targetInBuilding && isElevDiff) {
+                if (null != toUse.getThruBldg()) {
+                    toUse.setTargetCover(COVER_HORIZONTAL);
                 }
             }
         }

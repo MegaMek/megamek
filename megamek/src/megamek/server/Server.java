@@ -16978,6 +16978,13 @@ public class Server implements Runnable {
                 // as long as it was destroyed before the explosion.
                 continue;
             }
+            
+            //We are going to assume that explosions are on the ground here so flying entities should be 
+            //unaffected
+            //TODO: What about VTOLs? for now we assume they are affected
+            if(entity.isAirborne()) {
+                continue;
+            }
 
             if ((entity instanceof MechWarrior) && !((MechWarrior) entity).hasLanded()) {
                 // MechWarrior is still up in the air ejecting their for safe
@@ -16989,7 +16996,7 @@ public class Server implements Runnable {
             if (entityPos == null) {
                 // maybe its loaded?
                 Entity transport = game.getEntity(entity.getTransportId());
-                if (transport != null) {
+                if (transport != null && !transport.isAirborne()) {
                     loaded.add(entity);
                 }
                 continue;

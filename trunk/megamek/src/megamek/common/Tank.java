@@ -669,6 +669,14 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
+        if (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS) || hasWorkingMisc(MiscType.F_DUNE_BUGGY) || hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+            typeModifier += .1;
+        }
+
+        if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+            typeModifier += .2;
+        }
+
         dbv *= typeModifier;
 
         // adjust for target movement modifier

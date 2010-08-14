@@ -80,7 +80,6 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox useAverageSkills;
     private JCheckBox showUnitId;
     private JComboBox displayLocale;
-    private JCheckBox chatloungeTabs;
 
     private JCheckBox showMapsheets;
     private JCheckBox mouseWheelZoom;
@@ -305,11 +304,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         panSetting.add(displayLocale);
         tempPanel.add(panSetting);
 
-        // chatloungtab setting
-        chatloungeTabs = new JCheckBox(Messages
-                .getString("CommonSettingsDialog.chatloungeTabs")); //$NON-NLS-1$
-        tempPanel.add(chatloungeTabs);
-
         // showMapsheets setting
         showMapsheets = new JCheckBox(Messages
                 .getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
@@ -371,8 +365,6 @@ public class CommonSettingsDialog extends ClientDialog implements
             index = 2;
         }
         displayLocale.setSelectedIndex(index);
-
-        chatloungeTabs.setSelected(gs.getChatLoungeTabs());
 
         showMapsheets.setSelected(gs.getShowMapsheets());
 
@@ -446,7 +438,6 @@ public class CommonSettingsDialog extends ClientDialog implements
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale
                 .getSelectedIndex()]);
 
-        gs.setChatloungeTabs(chatloungeTabs.isSelected());
         gs.setShowMapsheets(showMapsheets.isSelected());
 
         if (tileSetChoice.getSelectedIndex() >= 0) {

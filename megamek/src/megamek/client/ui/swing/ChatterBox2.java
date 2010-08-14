@@ -606,11 +606,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         }
 
         switch (ke.getKeyCode()) {
-            case KeyEvent.VK_ALT:
-            case KeyEvent.VK_SHIFT:
-            case KeyEvent.VK_TAB:
-            case KeyEvent.VK_CAPS_LOCK:
-            case KeyEvent.VK_CONTROL:
             case KeyEvent.VK_UP:
                 cb.historyBookmark++;
                 cb.fetchHistory();
@@ -619,6 +614,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 cb.historyBookmark--;
                 cb.fetchHistory();
                 return;
+            case KeyEvent.VK_ALT:
+            case KeyEvent.VK_SHIFT:
+            case KeyEvent.VK_TAB:
+            case KeyEvent.VK_CAPS_LOCK:
+            case KeyEvent.VK_CONTROL:
             case KeyEvent.VK_RIGHT:
             case KeyEvent.VK_LEFT:
             case KeyEvent.VK_PAGE_UP:

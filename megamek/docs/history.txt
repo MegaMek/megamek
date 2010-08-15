@@ -31,7 +31,8 @@ v0.35.18-dev (SVN)
 + Added BV modifiers for Combat Chassis.
 + Bug: shift key in chatterbox working as "up" key
 + Bug: Single shot ultra and RAcs doing not enough damage against infantry
-+ Bug: Unjamming RACs not working 
++ Bug: Unjamming RACs not working
++ Bug: mousewheel scrolling in boardview not working
 
 v0.35.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

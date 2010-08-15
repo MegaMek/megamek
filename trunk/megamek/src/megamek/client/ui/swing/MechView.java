@@ -109,7 +109,7 @@ public class MechView {
         } else {
             sBasic.append(TechConstants.getLevelDisplayableName(entity
                     .getTechLevel()));
-        }      
+        }
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isInf) {
             sBasic.append(Math.round(entity.getWeight())).append(
@@ -124,7 +124,7 @@ public class MechView {
         sBasic.append(dFormatter.format(entity.getCost(false)));
         sBasic.append(" C-bills");
         sBasic.append("<br>"); //$NON-NLS-1$
-        
+
         if (!isGunEmplacement) {
             sBasic.append("<br>"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement")) //$NON-NLS-1$
@@ -200,8 +200,8 @@ public class MechView {
                 sBasic.append( getInternalAndArmor() );
             }
         }
-        if (entity.getFluff() != null) {
-            sFluff.append(entity.getFluff());
+        if (entity.getFluff().getHistory() != null) {
+            sFluff.append(entity.getFluff().getHistory());
         }
             sFluff.append("<br>");
     }
@@ -226,7 +226,7 @@ public class MechView {
 
     private String getInternalAndArmor() {
         StringBuffer sIntArm = new StringBuffer();
-        
+
         int maxArmor = entity.getTotalInternal() * 2 + 3;
         if(isInf && !isBA) {
         	Infantry inf = (Infantry)entity;
@@ -249,7 +249,7 @@ public class MechView {
         else {
         	sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
         	.append(entity.getTotalArmor());
-        	
+
         }
         if (isMech) {
             sIntArm.append("/") //$NON-NLS-1$
@@ -261,19 +261,19 @@ public class MechView {
         }
         sIntArm.append("<br>"); //$NON-NLS-1$
         // Walk through the entity's locations.
-        
+
         if(!(isInf && !isBA)) {
 	        sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
 	        sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Internal</th><th>&nbsp;&nbsp;Armor</th></tr>");
 	        for (int loc = 0; loc < entity.locations(); loc++) {
-	
+
 	            // Skip empty sections.
 	            if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
 	                    || (isVehicle && !isLargeSupportVehicle && ((((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY))
 	                    || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == LargeSupportTank.LOC_BODY)))))) {
 	                continue;
 	            }
-	
+
 	            sIntArm.append("<tr>");
 	            sIntArm.append("<td>").append(entity.getLocationName(loc)).append("</td>"); //$NON-NLS-1$
 	            sIntArm.append(renderArmor(entity.getInternal(loc), entity.getOInternal(loc))); //$NON-NLS-1$
@@ -343,7 +343,7 @@ public class MechView {
             sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
             sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Armor</th></tr>");
             for ( int loc = 0; loc < entity.locations(); loc++ ) {
-    
+
                 // Skip empty sections.
                 if ( IArmorState.ARMOR_NA == entity.getInternal(loc)) {
                     continue;
@@ -356,7 +356,7 @@ public class MechView {
                 if(!a.isLargeCraft() && (loc == Aero.LOC_WINGS)) {
                     continue;
                 }
-    
+
                 sIntArm.append("<tr><td>").append(entity.getLocationName(loc) )
                     .append( "</td>" ); //$NON-NLS-1$
                 if ( IArmorState.ARMOR_NA != entity.getArmor(loc) ) {
@@ -401,9 +401,9 @@ public class MechView {
     }
 
     private String getWeapons(boolean showDetail) {
-    	
+
     	StringBuffer sWeapons = new StringBuffer();
-    	
+
     	if(isInf && !isBA) {
     		Infantry inf = (Infantry)entity;
     		sWeapons.append("<table cellspacing=0 cellpadding=1 border=0>");
@@ -414,7 +414,7 @@ public class MechView {
     			sWeapons.append("<td>" + inf.getPrimaryWeapon().getDesc() + "</td></tr>");
     		}
     		sWeapons.append("<tr><td>Secondary Weapon:</td> ");
-    		if(null == inf.getSecondaryWeapon() || inf.getSecondaryN() == 0) {
+    		if((null == inf.getSecondaryWeapon()) || (inf.getSecondaryN() == 0)) {
     			sWeapons.append("<td>None</td></tr>");
     		} else {
     			sWeapons.append("<td>" + inf.getSecondaryWeapon().getDesc() + " ("+ inf.getSecondaryN() + ")</td></tr>");
@@ -422,8 +422,8 @@ public class MechView {
     		sWeapons.append("<tr><td>Damage per trooper:</td><td>").append((double)Math.round(inf.getDamagePerTrooper()*1000)/1000).append("</td></tr>");
     		sWeapons.append("</table><p>");
     	}
-    	
-        
+
+
         if(entity.getWeaponList().size() < 1) {
             return "";
         }
@@ -456,7 +456,7 @@ public class MechView {
             }
             */
             sWeapons.append("</td>");
-            
+
             sWeapons.append("<td align='right'>").append(entity.getLocationAbbr(mounted.getLocation()));
             if (mounted.isSplit()) {
                 sWeapons.append("/") // $NON-NLS-1$
@@ -477,7 +477,7 @@ public class MechView {
                     }
                     heat = heat + ((WeaponType)m.getType()).getHeat();
                 }
-            } 
+            }
             sWeapons.append("<td align='right'>").append(heat).append("</td>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 //          if this is a weapon bay, then cycle through weapons and ammo
@@ -595,14 +595,14 @@ public class MechView {
             }
             sMisc.append("</td><td align='right'>").append(entity.getLocationAbbr(mounted.getLocation()))
                     .append("</td>"); //$NON-NLS-1$
-            
+
             sMisc.append("</tr>"); //$NON-NLS-1$
         }
         sMisc.append("</table>");
         if(nEquip < 1) {
             sMisc = new StringBuffer();
         }
-        
+
         String capacity = entity.getUnusedString();
         if ((capacity != null) && (capacity.length() > 0)) {
             sMisc.append("<br><b>").append(Messages.getString("MechView.CarringCapacity")).append("</b><br>") //$NON-NLS-1$

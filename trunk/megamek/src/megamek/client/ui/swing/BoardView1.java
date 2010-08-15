@@ -328,7 +328,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     } else {
                         zoomOut();
                     }
+                } else {
+                    int notches = we.getWheelRotation();
+                    if (notches < 0) {
+                        vbar.setValue((int) (vbar.getValue() - HEX_H * scale * (-1*notches)));
+
+                    } else {
+                        vbar.setValue((int) (vbar.getValue() + HEX_H * scale * (notches)));
+                    }
                 }
+
             }
         });
 

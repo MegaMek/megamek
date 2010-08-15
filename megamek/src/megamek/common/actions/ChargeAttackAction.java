@@ -174,7 +174,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // target must have moved already, unless it's a skid charge
-        if (!te.isDone() && !skid) {
+        // errata: immobile units can be targeted, even when they haven't moved yet
+        if (!te.isDone() && !skid && !te.isImmobile()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be done with movement");
         }
 

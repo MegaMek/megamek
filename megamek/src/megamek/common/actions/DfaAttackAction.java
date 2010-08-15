@@ -169,8 +169,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
                     "Could not reach target with movement");
         }
 
-        // target must have moved already
-        if ((te != null) && !te.isDone()) {
+        // target must have moved already, unless it's immobile
+        if ((te != null) && (!te.isDone() && !te.isImmobile())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target must be done with movement");
         }

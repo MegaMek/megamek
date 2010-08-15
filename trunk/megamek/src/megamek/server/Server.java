@@ -10285,7 +10285,6 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
         r.add(te.getLocationAbbr(hit));
-        r.newlines = 0;
         addReport(r);
 
         // The building shields all units from a certain amount of damage.
@@ -10536,7 +10535,6 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
         r.add(te.getLocationAbbr(hit));
-        r.newlines = 0;
         addReport(r);
 
         // The building shields all units from a certain amount of damage.
@@ -10969,7 +10967,6 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
         r.add(te.getLocationAbbr(hit));
-        r.newlines = 0;
         addReport(r);
 
         // The building shields all units from a certain amount of damage.
@@ -11111,7 +11108,6 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getTableDesc());
             r.add(te.getLocationAbbr(hit));
-            r.newlines = 0;
             addReport(r);
             addReport(damageEntity(te, hit, damage));
             addNewLines();
@@ -11600,7 +11596,6 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
         r.add(te.getLocationAbbr(hit));
-        r.newlines = 0;
         addReport(r);
 
         // The building shields all units from a certain amount of damage.

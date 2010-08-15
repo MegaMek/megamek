@@ -16991,7 +16991,7 @@ public class Server implements Runnable {
             if (entityPos == null) {
                 // maybe its loaded?
                 Entity transport = game.getEntity(entity.getTransportId());
-                if (transport != null && !transport.isAirborne()) {
+                if ((transport != null) && !transport.isAirborne()) {
                     loaded.add(entity);
                 }
                 continue;
@@ -18013,7 +18013,6 @@ public class Server implements Runnable {
                 // no effect
                 r = new Report(6005);
                 r.subject = a.getId();
-                r.newlines = 0;
                 vDesc.add(r);
                 break;
             case Aero.CRIT_FCS:
@@ -19224,27 +19223,23 @@ public class Server implements Runnable {
                 // no effect
                 r = new Report(6005);
                 r.subject = en.getId();
-                r.newlines = 0;
                 vDesc.addElement(r);
                 return vDesc;
             } else if ((roll >= 8) && (roll <= 9)) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
-                r.newlines = 0;
                 vDesc.addElement(r);
             } else if ((roll >= 10) && (roll <= 11)) {
                 hits = 2;
                 r = new Report(6320);
                 r.subject = en.getId();
-                r.newlines = 0;
                 vDesc.addElement(r);
             } else if (roll >= 12) {
                 if (en instanceof Protomech) {
                     hits = 3;
                     r = new Report(6325);
                     r.subject = en.getId();
-                    r.newlines = 0;
                     vDesc.addElement(r);
                 } else if (en.locationIsLeg(loc)) {
 
@@ -19262,7 +19257,6 @@ public class Server implements Runnable {
                     r = new Report(6120);
                     r.subject = en.getId();
                     r.add(en.getLocationName(loc));
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     if (en.getInternal(loc) > 0) {
                         en.destroyLocation(loc);
@@ -19293,7 +19287,6 @@ public class Server implements Runnable {
                     r = new Report(6120);
                     r.subject = en.getId();
                     r.add(en.getLocationName(loc));
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     en.destroyLocation(loc);
                     if (null != hex) {
@@ -19311,7 +19304,6 @@ public class Server implements Runnable {
                     r = new Report(6330);
                     r.subject = en.getId();
                     r.add(en.getLocationName(loc));
-                    r.newlines = 0;
                     vDesc.addElement(r);
                     en.destroyLocation(loc);
                     if (((Mech) en).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
@@ -19332,7 +19324,6 @@ public class Server implements Runnable {
                     }
                     r = new Report(6325);
                     r.subject = en.getId();
-                    r.newlines = 0;
                     vDesc.addElement(r);
                 }
             }
@@ -19390,7 +19381,6 @@ public class Server implements Runnable {
                     r = new Report(6530);
                     r.subject = en.getId();
                     r.indent(3);
-                    r.newlines = 0;
                     r.add(en.crew.getOptions().intOption("edge"));
                     vDesc.addElement(r);
                     continue;
@@ -19413,7 +19403,6 @@ public class Server implements Runnable {
                             r = new Report(6083);
                             r.subject = en.getId();
                             r.indent(3);
-                            r.newlines = 0;
                             vDesc.addElement(r);
                             vDesc.addElement(r);
                             vDesc.addAll(damageEntity(en, new HitData(loc), en.getArmor(loc)));

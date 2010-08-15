@@ -16978,8 +16978,8 @@ public class Server implements Runnable {
                 // as long as it was destroyed before the explosion.
                 continue;
             }
-            
-            //We are going to assume that explosions are on the ground here so flying entities should be 
+
+            //We are going to assume that explosions are on the ground here so flying entities should be
             //unaffected
             //TODO: What about VTOLs? for now we assume they are affected
             if(entity.isAirborne()) {
@@ -23365,7 +23365,6 @@ public class Server implements Runnable {
     public Vector<Report> damageBuilding(Building bldg, int damage, String why, Coords coords) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         Report r = new Report(1210, Report.PUBLIC);
-        r.newlines = 0;
 
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {

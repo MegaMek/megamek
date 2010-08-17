@@ -84,14 +84,13 @@ public class TestMech extends TestEntity {
 
     @Override
     public float getWeightPowerAmp() {
-        if (mech.isIndustrial() && ((mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
+        if (mech.isIndustrial() && ((mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
             float powerAmpWeight = 0;
             for (Mounted mount : mech.getWeaponList()) {
                 if (mount.getType() instanceof EnergyWeapon) {
                     // power amplifier weighs 10% of energyweapons weight,
                     // rounded to the next half ton
-                    powerAmpWeight += TestEntity.ceilMaxHalf(mount.getType().getTonnage(mech)/10, TestEntity.CEIL_HALFTON);
+                    powerAmpWeight += TestEntity.ceilMaxHalf(mount.getType().getTonnage(mech) / 10, TestEntity.CEIL_HALFTON);
                 }
             }
             return powerAmpWeight;
@@ -165,13 +164,10 @@ public class TestMech extends TestEntity {
 
     @Override
     public String printWeightControls() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(mech
-                .getCockpitTypeString()
-                + ":", getPrintSize() - 5));
+        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(mech.getCockpitTypeString() + ":", getPrintSize() - 5));
         retVal.append(makeWeightString(getWeightCockpit()));
         retVal.append("\n");
-        retVal.append(StringUtil.makeLength(mech.getGyroTypeString() + ":",
-                getPrintSize() - 5));
+        retVal.append(StringUtil.makeLength(mech.getGyroTypeString() + ":", getPrintSize() - 5));
         retVal.append(makeWeightString(getWeightGyro()));
         retVal.append("\n");
         return retVal.toString();
@@ -181,8 +177,7 @@ public class TestMech extends TestEntity {
         return mech;
     }
 
-    public int countCriticalSlotsFromEquipInLocation(Entity entity, int eNum,
-            int location) {
+    public int countCriticalSlotsFromEquipInLocation(Entity entity, int eNum, int location) {
         int count = 0;
         for (int slots = 0; slots < entity.getNumberOfCriticals(location); slots++) {
             CriticalSlot slot = entity.getCritical(location, slots);
@@ -200,37 +195,31 @@ public class TestMech extends TestEntity {
     }
 
     public boolean checkMiscSpreadAllocation(Entity entity, Mounted mounted, StringBuffer buff) {
-        MiscType mt = (MiscType)mounted.getType();
+        MiscType mt = (MiscType) mounted.getType();
         int eNum = entity.getEquipmentNum(mounted);
         if (mt.hasFlag(MiscType.F_STEALTH)) {
             // stealth needs to have 2 crits in legs arm and side torso
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    Mech.LOC_LARM) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LARM) != 2) {
                 buff.append("incorrect number of stealth crits in left arm\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    Mech.LOC_RARM) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RARM) != 2) {
                 buff.append("incorrect number of stealth crits in right arm\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    Mech.LOC_LLEG) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LLEG) != 2) {
                 buff.append("incorrect number of stealth crits in left leg\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    Mech.LOC_RLEG) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RLEG) != 2) {
                 buff.append("incorrect number of stealth crits in right leg\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    Mech.LOC_LT) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LT) != 2) {
                 buff.append("incorrect number of stealth crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    Mech.LOC_RT) != 2) {
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RT) != 2) {
                 buff.append("incorrect number of stealth crits in right torso\n");
                 return false;
             }
@@ -238,8 +227,7 @@ public class TestMech extends TestEntity {
         if (mt.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
             // environmental sealing needs to have 1 crit per location
             for (int locations = 0; locations < entity.locations(); locations++) {
-                if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        locations) != 1) {
+                if (countCriticalSlotsFromEquipInLocation(entity, eNum, locations) != 1) {
                     buff.append("not a environmental sealing crit in each location\n");
                     return false;
                 }
@@ -249,8 +237,7 @@ public class TestMech extends TestEntity {
             // blue shield needs to have 1 crit per location, except head
             for (int locations = 0; locations < entity.locations(); locations++) {
                 if (locations != Mech.LOC_HEAD) {
-                    if (countCriticalSlotsFromEquipInLocation(entity, eNum,
-                            locations) != 1) {
+                    if (countCriticalSlotsFromEquipInLocation(entity, eNum, locations) != 1) {
                         buff.append("not a blue shield crit in each location except the head\n");
                         return false;
                     }
@@ -272,8 +259,7 @@ public class TestMech extends TestEntity {
         return true;
     }
 
-    public boolean criticalSlotsAllocated(Entity entity, Mounted mounted,
-            Vector<Serializable> allocation, StringBuffer buff) {
+    public boolean criticalSlotsAllocated(Entity entity, Mounted mounted, Vector<Serializable> allocation, StringBuffer buff) {
         int eNum = entity.getEquipmentNum(mounted);
         int location = mounted.getLocation();
         EquipmentType et = mounted.getType();
@@ -291,12 +277,10 @@ public class TestMech extends TestEntity {
 
         if (et.isSpreadable() && !et.getName().equals("Targeting Computer")) {
             for (int locations = 0; locations < entity.locations(); locations++) {
-                count += countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        locations);
+                count += countCriticalSlotsFromEquipInLocation(entity, eNum, locations);
             }
         } else {
-            count = countCriticalSlotsFromEquipInLocation(entity, eNum,
-                    location);
+            count = countCriticalSlotsFromEquipInLocation(entity, eNum, location);
         }
 
         if ((et instanceof WeaponType) && mounted.isSplit()) {
@@ -306,11 +290,8 @@ public class TestMech extends TestEntity {
                     continue;
                 }
 
-                secCound = countCriticalSlotsFromEquipInLocation(entity, eNum,
-                        locations);
-                if ((secCound != 0)
-                        && (location == Mech.mostRestrictiveLoc(locations,
-                                location))) {
+                secCound = countCriticalSlotsFromEquipInLocation(entity, eNum, locations);
+                if ((secCound != 0) && (location == Mech.mostRestrictiveLoc(locations, location))) {
                     count += secCound;
                     break;
                 }
@@ -327,9 +308,7 @@ public class TestMech extends TestEntity {
         return false;
     }
 
-    public void checkCriticalSlotsForEquipment(Entity entity,
-            Vector<Mounted> unallocated, Vector<Serializable> allocation,
-            Vector<Integer> heatSinks) {
+    public void checkCriticalSlotsForEquipment(Entity entity, Vector<Mounted> unallocated, Vector<Serializable> allocation, Vector<Integer> heatSinks) {
         int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
             if (m.getLocation() == Entity.LOC_NONE) {
@@ -341,8 +320,7 @@ public class TestMech extends TestEntity {
                     continue;
                 }
                 MiscType mt = (MiscType) m.getType();
-                if (mt.hasFlag(MiscType.F_HEAT_SINK)
-                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                if (mt.hasFlag(MiscType.F_HEAT_SINK) || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                     countInternalHeatSinks++;
                 } else {
                     unallocated.addElement(m);
@@ -350,10 +328,7 @@ public class TestMech extends TestEntity {
                 }
             }
         }
-        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity())
-                || ((countInternalHeatSinks < engine.integralHeatSinkCapacity())
-                        && (countInternalHeatSinks != ((Mech) entity)
-                                .heatSinks()) && !entity.isOmni())) {
+        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity()) || ((countInternalHeatSinks < engine.integralHeatSinkCapacity()) && (countInternalHeatSinks != ((Mech) entity).heatSinks()) && !entity.isOmni())) {
             heatSinks.addElement(new Integer(countInternalHeatSinks));
         }
     }
@@ -364,17 +339,14 @@ public class TestMech extends TestEntity {
         Vector<Integer> heatSinks = new Vector<Integer>();
         checkCriticalSlotsForEquipment(mech, unallocated, allocation, heatSinks);
         boolean correct = true;
-        /*StringBuffer critAlloc = new StringBuffer();
-         * need to redo this, in MML, spread equipment gets one mounted per block that needs to be allocated
-        for (Mounted m : mech.getEquipment()) {
-            if ((m.getLocation() != Entity.LOC_NONE) && (m.getType() instanceof MiscType)) {
-                if (!checkMiscSpreadAllocation(mech, m, critAlloc)) {
-                    correct = false;
-                    buff.append(critAlloc.toString());
-                }
-            }
-        }
-        */
+        /*
+         * StringBuffer critAlloc = new StringBuffer(); need to redo this, in
+         * MML, spread equipment gets one mounted per block that needs to be
+         * allocated for (Mounted m : mech.getEquipment()) { if
+         * ((m.getLocation() != Entity.LOC_NONE) && (m.getType() instanceof
+         * MiscType)) { if (!checkMiscSpreadAllocation(mech, m, critAlloc)) {
+         * correct = false; buff.append(critAlloc.toString()); } } }
+         */
 
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
@@ -385,22 +357,17 @@ public class TestMech extends TestEntity {
         }
         if (!allocation.isEmpty()) {
             buff.append("Allocated Equipment:\n");
-            for (Enumeration<Serializable> serializableEnum = allocation.elements();serializableEnum.hasMoreElements();) {
+            for (Enumeration<Serializable> serializableEnum = allocation.elements(); serializableEnum.hasMoreElements();) {
                 Mounted mount = (Mounted) serializableEnum.nextElement();
                 int needCrits = ((Integer) serializableEnum.nextElement()).intValue();
                 int aktCrits = ((Integer) serializableEnum.nextElement()).intValue();
-                buff.append(mount.getType().getInternalName()).append(" has ")
-                .append(needCrits).append(" Slots, but ").append(
-                        aktCrits).append(" Slots are allocated!")
-                        .append("\n");
+                buff.append(mount.getType().getInternalName()).append(" has ").append(needCrits).append(" Slots, but ").append(aktCrits).append(" Slots are allocated!").append("\n");
             }
             correct = false;
         }
         if (!heatSinks.isEmpty()) {
             int sinks = heatSinks.elements().nextElement().intValue();
-            buff.append(sinks).append(" of ").append(
-                    engine.integralHeatSinkCapacity()).append(
-                    " possible Internal Heat Sinks!").append("\n");
+            buff.append(sinks).append(" of ").append(engine.integralHeatSinkCapacity()).append(" possible Internal Heat Sinks!").append("\n");
             correct = false;
         }
         if (!checkSystemCriticals(buff)) {
@@ -413,16 +380,10 @@ public class TestMech extends TestEntity {
         // Engine criticals
         boolean engineCorrect = true;
         int requiredSideCrits = engine.getSideTorsoCriticalSlots().length;
-        if ((requiredSideCrits != mech.getNumberOfCriticals(
-                CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT))
-                || (requiredSideCrits != mech.getNumberOfCriticals(
-                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
-                        Mech.LOC_RT))) {
+        if ((requiredSideCrits != mech.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT)) || (requiredSideCrits != mech.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT))) {
             engineCorrect = false;
         }
-        if (engine.getCenterTorsoCriticalSlots(mech.getGyroType()).length != mech
-                .getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.SYSTEM_ENGINE, Mech.LOC_CT)) {
+        if (engine.getCenterTorsoCriticalSlots(mech.getGyroType()).length != mech.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT)) {
             engineCorrect = false;
         }
         if (!engineCorrect) {
@@ -445,16 +406,12 @@ public class TestMech extends TestEntity {
         for (int loc = 0; loc < mech.locations(); loc++) {
             if (loc == Mech.LOC_HEAD) {
                 if (mech.getOArmor(Mech.LOC_HEAD) > 9) {
-                    buff.append(printArmorLocation(Mech.LOC_HEAD)).append(
-                            printArmorLocProp(Mech.LOC_HEAD, 9)).append("\n");
+                    buff.append(printArmorLocation(Mech.LOC_HEAD)).append(printArmorLocProp(Mech.LOC_HEAD, 9)).append("\n");
                     correct = false;
                 }
 
-            } else if ((mech.getOArmor(loc) + (mech.hasRearArmor(loc) ? mech
-                    .getOArmor(loc, true) : 0)) > 2 * mech.getOInternal(loc)) {
-                buff.append(printArmorLocation(loc)).append(
-                        printArmorLocProp(loc, 2 * mech.getOInternal(loc)))
-                        .append("\n");
+            } else if ((mech.getOArmor(loc) + (mech.hasRearArmor(loc) ? mech.getOArmor(loc, true) : 0)) > 2 * mech.getOInternal(loc)) {
+                buff.append(printArmorLocation(loc)).append(printArmorLocProp(loc, 2 * mech.getOInternal(loc))).append("\n");
                 correct = false;
             }
         }
@@ -465,15 +422,13 @@ public class TestMech extends TestEntity {
     public boolean correctMovement(StringBuffer buff) {
         // Mechanical Jump Boosts can be greater then Running as long as
         // the unit can handle the weight.
-        if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC())
-                && !mech.hasJumpBoosters() && !mech.hasWorkingMisc(MiscType.F_TALON, -1)) {
+        if ((mech.getJumpMP(false) > mech.getOriginalRunMPwithoutMASC()) && !mech.hasJumpBoosters() && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
-        if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) &&
-               ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING))) {
-          buff.append("Jump MP exceeds walk MP without IJJs");
-          return false;
+        if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) && ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING))) {
+            buff.append("Jump MP exceeds walk MP without IJJs");
+            return false;
         }
         return true;
     }
@@ -500,9 +455,9 @@ public class TestMech extends TestEntity {
         }
         if (getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks()) {
             buff.append("Heat Sinks:\n");
-            buff.append(" Engine    "+engine.integralHeatSinkCapacity()+"\n");
-            buff.append(" Total     "+getCountHeatSinks()+"\n");
-            buff.append(" Required  "+engine.getWeightFreeEngineHeatSinks()+"\n");
+            buff.append(" Engine    " + engine.integralHeatSinkCapacity() + "\n");
+            buff.append(" Total     " + getCountHeatSinks() + "\n");
+            buff.append(" Required  " + engine.getWeightFreeEngineHeatSinks() + "\n");
             correct = false;
         }
         if (showCorrectArmor() && !correctArmor(buff)) {
@@ -532,8 +487,7 @@ public class TestMech extends TestEntity {
         buff.append(printTechLevel());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (").append(
-                    calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());
@@ -572,6 +526,5 @@ public class TestMech extends TestEntity {
         }
         return weight;
     }
-
 
 }

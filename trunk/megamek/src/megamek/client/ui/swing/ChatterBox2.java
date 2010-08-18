@@ -666,6 +666,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     client.sendChat(message);
                     visibleMessage = "";
                     message = "";
+                    cb.setMessage("");
                 }
                 break;
             case KeyEvent.VK_ESCAPE:

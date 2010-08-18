@@ -177,6 +177,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String POINTS = "points";
     public static final String TYPE = "type";
     public static final String IS_REAR = "isRear";
+    public static final String IS_TURRETED = "isTurreted";
     public static final String SHOTS = "shots";
     public static final String IS_HIT = "isHit";
     public static final String MUNITION = "munition";

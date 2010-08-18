@@ -2204,16 +2204,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Creates a new mount for this equipment and adds it in.
      */
     public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted) throws LocationFullException {
-        return addEquipment(etype, loc, rearMounted, false, false);
+        return addEquipment(etype, loc, rearMounted, false, false, false);
     }
 
     /**
      * Creates a new mount for this equipment and adds it in.
      */
-    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted, boolean isArmored) throws LocationFullException {
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted, boolean isArmored, boolean isTurreted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBodyMounted(bodyMounted);
+        mounted.setTurretMounted(isTurreted);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
@@ -2666,10 +2667,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public int countWorkingMisc(BigInteger flag) {
+        return countWorkingMisc(flag, -1);
+    }
+
+    public int countWorkingMisc(BigInteger flag, int location) {
         int count = 0;
         for (Mounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(flag) && (!m.getType().hasModes() || m.curMode().equals("On"))) { //$NON-NLS-1$
-                count++;
+                if ((location == -1) || (m.getLocation() == location)) {
+                    count++;
+                }
             }
         }
         return count;
@@ -4879,8 +4886,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: flyinge entities don't skid");
             return roll;
         }
-        
-        
+
+
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
         if ((moveType != EntityMovementType.MOVE_JUMP) && (prevHex != null)

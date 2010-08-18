@@ -2311,7 +2311,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         return "Can't fire field guns and small arms at the same time.";
                     }
                     if((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (weaponId != prevAttack.getWeaponId())) {
-                    	fieldGunWeight += prevWeapon.getType().getTonnage(ae);
+                        fieldGunWeight += prevWeapon.getType().getTonnage(ae);
                     }
                 }
             }

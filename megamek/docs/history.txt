@@ -40,8 +40,8 @@ v0.35.18-dev (SVN)
 + Data: 3031038 Lots of new unit images (Thanks Rufff13)
 + Added mech turrets (partially, just construction and BV data)
 + Bug: chatbox getting old message when switching from map view to report view
-+ Bug: FLAK ammo halving damage against VTOLs
-+ Bug: FLAK ammo has wrong techlevel
++ Bug: Flak ammo halving damage against VTOLs
++ Bug: Flak ammo has wrong techlevel
 
 v0.35.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

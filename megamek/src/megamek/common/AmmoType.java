@@ -1033,7 +1033,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY_AC, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Tracer", 1, M_TRACER, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Flak", 1, M_FLAK, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flak", 1, M_FLAK, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.

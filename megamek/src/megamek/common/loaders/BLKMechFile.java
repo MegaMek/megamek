@@ -215,25 +215,35 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             for (int c = 0; c < criticals[loc].size(); c++) {
                 String critName = criticals[loc].get(c).toString().trim();
                 boolean rearMounted = false;
+                boolean turretMounted = false;
+                boolean armored = false;
 
                 if (critName.startsWith("(R) ")) {
                     rearMounted = true;
                     critName = critName.substring(4);
                 }
+                if (critName.startsWith("(T) ")) {
+                    turretMounted = true;
+                    critName = critName.substring(4);
+                }
+                if (critName.startsWith("(A) ")) {
+                    armored = true;
+                    critName = critName.substring(4);
+                }
                 if (critName.indexOf("Engine") != -1) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored, null));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, true, armored, null));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, true, armored, null));
                     continue;
                 } else if (critName.equalsIgnoreCase("Cockpit")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT, true, armored, null));
                     continue;
                 } else if (critName.equalsIgnoreCase("Gyro")) {
-                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                    mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, true, armored, null));
                     continue;
                 }
 
@@ -244,7 +254,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                 }
                 if (etype != null) {
                     try {
-                        mech.addEquipment(etype, loc, rearMounted);
+                        mech.addEquipment(etype, loc, rearMounted, false, false, turretMounted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

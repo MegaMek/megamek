@@ -447,6 +447,7 @@ public class MtfFile implements IMechLoader {
             critName.trim();
             boolean rearMounted = false;
             boolean isArmored = false;
+            boolean isTurreted = false;
 
             // Check for Armored Actuators
             if (critName.toLowerCase().trim().endsWith(ARMORED)) {
@@ -478,6 +479,11 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
+            if (critName.toUpperCase().endsWith("(T)")) {
+                isTurreted = true;
+                critName = critName.substring(0, critName.length() - 3).trim();
+            }
+
             if (critName.toUpperCase().endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();
@@ -499,6 +505,7 @@ public class MtfFile implements IMechLoader {
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
                         m.setArmored(isArmored);
+                        m.setTurretMounted(isTurreted);
                         hSharedEquip.put(etype, m);
                     } else if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_SPLITABLE)) {
                         // do we already have this one in this or an outer
@@ -534,12 +541,14 @@ public class MtfFile implements IMechLoader {
                             m = new Mounted(mech, etype);
                             m.setFoundCrits(1);
                             m.setArmored(isArmored);
+                            m.setTurretMounted(isTurreted);
                             vSplitWeapons.addElement(m);
                         }
                         m.setArmored(isArmored);
+                        m.setTurretMounted(isTurreted);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
-                        mech.addEquipment(etype, loc, rearMounted, false, isArmored);
+                        mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
                     }
                 } else {
                     if (!critName.equals(MtfFile.EMPTY)) {

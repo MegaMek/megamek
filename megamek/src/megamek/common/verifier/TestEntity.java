@@ -251,7 +251,7 @@ public abstract class TestEntity implements TestEntityOption {
                     mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 continue;
             }
-            weightSum += mt.getTonnage(getEntity());
+            weightSum += mt.getTonnage(getEntity(), m.getLocation());
         }
         return weightSum;
     }
@@ -272,7 +272,7 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
-            if (mt.getTonnage(getEntity()) == 0f) {
+            if (mt.getTonnage(getEntity(), m.getLocation()) == 0f) {
                 continue;
             }
 
@@ -752,6 +752,26 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("Unable to load Modular Armor in Rotor/Head location\n");
                 }
 
+                if (mounted.getType().hasFlag(MiscType.F_HEAD_TURRET) && (mech.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) {
+                    illegal = true;
+                    buff.append("head turret requires torso mounted cockpit\n");
+                }
+                if (mounted.getType().hasFlag(MiscType.F_HEAD_TURRET) && (mech instanceof QuadMech)) {
+                    illegal = true;
+                    buff.append("quad mechs can't mount head turrets\n");
+                }
+                if (mounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET) && (mech instanceof QuadMech)) {
+                    illegal = true;
+                    buff.append("quad mechs can't mount shoulder turrets\n");
+                }
+                if (mounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET) && !((mounted.getLocation() == Mech.LOC_RT) || (mounted.getLocation() == Mech.LOC_LT))) {
+                    illegal = true;
+                    buff.append("shoulder turret must be mounted in side torso\n");
+                }
+                if (mounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET) && (mech.countWorkingMisc(MiscType.F_SHOULDER_TURRET, mounted.getLocation()) > 1)) {
+                    illegal = true;
+                    buff.append("max of 1 shoulder turret per side torso\n");
+                }
                 if (mounted.getType().hasFlag(MiscType.F_TALON)) {
                     if (mech instanceof BipedMech) {
                         if ((mounted.getLocation() != Mech.LOC_LLEG) && (mounted.getLocation() != Mech.LOC_RLEG)) {

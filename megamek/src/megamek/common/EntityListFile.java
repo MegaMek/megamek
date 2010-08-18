@@ -91,6 +91,9 @@ public class EntityListFile {
             if (mount.isRearMounted()) {
                 output.append("\" isRear=\"true");
             }
+            if (mount.isTurretMounted()) {
+                output.append("\" isTurreted=\"true");
+            }
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
                 output.append(String.valueOf(mount.getShotsLeft()));

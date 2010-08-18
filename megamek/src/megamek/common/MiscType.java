@@ -131,6 +131,9 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LIMITED_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(88);
     public static final BigInteger F_FULLY_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(89);
     public static final BigInteger F_DUNE_BUGGY = BigInteger.valueOf(1).shiftLeft(90);
+    public static final BigInteger F_SHOULDER_TURRET = BigInteger.valueOf(1).shiftLeft(91);
+    public static final BigInteger F_HEAD_TURRET = BigInteger.valueOf(1).shiftLeft(92);
+    public static final BigInteger F_QUAD_TURRET = BigInteger.valueOf(1).shiftLeft(93);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -218,6 +221,11 @@ public class MiscType extends EquipmentType {
 
     @Override
     public float getTonnage(Entity entity) {
+        return getTonnage(entity, Entity.LOC_NONE);
+    }
+
+    public float getTonnage(Entity entity, int location) {
+
         if (tonnage != TONNAGE_VARIABLE) {
             return tonnage;
         }
@@ -279,7 +287,22 @@ public class MiscType extends EquipmentType {
                 }
                 return Math.round(entity.getWeight() / 20.0f);
             }
-        } else if (hasFlag(F_TARGCOMP)) {
+        } else if (hasFlag(F_QUAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_HEAD_TURRET)) {
+            int locationToCheck = location;
+            if (hasFlag(F_HEAD_TURRET)) {
+                locationToCheck = Mech.LOC_HEAD;
+            }
+            // 10% of linked weapons' weight
+            float weaponWeight = 0;
+            for (Mounted m:entity.getWeaponList()) {
+                if ((m.getLocation() == locationToCheck) && m.isTurretMounted()) {
+                    weaponWeight += m.getType().getTonnage(entity);
+                }
+            }
+            // round to half ton
+            return (float) (Math.ceil(weaponWeight / 20) * 2.0);
+        }
+        else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
             for (Mounted m : entity.getWeaponList()) {
@@ -771,6 +794,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createClanLimitedAmphibiousChassis());
         EquipmentType.addType(MiscType.createClanFullyAmphibiousChassis());
         EquipmentType.addType(MiscType.createClanDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createISShoulderTurret());
+        EquipmentType.addType(MiscType.createCLShoulderTurret());
+        EquipmentType.addType(MiscType.createISHeadTurret());
+        EquipmentType.addType(MiscType.createCLHeadTurret());
+        EquipmentType.addType(MiscType.createISQuadTurret());
+        EquipmentType.addType(MiscType.createCLQuadTurret());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3046,7 +3075,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -4122,6 +4151,84 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
 
+        return misc;
+    }
+
+    public static MiscType createCLShoulderTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Shoulder Turret";
+        misc.setInternalName("CLShoulderTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISShoulderTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Shoulder Turret";
+        misc.setInternalName("ISShoulderTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLHeadTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Head Turret";
+        misc.setInternalName("CLHeadTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISHeadTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Head Turret";
+        misc.setInternalName("ISHeadTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLQuadTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Quad Turret";
+        misc.setInternalName("CLQuadTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISQuadTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Quad Turret";
+        misc.setInternalName("ISQuadTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
         return misc;
     }
 

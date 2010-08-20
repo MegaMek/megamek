@@ -59,10 +59,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         setDone();
         checkAmmo();
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if (total > 1) {
+        if (total > 1 && !weapon.curMode().equals("Single")) {
             howManyShots = 2;
-        }
-        if (total == 1) {
+        } else {
             howManyShots = 1;
         }
         if (total == 0) {

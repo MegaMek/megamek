@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -27,7 +27,7 @@ import megamek.server.Server;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6816799343788643259L;
 
@@ -43,7 +43,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
@@ -61,15 +61,15 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
 
-            if (missed)
+            if (missed) {
                 return;
+            }
 
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
             r.add(5);
             r.choose(true);
-            r.newlines = 0;
             vPhaseReport.addElement(r);
             entityTarget.heatFromExternal += 5;
         } else {
@@ -77,7 +77,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                     nCluster, bldgAbsorbs);
         }
     }
-    
+
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this
@@ -95,7 +95,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
-        
+
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
@@ -106,7 +106,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         }
         return true;
     }
-    
+
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits) {
@@ -124,7 +124,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                     true, -1, vPhaseReport);
         }
     }
-    
+
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {

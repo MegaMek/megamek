@@ -68,7 +68,6 @@ public class InfantryFlamerHeatHandler extends InfantryWeaponHandler {
                 r.subject = subjectId;
                 r.add(entityTarget.getShortName());
                 r.add(entityTarget.getLocationAbbr(hit));
-                r.newlines = 0;
                 r.indent(2);
                 vPhaseReport.addElement(r);
                 missed = true;
@@ -78,7 +77,6 @@ public class InfantryFlamerHeatHandler extends InfantryWeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             r.add(nDamPerHit);
-            r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
             entityTarget.heatFromExternal += nDamPerHit;

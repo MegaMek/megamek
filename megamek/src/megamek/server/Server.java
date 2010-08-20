@@ -16364,7 +16364,6 @@ public class Server implements Runnable {
                         // Platoon, Trooper, or Section destroyed message
                         r = new Report(1210);
                         r.subject = te_n;
-                        r.newlines = 0;
                         if (isPlatoon) {
                             // Infantry have only one section, and
                             // are therefore destroyed.
@@ -18443,7 +18442,6 @@ public class Server implements Runnable {
                     r = new Report(6225);
                     r.subject = en.getId();
                     r.indent(3);
-                    r.newlines = 0;
                     r.add(Protomech.systemNames[cs.getIndex()]);
                     vDesc.addElement(r);
                 }
@@ -18452,7 +18450,6 @@ public class Server implements Runnable {
                     if (2 == numHit) {
                         r = new Report(6230);
                         r.subject = en.getId();
-                        r.newlines = 0;
                         vDesc.addElement(r);
                         en.destroyLocation(loc);
                     }
@@ -18461,7 +18458,6 @@ public class Server implements Runnable {
                     if (2 == numHit) {
                         r = new Report(6235);
                         r.subject = en.getId();
-                        r.newlines = 0;
                         vDesc.addElement(r);
                         en.destroyLocation(loc);
                     }
@@ -18543,7 +18539,6 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.indent(3);
                 r.add(((Mech) en).getSystemName(cs.getIndex()));
-                r.newlines = 0;
                 vDesc.addElement(r);
                 switch (cs.getIndex()) {
                 case Mech.SYSTEM_COCKPIT:
@@ -18629,7 +18624,6 @@ public class Server implements Runnable {
             r.subject = en.getId();
             r.indent(3);
             r.add(mounted.getDesc());
-            r.newlines = 0;
             vDesc.addElement(r);
 
             // Shield objects are not useless when they take one crit.

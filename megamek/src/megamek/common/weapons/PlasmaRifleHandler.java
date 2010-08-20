@@ -67,7 +67,6 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int extraHeat = Compute.d6();
             r.add(extraHeat);
             r.choose(true);
-            r.newlines = 0;
             vPhaseReport.addElement(r);
             entityTarget.heatFromExternal += extraHeat;
         }

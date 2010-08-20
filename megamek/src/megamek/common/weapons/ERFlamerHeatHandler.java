@@ -71,7 +71,6 @@ public class ERFlamerHeatHandler extends FlamerHeatHandler {
                 r.subject = subjectId;
                 r.add(entityTarget.getShortName());
                 r.add(entityTarget.getLocationAbbr(hit));
-                r.newlines = 0;
                 r.indent(2);
                 vPhaseReport.addElement(r);
                 missed = true;
@@ -81,7 +80,6 @@ public class ERFlamerHeatHandler extends FlamerHeatHandler {
             r.subject = subjectId;
             r.indent(2);
             r.add(2);
-            r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
             entityTarget.heatFromExternal += 1;

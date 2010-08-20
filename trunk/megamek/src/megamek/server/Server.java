@@ -20504,8 +20504,25 @@ public class Server implements Runnable {
      * The mech falls down in place
      */
     private Vector<Report> doEntityFall(Entity entity, PilotingRollData roll) {
+        boolean fallToSurface = false;
+        // on ice
+        int toSubtract = 0;
+        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ICE) && entity.getElevation() != -game.getBoard().getHex(entity.getPosition()).depth()) {
+            fallToSurface = true;
+            toSubtract = game.getBoard().getHex(entity.getPosition()).surface();
+        }
+        // on a bridge
+        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BRIDGE_ELEV) && entity.getElevation() >= game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV)) {
+            fallToSurface = true;
+            toSubtract = game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV);
+        }
+        // on a building
+        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BLDG_ELEV) && entity.getElevation() >= game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BLDG_ELEV)) {
+            fallToSurface = true;
+            toSubtract = game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BLDG_ELEV);
+        }
         return doEntityFall(entity, entity.getPosition(), entity.getElevation()
-                + game.getBoard().getHex(entity.getPosition()).depth(), roll);
+                + (!fallToSurface?game.getBoard().getHex(entity.getPosition()).depth():entity.getElevation()-toSubtract), roll);
     }
 
     /**

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2002, 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -36,7 +36,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -50,11 +49,9 @@ import megamek.common.loaders.EntityLoadingException;
 public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2459992981678758743L;
-    private Client client;
-    private ClientGUI clientgui;
     private MechSelectorDialog parent;
 
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -82,14 +79,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
-    
+
     /** Creates a new instance of AdvancedSearchDialog */
     public AdvancedSearchDialog(MechSelectorDialog msd, ClientGUI clientgui) {
         super(clientgui.frame,
                 Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
-        this.client = clientgui.getClient();
-        this.clientgui = clientgui;
-        this.parent = msd;
+        parent = msd;
 
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -107,12 +102,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
-        
+
         cOrAnd.addItem(Messages.getString("MechSelectorDialog.Search.or"));
         cOrAnd.addItem(Messages.getString("MechSelectorDialog.Search.and"));
-        
+
         populateWeaponsAndEquipmentChoices();
-        
+
         cWalk.setSelectedIndex(0);
         tWalk.setText("");
         cJump.setSelectedIndex(0);
@@ -125,61 +120,61 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         cWeapons2.setSelectedIndex(0);
         chkEquipment.setSelected(false);
         cEquipment.setSelectedIndex(0);
-        
+
         //layout
         setLayout(new GridLayout(10, 1));
-        
+
         Panel row1 = new Panel();
         row1.setLayout(new FlowLayout(FlowLayout.LEFT));
         row1.add(lblWalk);
         row1.add(cWalk);
         row1.add(tWalk);
         this.add(row1);
-        
+
         Panel row2 = new Panel();
         row2.setLayout(new FlowLayout(FlowLayout.LEFT));
         row2.add(lblJump);
         row2.add(cJump);
         row2.add(tJump);
         this.add(row2);
-        
+
         Panel row3 = new Panel();
         row3.setLayout(new FlowLayout(FlowLayout.LEFT));
         row3.add(lblArmor);
         row3.add(cArmor);
         this.add(row3);
-        
+
         Panel row4 = new Panel();
         row4.setLayout(new FlowLayout(FlowLayout.LEFT));
         row4.add(lblWeapons);
         this.add(row4);
-        
+
         Panel row5 = new Panel();
         row5.setLayout(new FlowLayout(FlowLayout.LEFT));
         row5.add(lblWeapons1);
         row5.add(tWeapons1);
         row5.add(cWeapons1);
         this.add(row5);
-        
+
         Panel row6 = new Panel();
         row6.setLayout(new FlowLayout(FlowLayout.LEFT));
         row6.add(cOrAnd);
         this.add(row6);
-        
+
         Panel row7 = new Panel();
         row7.setLayout(new FlowLayout(FlowLayout.LEFT));
         row7.add(lblWeapons2);
         row7.add(tWeapons2);
         row7.add(cWeapons2);
         this.add(row7);
-        
+
         Panel row8 = new Panel();
         row8.setLayout(new FlowLayout(FlowLayout.LEFT));
         row8.add(lblEquipment);
         row8.add(chkEquipment);
         row8.add(cEquipment);
         this.add(row8);
-        
+
         Panel row9 = new Panel();
         row9.setLayout(new FlowLayout(FlowLayout.LEFT));
         row9.add(lblYear);
@@ -187,7 +182,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         row9.add(new Label("-"));
         row9.add(tEndYear);
         this.add(row9);
-        
+
         Panel row10 = new Panel();
         row10.setLayout(new FlowLayout(FlowLayout.CENTER));
         row10.add(butOkay);
@@ -214,15 +209,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         if (ev.getSource() == butOkay) {
             parent.filterUnits();
             parent.enableResetButton(true);
-            this.setVisible(false);
+            setVisible(false);
         }
         if (ev.getSource() == butCancel) {
-            this.setVisible(false);
+            setVisible(false);
         }
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     public void clearValues() {
@@ -240,7 +231,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         cEquipment.setSelectedIndex(0);
         parent.enableResetButton(false);
     }
-    
+
     private void populateWeaponsAndEquipmentChoices() {
         LinkedHashSet<String> weapons = new LinkedHashSet<String>();
         LinkedHashSet<String> equipment = new LinkedHashSet<String>();
@@ -298,24 +289,24 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     }
 
     public boolean isAdvancedSearchOff() {
-        
+
        // return true;
        return tWalk.getText().equals("") && tJump.getText().equals("")
             && tWeapons1.getText().equals("") && tWeapons2.getText().equals("")
                 && tStartYear.getText().equals("") && tEndYear.getText().equals("")
                     && !chkEquipment.isSelected() && cArmor.getSelectedIndex() == 0;
-        
+
     }
-    
+
     public boolean isMatch(MechSummary mech) {
-        
+
         if(isAdvancedSearchOff()) {
             return true;
         }
-        
+
         try {
             Entity entity = new MechFileParser(mech.getSourceFile(), mech.getEntryName()).getEntity();
-            
+
             int walk = -1;
             try {
                 walk = Integer.parseInt(tWalk.getText());
@@ -337,7 +328,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                     }
                 }
             }
-    
+
             int jump = -1;
             try {
                 jump = Integer.parseInt(tJump.getText());
@@ -359,7 +350,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                     }
                 }
             }
-    
+
             int sel = cArmor.getSelectedIndex();
             if (sel > 0) {
                 int armor = entity.getTotalArmor();
@@ -382,12 +373,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                     }
                 }
             }
-    
+
             boolean weaponLine1Active = false;
             boolean weaponLine2Active = false;
             boolean foundWeapon1 = false;
             boolean foundWeapon2 = false;
-    
+
             int count = 0;
             int weapon1 = -1;
             try {
@@ -408,7 +399,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                     foundWeapon1 = true;
                 }
             }
-    
+
             count = 0;
             int weapon2 = -1;
             try {
@@ -429,7 +420,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                     foundWeapon2 = true;
                 }
             }
-    
+
             int startYear = Integer.MIN_VALUE;
             int endYear = Integer.MAX_VALUE;
             try {
@@ -445,7 +436,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
             if ((entity.getYear() < startYear) || (entity.getYear() > endYear)) {
                 return false;
             }
-    
+
             if (weaponLine1Active && !weaponLine2Active && !foundWeapon1) {
                 return false;
             }
@@ -463,7 +454,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                     }
                 }
             }
-    
+
             count = 0;
             if (chkEquipment.isSelected()) {
                 for (Mounted m : entity.getEquipment()) {
@@ -480,7 +471,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
             //shouldn't happen
             return false;
         }
-        
+
         return true;
     }
 

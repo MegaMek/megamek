@@ -107,7 +107,6 @@ public class ACAPHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(entityTarget.getShortName());
             r.add(entityTarget.getLocationAbbr(hit));
-            r.newlines = 0;
             r.indent(2);
             vPhaseReport.addElement(r);
             nDamage = 0;

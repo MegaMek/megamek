@@ -64,7 +64,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.add(entityTarget.getShortName());
                 r.add(entityTarget.getLocationAbbr(hit));
-                r.newlines = 0;
                 r.indent(2);
                 vPhaseReport.addElement(r);
                 missed = true;
@@ -84,7 +83,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             int extraHeat = Compute.d6(2);
             r.add(extraHeat);
             r.choose(true);
-            r.newlines = 0;
             vPhaseReport.addElement(r);
             entityTarget.heatFromExternal += extraHeat;
         } else {

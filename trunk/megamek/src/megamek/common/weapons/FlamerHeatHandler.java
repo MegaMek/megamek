@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -38,7 +38,7 @@ import megamek.server.Server;
  */
 public class FlamerHeatHandler extends WeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7785915075211288648L;
 
@@ -70,7 +70,6 @@ public class FlamerHeatHandler extends WeaponHandler {
                 r.subject = subjectId;
                 r.add(entityTarget.getShortName());
                 r.add(entityTarget.getLocationAbbr(hit));
-                r.newlines = 0;
                 r.indent(2);
                 vPhaseReport.addElement(r);
                 missed = true;
@@ -80,7 +79,6 @@ public class FlamerHeatHandler extends WeaponHandler {
             r.subject = subjectId;
             r.indent(2);
             r.add(2);
-            r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
             entityTarget.heatFromExternal += 2;
@@ -92,30 +90,33 @@ public class FlamerHeatHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         int toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            if (ae instanceof BattleArmor)
+            if (ae instanceof BattleArmor) {
                 toReturn = Compute.d6(3);
+            }
             toReturn = Compute.d6(4);
-            if (bDirect)
+            if (bDirect) {
                 toReturn += toHit.getMoS()/3;
+            }
             // pain shunted infantry get half damage
             if (((Entity) target).getCrew().getOptions().booleanOption("pain_shunt")) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
-            if (bGlancing)
+            if (bGlancing) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            }
         } else {
             toReturn = super.calcDamagePerHit();
         }
         return toReturn;
     }
-    
+
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this
@@ -133,7 +134,7 @@ public class FlamerHeatHandler extends WeaponHandler {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
-        
+
         //shots that miss an entity can also potential cause explosions in a heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
@@ -144,7 +145,7 @@ public class FlamerHeatHandler extends WeaponHandler {
         }
         return true;
     }
-    
+
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits) {
@@ -162,7 +163,7 @@ public class FlamerHeatHandler extends WeaponHandler {
                     true, -1, vPhaseReport);
         }
     }
-    
+
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {

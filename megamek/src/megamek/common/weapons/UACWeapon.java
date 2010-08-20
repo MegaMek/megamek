@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -55,10 +54,6 @@ public abstract class UACWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        if (weapon.curMode().equals("Ultra")) {
-            return new UltraWeaponHandler(toHit, waa, game, server);
-        }
-        return super.getCorrectHandler(toHit, waa, game, server);
+        return new UltraWeaponHandler(toHit, waa, game, server);
     }
 }

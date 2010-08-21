@@ -18,19 +18,18 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLNailRivetGun extends NailRivetGunWeapon {
+public class ISRivetGun extends NailRivetGunWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -5198228513368748633L;
 
-    public CLNailRivetGun() {
+    public ISRivetGun() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
-        name = "Nail/Rivet Gun";
-        setInternalName("CLNail/Rivet Gun");
-        addLookupName("CLNailRivet Gun");
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        name = "Rivet Gun";
+        setInternalName(name);
+        addLookupName("ISRivet Gun");
     }
-
 }

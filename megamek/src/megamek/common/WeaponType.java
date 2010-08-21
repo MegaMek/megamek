@@ -501,16 +501,16 @@ public class WeaponType extends EquipmentType {
             case (CLASS_ROCKET_LAUNCHER):
                 return EquipmentType.get("Rocket Launcher Bay");
             case (CLASS_CAPITAL_LASER):
-            	if(subCapital) {
-            		return EquipmentType.get("Sub-Capital Laser Bay");
-            	}
+                if (subCapital) {
+                    return EquipmentType.get("Sub-Capital Laser Bay");
+                }
                 return EquipmentType.get("Capital Laser Bay");
             case (CLASS_CAPITAL_PPC):
                 return EquipmentType.get("Capital PPC Bay");
             case (CLASS_CAPITAL_AC):
-            	if(subCapital) {
-            		return EquipmentType.get("Sub-Capital Cannon Bay");
-            	}
+                if (subCapital) {
+                    return EquipmentType.get("Sub-Capital Cannon Bay");
+                }
                 return EquipmentType.get("Capital AC Bay");
             case (CLASS_CAPITAL_GAUSS):
                 return EquipmentType.get("Capital Gauss Bay");
@@ -929,8 +929,10 @@ public class WeaponType extends EquipmentType {
         // Taser
         EquipmentType.addType(new ISMekTaser());
 
-        EquipmentType.addType(new ISNailRivetGun());
-        EquipmentType.addType(new CLNailRivetGun());
+        EquipmentType.addType(new ISNailGun());
+        EquipmentType.addType(new ISRivetGun());
+        EquipmentType.addType(new CLNailGun());
+        EquipmentType.addType(new CLRivetGun());
 
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
@@ -947,7 +949,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
-        //Infantry Archaic Weapons
+        // Infantry Archaic Weapons
         EquipmentType.addType(new InfantryArchaicAxeWeapon());
         EquipmentType.addType(new InfantryArchaicBasicCrossbowWeapon());
         EquipmentType.addType(new InfantryArchaicBlackjackWeapon());
@@ -985,7 +987,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicVibroSwordWeapon());
         EquipmentType.addType(new InfantryArchaicWakizashiWeapon());
         EquipmentType.addType(new InfantryArchaicWhipWeapon());
-        //Infantry Pistols
+        // Infantry Pistols
         EquipmentType.addType(new InfantryPistolAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolBlazerPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
@@ -1193,7 +1195,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGRorynexRM3XXIWeapon());
         EquipmentType.addType(new InfantrySMGRuganWeapon());
         EquipmentType.addType(new InfantrySMGWeapon());
-
 
         EquipmentType.addType(new ISFireExtinguisher());
         EquipmentType.addType(new CLFireExtinguisher());
@@ -1407,11 +1408,9 @@ public class WeaponType extends EquipmentType {
     public double getBV(Entity entity) {
         double returnBV = bv;
         if ((entity instanceof SupportTank) || (entity instanceof SupportVTOL)) {
-            if (!entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)  &&
-                    !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+            if (!entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 returnBV *= 0.8;
-            } else if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) &&
-                    !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+            } else if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 returnBV *= 0.9;
             }
         }

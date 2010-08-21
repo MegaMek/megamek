@@ -294,15 +294,14 @@ public class MiscType extends EquipmentType {
             }
             // 10% of linked weapons' weight
             float weaponWeight = 0;
-            for (Mounted m:entity.getWeaponList()) {
+            for (Mounted m : entity.getWeaponList()) {
                 if ((m.getLocation() == locationToCheck) && m.isTurretMounted()) {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
             // round to half ton
             return (float) (Math.ceil(weaponWeight / 20) * 2.0);
-        }
-        else if (hasFlag(F_TARGCOMP)) {
+        } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
             for (Mounted m : entity.getWeaponList()) {
@@ -2742,7 +2741,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("BASearchlight");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 2000;
 
@@ -3075,7 +3074,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {

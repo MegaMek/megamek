@@ -134,6 +134,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SHOULDER_TURRET = BigInteger.valueOf(1).shiftLeft(91);
     public static final BigInteger F_HEAD_TURRET = BigInteger.valueOf(1).shiftLeft(92);
     public static final BigInteger F_QUAD_TURRET = BigInteger.valueOf(1).shiftLeft(93);
+    public static final BigInteger F_SPACE_ADAPTATION = BigInteger.valueOf(1).shiftLeft(94);
+    public static final BigInteger F_CUTTING_TORCH = BigInteger.valueOf(1).shiftLeft(95);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -830,6 +832,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLBALightActiveProbe());
         EquipmentType.addType(MiscType.createISBALightActiveProbe());
         EquipmentType.addType(MiscType.createRemoteSensorDispenser());
+        EquipmentType.addType(MiscType.createBACuttingTorch());
+        EquipmentType.addType(MiscType.createBASpaceOperationsAdaptation());
 
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
@@ -3074,7 +3078,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -4227,6 +4231,32 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createBASpaceOperationsAdaptation() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Space Operations Adaptation";
+        misc.setInternalName("BASpaceOperationsAdaptation");
+        misc.tonnage = 0.1f;
+        misc.criticals = 1;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_SPACE_ADAPTATION).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createBACuttingTorch() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Cutting Torch";
+        misc.setInternalName("BACuttingTorch");
+        misc.tonnage = 0.005f;
+        misc.criticals = 1;
+        misc.cost = 1000;
+        misc.flags = misc.flags.or(F_CUTTING_TORCH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         return misc;
     }

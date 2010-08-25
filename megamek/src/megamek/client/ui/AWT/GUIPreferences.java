@@ -53,6 +53,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MOVE_RUN_COLOR = "AdvancedMoveRunColor";
     public static final String ADVANCED_MOVE_BACK_COLOR = "AdvancedMoveBackColor";
     public static final String ADVANCED_MOVE_SPRINT_COLOR = "AdvancedMoveSprintColor";
+    public static final String ADVANCED_MOVE_FONT_TYPE = "AdvancedMoveFontType";
+    public static final String ADVANCED_MOVE_FONT_SIZE = "AdvancedMoveFontSize";
+    public static final String ADVANCED_MOVE_FONT_STYLE = "AdvancedMoveFontStyle";
+
     public static final String ADVANCED_MOVE_STEP_DELAY = "AdvancedMoveStepDelay";
     public static final String ADVANCED_DARKEN_MAP_AT_NIGHT = "AdvancedDarkenMapAtNight";
     public static final String ADVANCED_MAPSHEET_COLOR = "AdvancedMapsheetColor";
@@ -153,6 +157,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MOVE_RUN_COLOR, "yellow");
         setDefault(ADVANCED_MOVE_BACK_COLOR, new Color(255, 255, 0));
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, new Color(255, 20, 147));
+
+        setDefault(ADVANCED_MOVE_FONT_TYPE,"SansSerif");
+        setDefault(ADVANCED_MOVE_FONT_SIZE,26);
+        setDefault(ADVANCED_MOVE_FONT_STYLE,java.awt.Font.BOLD);
+
         store.setDefault(ADVANCED_MOVE_STEP_DELAY, 100);
         store.setDefault(ADVANCED_DARKEN_MAP_AT_NIGHT, true);
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");

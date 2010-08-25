@@ -3888,6 +3888,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             return step;
         }
 
+
+        public Font getMovementFont(){
+
+            String fontName= GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
+            int fontStyle =  GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
+            int fontSize =  GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_SIZE);
+
+            return new Font(fontName,fontStyle,fontSize);
+        }
+
+
         private void drawRemainingVelocity(MoveStep step, Point stepPos, Graphics graph,
                 boolean shiftFlag) {
             String velString = null;
@@ -3994,7 +4005,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             // Convert the buffer to a String and draw it.
             costString = costStringBuf.toString();
-            graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+            graph.setFont(getMovementFont()); //$NON-NLS-1$
             int costX = stepPos.x + 42;
             if (shiftFlag) {
                 costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);

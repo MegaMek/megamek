@@ -1002,6 +1002,18 @@ public class Aero extends Entity
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+
+        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
+        bvText.append(nl);
+
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -1020,9 +1032,49 @@ public class Aero extends Entity
             armorMod += 0.2;
         }
 
-        dbv += (getTotalArmor()+modularArmor) * 2.5 * armorMod;
+        bvText.append(startTable);
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
-        dbv += getSI() * 2.0 * (blueShield?1.2:1);
+        bvText.append("Total Armor Factor x 2.5 x");
+        bvText.append(armorMod);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        dbv += (getTotalArmor()+modularArmor);
+
+        bvText.append(dbv);
+        bvText.append(" x 2.5 x ");
+        bvText.append(armorMod);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+
+        dbv *= 2.5 * armorMod;
+
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total SI x 2 x SI modifier");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        double dbvSI = getSI() * 2.0 * (blueShield?1.2:1);
+        dbv += dbvSI;
+
+        bvText.append(getSI());
+        bvText.append(" x 2 x ");
+        bvText.append(blueShield?1.2:1);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(dbvSI);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add defensive equipment
         double amsBV = 0;
@@ -1038,18 +1090,95 @@ public class Aero extends Entity
             }
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("AMS BV");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
                 amsAmmoBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("AMS Ammo BV");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
                 screenAmmoBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("Screen Ammo BV");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("Screen BV");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total AMS BV: "+amsBV);
         dbv += amsBV;
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Screen BV: "+screenBV);
         dbv += screenBV;
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total AMS Ammo BV (to a maximum of AMS BV): "+Math.min(amsBV, amsAmmoBV));
         dbv += Math.min(amsBV, amsAmmoBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Screen Ammo BV (to a maximum of Screen BV): "+Math.min(screenBV, screenAmmoBV));
         dbv += Math.min(screenBV, screenAmmoBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
@@ -1104,12 +1233,186 @@ public class Aero extends Entity
         }
         dbv = Math.max(1, dbv - ammoPenalty);
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Explosive Weapons/Equipment Penalty ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("= -");
+        bvText.append(ammoPenalty);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Unit Type Modifier");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("DBV * Unittype Modifier = ");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(dbv+" x "+ getBVTypeModifier());
+        if (hasStealth()) {
+            bvText.append("+ 0.2 for Stealth");
+        }
         //unit type multiplier
         dbv *= (getBVTypeModifier() + (hasStealth()?0.2:0));
+
+        bvText.append(" = "+dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // calculate heat efficiency
         int aeroHeatEfficiency = 6 + getHeatCapacity();
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Base Heat Efficiency ");
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(aeroHeatEfficiency);
+
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Unmodified Weapon BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        double weaponBV = 0;
+        boolean hasTargComp = hasTargComp();
+        // first, add up front-faced and rear-faced unmodified BV,
+        // to know wether front- or rear faced BV should be halved
+        double bvFront = 0, bvRear = 0;
+        ArrayList<Mounted> weapons = getTotalWeaponList();
+        for (Mounted weapon : weapons) {
+            WeaponType wtype = (WeaponType) weapon.getType();
+            double dBV = wtype.getBV(this);
+            // don't count destroyed equipment
+            if (weapon.isDestroyed()) {
+                continue;
+            }
+            // don't count AMS, it's defensive
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+            // don't count screen launchers, they are defensive
+            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+                continue;
+            }
+            //do not count weapon groups
+            if(weapon.isWeaponGroup()) {
+                continue;
+            }
+            // calc MG Array here:
+            if (wtype.hasFlag(WeaponType.F_MGA)) {
+                double mgaBV = 0;
+                for (Mounted possibleMG : getTotalWeaponList()) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                            && (possibleMG.getLocation() == weapon
+                                    .getLocation())) {
+                        mgaBV += possibleMG.getType().getBV(this);
+                    }
+                }
+                dBV = mgaBV * 0.67;
+            }
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append(wtype.getName());
+            if (weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) {
+                bvRear += dBV;
+                bvText.append(" (R)");
+            } else {
+                bvFront += dBV;
+            }
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(dBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        boolean halveRear = true;
+        if (bvFront <= bvRear) {
+            halveRear = false;
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("halving front instead of rear weapon BVs");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+        }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Weapon Heat:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        // here we store the modified BV and heat of all heat-using weapons,
+        // to later be sorted by BV
+        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<ArrayList<Object>>();
+        // BVs of non-heat-using weapons
+        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<ArrayList<Object>>();
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
@@ -1158,6 +1461,108 @@ public class Aero extends Entity
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;
             }
+            String name = wtype.getName();
+
+            // check to see if the weapon is a PPC and has a Capacitor attached
+            // to it
+            if (wtype.hasFlag(WeaponType.F_PPC) && (mounted.getLinkedBy() != null)) {
+                name = name.concat(" with Capacitor");
+                weaponHeat += 5;
+            }
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append(name);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("+ ");
+            bvText.append(weaponHeat);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+
+            double dBV = wtype.getBV(this);
+            String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
+
+            // don't count destroyed equipment
+            if (mounted.isDestroyed()) {
+                continue;
+            }
+
+            // don't count AMS, it's defensive
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+            //don't count screen launchers, they are defensive
+            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+                continue;
+            }
+            //do not count weapon groups
+            if (mounted.isWeaponGroup()) {
+                continue;
+            }
+            // calc MG Array here:
+            if (wtype.hasFlag(WeaponType.F_MGA)) {
+                double mgaBV = 0;
+                for (Mounted possibleMG : getTotalWeaponList()) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                            && (possibleMG.getLocation() == mounted
+                                    .getLocation())) {
+                        mgaBV += possibleMG.getType().getBV(this);
+                    }
+                }
+                dBV = mgaBV * 0.67;
+            }
+
+            // and we'll add the tcomp here too
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                if (hasTargComp) {
+                    dBV *= 1.25;
+                }
+            }
+            // artemis bumps up the value
+            if (mounted.getLinkedBy() != null) {
+                Mounted mLinker = mounted.getLinkedBy();
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                    weaponName = weaponName.concat(" with Artemis IV");
+                }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    dBV *= 1.3;
+                    weaponName = weaponName.concat(" with Artemis V");
+                }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
+                    weaponName = weaponName.concat(" with Apollo");
+                }
+            }
+            // half for being rear mounted (or front mounted, when more rear-
+            // than front-mounted un-modded BV
+            if (((mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && halveRear) || (!(mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && !halveRear)) {
+                dBV /= 2;
+            }
+
+            // ArrayList that stores weapon values
+            // stores a double first (BV), then an Integer (heat),
+            // then a String (weapon name)
+            // for 0 heat weapons, just stores BV and name
+            ArrayList<Object> weaponValues = new ArrayList<Object>();
+            if (weaponHeat > 0) {
+                // store heat and BV, for sorting a few lines down;
+                weaponValues.add(dBV);
+                weaponValues.add(weaponHeat);
+                weaponValues.add(weaponName);
+                heatBVs.add(weaponValues);
+            } else {
+                weaponValues.add(dBV);
+                weaponValues.add(weaponName);
+                nonHeatBVs.add(weaponValues);
+            }
+
+
+
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
@@ -1171,229 +1576,183 @@ public class Aero extends Entity
             }
         }
 
-        double weaponBV = 0;
-        boolean hasTargComp = hasTargComp();
-        // first, add up front-faced and rear-faced unmodified BV,
-        // to know wether front- or rear faced BV should be halved
-        double bvFront = 0, bvRear = 0;
-        ArrayList<Mounted> weapons = getTotalWeaponList();
-        for (Mounted weapon : weapons) {
-            WeaponType wtype = (WeaponType) weapon.getType();
-            double dBV = wtype.getBV(this);
-            // don't count destroyed equipment
-            if (weapon.isDestroyed()) {
-                continue;
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total Heat:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(maximumHeat);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Weapons with no heat at full BV:");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        // count heat-free weapons always at full modified BV
+        for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
+            weaponBV += (Double) nonHeatWeapon.get(0);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(nonHeatWeapon.get(1));
+            if (nonHeatWeapon.get(1).toString().length() < 8) {
+                bvText.append("\t");
             }
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            // don't count screen launchers, they are defensive
-            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                continue;
-            }
-            //do not count weapon groups
-            if(weapon.isWeaponGroup()) {
-                continue;
-            }
-            // calc MG Array here:
-            if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon
-                                    .getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
-                    }
-                }
-                dBV = mgaBV * 0.67;
-            }
-            if (weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) {
-                bvRear += dBV;
-            } else {
-                bvFront += dBV;
-            }
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(nonHeatWeapon.get(0));
+            bvText.append(endColumn);
+            bvText.append(endRow);
         }
-        boolean halveRear = true;
-        if (bvFront <= bvRear) {
-            halveRear = false;
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Heat Modified Weapons BV: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        if (maximumHeat > aeroHeatEfficiency) {
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("(Heat Exceeds Aero Heat Efficiency) ");
+
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(endRow);
         }
 
         if (maximumHeat <= aeroHeatEfficiency) {
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
-            for (Mounted weapon : getTotalWeaponList()) {
-                WeaponType wtype = (WeaponType) weapon.getType();
-                double dBV = wtype.getBV(this);
+            for (ArrayList<Object> weaponValues : heatBVs) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
 
-                // don't count destroyed equipment
-                if (weapon.isDestroyed()) {
-                    continue;
-                }
+                bvText.append(weaponValues.get(2));
+                weaponBV += (Double) weaponValues.get(0);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
 
-                // don't count AMS, it's defensive
-                if (wtype.hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-                //don't count screen launchers, they are defensive
-                if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                    continue;
-                }
-                //do not count weapon groups
-                if(weapon.isWeaponGroup()) {
-                    continue;
-                }
-                // calc MG Array here:
-                if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                                && (possibleMG.getLocation() == weapon
-                                        .getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
-                        }
-                    }
-                    dBV = mgaBV * 0.67;
-                }
-
-                // and we'll add the tcomp here too
-                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    if (hasTargComp) {
-                        dBV *= 1.25;
-                    }
-                }
-                // artemis bumps up the value
-                if (weapon.getLinkedBy() != null) {
-                    Mounted mLinker = weapon.getLinkedBy();
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                        dBV *= 1.2;
-                    }
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                        dBV *= 1.3;
-                    }
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                        dBV *= 1.15;
-                    }
-                }
-                // half for being rear mounted (or front mounted, when more rear-
-                // than front-mounted un-modded BV
-                if (((weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) && halveRear) || (!(weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) && !halveRear)) {
-                    dBV /= 2;
-                }
-                weaponBV += dBV;
+                bvText.append(weaponValues.get(0));
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         } else {
             // this will count heat-generating weapons at full modified BV until
             // heatefficiency is reached or passed with one weapon
 
-            // here we store the modified BV and heat of all heat-using weapons,
-            // to later be sorted by BV
-            ArrayList<double[]> heatBVs = new ArrayList<double[]>();
-            // BVs of non-heat-using weapons
-            ArrayList<Double> nonHeatBVs = new ArrayList<Double>();
-            // loop through weapons, calc their modified BV
-            for (Mounted weapon : weapons) {
-                WeaponType wtype = (WeaponType) weapon.getType();
-                double dBV = wtype.getBV(this);
-                // don't count destroyed equipment
-                if (weapon.isDestroyed()) {
-                    continue;
-                }
-                // don't count AMS, it's defensive
-                if (wtype.hasFlag(WeaponType.F_AMS)) {
-                    continue;
-                }
-                //don't count screen launchers, they are defensive
-                if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                    continue;
-                }
-                //do not count weapon groups
-                if(weapon.isWeaponGroup()) {
-                    continue;
-                }
-                // calc MG Array here:
-                if (wtype.hasFlag(WeaponType.F_MGA)) {
-                    double mgaBV = 0;
-                    for (Mounted possibleMG : getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == weapon.getLocation())) {
-                            mgaBV += possibleMG.getType().getBV(this);
-                        }
-                    }
-                    dBV = mgaBV * 0.67;
-                }
-                // and we'll add the tcomp here too
-                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                    dBV *= 1.25;
-                }
-                // artemis bumps up the value
-                if (weapon.getLinkedBy() != null) {
-                    Mounted mLinker = weapon.getLinkedBy();
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                        dBV *= 1.2;
-                    }
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                        dBV *= 1.3;
-                    }
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                        dBV *= 1.15;
-                    }
-                }
-                // half for being rear mounted (or front mounted, when more rear-
-                // than front-mounted un-modded BV
-                if (((weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT))&& halveRear) || (!(weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) && !halveRear)) {
-                    dBV /= 2;
-                }
-                int weaponHeat = ((WeaponType)weapon.getType()).getHeat();
-                // double heat for ultras
-                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                    weaponHeat *= 2;
-                }
-
-                // Six times heat for RAC
-                if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                    weaponHeat *= 6;
-                }
-
-                double[] weaponValues = new double[2];
-                weaponValues[0] = dBV;
-                weaponValues[1] = weaponHeat;
-                if (weaponHeat > 0) {
-                    // store heat and BV, for sorting a few lines down
-                    weaponValues[0] = dBV;
-                    weaponValues[1] = weaponHeat;
-                    heatBVs.add(weaponValues);
-                }
-                else {
-                    nonHeatBVs.add(dBV);
-                }
-            }
             // sort the heat-using weapons by modified BV
-            Collections.sort(heatBVs, new Comparator<double[]>() {
-                public int compare(double[] obj1, double[] obj2) {
+            Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
+                public int compare(ArrayList<Object> obj1, ArrayList<Object> obj2) {
+                    // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
-                    if (obj1[0] == obj2[0]) {
-                        return (int)Math.ceil(obj1[1] - obj2[1]);
+                    if (obj1.get(0).equals(obj2.get(0))) {
+                        return (int) Math.ceil((Double) obj1.get(1) - (Double) obj2.get(1));
                     }
                     // higher BV first
-                    return (int)Math.ceil(obj2[0] - obj1[0]);
+                    return (int) Math.ceil((Double) obj2.get(0) - (Double) obj1.get(0));
                 }
             });
-            // count heat-free weapons at full modified BV
-            for (double bv : nonHeatBVs) {
-                weaponBV += bv;
-            }
+
             // count heat-generating weapons at full modified BV until heatefficiency is reached or
             // passed with one weapon
             double heatAdded = 0;
-            for (double[] weaponValues : heatBVs) {
-                double dBV = weaponValues[0];
+            for (ArrayList<Object> weaponValues : heatBVs) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+
+                bvText.append(weaponValues.get(2));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                double dBV = (Double) weaponValues.get(0);
                 if (heatAdded >= aeroHeatEfficiency) {
                     dBV /= 2;
                 }
-                heatAdded += weaponValues[1];
+                if (heatAdded >= aeroHeatEfficiency) {
+                    bvText.append("Heat efficiency reached, half BV");
+                }
+                heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(dBV);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("Heat count: " + heatAdded);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total Weapons BV Adjusted For Heat:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(weaponBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Misc Offensive Equipment: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add offensive misc. equipment BV
         double oEquipmentBV = 0;
@@ -1409,8 +1768,33 @@ public class Aero extends Entity
                 continue;
             }
             double bv = mtype.getBV(this);
+            if (bv > 0) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+
+                bvText.append(mtype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(bv);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
             oEquipmentBV += bv;
         }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total Misc Offensive Equipment BV: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(oEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         weaponBV += oEquipmentBV;
 
         // add ammo bv
@@ -1493,17 +1877,121 @@ public class Aero extends Entity
         }
         weaponBV += ammoBV;
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Toal Ammo BV: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(ammoBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         // adjust further for speed factor
         double speedFactor = Math.pow(1 + (((double) getRunMP()  - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Final Speed Factor: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         obv = weaponBV * speedFactor;
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Weapons BV * Speed Factor ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(weaponBV);
+        bvText.append(" * ");
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" = ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Offensive BV + Defensive BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+
         double finalBV = dbv + obv;
+
+        bvText.append(dbv);
+        bvText.append(" + ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" = ");
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        double cockpitMod = 1;
         if ( getCockpitType() == Aero.COCKPIT_SMALL ) {
-            finalBV *= 0.95;
+            cockpitMod = 0.95;
+            finalBV *= cockpitMod;
         }
         finalBV = Math.round(finalBV);
+        bvText.append("Total BV * Cockpit Modifier");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(obv + dbv);
+        bvText.append(" * ");
+        bvText.append(cockpitMod);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" = ");
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Final BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
 
         // we get extra bv from some stuff
         double xbv = 0.0;

@@ -574,8 +574,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 // Be sure to include all units that have retreated.
                 for (Enumeration<Entity> iter2 = getClient().game.getRetreatedEntities(); iter2.hasMoreElements();) {
                   Entity e= iter2.nextElement();
-                  if(e.getOwnerId()==p.getId())
-                      l.add(e);
+                  if(e.getOwnerId()==p.getId()) {
+                    l.add(e);
+                }
               }
                 saveListFile(l,p.getName());
             }
@@ -1146,7 +1147,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
          saveListFile(unitList,client.getLocalPlayer().getName());
     }
     protected void saveListFile(ArrayList<Entity> unitList,String filename) {
-    
+
         // Handle empty lists.
         if ((unitList == null) || unitList.isEmpty()) {
             return;
@@ -1233,8 +1234,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         return frame;
     }
 
-    // Shows a dialg where the player can select the entity types
-    // used in the LOS tool.
+    /**
+     *  Shows a dialog where the player can select the entity types
+     *  used in the LOS tool.
+     */
     private void showLOSSettingDialog() {
         GUIPreferences gp = GUIPreferences.getInstance();
         LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
@@ -1243,7 +1246,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         gp.setMechInSecond(ld.getMechInSecond());
     }
 
-    // Loads a preview image of the unit into the BufferedPanel.
+    /**
+     *  Loads a preview image of the unit into the BufferedPanel.
+     * @param bp
+     * @param entity
+     */
     public void loadPreviewImage(JLabel bp, Entity entity) {
         Player player = client.game.getPlayer(entity.getOwnerId());
         loadPreviewImage(bp, entity, player);
@@ -1332,7 +1339,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
 
-       
+
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();

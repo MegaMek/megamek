@@ -396,7 +396,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp) {
         Image base = mechTileset.imageFor(entity, comp, -1);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp);
-        Image preview = entityImage.loadPreviewImage();
+        entityImage.loadFacings();
+        Image preview = entityImage.getFacing(entity.getFacing());
 
         MediaTracker loadTracker = new MediaTracker(comp);
         loadTracker.addImage(preview, 0);

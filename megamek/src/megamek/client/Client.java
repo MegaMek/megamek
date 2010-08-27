@@ -502,6 +502,15 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
+     * Send mount-facing-change data to the server
+     */
+    public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
+        Object[] data = { new Integer(nEntity), new Integer(nEquip),
+                new Integer(nFacing) };
+        send(new Packet(Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE, data));
+    }
+
+    /**
      * Send called shot change data to the server
      */
     public void sendCalledShotChange(int nEntity, int nEquip) {

@@ -49,13 +49,13 @@ import megamek.common.net.PacketReceivedEvent;
 /**
  * This class provides an AWT GUI for testing the transmission and reception of
  * <code>Packet</code>s.
- * 
+ *
  * @author James Damour <suvarov454@users.sourceforge.net>
  */
 public class PacketTool extends Frame implements Runnable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3249150110009720658L;
 
@@ -127,7 +127,7 @@ public class PacketTool extends Frame implements Runnable {
         Panel main = null;
 
         // Handle the frame stuff.
-        this.addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 quit();
@@ -194,7 +194,7 @@ public class PacketTool extends Frame implements Runnable {
      * Close this window.
      */
     public synchronized void quit() {
-        if (null != this.conn) {
+        if (null != conn) {
             conn.close();
         }
         System.exit(0);
@@ -213,9 +213,10 @@ public class PacketTool extends Frame implements Runnable {
             Timer t = new Timer(true);
             final Runnable packetUpdate = new Runnable() {
                 public void run() {
-                    IConnection connection = PacketTool.this.conn;
-                    if (connection != null)
+                    IConnection connection = conn;
+                    if (connection != null) {
                         connection.update();
+                    }
                 }
             };
             final TimerTask packetUpdate2 = new TimerTask() {
@@ -324,7 +325,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * Process a packet from a connection. <p/> Implements
      * <code>ConnectionHandler</code>.
-     * 
+     *
      * @param id - the <code>int</code> ID the connection that received the
      *            packet.
      * @param packet - the <code>Packet</code> to be processed.
@@ -381,6 +382,9 @@ public class PacketTool extends Frame implements Runnable {
                     break;
                 case Packet.COMMAND_ENTITY_MODECHANGE:
                     System.out.print("COMMAND_ENTITY_MODECHANGE");
+                    break;
+                case Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE:
+                    System.out.print("COMMAND_ENTITY_MOUNTED_FACINGCHANGE");
                     break;
                 case Packet.COMMAND_ENTITY_AMMOCHANGE:
                     System.out.print("COMMAND_ENTITY_AMMOCHANGE");
@@ -477,7 +481,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * Called when it is sensed that a connection has terminated. <p/>
      * Implements <code>ConnectionHandler</code>.
-     * 
+     *
      * @param deadConn - the <code>Connection</code> that has terminated.
      */
     public synchronized void disconnected(IConnection deadConn) {

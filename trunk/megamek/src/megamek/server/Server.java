@@ -21476,6 +21476,29 @@ public class Server implements Runnable {
      * @param c
      * @param connIndex
      */
+    private void receiveEntityMountedFacingChange(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        int equipId = c.getIntValue(1);
+        int facing = c.getIntValue(2);
+        Entity e = game.getEntity(entityId);
+        if (e.getOwner() != getPlayer(connIndex)) {
+            return;
+        }
+        Mounted m = e.getEquipment(equipId);
+
+        if (m == null) {
+            return;
+        }
+        m.setFacing(facing);
+    }
+
+
+    /**
+     * receive and process an entity mode change packet
+     *
+     * @param c
+     * @param connIndex
+     */
     private void receiveEntityCalledShotChange(Packet c, int connIndex) {
         int entityId = c.getIntValue(0);
         int equipId = c.getIntValue(1);
@@ -22354,6 +22377,9 @@ public class Server implements Runnable {
             break;
         case Packet.COMMAND_ENTITY_MODECHANGE:
             receiveEntityModeChange(packet, connId);
+            break;
+        case Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE:
+            receiveEntityMountedFacingChange(packet, connId);
             break;
         case Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE:
             receiveEntityCalledShotChange(packet, connId);

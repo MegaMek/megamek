@@ -341,7 +341,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         getContentPane().add(panelFilterBtns, c);
 
         panelSearchBtns.setLayout(new GridBagLayout());
-        
+
         btnAdvSearch.setText(Messages.getString("MechSelectorDialog.AdvSearch")); //$NON-NLS-1$
         btnAdvSearch.addActionListener(this);
         c = new GridBagConstraints();
@@ -350,7 +350,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.gridy = 0;
         c.anchor = GridBagConstraints.WEST;
         panelSearchBtns.add(btnAdvSearch, c);
-        
+
         btnResetSearch.setText(Messages.getString("MechSelectorDialog.Reset")); //$NON-NLS-1$
         btnResetSearch.addActionListener(this);
         btnResetSearch.setEnabled(false);
@@ -360,7 +360,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.gridy = 0;
         c.anchor = GridBagConstraints.WEST;
         panelSearchBtns.add(btnResetSearch, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -370,7 +370,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.insets = new java.awt.Insets(10, 10, 10, 0);
         getContentPane().add(panelSearchBtns, c);
 
-        
+
         panelOKBtns.setLayout(new GridBagLayout());
 
 
@@ -443,20 +443,20 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                             /*Technology Level*/
                             ((nType == TechConstants.T_ALL)
                                 || (nType == mech.getType())
-                                || ((nType == TechConstants.T_IS_TW_ALL) 
+                                || ((nType == TechConstants.T_IS_TW_ALL)
                                     && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
                                      || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
-                                || ((nType == TechConstants.T_TW_ALL) 
+                                || ((nType == TechConstants.T_TW_ALL)
                                     && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() <= TechConstants.T_INTRO_BOXSET) 
+                                     || (mech.getType() <= TechConstants.T_INTRO_BOXSET)
                                      || (mech.getType() <= TechConstants.T_CLAN_TW)))
-                                || ((nType == TechConstants.T_ALL_IS) 
+                                || ((nType == TechConstants.T_ALL_IS)
                                     && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
                                      || (mech.getType() == TechConstants.T_INTRO_BOXSET)
                                      || (mech.getType() == TechConstants.T_IS_ADVANCED)
                                      || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL)
                                      || (mech.getType() == TechConstants.T_IS_UNOFFICIAL)))
-                                || ((nType == TechConstants.T_ALL_CLAN) 
+                                || ((nType == TechConstants.T_ALL_CLAN)
                                     && ((mech.getType() == TechConstants.T_CLAN_TW)
                                      || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
                                      || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
@@ -800,6 +800,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
         } else if(ev.getSource().equals(btnAdvSearch)) {
             asd.setVisible(true);
+            //TurretFacingDialog tfd = new TurretFacingDialog(clientgui.frame, "test", "test2", (Mech)getSelectedEntity(), null, clientgui);
+            //tfd.setVisible(true);
         } else if(ev.getSource().equals(btnResetSearch)) {
             asd.clearValues();
             filterUnits();
@@ -817,15 +819,15 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             }
         }
     }
-    
+
     public int getType() {
         return comboType.getSelectedIndex();
     }
-    
+
     public int getUnitType() {
         return comboUnitType.getSelectedIndex();
     }
-    
+
     public void enableResetButton(boolean b) {
         btnResetSearch.setEnabled(b);
     }

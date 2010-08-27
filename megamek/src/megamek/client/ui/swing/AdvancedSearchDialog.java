@@ -206,12 +206,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
-        if (ev.getSource() == butOkay) {
+        if (ev.getSource().equals(butOkay)) {
             parent.filterUnits();
             parent.enableResetButton(true);
             setVisible(false);
         }
-        if (ev.getSource() == butCancel) {
+        if (ev.getSource().equals(butCancel)) {
             setVisible(false);
         }
     }

@@ -775,7 +775,7 @@ public class Compute {
         }
 
         // Account for "dead zones" between Aeros at different altitudes
-        if (inDeadZone(game, ae, target)) {
+        if (Compute.inDeadZone(game, ae, target)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target in dead zone");
         }
 
@@ -852,7 +852,7 @@ public class Compute {
         //if this is an infantry weapon then we use a whole different calculation
         //to figure out range, so overwrite whatever we have at this point
         if(isWeaponInfantry) {
-        	return getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
+        	return Compute.getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
         }
 
         // add any target stealth modifier
@@ -1038,7 +1038,7 @@ public class Compute {
      * @return the effective distance
      */
     public static int effectiveDistance(IGame game, Entity attacker, Targetable target) {
-        return effectiveDistance(game, attacker, target, false);
+        return Compute.effectiveDistance(game, attacker, target, false);
     }
 
     /**
@@ -2544,6 +2544,9 @@ public class Compute {
             return true;
         }
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
+        if (ae.getEquipment(weaponId).isTurretMounted()) {
+            facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
+        }
         Coords aPos = ae.getPosition();
         Coords tPos = t.getPosition();
 
@@ -2766,7 +2769,7 @@ public class Compute {
         // ECM bubbles
         check += sensor.getModForECM(ae);
 
-        return getSensorBracket(check);
+        return Compute.getSensorBracket(check);
     }
 
     /**
@@ -2838,7 +2841,7 @@ public class Compute {
     }
 
     public static int targetSideTable(Entity attacker, Targetable target) {
-        return targetSideTable(attacker, target, CalledShot.CALLED_NONE);
+        return Compute.targetSideTable(attacker, target, CalledShot.CALLED_NONE);
     }
 
     public static int targetSideTable(Entity attacker, Targetable target, int called) {
@@ -3979,7 +3982,7 @@ public class Compute {
         if (base == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
-        toReturn = getAntiMechMods(toReturn, (Infantry)attacker, defender);
+        toReturn = Compute.getAntiMechMods(toReturn, (Infantry)attacker, defender);
         return toReturn;
     }
 
@@ -4056,7 +4059,7 @@ public class Compute {
         if (base == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
-        toReturn = getAntiMechMods(toReturn, (Infantry)attacker, defender);
+        toReturn = Compute.getAntiMechMods(toReturn, (Infantry)attacker, defender);
 
         // If the attacker has assault claws, give a -1 modifier.
         // We can stop looking when we find our first match.

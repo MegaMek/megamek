@@ -1186,6 +1186,9 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setTurretMounted(boolean turret) {
         turretMounted = turret;
+        if (turretMounted) {
+            setFacing(0);
+        }
     }
 
     public void setFacing(int facing) {

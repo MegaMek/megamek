@@ -41,6 +41,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.MinefieldTarget;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -174,6 +175,11 @@ public class MapMenu extends JPopupMenu {
                 }
 
                 menu = createTorsoTwistMenu();
+                if (menu.getItemCount() > 0) {
+                    this.add(menu);
+                    itemCount++;
+                }
+                menu = createRotateTurretMenu();
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
                     itemCount++;
@@ -1075,6 +1081,25 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    private JMenuItem createRotateTurretJMenuItem(final Mech mech, final Mounted turret) {
+        String turretString;
+        if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
+            turretString = "Rotate Shoulder Turret ("+mech.getLocationAbbr(turret.getLocation())+")";
+        } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
+            turretString = "Rotate Head Turret";
+        } else {
+            turretString = "Rotate Quad Turret";
+        }
+        JMenuItem item = new JMenuItem(turretString);
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                TurretFacingDialog tfe = new TurretFacingDialog(gui.frame, mech, turret, gui);
+                tfe.setVisible(true);
+            }
+        });
+        return item;
+    }
+
     private JMenu createTorsoTwistMenu() {
         JMenu menu = new JMenu();
 
@@ -1096,6 +1121,21 @@ public class MapMenu extends JPopupMenu {
             }
         }
 
+        return menu;
+    }
+
+    private JMenu createRotateTurretMenu() {
+        JMenu menu = new JMenu();
+        menu.setText("Turret Rotation");
+        if (myEntity instanceof Mech) {
+            for (Mounted mount : myEntity.getMisc()) {
+                if (mount.getType().hasFlag(MiscType.F_SHOULDER_TURRET)
+                        || mount.getType().hasFlag(MiscType.F_HEAD_TURRET)
+                        || mount.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
+                    menu.add(createRotateTurretJMenuItem((Mech)myEntity, mount));
+                }
+            }
+        }
         return menu;
     }
 

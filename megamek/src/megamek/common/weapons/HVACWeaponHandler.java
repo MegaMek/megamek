@@ -60,7 +60,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
         if (game.getOptions().booleanOption("tacops_start_fire") && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
-            int rear = (ae.getFacing() + 3) % 6;
+            int rear = (ae.getFacing() + 3 + (weapon.isTurretMounted()?weapon.getFacing():0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
             IBoard board = game.getBoard();

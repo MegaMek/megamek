@@ -92,14 +92,16 @@ public class Packet {
     public static final int COMMAND_SENDING_PLANETARY_CONDITIONS = 530;
     public static final int COMMAND_SQUADRON_ADD = 540;
     public static final int COMMAND_ENTITY_CALLEDSHOTCHANGE = 550;
-    
+
+    public static final int COMMAND_ENTITY_MOUNTED_FACINGCHANGE = 560;
+
     private int command;
 
     private Object[] data;
 
     /**
      * Contructs a new Packet with just the command and no data.
-     * 
+     *
      * @param command the command.
      */
     public Packet(int command) {
@@ -108,19 +110,19 @@ public class Packet {
 
     /**
      * Creates a <code>Packet</code> with a command and a single object
-     * 
+     *
      * @param command
      * @param object
      */
     public Packet(int command, Object object) {
         this.command = command;
-        this.data = new Object[1];
-        this.data[0] = object;
+        data = new Object[1];
+        data[0] = object;
     }
 
     /**
      * Creates a <code>Packet</code> with a command and an array of objects
-     * 
+     *
      * @param command
      * @param data
      */
@@ -145,7 +147,7 @@ public class Packet {
 
     /**
      * Returns the object at the specified index
-     * 
+     *
      * @param index the index of the desired object
      * @return the object at the specified index
      */
@@ -158,7 +160,7 @@ public class Packet {
 
     /**
      * Returns the <code>int</code> value of the object at the specified index
-     * 
+     *
      * @param index the index of the desired object
      * @return the <code>int</code> value of the object at the specified index
      */
@@ -169,7 +171,7 @@ public class Packet {
     /**
      * Returns the <code>boolean</code> value of the object at the specified
      * index
-     * 
+     *
      * @param index the index of the desired object
      * @return the <code>boolean</code> value of the object at the specified
      *         index

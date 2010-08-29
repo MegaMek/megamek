@@ -58,6 +58,7 @@ v0.35.18-dev (SVN)
     To face the turret, in the firing phase, right click the unit, and choose
     the "Turret Facing" menu options.
 + Patch 3051109: Infantry range update
++ Bug: Infantry inferno should deal half damage
 
 v0.35.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

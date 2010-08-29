@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -36,7 +36,7 @@ import megamek.server.Server;
 public class InfantryInfernoSRMHandler extends InfantryWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5917196139361672006L;
 
@@ -52,12 +52,12 @@ public class InfantryInfernoSRMHandler extends InfantryWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handle(int, java.util.Vector)
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+        if (!cares(phase)) {
             return true;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
@@ -141,7 +141,7 @@ public class InfantryInfernoSRMHandler extends InfantryWeaponHandler {
             r.subject = ae.getId();
             r.newlines = 0;
             vPhaseReport.addElement(r);
-        } 
+        }
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
@@ -178,7 +178,7 @@ public class InfantryInfernoSRMHandler extends InfantryWeaponHandler {
         } // End missed-target
 
         // light inferno missiles all at once
-        vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits, weapon.getCalledShot().getCall()));
+        vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits/2, weapon.getCalledShot().getCall()));
         return false;
     }
 

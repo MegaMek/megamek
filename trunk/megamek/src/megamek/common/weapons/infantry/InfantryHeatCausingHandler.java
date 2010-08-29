@@ -33,7 +33,7 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class InfantryFlamerHeatHandler extends InfantryWeaponHandler {
+public class InfantryHeatCausingHandler extends InfantryWeaponHandler {
 
     /**
      *
@@ -45,7 +45,7 @@ public class InfantryFlamerHeatHandler extends InfantryWeaponHandler {
      * @param w
      * @param g
      */
-    public InfantryFlamerHeatHandler(ToHitData t, WeaponAttackAction w,
+    public InfantryHeatCausingHandler(ToHitData t, WeaponAttackAction w,
             IGame g, Server s) {
         super(t, w, g, s);
     }

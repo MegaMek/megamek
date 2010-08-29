@@ -42,7 +42,7 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
         bv = 6.35;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 1.05;
-        infantryRange = 1;
+        infantryRange = 3;
         crew = 3;
     }
 }

@@ -23,26 +23,26 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportLaserWeapon extends InfantryWeapon {
+public class InfantrySupportUltraHeavyLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportLaserWeapon() {
+    public InfantrySupportUltraHeavyLaserWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
-        name = "Infantry Support Laser";
+        techLevel = TechConstants.T_CLAN_TW;
+        name = "Infantry Ultra-Heavy Support Laser";
         setInternalName(name);
-        addLookupName("InfantrySupportLaser");
-        addLookupName("InfantrySmallLaser");
+        addLookupName("InfantryUltraHeavyLaser");
+        addLookupName("InfantryHeavyMediumLaser");
         ammoType = AmmoType.T_NA;
-        cost = 10000;
-        bv = 5.08;
+        cost = 100000;
+        bv = 16.94;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.84;
-        infantryRange = 3;
-        crew = 2;
+        infantryDamage = 1.72;
+        infantryRange = 5;
+        crew = 4;
     }
 }

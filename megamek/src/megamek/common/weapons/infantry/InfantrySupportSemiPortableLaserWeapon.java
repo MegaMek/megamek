@@ -42,7 +42,7 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
         bv = 3.69;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 0.61;
-        infantryRange = 1;
+        infantryRange = 3;
         crew = 2;
     }
 }

@@ -1181,6 +1181,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportPulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportHeavyPulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportClanSemiPortablePulseLaserWeapon());
+        EquipmentType.addType(new InfantrySupportUltraHeavyLaserWeapon());
         // Infantry Grenade Weapons
         EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeMicroWeapon());

@@ -42,7 +42,7 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
         bv = 7.84;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
         infantryDamage = 0.98;
-        infantryRange = 2;
+        infantryRange = 4;
         crew = 4;
     }
 }

@@ -42,7 +42,7 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
         bv = 2.3;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_SUPPORT);
         infantryDamage = 0.55;
-        infantryRange = 1;
+        infantryRange = 2;
         crew = 2;
     }
 }

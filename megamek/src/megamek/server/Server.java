@@ -15497,8 +15497,7 @@ public class Server implements Runnable {
             reactiveArmor = true;
         }
 
-        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL)
-                && (!hardenedArmor && !ferroLamellorArmor) ? 1 : 0;
+        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1 : 0;
 
         int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL)
                 && (hardenedArmor || ferroLamellorArmor) ? 1 : 0;

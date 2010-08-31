@@ -615,6 +615,18 @@ public class MechFileParser {
         return false;
     }
 
+
+    public static Entity loadEntity(File f, String entityName) {
+        Entity entity = null;
+        try {
+            entity = new MechFileParser(f, entityName).getEntity();
+        } catch (megamek.common.loaders.EntityLoadingException e) {
+            System.out.println("Exception: " + e.toString());
+            e.printStackTrace();
+        }
+        return entity;
+    }
+
     public static void dispose() {
         canonUnitNames = null;
     }

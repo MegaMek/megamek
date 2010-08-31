@@ -5103,7 +5103,7 @@ public abstract class Mech extends Entity implements Serializable {
 
         Float tonnage = new Float(weight);
         sb.append("Mass:").append(tonnage.intValue()).append(nl);
-        sb.append("Engine:").append(getEngine().getEngineName()).append(" Engine");
+        sb.append("Engine:").append(getEngine().getEngineName()).append(" Engine").append(!(getEngine().hasFlag(Engine.CLAN_ENGINE)&&isMixedTech())?("(IS)"):"");
         sb.append(nl);
         sb.append("Structure:");
         sb.append(EquipmentType.getStructureTypeName(getStructureType()));

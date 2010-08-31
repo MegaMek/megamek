@@ -1993,6 +1993,7 @@ v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Show submarine depth next to unit name, like flight level for VTOLs
 + MASC weight and crits are rounded up to the ton or crit with TM
 + Bug 1897182: swing UI missing selected hex/unit cursors
++ RFE: added Light/Medium/Heavy Rifles for IS Mechs/Tanks/Aeros
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

@@ -61,6 +61,7 @@ v0.35.18-dev (SVN)
 + Bug: Infantry inferno should deal half damage
 + Bug: Ferro-Lamellor armor shouldn't prevent TACs
 + Bug: Mixed Tech base clan units with IS engines didn't load correctly
++ Patch: Added advanced search to random army creator, thanks Jason S!
 
 v0.35.17 (2010-07-20, 23:28 UTC+2)
 + Enable setting infantry armor divisor from .blk file

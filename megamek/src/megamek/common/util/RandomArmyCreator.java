@@ -22,6 +22,7 @@ import java.util.Comparator;
 import megamek.common.Compute;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.MechSearchFilter;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 
@@ -85,6 +86,11 @@ public class RandomArmyCreator {
          * maximum
          */
         public boolean padWithInfantry;
+
+        /**
+         * Advanced options for search
+         */
+        public MechSearchFilter advancedSearchFilter=null;
     }
 
     /**
@@ -251,6 +257,22 @@ public class RandomArmyCreator {
             if (p.canon && !m.isCanon()) {
                 continue;
             }
+
+
+            //ignoring infantry, BA and Proto for advancedSearch filter
+            if (((!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY)))
+                    && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK)))
+                    && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))))
+                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter)))
+            {
+                continue;
+            }
+
+
+
+
+
+
 
             // Unit accepted, add to the appropriate list
             if (m.getUnitType().equals(UnitType.getTypeName(UnitType.MEK))) {

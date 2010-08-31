@@ -58,6 +58,7 @@ import megamek.common.EntityWeightClass;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
+import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Tank;
@@ -116,6 +117,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     private MechSummary[] mechs;
 
     private MechTableModel unitModel;
+    private MechSearchFilter searchFilter;
 
     Client client;
     private ClientGUI clientgui;
@@ -134,7 +136,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         unitModel = new MechTableModel();
         initComponents();
         setLocationRelativeTo(cl.frame);
-        asd = new AdvancedSearchDialog(this, clientgui);
+        asd = new AdvancedSearchDialog(clientgui);
     }
 
     private void initComponents() {
@@ -463,7 +465,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                                      || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
                             && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                             /*Advanced Search*/
-                            && (asd.isAdvancedSearchOff() || asd.isMatch(mech))) {
+                            && (searchFilter==null || MechSearchFilter.isMatch(mech, searchFilter))) {
                         //yuck, I have to pull up a full Entity to get MechView to search in
                         //TODO: why not put mechview into the mech summary itself?
                         if(txtFilter.getText().length() > 0) {
@@ -650,6 +652,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
      @Override
      public void setVisible(boolean visible) {
          asd.clearValues();
+         searchFilter=null;
          updatePlayerChoice();
          //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
          filterUnits();
@@ -799,11 +802,15 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             tScroll.setPreferredSize(size);
             JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
         } else if(ev.getSource().equals(btnAdvSearch)) {
-            asd.setVisible(true);
+            searchFilter = asd.showDialog();
+            btnResetSearch.setEnabled(searchFilter!=null);
             //TurretFacingDialog tfd = new TurretFacingDialog(clientgui.frame, "test", "test2", (Mech)getSelectedEntity(), null, clientgui);
             //tfd.setVisible(true);
+            filterUnits();
         } else if(ev.getSource().equals(btnResetSearch)) {
             asd.clearValues();
+            searchFilter=null;
+            btnResetSearch.setEnabled(false);
             filterUnits();
         }
     }

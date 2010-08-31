@@ -37,14 +37,12 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
-import megamek.common.Entity;
+import megamek.common.MechSearchFilter;
 import megamek.common.EquipmentType;
-import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.WeaponType;
-import megamek.common.loaders.EntityLoadingException;
+
 
 public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
@@ -52,8 +50,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
      *
      */
     private static final long serialVersionUID = -2459992981678758743L;
-    private MechSelectorDialog parent;
-
+    public MechSearchFilter MechFilter=null;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
@@ -81,10 +78,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     private JTextField tEndYear = new JTextField(4);
 
     /** Creates a new instance of AdvancedSearchDialog */
-    public AdvancedSearchDialog(MechSelectorDialog msd, ClientGUI clientgui) {
+    public AdvancedSearchDialog(ClientGUI clientgui) {
         super(clientgui.frame,
                 Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
-        parent = msd;
+        
 
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -207,13 +204,18 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource().equals(butOkay)) {
-            parent.filterUnits();
-            parent.enableResetButton(true);
+            MechFilter=getMechSearchFilter();
             setVisible(false);
         }
         if (ev.getSource().equals(butCancel)) {
+            MechFilter=null;
             setVisible(false);
         }
+    }
+
+    public MechSearchFilter showDialog(){
+        setVisible(true);
+        return getMechSearchFilter();
     }
 
     public void clearValues() {
@@ -229,7 +231,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         cWeapons2.setSelectedIndex(0);
         chkEquipment.setSelected(false);
         cEquipment.setSelectedIndex(0);
-        parent.enableResetButton(false);
     }
 
     private void populateWeaponsAndEquipmentChoices() {
@@ -238,8 +239,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         /*
          * I am not going to filter by type and unit type because that may change after the advanced filter is set up
          */
-        int nType = parent.getType();
-        int nUnitType = parent.getUnitType();
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
                 .hasMoreElements();) {
             EquipmentType et = e.nextElement();
@@ -298,181 +297,37 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
     }
 
+    protected megamek.common.MechSearchFilter getMechSearchFilter() {
+        MechSearchFilter ret = new MechSearchFilter();
+
+        ret.sWalk = tWalk.getText();
+        ret.iWalk = cWalk.getSelectedIndex();
+
+        ret.sJump = tJump.getText();
+        ret.iJump = cJump.getSelectedIndex();
+
+        ret.iArmor = cArmor.getSelectedIndex();
+
+        ret.sWep1Count = tWeapons1.getText();
+        ret.sWep2Count = tWeapons2.getText();
+        ret.oWep1=cWeapons1.getSelectedItem();
+        ret.oWep2=cWeapons2.getSelectedItem();
+
+        ret.sStartYear = tStartYear.getText();
+        ret.sEndYear = tEndYear.getText();
+
+        ret.iWepAndOr = cOrAnd.getSelectedIndex();
+        ret.bCheckEquipment = chkEquipment.isSelected();
+        ret.oEquipment = cEquipment.getSelectedItem();
+        return ret;
+    }
+
     public boolean isMatch(MechSummary mech) {
-
-        if(isAdvancedSearchOff()) {
+        if(isAdvancedSearchOff())
             return true;
-        }
-
-        try {
-            Entity entity = new MechFileParser(mech.getSourceFile(), mech.getEntryName()).getEntity();
-
-            int walk = -1;
-            try {
-                walk = Integer.parseInt(tWalk.getText());
-            } catch (NumberFormatException ne) {
-                //ignore
-            }
-            if (walk > -1) {
-                if (cWalk.getSelectedIndex() == 0) { // at least
-                    if (entity.getWalkMP() < walk) {
-                        return false;
-                    }
-                } else if (cWalk.getSelectedIndex() == 1) { // equal to
-                    if (walk != entity.getWalkMP()) {
-                        return false;
-                    }
-                } else if (cWalk.getSelectedIndex() == 2) { // not more than
-                    if (entity.getWalkMP() > walk) {
-                        return false;
-                    }
-                }
-            }
-
-            int jump = -1;
-            try {
-                jump = Integer.parseInt(tJump.getText());
-            } catch (NumberFormatException ne) {
-                //ignore
-            }
-            if (jump > -1) {
-                if (cJump.getSelectedIndex() == 0) { // at least
-                    if (entity.getJumpMP() < jump) {
-                        return false;
-                    }
-                } else if (cJump.getSelectedIndex() == 1) { // equal to
-                    if (jump != entity.getJumpMP()) {
-                        return false;
-                    }
-                } else if (cJump.getSelectedIndex() == 2) { // not more than
-                    if (entity.getJumpMP() > jump) {
-                        return false;
-                    }
-                }
-            }
-
-            int sel = cArmor.getSelectedIndex();
-            if (sel > 0) {
-                int armor = entity.getTotalArmor();
-                int maxArmor = entity.getTotalInternal() * 2 + 3;
-                if (sel == 1) {
-                    if (armor < (maxArmor * .25)) {
-                        return false;
-                    }
-                } else if (sel == 2) {
-                    if (armor < (maxArmor * .5)) {
-                        return false;
-                    }
-                } else if (sel == 3) {
-                    if (armor < (maxArmor * .75)) {
-                        return false;
-                    }
-                } else if (sel == 4) {
-                    if (armor < (maxArmor * .9)) {
-                        return false;
-                    }
-                }
-            }
-
-            boolean weaponLine1Active = false;
-            boolean weaponLine2Active = false;
-            boolean foundWeapon1 = false;
-            boolean foundWeapon2 = false;
-
-            int count = 0;
-            int weapon1 = -1;
-            try {
-                weapon1 = Integer.parseInt(tWeapons1.getText());
-            } catch (NumberFormatException ne) {
-                //ignore
-            }
-            if (weapon1 > -1) {
-                weaponLine1Active = true;
-                for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                    WeaponType wt = (WeaponType) (entity.getWeaponList().get(i))
-                            .getType();
-                    if (wt.getName().equals(cWeapons1.getSelectedItem())) {
-                        count++;
-                    }
-                }
-                if (count >= weapon1) {
-                    foundWeapon1 = true;
-                }
-            }
-
-            count = 0;
-            int weapon2 = -1;
-            try {
-                weapon2 = Integer.parseInt(tWeapons2.getText());
-            } catch (NumberFormatException ne) {
-                //ignore
-            }
-            if (weapon2 > -1) {
-                weaponLine2Active = true;
-                for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                    WeaponType wt = (WeaponType) (entity.getWeaponList().get(i))
-                            .getType();
-                    if (wt.getName().equals(cWeapons2.getSelectedItem())) {
-                        count++;
-                    }
-                }
-                if (count >= weapon2) {
-                    foundWeapon2 = true;
-                }
-            }
-
-            int startYear = Integer.MIN_VALUE;
-            int endYear = Integer.MAX_VALUE;
-            try {
-                startYear = Integer.parseInt(tStartYear.getText());
-            } catch (NumberFormatException ne) {
-                //ignore
-            }
-            try {
-                endYear = Integer.parseInt(tEndYear.getText());
-            } catch (NumberFormatException ne) {
-                //ignore
-            }
-            if ((entity.getYear() < startYear) || (entity.getYear() > endYear)) {
-                return false;
-            }
-
-            if (weaponLine1Active && !weaponLine2Active && !foundWeapon1) {
-                return false;
-            }
-            if (weaponLine2Active && !weaponLine1Active && !foundWeapon2) {
-                return false;
-            }
-            if (weaponLine1Active && weaponLine2Active) {
-                if (cOrAnd.getSelectedIndex() == 0 /* 0 is "or" choice */) {
-                    if (!foundWeapon1 && !foundWeapon2) {
-                        return false;
-                    }
-                } else { // "and" choice in effect
-                    if (!foundWeapon1 || !foundWeapon2) {
-                        return false;
-                    }
-                }
-            }
-
-            count = 0;
-            if (chkEquipment.isSelected()) {
-                for (Mounted m : entity.getEquipment()) {
-                    EquipmentType mt = m.getType();
-                    if (mt.getName().equals(cEquipment.getSelectedItem())) {
-                        count++;
-                    }
-                }
-                if (count < 1) {
-                    return false;
-                }
-            }
-        } catch (EntityLoadingException ex) {
-            //shouldn't happen
-            return false;
-        }
-
-        return true;
+        else
+            return MechSearchFilter.isMatch(mech,getMechSearchFilter());
     }
 
 }
+

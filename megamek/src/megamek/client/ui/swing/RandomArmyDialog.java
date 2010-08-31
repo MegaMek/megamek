@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -42,6 +43,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MechFileParser;
+import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.TechConstants;
 import megamek.common.loaders.EntityLoadingException;
@@ -56,6 +58,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
     private static final long serialVersionUID = 4072453002423681675L;
     private ClientGUI m_clientgui;
     private Client m_client;
+    AdvancedSearchDialog asd;
+
+    private MechSearchFilter searchFilter;
+
     private boolean includeMaxTech;
 
     private JLabel m_labelPlayer = new JLabel(Messages
@@ -67,10 +73,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
+    private JPanel m_pAdvSearch = new JPanel();
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
-    private JButton m_bRoll = new JButton(Messages
-            .getString("RandomArmyDialog.Roll"));
+    private JButton m_bRoll = new JButton(Messages.getString("RandomArmyDialog.Roll"));
+    private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
+    private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
 
     private JList m_lMechs = new JList();
 
@@ -108,7 +116,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         m_clientgui = cl;
         m_client = cl.getClient();
         updatePlayerChoice();
-
+        asd = new AdvancedSearchDialog(m_clientgui);
         // set defaults
         m_tMechs.setText("4");
         m_tBVmin.setText("5800");
@@ -132,6 +140,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         m_bCancel.addActionListener(this);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
+
+        // construct the Adv Search Panel
+        m_pAdvSearch.setLayout(new FlowLayout(FlowLayout.LEADING));
+        m_pAdvSearch.add(m_bAdvSearch);
+        m_pAdvSearch.add(m_bAdvSearchClear);
+        m_bAdvSearchClear.setEnabled(false);
+        m_bAdvSearch.addActionListener(this);
+        m_bAdvSearchClear.addActionListener(this);
 
         // construct the parameters panel
         GridBagLayout layout = new GridBagLayout();
@@ -194,6 +210,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         m_pParameters.add(m_chkPad);
         layout.setConstraints(m_chkCanon, constraints);
         m_pParameters.add(m_chkCanon);
+        layout.setConstraints(m_pAdvSearch, constraints);
+        m_pParameters.add(m_pAdvSearch);
 
         // construct the preview panel
         m_pPreview.setLayout(new GridLayout(1, 1));
@@ -236,9 +254,17 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             setVisible(false);
         } else if (ev.getSource().equals(m_bCancel)) {
             setVisible(false);
+        } else if (ev.getSource().equals(m_bAdvSearch)){
+            searchFilter=asd.showDialog();
+            m_bAdvSearchClear.setEnabled(searchFilter!=null);
+        } else if (ev.getSource().equals(m_bAdvSearchClear)){
+            searchFilter=null;
+            m_bAdvSearchClear.setEnabled(false);
         } else if (ev.getSource().equals(m_bRoll)) {
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
                 RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
+                p.advancedSearchFilter=searchFilter;
                 p.mechs = Integer.parseInt(m_tMechs.getText());
                 p.tanks = Integer.parseInt(m_tVees.getText());
                 p.ba = Integer.parseInt(m_tBA.getText());
@@ -260,6 +286,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                 pack();
             } catch (NumberFormatException ex) {
                 //ignored
+            }finally{
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         }
     }

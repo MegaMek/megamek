@@ -40,7 +40,7 @@ import megamek.common.Mounted;
 
 /**
  * @author beerockxs
- *
+ * 
  */
 public class TurretFacingDialog extends JDialog implements ActionListener {
 
@@ -57,8 +57,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
 
     ArrayList<JRadioButton> facings = new ArrayList<JRadioButton>();
 
-    public TurretFacingDialog(JFrame parent,
-            Mech mech, Mounted turret, ClientGUI clientgui) {
+    public TurretFacingDialog(JFrame parent, Mech mech, Mounted turret, ClientGUI clientgui) {
         super(parent, "Turret facing", false);
         super.setResizable(false);
         this.mech = mech;
@@ -67,9 +66,9 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
 
-        for (int i = 0; i<=5; i++) {
+        for (int i = 0; i <= 5; i++) {
             JRadioButton button = new JRadioButton();
-            button.setActionCommand(i+"");
+            button.setActionCommand(i + "");
             facings.add(button);
             buttonGroup.add(button);
         }
@@ -77,14 +76,14 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET) || turret.getType().hasFlag(MiscType.F_QUAD_TURRET)) {
             if (turret.getLocation() == Mech.LOC_LT) {
                 for (Mounted mount : mech.getEquipment()) {
-                    if (mount.getLocation() == Mech.LOC_LT && mount.isTurretMounted()) {
+                    if ((mount.getLocation() == Mech.LOC_LT) && mount.isTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
                 }
             } else if (turret.getLocation() == Mech.LOC_RT) {
                 for (Mounted mount : mech.getEquipment()) {
-                    if (mount.getLocation() == Mech.LOC_RT && mount.isTurretMounted()) {
+                    if ((mount.getLocation() == Mech.LOC_RT) && mount.isTurretMounted()) {
                         turretFacing = mount.getFacing();
                         break;
                     }
@@ -92,7 +91,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             }
         } else if (turret.getType().hasFlag(MiscType.F_HEAD_TURRET)) {
             for (Mounted mount : mech.getEquipment()) {
-                if (mount.getLocation() == Mech.LOC_HEAD && mount.isTurretMounted()) {
+                if ((mount.getLocation() == Mech.LOC_HEAD) && mount.isTurretMounted()) {
                     turretFacing = mount.getFacing();
                     break;
                 }
@@ -101,7 +100,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         int frontFacing = mech.getFacing();
         // select appropriate button if we already have a facing
         for (JRadioButton button : facings) {
-            if (button.getActionCommand().equals((frontFacing+turretFacing)%6+"")) {
+            if (button.getActionCommand().equals((frontFacing + turretFacing) % 6 + "")) {
                 button.setSelected(true);
             }
         }
@@ -121,11 +120,11 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         // opposite of the shoulder the turret is mounted on
         if (turret.getType().hasFlag(MiscType.F_SHOULDER_TURRET)) {
             if (turret.getLocation() == Mech.LOC_LT) {
-                facings.get((frontFacing+1)%6).setEnabled(false);
-                facings.get((frontFacing+2)%6).setEnabled(false);
+                facings.get((frontFacing + 1) % 6).setEnabled(false);
+                facings.get((frontFacing + 2) % 6).setEnabled(false);
             } else if (turret.getLocation() == Mech.LOC_LT) {
-                facings.get((frontFacing+4)%6).setEnabled(false);
-                facings.get((frontFacing+5)%6).setEnabled(false);
+                facings.get((frontFacing + 4) % 6).setEnabled(false);
+                facings.get((frontFacing + 5) % 6).setEnabled(false);
             }
         }
         if (turret.isHit()) {
@@ -138,8 +137,8 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
 
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, mech);
-        Image mechImage = ((ImageIcon)labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager)clientgui.bv.getTilesetManager()).baseFor(new Hex());
+        Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
+        Image hexImage = ((TilesetManager) clientgui.bv.getTilesetManager()).baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
@@ -157,12 +156,9 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         add(tempPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
         pack();
-        setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - getSize().width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2, parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
     }
 
-    @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butCancel)) {
             dispose();
@@ -177,7 +173,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                 locToChange = turret.getLocation();
             }
             for (Mounted weapon : mech.getWeaponList()) {
-                if (weapon.getLocation() == locToChange && weapon.isTurretMounted()) {
+                if ((weapon.getLocation() == locToChange) && weapon.isTurretMounted()) {
                     weapon.setFacing(facing);
                     clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(weapon), facing);
                 }
@@ -188,4 +184,3 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
     }
 
 }
-

@@ -61,7 +61,7 @@ public class AmmoType extends EquipmentType {
     public static final int T_LAC = 34;
     public static final int T_HEAVY_FLAMER = 35;
     public static final int T_COOLANT_POD = 36; // not really ammo, but explodes
-                                                // and is depleted
+    // and is depleted
     public static final int T_EXLRM = 37;
     public static final int T_APGAUSS = 38;
     public static final int T_MAGSHOT = 39;
@@ -117,24 +117,56 @@ public class AmmoType extends EquipmentType {
     public static final int T_KRAKENM = 89;
     public static final int T_PAC = 90;
     public static final int T_NLRM = 91;
-    public static final int NUM_TYPES = 92;
+    public static final int T_RIFLE = 92;
+    public static final int NUM_TYPES = 93;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
-    public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only used by BA squads
-    public static final BigInteger F_PROTOMECH = BigInteger.valueOf(1).shiftLeft(2); // only used by Protomechs
-    public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo Can be hotloaded
-    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4); // BA can't jump or make
-                                                      // antimech until dumped
-    public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM type
-    public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White shark type
-    public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer Whale type
-    public static final BigInteger F_AR10_BARRACUDA = BigInteger.valueOf(1).shiftLeft(8); // barracuda type
-    public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(9); // Nuclear missile
+    public static final BigInteger F_BATTLEARMOR = BigInteger.valueOf(1).shiftLeft(1); // only
+    // used
+    // by
+    // BA
+    // squads
+    public static final BigInteger F_PROTOMECH = BigInteger.valueOf(1).shiftLeft(2); // only
+    // used
+    // by
+    // Protomechs
+    public static final BigInteger F_HOTLOAD = BigInteger.valueOf(1).shiftLeft(3); // Ammo
+    // Can
+    // be
+    // hotloaded
+    public static final BigInteger F_ENCUMBERING = BigInteger.valueOf(1).shiftLeft(4); // BA
+    // can't
+    // jump
+    // or
+    // make
+    // antimech until dumped
+    public static final BigInteger F_MML_LRM = BigInteger.valueOf(1).shiftLeft(5); // LRM
+    // type
+    public static final BigInteger F_AR10_WHITE_SHARK = BigInteger.valueOf(1).shiftLeft(6); // White
+    // shark
+    // type
+    public static final BigInteger F_AR10_KILLER_WHALE = BigInteger.valueOf(1).shiftLeft(7); // Killer
+    // Whale
+    // type
+    public static final BigInteger F_AR10_BARRACUDA = BigInteger.valueOf(1).shiftLeft(8); // barracuda
+    // type
+    public static final BigInteger F_NUCLEAR = BigInteger.valueOf(1).shiftLeft(9); // Nuclear
+    // missile
     public static final BigInteger F_TELE_MISSILE = BigInteger.valueOf(1).shiftLeft(10); // Tele-Missile
     public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Tele-Missile
-    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); //can be used to space bomb
-    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13); //can be used to ground bomb
+    public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); // can
+    // be
+    // used
+    // to
+    // space
+    // bomb
+    public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13); // can
+    // be
+    // used
+    // to
+    // ground
+    // bomb
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -261,7 +293,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
-     *
+     * 
      * @param other
      *            the <code>Object</code> to compare to this one.
      * @return <code>true</code> if the other is an <code>AmmoType</code> object
@@ -311,7 +343,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Returns the first usable ammo type for the given oneshot launcher
-     *
+     * 
      * @param mounted
      * @return
      */
@@ -917,6 +949,11 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISFluidGunAmmo());
         EquipmentType.addType(AmmoType.createCLFluidGunAmmo());
 
+        // Rifles
+        EquipmentType.addType(AmmoType.createISLightRifleAmmo());
+        EquipmentType.addType(AmmoType.createISMediumRifleAmmo());
+        EquipmentType.addType(AmmoType.createISHeavyRifleAmmo());
+
         // Create the munition types for IS SRM launchers.
         munitions.clear();
         munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO, TechConstants.T_IS_TW_NON_BOX));
@@ -1388,7 +1425,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 24;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.bv = 6;
         ammo.cost = 30000;
 
@@ -1410,7 +1448,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         ammo.cost = 30000;
 
@@ -1433,7 +1472,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 17;
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -1454,7 +1494,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 23;
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -1533,7 +1574,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -1555,7 +1597,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -1577,7 +1620,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 17;
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -1599,7 +1643,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 23;
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4527,7 +4572,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4567,7 +4613,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4607,7 +4654,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 8;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4647,7 +4695,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4687,7 +4736,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 14;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4709,7 +4759,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 14;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4750,7 +4801,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 26;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4772,7 +4824,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 26;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4813,7 +4866,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 36;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4835,7 +4889,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 36;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4876,7 +4931,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 52;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -4898,7 +4954,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 52;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -5330,7 +5387,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.kgPerShot = 8.3;
 
         return ammo;
@@ -5352,7 +5410,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.kgPerShot = 16.6;
 
         return ammo;
@@ -5374,7 +5433,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.kgPerShot = 25;
 
         return ammo;
@@ -5396,7 +5456,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.kgPerShot = 33.3;
 
         return ammo;
@@ -5417,7 +5478,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.kgPerShot = 41.5;
 
         return ammo;
@@ -6138,7 +6200,8 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 50000;
 
         // TODO: modes is a bodge because there is no proper end phase
-        String[] theModes = { "safe", "efficient", "off", "dump" };
+        String[] theModes =
+            { "safe", "efficient", "off", "dump" };
         ammo.setModes(theModes);
         ammo.setInstantModeSwitch(true);
 
@@ -6160,7 +6223,8 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 50000;
 
         // TODO: modes is a bodge because there is no proper end phase
-        String[] theModes = { "safe", "efficient", "off", "dump" };
+        String[] theModes =
+            { "safe", "efficient", "off", "dump" };
         ammo.setModes(theModes);
         ammo.setInstantModeSwitch(true);
 
@@ -6185,7 +6249,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6208,7 +6273,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 15;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6231,7 +6297,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 22;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6254,7 +6321,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 30;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6276,7 +6344,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 8;
         ammo.cost = 50000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6298,7 +6367,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 16;
         ammo.cost = 50000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6320,7 +6390,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 29;
         ammo.cost = 50000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6342,7 +6413,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 38;
         ammo.cost = 50000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6416,7 +6488,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.cost = 60000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6436,7 +6509,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 14;
         ammo.cost = 60000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6456,7 +6530,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.cost = 60000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6476,7 +6551,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 28;
         ammo.cost = 60000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
 
         return ammo;
     }
@@ -6486,7 +6562,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "Hawk SRM 2 Ammo";
-        ammo.shortName = "Hawk SRM 2" ;
+        ammo.shortName = "Hawk SRM 2";
         ammo.setInternalName("ISHawkSRM2 Ammo");
         ammo.addLookupName("IS Hawk SRM 2 Ammo");
         ammo.damagePerShot = 2;
@@ -6961,6 +7037,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+
     private static AmmoType createKrakenAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -7851,7 +7928,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NLRM;
         ammo.shots = 24;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.bv = 7;
         ammo.cost = 31000;
 
@@ -7870,7 +7948,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NLRM;
         ammo.shots = 12;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.bv = 13;
         ammo.cost = 31000;
 
@@ -7889,7 +7968,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NLRM;
         ammo.shots = 8;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.bv = 20;
         ammo.cost = 31000;
 
@@ -7908,13 +7988,67 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NLRM;
         ammo.shots = 6;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[] { "", "HotLoad" });
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
         ammo.bv = 26;
         ammo.cost = 31000;
 
         return ammo;
     }
 
+    private static AmmoType createISLightRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Light Rifle Ammo";
+        ammo.shortName = "Light Rifle";
+        ammo.setInternalName("IS Ammo Light Rifle");
+        ammo.addLookupName("ISLight Rifle Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_RIFLE;
+        ammo.shots = 18;
+        ammo.bv = 3;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISMediumRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Medium Rifle Ammo";
+        ammo.shortName = "Medium Rifle";
+        ammo.setInternalName("IS Ammo Medium Rifle");
+        ammo.addLookupName("ISMedium Rifle Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_RIFLE;
+        ammo.shots = 9;
+        ammo.bv = 6;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISHeavyRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "Heavy Rifle Ammo";
+        ammo.shortName = "Heavy Rifle";
+        ammo.setInternalName("IS Ammo Heavy Rifle");
+        ammo.addLookupName("ISHeavy Rifle Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_RIFLE;
+        ammo.shots = 6;
+        ammo.bv = 11;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
 
     @Override
     public String toString() {
@@ -8014,7 +8148,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
          * base round into one of its muntions.
-         *
+         * 
          * @param munitionName
          *            - the <code>String</code> name of this munition type.
          * @param weightRatio
@@ -8036,7 +8170,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
          * rack size.
-         *
+         * 
          * @param base
          *            - the <code>AmmoType</code> of the base round.
          * @return this munition's <code>AmmotType</code>.
@@ -8050,114 +8184,122 @@ public class AmmoType extends EquipmentType {
 
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
-            case AmmoType.T_AC:
-            case AmmoType.T_LAC:
-                // Add the munition name to the beginning of the display name.
-                nameBuf = new StringBuffer(name);
-                nameBuf.append(" ");
-                nameBuf.append(base.name);
-                munition.name = nameBuf.toString();
+                case AmmoType.T_AC:
+                case AmmoType.T_LAC:
+                    // Add the munition name to the beginning of the display
+                    // name.
+                    nameBuf = new StringBuffer(name);
+                    nameBuf.append(" ");
+                    nameBuf.append(base.name);
+                    munition.name = nameBuf.toString();
 
-                // Add the munition name to the end of the TDB ammo name.
-                nameBuf = new StringBuffer(" - ");
-                nameBuf.append(name);
-                munition.addToEnd(base, " - " + name);
+                    // Add the munition name to the end of the TDB ammo name.
+                    nameBuf = new StringBuffer(" - ");
+                    nameBuf.append(name);
+                    munition.addToEnd(base, " - " + name);
 
-                // The munition name appears in the middle of the other names.
-                nameBuf = new StringBuffer(base.internalName);
-                index = base.internalName.lastIndexOf("Ammo");
-                nameBuf.insert(index, ' ');
-                nameBuf.insert(index, name);
-                munition.setInternalName(nameBuf.toString());
-                munition.shortName = munition.name;
-                munition.addBeforeString(base, "Ammo", name + " ");
-                nameBuf = null;
-                break;
-            case AmmoType.T_ARROW_IV:
-                // The munition name appears in the middle of all names.
-                nameBuf = new StringBuffer(base.name);
-                index = base.name.lastIndexOf("Ammo");
-                nameBuf.insert(index, ' ');
-                // Do special processing for munition names ending in "IV".
-                // Note: this does not work for The Drawing Board
-                if (name.endsWith("-IV")) {
-                    StringBuffer tempName = new StringBuffer(name);
-                    tempName.setLength(tempName.length() - 3);
-                    nameBuf.insert(index, tempName.toString());
-                } else {
+                    // The munition name appears in the middle of the other
+                    // names.
+                    nameBuf = new StringBuffer(base.internalName);
+                    index = base.internalName.lastIndexOf("Ammo");
+                    nameBuf.insert(index, ' ');
                     nameBuf.insert(index, name);
-                }
-                munition.name = nameBuf.toString();
+                    munition.setInternalName(nameBuf.toString());
+                    munition.shortName = munition.name;
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    nameBuf = null;
+                    break;
+                case AmmoType.T_ARROW_IV:
+                    // The munition name appears in the middle of all names.
+                    nameBuf = new StringBuffer(base.name);
+                    index = base.name.lastIndexOf("Ammo");
+                    nameBuf.insert(index, ' ');
+                    // Do special processing for munition names ending in "IV".
+                    // Note: this does not work for The Drawing Board
+                    if (name.endsWith("-IV")) {
+                        StringBuffer tempName = new StringBuffer(name);
+                        tempName.setLength(tempName.length() - 3);
+                        nameBuf.insert(index, tempName.toString());
+                    } else {
+                        nameBuf.insert(index, name);
+                    }
+                    munition.name = nameBuf.toString();
 
-                nameBuf = new StringBuffer(base.internalName);
-                index = base.internalName.lastIndexOf("Ammo");
-                nameBuf.insert(index, name);
-                munition.setInternalName(nameBuf.toString());
-                munition.shortName = munition.name;
+                    nameBuf = new StringBuffer(base.internalName);
+                    index = base.internalName.lastIndexOf("Ammo");
+                    nameBuf.insert(index, name);
+                    munition.setInternalName(nameBuf.toString());
+                    munition.shortName = munition.name;
 
-                munition.addBeforeString(base, "Ammo", name + " ");
-                munition.addToEnd(base, " - " + name);
-                if (name.equals("Homing")) {
-                    munition.addToEnd(base, " (HO)"); // mep
-                }
-                nameBuf = null;
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    munition.addToEnd(base, " - " + name);
+                    if (name.equals("Homing")) {
+                        munition.addToEnd(base, " (HO)"); // mep
+                    }
+                    nameBuf = null;
 
-                break;
-            case AmmoType.T_SRM:
-            case AmmoType.T_MRM:
-            case AmmoType.T_LRM:
-            case AmmoType.T_MML:
-            case AmmoType.T_NLRM:
-                // Add the munition name to the end of some of the ammo names.
-                nameBuf = new StringBuffer(" ");
-                nameBuf.append(name);
-                munition.setInternalName(base.internalName + nameBuf.toString());
-                munition.addToEnd(base, nameBuf.toString());
-                nameBuf.insert(0, " -");
-                munition.addToEnd(base, nameBuf.toString());
+                    break;
+                case AmmoType.T_SRM:
+                case AmmoType.T_MRM:
+                case AmmoType.T_LRM:
+                case AmmoType.T_MML:
+                case AmmoType.T_NLRM:
+                    // Add the munition name to the end of some of the ammo
+                    // names.
+                    nameBuf = new StringBuffer(" ");
+                    nameBuf.append(name);
+                    munition.setInternalName(base.internalName + nameBuf.toString());
+                    munition.addToEnd(base, nameBuf.toString());
+                    nameBuf.insert(0, " -");
+                    munition.addToEnd(base, nameBuf.toString());
 
-                // The munition name appears in the middle of the other names.
-                nameBuf = new StringBuffer(base.name);
-                index = base.name.lastIndexOf("Ammo");
-                nameBuf.insert(index, ' ');
-                nameBuf.insert(index, name);
-                munition.name = nameBuf.toString();
-                nameBuf = null;
-                munition.shortName = munition.name;
-                munition.addBeforeString(base, "Ammo", name + " ");
-                break;
-            /*
-             * // Add the munition name to the beginning of the display name.
-             * nameBuf = new StringBuffer( name ); nameBuf.append( " " );
-             * nameBuf.append( base.name ); munition.name = nameBuf.toString();
-             *
-             * // Add the munition name to the end of some of the ammo names.
-             * nameBuf = new StringBuffer( " " ); nameBuf.append( name );
-             * munition.setInternalName(base.internalName + nameBuf.toString());
-             * munition.addToEnd(base, nameBuf.toString()); nameBuf.insert( 0,
-             * " -" ); munition.shortName = munition.name;
-             * munition.addToEnd(base, nameBuf.toString()); break;
-             */
-            case AmmoType.T_LONG_TOM:
-            case AmmoType.T_SNIPER:
-            case AmmoType.T_THUMPER:
-            case AmmoType.T_LONG_TOM_CANNON:
-            case AmmoType.T_SNIPER_CANNON:
-            case AmmoType.T_THUMPER_CANNON:
-                // Add the munition name to the beginning of the display name.
-                nameBuf = new StringBuffer(name);
-                nameBuf.append(" ");
-                nameBuf.append(base.name);
-                munition.name = nameBuf.toString();
-                munition.setInternalName(munition.name);
-                munition.addToEnd(base, munition.name);
+                    // The munition name appears in the middle of the other
+                    // names.
+                    nameBuf = new StringBuffer(base.name);
+                    index = base.name.lastIndexOf("Ammo");
+                    nameBuf.insert(index, ' ');
+                    nameBuf.insert(index, name);
+                    munition.name = nameBuf.toString();
+                    nameBuf = null;
+                    munition.shortName = munition.name;
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    break;
+                /*
+                 * // Add the munition name to the beginning of the display
+                 * name. nameBuf = new StringBuffer( name ); nameBuf.append( " "
+                 * ); nameBuf.append( base.name ); munition.name =
+                 * nameBuf.toString();
+                 * 
+                 * // Add the munition name to the end of some of the ammo
+                 * names. nameBuf = new StringBuffer( " " ); nameBuf.append(
+                 * name ); munition.setInternalName(base.internalName +
+                 * nameBuf.toString()); munition.addToEnd(base,
+                 * nameBuf.toString()); nameBuf.insert( 0, " -" );
+                 * munition.shortName = munition.name; munition.addToEnd(base,
+                 * nameBuf.toString()); break;
+                 */
+                case AmmoType.T_LONG_TOM:
+                case AmmoType.T_SNIPER:
+                case AmmoType.T_THUMPER:
+                case AmmoType.T_LONG_TOM_CANNON:
+                case AmmoType.T_SNIPER_CANNON:
+                case AmmoType.T_THUMPER_CANNON:
+                    // Add the munition name to the beginning of the display
+                    // name.
+                    nameBuf = new StringBuffer(name);
+                    nameBuf.append(" ");
+                    nameBuf.append(base.name);
+                    munition.name = nameBuf.toString();
+                    munition.setInternalName(munition.name);
+                    munition.addToEnd(base, munition.name);
 
-                munition.shortName = munition.name;
-                // The munition name appears in the middle of the other names.
-                munition.addBeforeString(base, "Ammo", name + " ");
-                break;
-            default:
-                throw new IllegalArgumentException("Don't know how to create munitions for " + base.ammoType);
+                    munition.shortName = munition.name;
+                    // The munition name appears in the middle of the other
+                    // names.
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    break;
+                default:
+                    throw new IllegalArgumentException("Don't know how to create munitions for " + base.ammoType);
             }
 
             // Assign our munition type.
@@ -8305,7 +8447,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * get BV for BA loads
-     *
+     * 
      * @return
      */
     public double getBABV() {

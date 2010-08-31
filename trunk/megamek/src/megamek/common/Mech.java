@@ -4179,8 +4179,9 @@ public abstract class Mech extends Entity implements Serializable {
         if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             cockpitCost = 750000;
         } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
-            // FIXME
-            cockpitCost = 0;
+            //Solaris VII - The Game World (German) This is not actually canonical as it
+            //has never been repeated in any English language source including Tech Manual
+            cockpitCost = 40000;
         } else if (getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
             // Command Consoles are listed as a cost of 500,000.
             // That appears to be in addition to the primary cockpit.

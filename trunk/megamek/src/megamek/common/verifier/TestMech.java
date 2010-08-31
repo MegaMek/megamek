@@ -109,9 +109,9 @@ public class TestMech extends TestEntity {
             // We're ignoring that and returning the total, because it's easier.
             weight = 6.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_DUAL) {
-            // This is wrong; I just don't remember the correct weight.
-            // FIXME
-            weight = 3.0f;
+            //Solaris VII - The Game World (German) This is not actually canonical as it 
+            //has never been repeated in any English language source including Tech Manual
+            weight = 4.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE) {
             weight = 5.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {

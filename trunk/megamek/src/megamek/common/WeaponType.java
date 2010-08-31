@@ -934,6 +934,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLNailGun());
         EquipmentType.addType(new CLRivetGun());
 
+        // rifles
+        EquipmentType.addType(new ISLightRifle());
+        EquipmentType.addType(new ISMediumRifle());
+        EquipmentType.addType(new ISHeavyRifle());
+
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());

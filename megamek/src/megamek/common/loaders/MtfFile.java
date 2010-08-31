@@ -429,10 +429,18 @@ public class MtfFile implements IMechLoader {
         // check for removed arm actuators
         if (!(mech instanceof QuadMech)) {
             if ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM)) {
-                if (!critData[loc][3].equals("Hand Actuator")) {
+                String toCheck = critData[loc][3];
+                if (toCheck.toLowerCase().trim().endsWith(ARMORED)) {
+                    toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
+                }
+                if (!toCheck.equals("Hand Actuator")) {
                     mech.setCritical(loc, 3, null);
                 }
-                if (!critData[loc][2].equals("Lower Arm Actuator")) {
+                toCheck = critData[loc][2];
+                if (toCheck.toLowerCase().trim().endsWith(ARMORED)) {
+                    toCheck = toCheck.substring(0, toCheck.length() - ARMORED.length()).trim();
+                }
+                if (!toCheck.equals("Lower Arm Actuator")) {
                     mech.setCritical(loc, 2, null);
                 }
             }

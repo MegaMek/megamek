@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.JDialog;
 
@@ -41,14 +42,27 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     private static final long serialVersionUID = -2459992981678758743L;
     private Client client;
     private ClientGUI clientgui;
+    private Vector<Entity> units;
 
     /** Creates new form RandomSkillDialog2 */
+    public RandomSkillDialog(ClientDialog ui,ClientGUI clientgui) {
+        super(ui, Messages.getString("RandomSkillDialog.title"),DEFAULT_MODALITY_TYPE.APPLICATION_MODAL); //$NON-NLS-1$
+        this.clientgui = clientgui;
+        init();
+    }
+
     public RandomSkillDialog(ClientGUI clientgui) {
         super(clientgui.frame, Messages.getString("RandomSkillDialog.title"), true); //$NON-NLS-1$
+        this.clientgui = clientgui;
+        init();
+    }
+
+    private void init(){
+        
         initComponents();
 
         this.client = clientgui.getClient();
-        this.clientgui = clientgui;
+
 
         updatePlayerChoice();
 
@@ -121,9 +135,20 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         super.setVisible(show);
     }
 
+    public  void showDialog(Vector<Entity> units){
+        this.units=units;
+        setVisible(true);
+    }
+
+    public  void showDialog(Entity unit){
+         Vector<Entity> units=new Vector<Entity>();
+         units.add(unit);
+         showDialog(units);
+    }
+
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource() == butOkay) {
-            // go through all of the units for this player and assign random
+            // go through all of the units provided for this player and assign random
             // skill levels
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
@@ -133,7 +158,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             if (c == null) {
                 c = client;
             }
-            for (Enumeration<Entity> e = c.game.getEntities(); e.hasMoreElements();) {
+            for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {
                 Entity ent = e.nextElement();
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     int skills[] = Compute.getRandomSkills(chMethod.getSelectedIndex(), chType.getSelectedIndex(),

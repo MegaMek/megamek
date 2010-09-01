@@ -1,6 +1,7 @@
-﻿VERSION HISTORY:
+VERSION HISTORY:
 ----------------
 v0.35.19-dev (SVN)
++ Patch 2948181: Random Skills for Individual Units
 + Bug 2996060: NPE when loading mech with armored lower arm/hand
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
@@ -2558,7 +2559,7 @@ v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 954406: Charge declaration and stacking
 + Bug: VTOL should crash when sideslipping into woods at elevation 1
 + Optional house rule for pilot survival in extreme temperatures
-+ TW rules change: A �Mech missing both arms and one leg may no longer attempt to stand
++ TW rules change: A ?Mech missing both arms and one leg may no longer attempt to stand
 + RFE 1606530: Current total BV's (& starting BV's)
 + Bug 1608682: heavy ppc inhibitor not working right
 + Maxtech clan physicals penalty (pilot option)

@@ -1703,7 +1703,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     public void loadRandomSkills() {
-        clientgui.getRandomSkillDialog().setVisible(true);
+        clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().game.getEntitiesVector());
     }
 
     /**

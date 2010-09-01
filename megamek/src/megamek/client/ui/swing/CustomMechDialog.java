@@ -182,6 +182,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JComboBox choC3 = new JComboBox();
 
+
     private int[] entityCorrespondance;
 
     private JLabel labCallsign = new JLabel(Messages
@@ -242,6 +243,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JTextField fldStartAltitude = new JTextField(3);
 
     private JPanel panButtons = new JPanel();
+
+    private JButton butRandomSkill = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
 
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
@@ -403,6 +406,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panPilot.add(labFatigue, GBC.std());
             panPilot.add(fldFatigue, GBC.eop());
         }
+        
+            panPilot.add(butRandomSkill, GBC.std());
+            panPilot.add(butRandomSkill, GBC.eop());
+        
+
 
         if(client.game.getOptions().booleanOption("toughness")) {
             panPilot.add(labTough, GBC.std());
@@ -688,6 +696,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         butCancel.addActionListener(this);
         butNext.addActionListener(this);
         butPrev.addActionListener(this);
+        butRandomSkill.addActionListener(this);
 
         // layout
         panButtons.setLayout(new GridLayout(1, 4, 10, 0));
@@ -1832,6 +1841,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     public void actionPerformed(ActionEvent actionEvent) {
+
+        if (actionEvent.getSource().equals(butRandomSkill)) {
+            RandomSkillDialog rsd=new RandomSkillDialog(this,clientgui);
+            rsd.showDialog(entity);
+            fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery()));
+            fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting()));
+            return;
+        }
         if (actionEvent.getSource().equals(butOffBoardDistance)) {
             int maxDistance = 19 * 17; // Long Tom
             for (Mounted wep : entity.getWeaponList()) {
@@ -1858,6 +1875,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             butOffBoardDistance.setText(Integer.toString(distance));
             return;
         }
+     
         if (!actionEvent.getSource().equals(butCancel)) {
             // get values
             String name = fldName.getText();

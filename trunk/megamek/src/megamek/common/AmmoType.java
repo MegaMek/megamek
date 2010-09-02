@@ -382,6 +382,11 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanArtyAmmos = new ArrayList<AmmoType>(6);
         ArrayList<AmmoType> mortarAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanMortarAmmos = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> lrtAmmos = new ArrayList<AmmoType>(26);
+        ArrayList<AmmoType> clanLrtAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> srtAmmos = new ArrayList<AmmoType>(26);
+        ArrayList<AmmoType> clanSrtAmmos = new ArrayList<AmmoType>();
+
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
 
         AmmoType base = null;
@@ -505,13 +510,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISiNarcExplosiveAmmo());
         EquipmentType.addType(AmmoType.createISiNarcHaywireAmmo());
         EquipmentType.addType(AmmoType.createISiNarcNemesisAmmo());
-        EquipmentType.addType(AmmoType.createISLRT5Ammo());
-        EquipmentType.addType(AmmoType.createISLRT10Ammo());
-        EquipmentType.addType(AmmoType.createISLRT15Ammo());
-        EquipmentType.addType(AmmoType.createISLRT20Ammo());
-        EquipmentType.addType(AmmoType.createISSRT2Ammo());
-        EquipmentType.addType(AmmoType.createISSRT4Ammo());
-        EquipmentType.addType(AmmoType.createISSRT6Ammo());
         EquipmentType.addType(AmmoType.createISExtendedLRM5Ammo());
         EquipmentType.addType(AmmoType.createISExtendedLRM10Ammo());
         EquipmentType.addType(AmmoType.createISExtendedLRM15Ammo());
@@ -932,6 +930,31 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createCLAPMortar8Ammo();
         clanMortarAmmos.add(base);
 
+        base = AmmoType.createISLRT5Ammo();
+        lrtAmmos.add(base);
+        base = AmmoType.createISLRT10Ammo();
+        lrtAmmos.add(base);
+        base = AmmoType.createISLRT15Ammo();
+        lrtAmmos.add(base);
+        base = AmmoType.createISLRT20Ammo();
+        lrtAmmos.add(base);
+
+        EquipmentType.addType(AmmoType.createISLRT5Ammo());
+        EquipmentType.addType(AmmoType.createISLRT10Ammo());
+        EquipmentType.addType(AmmoType.createISLRT15Ammo());
+        EquipmentType.addType(AmmoType.createISLRT20Ammo());
+
+        base = AmmoType.createISSRT2Ammo();
+        srtAmmos.add(base);
+        base = AmmoType.createISSRT4Ammo();
+        srtAmmos.add(base);
+        base = AmmoType.createISSRT6Ammo();
+        srtAmmos.add(base);
+
+        EquipmentType.addType(AmmoType.createISSRT2Ammo());
+        EquipmentType.addType(AmmoType.createISSRT4Ammo());
+        EquipmentType.addType(AmmoType.createISSRT6Ammo());
+
         EquipmentType.addType(AmmoType.createISAPMortar1Ammo());
         EquipmentType.addType(AmmoType.createISAPMortar2Ammo());
         EquipmentType.addType(AmmoType.createISAPMortar4Ammo());
@@ -953,6 +976,22 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISLightRifleAmmo());
         EquipmentType.addType(AmmoType.createISMediumRifleAmmo());
         EquipmentType.addType(AmmoType.createISHeavyRifleAmmo());
+
+        base = AmmoType.createCLLRT5Ammo();
+        clanLrtAmmos.add(base);
+        base = AmmoType.createCLLRT10Ammo();
+        clanLrtAmmos.add(base);
+        base = AmmoType.createCLLRT15Ammo();
+        clanLrtAmmos.add(base);
+        base = AmmoType.createCLLRT20Ammo();
+        clanLrtAmmos.add(base);
+
+        base = AmmoType.createCLSRT2Ammo();
+        clanSrtAmmos.add(base);
+        base = AmmoType.createCLSRT4Ammo();
+        clanSrtAmmos.add(base);
+        base = AmmoType.createCLSRT6Ammo();
+        clanSrtAmmos.add(base);
 
         // Create the munition types for IS SRM launchers.
         munitions.clear();
@@ -1146,6 +1185,40 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanArtyAmmos, munitions);
+
+        // Create the munition types for SRT launchers.
+        munitions.clear();
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(srtAmmos, munitions);
+
+        // Create the munition types for SRT launchers.
+        munitions.clear();
+        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_TW_NON_BOX));
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(lrtAmmos, munitions);
+
+        // Create the munition types for SRT launchers.
+        munitions.clear();
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(clanSrtAmmos, munitions);
+
+        // Create the munition types for SRT launchers.
+        munitions.clear();
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, TechConstants.T_CLAN_EXPERIMENTAL));
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(clanLrtAmmos, munitions);
 
         // cache types that share a launcher for loadout purposes
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
@@ -8244,6 +8317,8 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_LRM:
                 case AmmoType.T_MML:
                 case AmmoType.T_NLRM:
+                case AmmoType.T_SRM_TORPEDO:
+                case AmmoType.T_LRM_TORPEDO:
                     // Add the munition name to the end of some of the ammo
                     // names.
                     nameBuf = new StringBuffer(" ");

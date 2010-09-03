@@ -343,7 +343,6 @@ public class SharedUtility {
                 // check for hovering
                 rollTarget = a.checkHover(md);
                 checkNag(rollTarget, nagReport, psrList);
-
             }
         }
 

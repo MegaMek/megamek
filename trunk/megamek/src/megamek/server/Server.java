@@ -6250,6 +6250,21 @@ public class Server implements Runnable {
                         addReport(processCrash(entity, 0, entity.getPosition()));
                     }
                 }
+                
+                //check to see if spheroids should lose one altitude
+                if(a.isSpheroid() && !game.getBoard().inSpace() && a.isAirborne() 
+                        && md.getFinalNDown()==0 && md.getMpUsed()==0) {
+                    r = new Report(9392);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.newlines = 0;
+                    addReport(r);
+                    a.setAltitude(a.getAltitude() - 1);
+                    // check for crash
+                    if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                        addReport(processCrash(entity, 0, entity.getPosition()));
+                    }
+                }
             }
         }
 

@@ -4431,23 +4431,12 @@ public class Server implements Runnable {
         return game.getBoard().getHex(pos).ceiling() >= altitude;
     }
 
-    // TODO: need to fix calls to this for aero movement on ground maps
     private Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<Report>();
         Report r;
 
         if (vel < 1) {
             vel = 1;
-        }
-        
-        //the good news is you are not out of control anymore
-        if(entity instanceof Aero) {
-            Aero a = (Aero)entity;
-            a.setCurrentVelocity(0);
-            a.setNextVelocity(0);
-            a.setOutControl(false);
-            a.setOutCtrlHeat(false);
-            a.setRandomMove(false);
         }
 
         int orig_crash_damage = Compute.d6(2) * 10 * vel;
@@ -4482,7 +4471,6 @@ public class Server implements Runnable {
 
         // if the entity survived they are useless anyway because we have no
         // ground map yet so remove them
-        // TODO: need to change this to allow entities to be on the ground
         if (!entity.isDoomed() && !entity.isDestroyed()) {
             if (game.getBoard().inAtmosphere()) {
                 r = new Report(9393, Report.PUBLIC);

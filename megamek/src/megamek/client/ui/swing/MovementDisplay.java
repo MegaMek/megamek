@@ -1168,7 +1168,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         
         //check to see if spheroids will drop an elevation
-        if(ce() instanceof Aero & ((Aero)ce()).isSpheroid() && !clientgui.getClient().game.getBoard().inSpace() 
+        if(ce() instanceof Aero && ((Aero)ce()).isSpheroid() && !clientgui.getClient().game.getBoard().inSpace() 
                 && ((Aero)ce()).isAirborne() 
                 && cmd.getFinalNDown()==0 && cmd.getMpUsed()==0) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages

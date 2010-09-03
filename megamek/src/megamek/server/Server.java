@@ -4439,6 +4439,16 @@ public class Server implements Runnable {
         if (vel < 1) {
             vel = 1;
         }
+        
+        //the good news is you are not out of control anymore
+        if(entity instanceof Aero) {
+            Aero a = (Aero)entity;
+            a.setCurrentVelocity(0);
+            a.setNextVelocity(0);
+            a.setOutControl(false);
+            a.setOutCtrlHeat(false);
+            a.setRandomMove(false);
+        }
 
         int orig_crash_damage = Compute.d6(2) * 10 * vel;
         int crash_damage = orig_crash_damage;
@@ -14891,7 +14901,7 @@ public class Server implements Runnable {
          * http://forums.classicbattletech.com/index.php/topic,20424.0.html
          */
 
-        if (e instanceof Aero) {
+        if (e instanceof Aero && (e.isAirborne() || e.isSpaceborne())) {
             Aero a = (Aero) e;
 
             // they should get a shot at a recovery roll at the end of all this
@@ -15000,6 +15010,7 @@ public class Server implements Runnable {
                                     // check for crash
                                     if (checkCrash(a, a.getPosition(), a.getAltitude())) {
                                         vReport.addAll(processCrash(e, a.getCurrentVelocity(), a.getPosition()));
+                                        break;
                                     }
                                 }
                             } else {

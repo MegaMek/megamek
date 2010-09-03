@@ -7,6 +7,7 @@ v0.35.19-dev (SVN)
 + Bug 2996474: Spheroid Dropships and Stalling
 + Bug 3000967: Dropships vs. Ground Targets (see http://www.classicbattletech.com/forums/index.php?topic=67070.0)
 + Bug 2996454: Grounded Spheroid DS causes no damage for weaponfire
++ Bug 2892867: Grounded Dropship Out-of-Control
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

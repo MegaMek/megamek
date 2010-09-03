@@ -1166,6 +1166,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
+        
+        //check to see if spheroids will drop an elevation
+        if(ce() instanceof Aero & ((Aero)ce()).isSpheroid() && !clientgui.getClient().game.getBoard().inSpace() 
+                && ((Aero)ce()).isAirborne() 
+                && cmd.getFinalNDown()==0 && cmd.getMpUsed()==0) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
+                    .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.SpheroidAltitudeLoss") + //$NON-NLS-1$
+                            check, true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForPSR(false);
+                }
+            } else {
+                return;
+            }
+        }
+        
         if (ce().isAirborne() && (ce() instanceof Aero)) {
             if (!clientgui.getClient().game.useVectorMove()
                     && !((Aero) ce()).isOutControlTotal()) {

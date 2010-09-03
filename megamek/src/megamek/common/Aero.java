@@ -3244,6 +3244,9 @@ public class Aero extends Entity
         setElevation(0);
         setCurrentVelocity(0);
         setNextVelocity(0);
+        setOutControl(false);
+        setOutCtrlHeat(false);
+        setRandomMove(false);
     }
 
     public int getTakeOffLength() {

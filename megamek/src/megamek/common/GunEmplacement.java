@@ -423,13 +423,7 @@ public class GunEmplacement extends Tank implements Serializable {
 
     @Override
     public boolean doomedInVacuum() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_VACUUM_PROTECTION)) {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 
     @Override

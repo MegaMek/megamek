@@ -362,7 +362,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * 2 vectors holding entity and weapon ids. to see who hit us this round
      * with a swarm volley from what launcher. This vector holds the Entity ids.
-     *
+     * 
      * @see megamek.common.Entity#hitBySwarmsWeapon
      */
     private Vector<Integer> hitBySwarmsEntity = new Vector<Integer>();
@@ -370,7 +370,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A vector that stores from which launcher we where hit by a swarm weapon
      * this round. This vector holds the weapon ID's.
-     *
+     * 
      * @see megamek.common.Entity#hitBySwarmsEntity
      */
     private Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
@@ -494,7 +494,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns the ID number of this Entity.
-     *
+     * 
      * @return ID Number.
      */
     public int getId() {
@@ -504,7 +504,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Sets the ID number of this Entity, which will also set the display name
      * and short name to null.
-     *
+     * 
      * @param id
      *            the new ID.
      */
@@ -516,7 +516,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * this returns the external ID.
-     *
+     * 
      * @return the ID settable by external sources (such as mm.net)
      * @see megamek.common.Entity#externalId
      */
@@ -526,7 +526,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * This sets the external ID.
-     *
+     * 
      * @param externalId
      *            the new external ID for this Entity.
      * @see megamek.common.Entity#externalId
@@ -537,7 +537,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * This returns the game this Entity belongs to.
-     *
+     * 
      * @return the game.
      */
     public IGame getGame() {
@@ -548,7 +548,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * This sets the game the entity belongs to. It also restores the entity and
      * checks that the game is in a consistent state. This function takes care
      * of the units transported by this entity.
-     *
+     * 
      * @param game
      *            the game.
      */
@@ -583,7 +583,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the unit code for this Entity.
-     *
+     * 
      * @param model
      *            The unit code.
      */
@@ -600,7 +600,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * sets the chassis name for this entity.
-     *
+     * 
      * @param chassis
      *            The chassis name.
      */
@@ -624,7 +624,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the tech level for this Entity.
-     *
+     * 
      * @param techLevel
      *            The tech level, it must be one of the
      *            {@link megamek.common.TechConstants TechConstants }.
@@ -643,7 +643,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks if this is a clan unit. It is determined by tech level.
-     *
+     * 
      * @return true if this unit is a clan unit.
      * @see megamek.common.Entity#setTechLevel(int)
      */
@@ -822,7 +822,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this entity participate in the current game phase.
-     *
+     * 
      * @return <code>true</code> if this entity is not shut down, is not
      *         destroyed, has an active crew, and was not unloaded from a
      *         transport this turn. <code>false</code> otherwise.
@@ -861,7 +861,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if this <code>Entity</code> was unloaded previously this turn.
-     *
+     * 
      * @return <code>true</code> if this entity was unloaded for any reason
      *         during this turn.
      */
@@ -993,7 +993,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the current position of this entity on the board.
-     *
+     * 
      * @param position
      *            the new position.
      */
@@ -1002,7 +1002,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     *
+     * 
      * @return the coords of the second to last position on the passed through
      *         vector or the current position if too small
      */
@@ -1016,7 +1016,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the current elevation of this entity above the ground.
-     *
+     * 
      * @param elevation
      *            an <code>int</code> representing the new position.
      */
@@ -1410,7 +1410,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns the closest valid secondary facing to the given direction.
-     *
+     * 
      * @return the the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
@@ -1460,7 +1460,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns this entity's walking/cruising mp, factored for heat and possibly
      * gravity.
-     *
+     * 
      * @param gravity
      *            Should the movement be factored for gravity
      * @param ignoreheat
@@ -1486,7 +1486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * This returns how much MP is removed due to heat
-     *
+     * 
      * @return
      */
     public int getHeatMPReduction() {
@@ -1655,7 +1655,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * return this entity's current jump MP, possibly affected by gravity
-     *
+     * 
      * @param gravity
      * @return
      */
@@ -1673,7 +1673,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * get the heat generated by this Entity when jumping for a certain amount
      * of MP
-     *
+     * 
      * @param movedMP
      *            the number of movement points spent
      */
@@ -1888,7 +1888,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the original amount of armor in the location specified, or
      * ARMOR_NA, or ARMOR_DESTROYED.
-     *
+     * 
      * @param loc
      *            the location to check.
      * @param rear
@@ -1914,7 +1914,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets the amount of armor in the location specified.
-     *
+     * 
      * @param val
      *            the value of the armor (eg how many armor points)
      * @param loc
@@ -2104,7 +2104,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * sets location exposure
-     *
+     * 
      * @param loc
      *            the location who's exposure is to be set
      * @param status
@@ -2120,7 +2120,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns true is the location is a leg
-     *
+     * 
      * @param loc
      *            the location to check.
      */
@@ -2221,7 +2221,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * mounting weapons needs to take account of ammo
-     *
+     * 
      * @param etype
      * @param loc
      * @param rearMounted
@@ -2382,7 +2382,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determine how much ammunition (of all munition types) remains which is
      * compatable with the given ammo.
-     *
+     * 
      * @param et
      *            - the <code>EquipmentType</code> of the ammo to be found. This
      *            value may be <code>null</code>.
@@ -2447,7 +2447,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Returns the first ready weapon
-     *
+     * 
      * @return the index number of the first available weapon, or -1 if none are
      *         ready.
      */
@@ -2630,7 +2630,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of misc equipment
-     *
+     * 
      * @param flag
      *            A MiscType.F_XXX
      * @return true if at least one ready item.
@@ -2641,7 +2641,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of misc equipment
-     *
+     * 
      * @param flag
      *            A MiscType.F_XXX
      * @param secondary
@@ -2662,7 +2662,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * return how many misc equipments with the specified flag the unit has
-     *
+     * 
      * @param flag
      * @return
      */
@@ -2684,7 +2684,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of misc equipment
-     *
+     * 
      * @param name
      *            MiscType internal name
      * @return true if at least one ready item.
@@ -2703,7 +2703,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of misc equipment
-     *
+     * 
      * @param flag
      *            A MiscType.F_XXX
      * @param secondary
@@ -2735,7 +2735,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of weapon
-     *
+     * 
      * @param flag
      *            A WeaponType.F_XXX
      */
@@ -2745,7 +2745,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of weapon
-     *
+     * 
      * @param flag
      *            A WeaponType.F_XXX
      * @param secondary
@@ -2766,7 +2766,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of weapon
-     *
+     * 
      * @param string
      *            internal name of the weapon.
      * @return true if at least one ready item.
@@ -2785,7 +2785,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Check if the entity has an arbitrary type of weapon
-     *
+     * 
      * @param flag
      *            A WeaponType.F_XXX
      * @param secondary
@@ -2847,7 +2847,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Adds a critical to the first available slot in the location.
-     *
+     * 
      * @return true if there was room for the critical
      */
     public boolean addCritical(int loc, CriticalSlot cs) {
@@ -2863,7 +2863,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Attempts to set the given slot to the given critical. If the desired slot
      * is full, adds the critical to the first available slot.
-     *
+     * 
      * @return true if the crit was succesfully added to any slot
      */
     public boolean addCritical(int loc, int slot, CriticalSlot cs) {
@@ -2931,7 +2931,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Only Mechs have Gyros but this helps keep the code a bit cleaner.
-     *
+     * 
      * @return <code>-1</code>
      */
     public int getGyroType() {
@@ -3141,7 +3141,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks to see if this entity is wielding any vibroblades
-     *
+     * 
      * @return always returns <code>false</code> as Only biped mechs can wield
      *         vibroblades
      */
@@ -3151,7 +3151,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks to see if any heat is given off by an active vibro blade
-     *
+     * 
      * @param location
      * @return always returns <code>0</code> as Only biped mechs can wield
      *         vibroblades
@@ -3162,7 +3162,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Does the mech have any shields. a mech can have up to 2 shields.
-     *
+     * 
      * @return <code>true</code> if <code>shieldCount</code> is greater then 0
      *         else <code>false</code>
      */
@@ -3222,7 +3222,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * This method checks to see if a unit has Underwater Maneuvering Units Only
      * Battle Mechs may have UMU's
-     *
+     * 
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
@@ -3237,7 +3237,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * This counts the number of UMU's a Mech has that are still viable
-     *
+     * 
      * @return number <code>int</code>of useable UMU's
      */
     public int getActiveUMUCount() {
@@ -3259,7 +3259,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * This returns all UMU a mech has.
-     *
+     * 
      * @return <code>int</code>Total number of UMUs a mech has.
      */
     public int getAllUMUCount() {
@@ -3292,6 +3292,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * check if we have an active ECM unit for stealth armor purposes
+     * 
      * @param stealth
      * @return
      */
@@ -3373,7 +3374,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks to see if this entity has a functional ECM unit that is using
      * ECCM.
-     *
+     * 
      * @return <code>true</code> if the entity has angelecm and it is in ECCM
      *         mode <code>false</code> if the entity does not have angel ecm or
      *         it is not in eccm mode or it is damaged.
@@ -3399,7 +3400,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks to see if this unit has a functional AngelECM unit that is using
      * ECCM.
-     *
+     * 
      * @return <code>true</code> if the entity has angelecm and it is in ECCM
      *         mode <code>false</code> if the entity does not have angel ecm or
      *         it is not in eccm mode or it is damaged.
@@ -3419,7 +3420,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * What's the range of the ECM equipment? Infantry can have ECM that just
      * covers their own hex.
-     *
+     * 
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */
@@ -3489,7 +3490,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * What's the range of the BAP equipment?
-     *
+     * 
      * @return the <code>int</code> range of this unit's BAP. This value will be
      *         <code>Entity.NONE</code> if no BAP is active.
      */
@@ -3589,7 +3590,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_C3S) && !m.isInoperable()) {
+            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_C3S) || m.getType().hasFlag(MiscType.F_C3SBS)) && !m.isInoperable()) {
                 return true;
             }
         }
@@ -3598,7 +3599,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Only Meks can have CASE II so all other entites return false.
-     *
+     * 
      * @return true iff the mech has CASE II.
      */
     public boolean hasCASEII() {
@@ -3607,7 +3608,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Only Meks have CASE II so all other entites return false.
-     *
+     * 
      * @param location
      * @return true iff the mech has CASE II at this location.
      */
@@ -3617,7 +3618,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks if the entity has a C3 Master.
-     *
+     * 
      * @return true if it has a working C3M computer and has a master.
      */
     public boolean hasC3M() {
@@ -3625,7 +3626,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
+            if ((m.getType() instanceof WeaponType) && (m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) && !m.isInoperable()) {
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
                 // this unit does not have a lance master computer.
@@ -3653,11 +3654,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             Iterator<Mounted> e = getEquipment().iterator();
             while ((c3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
                 Mounted m = e.next();
-                if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
+                if ((m.getType() instanceof WeaponType) && (m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) && !m.isInoperable()) {
                     // Now look for the company command master.
                     while ((c3CompanyMasterIndex == LOC_DESTROYED) && e.hasNext()) {
                         m = e.next();
-                        if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_C3M) && !m.isInoperable()) {
+                        if ((m.getType() instanceof WeaponType) && (m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS)) && !m.isInoperable()) {
                             // Found the comany command master
                             c3CompanyMasterIndex = getEquipmentNum(m);
                         }
@@ -3680,7 +3681,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks if it has any type of C3 computer.
-     *
+     * 
      * @return true iff it has a C3 computer.
      */
     public boolean hasC3() {
@@ -3728,7 +3729,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Please note, if this <code>Entity</code> does not have two C3 Master
      * computers, then it must first be identified as a company commander;
      * otherwise the number of free nodes will be zero.
-     *
+     * 
      * @return a non-negative <code>int</code> value.
      */
     public int calculateFreeC3MNodes() {
@@ -3776,7 +3777,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Please note, if this <code>Entity</code> has two C3 Master computers,
      * then this function only returns the remaining number of <b>C3 Slave</b>
      * computers that can connect.
-     *
+     * 
      * @return a non-negative <code>int</code> value.
      */
     public int calculateFreeC3Nodes() {
@@ -3838,7 +3839,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * then this unit is out of the C3 network for the rest of the game. If the
      * master unit has shut down, then this unit may return to the C3 network at
      * a later time.
-     *
+     * 
      * @return the <code>Entity</code> that is the master of this unit's C3
      *         network. This value may be <code>null</code>. If the value master
      *         unit has shut down, then the value will be non-<code>null</code>
@@ -3906,7 +3907,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * unit has shut down, then the ID will still be returned. The only times
      * when the value, <code>Entity.NONE</code> is returned is when this unit is
      * permanently out of the C3 network, or when it was never in a C3 network.
-     *
+     * 
      * @return the <code>int</code> ID of the unit that is the master of this
      *         unit's C3 network, or <code>Entity.NONE</code>.
      */
@@ -3926,7 +3927,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <p>
      * Also note that when <code>null</code> is the master for this
      * <code>Entity</code>, then it is an independent master.
-     *
+     * 
      * @param e
      *            - the <code>Entity</code> that may be this unit's C3 Master.
      * @return a <code>boolean</code> that is <code>true</code> when the passed
@@ -3948,7 +3949,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set another <code>Entity</code> as our C3 Master
-     *
+     * 
      * @param e
      *            - the <code>Entity</code> that should be set as our C3 Master.
      */
@@ -4002,7 +4003,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks if another entity is on the same c3 network as this entity
-     *
+     * 
      * @param e
      *            The <code>Entity</code> to check against this entity
      * @param ignoreECM
@@ -4076,7 +4077,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Start a new round
-     *
+     * 
      * @param roundNumber
      *            the <code>int</code> number of the new round
      */
@@ -4317,7 +4318,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * add a narc pod from this team to the mech. Unremovable
-     *
+     * 
      * @param pod
      *            The <code>NarcPod</code> to be attached.
      */
@@ -4327,7 +4328,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * attach an iNarcPod
-     *
+     * 
      * @param pod
      *            The <code>INarcPod</code> to be attached.
      */
@@ -4337,7 +4338,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Have we been iNarced with a homing pod from that team?
-     *
+     * 
      * @param nTeamID
      *            The id of the team that we are wondering about.
      * @return true if the Entity is narced by that team.
@@ -4353,7 +4354,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Have we been iNarced with the named pod from any team?
-     *
+     * 
      * @param type
      *            the <code>int</code> type of iNarc pod.
      * @return <code>true</code> if we have.
@@ -4376,7 +4377,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Do we have any iNarc Pods attached?
-     *
+     * 
      * @return true iff one or more iNarcPods are attached.
      */
     public boolean hasINarcPodsAttached() {
@@ -4389,7 +4390,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Get an <code>Enumeration</code> of <code>INarcPod</code>s that are
      * attached to this entity.
-     *
+     * 
      * @return an <code>Enumeration</code> of <code>INarcPod</code>s.
      */
     public Iterator<INarcPod> getINarcPodsAttached() {
@@ -4398,7 +4399,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Remove an <code>INarcPod</code> from this entity.
-     *
+     * 
      * @param pod
      *            the <code>INarcPod</code> to be removed.
      * @return <code>true</code> if the pod was removed, <code>false</code> if
@@ -4417,7 +4418,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Calculates the battle value of this mech. If the parameter is true, then
      * the battle value for c3 will be added whether the mech is currently part
      * of a network or not. This should be overwritten if necessary
-     *
+     * 
      * @param ignoreC3
      *            if the contribution of the C3 computer should be ignored when
      *            calculating BV.
@@ -4843,7 +4844,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * return a <code>PilotingRollData</code> checking for wether this Entity
      * moved too fast due to low gravity
-     *
+     * 
      * @param step
      * @return
      */
@@ -4882,11 +4883,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         addPilotingModifierForTerrain(roll, lastPos);
 
-        if(isAirborne() || isAirborneVTOL()) {
+        if (isAirborne() || isAirborneVTOL()) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: flyinge entities don't skid");
             return roll;
         }
-
 
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
@@ -5017,7 +5017,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks to see if an entity is moving through building walls. Note: this
      * method returns true/false, unlike the other checkStuff() methods above.
-     *
+     * 
      * @return 0, no eligable building; 1, exiting; 2, entering; 3, both; 4,
      *         stepping on roof
      */
@@ -5227,7 +5227,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <p/>
      * This method should <strong>only</strong> be used when serializing the
      * <code>Entity</code>.
-     *
+     * 
      * @param entity
      *            - the <code>Entity</code> being serialized.
      * @return a <code>String</code> listing the <code>Transporter</code> class
@@ -5264,7 +5264,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <p/>
      * This method should <strong>only</strong> be used when deserializing the
      * <code>Entity</code>.
-     *
+     * 
      * @param entity
      *            - the <code>Entity</code> being deserialized.
      * @param transporters
@@ -5304,7 +5304,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Add a transportation component to this Entity. Please note, this method
      * should only be called during this entity's construction.
-     *
+     * 
      * @param component
      *            - One of this new entity's <code>Transporter</code>s.
      */
@@ -5323,7 +5323,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -5359,7 +5359,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Load the given unit.
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @throws IllegalArgumentException
@@ -5388,7 +5388,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Recover the given unit. Only for ASF and Small Craft
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @throws IllegalArgumentException
@@ -5433,7 +5433,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Damages a randomly determined bay door on the entity, if one exists
-     *
+     * 
      */
     public String damageBayDoor() {
 
@@ -5485,7 +5485,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Damages a randomly determined docking collar on the entity, if one exists
-     *
+     * 
      */
     public boolean damageDockCollar() {
 
@@ -5520,7 +5520,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
-     *
+     * 
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
      *         returned <code>List</code> is independant from the under- lying
@@ -5560,7 +5560,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * only entities in Bays (for cargo damage to Aero units
-     *
+     * 
      * @return
      */
     public Vector<Entity> getBayLoadedUnits() {
@@ -5687,7 +5687,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /***
      * Returns vector of Transports for everything a unit transports
-     *
+     * 
      * @return
      */
     public Vector<Transporter> getTransports() {
@@ -5807,7 +5807,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Unload the given unit.
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contained in this space,
@@ -5831,7 +5831,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Return a string that identifies the unused capacity of this transporter.
-     *
+     * 
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
@@ -5856,7 +5856,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     *
+     * 
      * @param loc
      *            - the <code>int</code> location attempting to fire.
      * @param isRear
@@ -5886,7 +5886,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * suffer damage when the transporter is hit by an attack. Currently, no
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
-     *
+     * 
      * @param loc
      *            - the <code>int</code> location hit by attack.
      * @param isRear
@@ -5937,7 +5937,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Record the ID of the <code>Entity</code> that has loaded this unit. A
      * unit that is unloaded can neither move nor attack for the rest of the
      * turn.
-     *
+     * 
      * @param transportId
      *            - the <code>int</code> ID of our transport. The ID is
      *            <b>not</b> validated. This value should be
@@ -5954,7 +5954,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get the ID <code>Entity</code> that has loaded this one.
-     *
+     * 
      * @return the <code>int</code> ID of our transport. The ID may be invalid.
      *         This value should be <code>Entity.NONE</code> if this unit has
      *         not been loaded.
@@ -5967,7 +5967,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Determine if this unit has an active and working stealth system.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active and it's actually working, <code>false</code> if
      *         there is no stealth system or if it is inactive.
@@ -5980,7 +5980,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Determine if this unit has an active and working stealth system.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active and it's actually working, <code>false</code> if
      *         there is no stealth system or if it is inactive.
@@ -5993,7 +5993,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Determine if this unit has an active null-signature system.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a null signature system that
      *         is currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -6006,7 +6006,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Determine if this unit has an active void signature system.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a void signature system that
      *         is currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -6019,7 +6019,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Determine if this unit has an active chameleon light polarization field.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a void signature system that
      *         is currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -6035,7 +6035,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -6074,7 +6074,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Record the ID of the <code>Entity</code> that is the current target of a
      * swarm attack by this unit. A unit that stops swarming can neither move
      * nor attack for the rest of the turn.
-     *
+     * 
      * @param id
      *            - the <code>int</code> ID of the swarm attack's target. The ID
      *            is <b>not</b> validated. This value should be
@@ -6092,7 +6092,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Get the ID of the <code>Entity</code> that is the current target of a
      * swarm attack by this unit.
-     *
+     * 
      * @return the <code>int</code> ID of the swarm attack's target The ID may
      *         be invalid. This value should be <code>Entity.NONE</code> if this
      *         unit is not swarming.
@@ -6104,7 +6104,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Record the ID of the <code>Entity</code> that is attacking this unit with
      * a swarm attack.
-     *
+     * 
      * @param id
      *            - the <code>int</code> ID of the swarm attack's attacker. The
      *            ID is <b>not</b> validated. This value should be
@@ -6117,7 +6117,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Get the ID of the <code>Entity</code> that is attacking this unit with a
      * swarm attack.
-     *
+     * 
      * @return the <code>int</code> ID of the swarm attack's attacker The ID may
      *         be invalid. This value should be <code>Entity.NONE</code> if this
      *         unit is not being swarmed.
@@ -6128,7 +6128,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Scans through the ammo on the unit for any inferno rounds.
-     *
+     * 
      * @return <code>true</code> if the unit is still loaded with Inferno
      *         rounds. <code>false</code> if no rounds were ever loaded or if
      *         they have all been fired.
@@ -6149,7 +6149,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Record if the unit is just combat-lossed or if it has been utterly
      * destroyed.
-     *
+     * 
      * @param canSalvage
      *            - a <code>boolean</code> that is <code>true</code> if the unit
      *            can be repaired (given time and parts); if this value is
@@ -6166,7 +6166,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Determine if the unit is just combat-lossed or if it has been utterly
      * destroyed.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit has
      *         salvageable components; if this value is <code>false</code> the
      *         unit is utterly destroyed.
@@ -6178,7 +6178,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -6190,7 +6190,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Getter for property removalCondition.
-     *
+     * 
      * @return Value of property removalCondition.
      */
     public int getRemovalCondition() {
@@ -6199,7 +6199,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Setter for property removalCondition.
-     *
+     * 
      * @param removalCondition
      *            New value of property removalCondition.
      */
@@ -6240,7 +6240,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Um, basically everything can spot for LRM indirect fire.
-     *
+     * 
      * @return true, if the entity is active
      */
     public boolean canSpot() {
@@ -6286,7 +6286,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * This returns a textual description of a specific location of the entity
      * for visualy impaired users.
-     *
+     * 
      * @param loc
      *            the location
      * @return a string descibing the status of the location.
@@ -6323,7 +6323,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The round the unit will be deployed. We will deploy at the end of a
      * round. So if depoyRound is set to 5, we will deploy when round 5 is over.
      * Any value of zero or less is automatically set to 1
-     *
+     * 
      * @param deployRound
      *            an int
      */
@@ -6333,7 +6333,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * The round the unit will be deployed
-     *
+     * 
      * @return an int
      */
     public int getDeployRound() {
@@ -6363,7 +6363,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set the unit number for this entity.
-     *
+     * 
      * @param unit
      *            the <code>char</code> number for the low-level unit that this
      *            entity belongs to. This entity can be removed from its unit by
@@ -6375,7 +6375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get the unit number of this entity.
-     *
+     * 
      * @return the <code>char</code> unit number. If the entity does not belong
      *         to a unit, <code>(char) Entity.NONE</code> will be returned.
      */
@@ -6562,7 +6562,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Pretty much anybody's eligible for movement. If the game option is
      * toggled on, inactive and immobile entities are not eligible. OffBoard
      * units are always ineligible
-     *
+     * 
      * @return whether or not the entity is allowed to move
      */
     public boolean isEligibleForMovement() {
@@ -6741,7 +6741,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Targetable#isOffBoard()
      */
     public boolean isOffBoard() {
@@ -6753,7 +6753,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * the direction must <b>not</b> be <code>Entity.NONE</code>. If a direction
      * other than <code>Entity.NONE</code> is chosen, the distance must
      * <b>not</b> be zero (0).
-     *
+     * 
      * @param distance
      *            the <code>int</code> distance in hexes that the unit will be
      *            deployed from the board; this value must not be negative.
@@ -6796,7 +6796,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Get the distance in hexes from the board that the unit will be deployed.
      * If the unit is to be deployed onboard, the distance will be zero (0).
-     *
+     * 
      * @return the <code>int</code> distance from the board the unit will be
      *         deployed (in hexes); this value will never be negative.
      */
@@ -6815,7 +6815,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <li><code>IOffBoardDirections.EAST</code></li>
      * <li><code>IOffBoardDirections.WEST</code></li>
      * </ul>
-     *
+     * 
      * @return the <code>int</code> direction from the board the unit will be
      *         deployed. Only valid values will be returned.
      */
@@ -6871,7 +6871,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Has this entity been captured?
-     *
+     * 
      * @return <code>true</code> if it has.
      */
     public boolean isCaptured() {
@@ -6880,7 +6880,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Specify that this entity has been captured.
-     *
+     * 
      * @param arg
      *            the <code>boolean</code> value to assign.
      */
@@ -6932,7 +6932,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * illuminate a hex and all units that are between us and the hex
-     *
+     * 
      * @param target
      *            the <code>HexTarget</code> to illuminate
      */
@@ -6958,7 +6958,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set weather this Entity is stuck in a swamp or not
-     *
+     * 
      * @param arg
      *            the <code>boolean</code> value to assign
      */
@@ -6975,7 +6975,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set wether this Enity is stuck in a swamp or not
-     *
+     * 
      * @param arg
      *            the <code>boolean</code> value to assign
      */
@@ -7021,7 +7021,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Add a targeting by a swarm volley from a specified entity
-     *
+     * 
      * @param entityId
      *            The <code>int</code> id of the shooting entity
      * @param weaponId
@@ -7034,7 +7034,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Were we targeted by a certain swarm/swarm-i volley this turn?
-     *
+     * 
      * @param entityId
      *            The <code>int</code> id of the shooting entity we are checking
      * @param weaponId
@@ -7480,7 +7480,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Apply PSR modifier for difficult terrain at the specified coordinates
-     *
+     * 
      * @param roll
      *            the PSR to modify
      * @param c
@@ -7502,7 +7502,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Apply PSR modifier for difficult terrain at the move step position
-     *
+     * 
      * @param roll
      *            the PSR to modify
      * @param step
@@ -7517,7 +7517,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Apply PSR modifier for difficult terrain in the current position
-     *
+     * 
      * @param roll
      *            the PSR to modify
      */
@@ -7598,7 +7598,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Checks if the unit is hardened agaist nuclear strikes.
-     *
+     * 
      * @return true if this is a hardened unit.
      */
     public abstract boolean isNuclearHardened();
@@ -7620,7 +7620,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Sets if this unit is a carcass.
-     *
+     * 
      * @param carcass
      *            true if this unit should be a carcass, false otherwise.
      * @see megamek.common.Entity#isCarcass
@@ -7631,7 +7631,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Marks all equipment in a location on this entity as destroyed.
-     *
+     * 
      * @param loc
      *            The location that is destroyed.
      */
@@ -7763,7 +7763,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * a function that let's us know if this entity has capital-scale armor
-     *
+     * 
      * @return
      */
     public boolean isCapitalScale() {
@@ -7778,7 +7778,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * a function that let's us know if this entity is using weapons bays
-     *
+     * 
      * @return
      */
     public boolean usesWeaponBays() {
@@ -7793,7 +7793,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * return the bay of the current weapon
-     *
+     * 
      * @param bayID
      * @return
      */
@@ -7813,7 +7813,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * return the first bay of the right type in the right location with enough
      * damage to spare
-     *
+     * 
      * @param wtype
      * @param loc
      * @param rearMount
@@ -8525,7 +8525,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * get the bay that ammo is associated with
-     *
+     * 
      * @param mammo
      * @return
      */
@@ -8552,7 +8552,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * shut this unit down due to a BA Taser attack
-     *
+     * 
      * @param turns
      *            - the amount of rounds for which this Entity should be
      *            shutdown
@@ -8565,7 +8565,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * get the number of rounds for which this unit should be shutdown by taser
-     *
+     * 
      * @return
      */
     public int getTaserShutdownRounds() {
@@ -8586,7 +8586,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * set this entity to suffer from taser feedback
-     *
+     * 
      * @param rounds
      *            - the number of rounds to suffer from taserfeedback
      */
@@ -8596,7 +8596,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * get the rounds for which this entity suffers from taser feedback
-     *
+     * 
      * @return
      */
     public int getTaserFeedBackRounds() {
@@ -8655,7 +8655,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Return a HTML string that describes the BV calculations
-     *
+     * 
      * @return a <code>String</code> explaining the BV calculation
      */
     public String getBVText() {
@@ -8668,7 +8668,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Return the BAR-rating of this Entity's armor
-     *
+     * 
      * @return the BAR rating
      */
     public int getBARRating() {
@@ -8678,7 +8678,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * does this Entity have BAR armor?
-     *
+     * 
      * @return
      */
     public boolean hasBARArmor() {
@@ -8687,7 +8687,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * does this entity have an armored chassis?
-     *
+     * 
      * @return
      */
     public boolean hasArmoredChassis() {
@@ -8699,7 +8699,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * does this <code>Entity</code> have Environmental sealing? (only Support
      * Vehicles or IndustrialMechs should mount this)
-     *
+     * 
      * @return
      */
     public boolean hasEnvironmentalSealing() {
@@ -8714,7 +8714,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * possibly do a ICE-Engine stall PSR, only industrialmechs will actually do
      * such a roll
-     *
+     * 
      * @param vPhaseReport
      *            the <code>Vector<Report></code> containing the phase reports
      * @return a Vector<Report> containing the passed in reports, and any
@@ -8727,7 +8727,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * check for unstalling of this Entity's engine (only used for ICE
      * industrial Mechs)
-     *
+     * 
      * @param vPhaseReport
      *            the <code>Vector<Report></code> containing the phase reports
      */
@@ -8741,7 +8741,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Is this Entity's ICE Engine stalled?
-     *
+     * 
      * @return if this Entity's ICE engine is stalled
      */
     public boolean isStalled() {
@@ -8761,7 +8761,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * used to set the source of the creation of this entity, i.e RS PPU Custom
      * what not Fluff for MMLab
-     *
+     * 
      * @param source
      */
     public void setSource(String source) {
@@ -8904,12 +8904,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean isSpaceborne() {
-        //for now if you are in space, you are spaceborne, but this will become more complicated when
-        //we start adding multiple maps to the same game and so I should try to replace most calls to
-        //game.getBoard().inSpace() with this one
+        // for now if you are in space, you are spaceborne, but this will become
+        // more complicated when
+        // we start adding multiple maps to the same game and so I should try to
+        // replace most calls to
+        // game.getBoard().inSpace() with this one
         return game.getBoard().inSpace();
     }
-    
+
     /**
      * is the unit flying Nape of the Earth? (i.e. one elevation above ground)
      */
@@ -8949,7 +8951,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * produce an int array of the number of bombs of each type based on the
      * current bomblist
-     *
+     * 
      * @return
      */
     public int[] getBombLoadout() {
@@ -9026,7 +9028,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Returns the Battle Force Movement string this is used in a battle force
      * game
-     *
+     * 
      * @return
      */
     public String getBattleForceMovement() {
@@ -9072,7 +9074,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * only used for Aerospace and Dropships
-     *
+     * 
      * @return
      */
     public String getBattleForceDamageThresholdString() {
@@ -9081,7 +9083,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * this will be unit specific
-     *
+     * 
      * @return
      */
     public int getBattleForceStructurePoints() {
@@ -9089,7 +9091,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     *
+     * 
      * @param range
      * @return
      */
@@ -9098,7 +9100,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     *
+     * 
      * @param range
      * @param ammoType
      * @return
@@ -9108,7 +9110,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     *
+     * 
      * @param range
      * @param ignoreHeat
      * @param ignoreSpecialAbilities
@@ -9119,7 +9121,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     *
+     * 
      * @param range
      * @param ammoType
      * @param ignoreHeat
@@ -9240,7 +9242,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Checks to see if this unit has a functional Blue Shield Particle Field
      * Damper that is turned on
-     *
+     * 
      * @return <code>true</code> if the entity has a working, switched on blue
      *         field <code>false</code> otherwise
      */
@@ -9266,7 +9268,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * does this unit have stealth armor?
-     *
+     * 
      * @return
      */
     public boolean hasStealth() {

@@ -243,12 +243,7 @@ public abstract class TestEntity implements TestEntityOption {
         float weightSum = 0.0f;
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
-            if (mt.hasFlag(MiscType.F_ENDO_STEEL) ||
-                    mt.hasFlag(MiscType.F_FERRO_FIBROUS) ||
-                    mt.hasFlag(MiscType.F_FERRO_LAMELLOR) ||
-                    mt.hasFlag(MiscType.F_ENDO_COMPOSITE) ||
-                    mt.hasFlag(MiscType.F_HEAT_SINK) ||
-                    mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            if (mt.hasFlag(MiscType.F_ENDO_STEEL) || mt.hasFlag(MiscType.F_FERRO_FIBROUS) || mt.hasFlag(MiscType.F_FERRO_LAMELLOR) || mt.hasFlag(MiscType.F_ENDO_COMPOSITE) || mt.hasFlag(MiscType.F_HEAT_SINK) || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 continue;
             }
             weightSum += mt.getTonnage(getEntity(), m.getLocation());
@@ -553,7 +548,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     *
+     * 
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal
@@ -562,7 +557,7 @@ public abstract class TestEntity implements TestEntityOption {
         int tagCount = 0;
         boolean illegal = false;
         for (Mounted m : getEntity().getWeaponList()) {
-            if (m.getType().hasFlag(WeaponType.F_TAG) && !m.getType().hasFlag(WeaponType.F_C3M)) {
+            if (m.getType().hasFlag(WeaponType.F_TAG) && !(m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS))) {
                 tagCount++;
             }
         }
@@ -883,7 +878,7 @@ class Armor {
             pointsPerTon = 8.0f;
         }
         double armorWeight = points / pointsPerTon;
-        return TestEntity.ceilMaxHalf((float)armorWeight, roundWeight);
+        return TestEntity.ceilMaxHalf((float) armorWeight, roundWeight);
     }
 
     public String getShortName() {

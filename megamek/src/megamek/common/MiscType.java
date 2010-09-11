@@ -136,6 +136,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_QUAD_TURRET = BigInteger.valueOf(1).shiftLeft(93);
     public static final BigInteger F_SPACE_ADAPTATION = BigInteger.valueOf(1).shiftLeft(94);
     public static final BigInteger F_CUTTING_TORCH = BigInteger.valueOf(1).shiftLeft(95);
+    public static final BigInteger F_OFF_ROAD = BigInteger.valueOf(1).shiftLeft(96);
+    public static final BigInteger F_C3SBS = BigInteger.valueOf(1).shiftLeft(97);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -430,7 +432,7 @@ public class MiscType extends EquipmentType {
     public double getCost(Entity entity, boolean isArmored) {
 
         if (cost == EquipmentType.COST_VARIABLE) {
-            if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING)) {
+            if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
                 cost = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
                 cost = getTonnage(entity) * 10000;
@@ -570,7 +572,7 @@ public class MiscType extends EquipmentType {
         if (bv != BV_VARIABLE) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
-            if ((entity instanceof VTOL) && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) && (location == VTOL.LOC_ROTOR) && (hasFlag(MiscType.F_ECM) || hasFlag(MiscType.F_BAP) || hasFlag(MiscType.F_C3S) || hasFlag(MiscType.F_C3I))) {
+            if ((entity instanceof VTOL) && entity.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1, VTOL.LOC_ROTOR) && (location == VTOL.LOC_ROTOR) && (hasFlag(MiscType.F_ECM) || hasFlag(MiscType.F_BAP) || hasFlag(MiscType.F_C3S) || hasFlag(MiscType.F_C3SBS) || hasFlag(MiscType.F_C3I))) {
                 returnBV += 10;
             }
             return returnBV;
@@ -640,6 +642,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLMASC());
         EquipmentType.addType(MiscType.createTSM());
         EquipmentType.addType(MiscType.createC3S());
+        EquipmentType.addType(MiscType.createC3SBS());
         EquipmentType.addType(MiscType.createC3I());
         EquipmentType.addType(MiscType.createISArtemis());
         EquipmentType.addType(MiscType.createCLArtemis());
@@ -791,10 +794,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISLimitedAmphibiousChassis());
         EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());
         EquipmentType.addType(MiscType.createISDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createISOffRoadChassis());
         EquipmentType.addType(MiscType.createClanFlotationHull());
         EquipmentType.addType(MiscType.createClanLimitedAmphibiousChassis());
         EquipmentType.addType(MiscType.createClanFullyAmphibiousChassis());
         EquipmentType.addType(MiscType.createClanDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createClanOffRoadChassis());
         EquipmentType.addType(MiscType.createISShoulderTurret());
         EquipmentType.addType(MiscType.createCLShoulderTurret());
         EquipmentType.addType(MiscType.createISHeadTurret());
@@ -1223,6 +1228,22 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 250000;
         misc.flags = misc.flags.or(F_C3S).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createC3SBS() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "C3 Boosted System Slave";
+        misc.setInternalName("ISC3BoostedSystemSlaveUnit");
+        misc.addLookupName("IS C3 Boosted System Slave");
+        misc.tonnage = 3;
+        misc.criticals = 2;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_C3SBS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
 
         return misc;
@@ -3078,7 +3099,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -4093,6 +4114,36 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISOffRoadChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Off-Road Chassis";
+        misc.setInternalName("ISOffRoadChassis");
+        misc.addLookupName("ISOffRoad");
+        misc.tonnage = 0f;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createClanOffRoadChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Off-Road Chassis";
+        misc.setInternalName("ClanOffRoadChassis");
+        misc.addLookupName("CLOffRoad");
+        misc.tonnage = 0f;
+        misc.criticals = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
 
         return misc;

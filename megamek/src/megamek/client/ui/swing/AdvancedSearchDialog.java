@@ -37,12 +37,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
-import megamek.common.MechSearchFilter;
 import megamek.common.EquipmentType;
+import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.MiscType;
 import megamek.common.WeaponType;
-
 
 public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
@@ -50,7 +49,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
      *
      */
     private static final long serialVersionUID = -2459992981678758743L;
-    public MechSearchFilter MechFilter=null;
+    public MechSearchFilter MechFilter = null;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
@@ -79,9 +78,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
     /** Creates a new instance of AdvancedSearchDialog */
     public AdvancedSearchDialog(ClientGUI clientgui) {
-        super(clientgui.frame,
-                Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
-        
+        super(clientgui.frame, Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
 
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -118,7 +115,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         chkEquipment.setSelected(false);
         cEquipment.setSelectedIndex(0);
 
-        //layout
+        // layout
         setLayout(new GridLayout(10, 1));
 
         Panel row1 = new Panel();
@@ -195,25 +192,21 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x
-                + clientgui.frame.getSize().width / 2 - getSize().width / 2,
-                clientgui.frame.getLocation().y
-                        + clientgui.frame.getSize().height / 2
-                        - getSize().height / 2);
+        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - getSize().width / 2, clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource().equals(butOkay)) {
-            MechFilter=getMechSearchFilter();
+            MechFilter = getMechSearchFilter();
             setVisible(false);
         }
         if (ev.getSource().equals(butCancel)) {
-            MechFilter=null;
+            MechFilter = null;
             setVisible(false);
         }
     }
 
-    public MechSearchFilter showDialog(){
+    public MechSearchFilter showDialog() {
         setVisible(true);
         return getMechSearchFilter();
     }
@@ -237,40 +230,49 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         LinkedHashSet<String> weapons = new LinkedHashSet<String>();
         LinkedHashSet<String> equipment = new LinkedHashSet<String>();
         /*
-         * I am not going to filter by type and unit type because that may change after the advanced filter is set up
+         * I am not going to filter by type and unit type because that may
+         * change after the advanced filter is set up
          */
-        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
-                .hasMoreElements();) {
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType et = e.nextElement();
             if ((et instanceof WeaponType)) {
-                   /* && ((et.getTechLevel() == nType)
-                            || ((nType == TechConstants.T_TW_ALL) && ((et
-                                    .getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                                    || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et
-                            .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
-                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
-                if (!(nUnitType == UnitType.SIZE)
-                        && ((UnitType.getTypeName(nUnitType).equals("Mek") || UnitType
-                                .getTypeName(nUnitType).equals("Tank")) && (et
-                                .hasFlag(WeaponType.F_INFANTRY)))) {
-                    continue;
-                }*/
+                /*
+                 * && ((et.getTechLevel() == nType) || ((nType ==
+                 * TechConstants.T_TW_ALL) && ((et .getTechLevel() ==
+                 * TechConstants.T_INTRO_BOXSET) || (et.getTechLevel() ==
+                 * TechConstants.T_IS_TW_NON_BOX) || (et .getTechLevel() ==
+                 * TechConstants.T_CLAN_TW))) || (((nType ==
+                 * TechConstants.T_IS_TW_ALL) || (nType ==
+                 * TechConstants.T_IS_TW_NON_BOX)) && ((et .getTechLevel() ==
+                 * TechConstants.T_INTRO_BOXSET) || (et .getTechLevel() ==
+                 * TechConstants.T_IS_TW_NON_BOX))))) { if (!(nUnitType ==
+                 * UnitType.SIZE) &&
+                 * ((UnitType.getTypeName(nUnitType).equals("Mek") || UnitType
+                 * .getTypeName(nUnitType).equals("Tank")) && (et
+                 * .hasFlag(WeaponType.F_INFANTRY)))) { continue; }
+                 */
                 weapons.add(et.getName());
-                if (et.hasFlag(WeaponType.F_C3M)) {
-                      /*  && ((nType == TechConstants.T_TW_ALL)
-                                || (nType == TechConstants.T_IS_TW_NON_BOX) || (nType == TechConstants.T_IS_TW_ALL))) {*/
+                if (et.hasFlag(WeaponType.F_C3M) || et.hasFlag(WeaponType.F_C3MBS)) {
+                    /*
+                     * && ((nType == TechConstants.T_TW_ALL) || (nType ==
+                     * TechConstants.T_IS_TW_NON_BOX) || (nType ==
+                     * TechConstants.T_IS_TW_ALL))) {
+                     */
                     equipment.add(et.getName());
                 }
             }
             if ((et instanceof MiscType)) {
-                  /*  && ((et.getTechLevel() == nType)
-                            || ((nType == TechConstants.T_TW_ALL) && ((et
-                                    .getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                                    || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et
-                                    .getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et
-                            .getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et
-                            .getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {*/
+                /*
+                 * && ((et.getTechLevel() == nType) || ((nType ==
+                 * TechConstants.T_TW_ALL) && ((et .getTechLevel() ==
+                 * TechConstants.T_INTRO_BOXSET) || (et.getTechLevel() ==
+                 * TechConstants.T_IS_TW_NON_BOX) || (et .getTechLevel() ==
+                 * TechConstants.T_CLAN_TW))) || (((nType ==
+                 * TechConstants.T_IS_TW_ALL) || (nType ==
+                 * TechConstants.T_IS_TW_NON_BOX)) && ((et .getTechLevel() ==
+                 * TechConstants.T_INTRO_BOXSET) || (et .getTechLevel() ==
+                 * TechConstants.T_IS_TW_NON_BOX))))) {
+                 */
                 equipment.add(et.getName());
             }
         }
@@ -281,19 +283,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
         for (String equipName : equipment) {
             cEquipment.addItem(equipName);
         }
-        //cWeapons1.invalidate();
-        //cWeapons2.invalidate();
-        //cEquipment.invalidate();
-        //pack();
+        // cWeapons1.invalidate();
+        // cWeapons2.invalidate();
+        // cEquipment.invalidate();
+        // pack();
     }
 
     public boolean isAdvancedSearchOff() {
 
-       // return true;
-       return tWalk.getText().equals("") && tJump.getText().equals("")
-            && tWeapons1.getText().equals("") && tWeapons2.getText().equals("")
-                && tStartYear.getText().equals("") && tEndYear.getText().equals("")
-                    && !chkEquipment.isSelected() && cArmor.getSelectedIndex() == 0;
+        // return true;
+        return tWalk.getText().equals("") && tJump.getText().equals("") && tWeapons1.getText().equals("") && tWeapons2.getText().equals("") && tStartYear.getText().equals("") && tEndYear.getText().equals("") && !chkEquipment.isSelected() && (cArmor.getSelectedIndex() == 0);
 
     }
 
@@ -310,8 +309,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
         ret.sWep1Count = tWeapons1.getText();
         ret.sWep2Count = tWeapons2.getText();
-        ret.oWep1=cWeapons1.getSelectedItem();
-        ret.oWep2=cWeapons2.getSelectedItem();
+        ret.oWep1 = cWeapons1.getSelectedItem();
+        ret.oWep2 = cWeapons2.getSelectedItem();
 
         ret.sStartYear = tStartYear.getText();
         ret.sEndYear = tEndYear.getText();
@@ -323,11 +322,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     }
 
     public boolean isMatch(MechSummary mech) {
-        if(isAdvancedSearchOff())
+        if (isAdvancedSearchOff()) {
             return true;
-        else
-            return MechSearchFilter.isMatch(mech,getMechSearchFilter());
+        } else {
+            return MechSearchFilter.isMatch(mech, getMechSearchFilter());
+        }
     }
 
 }
-

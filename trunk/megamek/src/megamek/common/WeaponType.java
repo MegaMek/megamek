@@ -180,6 +180,10 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
     public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
 
+    public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56); // C3
+    // Master
+    // Booster
+    // System
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
     public static final int RANGE_MED = 2;
@@ -882,6 +886,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLightTAG());
         EquipmentType.addType(new ISTAG());
         EquipmentType.addType(new ISC3M());
+        EquipmentType.addType(new ISC3MBS());
         EquipmentType.addType(new CLLightTAG());
         EquipmentType.addType(new CLTAG());
         // MMLs

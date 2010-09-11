@@ -671,10 +671,10 @@ public class Tank extends Entity {
 
         if (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS) || hasWorkingMisc(MiscType.F_DUNE_BUGGY) || hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
             typeModifier += .1;
-        }
-
-        if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
+        } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
             typeModifier += .2;
+        } else if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+            typeModifier += .5;
         }
 
         dbv *= typeModifier;
@@ -1251,6 +1251,9 @@ public class Tank extends Entity {
 
         if (hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
             cost *= 1.25;
+        }
+        if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+            cost *= 1.2;
         }
         return Math.round(cost * multiplier);
     }

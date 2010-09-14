@@ -53,6 +53,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -2537,6 +2538,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
                 c.sendDeleteEntity(entity.getId());
             }
+            else if (command.equalsIgnoreCase("SKILLS")) {
+                Client c = clientgui.getBots().get(entity.getOwner().getName());
+                if(c == null) {
+                    c = clientgui.getClient();
+                }
+                int[] skills = c.getRandomSkillsGenerator().getRandomSkills(entity, true);
+                entity.getCrew().setGunnery(skills[0]);
+                entity.getCrew().setPiloting(skills[1]);
+                c.sendUpdateEntity(entity);
+            }
         }
 
         @Override
@@ -2590,6 +2601,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 popup.add(menuItem);
+                JMenu menu = new JMenu("Randomize");
+                menuItem = new JMenuItem("Skills");
+                menuItem.setActionCommand("SKILLS|" + row);
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menu.add(menuItem);
+                popup.add(menu);
+                
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }

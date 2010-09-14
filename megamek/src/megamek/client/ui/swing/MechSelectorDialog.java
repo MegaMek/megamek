@@ -418,6 +418,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                 c = client;
             }
             autoSetSkills(e);
+            //e.getCrew().setName(c.getRandomNameGenerator().generate());
             e.setOwner(c.getLocalPlayer());
             c.sendAddEntity(e);
         }

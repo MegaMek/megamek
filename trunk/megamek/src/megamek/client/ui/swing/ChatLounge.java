@@ -2548,6 +2548,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 entity.getCrew().setPiloting(skills[1]);
                 c.sendUpdateEntity(entity);
             }
+            else if (command.equalsIgnoreCase("NAME")) {
+                Client c = clientgui.getBots().get(entity.getOwner().getName());
+                if(c == null) {
+                    c = clientgui.getClient();
+                }
+                entity.getCrew().setName(c.getRandomNameGenerator().generate());
+                c.sendUpdateEntity(entity);
+            }
         }
 
         @Override
@@ -2602,6 +2610,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setEnabled(isOwner || isBot);
                 popup.add(menuItem);
                 JMenu menu = new JMenu("Randomize");
+                menuItem = new JMenuItem("Name");
+                menuItem.setActionCommand("NAME|" + row);
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menu.add(menuItem);
                 menuItem = new JMenuItem("Skills");
                 menuItem.setActionCommand("SKILLS|" + row);
                 menuItem.addActionListener(this);

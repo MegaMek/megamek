@@ -581,35 +581,11 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         if (!cs.useAverageSkills()) {
             return;
         }
-        int piloting = 5;
-        int gunnery = 4;
-        if (e.isClan()) {
-            if ((e instanceof Mech) || (e instanceof BattleArmor)) {
-                gunnery = 3;
-                piloting = 4;
-            } else if (e instanceof Tank) {
-                gunnery = 5;
-                piloting = 6;
-            } else if (e instanceof Infantry) {
-                if (e.getMovementMode() == EntityMovementMode.INF_LEG) {
-                    gunnery = 5;
-                    piloting = 5;
-                } else {
-                    gunnery = 5;
-                    piloting = 6;
-                }
-            }
-        } else if (e instanceof Infantry) {
-            // IS crews are 4/5 except infantry
-            if ((e.getMovementMode() == EntityMovementMode.INF_LEG)
-                    || (e instanceof BattleArmor)) {
-                gunnery = 4;
-                piloting = 5;
-            } else {
-                gunnery = 4;
-                piloting = 6;
-            }
-        }
+        int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+    
+        int gunnery = skills[0];   
+        int piloting = skills[1];
+  
         e.getCrew().setGunnery(gunnery);
         e.getCrew().setPiloting(piloting);
     }

@@ -162,7 +162,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {
                 Entity ent = e.nextElement();
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
-                    int skills[] = rsg.getRandomSkills(ent instanceof Tank || ent instanceof VTOL);
+                    int skills[] = rsg.getRandomSkills(ent);
                     if (cForceClose.isSelected()) {
                         skills[1] = skills[0] + 1;
                     }

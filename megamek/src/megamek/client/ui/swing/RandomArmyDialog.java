@@ -47,6 +47,8 @@ import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.TechConstants;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
 public class RandomArmyDialog extends JDialog implements ActionListener,
@@ -241,7 +243,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                     if (c == null) {
                         c = m_client;
                     }
-                    // autoSetSkills(e);
+                    autoSetSkills(e);
                     e.setOwner(c.getLocalPlayer());
                     c.sendAddEntity(e);
                 } catch (EntityLoadingException ex) {
@@ -365,6 +367,20 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             updateTechChoice(false);
         }
         super.setVisible(show);
+    }
+    
+    private void autoSetSkills(Entity e) {
+        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        if (!cs.useAverageSkills()) {
+            return;
+        }
+        int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+    
+        int gunnery = skills[0];   
+        int piloting = skills[1];
+  
+        e.getCrew().setGunnery(gunnery);
+        e.getCrew().setPiloting(piloting);
     }
 
 }

@@ -121,6 +121,9 @@ public class Client implements IClientCommandHandler {
     public String phaseReport;
     public String roundReport;
 
+    //random generators
+    private RandomSkillsGenerator rsg;
+    
     // And close client events!
     private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
 
@@ -178,6 +181,8 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
 
+        rsg = new RandomSkillsGenerator();
+        
         TimerSingleton ts = TimerSingleton.getInstance();
         /*
          * this should be moved to UI implementations so that they are
@@ -1378,5 +1383,9 @@ public class Client implements IClientCommandHandler {
      */
     public Enumeration<String> getAllCommandNames() {
         return commandsHash.keys();
+    }
+    
+    public RandomSkillsGenerator getRandomSkillsGenerator() {
+        return rsg;
     }
 }

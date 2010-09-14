@@ -183,6 +183,10 @@ public class Pilot implements Serializable {
     public int getCommandBonus() {
         return commandBonus;
     }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public void setNickname(String nick) {
         nickname = nick;

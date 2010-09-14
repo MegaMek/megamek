@@ -138,10 +138,23 @@ public class RandomSkillsGenerator implements Serializable {
         this.close = b;
     }
     
+    /**
+     * Generates random skills for an entity based on the current settings of the random skills generator, 
+     * but does not assign those new skills to that entity
+     * @param e - an Entity
+     * @return an integer array of (gunnery, piloting) skill values
+     */
     public int[] getRandomSkills(Entity e) {
         return getRandomSkills(e, false);
     }
     
+    /**
+     * Generates random skills for an entity based on the current settings of the random skills generator, 
+     * but does not assign those new skills to that entity
+     * @param e - an Entity
+     * @param forceClan - a boolean that forces the type to be clan if the entity is a clan unit
+     * @return an integer array of (gunnery, piloting) skill values
+     */
     public int[] getRandomSkills(Entity e, boolean forceClan) {
 
         //dont use level and type directly because they might change

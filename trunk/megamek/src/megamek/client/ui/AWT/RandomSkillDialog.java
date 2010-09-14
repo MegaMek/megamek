@@ -15,7 +15,6 @@
 /**
  * The random skill dialog allows the player to randomly assign skills to pilots based on overall experience level.
  *
- * @author  Ben
  */
 package megamek.client.ui.AWT;
 
@@ -34,10 +33,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import megamek.client.Client;
+import megamek.client.RandomSkillsGenerator;
 import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -95,7 +94,7 @@ public class RandomSkillDialog extends Dialog implements
         chMethod.add(Messages.getString("RandomSkillDialog.MethodTaharqa")); //$NON-NLS-1$
         chMethod.add(Messages.getString("RandomSkillDialog.MethodConstant")); //$NON-NLS-1$
 
-        chMethod.select(Compute.METHOD_TW);
+        chMethod.select(RandomSkillsGenerator.M_TW);
         chMethod.addItemListener(this);
         texDesc.setText(Messages.getString("RandomSkillDialog.descTW"));
 
@@ -103,14 +102,14 @@ public class RandomSkillDialog extends Dialog implements
         chType.add(Messages.getString("RandomSkillDialog.Clan")); //$NON-NLS-1$
         chType.add(Messages.getString("RandomSkillDialog.ManeiDomini")); //$NON-NLS-1$
 
-        chType.select(Compute.TYPE_IS);
+        chType.select(RandomSkillsGenerator.T_IS);
 
         chLevel.add(Messages.getString("RandomSkillDialog.Green")); //$NON-NLS-1$
         chLevel.add(Messages.getString("RandomSkillDialog.Regular")); //$NON-NLS-1$
         chLevel.add(Messages.getString("RandomSkillDialog.Veteran")); //$NON-NLS-1$
         chLevel.add(Messages.getString("RandomSkillDialog.Elite")); //$NON-NLS-1$
 
-        chLevel.select(Compute.LEVEL_REGULAR);
+        chLevel.select(RandomSkillsGenerator.L_REG);
 
         setupButtons();
 
@@ -238,6 +237,7 @@ public class RandomSkillDialog extends Dialog implements
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource() == butOkay) {
+            /*
             // go through all of the units for this player and assign random
             // skill levels
             Client c = null;
@@ -267,6 +267,7 @@ public class RandomSkillDialog extends Dialog implements
                     c.sendUpdateEntity(ent);
                 }
             }
+            */
             clientgui.chatlounge.refreshEntities();
             // need to notify about customization
             // not updating entities in server
@@ -279,14 +280,14 @@ public class RandomSkillDialog extends Dialog implements
 
     public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource() == chMethod) {
-            if (chMethod.getSelectedIndex() == Compute.METHOD_TW) {
+            if (chMethod.getSelectedIndex() == RandomSkillsGenerator.M_TW) {
                 texDesc.setText(Messages.getString("RandomSkillDialog.descTW"));
             }
-            if (chMethod.getSelectedIndex() == Compute.METHOD_TAHARQA) {
+            if (chMethod.getSelectedIndex() == RandomSkillsGenerator.M_TAHARQA) {
                 texDesc.setText(Messages
                         .getString("RandomSkillDialog.descTaharqa"));
             }
-            if (chMethod.getSelectedIndex() == Compute.METHOD_CONSTANT) {
+            if (chMethod.getSelectedIndex() == RandomSkillsGenerator.M_CONSTANT) {
                 texDesc.setText(Messages
                         .getString("RandomSkillDialog.descConstant"));
             }

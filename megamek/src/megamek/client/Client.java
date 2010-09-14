@@ -123,6 +123,7 @@ public class Client implements IClientCommandHandler {
 
     //random generators
     private RandomSkillsGenerator rsg;
+    private RandomNameGenerator rng;
     
     // And close client events!
     private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
@@ -182,6 +183,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new AddBotCommand(this));
 
         rsg = new RandomSkillsGenerator();
+        rng = new RandomNameGenerator();
         
         TimerSingleton ts = TimerSingleton.getInstance();
         /*
@@ -1387,5 +1389,9 @@ public class Client implements IClientCommandHandler {
     
     public RandomSkillsGenerator getRandomSkillsGenerator() {
         return rsg;
+    }
+    
+    public RandomNameGenerator getRandomNameGenerator() {
+        return rng;
     }
 }

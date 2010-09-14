@@ -244,6 +244,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JPanel panButtons = new JPanel();
 
+    private JButton butRandomName = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
+    
     private JButton butRandomSkill = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
 
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -371,7 +373,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         portraitDialog = new PortraitChoiceDialog(clientgui.getFrame(), butPortrait);
         portraitDialog.setPilot(entity.crew);
 
-        panPilot.add(butPortrait, GBC.eol());
+        panPilot.add(butPortrait, GBC.std().gridheight(2));
+        panPilot.add(butRandomName, GBC.eop());
+        panPilot.add(butRandomSkill, GBC.eop());
+        
         panPilot.add(labName, GBC.std());
         panPilot.add(fldName, GBC.eol());
 
@@ -406,11 +411,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panPilot.add(labFatigue, GBC.std());
             panPilot.add(fldFatigue, GBC.eop());
         }
-        
-            panPilot.add(butRandomSkill, GBC.std());
-            panPilot.add(butRandomSkill, GBC.eop());
-        
-
 
         if(client.game.getOptions().booleanOption("toughness")) {
             panPilot.add(labTough, GBC.std());
@@ -697,6 +697,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         butNext.addActionListener(this);
         butPrev.addActionListener(this);
         butRandomSkill.addActionListener(this);
+        butRandomName.addActionListener(this);
 
         // layout
         panButtons.setLayout(new GridLayout(1, 4, 10, 0));
@@ -1843,10 +1844,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     public void actionPerformed(ActionEvent actionEvent) {
 
         if (actionEvent.getSource().equals(butRandomSkill)) {
-            RandomSkillDialog rsd=new RandomSkillDialog(this,clientgui);
-            rsd.showDialog(entity);
-            fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery()));
-            fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting()));
+            int[] skills = client.getRandomSkillsGenerator().getRandomSkills(entity);
+            fldGunnery.setText(Integer.toString(skills[0]));
+            fldPiloting.setText(Integer.toString(skills[1]));
+            return;
+        }
+        if (actionEvent.getSource().equals(butRandomName)) {
+            fldName.setText(client.getRandomNameGenerator().generate());
             return;
         }
         if (actionEvent.getSource().equals(butOffBoardDistance)) {

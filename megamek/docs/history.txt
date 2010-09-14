@@ -16,6 +16,9 @@ v0.35.19-dev (SVN)
 + New units added in lobby (including by random army method) assign skills based on current settings of the random skill generator
 + Added random skill option to context menu of individual units in chat lounge
 + random name generator, see RandomNameGenerator.java for details
++ random skill button in CustomMechDialog rolls skills based on current settings rather than pulling up RandomSkillsDialog
++ random name button in CustomMechDialog
++ random name menu item in Chat Lounge unit context menu
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

@@ -1237,7 +1237,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        misc.name = "C3 Boosted System Slave";
+        misc.name = "C3 Slave Boosted";
         misc.setInternalName("ISC3BoostedSystemSlaveUnit");
         misc.addLookupName("IS C3 Boosted System Slave");
         misc.tonnage = 3;

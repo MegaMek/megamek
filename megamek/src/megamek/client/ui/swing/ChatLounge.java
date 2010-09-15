@@ -2506,24 +2506,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
                 customizeMech(entity);
-            }
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-            int row = tableEntities.getSelectedRow();
-            if (row == -1) {
-                return;
-            }
-            Entity entity = mekModel.getEntityAt(row);
-            char typed = e.getKeyChar();
-            if (String.valueOf(typed).equals("v") || String.valueOf(typed).equals("V")) {
-                e.consume();
-                mechReadout(entity);
-            } else if (String.valueOf(typed).equals("c") || String.valueOf(typed).equals("C")) {
-                e.consume();
-                customizeMech(entity);
-            }
+            }   
         }
     }
 
@@ -2608,11 +2591,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setActionCommand("VIEW|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || !blindDrop);
+                menuItem.setMnemonic(KeyEvent.VK_V);
                 popup.add(menuItem);
                 menuItem = new JMenuItem("Configure unit...");
                 menuItem.setActionCommand("CONFIGURE|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_C);
                 popup.add(menuItem);
                 menuItem = new JMenuItem("Delete unit...");
                 menuItem.setActionCommand("DELETE|" + row);
@@ -2624,11 +2609,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setActionCommand("NAME|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_N);
                 menu.add(menuItem);
                 menuItem = new JMenuItem("Skills");
                 menuItem.setActionCommand("SKILLS|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
                 popup.add(menu);
                 

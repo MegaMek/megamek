@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Vector;
@@ -72,11 +73,11 @@ public class RandomNameGenerator implements Serializable {
     Map<String, Vector<String>> factionLast;
     Map<String, Map<String, Vector<String>>> factionFirst;
     
-    private double fractionFemale;
+    private int percentFemale;
     private String chosenFaction;
     
     public RandomNameGenerator() {  
-        this.fractionFemale = 0.5;
+        this.percentFemale = 50;
         this.chosenFaction = "General";
         //TODO: I should probably thread the loading of names, like for units
         populateNames();        
@@ -259,7 +260,7 @@ public class RandomNameGenerator implements Serializable {
                         eFirst = eLast;
                     }
                     Vector<String> fnames = firstm.get(eFirst);
-                    if(Compute.randomInt(100) <= (fractionFemale*100)) {
+                    if(Compute.randomInt(100) < percentFemale) {
                         fnames = firstf.get(eFirst);
                     }
                     Vector<String> lnames = last.get(eLast);                
@@ -275,6 +276,26 @@ public class RandomNameGenerator implements Serializable {
             }
         }
         return "Unnamed";
+    }
+    
+    public Iterator<String> getFactions() {
+        return factionLast.keySet().iterator();
+    }
+    
+    public String getChosenFaction() {
+        return chosenFaction;
+    }
+    
+    public void setChosenFaction(String s) {
+        this.chosenFaction = s;
+    }
+    
+    public int getPercentFemale() {
+        return percentFemale;
+    }
+    
+    public void setPerentFemale(int i) {
+        this.percentFemale = i;
     }
     
 }

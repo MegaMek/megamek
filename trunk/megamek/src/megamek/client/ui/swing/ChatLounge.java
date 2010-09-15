@@ -122,6 +122,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     JButton butLoad;
     JButton butArmy;
     JButton butSkills;
+    JButton butNames;
     JButton butLoadCustomFS;
     private JButton butLoadList;
     private JButton butSaveList;
@@ -297,6 +298,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butLoad = new JButton(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
         butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
+        butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
         butLoadCustomFS = new JButton(Messages.getString("ChatLounge.butLoadCustomFS"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
@@ -304,8 +306,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
-
         butSkills.setEnabled(true);
+        butNames.setEnabled(true);
 
         Font font = new Font("Sans Serif", Font.BOLD, 18); //$NON-NLS-1$
         butLoad.setFont(font);
@@ -313,6 +315,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butLoad.addActionListener(this);
         butArmy.addActionListener(this);
         butSkills.addActionListener(this);
+        butNames.addActionListener(this);
         butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
         butLoadCustomFS.addActionListener(this);
 
@@ -354,6 +357,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         c.gridx = 0;
         c.gridy = 3;
+        gridbag.setConstraints(butNames, c);
+        panUnitInfo.add(butNames);
+        
+        c.gridx = 0;
+        c.gridy = 4;
         gridbag.setConstraints(butLoadCustomFS, c);
         panUnitInfo.add(butLoadCustomFS);
 
@@ -1706,6 +1714,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public void loadRandomSkills() {
         clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().game.getEntitiesVector());
     }
+    
+    public void loadRandomNames() {
+        clientgui.getRandomNameDialog().showDialog(clientgui.getClient().game.getEntitiesVector());
+    }
 
     /**
      * Changes all selected boards to be the specified board
@@ -1824,10 +1836,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             loadArmy();
         } else if (ev.getSource().equals(butSkills)) {
             loadRandomSkills();
-            /*
-             * } else if (ev.getSource().equals(butLoadCustomBA)) {
-             * loadCustomBA();
-             */
+        } else if (ev.getSource().equals(butNames)) {
+                loadRandomNames();
         } else if (ev.getSource() == butLoadCustomFS) {
             loadCustomFS();
         } else if (ev.getSource().equals(tableEntities)) {

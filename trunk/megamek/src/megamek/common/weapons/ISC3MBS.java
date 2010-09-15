@@ -32,10 +32,11 @@ public class ISC3MBS extends TAGWeapon {
     public ISC3MBS() {
         super();
         techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        name = "C3 Master Boosted System with TAG";
+        name = "C3 Master Boosted with TAG";
         setInternalName("ISC3MasterBoostedSystemUnit");
         addLookupName("IS C3 Computer Boosted");
         addLookupName("ISC3MasterComputerBoosted");
+        addLookupName("C3 Master Boosted System with TAG");
         tonnage = 6;
         criticals = 6;
         hittable = true;

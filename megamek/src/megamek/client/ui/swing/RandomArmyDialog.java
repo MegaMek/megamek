@@ -243,7 +243,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                     if (c == null) {
                         c = m_client;
                     }
-                    autoSetSkills(e);
+                    autoSetSkillsAndName(e);
                     e.setOwner(c.getLocalPlayer());
                     c.sendAddEntity(e);
                 } catch (EntityLoadingException ex) {
@@ -369,18 +369,20 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         super.setVisible(show);
     }
     
-    private void autoSetSkills(Entity e) {
+    private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if (!cs.useAverageSkills()) {
-            return;
+        if(cs.useAverageSkills()) {
+            int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+        
+            int gunnery = skills[0];   
+            int piloting = skills[1];
+      
+            e.getCrew().setGunnery(gunnery);
+            e.getCrew().setPiloting(piloting);
         }
-        int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-    
-        int gunnery = skills[0];   
-        int piloting = skills[1];
-  
-        e.getCrew().setGunnery(gunnery);
-        e.getCrew().setPiloting(piloting);
+        if(cs.generateNames()) {
+            e.getCrew().setName(m_client.getRandomNameGenerator().generate());
+        }
     }
 
 }

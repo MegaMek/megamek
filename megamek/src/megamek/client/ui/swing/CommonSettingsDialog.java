@@ -78,6 +78,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JTextField stampFormat;
     private JCheckBox defaultAutoejectDisabled;
     private JCheckBox useAverageSkills;
+    private JCheckBox generateNames;
     private JCheckBox showUnitId;
     private JComboBox displayLocale;
 
@@ -244,6 +245,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         useAverageSkills.addItemListener(this);
         tempPanel.add(useAverageSkills);
 
+        generateNames = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.generateNames")); //$NON-NLS-1$
+        generateNames.addItemListener(this);
+        tempPanel.add(generateNames);
+        
         showUnitId = new JCheckBox(Messages
                 .getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
@@ -355,6 +361,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
         useAverageSkills.setSelected(cs.useAverageSkills());
+        generateNames.setSelected(cs.generateNames());
         showUnitId.setSelected(cs.getShowUnitId());
 
         int index = 0;
@@ -433,6 +440,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         cs.setUseAverageSkills(useAverageSkills.isSelected());
+        cs.setGenerateNames(generateNames.isSelected());
         cs.setShowUnitId(showUnitId.isSelected());
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale

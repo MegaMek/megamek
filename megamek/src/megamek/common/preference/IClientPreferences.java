@@ -47,6 +47,7 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
     public static final String USE_AVERAGE_SKILLS = "UseAverageSkills";
+    public static final String GENERATE_NAMES = "GenerateNames";
     public static final String METASERVER_NAME = "MetaServerName";
     public static final String GOAL_PLAYERS = "GoalPlayers";
     public static final String GUI_NAME = "GUIName";
@@ -61,6 +62,8 @@ public interface IClientPreferences extends IPreferenceStore {
     boolean defaultAutoejectDisabled();
 
     boolean useAverageSkills();
+    
+    boolean generateNames();
 
     String getLastConnectAddr();
 
@@ -115,6 +118,8 @@ public interface IClientPreferences extends IPreferenceStore {
     void setDefaultAutoejectDisabled(boolean state);
 
     void setUseAverageSkills(boolean state);
+    
+    void setGenerateNames(boolean state);
 
     void setKeepGameLog(boolean state);
 

@@ -417,8 +417,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             if (c == null) {
                 c = client;
             }
-            autoSetSkills(e);
-            //e.getCrew().setName(c.getRandomNameGenerator().generate());
+            autoSetSkillsAndName(e);
             e.setOwner(c.getLocalPlayer());
             c.sendAddEntity(e);
         }
@@ -577,18 +576,20 @@ public class MechSelectorDialog extends JDialog implements Runnable,
        }
     }
 
-    private void autoSetSkills(Entity e) {
+    private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if (!cs.useAverageSkills()) {
-            return;
+        if(cs.useAverageSkills()) {
+            int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+        
+            int gunnery = skills[0];   
+            int piloting = skills[1];
+      
+            e.getCrew().setGunnery(gunnery);
+            e.getCrew().setPiloting(piloting);
         }
-        int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e, true);
-    
-        int gunnery = skills[0];   
-        int piloting = skills[1];
-  
-        e.getCrew().setGunnery(gunnery);
-        e.getCrew().setPiloting(piloting);
+        if(cs.generateNames()) {
+            e.getCrew().setName(client.getRandomNameGenerator().generate());
+        }
     }
 
      public void run() {

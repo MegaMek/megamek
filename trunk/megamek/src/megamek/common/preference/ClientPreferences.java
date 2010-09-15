@@ -48,6 +48,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
         store.setDefault(USE_AVERAGE_SKILLS, true);
+        store.setDefault(GENERATE_NAMES, true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
         store.setDefault(BOARD_WIDTH, 16);
         store.setDefault(BOARD_HEIGHT, 17);
@@ -71,6 +72,10 @@ class ClientPreferences extends PreferenceStoreProxy implements
 
     public boolean useAverageSkills() {
         return store.getBoolean(USE_AVERAGE_SKILLS);
+    }
+    
+    public boolean generateNames() {
+        return store.getBoolean(GENERATE_NAMES);
     }
 
     public String getLastConnectAddr() {
@@ -173,6 +178,10 @@ class ClientPreferences extends PreferenceStoreProxy implements
 
     public void setUseAverageSkills(boolean state) {
         store.setValue(USE_AVERAGE_SKILLS, state);
+    }
+    
+    public void setGenerateNames(boolean state) {
+        store.setValue(GENERATE_NAMES, state);
     }
 
     public void setKeepGameLog(boolean state) {

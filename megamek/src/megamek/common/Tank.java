@@ -71,6 +71,10 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_LOCK = 13;
     public static final int CRIT_TURRET_DESTROYED = 14;
 
+    public static final int TARGETING_NONE = 0;
+    public static final int TARGETING_BASIC = 1;
+    public static final int TARGETING_ADVANCED = 2;
+
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS =
         { 25, 25, 25, 25, 25, 25 };
@@ -621,7 +625,7 @@ public class Tank extends Entity {
         }
 
         // total armor points
-        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1);
+        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1) * (getBARRating() / 10);
 
         // total internal structure
         dbv += getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1);
@@ -736,6 +740,17 @@ public class Tank extends Entity {
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
+            } else if (!wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                switch (getTargetingSystem()) {
+                    case Tank.TARGETING_ADVANCED:
+                        break;
+                    case Tank.TARGETING_BASIC:
+                        dBV *= .9;
+                        break;
+                    case Tank.TARGETING_NONE:
+                        dBV *= .8;
+                        break;
+                }
             }
             if (mounted.getLocation() == LOC_REAR) {
                 weaponsBVRear += dBV;
@@ -1772,4 +1787,12 @@ public class Tank extends Entity {
         // No Mek Stealth or system inactive. Return false.
         return false;
     }
+
+    public void setTargetingSystem(int system) {
+    }
+
+    public int getTargetingSystem() {
+        return Tank.TARGETING_ADVANCED;
+    }
+
 }

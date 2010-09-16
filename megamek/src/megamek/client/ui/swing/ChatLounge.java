@@ -1111,6 +1111,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 final Player p_b = clientgui.getClient().game.getPlayer(b.getOwnerId());// b.getOwner();
                 final int t_a = p_a.getTeam();
                 final int t_b = p_b.getTeam();
+                final int tr_a = a.getTransportId();
+                final int tr_b = b.getTransportId();
                 if (p_a.equals(clientgui.getClient().getLocalPlayer()) && !p_b.equals(clientgui.getClient().getLocalPlayer())) {
                     return -1;
                 } else if (p_b.equals(clientgui.getClient().getLocalPlayer()) && !p_a.equals(clientgui.getClient().getLocalPlayer())) {
@@ -1124,7 +1126,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 } else if (!p_a.equals(p_b)) {
                     return p_a.getName().compareTo(p_b.getName());
                 } else {
-                    return a.getId() - b.getId();
+                    int a_id = a.getId();
+                    int b_id = b.getId();
+                    //loaded units should be put immediately below their parent unit
+                   //if a unit's transport ID is not none, then it should replace their actual id
+                    if(tr_b != Entity.NONE) {
+                        if(tr_b == a_id) {
+                            //b is loaded on a
+                            return -1;
+                        }
+                        b_id = tr_b;
+                    }
+                    else if(tr_a != Entity.NONE && tr_a == b_id) {
+                        if(tr_a == b_id) {
+                            //a is loaded on b
+                            return 1;
+                        }
+                        a_id = tr_a;
+                    }
+                    return a_id - b_id;
                 }
             }
         });
@@ -2734,7 +2754,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         private static final long serialVersionUID = -7337823041775639463L;
 
         private JLabel lblImage;
-
+        
         public MekInfo() {
 
             lblImage = new JLabel();

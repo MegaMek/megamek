@@ -3507,7 +3507,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 }
             }
 
-            if (entity.crew.isDead()) {
+            if (entity.getCrew().isDead()) {
                 // draw "CREW DEAD"
                 graph.setColor(Color.darkGray);
                 graph.drawString(

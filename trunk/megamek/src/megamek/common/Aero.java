@@ -272,7 +272,7 @@ public class Aero extends Entity
 
     public boolean isOutControlTotal() {
         //due to control roll, heat, shut down, or crew unconscious
-        return (outControl || shutDown || crew.isUnconscious());
+        return (outControl || shutDown || getCrew().isUnconscious());
     }
 
     public boolean isOutControl() {
@@ -2017,7 +2017,7 @@ public class Aero extends Entity
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
@@ -2129,7 +2129,7 @@ public class Aero extends Entity
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(crew.getDescVector(false));
+        vDesc.addAll(getCrew().getDescVector(false));
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);
@@ -3015,7 +3015,7 @@ public class Aero extends Entity
     }
 
     public int getECCMTarget() {
-        return crew.getPiloting() + getSensorHits() + getCICHits() + getFCSHits();
+        return getCrew().getPiloting() + getSensorHits() + getCICHits() + getFCSHits();
     }
 
     public int getECCMBonus() {

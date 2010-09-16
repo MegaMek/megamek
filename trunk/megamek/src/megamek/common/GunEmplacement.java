@@ -286,7 +286,7 @@ public class GunEmplacement extends Tank implements Serializable {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
         // structure modifier
@@ -317,7 +317,7 @@ public class GunEmplacement extends Tank implements Serializable {
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(crew.getDescVector(false));
+        vDesc.addAll(getCrew().getDescVector(false));
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);

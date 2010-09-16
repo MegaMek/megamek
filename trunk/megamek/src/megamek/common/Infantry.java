@@ -662,7 +662,7 @@ public class Infantry extends Entity implements Serializable {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier(isAntiMek());
+            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMek());
         }
         return (int) Math.round((bv) * pilotFactor);
 
@@ -681,7 +681,7 @@ public class Infantry extends Entity implements Serializable {
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(crew.getDescVector(true));
+        vDesc.addAll(getCrew().getDescVector(true));
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);

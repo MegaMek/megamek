@@ -881,7 +881,7 @@ public class BattleArmor extends Infantry {
         // Adjust BV for crew skills.
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier(isAntiMek());
+            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMek());
         }
 
         int retVal = (int) Math.round(squadBV * pilotFactor);

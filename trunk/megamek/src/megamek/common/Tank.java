@@ -913,7 +913,7 @@ public class Tank extends Entity {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
@@ -968,7 +968,7 @@ public class Tank extends Entity {
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(crew.getDescVector(false));
+        vDesc.addAll(getCrew().getDescVector(false));
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);
@@ -1408,7 +1408,7 @@ public class Tank extends Entity {
             if (loc == LOC_FRONT) {
                 switch (roll) {
                     case 6:
-                        if (!crew.isDead() && !crew.isDoomed()) {
+                        if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             if (!isDriverHit()) {
                                 return CRIT_DRIVER;
                             } else if (!isCommanderHit()) {
@@ -1436,7 +1436,7 @@ public class Tank extends Entity {
                             return CRIT_SENSOR;
                         }
                     case 10:
-                        if (!crew.isDead() && !crew.isDoomed()) {
+                        if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             if (!isCommanderHit()) {
                                 return CRIT_COMMANDER;
                             } else if (!isDriverHit()) {
@@ -1452,7 +1452,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if (!crew.isDead() && !crew.isDoomed()) {
+                        if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             return CRIT_CREW_KILLED;
                         }
                 }
@@ -1551,7 +1551,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 8:
-                        if (!crew.isDead() && !crew.isDoomed()) {
+                        if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             if (isCommanderHit() && isDriverHit()) {
                                 return CRIT_CREW_KILLED;
                             }

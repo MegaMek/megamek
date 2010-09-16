@@ -278,7 +278,7 @@ public class VTOL extends Tank {
                     case 6:
                         if (!isDriverHit()) {
                             return CRIT_COPILOT;
-                        } else if (!crew.isDead() && !crew.isDoomed()) {
+                        } else if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             return CRIT_CREW_KILLED;
                         }
                     case 7:
@@ -303,7 +303,7 @@ public class VTOL extends Tank {
                     case 10:
                         if (!isCommanderHit()) {
                             return CRIT_PILOT;
-                        } else if (!crew.isDead() && !crew.isDoomed()) {
+                        } else if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             return CRIT_CREW_KILLED;
                         }
                     case 11:
@@ -314,7 +314,7 @@ public class VTOL extends Tank {
                             }
                         }
                     case 12:
-                        if (!crew.isDead() && !crew.isDoomed()) {
+                        if (!getCrew().isDead() && !getCrew().isDoomed()) {
                             return CRIT_CREW_KILLED;
                         }
                 }

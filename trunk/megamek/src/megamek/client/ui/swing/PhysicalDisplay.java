@@ -587,10 +587,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if (!SearchlightAttackAction.isPossible(clientgui.getClient().game,
+     /*   if (!SearchlightAttackAction.isPossible(clientgui.getClient().game,
                 cen, target, null)) {
             return;
-        }
+        }*/
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target

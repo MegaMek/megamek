@@ -18,6 +18,7 @@ import java.io.Serializable;
 
 /**
  * This is a support vehicle
+ * 
  * @author beerockxs
  */
 public class SupportTank extends Tank implements Serializable {
@@ -27,6 +28,7 @@ public class SupportTank extends Tank implements Serializable {
      */
     private static final long serialVersionUID = -9028127010133768714L;
     private int barRating;
+    private int targetingSystem;
 
     public void setBARRating(int rating) {
         barRating = rating;
@@ -34,6 +36,7 @@ public class SupportTank extends Tank implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
@@ -43,6 +46,7 @@ public class SupportTank extends Tank implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.Entity#hasBARArmor()
      */
     @Override
@@ -52,6 +56,7 @@ public class SupportTank extends Tank implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.Entity#hasArmoredChassis()
      */
     @Override
@@ -74,36 +79,18 @@ public class SupportTank extends Tank implements Serializable {
         }
         switch (movementMode) {
             case TRACKED:
-                return (hex.terrainLevel(Terrains.WOODS) > 1)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE)
-                                && !hasEnvironmentalSealing())
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                return (hex.terrainLevel(Terrains.WOODS) > 1) || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE) && !hasEnvironmentalSealing()) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.MAGMA) > 1);
             case WHEELED:
-                return hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.ROUGH)
-                        || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE)
-                                && !hasEnvironmentalSealing())
-                        || hex.containsTerrain(Terrains.RUBBLE)
-                        || hex.containsTerrain(Terrains.MAGMA)
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.SNOW) > 1)
-                        || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH) || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE) && !hasEnvironmentalSealing()) || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1) || (hex.terrainLevel(Terrains.GEYSER) == 2);
             case HOVER:
-                return hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.MAGMA) > 1);
             case NAVAL:
             case HYDROFOIL:
-                return (hex.terrainLevel(Terrains.WATER) <= 0)
-                        || hex.containsTerrain(Terrains.ICE);
+                return (hex.terrainLevel(Terrains.WATER) <= 0) || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS)
-                        || hex.containsTerrain(Terrains.BUILDING));
+                return (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.BUILDING));
             default:
                 return false;
         }
@@ -111,10 +98,19 @@ public class SupportTank extends Tank implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
+    }
+
+    public void setTargetingSystem(int system) {
+        targetingSystem = system;
+    }
+
+    public int getTargetingSystem() {
+        return targetingSystem;
     }
 }

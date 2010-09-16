@@ -101,7 +101,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
-    public Pilot crew = new Pilot();
+    private Pilot crew = new Pilot();
 
     private Quirks quirks = new Quirks();
 

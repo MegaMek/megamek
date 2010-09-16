@@ -2358,9 +2358,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
             } else if (col == COL_PILOT) {
                 if(compact) {
-                    return formatPilotCompact(entity.crew, blindDrop);
+                    return formatPilotCompact(entity.getCrew(), blindDrop);
                 }
-                return formatPilotHTML(entity.crew, blindDrop);
+                return formatPilotHTML(entity.getCrew(), blindDrop);
             } else {
                 if(compact) {
                     return formatUnitCompact(entity, blindDrop);
@@ -2419,9 +2419,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         if(compact) {
                             clearImage();
                         } else {
-                            setPortrait(entity.crew);
+                            setPortrait(entity.getCrew());
                         }
-                        setToolTipText(formatPilotTooltip(entity.crew,
+                        setToolTipText(formatPilotTooltip(entity.getCrew(),
                                 clientgui.getClient().game.getOptions().booleanOption("command_init"),
                                 clientgui.getClient().game.getOptions().booleanOption("individual_initiative"),
                                 clientgui.getClient().game.getOptions().booleanOption("toughness")));

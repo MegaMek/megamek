@@ -3206,7 +3206,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     }
                 }
 
-                if (entity.crew.isDead()) {
+                if (entity.getCrew().isDead()) {
                     // draw "CREW DEAD"
                     graph.setColor(Color.darkGray);
                     graph.drawString(Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$

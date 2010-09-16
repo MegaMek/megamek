@@ -290,12 +290,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
             pilotR
-                    .setString(en.crew.getDesc()
-                            + " (" + en.crew.getGunneryRPG() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    .setString(en.getCrew().getDesc()
+                            + " (" + en.getCrew().getGunneryRPG() + "/" + en.getCrew().getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else {
             pilotR
-                    .setString(en.crew.getDesc()
-                            + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    .setString(en.getCrew().getDesc()
+                            + " (" + en.getCrew().getGunnery() + "/" + en.getCrew().getPiloting() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
 
         ejectR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
@@ -320,9 +320,9 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         int i = 0;
-        for (Enumeration<IOptionGroup> advGroups = en.crew.getOptions().getGroups(); advGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups.hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
-            if(en.crew.countOptions(advGroup.getKey()) > 0) {
+            if(en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();

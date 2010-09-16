@@ -186,7 +186,7 @@ public class TeleMissile extends Aero {
     @Override
     public boolean isOutControlTotal() {
         //due to control roll, heat, shut down, or crew unconscious
-        return (isOutControl() || outContact || shutDown || crew.isUnconscious());
+        return (isOutControl() || outContact || shutDown || getCrew().isUnconscious());
     }
 
     public void setCritMod(int m) {

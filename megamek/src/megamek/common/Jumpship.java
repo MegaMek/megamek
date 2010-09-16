@@ -788,7 +788,7 @@ public class Jumpship extends Aero {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);

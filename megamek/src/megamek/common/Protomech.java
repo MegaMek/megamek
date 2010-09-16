@@ -1002,7 +1002,7 @@ public class Protomech extends Entity {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
@@ -1022,7 +1022,7 @@ public class Protomech extends Entity {
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(crew.getDescVector(true));
+        vDesc.addAll(getCrew().getDescVector(true));
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);

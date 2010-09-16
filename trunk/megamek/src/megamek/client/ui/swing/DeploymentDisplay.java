@@ -537,6 +537,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     other.setTransportId(Entity.NONE);
                     other.newRound(clientgui.getClient().game.getRoundCount());
                 }
+                //if any of these were loaded in the chat lounge I need to reload them however
+                for(Entity other : ce().getLoadedKeepers()) {
+                    ce().load(other);
+                    other.setTransportId(ce().getId());
+                }
             }
             selectEntity(clientgui.getClient().getNextDeployableEntityNum(cen));
         } else if (ev.getActionCommand().equals(DEPLOY_TURN)) {

@@ -123,6 +123,7 @@ import megamek.common.TeleMissile;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.Transporter;
 import megamek.common.TurnOrdered;
 import megamek.common.TurnVectors;
 import megamek.common.UnitLocation;
@@ -2039,6 +2040,17 @@ public class Server implements Runnable {
                     ((Aero) entity).applyBombs();
                 }
             }
+            
+            //if units were loaded in the chat lounge, I need to keep track of it here
+            //because they can get dumped in the deployment phase
+            if(entity.getLoadedUnits().size() > 0) {
+                Vector<Entity> v = new Vector<Entity>();
+                for(Entity en : entity.getLoadedUnits()) {
+                    v.add(en);
+                }
+                entity.setLoadedKeepers(v);
+            }
+            
             entityUpdate(entity.getId());
         }
     }
@@ -8780,7 +8792,7 @@ public class Server implements Runnable {
         Vector<Entity> loadVector = new Vector<Entity>();
         for (int i = 0; i < loadedCount; i++) {
             int loadedId = packet.getIntValue(6 + i);
-            loadVector.addElement(game.getEntity(loadedId));
+           loadVector.addElement(game.getEntity(loadedId));
         }
 
         // is this the right phase?
@@ -8816,6 +8828,7 @@ public class Server implements Runnable {
      */
     private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
             boolean assaultDrop) {
+        
         for (Entity loaded : loadVector) {
             if ((loaded == null) || (loaded.getPosition() != null) || (loaded.getTransportId() != Entity.NONE)) {
                 // Something is fishy in Denmark.

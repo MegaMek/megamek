@@ -282,12 +282,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The ID of the <code>Entity</code> that has loaded this unit.
      */
     private int conveyance = Entity.NONE;
-
+    
     /**
      * Set to <code>true</code> if this unit was unloaded this turn.
      */
     private boolean unloadedThisTurn = false;
 
+    /**
+     * Need to keep a vector of entities loaded in the chat lounge
+     */
+    private Vector<Entity> loadedKeepers = new Vector<Entity>();
+    
     /**
      * The id of the <code>Entity</code> that is the current target of a swarm
      * attack by this unit.
@@ -5385,7 +5390,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void load(Entity unit) {
         this.load(unit, true);
     }
-
+    
     /**
      * Recover the given unit. Only for ASF and Small Craft
      * 
@@ -9309,6 +9314,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         public void setMMLImagePath(String filePath) {
             mmlImageFilePath = filePath;
         }
+    }
+    
+    public Vector<Entity> getLoadedKeepers() {
+        return loadedKeepers;
+    }
+    
+    public void setLoadedKeepers(Vector<Entity> v) {
+         this.loadedKeepers = v;
     }
 
 }

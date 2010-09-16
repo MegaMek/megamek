@@ -1609,10 +1609,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         if(loader == null) {
             return;
         }
-        loader.load(loadee);
+        loader.load(loadee, false);
         loadee.setTransportId(loader.getId());
         //TODO: it would probably be a good idea to reset deployment
         //info to equal that of the loader, and disable it in customMechDialog
+        //I tried doing this but I cant quite figure out the client/server interaction in CustomMechDialog.java
         c.sendUpdateEntity(loadee);
         c.sendUpdateEntity(loader);
     }
@@ -1788,14 +1789,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * clientgui.getCustomBADialog().setVisible(true); }
      */
 
-    public void loadCustomFS() {
+    public FighterSquadron loadCustomFS() {
         String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
         if ((name == null) || (name.trim().length() == 0)) {
-            name = "";
+            name = "Flying Circus";
         }
         FighterSquadron fs = new FighterSquadron(name);
         fs.setOwner(clientgui.getClient().getLocalPlayer());
         clientgui.getClient().sendAddEntity(fs);
+        return fs;
     }
 
     private void loadArmy() {
@@ -2653,6 +2655,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             else if (command.equalsIgnoreCase("UNLOAD")) {
                 unloader(entity);
             }
+            else if (command.equalsIgnoreCase("SQUADRON")) {
+                FighterSquadron fs = loadCustomFS();
+                loader(entity, fs.getId());
+            }
             
         }
 
@@ -2739,6 +2745,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setActionCommand("UNLOAD|" + row);
                 menuItem.addActionListener(this);
                 menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() != Entity.NONE);
+                popup.add(menuItem);
+                menuItem = new JMenuItem("Start Fighter Squadron");
+                menuItem.setActionCommand("SQUADRON|" + row);
+                menuItem.addActionListener(this);
+                menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
                 popup.add(menuItem);
                 
                 popup.show(e.getComponent(), e.getX(), e.getY());

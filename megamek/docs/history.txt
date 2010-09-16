@@ -28,6 +28,7 @@ v0.35.19-dev (SVN)
 + Added Encode Method for VTOL
 + load and unload units in the lobby
 + helper functions for unloading, loading, and deleting units in the lobby
++ units loaded on other units are sorted immediately below their loaded unit
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

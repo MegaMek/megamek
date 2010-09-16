@@ -1574,6 +1574,68 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         customizeMech(mekModel.getEntityAt(tableEntities.getSelectedRow()));
     }
+    
+    /**
+     * Load one unit into another in the chat lounge
+     * @param loadee - an Entity that should be loaded
+     * @param loaderId - the id of the entity that will load
+     */
+    private void loader(Entity loadee, int loaderId) {
+        Client c = clientgui.getBots().get(loadee.getOwner().getName());
+        if (c == null) {
+            c = clientgui.getClient();
+        }
+        Entity loader = clientgui.getClient().game.getEntity(loaderId);
+        if(loader == null) {
+            return;
+        }
+        loader.load(loadee);
+        loadee.setTransportId(loader.getId());
+        //TODO: it would probably be a good idea to reset deployment
+        //info to equal that of the loader, and disable it in customMechDialog
+        c.sendUpdateEntity(loadee);
+        c.sendUpdateEntity(loader);
+    }
+    
+    /**
+     * Unload a unit in the chat lounge
+     * @param unloadee - the Entity to be unloaded
+     */
+    private void unloader(Entity unloadee) {
+        Client c = clientgui.getBots().get(unloadee.getOwner().getName());
+        if (c == null) {
+            c = clientgui.getClient();
+        }
+        Entity unloader = clientgui.getClient().game.getEntity(unloadee.getTransportId());
+        if(null == unloader) {
+            return;
+        }
+        unloader.unload(unloadee);
+        unloadee.setTransportId(Entity.NONE);
+        c.sendUpdateEntity(unloadee);
+        c.sendUpdateEntity(unloader);
+    }
+    
+    /**
+     * Delete an entity from the lobby
+     * @param entity
+     */
+    private void delete(Entity entity) {
+        Client c = clientgui.getBots().get(entity.getOwner().getName());
+        if (c == null) {
+            c = clientgui.getClient();
+        }
+        //first unload any units from this unit
+        if(entity.getLoadedUnits().size() > 0) {
+            for(Entity loaded : entity.getLoadedUnits()) {
+                entity.unload(loaded);
+                loaded.setTransportId(Entity.NONE);
+                c.sendUpdateEntity(loaded);
+            }
+            c.sendUpdateEntity(entity);
+        }
+        c.sendDeleteEntity(entity.getId());
+    }
 
     public void customizeMech(Entity entity) {
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
@@ -2504,20 +2566,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             int code = e.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
-                Client c = clientgui.getBots().get(entity.getOwner().getName());
-                if (c == null) {
-                    c = clientgui.getClient();
-                }
-                //first unload any units from this unit
-                if(entity.getLoadedUnits().size() > 0) {
-                    for(Entity loaded : entity.getLoadedUnits()) {
-                        entity.unload(loaded);
-                        loaded.setTransportId(Entity.NONE);
-                        c.sendUpdateEntity(loaded);
-                    }
-                    c.sendUpdateEntity(entity);
-                }
-                c.sendDeleteEntity(entity.getId());
+                delete(entity);
             } else if (code == KeyEvent.VK_SPACE) {
                 e.consume();
                 mechReadout(entity);
@@ -2578,21 +2627,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             else if (command.equalsIgnoreCase("LOAD")) {
                 int id = Integer.parseInt(st.nextToken());
-                Entity loader = clientgui.getClient().game.getEntity(id);
-                loader.load(entity);
-                entity.setTransportId(loader.getId());
-                clientgui.getClient().sendUpdateEntity(entity);
-                clientgui.getClient().sendUpdateEntity(loader);
+                loader(entity, id);
             }
             else if (command.equalsIgnoreCase("UNLOAD")) {
-                Entity loader = clientgui.getClient().game.getEntity(entity.getTransportId());
-                if(null == loader) {
-                    return;
-                }
-                loader.unload(entity);
-                entity.setTransportId(Entity.NONE);
-                clientgui.getClient().sendUpdateEntity(entity);
-                clientgui.getClient().sendUpdateEntity(loader);
+                unloader(entity);
             }
             
         }

@@ -25,6 +25,7 @@ v0.35.19-dev (SVN)
 + hotkeys in Chat Lounge command/control + (v=view unit, c=configure unit, r=random name, s=random skill)
 + RFE: Added BV modifiers for Tanks with BAR Ratings
 + RFE: Added BV Modifiers for Tanks with Non-Advanced Targeting systems
++ Added Encode Method for VTOL
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

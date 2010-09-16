@@ -3880,7 +3880,7 @@ public class Compute {
         }
 
         // MD Infantry with grappler/magnets get bonus
-        if (attacker.crew.getOptions().booleanOption("grappler")) {
+        if (attacker.getCrew().getOptions().booleanOption("grappler")) {
             data.addModifier(-2, "MD Grapple/Magnet");
         }
 

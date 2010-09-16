@@ -497,18 +497,18 @@ public class FighterSquadron extends Aero {
         int gunneryBTotal = 0;
         for(Aero fighter : fighters) {
             if(!fighter.isDestroyed() && !fighter.isDoomed()) {
-                pilotingTotal += fighter.crew.getPiloting();
-                gunneryTotal += fighter.crew.getGunnery();
-                gunneryLTotal += fighter.crew.getGunneryL();
-                gunneryMTotal += fighter.crew.getGunneryM();
-                gunneryBTotal += fighter.crew.getGunneryB();
+                pilotingTotal += fighter.getCrew().getPiloting();
+                gunneryTotal += fighter.getCrew().getGunnery();
+                gunneryLTotal += fighter.getCrew().getGunneryL();
+                gunneryMTotal += fighter.getCrew().getGunneryM();
+                gunneryBTotal += fighter.getCrew().getGunneryB();
             }
         }
-        crew.setPiloting(pilotingTotal / getN0Fighters());
-        crew.setGunnery(gunneryTotal / getN0Fighters());
-        crew.setGunneryL(gunneryTotal / getN0Fighters());
-        crew.setGunneryM(gunneryTotal / getN0Fighters());
-        crew.setGunneryB(gunneryTotal / getN0Fighters());
+        getCrew().setPiloting(pilotingTotal / getN0Fighters());
+        getCrew().setGunnery(gunneryTotal / getN0Fighters());
+        getCrew().setGunneryL(gunneryTotal / getN0Fighters());
+        getCrew().setGunneryM(gunneryTotal / getN0Fighters());
+        getCrew().setGunneryB(gunneryTotal / getN0Fighters());
     }
 
     @Override

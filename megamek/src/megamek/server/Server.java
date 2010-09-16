@@ -1146,9 +1146,9 @@ public class Server implements Runnable {
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = e.nextElement();
 
-            if (entity.crew.isDoomed()) {
-                entity.crew.setDoomed(false);
-                entity.crew.setDead(true);
+            if (entity.getCrew().isDoomed()) {
+                entity.getCrew().setDoomed(false);
+                entity.getCrew().setDead(true);
                 if (entity instanceof Tank) {
                     entity.setCarcass(true);
                     ((Tank) entity).immobilize();
@@ -12284,7 +12284,7 @@ public class Server implements Runnable {
 
         // should we even bother?
         if ((target == null)
-                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.crew
+                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.getCrew()
                         .isDead()))) {
             r = new Report(4190);
             r.subject = ae.getId();
@@ -12459,7 +12459,7 @@ public class Server implements Runnable {
 
         // should we even bother?
         if ((target == null)
-                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.crew
+                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.getCrew()
                         .isDead()))) {
             r = new Report(4190);
             r.subject = ae.getId();
@@ -12577,7 +12577,7 @@ public class Server implements Runnable {
 
         // should we even bother?
         if ((target == null)
-                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.crew
+                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.getCrew()
                         .isDead()))) {
             r = new Report(4190);
             r.subject = ae.getId();
@@ -12981,7 +12981,7 @@ public class Server implements Runnable {
 
         // should we even bother?
         if ((target == null)
-                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.crew
+                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te.isDestroyed() || te.isDoomed() || te.getCrew()
                         .isDead()))) {
             r = new Report(4245);
             r.subject = ae.getId();
@@ -13325,7 +13325,7 @@ public class Server implements Runnable {
                 Aero a = (Aero) entity;
 
                 // should we even bother?
-                if (entity.isDestroyed() || entity.isDoomed() || entity.crew.isDoomed() || entity.crew.isDead()) {
+                if (entity.isDestroyed() || entity.isDoomed() || entity.getCrew().isDoomed() || entity.getCrew().isDead()) {
                     continue;
                 }
 
@@ -13395,7 +13395,7 @@ public class Server implements Runnable {
                             int startup = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                             if (mtHeat) {
                                 startup -= 5;
-                                switch (entity.crew.getPiloting()) {
+                                switch (entity.getCrew().getPiloting()) {
                                 case 0:
                                 case 1:
                                     startup -= 2;
@@ -13452,7 +13452,7 @@ public class Server implements Runnable {
                         int shutdown = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                         if (mtHeat) {
                             shutdown -= 5;
-                            switch (entity.crew.getPiloting()) {
+                            switch (entity.getCrew().getPiloting()) {
                             case 0:
                             case 1:
                                 shutdown -= 2;
@@ -13576,7 +13576,7 @@ public class Server implements Runnable {
                 }
 
                 // The pilot may have just expired.
-                if ((entity.crew.isDead() || entity.crew.isDoomed()) && !entity.crew.isEjected()) {
+                if ((entity.getCrew().isDead() || entity.getCrew().isDoomed()) && !entity.getCrew().isEjected()) {
                     r = new Report(5080);
                     r.subject = entity.getId();
                     r.addDesc(entity);
@@ -13624,7 +13624,7 @@ public class Server implements Runnable {
             }
 
             // should we even bother?
-            if (entity.isDestroyed() || entity.isDoomed() || entity.crew.isDoomed() || entity.crew.isDead()) {
+            if (entity.isDestroyed() || entity.isDoomed() || entity.getCrew().isDoomed() || entity.getCrew().isDead()) {
                 continue;
             }
 
@@ -13865,7 +13865,7 @@ public class Server implements Runnable {
                         int startup = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                         if (mtHeat) {
                             startup -= 5;
-                            switch (entity.crew.getPiloting()) {
+                            switch (entity.getCrew().getPiloting()) {
                             case 0:
                             case 1:
                                 startup -= 2;
@@ -13928,7 +13928,7 @@ public class Server implements Runnable {
                     int shutdown = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
                     if (mtHeat) {
                         shutdown -= 5;
-                        switch (entity.crew.getPiloting()) {
+                        switch (entity.getCrew().getPiloting()) {
                         case 0:
                         case 1:
                             shutdown -= 2;
@@ -14018,7 +14018,7 @@ public class Server implements Runnable {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0) && ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat >= 0)))
-                    && !entity.crew.isDead() && !entity.crew.isDoomed() && !entity.crew.isEjected()) {
+                    && !entity.getCrew().isDead() && !entity.getCrew().isDoomed() && !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
                 if ((damageHeat >= 47) && mtHeat) {
@@ -14044,7 +14044,7 @@ public class Server implements Runnable {
                 }
                 if ((damageHeat > 0) && (entity instanceof Mech)
                         && (((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                        && !entity.crew.getOptions().booleanOption("pain_shunt")) {
+                        && !entity.getCrew().getOptions().booleanOption("pain_shunt")) {
                     damageToCrew += 1;
                 }
                 r = new Report(5070);
@@ -14054,8 +14054,8 @@ public class Server implements Runnable {
                 r.add(damageToCrew);
                 addReport(r);
                 addReport(damageCrew(entity, damageToCrew));
-            } else if (mtHeat && (entity.heat >= 32) && !entity.crew.isDead() && !entity.crew.isDoomed()
-                    && !entity.crew.getOptions().booleanOption("pain_shunt")) {
+            } else if (mtHeat && (entity.heat >= 32) && !entity.getCrew().isDead() && !entity.getCrew().isDoomed()
+                    && !entity.getCrew().getOptions().booleanOption("pain_shunt")) {
                 // Pilot may take damage from heat if MaxTech option is set
                 int heatroll = Compute.d6(2);
                 int avoidNumber = -1;
@@ -14084,7 +14084,7 @@ public class Server implements Runnable {
             }
 
             // The pilot may have just expired.
-            if ((entity.crew.isDead() || entity.crew.isDoomed()) && !entity.crew.isEjected()) {
+            if ((entity.getCrew().isDead() || entity.getCrew().isDoomed()) && !entity.getCrew().isEjected()) {
                 r = new Report(5080);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -15092,7 +15092,7 @@ public class Server implements Runnable {
         }
 
         // no consciousness roll for pain-shunted warriors
-        if (e.crew.getOptions().booleanOption("pain_shunt")) {
+        if (e.getCrew().getOptions().booleanOption("pain_shunt")) {
             return vDesc;
         }
 
@@ -15104,12 +15104,12 @@ public class Server implements Runnable {
         for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
             if(game.getOptions().booleanOption("toughness")) {
-                rollTarget -= e.crew.getToughness();
+                rollTarget -= e.getCrew().getToughness();
             }
             boolean edgeUsed = false;
             do {
                 if (edgeUsed) {
-                    e.crew.decreaseEdge();
+                    e.getCrew().decreaseEdge();
                 }
                 int roll = Compute.d6(2);
                 if (e.getCrew().getOptions().booleanOption("pain_resistance")) {
@@ -15123,28 +15123,28 @@ public class Server implements Runnable {
                 r.add(rollTarget);
                 r.add(roll);
                 if (roll >= rollTarget) {
-                    e.crew.setKoThisRound(false);
+                    e.getCrew().setKoThisRound(false);
                     r.choose(true);
                 } else {
-                    e.crew.setKoThisRound(true);
+                    e.getCrew().setKoThisRound(true);
                     r.choose(false);
-                    if (e.crew.hasEdgeRemaining() && e.crew.getOptions().booleanOption("edge_when_ko")) {
+                    if (e.getCrew().hasEdgeRemaining() && e.getCrew().getOptions().booleanOption("edge_when_ko")) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
                         r.subject = e.getId();
                         r.addDesc(e);
                         r.add(e.getCrew().getName());
-                        r.add(e.crew.getOptions().intOption("edge"));
+                        r.add(e.getCrew().getOptions().intOption("edge"));
                     } // if
                     // return true;
                 } // else
                 vDesc.add(r);
-            } while (e.crew.hasEdgeRemaining() && e.crew.isKoThisRound()
-                    && e.crew.getOptions().booleanOption("edge_when_ko"));
+            } while (e.getCrew().hasEdgeRemaining() && e.getCrew().isKoThisRound()
+                    && e.getCrew().getOptions().booleanOption("edge_when_ko"));
             // end of do-while
-            if (e.crew.isKoThisRound()) {
-                e.crew.setUnconscious(true);
+            if (e.getCrew().isKoThisRound()) {
+                e.getCrew().setUnconscious(true);
                 return vDesc;
             }
         }
@@ -15160,7 +15160,7 @@ public class Server implements Runnable {
 
             // only unconscious pilots of mechs and protos and MechWarrirs
             // can roll to wake up
-            if (!e.isTargetable() || !e.crew.isUnconscious() || e.crew.isKoThisRound()
+            if (!e.isTargetable() || !e.getCrew().isUnconscious() || e.getCrew().isKoThisRound()
                     || !((e instanceof Mech) || (e instanceof Protomech) || (e instanceof MechWarrior))) {
                 continue;
             }
@@ -15170,7 +15170,7 @@ public class Server implements Runnable {
                 roll = Math.min(12, roll + 1);
             }
 
-            int rollTarget = Compute.getConsciousnessNumber(e.crew.getHits());
+            int rollTarget = Compute.getConsciousnessNumber(e.getCrew().getHits());
             Report r = new Report(6029);
             r.subject = e.getId();
             r.addDesc(e);
@@ -15179,7 +15179,7 @@ public class Server implements Runnable {
             r.add(roll);
             if (roll >= rollTarget) {
                 r.choose(true);
-                e.crew.setUnconscious(false);
+                e.getCrew().setUnconscious(false);
             } else {
                 r.choose(false);
             }
@@ -15468,7 +15468,7 @@ public class Server implements Runnable {
             r.subject = te_n;
             r.indent(2);
             r.addDesc(te);
-            r.add(te.crew.getOptions().intOption("edge"));
+            r.add(te.getCrew().getOptions().intOption("edge"));
             vDesc.addElement(r);
         } // if
 
@@ -15566,7 +15566,7 @@ public class Server implements Runnable {
         // Is the infantry in the open?
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed()
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
-                && !te.crew.getOptions().booleanOption("dermal_armor")) {
+                && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
             te_hex = game.getBoard().getHex(te.getPosition());
             if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
                     && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
@@ -15597,7 +15597,7 @@ public class Server implements Runnable {
         // to not add another parameter.
         switch (bFrag) {
         case ANTI_INFANTRY:
-            if (isPlatoon && te.crew.getOptions().booleanOption("dermal_armor")) {
+            if (isPlatoon && te.getCrew().getOptions().booleanOption("dermal_armor")) {
                 int reduce = Math.min(damage - 1, Compute.d6());
                 damage -= reduce;
                 r = new Report(6042);
@@ -16684,7 +16684,7 @@ public class Server implements Runnable {
                 checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh, critSI, ammoExplosion, nukeS2S);
             }
 
-            if (isHeadHit && !te.crew.getOptions().booleanOption("dermal_armor")) {
+            if (isHeadHit && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
             }
@@ -16715,8 +16715,8 @@ public class Server implements Runnable {
         }
 
         // if using VDNI (but not buffered), check for damage on an internal hit
-        if (tookInternalDamage && te.crew.getOptions().booleanOption("vdni")
-                && !te.crew.getOptions().booleanOption("bvdni") && !te.crew.getOptions().booleanOption("pain_shunt")) {
+        if (tookInternalDamage && te.getCrew().getOptions().booleanOption("vdni")
+                && !te.getCrew().getOptions().booleanOption("bvdni") && !te.getCrew().getOptions().booleanOption("pain_shunt")) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -17732,13 +17732,13 @@ public class Server implements Runnable {
                 vDesc.addAll(damageEntity(target, hit, 5));
                 break;
             case Tank.CRIT_COMMANDER:
-                if (en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                if (en.getCrew().getOptions().booleanOption("vdni") || en.getCrew().getOptions().booleanOption("bvdni")) {
                     r = new Report(6191);
                     r.subject = t.getId();
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(en, 1));
                 } else {
-                    if (en.crew.getOptions().booleanOption("pain_shunt") && !t.isCommanderHitPS()) {
+                    if (en.getCrew().getOptions().booleanOption("pain_shunt") && !t.isCommanderHitPS()) {
                         r = new Report(6606);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -17752,14 +17752,14 @@ public class Server implements Runnable {
                 }
                 // fall through here, because effects of crew stunned also apply
             case Tank.CRIT_CREW_STUNNED:
-                if (en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                if (en.getCrew().getOptions().booleanOption("vdni") || en.getCrew().getOptions().booleanOption("bvdni")) {
                     r = new Report(6191);
                     r.subject = t.getId();
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(en, 1));
                 } else {
-                    if (en.crew.getOptions().booleanOption("pain_shunt")
-                            || en.crew.getOptions().booleanOption("dermal_armor")) {
+                    if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                            || en.getCrew().getOptions().booleanOption("dermal_armor")) {
                         r = new Report(6186);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -17773,13 +17773,13 @@ public class Server implements Runnable {
                 }
                 break;
             case Tank.CRIT_DRIVER:
-                if (en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                if (en.getCrew().getOptions().booleanOption("vdni") || en.getCrew().getOptions().booleanOption("bvdni")) {
                     r = new Report(6191);
                     r.subject = t.getId();
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(en, 1));
                 } else {
-                    if (en.crew.getOptions().booleanOption("pain_shunt") && !t.isDriverHitPS()) {
+                    if (en.getCrew().getOptions().booleanOption("pain_shunt") && !t.isDriverHitPS()) {
                         r = new Report(6601);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -17793,13 +17793,13 @@ public class Server implements Runnable {
                 }
                 break;
             case Tank.CRIT_CREW_KILLED:
-                if (en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                if (en.getCrew().getOptions().booleanOption("vdni") || en.getCrew().getOptions().booleanOption("bvdni")) {
                     r = new Report(6191);
                     r.subject = t.getId();
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(en, 1));
                 } else {
-                    if (en.crew.getOptions().booleanOption("pain_shunt") && !t.isCrewHitPS()) {
+                    if (en.getCrew().getOptions().booleanOption("pain_shunt") && !t.isCrewHitPS()) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -18098,7 +18098,7 @@ public class Server implements Runnable {
             case Aero.CRIT_CREW:
                 // pilot hit
                 r = new Report(6650);
-                if (en.crew.getOptions().booleanOption("dermal_armor")) {
+                if (en.getCrew().getOptions().booleanOption("dermal_armor")) {
                     r = new Report(6651);
                     r.subject = a.getId();
                     vDesc.add(r);
@@ -18121,7 +18121,7 @@ public class Server implements Runnable {
                 vDesc.add(r);
                 vDesc.addAll(damageCrew(a, 1));
                 // The pilot may have just expired.
-                if ((a.crew.isDead() || a.crew.isDoomed()) && !a.crew.isEjected()) {
+                if ((a.getCrew().isDead() || a.getCrew().isDoomed()) && !a.getCrew().isEjected()) {
                     vDesc.addAll(destroyEntity(a, "pilot death", true, true));
                 }
                 break;
@@ -18699,7 +18699,7 @@ public class Server implements Runnable {
         }
 
         // if using buffered VDNI then a possible pilot hit
-        if (en.crew.getOptions().booleanOption("bvdni") && !en.crew.getOptions().booleanOption("pain_shunt")) {
+        if (en.getCrew().getOptions().booleanOption("bvdni") && !en.getCrew().getOptions().booleanOption("pain_shunt")) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -19316,7 +19316,7 @@ public class Server implements Runnable {
                     if (((Mech) en).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
                         // Don't kill a pilot multiple times.
                         if (Pilot.DEATH > en.getCrew().getHits()) {
-                            en.crew.setDoomed(true);
+                            en.getCrew().setDoomed(true);
                             Report.addNewline(vDesc);
                             vDesc.addAll(destroyEntity(en, "pilot death", true));
                         }
@@ -19381,14 +19381,14 @@ public class Server implements Runnable {
                 }
                 // if explosive use edge
                 if ((en instanceof Mech)
-                        && (en.crew.hasEdgeRemaining() && en.crew.getOptions().booleanOption("edge_when_explosion"))
+                        && (en.getCrew().hasEdgeRemaining() && en.getCrew().getOptions().booleanOption("edge_when_explosion"))
                         && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                         && en.getEquipment(slot.getIndex()).getType().isExplosive()) {
-                    en.crew.decreaseEdge();
+                    en.getCrew().decreaseEdge();
                     r = new Report(6530);
                     r.subject = en.getId();
                     r.indent(3);
-                    r.add(en.crew.getOptions().intOption("edge"));
+                    r.add(en.getCrew().getOptions().intOption("edge"));
                     vDesc.addElement(r);
                     continue;
                 }
@@ -19643,7 +19643,7 @@ public class Server implements Runnable {
             }
         }
         if (loc == Mech.LOC_HEAD) {
-            entity.crew.setDoomed(true);
+            entity.getCrew().setDoomed(true);
             vDesc.addAll(destroyEntity(entity, "hull breach"));
             if (entity.getLocationStatus(loc) == ILocationExposureStatus.WET) {
                 r = new Report(6355);
@@ -20109,13 +20109,13 @@ public class Server implements Runnable {
         }
         // tanks only take pilot damage when using BVDNI or VDNI
         if ((en instanceof Tank)
-                && !(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni"))) {
+                && !(en.getCrew().getOptions().booleanOption("vdni") || en.getCrew().getOptions().booleanOption("bvdni"))) {
             pilotDamage = 0;
         }
-        if (!en.crew.getOptions().booleanOption("pain_shunt")) {
+        if (!en.getCrew().getOptions().booleanOption("pain_shunt")) {
             vDesc.addAll(damageCrew(en, pilotDamage));
         }
-        if (en.crew.isDoomed() || en.crew.isDead()) {
+        if (en.getCrew().isDoomed() || en.getCrew().isDead()) {
             vDesc.addAll(destroyEntity(en, "crew death", true));
         } else {
             Report.addNewline(vDesc);
@@ -20413,7 +20413,7 @@ public class Server implements Runnable {
 
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
-        if ((entity instanceof Mech) && !entity.crew.getOptions().booleanOption("dermal_armor")) {
+        if ((entity instanceof Mech) && !entity.getCrew().getOptions().booleanOption("dermal_armor")) {
             // we want to be able to avoid pilot damage even when it was
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();
@@ -20427,7 +20427,7 @@ public class Server implements Runnable {
                 r = new Report(2320);
                 r.subject = entity.getId();
                 r.addDesc(entity);
-                r.add(entity.crew.getName());
+                r.add(entity.getCrew().getName());
                 r.indent();
                 vPhaseReport.add(r);
                 vPhaseReport.addAll(damageCrew(entity, 1));
@@ -20437,7 +20437,7 @@ public class Server implements Runnable {
                 r = new Report(2325);
                 r.subject = entity.getId();
                 r.addDesc(entity);
-                r.add(entity.crew.getName());
+                r.add(entity.getCrew().getName());
                 r.add(roll.getValueAsString());
                 r.add(diceRoll);
                 if (diceRoll >= roll.getValue()) {

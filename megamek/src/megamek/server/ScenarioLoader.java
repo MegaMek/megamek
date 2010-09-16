@@ -397,7 +397,7 @@ public class ScenarioLoader {
                 if (hits > 5) {
                     hits = 0;
                 }
-                e.crew.setHits(hits);
+                e.getCrew().setHits(hits);
             }
 
             // Check for unit external ids

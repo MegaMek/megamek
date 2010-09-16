@@ -490,20 +490,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         } else if (isArtilleryFLAK) {
             toHit = new ToHitData(9, "artillery FLAK");
         } else {
-            toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
+            toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
             if (game.getOptions().booleanOption("rpg_gunnery")) {
                 if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                    toHit = new ToHitData(ae.crew.getGunneryL(), "gunnery (L) skill");
+                    toHit = new ToHitData(ae.getCrew().getGunneryL(), "gunnery (L) skill");
                 }
                 if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    toHit = new ToHitData(ae.crew.getGunneryM(), "gunnery (M) skill");
+                    toHit = new ToHitData(ae.getCrew().getGunneryM(), "gunnery (M) skill");
                 }
                 if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    toHit = new ToHitData(ae.crew.getGunneryB(), "gunnery (B) skill");
+                    toHit = new ToHitData(ae.getCrew().getGunneryB(), "gunnery (B) skill");
                 }
             }
             if(wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getOptions().booleanOption("artillery_skill")) {
-            	toHit = new ToHitData(ae.crew.getArtillery(), "artillery skill");
+            	toHit = new ToHitData(ae.getCrew().getArtillery(), "artillery skill");
             }
             if (ae.getTaserFeedBackRounds() > 0) {
                 toHit.addModifier(1, "Taser feedback");
@@ -534,7 +534,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // fatigue
-        if (game.getOptions().booleanOption("tacops_fatigue") && ae.crew.isGunneryFatigued(game.getRoundCount())) {
+        if (game.getOptions().booleanOption("tacops_fatigue") && ae.getCrew().isGunneryFatigued(game.getRoundCount())) {
             toHit.addModifier(1, "fatigue");
         }
 
@@ -886,27 +886,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
 
         // Has the pilot the appropriate gunnery skill?
-        if (ae.crew.getOptions().booleanOption("gunnery_laser") && wtype.hasFlag(WeaponType.F_ENERGY)) {
+        if (ae.getCrew().getOptions().booleanOption("gunnery_laser") && wtype.hasFlag(WeaponType.F_ENERGY)) {
             toHit.addModifier(-1, "Gunnery/Laser");
         }
 
-        if (ae.crew.getOptions().booleanOption("gunnery_ballistic") && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+        if (ae.getCrew().getOptions().booleanOption("gunnery_ballistic") && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
             toHit.addModifier(-1, "Gunnery/Ballistic");
         }
 
-        if (ae.crew.getOptions().booleanOption("gunnery_missile") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (ae.getCrew().getOptions().booleanOption("gunnery_missile") && wtype.hasFlag(WeaponType.F_MISSILE)) {
             toHit.addModifier(-1, "Gunnery/Missile");
         }
 
         //Is the pilot a weapon specialist?
-        if (ae.crew.getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
+        if (ae.getCrew().getOptions().stringOption("weapon_specialist").equals(wtype.getName())) {
             toHit.addModifier(-2, "weapon specialist");
-        } else if(ae.crew.getOptions().booleanOption("specialist")) {
+        } else if(ae.getCrew().getOptions().booleanOption("specialist")) {
             //aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
             //Note that weapon specialist supercedes gunnery specialization, so if you have
             //a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod
             if(wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_LASER)) {
+                if(ae.getCrew().getOptions().stringOption("specialist").equals(Pilot.SPECIAL_LASER)) {
                     toHit.addModifier(-1, "Laser Specialization");
                 }
                 else {
@@ -914,7 +914,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             else if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_BALLISTIC)) {
+                if(ae.getCrew().getOptions().stringOption("specialist").equals(Pilot.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, "Ballistic Specialization");
                 }
                 else {
@@ -922,7 +922,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             else if(wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if(ae.crew.getOptions().stringOption("specialist").equals(Pilot.SPECIAL_MISSILE)) {
+                if(ae.getCrew().getOptions().stringOption("specialist").equals(Pilot.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, "Missile Specialization");
                 }
                 else {
@@ -932,17 +932,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // check for VDNI
-        if (ae.crew.getOptions().booleanOption("vdni") || ae.crew.getOptions().booleanOption("bvdni")) {
+        if (ae.getCrew().getOptions().booleanOption("vdni") || ae.getCrew().getOptions().booleanOption("bvdni")) {
             toHit.addModifier(-1, "VDNI");
         }
 
         // check for pl-masc
-        if (ae.crew.getOptions().booleanOption("pl_masc") && (ae.getMovementMode() == EntityMovementMode.INF_LEG)) {
+        if (ae.getCrew().getOptions().booleanOption("pl_masc") && (ae.getMovementMode() == EntityMovementMode.INF_LEG)) {
             toHit.addModifier(+1, "PL-MASC");
         }
 
         // check for cyber eye laser sighting
-        if (ae.crew.getOptions().booleanOption("cyber_eye_tele")) {
+        if (ae.getCrew().getOptions().booleanOption("cyber_eye_tele")) {
             toHit.addModifier(-1, "MD laser-sighting");
         }
 

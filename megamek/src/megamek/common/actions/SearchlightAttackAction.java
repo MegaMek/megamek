@@ -54,10 +54,10 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     public static boolean isPossible(IGame game, int attackerId,
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
-        if (attacker == null || !attacker.isUsingSpotlight() || target == null)
-            return false;
-        if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0)
-            return false;
+    //    if (attacker == null || !attacker.isUsingSpotlight() || target == null)
+    //        return false;
+   //     if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0)
+   //         return false;
         if (!Compute.isInArc(attacker.getPosition(), attacker
                 .getSecondaryFacing(), target.getPosition(),
                 attacker.getForwardArc()))

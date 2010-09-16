@@ -177,20 +177,20 @@ public class PilotMapSet implements DisplayMapSet {
      */
     public void setEntity(Entity en) {
 
-        nameL.setString(en.crew.getName());
-        nickL.setString(en.crew.getNickname());
-        pilotR.setString(Integer.toString(en.crew.getPiloting()));
-        gunneryR.setString(Integer.toString(en.crew.getGunnery()));
+        nameL.setString(en.getCrew().getName());
+        nickL.setString(en.getCrew().getNickname());
+        pilotR.setString(Integer.toString(en.getCrew().getPiloting()));
+        gunneryR.setString(Integer.toString(en.getCrew().getGunnery()));
 
-        if(null != getPortrait(en.crew)) {
-            portraitArea.setIdleImage(getPortrait(en.crew));
+        if(null != getPortrait(en.getCrew())) {
+            portraitArea.setIdleImage(getPortrait(en.getCrew()));
         }
 
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
-            gunneryLR.setString(Integer.toString(en.crew.getGunneryL()));
-            gunneryMR.setString(Integer.toString(en.crew.getGunneryM()));
-            gunneryBR.setString(Integer.toString(en.crew.getGunneryB()));
+            gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL()));
+            gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM()));
+            gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB()));
             gunneryL.setVisible(false);
             gunneryR.setVisible(false);
             gunneryLL.setVisible(true);
@@ -211,33 +211,33 @@ public class PilotMapSet implements DisplayMapSet {
         }
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("toughness")) {
-            toughBR.setString(Integer.toString(en.crew.getToughness()));
+            toughBR.setString(Integer.toString(en.getCrew().getToughness()));
         } else {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
         }
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("individual_initiative")) {
-            initBR.setString(Integer.toString(en.crew.getInitBonus()));
+            initBR.setString(Integer.toString(en.getCrew().getInitBonus()));
         } else {
             initBL.setVisible(false);
             initBR.setVisible(false);
         }
         if ((en.getGame() != null)
                 && en.getGame().getOptions().booleanOption("command_init")) {
-            commandBR.setString(Integer.toString(en.crew.getCommandBonus()));
+            commandBR.setString(Integer.toString(en.getCrew().getCommandBonus()));
         } else {
             commandBL.setVisible(false);
             commandBR.setVisible(false);
         }
-        hitsR.setString(en.crew.getStatusDesc());
+        hitsR.setString(en.getCrew().getStatusDesc());
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i].setString(""); //$NON-NLS-1$
         }
         int i = 0;
-        for (Enumeration<IOptionGroup> advGroups = en.crew.getOptions().getGroups(); advGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups.hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
-            if(en.crew.countOptions(advGroup.getKey()) > 0) {
+            if(en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();

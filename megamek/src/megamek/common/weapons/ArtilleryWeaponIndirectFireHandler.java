@@ -169,7 +169,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             while (spottersAfter.hasMoreElements()) {
                 Entity ent = spottersAfter.nextElement();
                 if ((bestSpotter == null)
-                        || (ent.crew.getGunnery() < bestSpotter.crew
+                        || (ent.getCrew().getGunnery() < bestSpotter.getCrew()
                                 .getGunnery())) {
                     bestSpotter = ent;
                 }
@@ -179,7 +179,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // If at least one valid spotter, then get the benefits thereof.
         if (null != bestSpotter) {
-            int mod = (bestSpotter.crew.getGunnery() - 4) / 2;
+            int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
             toHit.addModifier(mod, "Spotting modifier");
         }
 

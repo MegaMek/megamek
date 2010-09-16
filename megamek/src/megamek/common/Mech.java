@@ -1889,8 +1889,8 @@ public abstract class Mech extends Entity implements Serializable {
                 // normal front hits
                 switch (roll) {
                     case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
+                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
                             return result;
@@ -1913,8 +1913,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 11:
                         return new HitData(Mech.LOC_LARM);
                     case 12:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
@@ -1925,8 +1925,8 @@ public abstract class Mech extends Entity implements Serializable {
                 // normal left side hits
                 switch (roll) {
                     case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
+                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_LT, false));
                             return result;
@@ -1956,8 +1956,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 11:
                         return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
@@ -1968,8 +1968,8 @@ public abstract class Mech extends Entity implements Serializable {
                 // normal right side hits
                 switch (roll) {
                     case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
+                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_RT, false));
                             return result;
@@ -1999,8 +1999,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 11:
                         return new HitData(Mech.LOC_LLEG);
                     case 12:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
@@ -2012,8 +2012,8 @@ public abstract class Mech extends Entity implements Serializable {
                 if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations") && isProne()) {
                     switch (roll) {
                         case 2:
-                            if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                                crew.decreaseEdge();
+                            if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                                getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                                 result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
                                 return result;
@@ -2036,8 +2036,8 @@ public abstract class Mech extends Entity implements Serializable {
                         case 11:
                             return new HitData(Mech.LOC_LARM, true);
                         case 12:
-                            if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                                crew.decreaseEdge();
+                            if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                                getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                                 result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                                 return result;
@@ -2047,8 +2047,8 @@ public abstract class Mech extends Entity implements Serializable {
                 } else {
                     switch (roll) {
                         case 2:
-                            if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
-                                crew.decreaseEdge();
+                            if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                                getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                                 result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
                                 return result;
@@ -2071,8 +2071,8 @@ public abstract class Mech extends Entity implements Serializable {
                         case 11:
                             return new HitData(Mech.LOC_LARM, true);
                         case 12:
-                            if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                                crew.decreaseEdge();
+                            if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                                getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                                 result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                                 return result;
@@ -2110,8 +2110,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 5:
                         return new HitData(Mech.LOC_RARM);
                     case 6:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
@@ -2131,8 +2131,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 5:
                         return new HitData(Mech.LOC_LARM);
                     case 6:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
@@ -2152,8 +2152,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 5:
                         return new HitData(Mech.LOC_RARM);
                     case 6:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
@@ -2175,8 +2175,8 @@ public abstract class Mech extends Entity implements Serializable {
                     case 5:
                         return new HitData(Mech.LOC_RARM, true);
                     case 6:
-                        if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
+                        if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                            getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                             return result;
@@ -2244,8 +2244,8 @@ public abstract class Mech extends Entity implements Serializable {
             // Swarm attack locations.
             switch (roll) {
                 case 2:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
+                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                        getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
                         return result;
@@ -2270,8 +2270,8 @@ public abstract class Mech extends Entity implements Serializable {
                 case 11:
                     return new HitData(Mech.LOC_CT, true, effects);
                 case 12:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
+                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                        getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
                         return result;
@@ -2306,8 +2306,8 @@ public abstract class Mech extends Entity implements Serializable {
                 case 5:
                     return new HitData(Mech.LOC_RARM, (side == ToHitData.SIDE_REAR));
                 case 6:
-                    if (crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
+                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                        getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
                         return result;
@@ -4146,7 +4146,7 @@ public abstract class Mech extends Entity implements Serializable {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = crew.getBVSkillMultiplier();
+            pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
@@ -4364,7 +4364,7 @@ public abstract class Mech extends Entity implements Serializable {
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(crew.getDescVector(false));
+        vDesc.addAll(getCrew().getDescVector(false));
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);

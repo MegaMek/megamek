@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common;
@@ -29,7 +29,7 @@ public class MechWarrior extends Infantry {
 
     /**
      * Create a new MechWarrior
-     * 
+     *
      * @param originalRide the <code>Entity</code> that was this MW's original
      *            ride
      */
@@ -41,9 +41,9 @@ public class MechWarrior extends Infantry {
         setWeight(1);
 
         // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer(this.getDisplayName());
+        StringBuffer newName = new StringBuffer(getDisplayName());
         newName.append(" of ").append(originalRide.getDisplayName());
-        this.displayName = newName.toString();
+        displayName = newName.toString();
 
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
@@ -54,7 +54,7 @@ public class MechWarrior extends Infantry {
         if (tmpGame != null
                 && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
             try {
-                addEquipment(EquipmentType.get("InfantryRifle"),
+                addEquipment(EquipmentType.get("InfantryAssaultRifle"),
                         Infantry.LOC_INFANTRY);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -64,7 +64,7 @@ public class MechWarrior extends Infantry {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#isSelectableThisTurn()
      */
     @Override
@@ -131,7 +131,7 @@ public class MechWarrior extends Infantry {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Infantry#calculateBattleValue()
      */
     @Override
@@ -144,7 +144,7 @@ public class MechWarrior extends Infantry {
         super.newRound(number);
         getCrew().setEjected(false);
     }
-    
+
     /**
      * Ejected pilots do not get killed by ammo/fusion engine explosions
      * so that means they are still up in the air and do not land until the end of the turn.
@@ -153,7 +153,7 @@ public class MechWarrior extends Infantry {
     public void setLanded(boolean landed){
         this.landed = landed;
     }
-    
+
     public boolean hasLanded(){
         return landed;
     }

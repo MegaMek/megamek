@@ -40,6 +40,7 @@ public class FighterSquadron extends Aero {
 
 
     public FighterSquadron() {
+        super();
         setChassis("Squadron");
         setModel("");
     }
@@ -48,10 +49,11 @@ public class FighterSquadron extends Aero {
      * construct fighter squadron with a specific name
      */
     public FighterSquadron(String name) {
+        super();
         setChassis(name.trim() + " Squadron");
         setModel("");
     }
-
+    
     /*
      * (non-Javadoc)
      * @see megamek.common.Aero#getCost(boolean)
@@ -551,7 +553,7 @@ public class FighterSquadron extends Aero {
     @Override
     public boolean canLoad(Entity unit, boolean checkFalse) {
         // We must have enough space for the new fighter.
-        if ( !unit.isEnemyOf(this) && unit.isFighter()  && (fighters.size() < MAX_SIZE)) {
+        if (!unit.isEnemyOf(this) && unit.isFighter()  && (fighters.size() < MAX_SIZE)) {
             return true;
         }
         //fighter squadrons can also load other fighter squadrons provided there is enough space

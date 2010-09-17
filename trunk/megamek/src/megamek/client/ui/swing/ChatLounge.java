@@ -125,7 +125,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     JButton butArmy;
     JButton butSkills;
     JButton butNames;
-    JButton butLoadCustomFS;
     private JButton butLoadList;
     private JButton butSaveList;
     private JButton butDeleteAll;
@@ -184,7 +183,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         public void doneLoading() {
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
-            butLoadCustomFS.setEnabled(true);
         }
     };
 
@@ -301,13 +299,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
-        butLoadCustomFS = new JButton(Messages.getString("ChatLounge.butLoadCustomFS"));
-
+     
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
-        butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
         butSkills.setEnabled(true);
         butNames.setEnabled(true);
 
@@ -318,9 +314,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butArmy.addActionListener(this);
         butSkills.addActionListener(this);
         butNames.addActionListener(this);
-        butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
-        butLoadCustomFS.addActionListener(this);
-
+        
         butDeleteAll = new JButton(Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
         butDeleteAll.setActionCommand("delete_all"); //$NON-NLS-1$
         butDeleteAll.addActionListener(this);
@@ -362,11 +356,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         gridbag.setConstraints(butNames, c);
         panUnitInfo.add(butNames);
         
-        c.gridx = 0;
-        c.gridy = 4;
-        gridbag.setConstraints(butLoadCustomFS, c);
-        panUnitInfo.add(butLoadCustomFS);
-
         c.gridx = 1;
         c.gridy = 1;
         gridbag.setConstraints(butLoadList, c);
@@ -1797,29 +1786,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * clientgui.getCustomBADialog().setVisible(true); }
      */
 
-    public void loadCustomFS() {
+    public void loadFS(Vector<Integer> fighterIds) {
         String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
         if ((name == null) || (name.trim().length() == 0)) {
             name = "Flying Circus";
         }
         FighterSquadron fs = new FighterSquadron(name);
         fs.setOwner(clientgui.getClient().getLocalPlayer());
-        clientgui.getClient().sendAddEntity(fs);
-    }
-    
-    public void loadFS(Vector<Aero> fighters) {
-        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
-        if ((name == null) || (name.trim().length() == 0)) {
-            name = "Flying Circus";
-        }
-        FighterSquadron fs = new FighterSquadron(name);
-        fs.setOwner(clientgui.getClient().getLocalPlayer());
-        clientgui.getClient().sendAddEntity(fs);
-        //FIXME: this is currently not working because the id of the 
-        //fighter squadron is still Entity.NONE
-        for(Aero fighter : fighters) {
-            loader(fighter, fs.getId());
-        }
+        clientgui.getClient().sendAddSquadron(fs, fighterIds);
     }
 
     private void loadArmy() {
@@ -1953,8 +1927,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             loadRandomSkills();
         } else if (ev.getSource().equals(butNames)) {
                 loadRandomNames();
-        } else if (ev.getSource() == butLoadCustomFS) {
-            loadCustomFS();
         } else if (ev.getSource().equals(tableEntities)) {
             customizeMech();
         } else if (ev.getSource().equals(tablePlayers)) {
@@ -2683,8 +2655,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
             }
             else if (command.equalsIgnoreCase("SQUADRON")) {
-                Vector<Aero> fighters = new Vector<Aero>();
-                fighters.add((Aero)entity);
+                Vector<Integer> fighters = new Vector<Integer>();
+                fighters.add(entity.getId());
                 loadFS(fighters);
             }
             
@@ -2765,7 +2737,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         //It would be nice to relax this, but it will take some work - we will
                         //have to listen for team changes and unload units if a teammate changes
                         //to an enemy
-                        if(loader.canLoad(entity, false) && loader.getOwnerId() == entity.getOwnerId()) {
+                        if(loader.canLoad(entity, false) 
+                                && loader.getOwnerId() == entity.getOwnerId()) {
+                            //TODO don't allow capital fighters to load one another at the moment
+                            if(loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
+                                continue;
+                            }
                             canLoad = true;
                             menuItem = new JMenuItem(loader.getShortName());
                             menuItem.setActionCommand("LOAD|" + row + "|" + loader.getId());
@@ -2793,13 +2770,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     menuItem.setEnabled((isOwner || isBot));
                     popup.add(menuItem);
                 }
-                menuItem = new JMenuItem("Start Fighter Squadron");
-                menuItem.setActionCommand("SQUADRON|" + row);
-                menuItem.addActionListener(this);
-                //TODO: disabling because of problem (see comments in loadFS() above)
-                menuItem.setEnabled(false);
-                //menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
-                //popup.add(menuItem);
+                if(entity.isCapitalFighter()) {
+                    menuItem = new JMenuItem("Start Fighter Squadron");
+                    menuItem.setActionCommand("SQUADRON|" + row);
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
+                    popup.add(menuItem);
+                }
                 
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }

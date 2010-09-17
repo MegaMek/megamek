@@ -21395,20 +21395,31 @@ public class Server implements Runnable {
     }
 
     /**
-     * adds a squadron to the game This is not working, don't use it
+     * adds a squadron to the game
      */
     private void receiveSquadronAdd(Packet c, int connIndex) {
-        /*
-         * final FighterSquadron fs = new FighterSquadron(); Vector<Entity>
-         * fighters = (Vector<Entity>)c.getObject(0); if(fighters.size() < 1) {
-         * return; } fs.setOwner(fighters.firstElement().getOwner()); // Only
-         * assign an entity ID when the client hasn't. if (Entity.NONE ==
-         * fs.getId()) { fs.setId(getFreeEntityId()); }
-         * game.addEntity(fs.getId(), fs);
-         * send(createAddEntityPacket(fs.getId())); for(Entity fighter :
-         * fighters) { fs.load(fighter); entityUpdate(fighter.getId()); }
-         * entityUpdate(fs.getId());
-         */
+        
+        final FighterSquadron fs = (FighterSquadron) c.getObject(0);
+        final Vector<Integer> fighters = (Vector<Integer>) c.getObject(1); 
+        if(fighters.size() < 1) {
+            return;
+        }
+        //fs.setOwner(fighters.firstElement().getOwner());
+        // Only assign an entity ID when the client hasn't.
+        if (Entity.NONE == fs.getId()) {
+            fs.setId(getFreeEntityId());
+        }
+        game.addEntity(fs.getId(), fs);   
+        for(int id : fighters) {
+            Entity fighter = game.getEntity(id);
+            if(null != fighter) {
+               fs.load(fighter, false);
+               fighter.setTransportId(fs.getId());
+               entityUpdate(fighter.getId());
+            }
+        }              
+        send(createAddEntityPacket(fs.getId())); 
+         
     }
 
     /**

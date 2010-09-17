@@ -51,6 +51,7 @@ import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
+import megamek.common.FighterSquadron;
 import megamek.common.Flare;
 import megamek.common.Game;
 import megamek.common.GameLog;
@@ -695,11 +696,11 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Sends an "add squadron" packet This is not working, don't use it
+     * Sends an "add squadron" packet
      */
-    public void sendAddSquadron(Vector<Entity> fighters) {
-        // checkDuplicateNamesDuringAdd(fs);
-        send(new Packet(Packet.COMMAND_SQUADRON_ADD, fighters));
+    public void sendAddSquadron(FighterSquadron fs, Vector<Integer> fighterIds) {
+        checkDuplicateNamesDuringAdd(fs);
+        send(new Packet(Packet.COMMAND_SQUADRON_ADD, new Object[] {fs, fighterIds}));
     }
 
     /**

@@ -1132,6 +1132,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     int b_id = b.getId();
                     //loaded units should be put immediately below their parent unit
                    //if a unit's transport ID is not none, then it should replace their actual id
+                    if(tr_a == tr_b) {
+                        //either they are both not being transported, or they are being transported
+                        //by the same unit
+                        return a_id - b_id;
+                    }
+                    
                     if(tr_b != Entity.NONE) {
                         if(tr_b == a_id) {
                             //b is loaded on a
@@ -1139,7 +1145,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         }
                         b_id = tr_b;
                     }
-                    else if(tr_a != Entity.NONE && tr_a == b_id) {
+                    else if(tr_a != Entity.NONE) {
                         if(tr_a == b_id) {
                             //a is loaded on b
                             return 1;

@@ -43,6 +43,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -78,6 +79,7 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -1789,7 +1791,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
      * clientgui.getCustomBADialog().setVisible(true); }
      */
 
-    public FighterSquadron loadCustomFS() {
+    public void loadCustomFS() {
         String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
         if ((name == null) || (name.trim().length() == 0)) {
             name = "Flying Circus";
@@ -1797,7 +1799,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         FighterSquadron fs = new FighterSquadron(name);
         fs.setOwner(clientgui.getClient().getLocalPlayer());
         clientgui.getClient().sendAddEntity(fs);
-        return fs;
+    }
+    
+    public void loadFS(Vector<Aero> fighters) {
+        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
+        if ((name == null) || (name.trim().length() == 0)) {
+            name = "Flying Circus";
+        }
+        FighterSquadron fs = new FighterSquadron(name);
+        fs.setOwner(clientgui.getClient().getLocalPlayer());
+        clientgui.getClient().sendAddEntity(fs);
+        //FIXME: this is currently not working because the id of the 
+        //fighter squadron is still Entity.NONE
+        for(Aero fighter : fighters) {
+            loader(fighter, fs.getId());
+        }
     }
 
     private void loadArmy() {
@@ -2656,8 +2672,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 unloader(entity);
             }
             else if (command.equalsIgnoreCase("SQUADRON")) {
-                FighterSquadron fs = loadCustomFS();
-                loader(entity, fs.getId());
+                Vector<Aero> fighters = new Vector<Aero>();
+                fighters.add((Aero)entity);
+                loadFS(fighters);
             }
             
         }
@@ -2749,7 +2766,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem = new JMenuItem("Start Fighter Squadron");
                 menuItem.setActionCommand("SQUADRON|" + row);
                 menuItem.addActionListener(this);
-                menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
+                //TODO: disabling because of problem (see comments in loadFS() above)
+                menuItem.setEnabled(false);
+                //menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
                 popup.add(menuItem);
                 
                 popup.show(e.getComponent(), e.getX(), e.getY());

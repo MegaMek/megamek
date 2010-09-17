@@ -2745,31 +2745,43 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
-                popup.add(menu);
-                menu = new JMenu("Load into");
-                for(Entity loader : clientgui.getClient().game.getEntitiesVector()) {
-                    if(loader.canLoad(entity, false)) {
-                        menuItem = new JMenuItem(loader.getShortName());
-                        menuItem.setActionCommand("LOAD|" + row + "|" + loader.getId());
-                        menuItem.addActionListener(this);
-                        menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() == Entity.NONE);
-                        menu.add(menuItem);
+                popup.add(menu);          
+                if(entity.getTransportId() == Entity.NONE) {
+                    menu = new JMenu("Load into");
+                    boolean canLoad = false;
+                    for(Entity loader : clientgui.getClient().game.getEntitiesVector()) {
+                        //TODO: for now, I am going to allow loading of player's units not teammates
+                        //It would be nice to relax this, but it will take some work - we will
+                        //have to listen for team changes and unload units if a teammate changes
+                        //to an enemy
+                        if(loader.canLoad(entity, false) && loader.getOwnerId() == entity.getOwnerId()) {
+                            canLoad = true;
+                            menuItem = new JMenuItem(loader.getShortName());
+                            menuItem.setActionCommand("LOAD|" + row + "|" + loader.getId());
+                            menuItem.addActionListener(this);
+                            menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() == Entity.NONE);
+                            menu.add(menuItem);
+                        }
+                    }
+                    if(canLoad) {
+                        menu.setEnabled((isOwner || isBot) && entity.getTransportId() == Entity.NONE && canLoad);
+                        popup.add(menu);
                     }
                 }
-                menu.setEnabled((isOwner || isBot) && entity.getTransportId() == Entity.NONE);
-                popup.add(menu);
-                menuItem = new JMenuItem("Unload");
-                menuItem.setActionCommand("UNLOAD|" + row);
-                menuItem.addActionListener(this);
-                menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() != Entity.NONE);
-                popup.add(menuItem);
+                else {
+                    menuItem = new JMenuItem("Unload");
+                    menuItem.setActionCommand("UNLOAD|" + row);
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() != Entity.NONE);
+                    popup.add(menuItem);
+                }
                 menuItem = new JMenuItem("Start Fighter Squadron");
                 menuItem.setActionCommand("SQUADRON|" + row);
                 menuItem.addActionListener(this);
                 //TODO: disabling because of problem (see comments in loadFS() above)
                 menuItem.setEnabled(false);
                 //menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
-                popup.add(menuItem);
+                //popup.add(menuItem);
                 
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }

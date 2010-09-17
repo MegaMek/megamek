@@ -2671,6 +2671,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             else if (command.equalsIgnoreCase("UNLOAD")) {
                 unloader(entity);
             }
+            else if (command.equalsIgnoreCase("UNLOADALL")) {
+                for(Entity loadee : entity.getLoadedUnits()) {
+                    unloader(loadee);
+                }
+            }
             else if (command.equalsIgnoreCase("SQUADRON")) {
                 Vector<Aero> fighters = new Vector<Aero>();
                 fighters.add((Aero)entity);
@@ -2773,6 +2778,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     menuItem.setActionCommand("UNLOAD|" + row);
                     menuItem.addActionListener(this);
                     menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() != Entity.NONE);
+                    popup.add(menuItem);
+                }
+                if(entity.getLoadedUnits().size() > 0) {
+                    menuItem = new JMenuItem("Unload All Carried Units");
+                    menuItem.setActionCommand("UNLOADALL|" + row);
+                    menuItem.addActionListener(this);
+                    menuItem.setEnabled((isOwner || isBot));
                     popup.add(menuItem);
                 }
                 menuItem = new JMenuItem("Start Fighter Squadron");

@@ -109,7 +109,7 @@ public class TestMech extends TestEntity {
             // We're ignoring that and returning the total, because it's easier.
             weight = 6.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_DUAL) {
-            //Solaris VII - The Game World (German) This is not actually canonical as it 
+            //Solaris VII - The Game World (German) This is not actually canonical as it
             //has never been repeated in any English language source including Tech Manual
             weight = 4.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE) {
@@ -398,7 +398,7 @@ public class TestMech extends TestEntity {
     }
 
     public String printArmorLocProp(int loc, int wert) {
-        return " is greater then " + Integer.toString(wert) + "!";
+        return " is greater than " + Integer.toString(wert) + "!";
     }
 
     public boolean correctArmor(StringBuffer buff) {

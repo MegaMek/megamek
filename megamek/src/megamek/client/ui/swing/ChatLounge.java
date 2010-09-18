@@ -79,7 +79,6 @@ import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
-import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -299,7 +298,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
-     
+
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
@@ -314,7 +313,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butArmy.addActionListener(this);
         butSkills.addActionListener(this);
         butNames.addActionListener(this);
-        
+
         butDeleteAll = new JButton(Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
         butDeleteAll.setActionCommand("delete_all"); //$NON-NLS-1$
         butDeleteAll.addActionListener(this);
@@ -355,7 +354,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridy = 3;
         gridbag.setConstraints(butNames, c);
         panUnitInfo.add(butNames);
-        
+
         c.gridx = 1;
         c.gridy = 1;
         gridbag.setConstraints(butLoadList, c);
@@ -1126,7 +1125,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         //by the same unit
                         return a_id - b_id;
                     }
-                    
+
                     if(tr_b != Entity.NONE) {
                         if(tr_b == a_id) {
                             //b is loaded on a
@@ -1350,7 +1349,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             Entity loader = entity.getGame().getEntity(entity.getTransportId());
             value += ", aboard " + loader.getShortName() + "";
         }
-        
+
         if (entity.isOffBoard()) {
             value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         } else if (entity.getDeployRound() > 0) {
@@ -1417,7 +1416,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
             int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
 
-            value += "<b>" + entity.getShortName() + "</b><br>";        
+            value += "<b>" + entity.getShortName() + "</b><br>";
             value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
             if(entity.getTransportId() != Entity.NONE) {
                 Entity loader = entity.getGame().getEntity(entity.getTransportId());
@@ -1591,7 +1590,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         customizeMech(mekModel.getEntityAt(tableEntities.getSelectedRow()));
     }
-    
+
     /**
      * Load one unit into another in the chat lounge
      * @param loadee - an Entity that should be loaded
@@ -1614,7 +1613,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.sendUpdateEntity(loadee);
         c.sendUpdateEntity(loader);
     }
-    
+
     /**
      * Unload a unit in the chat lounge
      * @param unloadee - the Entity to be unloaded
@@ -1633,7 +1632,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.sendUpdateEntity(unloadee);
         c.sendUpdateEntity(unloader);
     }
-    
+
     /**
      * Delete an entity from the lobby
      * @param entity
@@ -1803,7 +1802,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public void loadRandomSkills() {
         clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().game.getEntitiesVector());
     }
-    
+
     public void loadRandomNames() {
         clientgui.getRandomNameDialog().showDialog(clientgui.getClient().game.getEntitiesVector());
     }
@@ -2590,12 +2589,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
                 customizeMech(entity);
-            }   
+            }
         }
     }
 
     public class MekTableMouseAdapter extends MouseInputAdapter implements ActionListener {
-        
+
         public void actionPerformed(ActionEvent action) {
             StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
             String command = st.nextToken();
@@ -2659,7 +2658,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 fighters.add(entity.getId());
                 loadFS(fighters);
             }
-            
+
         }
 
         @Override
@@ -2728,7 +2727,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
-                popup.add(menu);          
+                popup.add(menu);
                 if(entity.getTransportId() == Entity.NONE) {
                     menu = new JMenu("Load into");
                     boolean canLoad = false;
@@ -2737,8 +2736,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         //It would be nice to relax this, but it will take some work - we will
                         //have to listen for team changes and unload units if a teammate changes
                         //to an enemy
-                        if(loader.canLoad(entity, false) 
-                                && loader.getOwnerId() == entity.getOwnerId()) {
+                        if(loader.canLoad(entity, false)
+                                && (loader.getOwnerId() == entity.getOwnerId())) {
                             //TODO don't allow capital fighters to load one another at the moment
                             if(loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
                                 continue;
@@ -2747,12 +2746,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                             menuItem = new JMenuItem(loader.getShortName());
                             menuItem.setActionCommand("LOAD|" + row + "|" + loader.getId());
                             menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() == Entity.NONE);
+                            menuItem.setEnabled((isOwner || isBot) && (entity.getTransportId() == Entity.NONE));
                             menu.add(menuItem);
                         }
                     }
                     if(canLoad) {
-                        menu.setEnabled((isOwner || isBot) && entity.getTransportId() == Entity.NONE && canLoad);
+                        menu.setEnabled((isOwner || isBot) && (entity.getTransportId() == Entity.NONE) && canLoad);
                         popup.add(menu);
                     }
                 }
@@ -2760,7 +2759,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     menuItem = new JMenuItem("Unload");
                     menuItem.setActionCommand("UNLOAD|" + row);
                     menuItem.addActionListener(this);
-                    menuItem.setEnabled((isOwner || isBot) && entity.getTransportId() != Entity.NONE);
+                    menuItem.setEnabled((isOwner || isBot) && (entity.getTransportId() != Entity.NONE));
                     popup.add(menuItem);
                 }
                 if(entity.getLoadedUnits().size() > 0) {
@@ -2777,7 +2776,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
                     popup.add(menuItem);
                 }
-                
+
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }
@@ -2793,7 +2792,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         private JLabel lblImage;
         private JLabel lblLoad;
-        
+
         public MekInfo() {
 
             lblImage = new JLabel();
@@ -2814,7 +2813,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(lblLoad, c);
             add(lblLoad);
-            
+
             c.fill = GridBagConstraints.BOTH;
             c.insets = new Insets(1, 1, 1, 1);
             c.gridx = 1;
@@ -2849,10 +2848,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         public JLabel getLabel() {
             return lblImage;
         }
-        
+
         public void setLoad(boolean load) {
             //if this is a loaded unit then do something with lblLoad to make it show up
-            //otherwise clear lblLoad 
+            //otherwise clear lblLoad
             if(load) {
                 lblLoad.setText(" +");
             } else {

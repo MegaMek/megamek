@@ -19,8 +19,6 @@
 
 package megamek.common.verifier;
 
-import megamek.common.AmmoType;
-import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
@@ -107,31 +105,9 @@ public class TestTank extends TestEntity {
         return 0f;
     }
 
-    public float getTankPowerAmplifier() {
-        if (!engine.isFusion()) {
-            int weight = 0;
-            for (Mounted m : tank.getWeaponList()) {
-                WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_LASER)
-                        || wt.hasFlag(WeaponType.F_PPC)
-                        || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
-                    weight += wt.getTonnage(tank);
-                }
-                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
-                        MiscType) && m.getLinkedBy().getType().
-                        hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                    weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
-                }
-            }
-            return TestEntity.ceil(weight / 10f, getWeightCeilingPowerAmp());
-        }
-        return 0f;
-    }
-
     @Override
     public float getWeightMisc() {
-        return getTankWeightTurret() + getTankWeightLifting()
-                + getTankPowerAmplifier();
+        return getTankWeightTurret() + getTankWeightLifting();
     }
 
     @Override
@@ -148,7 +124,7 @@ public class TestTank extends TestEntity {
                 heat += wt.getHeat();
             }
             // laser insulator reduce heat by 1, to a minimum of 1
-            if (wt.hasFlag(WeaponType.F_LASER) && m.getLinkedBy() != null
+            if (wt.hasFlag(WeaponType.F_LASER) && (m.getLinkedBy() != null)
                     && !m.getLinkedBy().isInoperable()
                     && m.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
                 heat -= 1;
@@ -208,9 +184,9 @@ public class TestTank extends TestEntity {
                 + (getTankWeightLifting() != 0 ? StringUtil.makeLength(
                         "Lifting Equip:", getPrintSize() - 5)
                         + TestEntity.makeWeightString(getTankWeightLifting()) + "\n" : "")
-                + (getTankPowerAmplifier() != 0 ? StringUtil.makeLength(
+                + (getWeightPowerAmp() != 0 ? StringUtil.makeLength(
                         "Power Amp:", getPrintSize() - 5)
-                        + TestEntity.makeWeightString(getTankPowerAmplifier()) + "\n" : "");
+                        + TestEntity.makeWeightString(getWeightPowerAmp()) + "\n" : "");
     }
 
     @Override
@@ -288,17 +264,20 @@ public class TestTank extends TestEntity {
 
     @Override
     public float getWeightPowerAmp() {
-        if ((tank.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                || (tank.getEngine().getEngineType() == Engine.FUEL_CELL)) {
-            float powerAmpWeight = 0;
-            for (Mounted mount : tank.getWeaponList()) {
-                if (mount.getType() instanceof EnergyWeapon) {
-                    // power amplifier weighs 10% of energyweapons weight,
-                    // rounded to the next tenth of a ton
-                    powerAmpWeight += TestEntity.ceilMaxHalf(mount.getType().getTonnage(tank)/10, TestEntity.CEIL_TENTHTON);
+        if (!engine.isFusion()) {
+            int weight = 0;
+            for (Mounted m : tank.getWeaponList()) {
+                WeaponType wt = (WeaponType) m.getType();
+                if (wt instanceof EnergyWeapon) {
+                    weight += wt.getTonnage(tank);
+                }
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                        MiscType) && m.getLinkedBy().getType().
+                        hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
                 }
             }
-            return powerAmpWeight;
+            return TestEntity.ceil(weight / 10f, getWeightCeilingPowerAmp());
         }
         return 0;
     }

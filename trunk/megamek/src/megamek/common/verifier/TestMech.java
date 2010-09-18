@@ -86,14 +86,18 @@ public class TestMech extends TestEntity {
     public float getWeightPowerAmp() {
         if (mech.isIndustrial() && ((mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
             float powerAmpWeight = 0;
-            for (Mounted mount : mech.getWeaponList()) {
-                if (mount.getType() instanceof EnergyWeapon) {
-                    // power amplifier weighs 10% of energyweapons weight,
-                    // rounded to the next half ton
-                    powerAmpWeight += TestEntity.ceilMaxHalf(mount.getType().getTonnage(mech) / 10, TestEntity.CEIL_HALFTON);
+            for (Mounted m : mech.getWeaponList()) {
+                WeaponType wt = (WeaponType) m.getType();
+                if (wt instanceof EnergyWeapon) {
+                    powerAmpWeight += wt.getTonnage(mech);
+                }
+                if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof
+                        MiscType) && m.getLinkedBy().getType().
+                        hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    powerAmpWeight += ((MiscType)m.getLinkedBy().getType()).getTonnage(mech);
                 }
             }
-            return powerAmpWeight;
+            return TestEntity.ceil(powerAmpWeight / 10f, getWeightCeilingPowerAmp());
         }
         return 0;
     }

@@ -71,10 +71,6 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_LOCK = 13;
     public static final int CRIT_TURRET_DESTROYED = 14;
 
-    public static final int TARGETING_NONE = 0;
-    public static final int TARGETING_BASIC = 1;
-    public static final int TARGETING_ADVANCED = 2;
-
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS =
         { 25, 25, 25, 25, 25, 25 };
@@ -700,6 +696,17 @@ public class Tank extends Entity {
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
+        double targetingSystemBVMode = 1.0;
+
+        if (this instanceof SupportTank) {
+            if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                targetingSystemBVMode = 1.0;
+            } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
+                targetingSystemBVMode = .9;
+            } else {
+                targetingSystemBVMode = .8;
+            }
+        }
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         for (Mounted mounted : getWeaponList()) {
@@ -740,17 +747,8 @@ public class Tank extends Entity {
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
-            } else if (!wtype.hasFlag(WeaponType.F_INFANTRY)) {
-                switch (getTargetingSystem()) {
-                    case Tank.TARGETING_ADVANCED:
-                        break;
-                    case Tank.TARGETING_BASIC:
-                        dBV *= .9;
-                        break;
-                    case Tank.TARGETING_NONE:
-                        dBV *= .8;
-                        break;
-                }
+            } else if ((this instanceof SupportTank) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                dBV *= targetingSystemBVMode;
             }
             if (mounted.getLocation() == LOC_REAR) {
                 weaponsBVRear += dBV;
@@ -1786,13 +1784,6 @@ public class Tank extends Entity {
         }
         // No Mek Stealth or system inactive. Return false.
         return false;
-    }
-
-    public void setTargetingSystem(int system) {
-    }
-
-    public int getTargetingSystem() {
-        return Tank.TARGETING_ADVANCED;
     }
 
 }

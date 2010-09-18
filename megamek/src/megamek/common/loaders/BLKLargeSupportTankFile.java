@@ -46,12 +46,6 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
 
         LargeSupportTank t = new LargeSupportTank();
 
-        if (!dataFile.exists("targetingsystem")) {
-            t.setTargetingSystem(Tank.TARGETING_ADVANCED);
-        } else {
-            t.setTargetingSystem(dataFile.getDataAsInt("targetingsystem")[0]);
-        }
-
         if (!dataFile.exists("barrating")) {
             throw new EntityLoadingException("Could not find barrating block.");
         }
@@ -273,7 +267,6 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
         blk.writeBlockData("barrating", t.getBARRating());
-        blk.writeBlockData("targetingsystem", t.getTargetingSystem());
 
         if (t.getFluff().getHistory().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());

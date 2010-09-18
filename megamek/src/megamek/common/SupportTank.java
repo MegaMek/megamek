@@ -28,7 +28,6 @@ public class SupportTank extends Tank implements Serializable {
      */
     private static final long serialVersionUID = -9028127010133768714L;
     private int barRating;
-    private int targetingSystem;
 
     public void setBARRating(int rating) {
         barRating = rating;
@@ -106,11 +105,4 @@ public class SupportTank extends Tank implements Serializable {
         return getExtraCommGearTons();
     }
 
-    public void setTargetingSystem(int system) {
-        targetingSystem = system;
-    }
-
-    public int getTargetingSystem() {
-        return targetingSystem;
-    }
 }

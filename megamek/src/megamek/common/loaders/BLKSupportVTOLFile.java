@@ -40,12 +40,6 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
         SupportVTOL t = new SupportVTOL();
 
-        if (!dataFile.exists("targetingsystem")) {
-            t.setTargetingSystem(Tank.TARGETING_ADVANCED);
-        } else {
-            t.setTargetingSystem(dataFile.getDataAsInt("targetingsystem")[0]);
-        }
-
         if (!dataFile.exists("barrating")) {
             throw new EntityLoadingException("Could not find barrating block.");
         }
@@ -259,8 +253,6 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         }
 
         blk.writeBlockData("barrating", t.getBARRating());
-
-        blk.writeBlockData("targetingsystem", t.getTargetingSystem());
 
         if (t.getFluff().getHistory().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());

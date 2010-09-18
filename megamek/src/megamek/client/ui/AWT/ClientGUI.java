@@ -75,6 +75,7 @@ import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
@@ -1544,6 +1545,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         public void gameMapQuery(GameMapQueryEvent e) {
             if ((boardSelectionDialog != null) && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(e.getSettings(), false);
+            }
+        }
+
+        @Override
+        public void gameTurnChange(GameTurnChangeEvent e) {
+            if (client.isMyTurn()) {
+                bing();
             }
         }
 

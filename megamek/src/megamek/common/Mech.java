@@ -6595,7 +6595,7 @@ public abstract class Mech extends Entity implements Serializable {
             if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_LAC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
                 double damage = baseDamage * damageModifier;
 
-                // if damage is greater then 10 then we do not add it to the
+                // if damage is greater than 10 then we do not add it to the
                 // standard damage it will be used in special weapons
                 if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
 
@@ -6655,7 +6655,7 @@ public abstract class Mech extends Entity implements Serializable {
                 }
 
                 double damage = baseDamage * damageModifier;
-                // if damage is greater then 10 then we do not add it to the
+                // if damage is greater than 10 then we do not add it to the
                 // standard damage it will be used in special weapons
                 if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis && (damage >= 10)) || (!ignoreSpecialAbility && hasArtemis)) {
 

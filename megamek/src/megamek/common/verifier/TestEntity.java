@@ -495,12 +495,12 @@ public abstract class TestEntity implements TestEntityOption {
         float weight = getWeight();
 
         if (showO && (weight + getMaxOverweight() < weightSum)) {
-            buff.append("Weight: ").append(calculateWeight()).append(" is greater then ").append(getWeight()).append("\n");
+            buff.append("Weight: ").append(calculateWeight()).append(" is greater than ").append(getWeight()).append("\n");
             // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
         if (showU && (weight - getMinUnderweight() > weightSum)) {
-            buff.append("Weight: ").append(calculateWeight()).append(" is lesser then ").append(getWeight()).append("\n");
+            buff.append("Weight: ").append(calculateWeight()).append(" is less than ").append(getWeight()).append("\n");
             // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
@@ -548,7 +548,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     * 
+     *
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal

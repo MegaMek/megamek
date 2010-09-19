@@ -28,8 +28,10 @@ public abstract class SubCapitalLaserWeapon extends EnergyWeapon {
 
     public SubCapitalLaserWeapon() {
         super();
-        this.atClass = CLASS_CAPITAL_LASER;
-        this.capital = true;
-        this.subCapital = true;
+        atClass = CLASS_CAPITAL_LASER;
+        capital = true;
+        subCapital = true;
+        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY);
+
     }
 }

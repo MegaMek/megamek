@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+
 /**
  * @author Jay Lawson
  */
@@ -28,8 +29,9 @@ public abstract class SubCapitalMissileWeapon extends AmmoWeapon {
 
     public SubCapitalMissileWeapon() {
         super();
-        this.atClass = CLASS_CAPITAL_MISSILE;
-        this.capital = true;
-        this.subCapital = true;
+        atClass = CLASS_CAPITAL_MISSILE;
+        capital = true;
+        subCapital = true;
+        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
     }
 }

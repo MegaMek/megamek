@@ -37,35 +37,36 @@ public class PiranhaWeapon extends SubCapitalMissileWeapon {
      */
     public PiranhaWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
-        this.name = "Piranha";
-        this.setInternalName(this.name);
-        this.addLookupName("Piranha");
-        this.heat = 9;
-        this.damage = 3;
-        this.ammoType = AmmoType.T_PIRANHA;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 100.0f;
-        this.bv = 670;
-        this.cost = 75000;
-        this.shortAV = 3;
-        this.medAV = 3;
-        this.longAV = 3;
-        this.maxRange = RANGE_LONG;
+        techLevel = TechConstants.T_IS_ADVANCED;
+        name = "Piranha";
+        setInternalName(name);
+        addLookupName("Piranha");
+        heat = 9;
+        damage = 3;
+        ammoType = AmmoType.T_PIRANHA;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        tonnage = 100.0f;
+        bv = 670;
+        cost = 75000;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
+        maxRange = RANGE_LONG;
+        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
         return new PiranhaHandler(toHit, waa, game, server);
     }
 }

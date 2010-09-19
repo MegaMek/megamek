@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-
 /**
  * Represtents a volume of space set aside for carrying mechs aboard dropships
  */
@@ -30,65 +29,66 @@ public final class MechBay extends Bay {
      * The default constructor is only for serialization.
      */
     protected MechBay() {
-        this.totalSpace = 0;
-        this.currentSpace = 0;
+        totalSpace = 0;
+        currentSpace = 0;
     }
 
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only
-     * the weight of the troops (and their equipment) are considered; if
-     * you'd like to think that they are stacked like lumber, be my guest.
-     *
-     * @param   space - The weight of troops (in tons) this space can carry.
+     * Create a space for the given tonnage of troops. For this class, only the
+     * weight of the troops (and their equipment) are considered; if you'd like
+     * to think that they are stacked like lumber, be my guest.
+     * 
+     * @param space
+     *            - The weight of troops (in tons) this space can carry.
      */
-    public MechBay( int space, int doors ) {
-        this.totalSpace = space;
-        this.currentSpace = space;
+    public MechBay(double space, int doors) {
+        totalSpace = space;
+        currentSpace = space;
         this.doors = doors;
-        this.doorsNext = doors;
+        doorsNext = doors;
     }
 
-    
     /**
-     * Determines if this object can accept the given unit.  The unit may
-     * not be of the appropriate type or there may be no room for the unit.
-     *
-     * @param   unit - the <code>Entity</code> to be loaded.
-     * @return  <code>true</code> if the unit can be loaded,
-     *          <code>false</code> otherwise.
+     * Determines if this object can accept the given unit. The unit may not be
+     * of the appropriate type or there may be no room for the unit.
+     * 
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *         otherwise.
      */
     @Override
-    public boolean canLoad( Entity unit ) {
+    public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
         // Only smallcraft
-        if ( unit instanceof Mech) {
+        if (unit instanceof Mech) {
             result = true;
         }
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if ( this.currentSpace < 1 ) {
+        if (currentSpace < 1) {
             result = false;
         }
-        
-        //is the door functional
-        if( this.doors < 1 ) {
+
+        // is the door functional
+        if (doors < 1) {
             result = false;
         }
 
         // Return our result.
         return result;
     }
-    
+
     @Override
     public String getUnusedString() {
-        return "Mech - " + this.currentSpace + " units";
+        return "Mech - " + currentSpace + " units";
     }
-    
+
     @Override
     public String getType() {
         return "Mech";

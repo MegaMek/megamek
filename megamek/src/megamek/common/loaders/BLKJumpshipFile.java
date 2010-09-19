@@ -201,49 +201,49 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                 if (transporter.startsWith("ASFBay:", 0)) {
                     String numbers = transporter.substring(7);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new ASFBay(size, doors));
                 } else if (transporter.startsWith("SmallCraftBay:", 0)) {
                     String numbers = transporter.substring(14);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new SmallCraftBay(size, doors));
                 } else if (transporter.startsWith("MechBay:", 0)) {
                     String numbers = transporter.substring(8);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new MechBay(size, doors));
                 } else if (transporter.startsWith("LightVehicleBay:", 0)) {
                     String numbers = transporter.substring(16);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new LightVehicleBay(size, doors));
                 } else if (transporter.startsWith("HeavyVehicleBay:", 0)) {
                     String numbers = transporter.substring(16);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new HeavyVehicleBay(size, doors));
                 } else if (transporter.startsWith("InfantryBay:", 0)) {
                     String numbers = transporter.substring(12);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new InfantryBay(size, doors));
                 } else if (transporter.startsWith("BattleArmorBay:", 0)) {
                     String numbers = transporter.substring(15);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new BattleArmorBay(size, doors));
                 } else if (transporter.startsWith("CargoBay:", 0)) {
                     String numbers = transporter.substring(9);
                     String temp[] = numbers.split(":");
-                    int size = Integer.parseInt(temp[0]);
+                    double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new CargoBay(size, doors));
                 }

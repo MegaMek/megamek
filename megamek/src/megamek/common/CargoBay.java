@@ -14,14 +14,13 @@
 
 package megamek.common;
 
-
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
+ * Represtents a volume of space set aside for carrying ASFs and Small Craft
+ * aboard DropShips
  */
 
 public final class CargoBay extends Bay {
 
-  
     /**
      * 
      */
@@ -31,49 +30,51 @@ public final class CargoBay extends Bay {
      * The default constructor is only for serialization.
      */
     protected CargoBay() {
-        this.totalSpace = 0;
-        this.currentSpace = 0;
+        totalSpace = 0;
+        currentSpace = 0;
     }
 
     // Public constructors and methods.
 
     /**
-     * Create a space for the given tonnage of troops. For this class, only
-     * the weight of the troops (and their equipment) are considered; if
-     * you'd like to think that they are stacked like lumber, be my guest.
-     *
-     * @param   space - The weight of troops (in tons) this space can carry.
+     * Create a space for the given tonnage of troops. For this class, only the
+     * weight of the troops (and their equipment) are considered; if you'd like
+     * to think that they are stacked like lumber, be my guest.
+     * 
+     * @param space
+     *            - The weight of troops (in tons) this space can carry.
      */
-    public CargoBay( int space, int doors ) {
-        this.totalSpace = space;
-        this.currentSpace = space;
+    public CargoBay(double space, int doors) {
+        totalSpace = space;
+        currentSpace = space;
         this.doors = doors;
     }
 
     /**
-     * Determines if this object can accept the given unit.  The unit may
-     * not be of the appropriate type or there may be no room for the unit.
-     *
-     * @param   unit - the <code>Entity</code> to be loaded.
-     * @return  <code>true</code> if the unit can be loaded,
-     *          <code>false</code> otherwise.
+     * Determines if this object can accept the given unit. The unit may not be
+     * of the appropriate type or there may be no room for the unit.
+     * 
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *         otherwise.
      */
     @Override
-    public boolean canLoad( Entity unit ) {
+    public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
         return result;
     }
-    
+
     @Override
     public String getUnusedString() {
-        return "Cargo Space - " + this.currentSpace + " tons";
+        return "Cargo Space - " + currentSpace + " tons";
     }
 
     @Override
     public String getType() {
         return "Cargo";
     }
-    
+
 } // End package class TroopSpace implements Transporter

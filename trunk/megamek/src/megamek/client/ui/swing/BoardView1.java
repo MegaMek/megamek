@@ -1697,6 +1697,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             addC3Link(entity);
         }
 
+        for (Iterator<FlyOverSprite> i = flyOverSprites.iterator(); i.hasNext();) {
+            final FlyOverSprite flyOverSprite = i.next();
+            if (flyOverSprite.getEntityId() == entity.getId()) {
+                i.remove();
+            }
+        }
         if(entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
@@ -1771,6 +1777,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             if (entity.hasC3() || entity.hasC3i()) {
                 addC3Link(entity);
+            }
+            
+            if(entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
+                addFlyOverPath(entity);
             }
         }
 
@@ -4260,6 +4270,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             return true;
         }
 
+        public int getEntityId() {
+            return en.getId();
+        }
+        
         @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
 

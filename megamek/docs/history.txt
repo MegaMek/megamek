@@ -44,6 +44,7 @@ v0.35.19-dev (SVN)
 + Started Global encode Function for BLKFile Class
 + Bug: Aero FlyOver Sprite should remain on board during firing phase
 + Dive bombing aeros should be at range 0 (+ 2 altitude) against units in the hex of dive bomb, see http://www.classicbattletech.com/forums/index.php?topic=67365.0
++ Swap pilots menuitem in Chat Lounge unit context menu
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

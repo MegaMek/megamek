@@ -1044,16 +1044,29 @@ public class Compute {
         // ground units that are the target of air to ground attacks always have
         // a distance of zero
         // for return fire except for altitude differences
-        if (Compute.isGroundToAir(attacker, target)) {
+        if (Compute.isGroundToAir(attacker, target) && target instanceof Entity) {
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if ((target instanceof Entity) && (prevAttack.getEntityId() == ((Entity) target).getId())
-                        && (prevAttack.getTargetId() == attacker.getId())) {
+                if(prevAttack.getEntityId() != ((Entity) target).getId()) {
+                    //not the aero target's attack
+                    continue;
+                }
+                Targetable prevTarget = prevAttack.getTarget(game);
+                if(prevTarget instanceof Entity && prevAttack.getTargetId() == attacker.getId()) {
                     distance = 0;
+                    break;
+                }
+                //check for dive-bombing of this hex
+                Coords attackPos = attacker.getPosition();
+                if (null != attackPos && prevAttack.isDiveBomb(game)
+                        && (prevTarget instanceof HexTarget) 
+                        && ((HexTarget)prevTarget).getPosition().equals(attackPos)) {
+                    distance = 0;
+                    break;
                 }
             }
         }

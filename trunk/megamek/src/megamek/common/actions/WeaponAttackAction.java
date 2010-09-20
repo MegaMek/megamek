@@ -171,6 +171,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         return Compute.isGroundToAir(getEntity(game), getTarget(game));
     }
 
+    public boolean isDiveBomb(IGame game) {
+        return ((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB);
+    }
+    
     public int getAltitudeLoss(IGame game) {
         if (isAirToGround(game)) {
             if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {

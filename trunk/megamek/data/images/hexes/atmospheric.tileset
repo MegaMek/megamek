@@ -792,14 +792,13 @@ super * "building:4:65;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hard
 super * "building:4:66;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/hardened_roof66.gif"
 super * "building:4:67;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/hardened_roof67.gif"
 super * "building:4:68;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/hardened_roof68.gif"
-
-super * "building:5:00;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship1.gif"
-super * "building:5:01;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship2.gif"
-super * "building:5:02;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship3.gif"
-super * "building:5:03;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship4.gif"
-super * "building:5:04;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship5.gif"
-super * "building:5:05;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship6.gif"
-super * "building:5:06;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "dropship/dropship7.gif"
+super * "building:4:69;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship1.gif"
+super * "building:4:70;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship2.gif"
+super * "building:4:71;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship3.gif"
+super * "building:4:72;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship4.gif"
+super * "building:4:73;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship5.gif"
+super * "building:4:74;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship6.gif"
+super * "building:4:75;bldg_elev:*;bldg_cf:*;bldg_class:*;bldg_armor:*" "" "hardened/dropship7.gif"
 
 ##BUILDINGS WITH NON-STANDARD CLASS, NO ARMOR##
 
@@ -882,6 +881,7 @@ super * "building:1:65;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof6
 super * "building:1:66;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof66.gif"
 super * "building:1:67;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof67.gif"
 super * "building:1:68;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "light/light_roof68.gif"
+
 
 super * "building:2:00;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "megaart/roof00.gif"
 super * "building:2:01;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "megaart/roof01.gif"
@@ -1092,14 +1092,13 @@ super * "building:4:65;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/hardened
 super * "building:4:66;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/hardened_roof66.gif"
 super * "building:4:67;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/hardened_roof67.gif"
 super * "building:4:68;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/hardened_roof68.gif"
-
-super * "building:5:00;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship1.gif"
-super * "building:5:01;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship2.gif"
-super * "building:5:02;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship3.gif"
-super * "building:5:03;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship4.gif"
-super * "building:5:04;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship5.gif"
-super * "building:5:05;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship6.gif"
-super * "building:5:06;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "dropship/dropship7.gif"
+super * "building:4:69;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship1.gif"
+super * "building:4:70;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship2.gif"
+super * "building:4:71;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship3.gif"
+super * "building:4:72;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship4.gif"
+super * "building:4:73;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship5.gif"
+super * "building:4:74;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship6.gif"
+super * "building:4:75;bldg_elev:*;bldg_cf:*;bldg_class:*" "" "hardened/dropship7.gif"
 
 ##STANDARD BUILDINGS WITH ARMOR##
 
@@ -1387,15 +1386,13 @@ super * "building:4:65;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/hardened
 super * "building:4:66;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/hardened_roof66.gif"
 super * "building:4:67;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/hardened_roof67.gif"
 super * "building:4:68;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/hardened_roof68.gif"
-
-super * "building:5:00;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship1.gif"
-super * "building:5:01;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship2.gif"
-super * "building:5:02;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship3.gif"
-super * "building:5:03;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship4.gif"
-super * "building:5:04;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship5.gif"
-super * "building:5:05;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship6.gif"
-super * "building:5:06;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "dropship/dropship7.gif"
-
+super * "building:4:69;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship1.gif"
+super * "building:4:70;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship2.gif"
+super * "building:4:71;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship3.gif"
+super * "building:4:72;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship4.gif"
+super * "building:4:73;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship5.gif"
+super * "building:4:74;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship6.gif"
+super * "building:4:75;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship7.gif"
 ##STANDARD BUILDINGS, NO ARMOR##
 
 super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif"
@@ -1706,14 +1703,13 @@ super * "building:4:65;bldg_elev:*;bldg_cf:*" "" "hardened/hardened_roof65.gif"
 super * "building:4:66;bldg_elev:*;bldg_cf:*" "" "hardened/hardened_roof66.gif"
 super * "building:4:67;bldg_elev:*;bldg_cf:*" "" "hardened/hardened_roof67.gif"
 super * "building:4:68;bldg_elev:*;bldg_cf:*" "" "hardened/hardened_roof68.gif"
-
-super * "building:5:00;bldg_elev:*;bldg_cf:*" "" "dropship/dropship1.gif"
-super * "building:5:01;bldg_elev:*;bldg_cf:*" "" "dropship/dropship2.gif"
-super * "building:5:02;bldg_elev:*;bldg_cf:*" "" "dropship/dropship3.gif"
-super * "building:5:03;bldg_elev:*;bldg_cf:*" "" "dropship/dropship4.gif"
-super * "building:5:04;bldg_elev:*;bldg_cf:*" "" "dropship/dropship5.gif"
-super * "building:5:05;bldg_elev:*;bldg_cf:*" "" "dropship/dropship6.gif"
-super * "building:5:06;bldg_elev:*;bldg_cf:*" "" "dropship/dropship7.gif"
+super * "building:4:69;bldg_elev:*;bldg_cf:*" "" "hardened/dropship1.gif"
+super * "building:4:70;bldg_elev:*;bldg_cf:*" "" "hardened/dropship2.gif"
+super * "building:4:71;bldg_elev:*;bldg_cf:*" "" "hardened/dropship3.gif"
+super * "building:4:72;bldg_elev:*;bldg_cf:*" "" "hardened/dropship4.gif"
+super * "building:4:73;bldg_elev:*;bldg_cf:*" "" "hardened/dropship5.gif"
+super * "building:4:74;bldg_elev:*;bldg_cf:*" "" "hardened/dropship6.gif"
+super * "building:4:75;bldg_elev:*;bldg_cf:*" "" "hardened/dropship7.gif"
 
 super * "rubble:1" "" "boring/rubble_light.gif"
 super * "rubble:2" "" "boring/rubble_medium.gif"

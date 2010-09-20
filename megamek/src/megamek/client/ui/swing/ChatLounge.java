@@ -94,6 +94,7 @@ import megamek.common.Pilot;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.UnitType;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -1634,6 +1635,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     }
 
     /**
+     * swap pilots from one entity to another
+     * @param swapee - an Entity that should be swapped from
+     * @param swapperId - the id of the entity that should be swapped to
+     */
+    private void swapPilots(Entity swapee, int swapperId) {
+        Client c = clientgui.getBots().get(swapee.getOwner().getName());
+        if (c == null) {
+            c = clientgui.getClient();
+        }
+        Entity swapper = clientgui.getClient().game.getEntity(swapperId);
+        if(swapper == null) {
+            return;
+        }
+        Pilot temp = swapper.getCrew();
+        swapper.setCrew(swapee.getCrew());
+        swapee.setCrew(temp);
+        c.sendUpdateEntity(swapee);
+        c.sendUpdateEntity(swapper);
+    }
+    
+    /**
      * Delete an entity from the lobby
      * @param entity
      */
@@ -2658,6 +2680,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 fighters.add(entity.getId());
                 loadFS(fighters);
             }
+            else if (command.equalsIgnoreCase("SWAP")) {
+                int id = Integer.parseInt(st.nextToken());
+                swapPilots(entity, id);
+            }
 
         }
 
@@ -2775,6 +2801,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     menuItem.addActionListener(this);
                     menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
                     popup.add(menuItem);
+                }
+                menu = new JMenu("Swap pilots with");
+                boolean canSwap = false;
+                for(Entity swapper : clientgui.getClient().game.getEntitiesVector()) {
+                    //only swap your own pilots and with the same unit type
+                    if(swapper.getOwnerId() == entity.getOwnerId()
+                            && swapper.getId() != entity.getId()
+                            && UnitType.determineUnitTypeCode(swapper) == UnitType.determineUnitTypeCode(entity)) {
+                        canSwap = true;
+                        menuItem = new JMenuItem(swapper.getShortName());
+                        menuItem.setActionCommand("SWAP|" + row + "|" + swapper.getId());
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled((isOwner || isBot));
+                        menu.add(menuItem);
+                    }
+                }
+                if(canSwap) {
+                    menu.setEnabled((isOwner || isBot) && canSwap);
+                    popup.add(menu);
                 }
 
                 popup.show(e.getComponent(), e.getX(), e.getY());

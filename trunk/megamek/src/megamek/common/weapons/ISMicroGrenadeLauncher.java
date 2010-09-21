@@ -47,6 +47,6 @@ public class ISMicroGrenadeLauncher extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 0;
-        flags = flags.or(F_BALLISTIC);
+        flags = flags.or(F_BALLISTIC).or(F_BA_WEAPON);
     }
 }

@@ -33,13 +33,14 @@ public abstract class TAGWeapon extends Weapon {
 
     public TAGWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_TAG).or(F_NO_FIRES);
-        setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BA_WEAPON).or(F_TAG).or(F_NO_FIRES);
+        setModes(new String[]
+            { "1-shot", "2-shot", "3-shot", "4-shot" });
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,

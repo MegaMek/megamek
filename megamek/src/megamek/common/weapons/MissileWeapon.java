@@ -31,12 +31,12 @@ public abstract class MissileWeapon extends AmmoWeapon {
     public MissileWeapon() {
         super();
         damage = DAMAGE_MISSILE;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_MISSILE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BA_WEAPON).or(F_AERO_WEAPON).or(F_MISSILE);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)

@@ -260,7 +260,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         tableEntities.setModel(mekModel);
         tableEntities.setRowHeight(80);
         tableEntities.setIntercellSpacing(new Dimension(0, 0));
-        tableEntities.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableEntities.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         TableColumn column = null;
         for (int i = 0; i < MekTableModel.N_COL; i++) {
             tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
@@ -2618,10 +2618,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     public class MekTableMouseAdapter extends MouseInputAdapter implements ActionListener {
 
         public void actionPerformed(ActionEvent action) {
-            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
+        	StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
             String command = st.nextToken();
-            int row = Integer.parseInt(st.nextToken());
+        	int[] rows = tableEntities.getSelectedRows();
+            int row = tableEntities.getSelectedRow();
             Entity entity = mekModel.getEntityAt(row);
+            Vector<Entity> entities = new Vector<Entity>();
+            for(int i = 0; i<rows.length; i++) {
+            	entities.add(mekModel.getEntityAt(rows[i]));
+            }
             if (null == entity) {
                 return;
             }
@@ -2634,41 +2639,51 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 if (c == null) {
                     c = clientgui.getClient();
                 }
-                //first unload any units from this unit
-                if(entity.getLoadedUnits().size() > 0) {
-                    for(Entity loaded : entity.getLoadedUnits()) {
-                        entity.unload(loaded);
-                        loaded.setTransportId(Entity.NONE);
-                        c.sendUpdateEntity(loaded);
-                    }
-                    c.sendUpdateEntity(entity);
+                for(Entity e : entities) {
+	                //first unload any units from this unit
+	                if(e.getLoadedUnits().size() > 0) {
+	                    for(Entity loaded : e.getLoadedUnits()) {
+	                        e.unload(loaded);
+	                        loaded.setTransportId(Entity.NONE);
+	                        c.sendUpdateEntity(loaded);
+	                    }
+	                    c.sendUpdateEntity(e);
+	                }
+	                c.sendDeleteEntity(e.getId());
                 }
-                c.sendDeleteEntity(entity.getId());
             }
             else if (command.equalsIgnoreCase("SKILLS")) {
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if(c == null) {
                     c = clientgui.getClient();
                 }
-                int[] skills = c.getRandomSkillsGenerator().getRandomSkills(entity, true);
-                entity.getCrew().setGunnery(skills[0]);
-                entity.getCrew().setPiloting(skills[1]);
-                c.sendUpdateEntity(entity);
+                for(Entity e : entities) {
+                	int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                	e.getCrew().setGunnery(skills[0]);
+                	e.getCrew().setPiloting(skills[1]);
+                	c.sendUpdateEntity(e);
+                }
             }
             else if (command.equalsIgnoreCase("NAME")) {
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if(c == null) {
                     c = clientgui.getClient();
                 }
-                entity.getCrew().setName(c.getRandomNameGenerator().generate());
-                c.sendUpdateEntity(entity);
+                for(Entity e : entities) {
+                	e.getCrew().setName(c.getRandomNameGenerator().generate());
+                	c.sendUpdateEntity(e);
+                }
             }
             else if (command.equalsIgnoreCase("LOAD")) {
                 int id = Integer.parseInt(st.nextToken());
-                loader(entity, id);
+                for(Entity e : entities) {
+                	loader(e, id);
+                }
             }
             else if (command.equalsIgnoreCase("UNLOAD")) {
-                unloader(entity);
+            	for(Entity e : entities) {
+            		unloader(e);
+            	}
             }
             else if (command.equalsIgnoreCase("UNLOADALL")) {
                 for(Entity loadee : entity.getLoadedUnits()) {
@@ -2677,7 +2692,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             else if (command.equalsIgnoreCase("SQUADRON")) {
                 Vector<Integer> fighters = new Vector<Integer>();
-                fighters.add(entity.getId());
+                for(Entity e : entities) {
+                	fighters.add(e.getId());
+                }
                 loadFS(fighters);
             }
             else if (command.equalsIgnoreCase("SWAP")) {
@@ -2715,46 +2732,71 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         private void maybeShowPopup(MouseEvent e) {
             JPopupMenu popup = new JPopupMenu();
-            int row = tableEntities.rowAtPoint(e.getPoint());
+            if(tableEntities.getSelectedRowCount() == 0) {
+            	return;
+            }
+            int[] rows = tableEntities.getSelectedRows();
+            int row = tableEntities.getSelectedRow();
+            boolean oneSelected = tableEntities.getSelectedRowCount() == 1;
+            
             Entity entity = mekModel.getEntityAt(row);
+            Vector<Entity> entities = new Vector<Entity>();
+            for(int i = 0; i<rows.length; i++) {
+            	entities.add(mekModel.getEntityAt(rows[i]));
+            }
             boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
             boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
             boolean blindDrop = clientgui.getClient().game.getOptions().booleanOption("blind_drop");
+            boolean allLoaded = true;
+            boolean allUnloaded = true;
+            boolean allCapFighter = true;
+            for(Entity en : entities) {
+            	if(en.getTransportId() == Entity.NONE) {
+            		allLoaded = false;
+            	} else {
+            		allUnloaded = false;
+            	}
+            	if(!en.isCapitalFighter() || en instanceof FighterSquadron) {
+            		allCapFighter = false;
+            	}
+            }
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
                 // JMenu menu = null;
-                menuItem = new JMenuItem("View unit...");
-                menuItem.setActionCommand("VIEW|" + row);
-                menuItem.addActionListener(this);
-                menuItem.setEnabled(isOwner || !blindDrop);
-                menuItem.setMnemonic(KeyEvent.VK_V);
-                popup.add(menuItem);
-                menuItem = new JMenuItem("Configure unit...");
-                menuItem.setActionCommand("CONFIGURE|" + row);
-                menuItem.addActionListener(this);
-                menuItem.setEnabled(isOwner || isBot);
-                menuItem.setMnemonic(KeyEvent.VK_C);
-                popup.add(menuItem);
-                menuItem = new JMenuItem("Delete unit...");
-                menuItem.setActionCommand("DELETE|" + row);
+                if(oneSelected) {
+	                menuItem = new JMenuItem("View...");
+	                menuItem.setActionCommand("VIEW");
+	                menuItem.addActionListener(this);
+	                menuItem.setEnabled(isOwner || !blindDrop);
+	                menuItem.setMnemonic(KeyEvent.VK_V);
+	                popup.add(menuItem);
+	                menuItem = new JMenuItem("Configure...");
+	                menuItem.setActionCommand("CONFIGURE");
+	                menuItem.addActionListener(this);
+	                menuItem.setEnabled(isOwner || isBot);
+	                menuItem.setMnemonic(KeyEvent.VK_C);
+	                popup.add(menuItem);    
+                }
+                menuItem = new JMenuItem("Delete...");
+                menuItem.setActionCommand("DELETE");
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 popup.add(menuItem);
                 JMenu menu = new JMenu("Randomize");
                 menuItem = new JMenuItem("Name");
-                menuItem.setActionCommand("NAME|" + row);
+                menuItem.setActionCommand("NAME");
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_N);
                 menu.add(menuItem);
                 menuItem = new JMenuItem("Skills");
-                menuItem.setActionCommand("SKILLS|" + row);
+                menuItem.setActionCommand("SKILLS");
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
-                popup.add(menu);
-                if(entity.getTransportId() == Entity.NONE) {
+                popup.add(menu);              
+                if(allUnloaded) {
                     menu = new JMenu("Load into");
                     boolean canLoad = false;
                     for(Entity loader : clientgui.getClient().game.getEntitiesVector()) {
@@ -2762,64 +2804,76 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         //It would be nice to relax this, but it will take some work - we will
                         //have to listen for team changes and unload units if a teammate changes
                         //to an enemy
-                        if(loader.canLoad(entity, false)
-                                && (loader.getOwnerId() == entity.getOwnerId())) {
-                            //TODO don't allow capital fighters to load one another at the moment
-                            if(loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
-                                continue;
-                            }
-                            canLoad = true;
-                            menuItem = new JMenuItem(loader.getShortName());
-                            menuItem.setActionCommand("LOAD|" + row + "|" + loader.getId());
-                            menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot) && (entity.getTransportId() == Entity.NONE));
-                            menu.add(menuItem);
+                    	//TODO don't allow capital fighters to load one another at the moment
+                    	if(loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
+                            continue;
                         }
+                    	boolean loadable = true;
+                    	for(Entity en : entities) {
+	                        if(!loader.canLoad(en, false) || loader.getId() == en.getId()
+	                                || (loader.getOwnerId() != en.getOwnerId())) {
+	                            loadable = false;
+	                            break;
+	                        }
+                    	}
+	                    if(loadable) {        
+	                    	canLoad = true;
+	                    	menuItem = new JMenuItem(loader.getShortName());
+	                    	menuItem.setActionCommand("LOAD|" + loader.getId());
+	                    	menuItem.addActionListener(this);
+	                    	menuItem.setEnabled((isOwner || isBot) && allUnloaded);
+	                    	menu.add(menuItem);
+	                    }
                     }
                     if(canLoad) {
-                        menu.setEnabled((isOwner || isBot) && (entity.getTransportId() == Entity.NONE) && canLoad);
+                        menu.setEnabled((isOwner || isBot) && allUnloaded && canLoad);
                         popup.add(menu);
                     }
                 }
-                else {
+                else if(allLoaded) {
                     menuItem = new JMenuItem("Unload");
-                    menuItem.setActionCommand("UNLOAD|" + row);
+                    menuItem.setActionCommand("UNLOAD");
                     menuItem.addActionListener(this);
-                    menuItem.setEnabled((isOwner || isBot) && (entity.getTransportId() != Entity.NONE));
+                    menuItem.setEnabled((isOwner || isBot) && allLoaded);
                     popup.add(menuItem);
                 }
-                if(entity.getLoadedUnits().size() > 0) {
+                if(oneSelected && entity.getLoadedUnits().size() > 0) {
                     menuItem = new JMenuItem("Unload All Carried Units");
-                    menuItem.setActionCommand("UNLOADALL|" + row);
+                    menuItem.setActionCommand("UNLOADALL");
                     menuItem.addActionListener(this);
                     menuItem.setEnabled((isOwner || isBot));
                     popup.add(menuItem);
                 }
-                if(entity.isCapitalFighter()) {
+                if(allCapFighter && allUnloaded) {
                     menuItem = new JMenuItem("Start Fighter Squadron");
-                    menuItem.setActionCommand("SQUADRON|" + row);
+                    menuItem.setActionCommand("SQUADRON");
                     menuItem.addActionListener(this);
-                    menuItem.setEnabled((isOwner || isBot) && entity.isCapitalFighter());
+                    menuItem.setEnabled((isOwner || isBot) && allCapFighter);
                     popup.add(menuItem);
                 }
-                menu = new JMenu("Swap pilots with");
-                boolean canSwap = false;
-                for(Entity swapper : clientgui.getClient().game.getEntitiesVector()) {
-                    //only swap your own pilots and with the same unit type
-                    if(swapper.getOwnerId() == entity.getOwnerId()
-                            && swapper.getId() != entity.getId()
-                            && UnitType.determineUnitTypeCode(swapper) == UnitType.determineUnitTypeCode(entity)) {
-                        canSwap = true;
-                        menuItem = new JMenuItem(swapper.getShortName());
-                        menuItem.setActionCommand("SWAP|" + row + "|" + swapper.getId());
-                        menuItem.addActionListener(this);
-                        menuItem.setEnabled((isOwner || isBot));
-                        menu.add(menuItem);
-                    }
-                }
-                if(canSwap) {
-                    menu.setEnabled((isOwner || isBot) && canSwap);
-                    popup.add(menu);
+                if(oneSelected) {
+	                menu = new JMenu("Swap pilots with");
+	                boolean canSwap = false;
+	                for(Entity swapper : clientgui.getClient().game.getEntitiesVector()) {
+	                	if(swapper.isCapitalFighter()) {
+	                		continue;
+	                	}
+	                    //only swap your own pilots and with the same unit type
+	                    if(swapper.getOwnerId() == entity.getOwnerId()
+	                            && swapper.getId() != entity.getId()
+	                            && UnitType.determineUnitTypeCode(swapper) == UnitType.determineUnitTypeCode(entity)) {
+	                        canSwap = true;
+	                        menuItem = new JMenuItem(swapper.getShortName());
+	                        menuItem.setActionCommand("SWAP|" + swapper.getId());
+	                        menuItem.addActionListener(this);
+	                        menuItem.setEnabled((isOwner || isBot));
+	                        menu.add(menuItem);
+	                    }
+	                }
+	                if(canSwap) {
+	                    menu.setEnabled((isOwner || isBot) && canSwap);
+	                    popup.add(menu);
+	                }
                 }
 
                 popup.show(e.getComponent(), e.getX(), e.getY());

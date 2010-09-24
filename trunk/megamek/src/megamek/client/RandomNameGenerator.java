@@ -194,6 +194,9 @@ public class RandomNameGenerator implements Serializable {
         //all faction files should be in the faction directory
         File dir = new File("./data/names/factions/");
         String[] filenames = dir.list();
+        if(null == filenames) {
+        	return;
+        }
         for(int filen = 0; filen<filenames.length; filen++) {
             String filename = filenames[filen];
             String key = filename.split("\\.txt")[0];

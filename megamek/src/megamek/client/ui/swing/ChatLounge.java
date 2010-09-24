@@ -2596,21 +2596,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
         @Override
         public void keyPressed(KeyEvent e) {
-            int row = tableEntities.getSelectedRow();
-            if (row == -1) {
-                return;
+            if(tableEntities.getSelectedRowCount() == 0) {
+            	return;
             }
-            Entity entity = mekModel.getEntityAt(row);
+            int[] rows = tableEntities.getSelectedRows();
+            Vector<Entity> entities = new Vector<Entity>();
+            for(int i = 0; i<rows.length; i++) {
+            	entities.add(mekModel.getEntityAt(rows[i]));
+            }
             int code = e.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
-                delete(entity);
+                for(Entity entity : entities) {
+                	delete(entity);
+                }
             } else if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                mechReadout(entity);
+                mechReadout(entities.get(0));
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
-                customizeMech(entity);
+                customizeMech(entities.get(0));
             }
         }
     }
@@ -2737,8 +2742,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             int[] rows = tableEntities.getSelectedRows();
             int row = tableEntities.getSelectedRow();
-            boolean oneSelected = tableEntities.getSelectedRowCount() == 1;
-            
+            boolean oneSelected = tableEntities.getSelectedRowCount() == 1;        
             Entity entity = mekModel.getEntityAt(row);
             Vector<Entity> entities = new Vector<Entity>();
             for(int i = 0; i<rows.length; i++) {

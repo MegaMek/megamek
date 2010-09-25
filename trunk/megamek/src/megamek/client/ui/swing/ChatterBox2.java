@@ -316,21 +316,21 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         // Scroll up
-        if ((x > 283) && (x < 299) && (y > (yOffset + 2))
+        if ((x > WIDTH - 17) && (x < WIDTH - 1) && (y > (yOffset + 2))
                 && (y < (yOffset + 18))) {
             scrollUp();
             bv.refreshDisplayables();
             return true;
         }
         // Above scrollbar
-        if ((x > 283) && (x < 298) && (y > (yOffset + 15))
+        if ((x > WIDTH - 17) && (x < WIDTH - 1) && (y > (yOffset + 15))
                 && (y < (yOffset + 18 + scrollBarOffset - 1))) {
             pageUp();
             bv.refreshDisplayables();
             return true;
         }
         // Scroll bar
-        if ((x > WIDTH - 15) && (x < WIDTH -5)
+        if ((x > WIDTH - 15) && (x < WIDTH - 5)
                 && (y > (yOffset + 18 + scrollBarOffset - 1))
                 && (y < (yOffset + 18 + scrollBarOffset + scrollBarHeight))) {
             lastScrollPoint = p;
@@ -410,7 +410,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             }
         } else {
             int row = 1;
-            for (int i = rows - (MAX_NBR_ROWS + chatScroll); i < messages
+            for (int i = rows - MAX_NBR_ROWS - chatScroll; i < messages
                     .size()
                     - chatScroll; i++) {
                 printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset

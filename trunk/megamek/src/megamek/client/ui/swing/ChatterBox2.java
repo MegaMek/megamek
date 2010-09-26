@@ -64,22 +64,18 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     }
 
     private static final int SLIDING_SPEED = 5;
-    private static final int MAX_SLIDE_OFFSET = 130;
     private static final int MIN_SLIDE_OFFSET = 0;
 
     private static final int DIST_BOTTOM = 5;
     private static final int DIST_SIDE = 5;
 
-    private static final int MAX_NBR_ROWS = 7;
-
-    private static final int SCROLLBAR_MAX_HEIGHT = 110;
-    private static final int SCROLLBAR_OUTER_HEIGHT = 114;
-
     private static final long MAX_IDLE_TIME = 10000;
 
     private int height = 150;
     private int width = 400;
+    private int max_nbr_rows = 7;
 
+    private boolean resizing = false;
     private boolean scrolling = false;
     private boolean increasedChatScroll = false;
     private boolean decreasedChatScroll = false;
@@ -109,6 +105,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private Image downbutton;
     private Image maxbutton;
     private Image minbutton;
+    private Image resizebutton;
 
     private FontMetrics fm;
 
@@ -148,11 +145,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         PMUtil.setImage(minbutton, client);
         maxbutton = toolkit.getImage("data/images/widgets/maxbutton.gif");
         PMUtil.setImage(maxbutton, client);
+        resizebutton = toolkit.getImage("data/images/widgets/resizebutton.gif");
+        PMUtil.setImage(resizebutton, client);
     }
 
     public boolean isReleased() {
         if (scrolling) {
             stopScrolling();
+            return true;
+        }
+        if (resizing) {
+            stopScrolling();
+            resizing = false;
+            lockOpen = false;
             return true;
         }
         return false;
@@ -181,7 +186,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     }
 
     private boolean isDown() {
-        return !isSliding() && (slideOffset == MAX_SLIDE_OFFSET);
+        return !isSliding() && (slideOffset == getMaxSlideOffset());
     }
 
     private boolean isUp() {
@@ -204,18 +209,18 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private void pageUp() {
         setIdleTime(0, false);
-        if (!(chatScroll >= messages.size() - MAX_NBR_ROWS - (MAX_NBR_ROWS - 1))) {
-            chatScroll += MAX_NBR_ROWS - 1;
+        if (!(chatScroll >= messages.size() - max_nbr_rows - (max_nbr_rows - 1))) {
+            chatScroll += max_nbr_rows - 1;
         } else {
-            chatScroll = messages.size() - MAX_NBR_ROWS;
+            chatScroll = messages.size() - max_nbr_rows;
         }
         computeScrollBarOffset();
     }
 
     private void pageDown() {
         setIdleTime(0, false);
-        if (chatScroll > MAX_NBR_ROWS - 1) {
-            chatScroll -= MAX_NBR_ROWS - 1;
+        if (chatScroll > max_nbr_rows - 1) {
+            chatScroll -= max_nbr_rows - 1;
         } else {
             chatScroll = 0;
         }
@@ -224,11 +229,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     public boolean slide() {
         if (slidingDown) {
-            if (slideOffset < MAX_SLIDE_OFFSET) {
+            if (slideOffset < getMaxSlideOffset()) {
                 slideOffset += SLIDING_SPEED;
             } else {
                 stopSliding();
             }
+            slideOffset = Math.min(slideOffset, getMaxSlideOffset());
             return true;
         } else if (slidingUp) {
             if (slideOffset > MIN_SLIDE_OFFSET) {
@@ -236,6 +242,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             } else {
                 stopSliding();
             }
+            slideOffset = Math.max(slideOffset, MIN_SLIDE_OFFSET);
             return true;
         }
         return false;
@@ -256,11 +263,15 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             scroll(p, size);
             return true;
         }
+        if (resizing) {
+            resize(p, size);
+            return true;
+        }
         return false;
     }
 
     public boolean isBeingDragged() {
-        return scrolling;
+        return scrolling || resizing ;
     }
 
     public boolean isMouseOver(Point p, Dimension size) {
@@ -317,14 +328,23 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         // Scroll up
-        if ((x > width - 17) && (x < width - 1) && (y > (yOffset + 2))
-                && (y < (yOffset + 18))) {
+        if ((x > width - 17) && (x < width - 1) && (y > (yOffset + 2 + 14))
+                && (y < (yOffset + 32))) {
             scrollUp();
             bv.refreshDisplayables();
             return true;
         }
+        // resize
+        if ((x > width - 17) && (x < width - 1) && (y > (yOffset + 2))
+                && (y < (yOffset + 18))) {
+            if (isUp()) {
+                resizing = true;
+                lockOpen = true;
+                return true;
+            }
+        }
         // Above scrollbar
-        if ((x > width - 17) && (x < width - 1) && (y > (yOffset + 15))
+        if ((x > width - 17) && (x < width - 1) && (y > (yOffset + 31))
                 && (y < (yOffset + 18 + scrollBarOffset - 1))) {
             pageUp();
             bv.refreshDisplayables();
@@ -341,7 +361,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         // Below scrollbar
         if ((x > width - 17) && (x < width - 2)
                 && (y > (yOffset + 18 + scrollBarOffset + scrollBarHeight))
-                && (y < (yOffset + 18 + SCROLLBAR_OUTER_HEIGHT))) {
+                && (y < (yOffset + 18 + getScrollbarOuterHeight()))) {
             pageDown();
             bv.refreshDisplayables();
             return true;
@@ -375,7 +395,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         graph.setColor(COLOR_TEXT_BACK);
 
         // Min/max button
-        if (slideOffset == 130) {
+        if (slideOffset == getMaxSlideOffset()) {
             graph.drawImage(maxbutton, 10 + clipBounds.x, yOffset + 3, bv);
         } else {
             graph.drawImage(minbutton, 10 + clipBounds.x , yOffset + 3, bv);
@@ -384,39 +404,44 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         // Title
         printLine(graph, "Incoming messages...", 29 + clipBounds.x, yOffset + 15);
 
+        // resize button
+        graph.drawImage(resizebutton, width - 16 + clipBounds.x, yOffset + 3, bv);
+
         // Scroll up button
-        graph.drawImage(upbutton, width - 16 + clipBounds.x, yOffset + 3, bv);
+        graph.drawImage(upbutton, width - 16 + clipBounds.x, yOffset + 16, bv);
 
         // Scroll bar outer
-        graph.drawRect(width - 16 + clipBounds.x, yOffset + 16, 13, SCROLLBAR_OUTER_HEIGHT);
+        graph.drawRect(width - 16 + clipBounds.x, yOffset + 30, 13, getScrollbarOuterHeight());
 
         // Scroll bar inner
-        graph.drawRect(width - 14 + clipBounds.x, yOffset + 18 + scrollBarOffset, 9, scrollBarHeight);
+        graph.drawRect(width - 14 + clipBounds.x, yOffset + 31 + scrollBarOffset, 9, scrollBarHeight);
 
         // Scroll down button
-        graph.drawImage(downbutton, width - 16 + clipBounds.x, yOffset + 150 - 20, bv);
+        graph.drawImage(downbutton, width - 16 + clipBounds.x, yOffset + height - 20, bv);
 
         // Message box
-        graph.drawRect(10 + clipBounds.x, yOffset + 150 - 21, width - 50, 17);
+        graph.drawRect(10 + clipBounds.x, yOffset + height - 21, width - 50, 17);
         if (message != null) {
-            printLine(graph, visibleMessage + "_", 13 + clipBounds.x, yOffset + 150 - 7);
+            printLine(graph, visibleMessage + "_", 13 + clipBounds.x, yOffset + height - 7);
         }
 
         // Text rows
         int rows = messages.size();
-        if (rows <= MAX_NBR_ROWS) {
+        if (rows <= max_nbr_rows) {
             for (int i = 0; i < messages.size(); i++) {
                 printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
                         + 15 + ((i + 1) * 15));
             }
         } else {
             int row = 1;
-            for (int i = rows - MAX_NBR_ROWS - chatScroll; i < messages
+            for (int i = rows - max_nbr_rows - chatScroll; i < messages
                     .size()
                     - chatScroll; i++) {
-                printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
-                        + 15 + (row * 15));
-                row++;
+                if (i > -1) {
+                    printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
+                            + 15 + (row * 15));
+                    row++;
+                }
             }
         }
     }
@@ -471,22 +496,38 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         bv.refreshDisplayables();
     }
 
-    // Scrolls up one line.
+    /**
+     *  Scrolls up one line.
+     */
     public void scrollUp() {
         setIdleTime(0, false);
-        if (!(chatScroll >= messages.size() - MAX_NBR_ROWS)) {
+        if (!(chatScroll >= messages.size() - max_nbr_rows)) {
             chatScroll++;
             computeScrollBarOffset();
         }
     }
 
-    // Scrolls down one line.
+    /**
+     *  Scrolls down one line.
+     */
     public void scrollDown() {
         setIdleTime(0, false);
         if (chatScroll > 0) {
             chatScroll--;
             computeScrollBarOffset();
         }
+    }
+
+    /**
+     * resizing
+     * @param p
+     * @param size
+     */
+    private void resize(Point p, Dimension size) {
+        width = p.x;
+        height = Math.max(size.height - p.y, 10);
+        max_nbr_rows = height / fm.getHeight() - 2;
+        computeScrollBarHeight();
     }
 
     /**
@@ -498,11 +539,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         int yOffset = (size.height) - height - DIST_BOTTOM;
         int dY;
-        if (p.y < yOffset + 3 + 14) {
+        if (p.y < yOffset + 3 + 14 + 14) {
             if (overTheTop) {
                 return;
             } else {
-                p = new Point(0, yOffset + 3 + 14);
+                p = new Point(0, yOffset + 3 + 14 + 14);
                 overTheTop = true;
             }
         } else if (p.y > yOffset + 150 - 20) {
@@ -525,8 +566,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         if (scrollBarOffset < 0) {
             scrollBarOffset = 0;
-        } else if (scrollBarOffset > (SCROLLBAR_MAX_HEIGHT - scrollBarHeight)) {
-            scrollBarOffset = SCROLLBAR_MAX_HEIGHT - scrollBarHeight;
+        } else if (scrollBarOffset > (getMaxScrollbarHeight() - scrollBarHeight)) {
+            scrollBarOffset = getMaxScrollbarHeight() - scrollBarHeight;
         }
 
         while (Math.abs(scrollBarDragPos) >= scrollBarStep) {
@@ -575,24 +616,24 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     }
 
     private void computeScrollBarOffset() {
-        if (messages.size() <= MAX_NBR_ROWS) {
+        if (messages.size() <= max_nbr_rows) {
             scrollBarOffset = 0;
         } else {
-            scrollBarOffset = (int) (((SCROLLBAR_MAX_HEIGHT - scrollBarHeight)) * (1.0f - ((float) chatScroll / ((float) (messages
-                    .size() - MAX_NBR_ROWS)))));
+            scrollBarOffset = (int) (((getMaxScrollbarHeight() - scrollBarHeight)) * (1.0f - (chatScroll / ((float) (messages
+                    .size() - max_nbr_rows)))));
         }
     }
 
     private void computeScrollBarHeight() {
-        if (messages.size() <= MAX_NBR_ROWS) {
-            scrollBarHeight = SCROLLBAR_MAX_HEIGHT;
+        if (messages.size() <= max_nbr_rows) {
+            scrollBarHeight = getMaxScrollbarHeight();
             scrollBarStep = 0;
         } else {
             scrollBarHeight = Math
-                    .max(3, (int) (((float) MAX_NBR_ROWS / (float) messages
-                            .size()) * SCROLLBAR_MAX_HEIGHT));
-            scrollBarStep = ((float) (SCROLLBAR_MAX_HEIGHT - scrollBarHeight) / (float) (messages
-                    .size() - MAX_NBR_ROWS));
+                    .max(3, (int) (((float) max_nbr_rows / messages
+                            .size()) * getMaxScrollbarHeight()));
+            scrollBarStep = ((getMaxScrollbarHeight() - scrollBarHeight) / (float) (messages
+                    .size() - max_nbr_rows));
         }
         computeScrollBarOffset();
     }
@@ -679,12 +720,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
                 message = message.substring(0, message.length() - 1);
                 int i = 0;
-                if (fm.stringWidth(message) > 240) {
+                if (fm.stringWidth(message) > width - 60) {
                     boolean noFit = true;
                     while (noFit) {
                         i++;
                         String s = message.substring(i);
-                        noFit = fm.stringWidth(s) > 240;
+                        noFit = fm.stringWidth(s) > width - 60;
                     }
                 }
                 visibleMessage = message.substring(i);
@@ -698,12 +739,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 }
                 cb.setMessage(message);
                 i = 0;
-                if (fm.stringWidth(message) > 240) {
+                if (fm.stringWidth(message) > width - 60) {
                     boolean noFit = true;
                     while (noFit) {
                         i++;
                         String s = message.substring(i);
-                        noFit = fm.stringWidth(s) > 240;
+                        noFit = fm.stringWidth(s) > width - 60;
                     }
                 }
                 visibleMessage = message.substring(i);
@@ -737,6 +778,18 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     public void setChatterBox(ChatterBox cb) {
         this.cb = cb;
+    }
+
+    private int getScrollbarOuterHeight() {
+        return height - 49;
+    }
+
+    private int getMaxScrollbarHeight() {
+        return height - 54;
+    }
+
+    private int getMaxSlideOffset() {
+        return height - 20;
     }
 
 }

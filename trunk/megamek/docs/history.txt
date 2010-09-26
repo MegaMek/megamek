@@ -56,6 +56,7 @@ v0.35.19-dev (SVN)
 + Added Grenadier image, thanks Adgar76
 + Bug: MASS showing as Offensive BV weapon
 + Allow mousewheel to scroll the chatbox in the boardview
++ Bug: Chainsaw shouldn't need hand actuators to attack
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

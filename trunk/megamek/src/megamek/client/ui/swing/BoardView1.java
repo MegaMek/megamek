@@ -322,6 +322,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         addMouseListener(this);
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent we) {
+                Point mousePoint = we.getPoint();
+                for (int i = 0; i < displayables.size(); i++) {
+                    IDisplayable disp = displayables.get(i);
+                    if (!(disp instanceof ChatterBox2)) {
+                        return;
+                    }
+                    double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
+                    double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());
+                    Dimension drawDimension = new Dimension();
+                    drawDimension.setSize(width, height);
+                    if (disp.isMouseOver(mousePoint, drawDimension)) {
+                        ChatterBox2 cb2  = (ChatterBox2)disp;
+                        if (we.getWheelRotation() > 0) {
+                            cb2.scrollDown();
+                        } else {
+                            cb2.scrollUp();
+                        }
+                        refreshDisplayables();
+                        return;
+                    }
+                }
                 if (GUIPreferences.getInstance().getMouseWheelZoom()) {
                     if (we.getWheelRotation() > 0) {
                         zoomIn();
@@ -1778,7 +1799,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (entity.hasC3() || entity.hasC3i()) {
                 addC3Link(entity);
             }
-            
+
             if(entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
                 addFlyOverPath(entity);
             }
@@ -3448,7 +3469,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             buffer.append(" (")
                     .append(entity.getCrew().getGunnery()).append("/") //$NON-NLS-1$
                     .append(entity.getCrew().getPiloting()).append(")").append("; ")
-                    .append(entity.getCrew().getStatusDesc()); //$NON-NLS-1$
+                    .append(entity.getCrew().getStatusDesc());
             int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
             boolean isMD = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
             if (numAdv > 0) {
@@ -4273,7 +4294,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         public int getEntityId() {
             return en.getId();
         }
-        
+
         @Override
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
 

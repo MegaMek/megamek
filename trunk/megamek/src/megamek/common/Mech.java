@@ -6108,13 +6108,19 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
-        // gyro is the only system that has it's own BV and can only be in CT
-        // so check all CT crits for being armored and gyro, and add 5%
-        // of gyro BV for each slot
-        for (int slot = 0; slot < getNumberOfCriticals(Mech.LOC_CT); slot++) {
-            CriticalSlot cs = getCritical(Mech.LOC_CT, slot);
-            if ((cs != null) && cs.isArmored() && (cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_GYRO)) {
-                bv += getWeight() * getGyroMultiplier() * 0.05;
+        for (int location = 0; location < locations(); location++) {
+            for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+                CriticalSlot cs = getCritical(location, slot);
+                if ((cs != null) && cs.isArmored() && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                    // gyro is the only system that has it's own BV
+                    if ((cs.getIndex() == Mech.SYSTEM_GYRO)) {
+                        bv += getWeight() * getGyroMultiplier() * 0.05;
+                    } else {
+                        // System Crit that is armored but does not normally
+                        // have a BV
+                        bv += 5;
+                    }
+                }
             }
         }
         return bv;

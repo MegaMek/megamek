@@ -38,7 +38,7 @@ import megamek.common.ToHitData;
 /**
  * The attacker makes a club attack on the target. This also covers mech melee
  * weapons like hatchets.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -198,7 +198,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final boolean shield = ((MiscType) club.getType()).isShield();
         boolean needsHand = true;
 
-        if (hasClaws || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)) || (((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL)) || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)) || (((MiscType) club.getType()).hasSubType(MiscType.S_BUZZSAW)) || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) || (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE))) {
+        if (hasClaws || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)) || (((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL)) || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)) || (((MiscType) club.getType()).hasSubType(MiscType.S_BUZZSAW)) || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) || (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)) || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))) {
             needsHand = false;
         }
 

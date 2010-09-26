@@ -23,8 +23,12 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -643,8 +647,28 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
-        if (ke.isControlDown() || ke.isAltDown()) {
+        if (ke.isAltDown()) {
             return;
+        }
+        if (ke.isControlDown() && ke.getKeyCode() == KeyEvent.VK_V) {
+            Transferable content = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+            boolean hasTransferableText =
+              (content != null) && content.isDataFlavorSupported(DataFlavor.stringFlavor)
+            ;
+            if (hasTransferableText) {
+                try {
+                    addChatMessage((String)content.getTransferData(DataFlavor.stringFlavor));
+                  }
+                  catch (UnsupportedFlavorException ex){
+                    //highly unlikely since we are using a standard DataFlavor
+                    System.out.println(ex);
+                    ex.printStackTrace();
+                  }
+                  catch (IOException ex) {
+                      System.out.println(ex);
+                      ex.printStackTrace();
+                  }
+            }
         }
 
         switch (ke.getKeyCode()) {

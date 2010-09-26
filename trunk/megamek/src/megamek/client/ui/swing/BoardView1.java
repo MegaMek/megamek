@@ -326,7 +326,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 for (int i = 0; i < displayables.size(); i++) {
                     IDisplayable disp = displayables.get(i);
                     if (!(disp instanceof ChatterBox2)) {
-                        return;
+                        break;
                     }
                     double width = Math.min(boardSize.getWidth(), scrollpane.getViewport().getSize().getWidth());
                     double height = Math.min(boardSize.getHeight(), scrollpane.getViewport().getSize().getHeight());

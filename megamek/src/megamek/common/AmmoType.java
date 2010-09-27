@@ -293,7 +293,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
-     * 
+     *
      * @param other
      *            the <code>Object</code> to compare to this one.
      * @return <code>true</code> if the other is an <code>AmmoType</code> object
@@ -343,7 +343,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Returns the first usable ammo type for the given oneshot launcher
-     * 
+     *
      * @param mounted
      * @return
      */
@@ -1815,7 +1815,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo Long Tom Cannon");
         ammo.addLookupName("IS Long Tom Cannon Ammo");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 25;
+        ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
         ammo.shots = 5;
         ammo.bv = 44;
@@ -1836,7 +1836,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CL Ammo Long Tom Cannon");
         ammo.addLookupName("CL Long Tom Cannon Ammo");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 25;
+        ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
         ammo.shots = 5;
         ammo.bv = 44;
@@ -1878,7 +1878,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo Sniper Cannon");
         ammo.addLookupName("IS Sniper Cannon Ammo");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
+        ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_SNIPER_CANNON;
         ammo.shots = 10;
         ammo.bv = 10;
@@ -1899,7 +1899,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CL Ammo Sniper Cannon");
         ammo.addLookupName("CL Sniper Cannon Ammo");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
+        ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_SNIPER_CANNON;
         ammo.shots = 10;
         ammo.bv = 10;
@@ -1941,7 +1941,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo Thumper Cannon");
         ammo.addLookupName("IS Thumper Cannon Ammo");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 15;
+        ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_THUMPER_CANNON;
         ammo.shots = 20;
         ammo.bv = 5;
@@ -1962,7 +1962,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CL Ammo Thumper Cannon");
         ammo.addLookupName("CL Thumper Cannon Ammo");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 15;
+        ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_THUMPER_CANNON;
         ammo.shots = 20;
         ammo.bv = 5;
@@ -8221,7 +8221,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
          * base round into one of its muntions.
-         * 
+         *
          * @param munitionName
          *            - the <code>String</code> name of this munition type.
          * @param weightRatio
@@ -8243,7 +8243,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
          * rack size.
-         * 
+         *
          * @param base
          *            - the <code>AmmoType</code> of the base round.
          * @return this munition's <code>AmmotType</code>.
@@ -8344,7 +8344,7 @@ public class AmmoType extends EquipmentType {
                  * name. nameBuf = new StringBuffer( name ); nameBuf.append( " "
                  * ); nameBuf.append( base.name ); munition.name =
                  * nameBuf.toString();
-                 * 
+                 *
                  * // Add the munition name to the end of some of the ammo
                  * names. nameBuf = new StringBuffer( " " ); nameBuf.append(
                  * name ); munition.setInternalName(base.internalName +
@@ -8522,7 +8522,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * get BV for BA loads
-     * 
+     *
      * @return
      */
     public double getBABV() {

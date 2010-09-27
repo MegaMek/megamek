@@ -3588,6 +3588,40 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
+        if (hasVibroblades()) {
+
+            for (int location = Mech.LOC_RARM; location <= Mech.LOC_LARM; location++) {
+                for (int slot = 0; slot < locations(); slot++) {
+                    CriticalSlot cs = getCritical(location, slot);
+
+                    if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                        Mounted mount = getEquipment(cs.getIndex());
+                        if ((mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_CLUB) && ((MiscType) mount.getType()).isVibroblade()) {
+
+                            ArrayList<Object> weaponValues = new ArrayList<Object>();
+                            weaponValues.add(((MiscType) mount.getType()).getBV(this));
+                            weaponValues.add(getActiveVibrobladeHeat(location));
+                            weaponValues.add(mount.getName());
+                            heatBVs.add(weaponValues);
+
+                            bvText.append(startRow);
+                            bvText.append(startColumn);
+
+                            bvText.append(mount.getName());
+                            bvText.append(endColumn);
+                            bvText.append(startColumn);
+                            bvText.append(endColumn);
+                            bvText.append(startColumn);
+                            bvText.append("+ ");
+                            bvText.append(((MiscType) mount.getType()).getBV(this));
+                            bvText.append(endColumn);
+                            bvText.append(endRow);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);

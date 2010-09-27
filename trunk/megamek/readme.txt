@@ -1,10 +1,15 @@
 INTRODUCTION
 ------------
 MegaMek is a version of BattleTech that you can play with your friends 
-over the internet.  It is written in Java.  All of the level 1 (3025) 
-equipment and nearly all of the level 1 rules are functioning. In addition,
-many of the level 2 rules and equipment are finished, and even a few
-level 3 rules are available in the options.
+over the internet.  It is written in Java.  All rules from Total Warfare are
+implemented.  Rules from Tactical Operations and Strategic Operations are
+constantly in the works, and many of those rules and weapons
+are already implemented.
+
+Players can create their own units, maps, and scenarios for use with MegaMek.
+MegaMek supports all unit types, from infantry, battlemechs, and vehicles, to
+aerospace fighters, dropships, and warships. Ground battles as well as space 
+battles can be played.
 
 If you would like information about how to play the game, see the "PLAYING
 THE GAME" section, below.  If you're having trouble getting MegaMek started, 
@@ -122,20 +127,18 @@ PLAYING THE GAME
 
 Pre-game Lobby:
 
-Here you can chat, specify what mechs you wish to use, select map settings,
+Here you can chat, specify what units you wish to use, select map settings,
 declare starting positions, and change your player's color.  When everybody
-has at least one mech, you may all hit "ready" to start the game.  Most
+has at least one unit, you may all hit "ready" to start the game.  Most
 changes to the game parameters will cancel your ready status, so you should
-wait for everybody to finish choosing their mechs and positions.  Note: If
-you wish to use custom mech designs, please see the section below
+wait for everybody to finish choosing their units and positions.  Note: If
+you wish to use custom unit designs, please see the section below
 entitled "CUSTOM UNITS".
 
-You can enter the map selector by pressing the "Edit/View" button under the
-map sizes.  You can change the dimensions of the map boards (in hexes) or the
+You can enter the map selector by clicking on the "Select Map" tab at the top
+of the lobby.  You can change the dimensions of the map boards (in hexes) or the
 dimensions of the whole map (in boards.)  All maps are loaded off the server.
-All the map boards that MegaMek comes with are 16x17.  Whenever you change
-either of these values, you will need to hit the "Update Size Settings" button
-to have the rest of the dialog reflect the new values.
+Most of the map boards that MegaMek comes with are 16x17.
 
 Below the map size inputs is a not-to-scale representation of how the boards
 are laid out relative to each other.  The middle column lists the current maps
@@ -183,7 +186,7 @@ Mountain tops (4+ height) are expensive to build on, so they will only build in 
 Other terrain will just be bulldozed in the name of progress, though you may find a few
         hexes left between buildings.  
 
-There is also a "advanced" button, which lets you fine-tune the map to your liking.
+There is also an "advanced" button, which lets you fine-tune the map to your liking.
 See the "advanced map settings" section near the end of this file
 
 Initiative Report:
@@ -302,7 +305,7 @@ The buttons at the bottom of the screen allow you to fire your weapons,
 switch to another unit, or commit to your currently declared fire.  Again, 
 you do not need to declare fire for your first selected unit first.
 
-To target another unit, click on it on the board.  Targetting information
+To target another unit, click on it on the board.  Targeting information
 for your current weapon should appear in the mech display window.  To fire
 your current weapon at the target, press the "Fire" button at the bottom of 
 the screen.  To switch to another weapon, click on its name at the top of the
@@ -335,7 +338,7 @@ Swarm Mek attack does no damage in the turn it hits, but it means that the unit
 has attached itself to the Mek, and can begin to cause significant damage on
 subsequent turns.  Starting the turn after the unit starts a Swarming a Mek,
 all attacks by that unit automatically hit, use a location chart that is more
-dangerous than normaly, and automatically roll for a Thru-Armor Critical.  A
+dangerous than normally, and automatically roll for a Thru-Armor Critical.  A
 unit that is Swarming a Mek can also choose to Stop Swarming in any weapons
 phase.  The Leg Attack, Swarm Mek, and Stop Swarm actions are all "solo"
 actions: the unit can take no other action in the Weapons Fire Phase.  Attempts
@@ -392,8 +395,9 @@ loaded from any of several formats:
  MegaMek Native - files with the extension ".mtf"
     A simple format that is very whitespace sensitive.  All of the
     meks distributed with MegaMek are in this format, so just look
-    inside the zips for examples of the format.  Also created by the
-    HMPRead program.
+    inside the zips for examples of the format.  Units of this
+    file type can be created with MegaMekLab, Solaris Skunk Werks,
+    and the HMPRead program.
 
  Heavy Metal - files with the extensions ".hmp" and ".hmv"
     This is a commercial mech design program officially sanctioned by
@@ -514,7 +518,6 @@ discrepancies, please contact the author (see "CONTACT" below.)
     MegaMek currently picks the hex for you, choosing high elevations over low
     ones, to avoid falling damage.
     
-- Some more that I've forgotten...
 
 
 

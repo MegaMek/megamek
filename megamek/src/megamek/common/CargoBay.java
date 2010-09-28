@@ -69,7 +69,16 @@ public final class CargoBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Cargo Space - " + currentSpace + " tons";
+        StringBuffer returnString = new StringBuffer("Cargo Space - ");
+
+        if (currentSpace != Math.round(currentSpace)) {
+            returnString.append(String.format("%1$,.2f", currentSpace));
+        } else {
+            returnString.append(String.format("%1$,.0f", currentSpace));
+        }
+
+        returnString.append(" tons");
+        return returnString.toString();
     }
 
     @Override

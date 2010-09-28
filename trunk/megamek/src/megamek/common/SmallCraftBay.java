@@ -129,7 +129,7 @@ public final class SmallCraftBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Small Craft - " + currentSpace + " units (" + getRecoverySlots() + " recovery open)";
+        return "Small Craft - " + String.format("%1$,.0f", currentSpace) + " units (" + getRecoverySlots() + " recovery open)";
     }
 
     @Override

@@ -285,6 +285,7 @@ public class AmmoType extends EquipmentType {
 
     public AmmoType() {
         criticals = 1;
+        tankslots = 0;
         tonnage = 1.0f;
         explosive = true;
         instantModeSwitch = false;

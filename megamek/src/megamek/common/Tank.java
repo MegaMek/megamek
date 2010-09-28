@@ -1810,17 +1810,17 @@ public class Tank extends Entity {
         }
         // different engines take different amounts of slots
         if (getEngine().isFusion()) {
-            if (getEngine().hasFlag(Engine.LIGHT_ENGINE)) {
+            if (getEngine().getEngineType() == Engine.LIGHT_ENGINE) {
                 usedSlots++;
             }
-            if (getEngine().hasFlag(Engine.XL_ENGINE)) {
+            if (getEngine().getEngineType() == Engine.XL_ENGINE) {
                 if (getEngine().hasFlag(Engine.CLAN_ENGINE)) {
                     usedSlots++;
                 } else {
                     usedSlots += 2;
                 }
             }
-            if (getEngine().hasFlag(Engine.XXL_ENGINE)) {
+            if (getEngine().getEngineType() == Engine.XXL_ENGINE) {
                 if (getEngine().hasFlag(Engine.CLAN_ENGINE)) {
                    usedSlots += 2;
                 } else {
@@ -1851,7 +1851,7 @@ public class Tank extends Entity {
         int armorType = getArmorType();
         switch (armorType) {
             case EquipmentType.T_ARMOR_FERRO_FIBROUS:
-                if (isClan()) {
+                if (TechConstants.isClan(getArmorTechLevel())) {
                     usedSlots++;
                 } else {
                     usedSlots += 2;
@@ -1870,7 +1870,7 @@ public class Tank extends Entity {
                 usedSlots +=2;
                 break;
             case EquipmentType.T_ARMOR_REACTIVE:
-                if (isClan()) {
+                if (TechConstants.isClan(getArmorTechLevel())) {
                     usedSlots++;
                 } else {
                     usedSlots +=2;

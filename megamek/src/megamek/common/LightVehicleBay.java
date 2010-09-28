@@ -87,7 +87,7 @@ public final class LightVehicleBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Light Vehicle - " + currentSpace + " units";
+        return "Light Vehicle - " + String.format("%1$,.0f", currentSpace) + " units";
     }
 
     @Override

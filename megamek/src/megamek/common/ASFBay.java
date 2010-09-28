@@ -129,7 +129,7 @@ public final class ASFBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Aerospace Fighter - " + currentSpace + " units (" + getRecoverySlots() + " recovery open)";
+        return "Aerospace Fighter - " + String.format("%1$,.0f", currentSpace) + " units (" + getRecoverySlots() + " recovery open)";
     }
 
     @Override

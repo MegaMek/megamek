@@ -87,7 +87,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Battle Armor - " + currentSpace + " squads";
+        return "Battle Armor - " + String.format("%1$,.0f", currentSpace) + " squads";
     }
 
     @Override

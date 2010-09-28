@@ -138,6 +138,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_CUTTING_TORCH = BigInteger.valueOf(1).shiftLeft(95);
     public static final BigInteger F_OFF_ROAD = BigInteger.valueOf(1).shiftLeft(96);
     public static final BigInteger F_C3SBS = BigInteger.valueOf(1).shiftLeft(97);
+    public static final BigInteger F_VTOL_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(98);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -451,6 +452,20 @@ public class MiscType extends EquipmentType {
         }
 
         return super.getCost(entity, isArmored);
+    }
+
+    @Override
+    public int getTankslots(Entity entity) {
+        if (tankslots != TANKSLOTS_VARIABLE) {
+            return tankslots;
+        }
+        if (hasFlag(F_FERRO_FIBROUS)) {
+            if (entity.isClanArmor()) {
+                return 1;
+            }
+            return 2;
+        }
+        return 1;
     }
 
     @Override
@@ -855,6 +870,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 1.0f;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_HEAT_SINK);
         misc.bv = 0;
 
@@ -870,6 +886,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("JumpJet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.subType |= S_STANDARD;
         misc.bv = 0;
@@ -886,7 +903,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
-        misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
         misc.subType |= S_IMPROVED;
         misc.bv = 0;
 
@@ -903,7 +920,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLImprovedJump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
-        misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
         misc.subType |= S_IMPROVED;
         misc.bv = 0;
 
@@ -959,7 +976,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.flags = misc.flags.or(F_CLUB).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_CLUB);
         misc.subType |= S_CLUB;
         misc.bv = 0;
 
@@ -2021,6 +2038,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Ferro Fibre");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
+        misc.tankslots = TANKSLOTS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);
@@ -2072,6 +2090,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Heavy Ferro-Fibrous Armor");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 21;
+        misc.tankslots = 3;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);
@@ -2980,6 +2999,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 8;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.spreadable = true;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -3099,7 +3119,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -3517,6 +3537,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISHeavyPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.cost = 150000;
         misc.setModes(new String[]
             { "Off", "Charge" });
@@ -3869,6 +3890,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 1f;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -3897,9 +3919,9 @@ public class MiscType extends EquipmentType {
         misc.name = "Mast Mount";
         misc.setInternalName("CLMastMount");
         misc.tonnage = 0.5f;
-        misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MAST_MOUNT);
+        misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT);
         misc.bv = BV_VARIABLE;
 
         return misc;
@@ -3912,9 +3934,9 @@ public class MiscType extends EquipmentType {
         misc.name = "Mast Mount";
         misc.setInternalName("ISMastMount");
         misc.tonnage = 0.5f;
-        misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MAST_MOUNT);
+        misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT);
         misc.bv = BV_VARIABLE;
 
         return misc;

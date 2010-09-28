@@ -1047,7 +1047,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1339,7 +1339,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     * 
+     *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), or heavy damage (3)
@@ -1385,7 +1385,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -1662,7 +1662,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -1672,7 +1672,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
@@ -1737,7 +1737,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1765,7 +1765,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1784,6 +1784,58 @@ public class Tank extends Entity {
         }
         // No Mek Stealth or system inactive. Return false.
         return false;
+    }
+
+    public int getTotalSlots() {
+        return 5 + (int)Math.floor(getWeight()/5);
+    }
+
+    public int getFreeSlots() {
+        int availableSlots =  getTotalSlots();
+        int usedSlots = 0;
+        for (Mounted mount:this.getEquipment()) {
+            usedSlots += mount.getType().getTankslots(this);
+        }
+        if (this.getJumpMP(false) > 0) {
+            usedSlots++;
+        }
+        if (getEngine().isFusion()) {
+            if (getEngine().hasFlag(Engine.LIGHT_ENGINE)) {
+                usedSlots++;
+            }
+            if (getEngine().hasFlag(Engine.XL_ENGINE)) {
+                if (getEngine().hasFlag(Engine.CLAN_ENGINE)) {
+                    usedSlots++;
+                } else {
+                    usedSlots += 2;
+                }
+            }
+            if (getEngine().hasFlag(Engine.XXL_ENGINE)) {
+                if (getEngine().hasFlag(Engine.CLAN_ENGINE)) {
+                   usedSlots += 2;
+                } else {
+                    usedSlots += 4;
+                }
+            }
+        }
+        if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
+            usedSlots++;
+        }
+        Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
+        for (Mounted ammo : getAmmo()) {
+            AmmoType at = (AmmoType)ammo.getType();
+            if (foundAmmo.get(at.getAmmoType()+":"+at.getRackSize()) == null) {
+                usedSlots++;
+                foundAmmo.put(at.getAmmoType()+":"+at.getRackSize(), true);
+            }
+        }
+        for (Transporter transport : getTransports()) {
+            if (transport instanceof TroopSpace) {
+                usedSlots++;
+                break;
+            }
+        }
+        return availableSlots - usedSlots;
     }
 
 }

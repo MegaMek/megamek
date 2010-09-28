@@ -37,6 +37,7 @@ public class EquipmentType {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
+    public static final int TANKSLOTS_VARIABLE = Integer.MIN_VALUE;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;
@@ -112,6 +113,7 @@ public class EquipmentType {
 
     protected float tonnage = 0;
     protected int criticals = 0;
+    protected int tankslots = 1;
 
     protected boolean explosive = false;
     protected boolean hittable = true; // if false, reroll critical hits
@@ -207,6 +209,10 @@ public class EquipmentType {
 
     public int getCriticals(Entity entity) {
         return criticals;
+    }
+
+    public int getTankslots(Entity entity) {
+        return tankslots;
     }
 
     public boolean isExplosive() {

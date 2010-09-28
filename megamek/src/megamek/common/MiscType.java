@@ -455,20 +455,6 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public int getTankslots(Entity entity) {
-        if (tankslots != TANKSLOTS_VARIABLE) {
-            return tankslots;
-        }
-        if (hasFlag(F_FERRO_FIBROUS)) {
-            if (entity.isClanArmor()) {
-                return 1;
-            }
-            return 2;
-        }
-        return 1;
-    }
-
-    @Override
     public int getCriticals(Entity entity) {
         if (criticals != CRITICALS_VARIABLE) {
             return criticals;
@@ -2038,7 +2024,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Ferro Fibre");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
-        misc.tankslots = TANKSLOTS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);
@@ -2090,7 +2075,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Heavy Ferro-Fibrous Armor");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 21;
-        misc.tankslots = 3;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);

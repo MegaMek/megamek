@@ -1786,19 +1786,29 @@ public class Tank extends Entity {
         return false;
     }
 
+    /**
+     * get the total amount of item slots available for this tank
+     * @return
+     */
     public int getTotalSlots() {
         return 5 + (int)Math.floor(getWeight()/5);
     }
 
+    /**
+     * get the free item slots for this tank
+     * @return
+     */
     public int getFreeSlots() {
         int availableSlots =  getTotalSlots();
         int usedSlots = 0;
         for (Mounted mount:this.getEquipment()) {
             usedSlots += mount.getType().getTankslots(this);
         }
+        // JJs take just 1 slot
         if (this.getJumpMP(false) > 0) {
             usedSlots++;
         }
+        // different engines take different amounts of slots
         if (getEngine().isFusion()) {
             if (getEngine().hasFlag(Engine.LIGHT_ENGINE)) {
                 usedSlots++;
@@ -1821,6 +1831,7 @@ public class Tank extends Entity {
         if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
             usedSlots++;
         }
+        // for ammo, each type of ammo takes one slots, regardless of submunition type
         Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
         for (Mounted ammo : getAmmo()) {
             AmmoType at = (AmmoType)ammo.getType();
@@ -1829,11 +1840,44 @@ public class Tank extends Entity {
                 foundAmmo.put(at.getAmmoType()+":"+at.getRackSize(), true);
             }
         }
+        // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot total)
         for (Transporter transport : getTransports()) {
             if (transport instanceof TroopSpace) {
                 usedSlots++;
                 break;
             }
+        }
+        // different armor types take different amount of slots
+        int armorType = getArmorType();
+        switch (armorType) {
+            case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                if (isClan()) {
+                    usedSlots++;
+                } else {
+                    usedSlots += 2;
+                }
+                break;
+            case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                usedSlots +=3;
+                break;
+            case EquipmentType.T_ARMOR_LIGHT_FERRO:
+            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+            case EquipmentType.T_ARMOR_REFLECTIVE:
+            case EquipmentType.T_ARMOR_HARDENED:
+                usedSlots++;
+                break;
+            case EquipmentType.T_ARMOR_STEALTH:
+                usedSlots +=2;
+                break;
+            case EquipmentType.T_ARMOR_REACTIVE:
+                if (isClan()) {
+                    usedSlots++;
+                } else {
+                    usedSlots +=2;
+                }
+                break;
+            default:
+                break;
         }
         return availableSlots - usedSlots;
     }

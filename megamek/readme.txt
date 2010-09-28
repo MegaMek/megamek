@@ -1,7 +1,7 @@
 INTRODUCTION
 ------------
-MegaMek is a version of BattleTech that you can play with your friends 
-over the internet.  It is written in Java.  All rules from Total Warfare are
+MegaMek is a Java version of BattleTech that you can play with your friends 
+over the internet.  All rules from Total Warfare are
 implemented.  Rules from Tactical Operations and Strategic Operations are
 constantly in the works, and many of those rules and weapons
 are already implemented.
@@ -14,6 +14,10 @@ battles can be played.
 If you would like information about how to play the game, see the "PLAYING
 THE GAME" section, below.  If you're having trouble getting MegaMek started, 
 see the next section, "RUNNING MEGAMEK".
+
+For complete game rules, consult the Classic BattleTech rule books published
+by Catalyst Game Labs.  These books include Total Warfare, Tactical
+Operations, and Strategic Operations.
 
 
 

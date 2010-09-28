@@ -70,6 +70,7 @@ v0.35.19-dev (SVN)
 + Updated bay.getUnusedString() to not show .0 tons/Units
 + keep track of Tank item slots
 + Bug: BA cannot use AutoCannons
++ Bug 3077218: MG Extreme range damage
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

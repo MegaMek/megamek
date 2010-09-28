@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -38,10 +38,10 @@ import megamek.server.Server.DamageType;
 public class MGHandler extends AmmoWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5635871269404561702L;
-    
+
     private int nRapidDamHeatPerHit;
 
     /**
@@ -57,39 +57,49 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
-        if (weapon.isRapidfire() && !(target instanceof Infantry && !(target instanceof BattleArmor))) {
+        double toReturn = nDamPerHit;
+        if (weapon.isRapidfire() && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
-            if (bGlancing)
-                nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
+            if (bGlancing) {
+                toReturn = (int) Math.floor(nDamPerHit / 2.0);
+            }
         } else {
-            if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-                nDamPerHit = Compute.d6(wtype.getDamage());
-                if (bGlancing)
-                    nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
-                if (bDirect)
-                    nDamPerHit += toHit.getMoS()/3;
+            if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+                toReturn = Compute.d6(wtype.getDamage());
+                if (bGlancing) {
+                    toReturn = (int) Math.floor(toReturn / 2.0);
+                }
+                if (bDirect) {
+                    toReturn += toHit.getMoS()/3;
+                }
             } else {
-                nDamPerHit = super.calcDamagePerHit();
+                toReturn = wtype.getDamage();
+                if (bDirect) {
+                    toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+                }
+                if (bGlancing) {
+                    toReturn = (int) Math.floor(toReturn / 2.0);
+                }
             }
         }
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
-            float toReturn = nDamPerHit;
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
-            nDamPerHit = (int) Math.floor(toReturn);
+            toReturn = (int) Math.floor(toReturn);
         }
+        nDamPerHit = (int)toReturn;
 
         return nDamPerHit;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -105,7 +115,7 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     @Override
@@ -122,7 +132,7 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override
@@ -153,8 +163,9 @@ public class MGHandler extends AmmoWeaponHandler {
                 ammo.setShotsLeft(ammo.getShotsLeft() - 1);
             }
             setDone();
-        } else
+        } else {
             super.useAmmo();
+        }
     }
 
 }

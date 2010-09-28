@@ -218,7 +218,6 @@ public class Engine implements Serializable {
      * @return the weight of the engine in tons.
      */
     public float getWeightEngine(Entity entity, float roundWeight) {
-        int test = (int)Math.ceil(engineRating/5.0);
         float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
             case COMBUSTION_ENGINE:

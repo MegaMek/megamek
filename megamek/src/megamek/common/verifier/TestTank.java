@@ -223,6 +223,10 @@ public class TestTank extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
+        if (tank.getFreeSlots() < 0) {
+            buff.append("Not enough itemslots available!\n\n");
+            correct = false;
+        }
         if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
         }

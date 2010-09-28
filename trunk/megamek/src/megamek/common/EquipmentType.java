@@ -37,7 +37,6 @@ public class EquipmentType {
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
-    public static final int TANKSLOTS_VARIABLE = Integer.MIN_VALUE;
 
     public static final int T_ARMOR_UNKNOWN = -1;
     public static final int T_ARMOR_STANDARD = 0;

@@ -152,6 +152,10 @@
      archonlomendil@hotmail.com
      Punakettu
      Michael "Bedwyr" Mullins
+     ladob
+     ruff
+     DarkISI
+     Diezle
 
   Translations
      Jörg Harder <joergharder@t-online.de>

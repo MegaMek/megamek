@@ -264,7 +264,7 @@ public class MechFileParser {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // only srm, lrm and mml are valid for artemis
-                    if ((wtype.getAmmoType() != AmmoType.T_LRM) && (wtype.getAmmoType() != AmmoType.T_MML) && (wtype.getAmmoType() != AmmoType.T_SRM) && (wtype.getAmmoType() != AmmoType.T_NLRM)) {
+                    if ((wtype.getAmmoType() != AmmoType.T_LRM) && (wtype.getAmmoType() != AmmoType.T_MML) && (wtype.getAmmoType() != AmmoType.T_SRM) && (wtype.getAmmoType() != AmmoType.T_NLRM) && (wtype.getAmmoType() != AmmoType.T_LRM_TORPEDO) && (wtype.getAmmoType() != AmmoType.T_SRM_TORPEDO) && (wtype.getAmmoType() != AmmoType.T_LRM_TORPEDO_COMBO)) {
                         continue;
                     }
 
@@ -614,7 +614,6 @@ public class MechFileParser {
         }
         return false;
     }
-
 
     public static Entity loadEntity(File f, String entityName) {
         Entity entity = null;

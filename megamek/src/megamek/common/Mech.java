@@ -3616,6 +3616,7 @@ public abstract class Mech extends Entity implements Serializable {
                             bvText.append(getActiveVibrobladeHeat(location));
                             bvText.append(endColumn);
                             bvText.append(endRow);
+                            maximumHeat += getActiveVibrobladeHeat(location);
                             break;
                         }
                     }

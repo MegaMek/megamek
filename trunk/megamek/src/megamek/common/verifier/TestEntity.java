@@ -436,15 +436,15 @@ public abstract class TestEntity implements TestEntityOption {
             return 7;
         } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(mt.getInternalName())) {
             return 21;
-        } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL).equals(mt.getInternalName())) {
-            if (isClan()) {
+        } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL).equals(mt.getInternalName()) || mt.hasFlag(MiscType.F_ENDO_STEEL)) {
+            if (isClan() || mt.getInternalName().equals("Clan " + EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL))) {
                 return 7;
             }
             return 14;
         } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE).equals(mt.getInternalName())) {
             return 16;
-        } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE).equals(mt.getInternalName())) {
-            if (isClan()) {
+        } else if (EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE).equals(mt.getInternalName()) || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)) {
+            if (isClan() || mt.getInternalName().equals("Clan " + EquipmentType.getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_COMPOSITE))) {
                 return 4;
             }
             return 7;
@@ -548,7 +548,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     *
+     * 
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal

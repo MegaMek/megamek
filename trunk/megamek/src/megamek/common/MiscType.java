@@ -340,7 +340,7 @@ public class MiscType extends EquipmentType {
             double tons = entity.getTotalOArmor() / (16 * 0.875);
             tons = Math.ceil(tons * 2.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) || hasFlag(F_ENDO_STEEL)) {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
@@ -348,7 +348,7 @@ public class MiscType extends EquipmentType {
             double tons = 0.0;
             tons = Math.ceil(entity.getWeight() / 10.0) / 2.0;
             return (float) tons;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE).equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE).equals(internalName) || hasFlag(F_ENDO_COMPOSITE)) {
             double tons = 0.0;
             tons = entity.getWeight() / 10.0;
             tons = Math.ceil(tons * 1.5) / 2.0;
@@ -654,6 +654,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMekStealth());
         EquipmentType.addType(MiscType.createFerroFibrous());
         EquipmentType.addType(MiscType.createEndoSteel());
+        EquipmentType.addType(MiscType.createCLEndoSteel());
         EquipmentType.addType(MiscType.createBeagleActiveProbe());
         EquipmentType.addType(MiscType.createBloodhoundActiveProbe());
         EquipmentType.addType(MiscType.createTHBBloodhoundActiveProbe());
@@ -698,7 +699,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createArtemisV());
         EquipmentType.addType(MiscType.createISAngelECM());
         EquipmentType.addType(MiscType.createISTHBAngelECM());
-        EquipmentType.addType(MiscType.createCLAngelECM());
+        EquipmentType.addType(MiscType.createCLgelECM());
         EquipmentType.addType(MiscType.createWatchdogECM());
         EquipmentType.addType(MiscType.createTHBMace());
         EquipmentType.addType(MiscType.createMace());
@@ -786,6 +787,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFuelHalf());
         EquipmentType.addType(MiscType.createBlueShield());
         EquipmentType.addType(MiscType.createEndoComposite());
+        EquipmentType.addType(MiscType.createCLEndoComposite());
         EquipmentType.addType(MiscType.createCLLaserInsulator());
         EquipmentType.addType(MiscType.createISLaserInsulator());
         EquipmentType.addType(MiscType.createISEWEquipment());
@@ -796,11 +798,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());
         EquipmentType.addType(MiscType.createISDuneBuggyChassis());
         EquipmentType.addType(MiscType.createISOffRoadChassis());
-        EquipmentType.addType(MiscType.createClanFlotationHull());
-        EquipmentType.addType(MiscType.createClanLimitedAmphibiousChassis());
-        EquipmentType.addType(MiscType.createClanFullyAmphibiousChassis());
-        EquipmentType.addType(MiscType.createClanDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createClanOffRoadChassis());
+        EquipmentType.addType(MiscType.createCLFlotationHull());
+        EquipmentType.addType(MiscType.createCLLimitedAmphibiousChassis());
+        EquipmentType.addType(MiscType.createCLFullyAmphibiousChassis());
+        EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createCLOffRoadChassis());
         EquipmentType.addType(MiscType.createISShoulderTurret());
         EquipmentType.addType(MiscType.createCLShoulderTurret());
         EquipmentType.addType(MiscType.createISHeadTurret());
@@ -1412,7 +1414,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLAngelECM() {
+    public static MiscType createCLgelECM() {
         MiscType misc = new MiscType();
 
         // Don't forget, this will eventually count double for ECCM.
@@ -2197,6 +2199,41 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENDO_STEEL);
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+
+        return misc;
+    }
+
+    public static MiscType createCLEndoSteel() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
+        misc.setInternalName("Clan " + EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
+        misc.addLookupName("ClanEndo-Steel");
+        misc.addLookupName("ClanEndoSteel");
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 7;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_ENDO_STEEL);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createCLEndoComposite() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
+        misc.setInternalName("Clan " + EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
+        misc.addLookupName("ClanEndo-Composite");
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 4;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
+        misc.bv = 0;
 
         return misc;
     }
@@ -3103,7 +3140,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -4140,7 +4177,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createClanOffRoadChassis() {
+    public static MiscType createCLOffRoadChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Off-Road Chassis";
@@ -4155,7 +4192,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createClanFlotationHull() {
+    public static MiscType createCLFlotationHull() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Flotation Hull";
@@ -4169,7 +4206,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createClanLimitedAmphibiousChassis() {
+    public static MiscType createCLLimitedAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Limited Amphibious Chassis";
@@ -4184,7 +4221,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createClanFullyAmphibiousChassis() {
+    public static MiscType createCLFullyAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Fully Amphibious Chassis";
@@ -4199,7 +4236,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createClanDuneBuggyChassis() {
+    public static MiscType createCLDuneBuggyChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Dune Buggy Chassis";

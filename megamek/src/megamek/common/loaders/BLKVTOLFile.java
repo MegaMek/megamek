@@ -17,14 +17,10 @@
  */
 package megamek.common.loaders;
 
-import java.util.Vector;
-
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
-import megamek.common.Mounted;
 import megamek.common.Tank;
-import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;

@@ -35,7 +35,6 @@ import java.util.Random;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.common.Coords;
 import megamek.common.Hex;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
@@ -65,19 +64,22 @@ public class HexTileset {
     }
 
     /**
-     * This assigns images to a hex based on the best matches it can find. <p/>
+     * This assigns images to a hex based on the best matches it can find.
+     * <p/>
      * First it assigns any images to be superimposed on a hex. These images
      * must have a match value of 1.0 to be added, and any time a match of this
      * level is achieved, any terrain involved in the match is removed from
-     * further consideration. <p/> Any terrain left is used to match a base
-     * image for the hex. This time, a match can be any value, and the first,
-     * best image is used.
+     * further consideration.
+     * <p/>
+     * Any terrain left is used to match a base image for the hex. This time, a
+     * match can be any value, and the first, best image is used.
      */
     public synchronized Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
         List<Image> supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
-        Object[] pair = new Object[] { base, supers };
+        Object[] pair = new Object[]
+            { base, supers };
         hexToImageCache.put(hex, base);
         hexToImageListCache.put(hex, supers);
         return pair;
@@ -165,8 +167,7 @@ public class HexTileset {
 
     public void loadFromFile(String filename) throws IOException {
         // make inpustream for board
-        Reader r = new BufferedReader(new FileReader(
-                "data/images/hexes/" + filename)); //$NON-NLS-1$
+        Reader r = new BufferedReader(new FileReader("data/images/hexes/" + filename)); //$NON-NLS-1$
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -178,8 +179,7 @@ public class HexTileset {
             String terrain = null;
             String theme = null;
             String imageName = null;
-            if (st.ttype == StreamTokenizer.TT_WORD
-                    && (st.sval.equals("base") || st.sval.equals("super"))) { //$NON-NLS-1$ //$NON-NLS-2$
+            if ((st.ttype == StreamTokenizer.TT_WORD) && (st.sval.equals("base") || st.sval.equals("super"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 boolean base = st.sval.equals("base"); //$NON-NLS-1$
 
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
@@ -195,20 +195,16 @@ public class HexTileset {
                 imageName = st.sval;
                 // add to list
                 if (base) {
-                    bases.add(new HexEntry(new Hex(elevation, terrain, theme),
-                            imageName));
+                    bases.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
                 } else {
-                    supers.add(new HexEntry(new Hex(elevation, terrain, theme),
-                            imageName));
+                    supers.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
                 }
             }
         }
         r.close();
 
-        System.out
-                .println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out
-                .println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -264,13 +260,13 @@ public class HexTileset {
     /**
      * Match the two hexes using the "super" formula. All matches must be exact,
      * however the match only depends on the original hex matching all the
-     * elements of the comparision, not vice versa. <p/> EXCEPTION: a themed
-     * original matches any unthemed comparason.
+     * elements of the comparision, not vice versa.
+     * <p/>
+     * EXCEPTION: a themed original matches any unthemed comparason.
      */
     private double superMatch(IHex org, IHex com) {
         // check elevation
-        if (com.getElevation() != ITerrain.WILDCARD
-                && org.getElevation() != com.getElevation()) {
+        if ((com.getElevation() != ITerrain.WILDCARD) && (org.getElevation() != com.getElevation())) {
             return 0;
         }
         // check terrain
@@ -279,17 +275,12 @@ public class HexTileset {
             ITerrain oTerr = org.getTerrain(i);
             if (cTerr == null) {
                 continue;
-            } else if (oTerr == null
-                    || (cTerr.getLevel() != ITerrain.WILDCARD && oTerr
-                            .getLevel() != cTerr.getLevel())
-                    || (cTerr.hasExitsSpecified() && oTerr.getExits() != cTerr
-                            .getExits())) {
+            } else if ((oTerr == null) || ((cTerr.getLevel() != ITerrain.WILDCARD) && (oTerr.getLevel() != cTerr.getLevel())) || (cTerr.hasExitsSpecified() && (oTerr.getExits() != cTerr.getExits()))) {
                 return 0;
             }
         }
         // A themed original matches any unthemed comparason.
-        if (com.getTheme() != null
-                && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
+        if ((com.getTheme() != null) && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
             return 0.0;
         }
 
@@ -297,9 +288,10 @@ public class HexTileset {
     }
 
     /**
-     * Match the two hexes using the "base" formula. <p/> Returns a value
-     * indicating how close of a match the original hex is to the comparison
-     * hex. 0 means no match, 1 means perfect match.
+     * Match the two hexes using the "base" formula.
+     * <p/>
+     * Returns a value indicating how close of a match the original hex is to
+     * the comparison hex. 0 means no match, 1 means perfect match.
      */
     private double baseMatch(IHex org, IHex com) {
         double elevation;
@@ -310,19 +302,17 @@ public class HexTileset {
         if (com.getElevation() == ITerrain.WILDCARD) {
             elevation = 1.0;
         } else {
-            elevation = 1.01 / (Math.abs(org.getElevation()
-                    - com.getElevation()) + 1.01);
+            elevation = 1.01 / (Math.abs(org.getElevation() - com.getElevation()) + 1.01);
         }
 
         // Determine maximum number of terrain matches.
         // Bug 732188: Have a non-zero minimum terrain match.
-        double maxTerrains = Math.max(org.terrainsPresent(), com
-                .terrainsPresent());
+        double maxTerrains = Math.max(org.terrainsPresent(), com.terrainsPresent());
         double matches = 0.0;
         for (int i = 0; i < Terrains.SIZE; i++) {
             ITerrain cTerr = com.getTerrain(i);
             ITerrain oTerr = org.getTerrain(i);
-            if (cTerr == null || oTerr == null) {
+            if ((cTerr == null) || (oTerr == null)) {
                 continue;
             }
             double thisMatch = 0;
@@ -330,12 +320,10 @@ public class HexTileset {
             if (cTerr.getLevel() == ITerrain.WILDCARD) {
                 thisMatch = 1.0;
             } else {
-                thisMatch = 1.0 / (Math
-                        .abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);
+                thisMatch = 1.0 / (Math.abs(oTerr.getLevel() - cTerr.getLevel()) + 1.0);
             }
             // without exit match, terrain counts... um, half?
-            if (cTerr.hasExitsSpecified()
-                    && oTerr.getExits() != cTerr.getExits()) {
+            if (cTerr.hasExitsSpecified() && (oTerr.getExits() != cTerr.getExits())) {
                 thisMatch *= 0.5;
             }
             // add up match value
@@ -348,9 +336,7 @@ public class HexTileset {
         }
 
         // check theme
-        if (com.getTheme() == org.getTheme()
-                || (com.getTheme() != null && com.getTheme().equalsIgnoreCase(
-                        org.getTheme()))) {
+        if ((com.getTheme() == org.getTheme()) || ((com.getTheme() != null) && com.getTheme().equalsIgnoreCase(org.getTheme()))) {
             theme = 1.0;
         } else {
             // also don't throw a match entirely out because the theme is off
@@ -392,12 +378,15 @@ public class HexTileset {
                 loadImage(comp);
             }
             if (images.size() > 1) {
-                //Instead of a random number. Use a "seed" for determining which
-                //Image to use from the tileset. Normally the seed is the hashcode of
-                //the hex coordinates.
-                //Coords.Hashcode() is always a multiple of 4. So mess with the seed a little.
-                int betterSeed =  (seed >> 3) + (seed);
-                int rand = (int) (betterSeed % images.size());
+                // Instead of a random number. Use a "seed" for determining
+                // which
+                // Image to use from the tileset. Normally the seed is the
+                // hashcode of
+                // the hex coordinates.
+                // Coords.Hashcode() is always a multiple of 4. So mess with the
+                // seed a little.
+                int betterSeed = (seed >> 3) + (seed);
+                int rand = (betterSeed % images.size());
                 return images.elementAt(rand);
             }
             return images.firstElement();
@@ -407,8 +396,7 @@ public class HexTileset {
             images = new Vector<Image>();
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
-                images.addElement(comp.getToolkit().getImage(
-                        "data/images/hexes/" + filename)); //$NON-NLS-1$
+                images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$
             }
             // image = comp.getToolkit().getImage("data/images/hexes/" +
             // imageFile);

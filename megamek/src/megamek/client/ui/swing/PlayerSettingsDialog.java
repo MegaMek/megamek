@@ -20,48 +20,28 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
-import megamek.common.options.IOption;
 
 /**
- * A dialog that can be used to adjust advanced player settings like initiative, 
+ * A dialog that can be used to adjust advanced player settings like initiative,
  * minefields, and maybe other things in the future like force abilities.
- *
+ * 
  * @author Jay Lawson
  */
 public class PlayerSettingsDialog extends ClientDialog implements ActionListener {
@@ -73,40 +53,37 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
 
     private Client client;
     private ClientGUI clientgui;
-    
+
     private JPanel panMain = new JPanel();
     private JPanel panButtons = new JPanel();
-    
-    private JLabel labInit = new JLabel(Messages
-            .getString("PlayerSettingsDialog.ConstantBonus"));
+
+    private JLabel labInit = new JLabel(Messages.getString("PlayerSettingsDialog.ConstantBonus"));
     private JTextField texInit = new JTextField(3);
-    private JLabel labMines = new JLabel(Messages
-            .getString("PlayerSettingsDialog.Minefields"));
+    private JLabel labMines = new JLabel(Messages.getString("PlayerSettingsDialog.Minefields"));
     private JLabel labConventional = new JLabel(Messages.getString("PlayerSettingsDialog.labConventional"), SwingConstants.RIGHT); //$NON-NLS-1$
     //private JLabel labCommandDetonated = new JLabel(Messages.getString("PlayerSettingsDialog.labCommandDetonated"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JLabel labVibrabomb = new JLabel(Messages.getString("PlayerSettingsDialog.labVibrabomb"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JLabel labActive = new JLabel(Messages.getString("PlayerSettingsDialog.labActive"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JLabel labInferno = new JLabel(Messages.getString("PlayerSettingsDialog.labInferno"), SwingConstants.RIGHT); //$NON-NLS-1$
-    
+
     private JTextField fldConventional = new JTextField(3);
-    //private JTextField fldCommandDetonated = new JTextField(1);
+    // private JTextField fldCommandDetonated = new JTextField(1);
     private JTextField fldVibrabomb = new JTextField(3);
     private JTextField fldActive = new JTextField(3);
     private JTextField fldInferno = new JTextField(3);
-    
+
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    
+
     public PlayerSettingsDialog(ClientGUI clientgui, Client client) {
-          
-        super(clientgui.frame,
-                Messages.getString("PlayerSettingsDialog.title"), true); //$NON-NLS-1$
-        
+
+        super(clientgui.frame, Messages.getString("PlayerSettingsDialog.title"), true); //$NON-NLS-1$
+
         this.client = client;
         this.clientgui = clientgui;
-        
+
         setUpMain();
-        
+
         panButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         panButtons.add(butOkay);
         butOkay.addActionListener(this);
@@ -116,7 +93,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         getContentPane().setLayout(gridbag);
-        
+
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(5, 5, 5, 5);
         c.gridx = 0;
@@ -128,7 +105,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(panMain, c);
         getContentPane().add(panMain);
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
@@ -140,22 +117,21 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);
-        
+
         setResizable(true);
         validate();
         pack();
-        
-        
+
     }
-    
+
     private void setUpMain() {
-        
+
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         panMain.setLayout(gridbag);
 
         refreshValues();
-        
+
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
@@ -167,7 +143,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labInit, c);
         panMain.add(labInit);
-        
+
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 1;
@@ -179,7 +155,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(texInit, c);
         panMain.add(texInit);
-        
+
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
@@ -191,7 +167,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMines, c);
         panMain.add(labMines);
-        
+
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridx = 0;
@@ -287,7 +263,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(fldInferno, c);
         panMain.add(fldInferno);
-        
+
     }
 
     private void refreshValues() {
@@ -296,12 +272,12 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
         fldConventional.setText(Integer.toString(player.getNbrMFConventional()));
         fldVibrabomb.setText(Integer.toString(player.getNbrMFVibra()));
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
-        fldInferno.setText(Integer.toString(player.getNbrMFInferno()));   
+        fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
     }
 
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource().equals(butOkay)) {
-            
+        if (e.getSource().equals(butOkay)) {
+
             String init = texInit.getText();
             int initB = 0;
             try {
@@ -313,8 +289,7 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
                 return;
             }
             client.getLocalPlayer().setConstantInitBonus(initB);
-            
-            
+
             String conv = fldConventional.getText();
             String vibra = fldVibrabomb.getText();
             String active = fldActive.getText();
@@ -351,12 +326,12 @@ public class PlayerSettingsDialog extends ClientDialog implements ActionListener
             client.getLocalPlayer().setNbrMFVibra(nbrVibra);
             client.getLocalPlayer().setNbrMFActive(nbrActive);
             client.getLocalPlayer().setNbrMFInferno(nbrInferno);
-            
+
             client.sendPlayerInfo();
             setVisible(false);
-        } else if(e.getSource().equals(butCancel)) {
+        } else if (e.getSource().equals(butCancel)) {
             setVisible(false);
         }
-        
+
     }
 }

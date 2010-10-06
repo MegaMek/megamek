@@ -123,7 +123,6 @@ import megamek.common.TeleMissile;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
-import megamek.common.Transporter;
 import megamek.common.TurnOrdered;
 import megamek.common.TurnVectors;
 import megamek.common.UnitLocation;

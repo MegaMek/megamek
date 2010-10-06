@@ -38,10 +38,6 @@ import java.util.Iterator;
 import megamek.client.Client;
 import megamek.client.RandomSkillsGenerator;
 import megamek.client.ui.Messages;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Tank;
-import megamek.common.VTOL;
 
 public class RandomSkillDialog extends Dialog implements
         ActionListener, ItemListener {

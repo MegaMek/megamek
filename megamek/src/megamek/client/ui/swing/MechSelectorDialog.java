@@ -51,17 +51,12 @@ import javax.swing.table.TableRowSorter;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.common.BattleArmor;
 import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
-import megamek.common.Infantry;
-import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
-import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;

@@ -24,7 +24,6 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.Report;
-import megamek.common.Tank;
 import megamek.common.Targetable;
 
 /**

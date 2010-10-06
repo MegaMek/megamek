@@ -77,6 +77,7 @@ v0.35.19-dev (SVN)
 + Added new Clan Endo and Endo Composite MiscType
 + Removed unused imports
 + Bug: RL 15 should cause 4 heat, not 5
++ Bug: vibroblade heat not correctly handled for BV
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

@@ -4,7 +4,6 @@
 # base/super <elevation> <terrains> <theme> <image>
 #
 
-
 super * "elevator:*:01" "" "boring/elevator1.gif"
 super * "elevator:*:02" "" "boring/elevator2.gif"
 super * "elevator:*:04" "" "boring/elevator3.gif"

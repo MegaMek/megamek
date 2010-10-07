@@ -22,7 +22,7 @@ import megamek.common.TechConstants;
 /**
  * @author Andrew Hunter
  */
-public class ISBAFlamer extends FlamerWeapon {
+public class ISBAFlamer extends BAFlamerWeapon {
     /**
      *
      */

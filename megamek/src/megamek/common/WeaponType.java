@@ -1258,6 +1258,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAFlamer());
         EquipmentType.addType(new CLBAFlamer());
         EquipmentType.addType(new ISBATaser());
+        
+        // Unofficial BA Weapons
+        EquipmentType.addType(new CLBearhunterSuperheavyACi());
 
         // Cruise Missiles
         EquipmentType.addType(new ISCruiseMissile50());

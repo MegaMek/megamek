@@ -81,6 +81,8 @@ v0.35.19-dev (SVN)
 + Bug: Armored Components not calculating correctly for PPC Cap
 + Bug: Explosive bv not calculating correctly for PPC Cap
 + RFE: Errata on Clan Arrow IV BV now 268 from 168
++ Unofficial Weapon Tech:  Improved Bearhunter AC for BA
++ Added Unofficial Clan Unit: Golem Assault Battlearmor with Improved Bearhunter
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

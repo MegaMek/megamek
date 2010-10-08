@@ -58,6 +58,8 @@ public class ISLightPPC extends PPCWeapon {
         medAV = 5;
         maxRange = RANGE_MED;
         cost = 150000;
+        // with a capacitor
+        explosive = true;
     }
 
 

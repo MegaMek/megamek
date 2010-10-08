@@ -27,6 +27,7 @@ import java.util.Vector;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.PPCWeapon;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -1189,9 +1190,17 @@ public class Aero extends Entity
             int toSubtract = 15;
             EquipmentType etype = mounted.getType();
 
-            // only count explosive ammo
+             // only count explosive ammo
             if (!etype.isExplosive()) {
                 continue;
+            }
+            // PPCs with capacitors subtract 1
+            if (etype instanceof PPCWeapon) {
+                if (mounted.getLinkedBy() != null) {
+                    toSubtract = 1;
+                } else {
+                    continue;
+                }
             }
 
             // do not count weapon groups

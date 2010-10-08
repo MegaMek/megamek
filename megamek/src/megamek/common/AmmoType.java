@@ -3345,7 +3345,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_ROTARY;
         ammo.shots = 45;
-        ammo.bv = 22;
+        ammo.bv = 20;
         ammo.cost = 5000;
 
         return ammo;

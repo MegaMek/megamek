@@ -3286,11 +3286,33 @@ public abstract class Mech extends Entity implements Serializable {
                 dBV = mgaBV * 0.67;
             }
             String name = wtype.getName();
-            // check to see if the weapon is a PPC and has a Capacitor attached
-            // to it
-            if (wtype.hasFlag(WeaponType.F_PPC) && (weapon.getLinkedBy() != null)) {
-                dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this, weapon);
-                name = name.concat(" with Capacitor");
+            // artemis bumps up the value
+            // PPC caps do, too
+            if (weapon.getLinkedBy() != null) {
+                // check to see if the weapon is a PPC and has a Capacitor
+                // attached to it
+                if (wtype.hasFlag(WeaponType.F_PPC)) {
+                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this, weapon);
+                    name = name.concat(" with Capacitor");
+                }
+                Mounted mLinker = weapon.getLinkedBy();
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                    name = name.concat(" with Artemis IV");
+                }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    dBV *= 1.3;
+                    name = name.concat(" with Artemis V");
+                }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
+                    name = name.concat(" with Apollo");
+                }
+            }
+
+            if (hasFunctionalArmAES(weapon.getLocation())) {
+                dBV *= 1.5;
+                name = name.concat(" augmented by AES");
             }
 
             bvText.append(startRow);

@@ -1093,93 +1093,108 @@ public class Aero extends Entity
                 amsBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("AMS BV");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);
+                bvText.append(endColumn);               
                 bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
                 amsAmmoBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("AMS Ammo BV");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
+                bvText.append(endColumn);               
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
                 screenAmmoBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Screen Ammo BV");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
+                bvText.append(endColumn);               
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
             } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Screen BV");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
+                bvText.append(endColumn);               
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
                 bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
                 bvText.append(endRow);
             }
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total AMS BV: "+amsBV);
-        dbv += amsBV;
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Screen BV: "+screenBV);
-        dbv += screenBV;
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total AMS Ammo BV (to a maximum of AMS BV): "+Math.min(amsBV, amsAmmoBV));
-        dbv += Math.min(amsBV, amsAmmoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Screen Ammo BV (to a maximum of Screen BV): "+Math.min(screenBV, screenAmmoBV));
-        dbv += Math.min(screenBV, screenAmmoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        if(amsBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(amsBV);
+            dbv += amsBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if(screenBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(screenBV);
+            dbv += screenBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if(amsAmmoBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(amsBV, amsAmmoBV));
+            dbv += Math.min(amsBV, amsAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if(screenAmmoBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(screenBV, screenAmmoBV));
+            dbv += Math.min(screenBV, screenAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
@@ -1280,28 +1295,41 @@ public class Aero extends Entity
 
         bvText.append(startRow);
         bvText.append(startColumn);
-
-        bvText.append("Unit Type Modifier");
+        bvText.append("Multiply by Unit Type Modifier");
         bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
         bvText.append(startColumn);
-        bvText.append("DBV * Unittype Modifier = ");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(dbv+" x "+ getBVTypeModifier());
+        bvText.append(getBVTypeModifier());
         if (hasStealth()) {
             bvText.append("+ 0.2 for Stealth");
         }
+        bvText.append(endColumn);
         //unit type multiplier
         dbv *= (getBVTypeModifier() + (hasStealth()?0.2:0));
-
-        bvText.append(" = "+dbv);
+        bvText.append(startColumn);
+        bvText.append("x" + (getBVTypeModifier() + (hasStealth()?0.2:0)));
         bvText.append(endColumn);
         bvText.append(endRow);
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -1889,7 +1917,7 @@ public class Aero extends Entity
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Toal Ammo BV: ");
+        bvText.append("Total Ammo BV: ");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);

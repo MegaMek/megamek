@@ -32,6 +32,10 @@ public class Tank extends Entity {
     protected boolean m_bTurretLocked = false;
     protected boolean m_bTurretJammed = false;
     protected boolean m_bTurretEverJammed = false;
+    protected boolean m_bHasNoDualTurret = true;
+    protected boolean m_bDualTurretLocked = false;
+    protected boolean m_bDualTurretJammed = false;
+    protected boolean m_bDualTurretEverJammed = false;
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
     private boolean m_bImmobile = false;
@@ -52,6 +56,7 @@ public class Tank extends Entity {
     public static final int LOC_LEFT = 3;
     public static final int LOC_REAR = 4;
     public static final int LOC_TURRET = 5;
+    public static final int LOC_TURRET_2 = 6;
 
     // critical hits
     public static final int CRIT_NONE = -1;
@@ -76,9 +81,12 @@ public class Tank extends Entity {
         { 25, 25, 25, 25, 25, 25 };
 
     private static String[] LOCATION_ABBRS =
-        { "BD", "FR", "RS", "LS", "RR", "TU" };
+        { "BD", "FR", "RS", "LS", "RR", "TU", "TU2" };
     private static String[] LOCATION_NAMES =
-        { "Body", "Front", "Right", "Left", "Rear", "Turret" };
+        { "Body", "Front", "Right", "Left", "Rear", "Turret"};
+
+    private static String[] LOCATION_NAMES_DUAL_TURRET =
+    { "Body", "Front", "Right", "Left", "Rear", "Forward Turret", "Rear Turret"};
 
     @Override
     public String[] getLocationAbbrs() {
@@ -87,6 +95,9 @@ public class Tank extends Entity {
 
     @Override
     public String[] getLocationNames() {
+        if (hasNoDualTurret()) {
+            return LOCATION_NAMES_DUAL_TURRET;
+        }
         return LOCATION_NAMES;
     }
 
@@ -105,8 +116,16 @@ public class Tank extends Entity {
         return m_bHasNoTurret;
     }
 
+    public boolean hasNoDualTurret() {
+        return m_bHasNoDualTurret;
+    }
+
     public void setHasNoTurret(boolean b) {
         m_bHasNoTurret = b;
+    }
+
+    public void setHasNoDualTurret(boolean b) {
+        m_bHasNoDualTurret = b;
     }
 
     /**
@@ -300,17 +319,34 @@ public class Tank extends Entity {
         m_bTurretLocked = true;
     }
 
+    public void lockDualTurret() {
+        m_bDualTurretLocked = true;
+    }
+
     public void jamTurret() {
         m_bTurretEverJammed = true;
         m_bTurretJammed = true;
+    }
+
+    public void jamDualTurret() {
+        m_bDualTurretEverJammed = true;
+        m_bDualTurretJammed = true;
     }
 
     public void unjamTurret() {
         m_bTurretJammed = false;
     }
 
+    public void unjamDualTurret() {
+        m_bDualTurretJammed = false;
+    }
+
     public boolean isTurretEverJammed() {
         return m_bTurretEverJammed;
+    }
+
+    public boolean isDualTurretEverJammed() {
+        return m_bDualTurretEverJammed;
     }
 
     public int getStunnedTurns() {
@@ -604,6 +640,17 @@ public class Tank extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
+        bvText.append(nl);
+
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -620,9 +667,19 @@ public class Tank extends Entity {
             blueShield = true;
         }
 
-        // total armor points
-        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1) * (getBARRating() / 10);
+        bvText.append(startTable);
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
+        bvText.append("Total Armor Factor x 2.5 x Armor multplier x BAR Rating / 10");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        // total armor points
+        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1) * ((float)(getBARRating()) / 10);
+
+        int armor = getTotalArmor() + modularArmor;
+        bvText.append(armor + " x 2.5 x "+(blueShield?"1.2":"1.0")+" x "+((float)(getBARRating()) / 10));
         // total internal structure
         dbv += getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1);
 

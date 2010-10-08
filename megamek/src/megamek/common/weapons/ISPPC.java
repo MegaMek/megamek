@@ -59,6 +59,8 @@ public class ISPPC extends PPCWeapon {
         shortAV = 10;
         medAV = 10;
         maxRange = RANGE_MED;
+        // with a capacitor
+        explosive = true;
     }
 
 }

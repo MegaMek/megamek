@@ -82,6 +82,7 @@ import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
+import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
@@ -99,6 +100,7 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
@@ -130,8 +132,6 @@ import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponComparator;
 import megamek.common.WeaponType;
-import megamek.common.IGame.Phase;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -185,6 +185,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
@@ -2039,7 +2040,7 @@ public class Server implements Runnable {
                     ((Aero) entity).applyBombs();
                 }
             }
-            
+
             //if units were loaded in the chat lounge, I need to keep track of it here
             //because they can get dumped in the deployment phase
             if(entity.getLoadedUnits().size() > 0) {
@@ -2049,7 +2050,7 @@ public class Server implements Runnable {
                 }
                 entity.setLoadedKeepers(v);
             }
-            
+
             entityUpdate(entity.getId());
         }
     }
@@ -6259,10 +6260,10 @@ public class Server implements Runnable {
                         addReport(processCrash(entity, 0, entity.getPosition()));
                     }
                 }
-                
+
                 //check to see if spheroids should lose one altitude
-                if(a.isSpheroid() && !game.getBoard().inSpace() && a.isAirborne() 
-                        && md.getFinalNDown()==0 && md.getMpUsed()==0) {
+                if(a.isSpheroid() && !game.getBoard().inSpace() && a.isAirborne()
+                        && (md.getFinalNDown()==0) && (md.getMpUsed()==0)) {
                     r = new Report(9392);
                     r.subject = entity.getId();
                     r.addDesc(entity);
@@ -8827,7 +8828,7 @@ public class Server implements Runnable {
      */
     private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
             boolean assaultDrop) {
-        
+
         for (Entity loaded : loadVector) {
             if ((loaded == null) || (loaded.getPosition() != null) || (loaded.getTransportId() != Entity.NONE)) {
                 // Something is fishy in Denmark.
@@ -14901,7 +14902,7 @@ public class Server implements Runnable {
          * http://forums.classicbattletech.com/index.php/topic,20424.0.html
          */
 
-        if (e instanceof Aero && (e.isAirborne() || e.isSpaceborne())) {
+        if ((e instanceof Aero) && (e.isAirborne() || e.isSpaceborne())) {
             Aero a = (Aero) e;
 
             // they should get a shot at a recovery roll at the end of all this
@@ -20024,6 +20025,14 @@ public class Server implements Runnable {
             return vDesc;
         }
 
+        // special case. PPC with Capacitor only explodes when charged
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && !mounted.curMode().equals("Charge")) {
+            return vDesc;
+        }
+        if ((mounted.getType() instanceof PPCWeapon) && !mounted.hasChargedCapacitor()) {
+            return vDesc;
+        }
+
         // Inferno ammo causes heat buildup as well as the damage
         if ((mounted.getType() instanceof AmmoType)
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || (((AmmoType) mounted.getType())
@@ -20526,17 +20535,17 @@ public class Server implements Runnable {
         boolean fallToSurface = false;
         // on ice
         int toSubtract = 0;
-        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ICE) && entity.getElevation() != -game.getBoard().getHex(entity.getPosition()).depth()) {
+        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.ICE) && (entity.getElevation() != -game.getBoard().getHex(entity.getPosition()).depth())) {
             fallToSurface = true;
             toSubtract = game.getBoard().getHex(entity.getPosition()).surface();
         }
         // on a bridge
-        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BRIDGE_ELEV) && entity.getElevation() >= game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV)) {
+        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BRIDGE_ELEV) && (entity.getElevation() >= game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV))) {
             fallToSurface = true;
             toSubtract = game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV);
         }
         // on a building
-        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BLDG_ELEV) && entity.getElevation() >= game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BLDG_ELEV)) {
+        if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BLDG_ELEV) && (entity.getElevation() >= game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BLDG_ELEV))) {
             fallToSurface = true;
             toSubtract = game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BLDG_ELEV);
         }
@@ -21396,10 +21405,11 @@ public class Server implements Runnable {
     /**
      * adds a squadron to the game
      */
+    @SuppressWarnings("unchecked")
     private void receiveSquadronAdd(Packet c, int connIndex) {
-        
+
         final FighterSquadron fs = (FighterSquadron) c.getObject(0);
-        final Vector<Integer> fighters = (Vector<Integer>) c.getObject(1); 
+        final Vector<Integer> fighters = (Vector<Integer>) c.getObject(1);
         if(fighters.size() < 1) {
             return;
         }
@@ -21408,7 +21418,7 @@ public class Server implements Runnable {
         if (Entity.NONE == fs.getId()) {
             fs.setId(getFreeEntityId());
         }
-        game.addEntity(fs.getId(), fs);   
+        game.addEntity(fs.getId(), fs);
         for(int id : fighters) {
             Entity fighter = game.getEntity(id);
             if(null != fighter) {
@@ -21416,9 +21426,9 @@ public class Server implements Runnable {
                fighter.setTransportId(fs.getId());
                entityUpdate(fighter.getId());
             }
-        }              
-        send(createAddEntityPacket(fs.getId())); 
-         
+        }
+        send(createAddEntityPacket(fs.getId()));
+
     }
 
     /**

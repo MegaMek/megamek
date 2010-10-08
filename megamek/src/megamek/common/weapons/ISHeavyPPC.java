@@ -58,5 +58,7 @@ public class ISHeavyPPC extends PPCWeapon {
         medAV = 15;
         maxRange = RANGE_MED;
         cost = 250000;
+        // with a capacitor
+        explosive = true;
     }
 }

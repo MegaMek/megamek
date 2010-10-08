@@ -18,6 +18,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -174,8 +175,29 @@ public class Dropship extends SmallCraft implements Serializable {
         return Math.round(cost * weightMultiplier);
 
     }
+    
+    private String getArcName(int loc) {
+        if(loc < locations()) {
+            return getLocationName(loc);
+        } else {
+            return getLocationName(loc-3) + " (R)";
+        }
+    }
+    
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        
+        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
+        bvText.append(nl);
+        
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -186,10 +208,52 @@ public class Dropship extends SmallCraft implements Serializable {
             }
         }
 
-        dbv += (getTotalArmor()+modularArmor) * 2.5;
+        //no use for armor mods right now but in case we need one later
+        double armorMod = 1.0;
+        
+        bvText.append(startTable);
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
-        dbv += getSI() * 2.0;
+        bvText.append("Total Armor Factor x 2.5 x");
+        bvText.append(armorMod);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        
+        dbv += (getTotalArmor()+modularArmor);
 
+        bvText.append(dbv);
+        bvText.append(" x 2.5 x ");
+        bvText.append(armorMod);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+
+        dbv *= 2.5 * armorMod;
+
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total SI x 2");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        double dbvSI = getSI() * 2.0;
+        dbv += dbvSI;
+
+        bvText.append(getSI());
+        bvText.append(" x 2");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(dbvSI);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+ 
         // add defensive equipment
         double amsBV = 0;
         double amsAmmoBV = 0;
@@ -202,116 +266,357 @@ public class Dropship extends SmallCraft implements Serializable {
             if (mounted.isDestroyed()) {
                 continue;
             }
+            if(etype instanceof BayWeapon) {
+                continue;
+            }           
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);               
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                amsAmmoBV += etype.getBV(this);
+                //we need to deal with cases where ammo is loaded in multi-ton increments
+                //(on dropships and jumpships) - lets take the ratio of shots to shots left
+                double ratio = mounted.getShotsLeft()/((AmmoType)etype).getShots();
+                
+                //if the ratio is less than one, we will treat as a full ton since 
+                //we don't make that adjustment elsewhere
+                if(ratio < 1.0) {
+                    ratio = 1.0;
+                }
+                amsAmmoBV += ratio * etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);               
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(ratio * etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
-                screenAmmoBV += etype.getBV(this);
+                //we need to deal with cases where ammo is loaded in multi-ton increments
+                //(on dropships and jumpships) - lets take the ratio of shots to shots left
+                double ratio = mounted.getShotsLeft()/((AmmoType)etype).getShots();
+                
+                //if the ratio is less than one, we will treat as a full ton since 
+                //we don't make that adjustment elsewhere
+                if(ratio < 1.0) {
+                    ratio = 1.0;
+                }
+                screenAmmoBV += ratio * etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);               
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(ratio * etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);               
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
-        dbv += amsBV;
-        dbv += screenBV;
-        dbv += Math.min(amsBV, amsAmmoBV);
-        dbv += Math.min(screenBV, screenAmmoBV);
+        if(amsBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(amsBV);
+            dbv += amsBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if(screenBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(screenBV);
+            dbv += screenBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if(amsAmmoBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(amsBV, amsAmmoBV));
+            dbv += Math.min(amsBV, amsAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if(screenAmmoBV>0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(Math.min(screenBV, screenAmmoBV));
+            dbv += Math.min(screenBV, screenAmmoBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         //unit type multiplier
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Multiply by Unit type Modifier");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getBVTypeModifier());
         dbv *= getBVTypeModifier();
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("x"+getBVTypeModifier());
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
+        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         // calculate heat efficiency
         int aeroHeatEfficiency = getHeatCapacity();
 
-        //get arc BV and heat
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
-        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
-        TreeMap<Integer, Double> arcBVs = new TreeMap<Integer, Double>();
-        TreeMap<Integer, Double> arcHeat = new TreeMap<Integer, Double>();
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double weaponHeat = wtype.getHeat();
-            int arc = getWeaponArc(getEquipmentNum(mounted));
-            double dBV = wtype.getBV(this);
-            //skip bays
-            if(wtype instanceof BayWeapon) {
-                continue;
-            }
-            //don't count defensive weapons
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            //don't count screen launchers, they are defensive
-            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                continue;
-            }
-            // only count non-damaged equipment
-            if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
-                continue;
-            }
+        bvText.append(startRow);
+        bvText.append(startColumn);
 
-            // double heat for ultras
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weaponHeat *= 2;
+        bvText.append("Base Heat Efficiency ");
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(aeroHeatEfficiency);
+
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        //get arc BV and heat
+        //I am going to redo how I do this to cycle through locations, so I can spit it out 
+        //to bvText. It will require a little trickery for rear LS/RS since those technically are not 
+        //locations
+        double[] arcBVs = new double[locations()+2];
+        double[] arcHeats = new double[locations()+2];
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Arc BV and Heat");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
+        //first cycle through normal locations (leaving out rear-facing weapons
+        for(int loc = 0; loc < (locations() + 2); loc++) {
+            int l = loc;
+            boolean isRear = (loc >= locations());
+            String rear = "";
+            if(isRear) {
+                l = l - 3;
+                rear = " (R)";
             }
-            // Six times heat for RAC
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weaponHeat *= 6;
-            }
-            //add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize() + ";" + arc;
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+            this.getLocationName(l);
+            
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("<i>" + getLocationName(l) + rear + "</i>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<i>BV</i>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<i>Heat</i>");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            double arcBV = 0.0;
+            double arcHeat = 0.0;
+            for (Mounted mounted : getTotalWeaponList()) {
+                if(mounted.getLocation() != l) {
+                    continue;
                 }
-            }
-            //calc MG Array here:
-            if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgaBV = 0;
-                for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted.getLocation())) {
-                        mgaBV += possibleMG.getType().getBV(this);
+                if(mounted.isRearMounted() != isRear) {
+                    continue;
+                }
+                // only count non-damaged equipment
+                if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
+                    continue;
+                }               
+                WeaponType wtype = (WeaponType) mounted.getType();
+                double weaponHeat = wtype.getHeat();
+                double dBV = wtype.getBV(this);
+                //skip bays
+                if(wtype instanceof BayWeapon) {
+                    continue;
+                }
+                //don't count defensive weapons
+                if (wtype.hasFlag(WeaponType.F_AMS)) {
+                    continue;
+                }
+                //don't count screen launchers, they are defensive
+                if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+                    continue;
+                }
+                // double heat for ultras
+                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                    weaponHeat *= 2;
+                }
+                // Six times heat for RAC
+                if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                    weaponHeat *= 6;
+                }
+                //calc MG Array here:
+                if (wtype.hasFlag(WeaponType.F_MGA)) {
+                    double mgaBV = 0;
+                    for (Mounted possibleMG : getTotalWeaponList()) {
+                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                                && (possibleMG.getLocation() == mounted.getLocation())) {
+                            mgaBV += possibleMG.getType().getBV(this);
+                        }
+                    }
+                    dBV = mgaBV * 0.67;
+                }
+                // and we'll add the tcomp here too
+                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    if (hasTargComp()) {
+                        dBV *= 1.25;
                     }
                 }
-                dBV = mgaBV * 0.67;
-            }
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                if (hasTargComp()) {
-                    dBV *= 1.25;
+                // artemis bumps up the value
+                if (mounted.getLinkedBy() != null) {
+                    Mounted mLinker = mounted.getLinkedBy();
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                        dBV *= 1.2;
+                    }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                        dBV *= 1.3;
+                    }
+                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                        dBV *= 1.15;
+                    }
                 }
-            }
-            // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
+                //add up BV of ammo-using weapons for each type of weapon,
+                // to compare with ammo BV later for excessive ammo BV rule
+                if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
+                    String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
+                    if (!weaponsForExcessiveAmmo.containsKey(key)) {
+                        weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                    } else {
+                        weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+                    }
                 }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                }
-            }
-
-            double currentArcBV = 0.0;
-            double currentArcHeat = 0.0;
-            if(null != arcBVs.get(arc)) {
-                currentArcBV = arcBVs.get(arc);
-            }
-            if(null != arcHeat.get(arc)) {
-                currentArcHeat = arcHeat.get(arc);
-            }
-            arcBVs.put(arc, currentArcBV + dBV);
-            arcHeat.put(arc, currentArcHeat + weaponHeat);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(wtype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + dBV);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + weaponHeat);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                arcBV += dBV;
+                arcHeat += weaponHeat;
+            }      
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("<b>" + getLocationName(l) + rear + " Totals</b>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<b>" + arcBV + "</b>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<b>" + arcHeat + "</b>");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            arcBVs[loc] = arcBV;
+            arcHeats[loc] = arcHeat;
         }
+        
         double weaponBV = 0.0;
-        //lets traverse the hash and find the highest value BV arc
+        //ok, now lets loop through the arcs and find the highest value BV arc
         int highArc = Integer.MIN_VALUE;
         int adjArc = Integer.MIN_VALUE;
         int oppArc = Integer.MIN_VALUE;
@@ -319,32 +624,30 @@ public class Dropship extends SmallCraft implements Serializable {
         double oppArcMult = 0.5;
         double highBV = 0.0;
         double heatUsed = 0.0;
-        Set<Integer> set= arcBVs.keySet();
-        Iterator<Integer> iter = set.iterator();
-        while(iter.hasNext()) {
-            int key = iter.next();
-            if(arcBVs.get(key) > highBV) {
-                highArc = key;
-                highBV = arcBVs.get(key);
+        for(int loc = 0; loc < arcBVs.length; loc++) {
+            if(arcBVs[loc] > highBV) {
+                highArc = loc;
+                highBV = arcBVs[loc];
             }
         }
         //now lets identify the adjacent and opposite arcs
         if(highArc > Integer.MIN_VALUE) {
-            heatUsed += arcHeat.get(highArc);
+            heatUsed += arcHeats[highArc];
             //now get the BV and heat for the two adjacent arcs
-            int adjArcCW = getAdjacentArcCW(highArc);
-            int adjArcCCW = getAdjacentArcCCW(highArc);
+            int adjArcCW = getAdjacentLocCW(highArc);
+            int adjArcCCW = getAdjacentLocCCW(highArc);
+            oppArc = getOppositeLoc(highArc);
             double adjArcCWBV = 0.0;
             double adjArcCWHeat = 0.0;
-            if((adjArcCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCW))) {
-                adjArcCWBV = arcBVs.get(adjArcCW);
-                adjArcCWHeat = arcHeat.get(adjArcCW);
+            if(adjArcCW > Integer.MIN_VALUE) {
+                adjArcCWBV = arcBVs[adjArcCW];
+                adjArcCWHeat = arcHeats[adjArcCW];
             }
             double adjArcCCWBV = 0.0;
             double adjArcCCWHeat = 0.0;
-            if((adjArcCCW > Integer.MIN_VALUE) && (null != arcBVs.get(adjArcCCW))) {
-                adjArcCCWBV = arcBVs.get(adjArcCCW);
-                adjArcCCWHeat = arcHeat.get(adjArcCCW);
+            if(adjArcCCW > Integer.MIN_VALUE) {
+                adjArcCCWBV = arcBVs[adjArcCCW];
+                adjArcCCWHeat = arcHeats[adjArcCCW];
             }
             if(adjArcCWBV > adjArcCCWBV) {
                 adjArc = adjArcCW;
@@ -352,24 +655,24 @@ public class Dropship extends SmallCraft implements Serializable {
                     adjArcMult = 0.5;
                 }
                 heatUsed += adjArcCWHeat;
-                oppArc = adjArcCCW;
-                if((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
-                    oppArcMult = 0.25;
-                }
             } else {
                 adjArc = adjArcCCW;
                 if((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
                     adjArcMult = 0.5;
                 }
                 heatUsed += adjArcCCWHeat;
-                oppArc = adjArcCW;
-                if((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
+            }
+            if(oppArc > Integer.MIN_VALUE) {
+                if(heatUsed + arcHeats[oppArc] > aeroHeatEfficiency) {
                     oppArcMult = 0.25;
                 }
             }
         }
+        /*
+        //TODO: ask welshie about this because it has never been incorporated into errata
         //According to an email with Welshman, ammo should be now added into each arc BV
         //for the final calculation of BV, including the excessive ammo rule
+         * 
         Map<String, Double> ammo = new HashMap<String, Double>();
         ArrayList<String> keys = new ArrayList<String>();
         for (Mounted mounted : getAmmo()) {
@@ -432,30 +735,102 @@ public class Dropship extends SmallCraft implements Serializable {
             }
             arcBVs.put(arc, currentArcBV + ammoBV);
         }
-
+        */
 
         //ok now lets go in and add the arcs
+        double totalHeat = 0.0;
         if(highArc > Integer.MIN_VALUE) {
             //ok now add the BV from this arc and reset to zero
-            weaponBV += arcBVs.get(highArc);
-            arcBVs.put(highArc, 0.0);
-            if((adjArc > Integer.MIN_VALUE) && (null != arcBVs.get(adjArc))) {
-                weaponBV += adjArcMult * arcBVs.get(adjArc);
-                arcBVs.put(adjArc, 0.0);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Highest BV Arc (" + getArcName(highArc) + ")" + arcBVs[highArc] + "*1.0");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("+" + arcBVs[highArc]);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startColumn);
+            totalHeat = arcHeats[highArc];
+            bvText.append("Total Heat: " + totalHeat);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            weaponBV += arcBVs[highArc];
+            arcBVs[highArc] = 0.0;
+            if(adjArc > Integer.MIN_VALUE) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("Adjacent BV Arc (" + getArcName(adjArc) + ") " + arcBVs[adjArc] + "*" + adjArcMult);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + arcBVs[adjArc] * adjArcMult);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                totalHeat += arcHeats[adjArc];
+                String over = "";
+                if(totalHeat > aeroHeatEfficiency) {
+                    over = " (Greater than heat efficiency)";
+                }
+                bvText.append("Total Heat: " + totalHeat + over);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                weaponBV += adjArcMult * arcBVs[adjArc];
+                arcBVs[adjArc] = 0.0;
             }
-            if((oppArc > Integer.MIN_VALUE) && (null != arcBVs.get(oppArc))) {
-                weaponBV += oppArcMult * arcBVs.get(oppArc);
-                arcBVs.put(oppArc, 0.0);
+            if(oppArc > Integer.MIN_VALUE) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append("Opposite BV Arc (" + getArcName(oppArc)  + ") " + arcBVs[oppArc] + "*" + oppArcMult);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + oppArcMult*arcBVs[oppArc]);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                totalHeat += arcHeats[oppArc];
+                String over = "";
+                if(totalHeat > aeroHeatEfficiency) {
+                    over = " (Greater than heat efficiency)";
+                }
+                bvText.append("Total Heat: " + totalHeat + over);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                weaponBV += oppArcMult * arcBVs[oppArc];
+                arcBVs[oppArc] = 0.0;
             }
             //ok now we can cycle through the rest and add 25%
-            set= arcBVs.keySet();
-            iter = set.iterator();
-            while(iter.hasNext()) {
-                int key = iter.next();
-                weaponBV += (0.25 * arcBVs.get(key));
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Remaining Arcs");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            for(int loc = 0; loc < arcBVs.length; loc++) {
+                if(arcBVs[loc]<=0) {
+                    continue;
+                }
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(getArcName(loc) + " " + arcBVs[loc] + "*0.25");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+" + 0.25*arcBVs[loc]);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+                weaponBV += (0.25 * arcBVs[loc]);
             }
         }
 
+        bvText.append("Total Weapons BV Adjusted For Heat:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(weaponBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         // add offensive misc. equipment BV
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
@@ -470,18 +845,199 @@ public class Dropship extends SmallCraft implements Serializable {
                 continue;
             }
             double bv = mtype.getBV(this);
+            if (bv > 0) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+
+                bvText.append(mtype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(bv);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
             oEquipmentBV += bv;
         }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total Misc Offensive Equipment BV: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(oEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
         weaponBV += oEquipmentBV;
 
+        // add ammo bv
+        double ammoBV = 0;
+        Map<String, Double> ammo = new HashMap<String, Double>();
+        ArrayList<String> keys = new ArrayList<String>();
+        for (Mounted mounted : getAmmo()) {
+            AmmoType atype = (AmmoType) mounted.getType();
+
+            //we need to deal with cases where ammo is loaded in multi-ton increments
+            //(on dropships and jumpships) - lets take the ratio of shots to shots left
+            double ratio = mounted.getShotsLeft()/atype.getShots();
+            
+            //if the ratio is less than one, we will treat as a full ton since 
+            //we don't make that adjustment elsewhere
+            if(ratio < 1.0) {
+                ratio = 1.0;
+            }
+            
+            // don't count depleted ammo
+            if (mounted.getShotsLeft() == 0) {
+                continue;
+            }
+
+            // don't count AMS, it's defensive
+            if (atype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
+            //don't count screen launchers, they are defensive
+            if(atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+                continue;
+            }
+
+            // don't count oneshot ammo, it's considered part of the launcher.
+            if (mounted.getLocation() == Entity.LOC_NONE) {
+                // assumption: ammo without a location is for a oneshot weapon
+                continue;
+            }
+            double abv = ratio * atype.getBV(this);       
+            String key = atype.getAmmoType() + ":" + atype.getRackSize();
+            if (!keys.contains(key)) {
+                keys.add(key);
+            }
+            if (!ammo.containsKey(key)) {
+                ammo.put(key, abv);
+            } else {
+                ammo.put(key, abv + ammo.get(key));
+            }
+        }
+
+        // Excessive ammo rule:
+        // Only count BV for ammo for a weapontype until the BV of all weapons
+        // of that
+        // type on the mech is reached.
+        for (String key : keys) {
+            if (weaponsForExcessiveAmmo.get(key) != null) {
+                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
+                    ammoBV += weaponsForExcessiveAmmo.get(key);
+                } else {
+                    ammoBV += ammo.get(key);
+                }
+            }
+        }
+        weaponBV += ammoBV;
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Total Ammo BV: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(ammoBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        // adjust 
+        
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP()  - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + (((double) getWalkMP()  - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
+
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Final Speed Factor: ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         obv = weaponBV * speedFactor;
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Weapons BV * Speed Factor ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(weaponBV);
+        bvText.append(" * ");
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" = ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Offensive BV + Defensive BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+
+        double finalBV = dbv + obv;
+
+        bvText.append(dbv);
+        bvText.append(" + ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(" = ");
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        finalBV = Math.round(finalBV);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Final BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
+
         // we get extra bv from some stuff
         double xbv = 0.0;
+      
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
@@ -496,8 +1052,8 @@ public class Dropship extends SmallCraft implements Serializable {
             }
             xbv += totalForceBV *= 0.05;
         }
+        finalBV += xbv;
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
         double pilotFactor = 1;
@@ -509,9 +1065,10 @@ public class Dropship extends SmallCraft implements Serializable {
 
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3) {
-            return finalBV;
+            return (int)finalBV;
         }
         return retVal;
+        
     }
 
     /**
@@ -625,6 +1182,72 @@ public class Dropship extends SmallCraft implements Serializable {
             } else {
                 return Compute.ARC_RWINGA;
             }
+        default:
+            return Integer.MIN_VALUE;
+        }
+    }
+    
+    /**
+     * find the adjacent firing arc location on this vessel clockwise
+     */
+    public int getAdjacentLocCW(int loc) {
+        switch(loc) {
+        case LOC_NOSE:
+            return LOC_RWING;
+        case LOC_LWING:
+            return LOC_NOSE;
+        case LOC_RWING:
+            return (LOC_RWING + 3);
+        case LOC_AFT:
+            return (LOC_LWING + 3);
+        case 4:
+            return LOC_LWING;
+        case 5: 
+            return LOC_AFT;
+        default:
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    /**
+     * find the adjacent firing arc on this vessel counter-clockwise
+     */
+    public int getAdjacentLocCCW(int loc) {
+        switch(loc) {
+        case LOC_NOSE:
+            return LOC_LWING;
+        case LOC_LWING:
+            return (LOC_LWING + 3);
+        case LOC_RWING:
+            return LOC_NOSE;
+        case LOC_AFT:
+            return (LOC_RWING + 3);
+        case 4:
+            return LOC_AFT;
+        case 5: 
+            return LOC_RWING;
+        default:
+            return Integer.MIN_VALUE;
+        }
+    }
+    
+    /**
+     * find the adjacent firing arc location on this vessel clockwise
+     */
+    public int getOppositeLoc(int loc) {
+        switch(loc) {
+        case LOC_NOSE:
+            return LOC_AFT;
+        case LOC_LWING:
+            return (LOC_RWING + 3);
+        case LOC_RWING:
+            return (LOC_LWING + 3);
+        case LOC_AFT:
+            return LOC_NOSE;
+        case 4:
+            return LOC_RWING;
+        case 5: 
+            return LOC_LWING;
         default:
             return Integer.MIN_VALUE;
         }

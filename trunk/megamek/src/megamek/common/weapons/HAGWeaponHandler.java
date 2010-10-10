@@ -126,6 +126,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         r.add(nHits);
         r.add(" projectiles ");
         r.newlines = 0;
+        r.add(toHit.getTableDesc());
         vPhaseReport.addElement(r);
         if (nHitsModifier != 0) {
             r = new Report(3340);

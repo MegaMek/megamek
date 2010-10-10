@@ -7153,10 +7153,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public abstract double getCost(boolean ignoreAmmo);
 
     public int getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        return getWeaponsAndEquipmentCost(null, ignoreAmmo);
-    }
-
-    public int getWeaponsAndEquipmentCost(StringBuffer detail, boolean ignoreAmmo) {
+        bvText = new StringBuffer();
         int cost = 0;
 
         String startRow = "<TR>";
@@ -7179,16 +7176,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 itemCost = mounted.getType().resolveVariableCost(this, mounted.isArmored());
             }
             cost += itemCost;
-            if ((detail != null) && (itemCost > 0)) {
-                detail.append(startRow);
-                detail.append(startColumn);
-                detail.append(mounted.getName());
-                detail.append(endColumn);
+            if ((bvText != null) && (itemCost > 0)) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(mounted.getName());
+                bvText.append(endColumn);
 
-                detail.append(startColumn);
-                detail.append(commafy.format(itemCost));
-                detail.append(endColumn);
-                detail.append(endRow);
+                bvText.append(startColumn);
+                bvText.append(commafy.format(itemCost));
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
         }
         return cost;

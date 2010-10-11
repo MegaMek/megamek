@@ -291,7 +291,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
         Mounted bayMount = null;
         // set up a new bay type
         boolean newBay = false;
-        int bayDamage = 0;
+        double bayDamage = 0;
         int nBay = 1;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -359,7 +359,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
                             }
                         }
 
-                        int damage = weap.getRoundShortAV();
+                        double damage = weap.getShortAV();
                         if (weap.isCapital()) {
                             damage *= 10;
                         }

@@ -309,7 +309,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         Mounted bayMount = null;
         // set up a new bay type
         boolean newBay = false;
-        int bayDamage = 0;
+        double bayDamage = 0;
         int nBay = 1;
         if (saEquip[0] != null) {
             for (String element : saEquip) {
@@ -375,13 +375,16 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
-                        }
-
-                        int damage = weap.getRoundShortAV();
+                        }                  
+                        double damage = weap.getShortAV();
                         if (weap.isCapital()) {
                             damage *= 10;
                         }
-                        if (!newBay && ((bayDamage + damage) <= 700) && (bayMount.isRearMounted() == rearMount) && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
+                        if (!newBay 
+                                && ((bayDamage + damage) <= 700) 
+                                && (bayMount.isRearMounted() == rearMount) 
+                                && (weap.getAtClass() == ((WeaponType) bayMount.getType()).getAtClass()) 
+                                && !(((WeaponType) bayMount.getType()).isSubCapital() && !weap.isSubCapital())) {
                             // then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
                             bayDamage += damage;

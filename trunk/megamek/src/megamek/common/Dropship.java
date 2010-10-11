@@ -952,7 +952,7 @@ public class Dropship extends SmallCraft implements Serializable {
         // adjust 
         
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getWalkMP()  - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + (((double) getRunMP()  - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         

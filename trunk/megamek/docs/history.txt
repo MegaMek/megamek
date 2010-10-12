@@ -87,7 +87,6 @@ v0.35.19-dev (SVN)
 + Bug: vibroblade heat not correctly handled for BV
 + Bug: Armored Components not calculating correctly for PPC Cap
 + Bug: Explosive bv not calculating correctly for PPC Cap
-+ RFE: Errata on Clan Arrow IV BV now 268 from 168
 + Unofficial Weapon Tech:  Improved Bearhunter AC for BA
 + Added Unofficial Clan Unit: Golem Assault Battlearmor with Improved Bearhunter
 + Bug: BA Flamer available to Mechs
@@ -101,6 +100,8 @@ v0.35.19-dev (SVN)
 + Bug: dropships should use maximum thrust, not safe thrust for BV calculations
 + Bug 3085415: Dropship errors
 + Bug 2003672: Naval Laser Bay
++ Bug: Clan Arrow IV should have same BV as IS
++ Bug: Clan Mech Mortars should have same BV as IS
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

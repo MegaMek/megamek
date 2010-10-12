@@ -1100,6 +1100,19 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    private JMenuItem createRotateDualTurretJMenuItem(final Tank tank) {
+        String turretString;
+        turretString = "Rotate Front Turret";
+        JMenuItem item = new JMenuItem(turretString);
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                TurretFacingDialog tfe = new TurretFacingDialog(gui.frame, tank, gui);
+                tfe.setVisible(true);
+            }
+        });
+        return item;
+    }
+
     private JMenu createTorsoTwistMenu() {
         JMenu menu = new JMenu();
 
@@ -1119,6 +1132,9 @@ public class MapMenu extends JPopupMenu {
             } else {
                 menu.add(createTorsoTwistJMenuItem(coords));
             }
+        }
+        if ((myEntity instanceof Tank) && !((Tank)myEntity).hasNoDualTurret()) {
+            menu.add(createRotateDualTurretJMenuItem((Tank)myEntity));
         }
 
         return menu;

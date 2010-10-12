@@ -1044,7 +1044,7 @@ public class Compute {
         // ground units that are the target of air to ground attacks always have
         // a distance of zero
         // for return fire except for altitude differences
-        if (Compute.isGroundToAir(attacker, target) && target instanceof Entity) {
+        if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
@@ -1056,14 +1056,14 @@ public class Compute {
                     continue;
                 }
                 Targetable prevTarget = prevAttack.getTarget(game);
-                if(prevTarget instanceof Entity && prevAttack.getTargetId() == attacker.getId()) {
+                if((prevTarget instanceof Entity) && (prevAttack.getTargetId() == attacker.getId())) {
                     distance = 0;
                     break;
                 }
                 //check for dive-bombing of this hex
                 Coords attackPos = attacker.getPosition();
-                if (null != attackPos && prevAttack.isDiveBomb(game)
-                        && (prevTarget instanceof HexTarget) 
+                if ((null != attackPos) && prevAttack.isDiveBomb(game)
+                        && (prevTarget instanceof HexTarget)
                         && ((HexTarget)prevTarget).getPosition().equals(attackPos)) {
                     distance = 0;
                     break;
@@ -2541,6 +2541,9 @@ public class Compute {
             return true;
         }
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae.getSecondaryFacing() : ae.getFacing();
+        if ((ae instanceof Tank) && (ae.getEquipment(weaponId).getLocation() == Tank.LOC_TURRET_2)) {
+            facing = ((Tank)ae).getDualTurretFacing();
+        }
         if (ae.getEquipment(weaponId).isTurretMounted()) {
             facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
         }
@@ -4472,7 +4475,7 @@ public class Compute {
         return null;
     }
 
-    
+
 
     /*
      * public static FighterSquadron compileSquadron(Vector<Entity> squadron) {

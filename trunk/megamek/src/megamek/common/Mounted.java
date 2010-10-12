@@ -32,7 +32,7 @@ import megamek.common.weapons.GaussWeapon;
 
 /**
  * This describes equipment mounted on a mech.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -51,7 +51,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean turretMounted = false; // is this mounted in a mechturret?
+    private boolean turretMounted = false; // is this mounted in a mechturret
     private int facing = -1; // facing for turrets
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
@@ -217,7 +217,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Switches the equipment mode to the next available.
-     * 
+     *
      * @return new mode number, or <code>-1</code> if it's not available.
      */
     public int switchMode() {
@@ -236,7 +236,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Sets the equipment mode to the mode denoted by the given mode name
-     * 
+     *
      * @param newMode
      *            the name of the desired new mode
      * @return new mode number on success, <code>-1<code> otherwise.
@@ -253,7 +253,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Sets the equipment mode to the mode denoted by the given mode number
-     * 
+     *
      * @param newMode
      *            the number of the desired new mode
      */
@@ -290,7 +290,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Can the switch from the current mode to the new mode happen instantly?
-     * 
+     *
      * @param newMode
      *            - integer for the new mode
      * @return
@@ -412,7 +412,7 @@ public class Mounted implements Serializable, RoundUpdated {
      * Set this Mounted's destroyed status NOTE: only set this if this Mounted
      * cannot be used in the current phase anymore. If it still can, use setHit
      * instead
-     * 
+     *
      * @param destroyed
      * @see #setHit(boolean)
      */
@@ -432,7 +432,7 @@ public class Mounted implements Serializable, RoundUpdated {
      * set that this mounted was or was not hit with a crit this phase Note:
      * stuff that was hit in a phase can still be used in that phase, if that's
      * not desired, use setDestroyed instead
-     * 
+     *
      * @param hit
      * @see #setDestroyed(boolean)
      */
@@ -531,7 +531,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Checks to see if the current ammo for this weapon is hotloaded
-     * 
+     *
      * @return <code>true</code> if ammo is hotloaded or <code>false</code> if
      *         not
      */
@@ -582,7 +582,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Sets the hotloading parameter for this weapons ammo.
-     * 
+     *
      * @param hotload
      */
     public void setHotLoad(boolean hotload) {
@@ -776,7 +776,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Confirm that the given entity can fire the indicated equipment.
-     * 
+     *
      * @return <code>true</code> if the equipment can be fired by the entity;
      *         <code>false</code> otherwise.
      */
@@ -818,7 +818,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * set the type of mine this should be
-     * 
+     *
      * @param mineType
      */
     public void setMineType(int mineType) {
@@ -827,7 +827,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * set the vibrabomb sensitivity
-     * 
+     *
      * @param vibraSetting
      *            the <code>int</code> sensitivity to set
      */
@@ -837,7 +837,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * get the vibrabomb sensitivity
-     * 
+     *
      * @return the <code>int</code> vibrabomb sensitity this mine is set to.
      */
     public int getVibraSetting() {
@@ -863,7 +863,7 @@ public class Mounted implements Serializable, RoundUpdated {
      * damage absorption is reduced by 1 and finally if the shoulder is hit the
      * damage absorption is reduced by 2 making it possble to kill a shield
      * before its gone through its full damage capacity.
-     * 
+     *
      * @param entity
      * @param location
      * @return
@@ -919,7 +919,7 @@ public class Mounted implements Serializable, RoundUpdated {
      * Damage Capacity. basically count down from the top then subtract the
      * amount of damage its already take. The damage capacity is used to
      * determine if the shield is still viable.
-     * 
+     *
      * @param entity
      * @param location
      * @return damage capacity(no less then 0)

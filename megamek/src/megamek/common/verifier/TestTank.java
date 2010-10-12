@@ -92,6 +92,16 @@ public class TestTank extends TestEntity {
         return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
     }
 
+    public float getTankWeightDualTurret() {
+        float weight = 0f;
+        for (Mounted m : tank.getWeaponList()) {
+            if (m.getLocation() == Tank.LOC_TURRET_2) {
+                weight += ((WeaponType) m.getType()).getTonnage(tank);
+            }
+        }
+        return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
+    }
+
     public float getTankWeightLifting() {
         if (tank.getMovementMode() == EntityMovementMode.HOVER) {
             return tank.getWeight() / 10.0f;
@@ -107,7 +117,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public float getWeightMisc() {
-        return getTankWeightTurret() + getTankWeightLifting();
+        return getTankWeightTurret() + getTankWeightDualTurret() + getTankWeightLifting();
     }
 
     @Override
@@ -178,9 +188,13 @@ public class TestTank extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        return (!tank.hasNoTurret() ? StringUtil.makeLength("Turret:",
+        String turretString = !tank.hasNoTurret() ? StringUtil.makeLength("Turret:",
                 getPrintSize() - 5)
-                + TestEntity.makeWeightString(getTankWeightTurret()) + "\n" : "")
+                + TestEntity.makeWeightString(getTankWeightTurret()) + "\n" : "";
+        String dualTurretString = !tank.hasNoDualTurret() ? StringUtil.makeLength("Front Turret:",
+                getPrintSize() - 5)
+                + TestEntity.makeWeightString(getTankWeightDualTurret()) + "\n" : "";
+        return turretString + dualTurretString
                 + (getTankWeightLifting() != 0 ? StringUtil.makeLength(
                         "Lifting Equip:", getPrintSize() - 5)
                         + TestEntity.makeWeightString(getTankWeightLifting()) + "\n" : "")

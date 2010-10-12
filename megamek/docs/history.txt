@@ -102,6 +102,10 @@ v0.35.19-dev (SVN)
 + Bug 2003672: Naval Laser Bay
 + Bug: Clan Arrow IV should have same BV as IS
 + Bug: Clan Mech Mortars should have same BV as IS
++ Added rules for dual turrets, TODO: Add MapSet for armor and IS display
+   To use them in files, have a 6th armor value for the dual turret in the BLK,
+   change the <Turret Equipment> section in the file to <Rear Turret Equipment>,
+   and add a <Front Turret Equipment> section.
 
 v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL

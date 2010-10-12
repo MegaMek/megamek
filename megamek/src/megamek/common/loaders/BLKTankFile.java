@@ -124,11 +124,12 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if ((armor.length < 4) || (armor.length > 5)) {
+        if ((armor.length < 4) || (armor.length > 6)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
         t.setHasNoTurret(armor.length == 4);
+        t.setHasNoDualTurret((armor.length == 4) || (armor.length == 5));
 
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];
@@ -144,9 +145,15 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         loadEquipment(t, "Right", Tank.LOC_RIGHT);
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
-        if (!t.hasNoTurret()) {
-            loadEquipment(t, "Turret", Tank.LOC_TURRET);
+        if (t.hasNoDualTurret()) {
+            if (!t.hasNoTurret()) {
+                loadEquipment(t, "Turret", Tank.LOC_TURRET);
+            }
+        } else {
+            loadEquipment(t, "Rear Turret", Tank.LOC_TURRET);
+            loadEquipment(t, "Front Turret", Tank.LOC_TURRET_2);
         }
+
         loadEquipment(t, "Body", Tank.LOC_BODY);
 
         if (dataFile.exists("omni")) {

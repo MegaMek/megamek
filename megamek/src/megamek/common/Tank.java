@@ -37,6 +37,7 @@ public class Tank extends Entity {
     protected boolean m_bDualTurretJammed = false;
     protected boolean m_bDualTurretEverJammed = false;
     private int m_nTurretOffset = 0;
+    private int m_nDualTurretOffset = 0;
     private int m_nStunnedTurns = 0;
     private boolean m_bImmobile = false;
     private boolean m_bImmobileHit = false;
@@ -55,7 +56,9 @@ public class Tank extends Entity {
     public static final int LOC_RIGHT = 2;
     public static final int LOC_LEFT = 3;
     public static final int LOC_REAR = 4;
+    /** for dual turret tanks, this is the rear turret **/
     public static final int LOC_TURRET = 5;
+    /** for dual turret tanks, this is the front turret **/
     public static final int LOC_TURRET_2 = 6;
 
     // critical hits
@@ -86,7 +89,7 @@ public class Tank extends Entity {
         { "Body", "Front", "Right", "Left", "Rear", "Turret"};
 
     private static String[] LOCATION_NAMES_DUAL_TURRET =
-    { "Body", "Front", "Right", "Left", "Rear", "Forward Turret", "Rear Turret"};
+    { "Body", "Front", "Right", "Left", "Rear", "Rear Turret", "Front Turret"};
 
     @Override
     public String[] getLocationAbbrs() {
@@ -95,7 +98,7 @@ public class Tank extends Entity {
 
     @Override
     public String[] getLocationNames() {
-        if (hasNoDualTurret()) {
+        if (!hasNoDualTurret()) {
             return LOCATION_NAMES_DUAL_TURRET;
         }
         return LOCATION_NAMES;
@@ -155,12 +158,22 @@ public class Tank extends Entity {
 
     }
 
-    public boolean isTurretLocked() {
-        return m_bTurretLocked || m_bTurretJammed;
+    public boolean isTurretLocked(int turret) {
+        if (turret == LOC_TURRET) {
+            return m_bTurretLocked || m_bTurretJammed;
+        } else if (turret == LOC_TURRET_2) {
+            return m_bDualTurretLocked || m_bDualTurretJammed;
+        }
+        return false;
     }
 
-    public boolean isTurretJammed() {
-        return m_bTurretJammed;
+    public boolean isTurretJammed(int turret) {
+        if (turret == LOC_TURRET) {
+            return m_bTurretJammed;
+        } else if (turret == LOC_TURRET_2) {
+            return m_bDualTurretJammed;
+        }
+        return false;
     }
 
     /**
@@ -168,18 +181,22 @@ public class Tank extends Entity {
      */
     @Override
     public int locations() {
-        return m_bHasNoTurret ? 5 : 6;
+        if (m_bHasNoDualTurret) {
+            return m_bHasNoTurret ? 5 : 6;
+        } else {
+            return 7;
+        }
         // return 6;
     }
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !m_bHasNoTurret && !isTurretLocked();
+        return !m_bHasNoTurret && !isTurretLocked(LOC_TURRET);
     }
 
     @Override
     public boolean isValidSecondaryFacing(int n) {
-        return !isTurretLocked();
+        return !isTurretLocked(LOC_TURRET);
     }
 
     @Override
@@ -189,7 +206,7 @@ public class Tank extends Entity {
 
     @Override
     public void setSecondaryFacing(int sec_facing) {
-        if (!isTurretLocked()) {
+        if (!isTurretLocked(LOC_TURRET)) {
             super.setSecondaryFacing(sec_facing);
             if (!m_bHasNoTurret) {
                 m_nTurretOffset = sec_facing - getFacing();
@@ -200,10 +217,18 @@ public class Tank extends Entity {
     @Override
     public void setFacing(int facing) {
         super.setFacing(facing);
-        if (isTurretLocked()) {
+        if (isTurretLocked(LOC_TURRET)) {
             int nTurretFacing = (facing + m_nTurretOffset + 6) % 6;
             super.setSecondaryFacing(nTurretFacing);
         }
+    }
+
+    public int getDualTurretFacing() {
+        return (facing + m_nDualTurretOffset + 6) % 6;
+    }
+
+    public void setDualTurretOffset(int offset) {
+        m_nDualTurretOffset = offset;
     }
 
     public boolean isStabiliserHit(int loc) {
@@ -315,38 +340,42 @@ public class Tank extends Entity {
         }
     }
 
-    public void lockTurret() {
-        m_bTurretLocked = true;
+    public void lockTurret(int turret) {
+        if (turret == LOC_TURRET) {
+            m_bTurretLocked = true;
+        } else if (turret == LOC_TURRET_2) {
+            m_bDualTurretLocked = true;
+        }
+
     }
 
-    public void lockDualTurret() {
-        m_bDualTurretLocked = true;
+    public void jamTurret(int turret) {
+        if (turret == LOC_TURRET) {
+            m_bTurretEverJammed = true;
+            m_bTurretJammed = true;
+        } else if (turret == LOC_TURRET_2) {
+            m_bDualTurretEverJammed = true;
+            m_bDualTurretJammed = true;
+        }
+
     }
 
-    public void jamTurret() {
-        m_bTurretEverJammed = true;
-        m_bTurretJammed = true;
+    public void unjamTurret(int turret) {
+        if (turret == LOC_TURRET) {
+            m_bTurretJammed = false;
+        } else if (turret == LOC_TURRET_2) {
+            m_bDualTurretJammed = false;
+        }
     }
 
-    public void jamDualTurret() {
-        m_bDualTurretEverJammed = true;
-        m_bDualTurretJammed = true;
-    }
 
-    public void unjamTurret() {
-        m_bTurretJammed = false;
-    }
-
-    public void unjamDualTurret() {
-        m_bDualTurretJammed = false;
-    }
-
-    public boolean isTurretEverJammed() {
-        return m_bTurretEverJammed;
-    }
-
-    public boolean isDualTurretEverJammed() {
-        return m_bDualTurretEverJammed;
+    public boolean isTurretEverJammed(int turret) {
+        if (turret == LOC_TURRET) {
+            return m_bTurretEverJammed;
+        } else  if (turret == LOC_TURRET_2) {
+            return m_bDualTurretEverJammed;
+        }
+        return false;
     }
 
     public int getStunnedTurns() {
@@ -458,6 +487,8 @@ public class Tank extends Entity {
                     return Compute.ARC_TURRET;
                 }
                 return Compute.ARC_FORWARD;
+            case LOC_TURRET_2:
+                return Compute.ARC_FORWARD;
             case LOC_RIGHT:
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_RIGHT_BROADSIDE;
@@ -502,7 +533,17 @@ public class Tank extends Entity {
         int motiveMod = 0;
         if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !ignoreTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
-            nArmorLoc = LOC_TURRET;
+            if (!hasNoDualTurret()) {
+                int roll = Compute.d6() - 2;
+                if (roll <= 3) {
+                    nArmorLoc = LOC_TURRET_2;
+                } else {
+                    nArmorLoc = LOC_TURRET;
+                }
+            } else {
+                nArmorLoc = LOC_TURRET;
+            }
+
         }
         if (side == ToHitData.SIDE_LEFT) {
             nArmorLoc = LOC_LEFT;
@@ -584,19 +625,61 @@ public class Tank extends Entity {
                     break;
                 case 10:
                     if (!ignoreTurret) {
-                        rv = new HitData(LOC_TURRET);
+                        if (!hasNoDualTurret()) {
+                            int roll = Compute.d6();
+                            if (side == ToHitData.SIDE_FRONT) {
+                                roll -= 2;
+                            } else if (side == ToHitData.SIDE_REAR) {
+                                roll += 2;
+                            }
+                            if (roll <=3) {
+                                rv = new HitData(LOC_TURRET_2);
+                            } else {
+                                rv = new HitData(LOC_TURRET);
+                            }
+                        } else {
+                            rv = new HitData(LOC_TURRET);
+                        }
                     }
                     break;
                 case 11:
                     if (!ignoreTurret) {
-                        rv = new HitData(LOC_TURRET);
+                        if (!hasNoDualTurret()) {
+                            int roll = Compute.d6();
+                            if (side == ToHitData.SIDE_FRONT) {
+                                roll -= 2;
+                            } else if (side == ToHitData.SIDE_REAR) {
+                                roll += 2;
+                            }
+                            if (roll <=3) {
+                                rv = new HitData(LOC_TURRET_2);
+                            } else {
+                                rv = new HitData(LOC_TURRET);
+                            }
+                        } else {
+                            rv = new HitData(LOC_TURRET);
+                        }
                     }
                     break;
                 case 12:
                     if (ignoreTurret) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     } else {
-                        rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
+                        if (!hasNoDualTurret()) {
+                            int roll = Compute.d6();
+                            if (side == ToHitData.SIDE_FRONT) {
+                                roll -= 2;
+                            } else if (side == ToHitData.SIDE_REAR) {
+                                roll += 2;
+                            }
+                            if (roll <=3) {
+                                rv = new HitData(LOC_TURRET_2, false, HitData.EFFECT_CRITICAL);
+                            } else {
+                                rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
+                            }
+                        } else {
+                            rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
+                        }
                     }
             }
         }
@@ -1554,7 +1637,7 @@ public class Tank extends Entity {
                             return CRIT_FUEL_TANK;
                         }
                 }
-            } else if (loc == LOC_TURRET) {
+            } else if ((loc == LOC_TURRET) || (loc == LOC_TURRET_2)) {
                 switch (roll) {
                     case 6:
                         if (!isStabiliserHit(loc)) {
@@ -1565,7 +1648,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 7:
-                        if (!isTurretLocked()) {
+                        if (!isTurretLocked(loc)) {
                             return CRIT_TURRET_JAM;
                         }
                     case 8:
@@ -1575,7 +1658,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 9:
-                        if (!isTurretLocked()) {
+                        if (!isTurretLocked(loc)) {
                             return CRIT_TURRET_LOCK;
                         }
                     case 10:
@@ -1682,7 +1765,8 @@ public class Tank extends Entity {
     public void engineHit() {
         engineHit = true;
         immobilize();
-        lockTurret();
+        lockTurret(LOC_TURRET);
+        lockTurret(LOC_TURRET_2);
         for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
             if (wtype.hasFlag(WeaponType.F_ENERGY)) {

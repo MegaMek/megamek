@@ -797,8 +797,8 @@ KeyListener, ItemListener, ListSelectionListener {
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        if ((attacks.size() == 0) && (ce() instanceof Tank)
-                && ((Tank) ce()).isTurretJammed()) {
+        if ((((attacks.size() == 0) && (ce() instanceof Tank)
+                && (((Tank) ce()).isTurretJammed(Tank.LOC_TURRET))) || ((Tank) ce()).isTurretJammed(Tank.LOC_TURRET_2))) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
             attacks.add(uta);
             ready();
@@ -1506,7 +1506,7 @@ KeyListener, ItemListener, ListSelectionListener {
 
     private void updateClearTurret() {
         setFireClearTurretEnabled((ce() instanceof Tank)
-                && ((Tank) ce()).isTurretJammed() && (attacks.size() == 0)
+                && (((Tank) ce()).isTurretJammed(Tank.LOC_TURRET) || ((Tank) ce()).isTurretJammed(Tank.LOC_TURRET_2)) && (attacks.size() == 0)
                 && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 

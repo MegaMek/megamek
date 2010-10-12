@@ -833,7 +833,7 @@ public class XMLStreamParser implements XMLResponder {
             try {
                 int turDir = Integer.parseInt(value);
                 ((Tank) entity).setSecondaryFacing(turDir);
-                ((Tank) entity).lockTurret();
+                ((Tank) entity).lockTurret(Tank.LOC_TURRET);
             } catch (Exception e) {
                 System.err.println(e);
                 e.printStackTrace();

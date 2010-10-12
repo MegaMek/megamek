@@ -9335,7 +9335,8 @@ public class Server implements Runnable {
                 addReport(saa.resolveAction(game));
             } else if (ea instanceof UnjamTurretAction) {
                 if (entity instanceof Tank) {
-                    ((Tank) entity).unjamTurret();
+                    ((Tank) entity).unjamTurret(Tank.LOC_TURRET);
+                    ((Tank) entity).unjamTurret(Tank.LOC_TURRET_2);
                     Report r = new Report(3033);
                     r.addDesc(entity);
                     addReport(r);
@@ -17903,23 +17904,23 @@ public class Server implements Runnable {
                 vDesc.addAll(destroyEntity(t, "turret blown off", true, true));
                 break;
             case Tank.CRIT_TURRET_JAM:
-                if (t.isTurretEverJammed()) {
+                if (t.isTurretEverJammed(loc)) {
                     r = new Report(6640);
                     r.subject = t.getId();
                     vDesc.add(r);
-                    t.lockTurret();
+                    t.lockTurret(loc);
                     break;
                 }
                 r = new Report(6635);
                 r.subject = t.getId();
                 vDesc.add(r);
-                t.jamTurret();
+                t.jamTurret(loc);
                 break;
             case Tank.CRIT_TURRET_LOCK:
                 r = new Report(6640);
                 r.subject = t.getId();
                 vDesc.add(r);
-                t.lockTurret();
+                t.lockTurret(loc);
                 break;
             case Tank.CRIT_WEAPON_DESTROYED: {
                 r = new Report(6305);
@@ -23623,7 +23624,7 @@ public class Server implements Runnable {
                 r.indent(1);
                 vDesc.add(r);
                 for(GunEmplacement gun : guns) {
-                    gun.lockTurret();
+                    gun.lockTurret(Tank.LOC_TURRET);
                 }
             } else {
                 //turret jam
@@ -23632,10 +23633,10 @@ public class Server implements Runnable {
                 r.indent(1);
                 vDesc.add(r);
                 for(GunEmplacement gun : guns) {
-                    if(gun.isTurretEverJammed()) {
-                        gun.lockTurret();
+                    if(gun.isTurretEverJammed(Tank.LOC_TURRET)) {
+                        gun.lockTurret(Tank.LOC_TURRET);
                     } else {
-                        gun.jamTurret();
+                        gun.jamTurret(Tank.LOC_TURRET);
                     }
                 }
             }

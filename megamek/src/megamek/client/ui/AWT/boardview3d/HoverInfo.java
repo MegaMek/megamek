@@ -41,6 +41,7 @@ import megamek.common.LosEffects;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Player;
+import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -507,7 +508,7 @@ class HoverInfo implements IDisplayable {
                         .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
             }
         } else {
-            if (ge.isTurret() && ge.isTurretLocked()) {
+            if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
                 buffer
                         .append(Messages
                                 .getString("BoardView1.TurretLocked"));

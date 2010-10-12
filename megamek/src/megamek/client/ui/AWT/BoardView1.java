@@ -93,6 +93,7 @@ import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
@@ -104,7 +105,6 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -3821,7 +3821,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     .append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
                 }
             } else {
-                if (ge.isTurret() && ge.isTurretLocked()) {
+                if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
                     buffer
                     .append(Messages
                             .getString("BoardView1.TurretLocked"));

@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
  *           Copyright (C) 2005 Mike Gratton <mike@vee.net>
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -24,19 +24,20 @@ import java.util.Enumeration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
+import megamek.common.Tank;
 
 /**
  * Objects of this class can encode a <code>Entity</code> object as XML into
  * an output writer and decode one from a parsed XML node. It is used when
  * saving games into a version- neutral format.
- * 
+ *
  * @author Mike Gratton <mike@vee.net>
  */
 public class GunEmplacementEncoder {
 
     /**
      * Encode a <code>Entity</code> object to an output writer.
-     * 
+     *
      * @param entity - the <code>Entity</code> to be encoded. This value must
      *            not be <code>null</code>.
      * @param out - the <code>Writer</code> that will receive the XML. This
@@ -47,7 +48,7 @@ public class GunEmplacementEncoder {
         GunEmplacement ge = (GunEmplacement) entity;
         // save this so that the GE has the correct building type when decoded
 
-        if (ge.isTurret() && ge.isTurretLocked()) {
+        if (ge.isTurret() && ge.isTurretLocked(Tank.LOC_TURRET)) {
             out.write("<turretLocked facing=\"");
             out.write(Integer.toString(ge.getSecondaryFacing()));
             out.write("\"/>");
@@ -56,7 +57,7 @@ public class GunEmplacementEncoder {
 
     /**
      * Decode a <code>Entity</code> object from the passed node.
-     * 
+     *
      * @param node - the <code>ParsedXML</code> node for this object. This
      *            value must not be <code>null</code>.
      * @param game - the <code>IGame</code> the decoded object belongs to.
@@ -82,7 +83,7 @@ public class GunEmplacementEncoder {
 
             if (childName.equals("turretLocked")) {
                 String facing = child.getAttribute("facing");
-                ge.lockTurret();
+                ge.lockTurret(Tank.LOC_TURRET);
                 try {
                     ge.setSecondaryFacing(Integer.parseInt(facing));
                 } catch (NumberFormatException nfe) {

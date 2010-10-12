@@ -477,7 +477,7 @@ public class EntityListFile {
             if (entity instanceof Tank) {
                 Tank tentity = (Tank) entity;
                 output.write(EntityListFile.getMovementString(tentity));
-                if (tentity.isTurretLocked()) {
+                if (tentity.isTurretLocked(Tank.LOC_TURRET)) {
                     output.write(EntityListFile.getTurretLockedString(tentity));
                 }
             }

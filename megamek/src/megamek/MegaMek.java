@@ -50,7 +50,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.35.19-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.35.19"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
@@ -188,7 +188,7 @@ public class MegaMek {
      * @return An that can start a GUI such as
      *         {@link megamek.client.ui.AWT.MegaMekGUI}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     private static IMegaMekGUI getGui(String guiName) {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         String guiClassName = MegaMek.getGUIClassName(guiName);

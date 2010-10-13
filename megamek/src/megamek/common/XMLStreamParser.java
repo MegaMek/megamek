@@ -135,6 +135,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String SLOT = "slot";
     public static final String MOVEMENT = "movement";
     public static final String TURRETLOCK = "turretlock";
+    public static final String TURRET2LOCK = "turret2lock";
     public static final String SI = "structural";
     public static final String HEAT = "Heat";
     public static final String FUEL = "fuel";
@@ -839,6 +840,26 @@ public class XMLStreamParser implements XMLResponder {
                 e.printStackTrace();
                 warning
                         .append("Invalid turret lock direction value in movement tag.\n");
+            }
+        } else if (name.equals(TURRET2LOCK)) {
+            // Are we in the outside of an Entity?
+            if (entity == null) {
+                warning
+                        .append("Found turret2 lock outside of an Entity.\n");
+            } else if (!(entity instanceof Tank)) {
+                warning
+                        .append("Turret2 crit record found outside a Tank.\n");
+            }
+            String value = (String) attr.get(DIRECTION);
+            try {
+                int turDir = Integer.parseInt(value);
+                ((Tank) entity).setDualTurretOffset(turDir);
+                ((Tank) entity).lockTurret(Tank.LOC_TURRET_2);
+            } catch (Exception e) {
+                System.err.println(e);
+                e.printStackTrace();
+                warning
+                        .append("Invalid turret2 lock direction value in movement tag.\n");
             }
         } else if (name.equals(MOVEMENT)) {
             // Are we in the outside of an Entity?

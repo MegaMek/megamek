@@ -761,6 +761,10 @@ public final class PhysicalCalculator {
                 max_index++;
                 armor_values[max_index] = target.getArmor(Tank.LOC_TURRET);
             }
+            if (!((Tank) target).hasNoDualTurret()) {
+                max_index++;
+                armor_values[max_index] = target.getArmor(Tank.LOC_TURRET_2);
+            }
         }
         // If the target is Battle Armor
         if (target instanceof BattleArmor) {

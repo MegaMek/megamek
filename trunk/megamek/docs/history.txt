@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.19-dev (SVN)
+v0.35.19 (2010-10-13, 16:39 UTC+2)
 + Patch 2948181: Random Skills for Individual Units
 + Bug 2996060: NPE when loading mech with armored lower arm/hand
 + RFE: Added Artemis Torpedos.

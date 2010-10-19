@@ -618,10 +618,10 @@ public class Dropship extends SmallCraft implements Serializable {
         double weaponBV = 0.0;
         //ok, now lets loop through the arcs and find the highest value BV arc
         int highArc = Integer.MIN_VALUE;
-        int adjArc = Integer.MIN_VALUE;
-        int oppArc = Integer.MIN_VALUE;
-        double adjArcMult = 1.0;
-        double oppArcMult = 0.5;
+        int adjArcH = Integer.MIN_VALUE;
+        int adjArcL = Integer.MIN_VALUE;
+        double adjArcHMult = 1.0;
+        double adjArcLMult = 0.5;
         double highBV = 0.0;
         double heatUsed = 0.0;
         for(int loc = 0; loc < arcBVs.length; loc++) {
@@ -630,13 +630,12 @@ public class Dropship extends SmallCraft implements Serializable {
                 highBV = arcBVs[loc];
             }
         }
-        //now lets identify the adjacent and opposite arcs
+        //now lets identify the adjacent arcs
         if(highArc > Integer.MIN_VALUE) {
             heatUsed += arcHeats[highArc];
             //now get the BV and heat for the two adjacent arcs
             int adjArcCW = getAdjacentLocCW(highArc);
             int adjArcCCW = getAdjacentLocCCW(highArc);
-            oppArc = getOppositeLoc(highArc);
             double adjArcCWBV = 0.0;
             double adjArcCWHeat = 0.0;
             if(adjArcCW > Integer.MIN_VALUE) {
@@ -650,22 +649,27 @@ public class Dropship extends SmallCraft implements Serializable {
                 adjArcCCWHeat = arcHeats[adjArcCCW];
             }
             if(adjArcCWBV > adjArcCCWBV) {
-                adjArc = adjArcCW;
+                adjArcH = adjArcCW;
                 if((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
-                    adjArcMult = 0.5;
+                    adjArcHMult = 0.5;
                 }
                 heatUsed += adjArcCWHeat;
-            } else {
-                adjArc = adjArcCCW;
+                adjArcL = adjArcCCW;
                 if((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
-                    adjArcMult = 0.5;
+                    adjArcLMult = 0.25;
                 }
                 heatUsed += adjArcCCWHeat;
-            }
-            if(oppArc > Integer.MIN_VALUE) {
-                if(heatUsed + arcHeats[oppArc] > aeroHeatEfficiency) {
-                    oppArcMult = 0.25;
+            } else {
+            	adjArcH = adjArcCCW;
+                if((heatUsed + adjArcCCWHeat) > aeroHeatEfficiency) {
+                    adjArcHMult = 0.5;
                 }
+                heatUsed += adjArcCCWHeat;
+                adjArcL = adjArcCW;
+                if((heatUsed + adjArcCWHeat) > aeroHeatEfficiency) {
+                    adjArcLMult = 0.25;
+                }
+                heatUsed += adjArcCWHeat;
             }
         }
         /*
@@ -756,18 +760,18 @@ public class Dropship extends SmallCraft implements Serializable {
             bvText.append(endRow);
             weaponBV += arcBVs[highArc];
             arcBVs[highArc] = 0.0;
-            if(adjArc > Integer.MIN_VALUE) {
+            if(adjArcH > Integer.MIN_VALUE) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Adjacent BV Arc (" + getArcName(adjArc) + ") " + arcBVs[adjArc] + "*" + adjArcMult);
+                bvText.append("Adjacent High BV Arc (" + getArcName(adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
-                bvText.append("+" + arcBVs[adjArc] * adjArcMult);
+                bvText.append("+" + arcBVs[adjArcH] * adjArcHMult);
                 bvText.append(endColumn);
                 bvText.append(endRow);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                totalHeat += arcHeats[adjArc];
+                totalHeat += arcHeats[adjArcH];
                 String over = "";
                 if(totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
@@ -775,21 +779,21 @@ public class Dropship extends SmallCraft implements Serializable {
                 bvText.append("Total Heat: " + totalHeat + over);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-                weaponBV += adjArcMult * arcBVs[adjArc];
-                arcBVs[adjArc] = 0.0;
+                weaponBV += adjArcHMult * arcBVs[adjArcH];
+                arcBVs[adjArcH] = 0.0;
             }
-            if(oppArc > Integer.MIN_VALUE) {
+            if(adjArcL > Integer.MIN_VALUE) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Opposite BV Arc (" + getArcName(oppArc)  + ") " + arcBVs[oppArc] + "*" + oppArcMult);
+                bvText.append("Adjacent Low BV Arc (" + getArcName(adjArcL)  + ") " + arcBVs[adjArcL] + "*" + adjArcLMult);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
-                bvText.append("+" + oppArcMult*arcBVs[oppArc]);
+                bvText.append("+" + adjArcLMult*arcBVs[adjArcL]);
                 bvText.append(endColumn);
                 bvText.append(endRow);
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                totalHeat += arcHeats[oppArc];
+                totalHeat += arcHeats[adjArcL];
                 String over = "";
                 if(totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
@@ -797,8 +801,8 @@ public class Dropship extends SmallCraft implements Serializable {
                 bvText.append("Total Heat: " + totalHeat + over);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-                weaponBV += oppArcMult * arcBVs[oppArc];
-                arcBVs[oppArc] = 0.0;
+                weaponBV += adjArcLMult * arcBVs[adjArcL];
+                arcBVs[adjArcL] = 0.0;
             }
             //ok now we can cycle through the rest and add 25%
             bvText.append(startRow);

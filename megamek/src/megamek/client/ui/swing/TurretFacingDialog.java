@@ -238,6 +238,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             int facing = Integer.parseInt(buttonGroup.getSelection().getActionCommand());
             int locToChange;
             if (mech != null) {
+                facing = (mech.getFacing() + facing)%6;
                 turret.setFacing(facing);
                 clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(turret), facing);
                 if (turret.getLocation() == Mech.LOC_CT) {

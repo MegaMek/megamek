@@ -1,28 +1,28 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *           Copyright (C) 2005 Mike Gratton <mike@vee.net>
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org) Copyright (C)
+ * 2005 Mike Gratton <mike@vee.net>
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 /*
  * BLkFile.java
- *
+ * 
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- *
- * @author  njrkrynn
- * @version 
+ * 
+ * @author njrkrynn
+ * @version
  */
 package megamek.common.loaders;
 
@@ -52,6 +52,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         }
 
         setTechLevel(e);
+        setFluff(e);
 
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
@@ -61,14 +62,6 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
             if (dataFile.getDataAsInt("Turret")[0] != 1) {
                 e.setHasNoTurret(true);
             }
-        }
-
-        if (dataFile.exists("history")) {
-            e.getFluff().setHistory(dataFile.getDataAsString("history").toString());
-        }
-
-        if (dataFile.exists("imagepath")) {
-            e.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath").toString());
         }
 
         loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);

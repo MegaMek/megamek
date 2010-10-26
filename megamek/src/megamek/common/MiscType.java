@@ -1,21 +1,21 @@
 /**
- * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
+ * (bmazur@sev.org)
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 /**
  * MiscType.java
- *
+ * 
  * Created on April 2, 2002, 12:15 PM
  */
 
@@ -139,6 +139,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_OFF_ROAD = BigInteger.valueOf(1).shiftLeft(96);
     public static final BigInteger F_C3SBS = BigInteger.valueOf(1).shiftLeft(97);
     public static final BigInteger F_VTOL_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(98);
+    public static final BigInteger F_NAVAL_C3 = BigInteger.valueOf(1).shiftLeft(99);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -645,6 +646,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createC3S());
         EquipmentType.addType(MiscType.createC3SBS());
         EquipmentType.addType(MiscType.createC3I());
+        EquipmentType.addType(MiscType.createNC3());
         EquipmentType.addType(MiscType.createISArtemis());
         EquipmentType.addType(MiscType.createCLArtemis());
         EquipmentType.addType(MiscType.createGECM());
@@ -1266,6 +1268,25 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_C3I).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createNC3() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "Naval C3";
+        misc.setInternalName("ISNC3");
+        misc.setInternalName("NC3");
+        misc.setInternalName("NC3Unit");
+        misc.setInternalName("ISNC3Unit");
+        misc.addLookupName("IS Navel C3");
+        misc.tonnage = 6;
+        misc.criticals = 1;
+        misc.cost = 250000;
+        misc.flags = misc.flags.or(F_C3I).or(F_AERO_EQUIPMENT);
         misc.bv = 0;
 
         return misc;

@@ -140,6 +140,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_C3SBS = BigInteger.valueOf(1).shiftLeft(97);
     public static final BigInteger F_VTOL_EQUIPMENT = BigInteger.valueOf(1).shiftLeft(98);
     public static final BigInteger F_NAVAL_C3 = BigInteger.valueOf(1).shiftLeft(99);
+    public static final BigInteger F_MINESWEEPER = BigInteger.valueOf(1).shiftLeft(100);
+    public static final BigInteger F_MOBILE_HPG = BigInteger.valueOf(1).shiftLeft(101);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -765,6 +767,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCommsGear13());
         EquipmentType.addType(MiscType.createCommsGear14());
         EquipmentType.addType(MiscType.createCommsGear15());
+        EquipmentType.addType(MiscType.createISGroundMobileHPG());
+        EquipmentType.addType(MiscType.createISMobileHPG());
+        EquipmentType.addType(MiscType.createClanGroundMobileHPG());
+        EquipmentType.addType(MiscType.createClanMobileHPG());
         EquipmentType.addType(MiscType.createCLPartialWing());
         EquipmentType.addType(MiscType.createISPartialWing());
         EquipmentType.addType(MiscType.createCargo1());
@@ -844,12 +850,16 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRemoteSensorDispenser());
         EquipmentType.addType(MiscType.createBACuttingTorch());
         EquipmentType.addType(MiscType.createBASpaceOperationsAdaptation());
+        EquipmentType.addType(MiscType.createBC3());
+        EquipmentType.addType(MiscType.createBC3i());
 
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
+        EquipmentType.addType(MiscType.createMineSweeper());
+
     }
 
     public static MiscType createHeatSink() {
@@ -1287,6 +1297,39 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 250000;
         misc.flags = misc.flags.or(F_C3I).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createBC3() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "BC3";
+        misc.setInternalName("BattleArmorC3");
+        misc.addLookupName("IS BattleArmor C3");
+        misc.tonnage = .250f;
+        misc.criticals = 1;
+        misc.cost = 62500;
+        misc.flags = misc.flags.or(F_C3S).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createBC3i() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "BC3i";
+        misc.setInternalName("ISBC3i");
+        misc.addLookupName("IS BC3i");
+        misc.addLookupName("IS BattleArmor C3i");
+        misc.tonnage = .350f;
+        misc.criticals = 1;
+        misc.cost = 125000;
+        misc.flags = misc.flags.or(F_C3I).or(F_BA_EQUIPMENT);
         misc.bv = 0;
 
         return misc;
@@ -4372,6 +4415,71 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_CUTTING_TORCH).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createMineSweeper() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Mine Sweeper";
+        misc.setInternalName("MineSweeper");
+        misc.tonnage = 3f;
+        misc.criticals = 1;
+        misc.cost = 40000;
+        misc.flags = misc.flags.or(F_MINESWEEPER).or(F_TANK_EQUIPMENT);
+        misc.bv = 30;
+        return misc;
+    }
+
+    public static MiscType createISMobileHPG() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Mobile HPG";
+        misc.setInternalName("ISMobileHPG");
+        misc.tonnage = 50f;
+        misc.criticals = 50;
+        misc.cost = 1000000000;
+        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createClanMobileHPG() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Mobile HPG";
+        misc.setInternalName("ClanMobileHPG");
+        misc.tonnage = 50f;
+        misc.criticals = 50;
+        misc.cost = 1000000000;
+        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISGroundMobileHPG() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Ground-Mobile HPG";
+        misc.setInternalName("ISGroundMobileHPG");
+        misc.tonnage = 12f;
+        misc.criticals = 12;
+        misc.cost = 4000000000f;
+        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createClanGroundMobileHPG() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Ground-Mobile HPG";
+        misc.setInternalName("ClanGroundMobileHPG");
+        misc.tonnage = 12f;
+        misc.criticals = 12;
+        misc.cost = 4000000000f;
+        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 0;
         return misc;
     }

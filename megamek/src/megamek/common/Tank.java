@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -86,10 +86,10 @@ public class Tank extends Entity {
     private static String[] LOCATION_ABBRS =
         { "BD", "FR", "RS", "LS", "RR", "TU", "TU2" };
     private static String[] LOCATION_NAMES =
-        { "Body", "Front", "Right", "Left", "Rear", "Turret"};
+        { "Body", "Front", "Right", "Left", "Rear", "Turret" };
 
     private static String[] LOCATION_NAMES_DUAL_TURRET =
-    { "Body", "Front", "Right", "Left", "Rear", "Rear Turret", "Front Turret"};
+        { "Body", "Front", "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -368,11 +368,10 @@ public class Tank extends Entity {
         }
     }
 
-
     public boolean isTurretEverJammed(int turret) {
         if (turret == LOC_TURRET) {
             return m_bTurretEverJammed;
-        } else  if (turret == LOC_TURRET_2) {
+        } else if (turret == LOC_TURRET_2) {
             return m_bDualTurretEverJammed;
         }
         return false;
@@ -632,7 +631,7 @@ public class Tank extends Entity {
                             } else if (side == ToHitData.SIDE_REAR) {
                                 roll += 2;
                             }
-                            if (roll <=3) {
+                            if (roll <= 3) {
                                 rv = new HitData(LOC_TURRET_2);
                             } else {
                                 rv = new HitData(LOC_TURRET);
@@ -651,7 +650,7 @@ public class Tank extends Entity {
                             } else if (side == ToHitData.SIDE_REAR) {
                                 roll += 2;
                             }
-                            if (roll <=3) {
+                            if (roll <= 3) {
                                 rv = new HitData(LOC_TURRET_2);
                             } else {
                                 rv = new HitData(LOC_TURRET);
@@ -672,7 +671,7 @@ public class Tank extends Entity {
                             } else if (side == ToHitData.SIDE_REAR) {
                                 roll += 2;
                             }
-                            if (roll <=3) {
+                            if (roll <= 3) {
                                 rv = new HitData(LOC_TURRET_2, false, HitData.EFFECT_CRITICAL);
                             } else {
                                 rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
@@ -759,10 +758,10 @@ public class Tank extends Entity {
         bvText.append(startColumn);
 
         // total armor points
-        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1) * ((float)(getBARRating()) / 10);
+        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1) * ((float) (getBARRating()) / 10);
 
         int armor = getTotalArmor() + modularArmor;
-        bvText.append(armor + " x 2.5 x "+(blueShield?"1.2":"1.0")+" x "+((float)(getBARRating()) / 10));
+        bvText.append(armor + " x 2.5 x " + (blueShield ? "1.2" : "1.0") + " x " + ((float) (getBARRating()) / 10));
         // total internal structure
         dbv += getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1);
 
@@ -778,10 +777,11 @@ public class Tank extends Entity {
 
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))) {
                 dEquipmentBV += etype.getBV(this);
-            } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
+            } else if (((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || etype.hasFlag(MiscType.F_BAP))) {
+                    || etype.hasFlag(MiscType.F_BAP)))
+                    || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
                 dEquipmentBV += bv;
@@ -1187,7 +1187,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1479,7 +1479,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     *
+     * 
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), or heavy damage (3)
@@ -1525,7 +1525,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     *
+     * 
      * @param roll
      *            the final dice roll
      * @param loc
@@ -1878,7 +1878,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1906,7 +1906,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1929,20 +1929,22 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
+     * 
      * @return
      */
     public int getTotalSlots() {
-        return 5 + (int)Math.floor(getWeight()/5);
+        return 5 + (int) Math.floor(getWeight() / 5);
     }
 
     /**
      * get the free item slots for this tank
+     * 
      * @return
      */
     public int getFreeSlots() {
-        int availableSlots =  getTotalSlots();
+        int availableSlots = getTotalSlots();
         int usedSlots = 0;
-        for (Mounted mount:this.getEquipment()) {
+        for (Mounted mount : this.getEquipment()) {
             usedSlots += mount.getType().getTankslots(this);
         }
         // JJs take just 1 slot
@@ -1963,7 +1965,7 @@ public class Tank extends Entity {
             }
             if (getEngine().getEngineType() == Engine.XXL_ENGINE) {
                 if (getEngine().hasFlag(Engine.CLAN_ENGINE)) {
-                   usedSlots += 2;
+                    usedSlots += 2;
                 } else {
                     usedSlots += 4;
                 }
@@ -1972,16 +1974,18 @@ public class Tank extends Entity {
         if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
             usedSlots++;
         }
-        // for ammo, each type of ammo takes one slots, regardless of submunition type
+        // for ammo, each type of ammo takes one slots, regardless of
+        // submunition type
         Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
         for (Mounted ammo : getAmmo()) {
-            AmmoType at = (AmmoType)ammo.getType();
-            if (foundAmmo.get(at.getAmmoType()+":"+at.getRackSize()) == null) {
+            AmmoType at = (AmmoType) ammo.getType();
+            if (foundAmmo.get(at.getAmmoType() + ":" + at.getRackSize()) == null) {
                 usedSlots++;
-                foundAmmo.put(at.getAmmoType()+":"+at.getRackSize(), true);
+                foundAmmo.put(at.getAmmoType() + ":" + at.getRackSize(), true);
             }
         }
-        // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot total)
+        // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot
+        // total)
         for (Transporter transport : getTransports()) {
             if (transport instanceof TroopSpace) {
                 usedSlots++;
@@ -1999,7 +2003,7 @@ public class Tank extends Entity {
                 }
                 break;
             case EquipmentType.T_ARMOR_HEAVY_FERRO:
-                usedSlots +=3;
+                usedSlots += 3;
                 break;
             case EquipmentType.T_ARMOR_LIGHT_FERRO:
             case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
@@ -2008,13 +2012,13 @@ public class Tank extends Entity {
                 usedSlots++;
                 break;
             case EquipmentType.T_ARMOR_STEALTH:
-                usedSlots +=2;
+                usedSlots += 2;
                 break;
             case EquipmentType.T_ARMOR_REACTIVE:
                 if (TechConstants.isClan(getArmorTechLevel())) {
                     usedSlots++;
                 } else {
-                    usedSlots +=2;
+                    usedSlots += 2;
                 }
                 break;
             default:

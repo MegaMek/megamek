@@ -86,6 +86,21 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         }
         a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
+        if (!dataFile.exists("battlearmor")) {
+            throw new EntityLoadingException("Could not find crew block.");
+        }
+        a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
+
+        if (!dataFile.exists("marines")) {
+            throw new EntityLoadingException("Could not find crew block.");
+        }
+        a.setNMarines(dataFile.getDataAsInt("marines")[0]);
+
+        if (!dataFile.exists("otherpassenger")) {
+            throw new EntityLoadingException("Could not find crew block.");
+        }
+        a.setNOtherPassenger(dataFile.getDataAsInt("otherpassenger")[0]);
+
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find motion_type block.");
         }

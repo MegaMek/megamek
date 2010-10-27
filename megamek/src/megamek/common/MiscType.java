@@ -858,7 +858,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createArmoredChassis());
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
-        EquipmentType.addType(MiscType.createMineSweeper());
+        EquipmentType.addType(MiscType.createISMineSweeper());
+        EquipmentType.addType(MiscType.createClanMineSweeper());
 
     }
 
@@ -4419,11 +4420,24 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createMineSweeper() {
+    public static MiscType createISMineSweeper() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Mine Sweeper";
-        misc.setInternalName("MineSweeper");
+        misc.setInternalName("ISMineSweeper");
+        misc.tonnage = 3f;
+        misc.criticals = 1;
+        misc.cost = 40000;
+        misc.flags = misc.flags.or(F_MINESWEEPER).or(F_TANK_EQUIPMENT);
+        misc.bv = 30;
+        return misc;
+    }
+
+    public static MiscType createClanMineSweeper() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Mine Sweeper";
+        misc.setInternalName("ClanMineSweeper");
         misc.tonnage = 3f;
         misc.criticals = 1;
         misc.cost = 40000;

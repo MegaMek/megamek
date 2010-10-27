@@ -12,6 +12,13 @@ v0.35.20-dev (SVN)
 + Added BC3
 + Added BC3i
 + Added Minesweeper for Tanks (BV and Equipment only no ingame effects).
++ Split minesweeper into Clan and IS
++ Added battlearmor setter and getter for smallcraft
++ Added battlearmor tag for smallcraft and DS
++ Added marines setter and getter for smallcraft
++ Added marines tag for smallcraft and DS
++ Added otherPassenger setter and getter for smallcraft
++ Added otherPassenger for smallcraft and DS
 
 v0.35.19 (2010-10-13, 16:39 UTC+2)
 + Patch 2948181: Random Skills for Individual Units

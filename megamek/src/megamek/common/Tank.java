@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -1027,26 +1027,17 @@ public class Tank extends Entity {
 
         obv = weaponBV * speedFactor;
 
+        double finalBV = dbv + obv;
+
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
-        // extra from c3 networks. a valid network requires at least 2 members
-        // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3
-        // times
-        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
-            int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true, true);
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
-                }
-            }
-            xbv += totalForceBV *= 0.05;
+        if (!ignoreC3) {
+            xbv += getExtraC3BV((int)Math.round(finalBV));
         }
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
+        finalBV = Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
         double pilotFactor = 1;
@@ -1056,10 +1047,6 @@ public class Tank extends Entity {
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
-        // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3) {
-            return finalBV;
-        }
         return retVal;
     }
 
@@ -1187,7 +1174,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1479,7 +1466,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     * 
+     *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), or heavy damage (3)
@@ -1525,7 +1512,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -1878,7 +1865,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1906,7 +1893,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1929,7 +1916,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     * 
+     *
      * @return
      */
     public int getTotalSlots() {
@@ -1938,7 +1925,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     * 
+     *
      * @return
      */
     public int getFreeSlots() {

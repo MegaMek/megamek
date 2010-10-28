@@ -3,7 +3,7 @@
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -679,7 +679,7 @@ public class Dropship extends SmallCraft implements Serializable {
         //TODO: ask welshie about this because it has never been incorporated into errata
         //According to an email with Welshman, ammo should be now added into each arc BV
         //for the final calculation of BV, including the excessive ammo rule
-         * 
+         *
         Map<String, Double> ammo = new HashMap<String, Double>();
         ArrayList<String> keys = new ArrayList<String>();
         for (Mounted mounted : getAmmo()) {
@@ -1049,15 +1049,8 @@ public class Dropship extends SmallCraft implements Serializable {
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
-            int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true, true);
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
-                }
-            }
-            xbv += totalForceBV *= 0.05;
+        if (!ignoreC3 && (game != null)) {
+            xbv += getExtraC3BV((int)Math.round(finalBV));
         }
         finalBV += xbv;
 
@@ -1069,10 +1062,6 @@ public class Dropship extends SmallCraft implements Serializable {
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
-        // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3) {
-            return (int) finalBV;
-        }
         return retVal;
 
     }
@@ -1269,7 +1258,7 @@ public class Dropship extends SmallCraft implements Serializable {
 
     /**
      * What's the range of the ECM equipment?
-     * 
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */

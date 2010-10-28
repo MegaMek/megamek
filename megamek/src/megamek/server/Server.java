@@ -17348,8 +17348,8 @@ public class Server implements Runnable {
 
         // Everything that was blasted by the explosion has to make a piloting
         // check at +6.
-        for (Object i : blastedUnitsVec) {
-            Entity o = game.getEntity((Integer) i);
+        for (int i : blastedUnitsVec) {
+            Entity o = game.getEntity(i);
             if (o instanceof Mech) {
                 Mech bm = (Mech) o;
                 // Needs a piloting check at +6 to avoid falling over.

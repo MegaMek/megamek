@@ -1094,7 +1094,7 @@ public class Aero extends Entity
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);               
+                bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
@@ -1107,7 +1107,7 @@ public class Aero extends Entity
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);               
+                bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
@@ -1120,7 +1120,7 @@ public class Aero extends Entity
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);               
+                bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
@@ -1133,7 +1133,7 @@ public class Aero extends Entity
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
-                bvText.append(endColumn);               
+                bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+");
                 bvText.append(etype.getBV(this));
@@ -1319,7 +1319,7 @@ public class Aero extends Entity
         bvText.append("-------------");
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1329,7 +1329,7 @@ public class Aero extends Entity
         bvText.append(dbv);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -2038,15 +2038,9 @@ public class Aero extends Entity
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
-            int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true, true);
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
-                }
-            }
-            xbv += totalForceBV *= 0.05;
+        if (!ignoreC3 && (game != null)) {
+
+            xbv += getExtraC3BV((int)Math.round(finalBV));
         }
         finalBV += xbv;
 
@@ -2059,10 +2053,6 @@ public class Aero extends Entity
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
-        // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3) {
-            return (int)finalBV;
-        }
         return retVal;
     }
 

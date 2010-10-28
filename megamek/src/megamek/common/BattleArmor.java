@@ -875,6 +875,10 @@ public class BattleArmor extends Infantry {
             break;
         }
 
+        if (!ignoreC3) {
+            squadBV += getExtraC3BV((int)Math.round(squadBV));
+        }
+
         // Adjust BV for crew skills.
         double pilotFactor = 1;
         if (!ignorePilot) {

@@ -766,24 +766,20 @@ public class Jumpship extends Aero {
 
         obv = weaponBV * speedFactor;
 
+        double finalBV = dbv + obv;
+
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
-        if (((hasC3MM() && (calculateFreeC3MNodes() < 2)) || (hasC3M() && (calculateFreeC3Nodes() < 3)) || (hasC3S() && (c3Master > NONE)) || (hasC3i() && (calculateFreeC3Nodes() < 5))) && !ignoreC3 && (game != null)) {
-            int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(true, true);
-            for (Entity e : game.getC3NetworkMembers(this)) {
-                if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV += e.calculateBattleValue(true, true);
-                }
-            }
-            xbv += totalForceBV *= 0.05;
+        if (!ignoreC3 && (game != null)) {
+            xbv += getExtraC3BV((int)Math.round(finalBV));
         }
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
+
+        finalBV = Math.round(finalBV + xbv);
 
         // and then factor in pilot
         double pilotFactor = 1;
@@ -793,10 +789,6 @@ public class Jumpship extends Aero {
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 
-        // don't factor pilot in if we are just calculating BV for C3 extra BV
-        if (ignoreC3) {
-            return finalBV;
-        }
         return retVal;
     }
 

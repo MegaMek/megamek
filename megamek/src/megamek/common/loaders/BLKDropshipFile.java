@@ -83,25 +83,21 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         }
         a.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
-        if (!dataFile.exists("battlearmor")) {
-            throw new EntityLoadingException("Could not find crew block.");
+        if (dataFile.exists("passengers")) {
+            a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
         }
-        a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
 
-        if (!dataFile.exists("marines")) {
-            throw new EntityLoadingException("Could not find crew block.");
+        if (dataFile.exists("battlearmor")) {
+            a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
         }
-        a.setNMarines(dataFile.getDataAsInt("marines")[0]);
 
-        if (!dataFile.exists("otherpassenger")) {
-            throw new EntityLoadingException("Could not find crew block.");
+        if (dataFile.exists("marines")) {
+            a.setNMarines(dataFile.getDataAsInt("marines")[0]);
         }
-        a.setNOtherPassenger(dataFile.getDataAsInt("otherpassenger")[0]);
 
-        if (!dataFile.exists("passengers")) {
-            throw new EntityLoadingException("Could not find passenger block.");
+        if (dataFile.exists("otherpassenger")) {
+            a.setNOtherPassenger(dataFile.getDataAsInt("otherpassenger")[0]);
         }
-        a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
 
         if (!dataFile.exists("life_boat")) {
             throw new EntityLoadingException("Could not find life boat block.");

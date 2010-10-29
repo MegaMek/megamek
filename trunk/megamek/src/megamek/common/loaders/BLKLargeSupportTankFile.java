@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author njrkrynn
  * @version
  */
@@ -30,6 +30,7 @@ import java.util.Vector;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EquipmentType;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mounted;
 import megamek.common.Tank;
@@ -116,12 +117,16 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
 
         if (dataFile.exists("armor_type")) {
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
         if (dataFile.exists("armor_tech")) {
             t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
         if (dataFile.exists("internal_type")) {
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
+        } else {
+            t.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
 
         if (!dataFile.exists("armor")) {

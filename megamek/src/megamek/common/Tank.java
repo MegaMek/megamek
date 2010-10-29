@@ -1214,26 +1214,6 @@ public class Tank extends Entity {
         return false;
     }
 
-    @Override
-    public int getArmorType() {
-        return armorType;
-    }
-
-    @Override
-    public void setArmorType(int type) {
-        armorType = type;
-    }
-
-    @Override
-    public int getStructureType() {
-        return structureType;
-    }
-
-    @Override
-    public void setStructureType(int type) {
-        structureType = type;
-    }
-
     /**
      * @return suspension factor of vehicle
      */

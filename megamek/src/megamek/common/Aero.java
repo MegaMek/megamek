@@ -2288,18 +2288,6 @@ public class Aero extends Entity
         return !isImmobile() && (getWalkMP() > 0);
     }
 
-    @Override
-    public int getArmorType()
-    {
-        return armorType;
-    }
-
-    @Override
-    public void setArmorType(int type)
-    {
-        armorType = type;
-    }
-
     /**
      * @return suspension factor of vehicle
      */

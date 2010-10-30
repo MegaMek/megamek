@@ -444,6 +444,10 @@ public class MiscType extends EquipmentType {
                 float totalTons = getTonnage(entity);
                 cost = 10 * totalTons * totalTons;
             }
+
+            if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
+                cost = entity.getRunMP() * 75000;
+            }
         }
 
         if (isArmored) {
@@ -838,6 +842,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAArmoredGlove());
         EquipmentType.addType(MiscType.createBAMagneticClamp());
         EquipmentType.addType(MiscType.createBAAPMount());
+        EquipmentType.addType(MiscType.createCLBAMyomerBooster());
         EquipmentType.addType(MiscType.createSingleHexECM());
         EquipmentType.addType(MiscType.createMimeticCamo());
         EquipmentType.addType(MiscType.createSimpleCamo());
@@ -1152,6 +1157,23 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_MASC).or(F_PROTOMECH_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createCLBAMyomerBooster() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_TW;
+        misc.name = "BA Myomer Booster";
+        misc.setInternalName("CLBAMyomerBooster");
+        misc.addLookupName("CLBAMB");
+        misc.addLookupName("BAMyomerBooster");
+        misc.tonnage = .250f;
+        misc.criticals = 0;
+        misc.cost = COST_VARIABLE;
+        misc.bv = 0;
+        misc.flags = misc.flags.or(F_MASC).or(F_BA_EQUIPMENT);
 
         return misc;
     }
@@ -2275,7 +2297,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Clan " + EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL));
         misc.addLookupName("ClanEndo-Steel");
         misc.addLookupName("ClanEndoSteel");
-        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 7;
         misc.hittable = false;
@@ -2292,7 +2314,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
         misc.setInternalName("Clan " + EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
         misc.addLookupName("ClanEndo-Composite");
-        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.techLevel = TechConstants.T_CLAN_TW;
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 4;
         misc.hittable = false;

@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -32,75 +32,84 @@ import megamek.common.weapons.PPCWeapon;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public class Aero extends Entity
-{
+public class Aero extends Entity {
     /**
      *
      */
     private static final long serialVersionUID = 7196307097459255187L;
 
     // locations
-    public static final int        LOC_NOSE               = 0;
-    public static final int        LOC_LWING              = 1;
-    public static final int        LOC_RWING              = 2;
-    public static final int        LOC_AFT                = 3;
-    public static final int        LOC_WINGS              = 4;
+    public static final int LOC_NOSE = 0;
+    public static final int LOC_LWING = 1;
+    public static final int LOC_RWING = 2;
+    public static final int LOC_AFT = 3;
+    public static final int LOC_WINGS = 4;
 
-    //ramming angles
-    public static final int        RAM_TOWARD_DIR         = 0;
-    public static final int        RAM_TOWARD_OBL         = 1;
-    public static final int        RAM_AWAY_OBL           = 2;
-    public static final int        RAM_AWAY_DIR           = 3;
+    // ramming angles
+    public static final int RAM_TOWARD_DIR = 0;
+    public static final int RAM_TOWARD_OBL = 1;
+    public static final int RAM_AWAY_OBL = 2;
+    public static final int RAM_AWAY_DIR = 3;
 
-    //heat type
-    public static final int           HEAT_SINGLE              = 0;
-    public static final int           HEAT_DOUBLE              = 1;
+    // heat type
+    public static final int HEAT_SINGLE = 0;
+    public static final int HEAT_DOUBLE = 1;
 
-    //cockpit types
+    // cockpit types
     public static final int COCKPIT_STANDARD = 0;
     public static final int COCKPIT_SMALL = 1;
     public static final int COCKPIT_COMMAND_CONSOLE = 2;
-    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Small Cockpit", "Command Console"};
-    public static final String[] COCKPIT_SHORT_STRING = { "Standard","Small", "Command Console"};
+    public static final String[] COCKPIT_STRING =
+        { "Standard Cockpit", "Small Cockpit", "Command Console" };
+    public static final String[] COCKPIT_SHORT_STRING =
+        { "Standard", "Small", "Command Console" };
 
-
-    //critical hits
-    public static final int CRIT_NONE             = -1;
-    public static final int CRIT_CREW             = 0;
-    public static final int CRIT_FCS              = 1;
-    public static final int CRIT_WEAPON           = 2;
-    public static final int CRIT_CONTROL          = 3;
-    public static final int CRIT_SENSOR           = 4;
-    public static final int CRIT_BOMB             = 5;
-    public static final int CRIT_ENGINE           = 6;
-    public static final int CRIT_FUEL_TANK        = 7;
-    public static final int CRIT_AVIONICS         = 8;
-    public static final int CRIT_GEAR             = 9;
-    public static final int CRIT_HEATSINK         = 10;
-    public static final int CRIT_CARGO             = 11;
-    public static final int CRIT_DOCK_COLLAR       = 12;
-    public static final int CRIT_DOOR              = 13;
-    public static final int CRIT_KF_BOOM           = 14;
-    public static final int CRIT_LIFE_SUPPORT      = 15;
-    public static final int CRIT_LEFT_THRUSTER     = 16;
-    public static final int CRIT_RIGHT_THRUSTER    = 17;
-    public static final int CRIT_CIC               = 18;
-    public static final int CRIT_KF_DRIVE          = 19;
-    public static final int CRIT_GRAV_DECK         = 20;
-    public static final int CRIT_WEAPON_BROAD      = 21;
+    // critical hits
+    public static final int CRIT_NONE = -1;
+    public static final int CRIT_CREW = 0;
+    public static final int CRIT_FCS = 1;
+    public static final int CRIT_WEAPON = 2;
+    public static final int CRIT_CONTROL = 3;
+    public static final int CRIT_SENSOR = 4;
+    public static final int CRIT_BOMB = 5;
+    public static final int CRIT_ENGINE = 6;
+    public static final int CRIT_FUEL_TANK = 7;
+    public static final int CRIT_AVIONICS = 8;
+    public static final int CRIT_GEAR = 9;
+    public static final int CRIT_HEATSINK = 10;
+    public static final int CRIT_CARGO = 11;
+    public static final int CRIT_DOCK_COLLAR = 12;
+    public static final int CRIT_DOOR = 13;
+    public static final int CRIT_KF_BOOM = 14;
+    public static final int CRIT_LIFE_SUPPORT = 15;
+    public static final int CRIT_LEFT_THRUSTER = 16;
+    public static final int CRIT_RIGHT_THRUSTER = 17;
+    public static final int CRIT_CIC = 18;
+    public static final int CRIT_KF_DRIVE = 19;
+    public static final int CRIT_GRAV_DECK = 20;
+    public static final int CRIT_WEAPON_BROAD = 21;
 
     // aeros have no critical slot limitations
-    //this needs to be larger, it is too easy to go over when you get to warships
-    //and bombs and such
-    private static final int[] NUM_OF_SLOTS = {100, 100, 100, 100, 100, 100};
+    // this needs to be larger, it is too easy to go over when you get to
+    // warships
+    // and bombs and such
+    private static final int[] NUM_OF_SLOTS =
+        { 100, 100, 100, 100, 100, 100 };
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
+    private static String[] LOCATION_ABBRS =
+        { "NOS", "LWG", "RWG", "AFT", "WNG" };
+    private static String[] LOCATION_NAMES =
+        { "Nose", "Left Wing", "Right Wing", "Aft", "Wings" };
 
     @Override
-    public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
+    public String[] getLocationAbbrs() {
+        return LOCATION_ABBRS;
+    }
+
     @Override
-    public String[] getLocationNames() { return LOCATION_NAMES; }
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
+    }
 
     private int sensorHits = 0;
     private int fcsHits = 0;
@@ -110,50 +119,52 @@ public class Aero extends Entity
     private boolean gearHit = false;
     private int structIntegrity;
     private int orig_structIntegrity;
-    //set up damage threshold
-    private int damThresh[] = {0,0,0,0,0};
-    //set up an int for what the critical effect would be
+    // set up damage threshold
+    private int damThresh[] =
+        { 0, 0, 0, 0, 0 };
+    // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
-    //need to set up standard damage here
-    private int[] standard_damage = {0,0,0,0,0};
-    //ignored crew hit for harjel
+    // need to set up standard damage here
+    private int[] standard_damage =
+        { 0, 0, 0, 0, 0 };
+    // ignored crew hit for harjel
     private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
 
-    //track straight movement from last turn
+    // track straight movement from last turn
     private int straightMoves = 0;
 
-    //are we tracking any altitude loss due to air-to-ground assaults
+    // are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
 
     private boolean spheroid = false;
 
-    //deal with heat
+    // deal with heat
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
 
-    //bombs
-    public static final String  SPACE_BOMB_ATTACK      = "SpaceBombAttack";
-    public static final String  DIVE_BOMB_ATTACK      = "DiveBombAttack";
-    public static final String  ALT_BOMB_ATTACK      = "AltBombAttack";
+    // bombs
+    public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
+    public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
+    public static final String ALT_BOMB_ATTACK = "AltBombAttack";
 
     private int maxBombPoints = 0;
     private int[] bombChoices = new int[BombType.B_NUM];
 
-    //fuel
+    // fuel
     private int fuel = 0;
 
-    //these are used by more advanced aeros
+    // these are used by more advanced aeros
     private boolean lifeSupport = true;
     private int leftThrustHits = 0;
     private int rightThrustHits = 0;
 
-    //out of control
+    // out of control
     private boolean outControl = false;
     private boolean outCtrlHeat = false;
     private boolean randomMove = false;
 
-    //set up movement
+    // set up movement
     private int currentVelocity = 0;
     private int nextVelocity = currentVelocity;
     private boolean accLast = false;
@@ -161,19 +172,20 @@ public class Aero extends Entity
     private boolean failedManeuver = false;
     private boolean accDecNow = false;
 
-    //was the damage threshold exceeded this turn
+    // was the damage threshold exceeded this turn
     boolean critThresh = false;
 
-    //vstol status
+    // vstol status
     boolean vstol = false;
 
-    //Capital Fighter stuff
+    // Capital Fighter stuff
     private int capitalArmor = 0;
     private int capitalArmor_orig = 0;
     private int fatalThresh = 2;
     private int currentDamage = 0;
     private boolean wingsHit = false;
-    //a hash map of the current weapon groups - the key is the location:internal name, and the value is the weapon id
+    // a hash map of the current weapon groups - the key is the
+    // location:internal name, and the value is the weapon id
     Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
 
     /*
@@ -190,35 +202,35 @@ public class Aero extends Entity
     private int eccmRoll = 0;
 
     public Aero() {
-        //need to set altitude to something different than entity
+        // need to set altitude to something different than entity
         altitude = 5;
     }
 
     /**
-     * Returns this entity's safe thrust, factored
-     * for heat, extreme temperatures, gravity, and bomb load.
+     * Returns this entity's safe thrust, factored for heat, extreme
+     * temperatures, gravity, and bomb load.
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
-        if(null != game) {
+        if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if(weatherMod != 0) {
+            if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
         }
-        //get bomb load
-        j = Math.max(0, j - (int)Math.ceil(getBombPoints()/5.0));
+        // get bomb load
+        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
 
-        if ( hasModularArmor() ) {
+        if (hasModularArmor()) {
             j--;
         }
 
-        //if they are not airborne, then they get MP halved (aerodyne) or no MP
-        if(!isAirborne()) {
+        // if they are not airborne, then they get MP halved (aerodyne) or no MP
+        if (!isAirborne()) {
             j = j / 2;
-            if(isSpheroid()) {
+            if (isSpheroid()) {
                 j = 0;
             }
         }
@@ -228,21 +240,22 @@ public class Aero extends Entity
 
     /**
      * Thi is the same as getWalkMP, but does not divide by 2 when grounded
+     * 
      * @return
      */
     public int getCurrentThrust() {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
-        if(null != game) {
+        if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if(weatherMod != 0) {
+            if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
         }
-        //get bomb load
-        j = Math.max(0, j - (int)Math.ceil(getBombPoints()/5.0));
+        // get bomb load
+        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
 
-        if ( hasModularArmor() ) {
+        if (hasModularArmor()) {
             j--;
         }
         return j;
@@ -272,7 +285,7 @@ public class Aero extends Entity
     }
 
     public boolean isOutControlTotal() {
-        //due to control roll, heat, shut down, or crew unconscious
+        // due to control roll, heat, shut down, or crew unconscious
         return (outControl || shutDown || getCrew().isUnconscious());
     }
 
@@ -326,9 +339,9 @@ public class Aero extends Entity
 
     public int getBombPoints() {
         int points = 0;
-        for(Mounted bomb : getBombs()) {
-            if(bomb.getShotsLeft() > 0) {
-                points += BombType.getBombCost(((BombType)bomb.getType()).getBombType());
+        for (Mounted bomb : getBombs()) {
+            if (bomb.getShotsLeft() > 0) {
+                points += BombType.getBombCost(((BombType) bomb.getType()).getBombType());
             }
         }
         return points;
@@ -339,7 +352,7 @@ public class Aero extends Entity
     }
 
     public void autoSetMaxBombPoints() {
-        maxBombPoints = Math.round(getWeight()/5);
+        maxBombPoints = Math.round(getWeight() / 5);
     }
 
     public int[] getBombChoices() {
@@ -347,7 +360,7 @@ public class Aero extends Entity
     }
 
     public void setBombChoices(int[] bc) {
-        if(bc.length == bombChoices.length) {
+        if (bc.length == bombChoices.length) {
             bombChoices = bc;
         }
     }
@@ -361,9 +374,9 @@ public class Aero extends Entity
     }
 
     public int getCurrentVelocity() {
-        //if using advanced movement then I just want to sum up
-        //the different vectors
-        if(game.useVectorMove()) {
+        // if using advanced movement then I just want to sum up
+        // the different vectors
+        if (game.useVectorMove()) {
             return getVelocity();
         }
         return currentVelocity;
@@ -381,8 +394,8 @@ public class Aero extends Entity
         nextVelocity = velocity;
     }
 
-    //need some way of retrieving true current velocity
-    //even when using advanced movement
+    // need some way of retrieving true current velocity
+    // even when using advanced movement
     public int getCurrentVelocityActual() {
         return currentVelocity;
     }
@@ -432,20 +445,19 @@ public class Aero extends Entity
         structIntegrity = si;
     }
 
-
     public void autoSetSI() {
-        int siweight = (int)Math.floor(weight / 10.0);
+        int siweight = (int) Math.floor(weight / 10.0);
         int sithrust = getOriginalWalkMP();
-        initializeSI(Math.max(siweight,sithrust));
+        initializeSI(Math.max(siweight, sithrust));
     }
 
     public void autoSetCapArmor() {
-        capitalArmor_orig = (int)Math.round(getTotalOArmor() / 10.0);
-        capitalArmor = (int)Math.round(getTotalArmor() / 10.0);
+        capitalArmor_orig = (int) Math.round(getTotalOArmor() / 10.0);
+        capitalArmor = (int) Math.round(getTotalArmor() / 10.0);
     }
 
     public void autoSetFatalThresh() {
-        fatalThresh = Math.max(2, (int)Math.ceil(capitalArmor/4.0));
+        fatalThresh = Math.max(2, (int) Math.ceil(capitalArmor / 4.0));
     }
 
     public void initializeSI(int val) {
@@ -462,7 +474,7 @@ public class Aero extends Entity
     }
 
     public void setSensorHits(int hits) {
-        if(hits > 3) {
+        if (hits > 3) {
             hits = 3;
         }
         sensorHits = hits;
@@ -473,7 +485,7 @@ public class Aero extends Entity
     }
 
     public void setFCSHits(int hits) {
-        if(hits > 3) {
+        if (hits > 3) {
             hits = 3;
         }
         fcsHits = hits;
@@ -577,88 +589,85 @@ public class Aero extends Entity
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        //reset threshold critted
+        // reset threshold critted
         setCritThresh(false);
 
-        //reset maneuver status
+        // reset maneuver status
         setFailedManeuver(false);
-        //reset acc/dec this turn
+        // reset acc/dec this turn
         setAccDecNow(false);
 
         updateBays();
 
-        //update recovery turn if in recovery
-        if(getRecoveryTurn() > 0) {
+        // update recovery turn if in recovery
+        if (getRecoveryTurn() > 0) {
             setRecoveryTurn(getRecoveryTurn() - 1);
         }
 
-        //if in atmosphere, then halve next turn's velocity
-        if(!game.getBoard().inSpace() && isDeployed() && (roundNumber > 0)) {
-            setNextVelocity((int)Math.floor(getNextVelocity() / 2.0));
+        // if in atmosphere, then halve next turn's velocity
+        if (!game.getBoard().inSpace() && isDeployed() && (roundNumber > 0)) {
+            setNextVelocity((int) Math.floor(getNextVelocity() / 2.0));
         }
 
-        //update velocity
+        // update velocity
         setCurrentVelocity(getNextVelocity());
 
-        //if using variable damage thresholds then autoset them
-        if(game.getOptions().booleanOption("variable_damage_thresh")) {
+        // if using variable damage thresholds then autoset them
+        if (game.getOptions().booleanOption("variable_damage_thresh")) {
             autoSetThresh();
         }
 
-        //if they are out of control due to heat, then apply this and reset
-        if(isOutCtrlHeat()) {
+        // if they are out of control due to heat, then apply this and reset
+        if (isOutCtrlHeat()) {
             setOutControl(true);
             setOutCtrlHeat(false);
         }
 
-
-        //reset eccm bonus
+        // reset eccm bonus
         setECCMRoll(Compute.d6(2));
 
-        //get new random whofirst
+        // get new random whofirst
         setWhoFirst();
 
     }
 
     /**
-     * Returns the name of the type of movement used.
-     * This is tank-specific.
+     * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
     public String getMovementString(EntityMovementType mtype) {
-        switch(mtype) {
-        case MOVE_SKID :
-            return "Skidded";
-        case MOVE_NONE :
-            return "None";
-        case MOVE_WALK :
-            return "Cruised";
-        case MOVE_RUN :
-            return "Flanked";
-        case MOVE_SAFE_THRUST :
-            return "Safe Thrust";
-        case MOVE_OVER_THRUST :
-            return "Over Thrust";
-        default :
-            return "Unknown!";
+        switch (mtype) {
+            case MOVE_SKID:
+                return "Skidded";
+            case MOVE_NONE:
+                return "None";
+            case MOVE_WALK:
+                return "Cruised";
+            case MOVE_RUN:
+                return "Flanked";
+            case MOVE_SAFE_THRUST:
+                return "Safe Thrust";
+            case MOVE_OVER_THRUST:
+                return "Over Thrust";
+            default:
+                return "Unknown!";
         }
     }
 
     /**
-     * Returns the name of the type of movement used.
-     * This is tank-specific.
+     * Returns the name of the type of movement used. This is tank-specific.
      */
     @Override
     public String getMovementAbbr(EntityMovementType mtype) {
-        switch(mtype) {
-        case MOVE_NONE :
-            return "N";
-        case MOVE_SAFE_THRUST :
-            return "S";
-        case MOVE_OVER_THRUST :
-            return "O";
-        default :
-            return "?";
+        switch (mtype) {
+            case MOVE_NONE:
+                return "N";
+            case MOVE_SAFE_THRUST:
+                return "S";
+            case MOVE_OVER_THRUST:
+                return "O";
+            default:
+                return "?";
         }
     }
 
@@ -670,43 +679,41 @@ public class Aero extends Entity
     /**
      * Returns the Compute.ARC that the weapon fires into.
      */
-    //need to figure out aft-pointed wing weapons
-    //need to figure out new arcs
+    // need to figure out aft-pointed wing weapons
+    // need to figure out new arcs
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if(mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)
-                || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)
-                || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+        if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
-        case LOC_NOSE:
-            arc = Compute.ARC_NOSE;
-            break;
-        case LOC_RWING:
-            if(mounted.isRearMounted()) {
-                arc = Compute.ARC_RWINGA;
-            } else {
-                arc = Compute.ARC_RWING;
-            }
-            break;
-        case LOC_LWING:
-            if(mounted.isRearMounted()) {
-                arc = Compute.ARC_LWINGA;
-            } else {
-                arc = Compute.ARC_LWING;
-            }
-            break;
-        case LOC_AFT:
-            arc = Compute.ARC_AFT;
-            break;
-        case LOC_WINGS:
-            arc = Compute.ARC_NOSE;
-            break;
-        default:
-            arc = Compute.ARC_360;
+            case LOC_NOSE:
+                arc = Compute.ARC_NOSE;
+                break;
+            case LOC_RWING:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_RWINGA;
+                } else {
+                    arc = Compute.ARC_RWING;
+                }
+                break;
+            case LOC_LWING:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_LWINGA;
+                } else {
+                    arc = Compute.ARC_LWING;
+                }
+                break;
+            case LOC_AFT:
+                arc = Compute.ARC_AFT;
+                break;
+            case LOC_WINGS:
+                arc = Compute.ARC_NOSE;
+                break;
+            default:
+                arc = Compute.ARC_360;
         }
 
         return rollArcs(arc);
@@ -716,26 +723,26 @@ public class Aero extends Entity
      * switches certain arcs due to rolling
      */
     public int rollArcs(int arc) {
-        if(isRolled()) {
-            if(arc == Compute.ARC_LWING) {
+        if (isRolled()) {
+            if (arc == Compute.ARC_LWING) {
                 return Compute.ARC_RWING;
-            } else if( arc == Compute.ARC_RWING) {
+            } else if (arc == Compute.ARC_RWING) {
                 return Compute.ARC_LWING;
-            } else if( arc == Compute.ARC_LWINGA) {
+            } else if (arc == Compute.ARC_LWINGA) {
                 return Compute.ARC_RWINGA;
-            } else if( arc == Compute.ARC_RWINGA) {
+            } else if (arc == Compute.ARC_RWINGA) {
                 return Compute.ARC_LWINGA;
-            } else if( arc == Compute.ARC_LEFTSIDE_SPHERE) {
+            } else if (arc == Compute.ARC_LEFTSIDE_SPHERE) {
                 return Compute.ARC_RIGHTSIDE_SPHERE;
-            } else if( arc == Compute.ARC_RIGHTSIDE_SPHERE) {
+            } else if (arc == Compute.ARC_RIGHTSIDE_SPHERE) {
                 return Compute.ARC_LEFTSIDE_SPHERE;
-            } else if( arc == Compute.ARC_LEFTSIDEA_SPHERE) {
+            } else if (arc == Compute.ARC_LEFTSIDEA_SPHERE) {
                 return Compute.ARC_RIGHTSIDEA_SPHERE;
-            } else if( arc == Compute.ARC_RIGHTSIDEA_SPHERE) {
+            } else if (arc == Compute.ARC_RIGHTSIDEA_SPHERE) {
                 return Compute.ARC_LEFTSIDEA_SPHERE;
-            } else if( arc == Compute.ARC_LEFT_BROADSIDE) {
+            } else if (arc == Compute.ARC_LEFT_BROADSIDE) {
                 return Compute.ARC_RIGHT_BROADSIDE;
-            } else if( arc == Compute.ARC_RIGHT_BROADSIDE) {
+            } else if (arc == Compute.ARC_RIGHT_BROADSIDE) {
                 return Compute.ARC_LEFT_BROADSIDE;
             }
         }
@@ -743,15 +750,16 @@ public class Aero extends Entity
     }
 
     /**
-     * Returns true if this weapon fires into the secondary facing arc.  If
+     * Returns true if this weapon fires into the secondary facing arc. If
      * false, assume it fires into the primary.
      */
     @Override
     public boolean isSecondaryArcWeapon(int weaponId) {
-        //just leave true for now in case we implement rolls or
-        //newtonian movement this way
+        // just leave true for now in case we implement rolls or
+        // newtonian movement this way
         return true;
     }
+
     /**
      * Rolls up a hit location
      */
@@ -770,207 +778,203 @@ public class Aero extends Entity
 
         int roll = Compute.d6(2);
 
-        //first check for above/below
-        if((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
+        // first check for above/below
+        if ((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
 
-            //have to decide which wing
+            // have to decide which wing
             int wingloc = LOC_RWING;
             int wingroll = Compute.d6(1);
-            if(wingroll > 3) {
+            if (wingroll > 3) {
                 wingloc = LOC_LWING;
             }
-            switch( roll ) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            switch (roll) {
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
 
-        if(side == ToHitData.SIDE_FRONT) {
+        if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
-            switch( roll ) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_FCS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            switch (roll) {
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_FCS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
-        }
-        else if(side == ToHitData.SIDE_LEFT) {
+        } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
-            switch( roll ) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_BOMB);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            switch (roll) {
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_BOMB);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
-        }
-        else if(side == ToHitData.SIDE_RIGHT) {
+        } else if (side == ToHitData.SIDE_RIGHT) {
             // normal right-side hits
-            switch( roll ) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_BOMB);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            switch (roll) {
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_BOMB);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
-        }
-        else if(side == ToHitData.SIDE_REAR) {
+        } else if (side == ToHitData.SIDE_REAR) {
             // normal aft hits
-            switch( roll ) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            switch (roll) {
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
     }
-
 
     /**
      * Gets the location that excess damage transfers to
@@ -1042,7 +1046,7 @@ public class Aero extends Entity
         bvText.append(endColumn);
         bvText.append(startColumn);
 
-        dbv += (getTotalArmor()+modularArmor);
+        dbv += (getTotalArmor() + modularArmor);
 
         bvText.append(dbv);
         bvText.append(" x 2.5 x ");
@@ -1064,12 +1068,12 @@ public class Aero extends Entity
         bvText.append(endColumn);
         bvText.append(startColumn);
 
-        double dbvSI = getSI() * 2.0 * (blueShield?1.2:1);
+        double dbvSI = getSI() * 2.0 * (blueShield ? 1.2 : 1);
         dbv += dbvSI;
 
         bvText.append(getSI());
         bvText.append(" x 2 x ");
-        bvText.append(blueShield?1.2:1);
+        bvText.append(blueShield ? 1.2 : 1);
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append("= ");
@@ -1143,7 +1147,7 @@ public class Aero extends Entity
                 bvText.append(endRow);
             }
         }
-        if(amsBV>0) {
+        if (amsBV > 0) {
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("Total AMS BV:");
@@ -1156,7 +1160,7 @@ public class Aero extends Entity
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        if(screenBV>0) {
+        if (screenBV > 0) {
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("Total Screen BV:");
@@ -1169,7 +1173,7 @@ public class Aero extends Entity
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        if(amsAmmoBV>0) {
+        if (amsAmmoBV > 0) {
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
@@ -1182,7 +1186,7 @@ public class Aero extends Entity
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-        if(screenAmmoBV>0) {
+        if (screenAmmoBV > 0) {
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
@@ -1198,14 +1202,14 @@ public class Aero extends Entity
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
-        //need to keep track of any ammo type already used
+        // need to keep track of any ammo type already used
         boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][41];
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 15;
             EquipmentType etype = mounted.getType();
 
-             // only count explosive ammo
+            // only count explosive ammo
             if (!etype.isExplosive()) {
                 continue;
             }
@@ -1219,7 +1223,7 @@ public class Aero extends Entity
             }
 
             // do not count weapon groups
-            if(mounted.isWeaponGroup()) {
+            if (mounted.isWeaponGroup()) {
                 continue;
             }
 
@@ -1239,9 +1243,9 @@ public class Aero extends Entity
                 toSubtract = 1;
             }
 
-            //only ammo counts from here on out
-            if((etype instanceof AmmoType)) {
-                AmmoType aType = (AmmoType)etype;
+            // only ammo counts from here on out
+            if ((etype instanceof AmmoType)) {
+                AmmoType aType = (AmmoType) etype;
                 // empty ammo shouldn't count
                 if (mounted.getShotsLeft() == 0) {
                     continue;
@@ -1303,10 +1307,10 @@ public class Aero extends Entity
             bvText.append("+ 0.2 for Stealth");
         }
         bvText.append(endColumn);
-        //unit type multiplier
-        dbv *= (getBVTypeModifier() + (hasStealth()?0.2:0));
+        // unit type multiplier
+        dbv *= (getBVTypeModifier() + (hasStealth() ? 0.2 : 0));
         bvText.append(startColumn);
-        bvText.append("x" + (getBVTypeModifier() + (hasStealth()?0.2:0)));
+        bvText.append("x" + (getBVTypeModifier() + (hasStealth() ? 0.2 : 0)));
         bvText.append(endColumn);
         bvText.append(endRow);
 
@@ -1368,6 +1372,19 @@ public class Aero extends Entity
 
         double weaponBV = 0;
         boolean hasTargComp = hasTargComp();
+
+        double targetingSystemBVMode = 1.0;
+
+        if (this instanceof FixedWingSupport) {
+            if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
+                targetingSystemBVMode = 1.0;
+            } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
+                targetingSystemBVMode = .9;
+            } else {
+                targetingSystemBVMode = .8;
+            }
+        }
+
         // first, add up front-faced and rear-faced unmodified BV,
         // to know wether front- or rear faced BV should be halved
         double bvFront = 0, bvRear = 0;
@@ -1384,20 +1401,18 @@ public class Aero extends Entity
                 continue;
             }
             // don't count screen launchers, they are defensive
-            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+            if (wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
                 continue;
             }
-            //do not count weapon groups
-            if(weapon.isWeaponGroup()) {
+            // do not count weapon groups
+            if (weapon.isWeaponGroup()) {
                 continue;
             }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
                 for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == weapon
-                                    .getLocation())) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == weapon.getLocation())) {
                         mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
@@ -1463,8 +1478,8 @@ public class Aero extends Entity
                 continue;
             }
 
-            //do not count weapon groups
-            if(mounted.isWeaponGroup()) {
+            // do not count weapon groups
+            if (mounted.isWeaponGroup()) {
                 continue;
             }
 
@@ -1484,15 +1499,12 @@ public class Aero extends Entity
             }
 
             // laser insulator reduce heat by 1, to a minimum of 1
-            if (wtype.hasFlag(WeaponType.F_LASER) && (mounted.getLinkedBy() != null)
-                    && !mounted.getLinkedBy().isInoperable()
-                    && mounted.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+            if (wtype.hasFlag(WeaponType.F_LASER) && (mounted.getLinkedBy() != null) && !mounted.getLinkedBy().isInoperable() && mounted.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
                 weaponHeat -= 1;
                 if (weaponHeat == 0) {
                     weaponHeat++;
                 }
             }
-
 
             // half heat for streaks
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
@@ -1532,11 +1544,11 @@ public class Aero extends Entity
             if (wtype.hasFlag(WeaponType.F_AMS)) {
                 continue;
             }
-            //don't count screen launchers, they are defensive
-            if(wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
+            // don't count screen launchers, they are defensive
+            if (wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
                 continue;
             }
-            //do not count weapon groups
+            // do not count weapon groups
             if (mounted.isWeaponGroup()) {
                 continue;
             }
@@ -1544,9 +1556,7 @@ public class Aero extends Entity
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
                 for (Mounted possibleMG : getTotalWeaponList()) {
-                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                            && (possibleMG.getLocation() == mounted
-                                    .getLocation())) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == mounted.getLocation())) {
                         mgaBV += possibleMG.getType().getBV(this);
                     }
                 }
@@ -1554,10 +1564,10 @@ public class Aero extends Entity
             }
 
             // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                if (hasTargComp) {
-                    dBV *= 1.25;
-                }
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                dBV *= 1.25;
+            } else if ((this instanceof FixedWingSupport) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
+                dBV *= targetingSystemBVMode;
             }
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
@@ -1597,8 +1607,6 @@ public class Aero extends Entity
                 weaponValues.add(weaponName);
                 nonHeatBVs.add(weaponValues);
             }
-
-
 
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
@@ -1721,7 +1729,8 @@ public class Aero extends Entity
                 }
             });
 
-            // count heat-generating weapons at full modified BV until heatefficiency is reached or
+            // count heat-generating weapons at full modified BV until
+            // heatefficiency is reached or
             // passed with one weapon
             double heatAdded = 0;
             for (ArrayList<Object> weaponValues : heatBVs) {
@@ -1853,8 +1862,8 @@ public class Aero extends Entity
             if (atype.getAmmoType() == AmmoType.T_AMS) {
                 continue;
             }
-            //don't count screen launchers, they are defensive
-            if(atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+            // don't count screen launchers, they are defensive
+            if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
                 continue;
             }
 
@@ -1864,8 +1873,7 @@ public class Aero extends Entity
                 continue;
             }
             // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
+            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED) || (atype.getMunitionType() == AmmoType.M_HOMING)) {
                 Player tmpP = getOwner();
 
                 if (tmpP != null) {
@@ -1928,7 +1936,7 @@ public class Aero extends Entity
         bvText.append(endRow);
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP()  - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         bvText.append(startRow);
@@ -1969,7 +1977,6 @@ public class Aero extends Entity
         bvText.append(endColumn);
         bvText.append(startColumn);
 
-
         double finalBV = dbv + obv;
 
         bvText.append(dbv);
@@ -1986,7 +1993,7 @@ public class Aero extends Entity
         bvText.append(startColumn);
 
         double cockpitMod = 1;
-        if ( getCockpitType() == Aero.COCKPIT_SMALL ) {
+        if (getCockpitType() == Aero.COCKPIT_SMALL) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
         }
@@ -2040,10 +2047,9 @@ public class Aero extends Entity
         // times
         if (!ignoreC3 && (game != null)) {
 
-            xbv += getExtraC3BV((int)Math.round(finalBV));
+            xbv += getExtraC3BV((int) Math.round(finalBV));
         }
         finalBV += xbv;
-
 
         // and then factor in pilot
         double pilotFactor = 1;
@@ -2061,65 +2067,66 @@ public class Aero extends Entity
     }
 
     @Override
-    public PilotingRollData addEntityBonuses(PilotingRollData prd)
-    {
-        //this is a control roll. Affected by:
-        //avionics damage
-        //pilot damage
-        //current velocity
+    public PilotingRollData addEntityBonuses(PilotingRollData prd) {
+        // this is a control roll. Affected by:
+        // avionics damage
+        // pilot damage
+        // current velocity
         int avihits = getAvionicsHits();
         int pilothits = getCrew().getHits();
 
-        if((avihits > 0) && (avihits<3)) {
+        if ((avihits > 0) && (avihits < 3)) {
             prd.addModifier(avihits, "Avionics Damage");
         }
 
-        //this should probably be replaced with some kind of AVI_DESTROYED boolean
-        if(avihits >= 3) {
+        // this should probably be replaced with some kind of AVI_DESTROYED
+        // boolean
+        if (avihits >= 3) {
             prd.addModifier(5, "Avionics Destroyed");
         }
 
-        if(pilothits>0) {
+        if (pilothits > 0) {
             prd.addModifier(pilothits, "Pilot Hits");
         }
 
-        //movement effects
-        //some question as to whether "above safe thrust" applies to thrust or velocity
-        //I will treat it as thrust until it is resolved
-        if(moved == EntityMovementType.MOVE_OVER_THRUST) {
+        // movement effects
+        // some question as to whether "above safe thrust" applies to thrust or
+        // velocity
+        // I will treat it as thrust until it is resolved
+        if (moved == EntityMovementType.MOVE_OVER_THRUST) {
             prd.addModifier(+1, "Used more than safe thrust");
         }
         int vel = getCurrentVelocity();
-        int vmod = vel - (2*getWalkMP());
-        if(vmod > 0) {
+        int vmod = vel - (2 * getWalkMP());
+        if (vmod > 0) {
             prd.addModifier(vmod, "Velocity greater than 2x safe thrust");
         }
 
-        //add in atmospheric effects later
-        if(!game.getBoard().inSpace() && isAirborne()) {
+        // add in atmospheric effects later
+        if (!game.getBoard().inSpace() && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
-            //check type
-            if(this instanceof Dropship) {
-                if(isSpheroid()) {
-                    prd.addModifier(-1,"spheroid dropship");
+            // check type
+            if (this instanceof Dropship) {
+                if (isSpheroid()) {
+                    prd.addModifier(-1, "spheroid dropship");
                 } else {
-                    prd.addModifier(0,"aerodyne dropship");
+                    prd.addModifier(0, "aerodyne dropship");
                 }
             } else {
-                prd.addModifier(-1,"fighter/small craft");
+                prd.addModifier(-1, "fighter/small craft");
             }
         }
 
-        //life support (only applicable to non-ASFs
-        if(!hasLifeSupport()) {
-            prd.addModifier(+2,"No life support");
+        // life support (only applicable to non-ASFs
+        if (!hasLifeSupport()) {
+            prd.addModifier(+2, "No life support");
         }
 
-        if ( hasModularArmor() ) {
-            prd.addModifier(1,"Modular Armor");
+        if (hasModularArmor()) {
+            prd.addModifier(1, "Modular Armor");
         }
-        //VDNI bonus?
+        // VDNI bonus?
         if (getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
@@ -2129,14 +2136,14 @@ public class Aero extends Entity
             prd.addModifier(1, "Small Cockpit");
         }
 
-        //quirks?
-        if(getQuirks().booleanOption("atmo_flyer") && !game.getBoard().inSpace()) {
+        // quirks?
+        if (getQuirks().booleanOption("atmo_flyer") && !game.getBoard().inSpace()) {
             prd.addModifier(-1, "atmospheric flyer");
         }
-        if(getQuirks().booleanOption("atmo_instability") && !game.getBoard().inSpace()) {
+        if (getQuirks().booleanOption("atmo_instability") && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if(getQuirks().booleanOption("cramped_cockpit")) {
+        if (getQuirks().booleanOption("cramped_cockpit")) {
             prd.addModifier(1, "cramped cockpit");
         }
 
@@ -2161,12 +2168,12 @@ public class Aero extends Entity
         r.add(getKillNumber());
         vDesc.addElement(r);
 
-        if(isDestroyed()) {
+        if (isDestroyed()) {
             Entity killer = game.getEntity(killerId);
-            if(killer == null) {
+            if (killer == null) {
                 killer = game.getOutOfGameEntity(killerId);
             }
-            if(killer != null) {
+            if (killer != null) {
                 r = new Report(7072, Report.PUBLIC);
                 r.addDesc(killer);
             } else {
@@ -2180,8 +2187,7 @@ public class Aero extends Entity
     }
 
     @Override
-    public int[] getNoOfSlots()
-    {
+    public int[] getNoOfSlots() {
         return NUM_OF_SLOTS;
     }
 
@@ -2195,10 +2201,10 @@ public class Aero extends Entity
 
     @Override
     public int getHeatCapacity() {
-        return (getHeatSinks()*(getHeatType()+1));
+        return (getHeatSinks() * (getHeatType() + 1));
     }
 
-    //If the aero is in the water, it is dead so no worries
+    // If the aero is in the water, it is dead so no worries
     @Override
     public int getHeatCapacityWithWater() {
         return getHeatCapacity();
@@ -2210,25 +2216,22 @@ public class Aero extends Entity
     }
 
     @Override
-    public void autoSetInternal()
-    {
-        //should be no internals because only one SI
-        //It doesn't seem to be screwing anything up yet.
-        //Need to figure out how destruction of entity is determined
-        int nInternal = (int)Math.ceil(weight / 10.0);
+    public void autoSetInternal() {
+        // should be no internals because only one SI
+        // It doesn't seem to be screwing anything up yet.
+        // Need to figure out how destruction of entity is determined
+        int nInternal = (int) Math.ceil(weight / 10.0);
         nInternal = 0;
-        //I need to look at safe thrust as well at some point
+        // I need to look at safe thrust as well at some point
 
         for (int x = 0; x < locations(); x++) {
             initializeInternal(nInternal, x);
         }
     }
 
-    //initialize the Damage threshold
-    public void autoSetThresh()
-    {
-        for(int x = 0; x < locations(); x++)
-        {
+    // initialize the Damage threshold
+    public void autoSetThresh() {
+        for (int x = 0; x < locations(); x++) {
             initializeThresh(x);
         }
     }
@@ -2237,10 +2240,9 @@ public class Aero extends Entity
         damThresh[loc] = val;
     }
 
-    public void initializeThresh(int loc)
-    {
-        int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
-        setThresh(nThresh,loc);
+    public void initializeThresh(int loc) {
+        int nThresh = (int) Math.ceil(getArmor(loc) / 10.0);
+        setThresh(nThresh, loc);
     }
 
     public int getThresh(int loc) {
@@ -2249,15 +2251,15 @@ public class Aero extends Entity
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
-     * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is only a source of spares.
-     * @see     Entity#isSalvage()
+     * 
+     * @return A <code>boolean</code> that is <code>true</code> if the unit can
+     *         be repaired (given enough time and parts); if this value is
+     *         <code>false</code>, the unit is only a source of spares.
+     * @see Entity#isSalvage()
      */
     @Override
     public boolean isRepairable() {
-        return true; //deal with this later
+        return true; // deal with this later
     }
 
     /**
@@ -2266,14 +2268,13 @@ public class Aero extends Entity
     @Override
     public void restore() {
         super.restore();
-        //not sure what to put here
+        // not sure what to put here
 
     }
 
-
     @Override
     public boolean canCharge() {
-        //ramming is resolved differently than chargin
+        // ramming is resolved differently than chargin
         return false;
     }
 
@@ -2291,47 +2292,48 @@ public class Aero extends Entity
     /**
      * @return suspension factor of vehicle
      */
-    //Doesn't really do anything so just return 0
-    public int getSuspensionFactor () {
+    // Doesn't really do anything so just return 0
+    public int getSuspensionFactor() {
         return 0;
     }
 
     /**
-     * There is a mistake in some of the AT2r costs
-     * for some reason they added ammo twice for a lot of the
-     * level 2 designs, leading to costs that are too high
+     * There is a mistake in some of the AT2r costs for some reason they added
+     * ammo twice for a lot of the level 2 designs, leading to costs that are
+     * too high
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
 
         double cost = 0;
 
-        //add in cockpit
+        // add in cockpit
         cost += 200000 + 50000 + 2000 * weight;
 
-        //Structural integrity
+        // Structural integrity
         cost += 50000 * getSI();
 
-        //additional flight systems (attitude thruster and landing gear)
+        // additional flight systems (attitude thruster and landing gear)
         cost += 25000 + 10 * getWeight();
 
-        //engine
+        // engine
         cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
 
-        //fuel tanks
+        // fuel tanks
         cost += 200 * getFuel() / 80.0;
 
-        //armor
-        cost += getArmorWeight()*EquipmentType.getArmorCost(armorType);
+        // armor
+        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType);
 
-        //heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;
-        cost += sinkCost*getHeatSinks();
+        // heat sinks
+        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
+        // 2000;
+        cost += sinkCost * getHeatSinks();
 
-        //weapons
+        // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        //omni multiplier
+        // omni multiplier
         double omniMultiplier = 1;
         if (isOmni()) {
             omniMultiplier = 1.25f;
@@ -2364,7 +2366,7 @@ public class Aero extends Entity
     }
 
     @Override
-    public boolean canGoHullDown () {
+    public boolean canGoHullDown() {
         return false;
     }
 
@@ -2381,17 +2383,16 @@ public class Aero extends Entity
         }
     }
 
-
     /**
      * Returns the percent of the SI remaining
      */
     @Override
     public double getInternalRemainingPercent() {
-        return ((double)getSI() / (double)get0SI());
+        return ((double) getSI() / (double) get0SI());
     }
 
     protected int calculateWalk() {
-        return (getEngine().getRating()  / (int)weight) + 2;
+        return (getEngine().getRating() / (int) weight) + 2;
     }
 
     @Override
@@ -2400,24 +2401,25 @@ public class Aero extends Entity
     }
 
     @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-    throws LocationFullException {
-        super.addEquipment(mounted,loc, rearMounted);
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
+        super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mounted),
-                true, mounted));
+        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
     }
 
-    /** get the type of critical caused by a critical roll,
-     * taking account of existing damage
-     * @param roll the final dice roll
-     * @param loc  the hit location
-     * @return     a critical type
+    /**
+     * get the type of critical caused by a critical roll, taking account of
+     * existing damage
+     * 
+     * @param roll
+     *            the final dice roll
+     * @param loc
+     *            the hit location
+     * @return a critical type
      */
     public int getCriticalEffect(int roll, int target) {
-        //just grab the latest potential crit
-        if(roll < target) {
+        // just grab the latest potential crit
+        if (roll < target) {
             return CRIT_NONE;
         }
 
@@ -2428,11 +2430,11 @@ public class Aero extends Entity
     public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if(thrust > getSI()) {
+        if (thrust > getSI()) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), thrust-getSI(), "Thrust exceeds current SI in a single hex"));
+            roll.append(new PilotingRollData(getId(), thrust - getSI(), "Thrust exceeds current SI in a single hex"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }
         return roll;
     }
@@ -2440,11 +2442,11 @@ public class Aero extends Entity
     public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if(thrust > getSI()) {
+        if (thrust > getSI()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "Thrust spent this turn exceeds current SI"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }
         return roll;
     }
@@ -2452,11 +2454,11 @@ public class Aero extends Entity
     public PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if((velocity > (2 * getWalkMP())) && !game.getBoard().inSpace()) {
+        if ((velocity > (2 * getWalkMP())) && !game.getBoard().inSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "Velocity greater than 2x safe thrust"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding 2x safe thrust");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding 2x safe thrust");
         }
         return roll;
     }
@@ -2464,11 +2466,11 @@ public class Aero extends Entity
     public PilotingRollData checkDown(int drop, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if( drop > 2 ) {
+        if (drop > 2) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), drop, "lost more than two altitudes"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: entity did not drop more than two altitudes");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity did not drop more than two altitudes");
         }
         return roll;
     }
@@ -2476,11 +2478,11 @@ public class Aero extends Entity
     public PilotingRollData checkHover(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( md.contains(MoveStepType.HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
+        if (md.contains(MoveStepType.HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "hovering above safe thrust"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: entity did not hover");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity did not hover");
         }
         return roll;
     }
@@ -2488,11 +2490,11 @@ public class Aero extends Entity
     public PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if( (md.getFinalVelocity() == 0)  && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid() && !game.getBoard().inSpace()) {
+        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid() && !game.getBoard().inSpace()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "stalled out"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: entity not stalled out");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity not stalled out");
         }
         return roll;
     }
@@ -2500,12 +2502,11 @@ public class Aero extends Entity
     public PilotingRollData checkRolls(MoveStep step, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if(((step.getType() == MoveStepType.ROLL) || (step.getType() == MoveStepType.YAW))
-                && (step.getNRolls() > 1)) {
+        if (((step.getType() == MoveStepType.ROLL) || (step.getType() == MoveStepType.YAW)) && (step.getNRolls() > 1)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "More than one roll in the same turn"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not rolling more than once");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not rolling more than once");
         }
         return roll;
     }
@@ -2513,27 +2514,27 @@ public class Aero extends Entity
     public PilotingRollData checkVerticalTakeOff() {
         PilotingRollData roll = getBasePilotingRoll(EntityMovementType.MOVE_SAFE_THRUST);
 
-        if(isGearHit()) {
+        if (isGearHit()) {
             roll.addModifier(+1, "landing gear damaged");
         }
 
-        if((getLeftThrustHits() + getRightThrustHits()) > 0) {
+        if ((getLeftThrustHits() + getRightThrustHits()) > 0) {
             roll.addModifier(+3, "Maneuvering thrusters damaged");
         }
 
-        //Supposed to be -1 for lifting off from an "airfield or landing pad."
-        //We will just treat this as having paved terrain
+        // Supposed to be -1 for lifting off from an "airfield or landing pad."
+        // We will just treat this as having paved terrain
         Coords pos = getPosition();
         IHex hex = game.getBoard().getHex(pos);
-        if((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+        if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
 
-        if(!(this instanceof SmallCraft)) {
+        if (!(this instanceof SmallCraft)) {
             roll.addModifier(+2, "Fighter making vertical liftoff");
         }
 
-        //TODO: Taking off from a crater? What constitutes a crater?
+        // TODO: Taking off from a crater? What constitutes a crater?
 
         return roll;
     }
@@ -2545,28 +2546,24 @@ public class Aero extends Entity
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-            "Check false: Entity is not attempting to get up.");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not attempting to get up.");
             return roll;
         }
 
-        roll.append(new PilotingRollData(getId(),
-                ManeuverType.getMod(step.getManeuverType(), isVSTOL()),
-                ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
+        roll.append(new PilotingRollData(getId(), ManeuverType.getMod(step.getManeuverType(), isVSTOL()), ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
 
         return roll;
 
     }
 
-
     /**
 
      */
     @Override
-    public void setOmni( boolean omni ) {
+    public void setOmni(boolean omni) {
 
         // Perform the superclass' action.
-        super.setOmni( omni );
+        super.setOmni(omni);
 
     }
 
@@ -2574,16 +2571,16 @@ public class Aero extends Entity
      * Adds clan CASE in every location
      */
     public void addClanCase() {
-        boolean explosiveFound=false;
+        boolean explosiveFound = false;
         EquipmentType clCase = EquipmentType.get("CLCASE");
         for (int i = 0; i < locations(); i++) {
-            explosiveFound=false;
-            for (Mounted m : getEquipment()){
-                if(m.getType().isExplosive() && (m.getLocation()==i)) {
-                    explosiveFound=true;
+            explosiveFound = false;
+            for (Mounted m : getEquipment()) {
+                if (m.getType().isExplosive() && (m.getLocation() == i)) {
+                    explosiveFound = true;
                 }
             }
-            if(explosiveFound) {
+            if (explosiveFound) {
                 try {
                     addEquipment(new Mounted(this, clCase), i, false);
                 } catch (LocationFullException ex) {
@@ -2596,6 +2593,7 @@ public class Aero extends Entity
 
     /**
      * check to see if case is available anywhere
+     * 
      * @return
      */
     public boolean hasCase() {
@@ -2603,7 +2601,7 @@ public class Aero extends Entity
         boolean hasCase = false;
 
         for (int x = 0; x < locations(); x++) {
-            if(!hasCase) {
+            if (!hasCase) {
                 hasCase = locationHasCase(x);
             }
         }
@@ -2612,16 +2610,16 @@ public class Aero extends Entity
 
     /**
      * Used to determine net velocity of ramming attack
-     *
+     * 
      */
     public int sideTableRam(Coords src) {
 
         int side = sideTableRam(src, facing);
-        //if using advanced movement, then I need heading, but
-        //in cases of ties, I use the least damaging option
-        if(game.useVectorMove()) {
+        // if using advanced movement, then I need heading, but
+        // in cases of ties, I use the least damaging option
+        if (game.useVectorMove()) {
             int newside = chooseSideRam(src);
-            if(newside != -1) {
+            if (newside != -1) {
                 side = newside;
             }
         }
@@ -2645,32 +2643,34 @@ public class Aero extends Entity
     }
 
     public int chooseSideRam(Coords src) {
-        //loop through directions and if we have a non-zero vector, then compute
-        //the targetsidetable. If we come to a higher vector, then replace.  If
-        //we come to an equal vector then take it if it is better
+        // loop through directions and if we have a non-zero vector, then
+        // compute
+        // the targetsidetable. If we come to a higher vector, then replace. If
+        // we come to an equal vector then take it if it is better
         int thrust = 0;
         int high = -1;
         int side = -1;
-        for(int dir = 0; dir < 6; dir++) {
+        for (int dir = 0; dir < 6; dir++) {
             thrust = getVector(dir);
-            if(thrust == 0) {
+            if (thrust == 0) {
                 continue;
             }
 
-            if(thrust > high) {
+            if (thrust > high) {
                 high = thrust;
                 side = sideTableRam(src, dir);
             }
 
-            //what if they tie
-            if(thrust == high) {
+            // what if they tie
+            if (thrust == high) {
                 int newside = sideTableRam(src, dir);
-                //choose the better
-                if(newside > side) {
+                // choose the better
+                if (newside > side) {
                     newside = side;
                 }
-                //that should be the only case, because it can't shift you from front
-                //to aft or vice-versa
+                // that should be the only case, because it can't shift you from
+                // front
+                // to aft or vice-versa
             }
 
         }
@@ -2682,7 +2682,7 @@ public class Aero extends Entity
     }
 
     public void resetStandardDamage() {
-        for(int i = 0; i < locations(); i++) {
+        for (int i = 0; i < locations(); i++) {
             standard_damage[i] = 0;
         }
     }
@@ -2697,7 +2697,7 @@ public class Aero extends Entity
 
     @Override
     public int getMaxElevationChange() {
-        if(isAirborne()) {
+        if (isAirborne()) {
             return 999;
         }
         return 1;
@@ -2705,22 +2705,14 @@ public class Aero extends Entity
 
     @Override
     public boolean isHexProhibited(IHex hex) {
-        if(isAirborne()) {
-            if(hex.containsTerrain(Terrains.IMPASSABLE)) {
+        if (isAirborne()) {
+            if (hex.containsTerrain(Terrains.IMPASSABLE)) {
                 return true;
             }
             return false;
         }
-        //grounded aeros have the same prohibitions as wheeled tanks
-        return hex.containsTerrain(Terrains.WOODS)
-        || hex.containsTerrain(Terrains.ROUGH)
-        || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex
-                .containsTerrain(Terrains.ICE))
-                || hex.containsTerrain(Terrains.RUBBLE)
-                || hex.containsTerrain(Terrains.MAGMA)
-                || hex.containsTerrain(Terrains.JUNGLE)
-                || (hex.terrainLevel(Terrains.SNOW) > 1)
-                || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        // grounded aeros have the same prohibitions as wheeled tanks
+        return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH) || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1) || (hex.terrainLevel(Terrains.GEYSER) == 2);
     }
 
     public boolean isSpheroid() {
@@ -2739,11 +2731,11 @@ public class Aero extends Entity
     /**
      * Returns true if the entity has an RAC which is jammed and not destroyed
      */
-    //different from base bacause I have to look beyond weapon bays
+    // different from base bacause I have to look beyond weapon bays
     @Override
     public boolean canUnjamRAC() {
         for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType)mounted.getType();
+            WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY) && mounted.isJammed() && !mounted.isDestroyed()) {
                 return true;
             }
@@ -2751,56 +2743,58 @@ public class Aero extends Entity
         return false;
     }
 
-    //I need a function that takes the bombChoices variable and uses it to produce bombs
+    // I need a function that takes the bombChoices variable and uses it to
+    // produce bombs
     public void applyBombs() {
         int loc = LOC_NOSE;
-        for(int type = 0; type < BombType.B_NUM; type++) {
-            for(int i = 0; i<bombChoices[type]; i++) {
-                if((type == BombType.B_ALAMO) && !game.getOptions().booleanOption("at2_nukes")) {
+        for (int type = 0; type < BombType.B_NUM; type++) {
+            for (int i = 0; i < bombChoices[type]; i++) {
+                if ((type == BombType.B_ALAMO) && !game.getOptions().booleanOption("at2_nukes")) {
                     continue;
                 }
-                if((type > BombType.B_TAG) && !game.getOptions().booleanOption("allow_advanced_ammo")) {
+                if ((type > BombType.B_TAG) && !game.getOptions().booleanOption("allow_advanced_ammo")) {
                     continue;
                 }
 
-                //some bombs need an associated weapon and if so
-                //they need a weapon for each bomb
-                if((null != BombType.getBombWeaponName(type)) && (type != BombType.B_ARROW) && (type != BombType.B_HOMING)) {
-                    try{
-                        addBomb(EquipmentType.get(BombType.getBombWeaponName(type)),loc);
+                // some bombs need an associated weapon and if so
+                // they need a weapon for each bomb
+                if ((null != BombType.getBombWeaponName(type)) && (type != BombType.B_ARROW) && (type != BombType.B_HOMING)) {
+                    try {
+                        addBomb(EquipmentType.get(BombType.getBombWeaponName(type)), loc);
                     } catch (LocationFullException ex) {
-                        //throw new LocationFullException(ex.getMessage());
+                        // throw new LocationFullException(ex.getMessage());
                     }
                 }
-                if(type != BombType.B_TAG) {
-                    try{
-                        addEquipment(EquipmentType.get(BombType.getBombInternalName(type)),loc,false);
+                if (type != BombType.B_TAG) {
+                    try {
+                        addEquipment(EquipmentType.get(BombType.getBombInternalName(type)), loc, false);
                     } catch (LocationFullException ex) {
-                        //throw new LocationFullException(ex.getMessage());
+                        // throw new LocationFullException(ex.getMessage());
                     }
                 }
             }
         }
-        //add the space bomb attack
-        //TODO: I don't know where else to put this (where do infantry attacks get added)
-        if(game.getOptions().booleanOption("stratops_space_bomb") && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
-            try{
-                addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK),LOC_NOSE,false);
+        // add the space bomb attack
+        // TODO: I don't know where else to put this (where do infantry attacks
+        // get added)
+        if (game.getOptions().booleanOption("stratops_space_bomb") && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+            try {
+                addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {
-                //throw new LocationFullException(ex.getMessage());
+                // throw new LocationFullException(ex.getMessage());
             }
         }
-        if(getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
-            try{
-                addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK),LOC_NOSE,false);
+        if (getBombs(AmmoType.F_GROUND_BOMB).size() > 0) {
+            try {
+                addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
             } catch (LocationFullException ex) {
-                //throw new LocationFullException(ex.getMessage());
+                // throw new LocationFullException(ex.getMessage());
             }
-            for(int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
-                try{
-                    addEquipment(EquipmentType.get(ALT_BOMB_ATTACK),LOC_NOSE,false);
+            for (int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
+                try {
+                    addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
                 } catch (LocationFullException ex) {
-                    //throw new LocationFullException(ex.getMessage());
+                    // throw new LocationFullException(ex.getMessage());
                 }
             }
         }
@@ -2826,7 +2820,7 @@ public class Aero extends Entity
     }
 
     public int getFuelUsed(int thrust) {
-        int overThrust =  Math.max(thrust - getWalkMP(), 0);
+        int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + 2 * overThrust;
         return used;
@@ -2853,22 +2847,20 @@ public class Aero extends Entity
         super.setGameOptions();
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon)
-                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA)
-                    && (game != null) && game.getOptions().booleanOption("tacops_energy_weapons")) {
+            if ((mounted.getType() instanceof EnergyWeapon) && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null) && game.getOptions().booleanOption("tacops_energy_weapons")) {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 int damage = ((WeaponType) mounted.getType()).getDamage();
 
-                if ( damage == WeaponType.DAMAGE_VARIABLE ) {
+                if (damage == WeaponType.DAMAGE_VARIABLE) {
                     damage = ((WeaponType) mounted.getType()).damageShort;
                 }
 
                 for (; damage >= 0; damage--) {
                     modes.add("Damage " + damage);
                 }
-                if ( ((WeaponType)mounted.getType()).hasFlag(WeaponType.F_FLAMER) ){
+                if (((WeaponType) mounted.getType()).hasFlag(WeaponType.F_FLAMER)) {
                     modes.add("Heat");
                 }
                 ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
@@ -2882,9 +2874,7 @@ public class Aero extends Entity
     public boolean hasModularArmor() {
 
         for (Mounted mount : this.getEquipment()) {
-            if (!mount.isDestroyed()
-                    && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
+            if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 return true;
             }
         }
@@ -2897,9 +2887,7 @@ public class Aero extends Entity
     public boolean hasModularArmor(int loc) {
 
         for (Mounted mount : this.getEquipment()) {
-            if ((mount.getLocation() == loc)
-                    && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
+            if ((mount.getLocation() == loc) && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
                 return true;
             }
         }
@@ -2947,14 +2935,14 @@ public class Aero extends Entity
     public double getArmorRemainingPercent() {
         int armor0 = getTotalOArmor();
         int armor = getTotalArmor();
-        if(isCapitalFighter()) {
+        if (isCapitalFighter()) {
             armor0 = getCap0Armor();
             armor = getCapArmor();
         }
-        if(armor0 == 0) {
+        if (armor0 == 0) {
             return IArmorState.ARMOR_NA;
         }
-        return ((double)armor / (double)armor0);
+        return ((double) armor / (double) armor0);
     }
 
     /**
@@ -2972,17 +2960,17 @@ public class Aero extends Entity
      * what location is opposite the given one
      */
     public int getOppositeLocation(int loc) {
-        switch(loc) {
-        case Aero.LOC_NOSE:
-            return Aero.LOC_AFT;
-        case Aero.LOC_LWING:
-            return Aero.LOC_RWING;
-        case Aero.LOC_RWING:
-            return Aero.LOC_LWING;
-        case Aero.LOC_AFT:
-            return Aero.LOC_NOSE;
-        default:
-            return Aero.LOC_NOSE;
+        switch (loc) {
+            case Aero.LOC_NOSE:
+                return Aero.LOC_AFT;
+            case Aero.LOC_LWING:
+                return Aero.LOC_RWING;
+            case Aero.LOC_RWING:
+                return Aero.LOC_LWING;
+            case Aero.LOC_AFT:
+                return Aero.LOC_NOSE;
+            default:
+                return Aero.LOC_NOSE;
         }
     }
 
@@ -2990,18 +2978,18 @@ public class Aero extends Entity
      * get modifications to the cluster hit table for critical hits
      */
     public int getClusterMods() {
-        return -1*(getFCSHits() + getSensorHits());
+        return -1 * (getFCSHits() + getSensorHits());
     }
 
     /**
      * What's the range of the ECM equipment?
-     *
-     * @return the <code>int</code> range of this unit's ECM. This value will
-     *         be <code>Entity.NONE</code> if no ECM is active.
+     * 
+     * @return the <code>int</code> range of this unit's ECM. This value will be
+     *         <code>Entity.NONE</code> if no ECM is active.
      */
     @Override
     public int getECMRange() {
-        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         return Math.min(super.getECMRange(), 0);
@@ -3012,10 +3000,10 @@ public class Aero extends Entity
      */
     @Override
     public double getECCMStrength() {
-        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.getECCMStrength();
         }
-        if(hasActiveECCM()) {
+        if (hasActiveECCM()) {
             return 1;
         }
         return 0;
@@ -3038,7 +3026,8 @@ public class Aero extends Entity
     }
 
     /**
-     * @return is  the crew of this vessel protected from gravitational effects, see StratOps, pg. 36
+     * @return is the crew of this vessel protected from gravitational effects,
+     *         see StratOps, pg. 36
      */
     public boolean isCrewProtected() {
         return true;
@@ -3046,36 +3035,36 @@ public class Aero extends Entity
 
     public int getGravSecondaryThreshold() {
         int thresh = 6;
-        if(isCrewProtected()) {
+        if (isCrewProtected()) {
             thresh = 12;
         }
-        //TODO: clan phenotypes
+        // TODO: clan phenotypes
         return thresh;
     }
 
     public int getGravPrimaryThreshold() {
         int thresh = 12;
-        if(isCrewProtected()) {
+        if (isCrewProtected()) {
             thresh = 22;
         }
-        //TODO: clan phenotypes
+        // TODO: clan phenotypes
         return thresh;
     }
 
     /**
-     * Determines if this object can accept the given unit.  The unit may
-     * not be of the appropriate type or there may be no room for the unit.
-     *
-     * @param   unit - the <code>Entity</code> to be loaded.
-     * @return  <code>true</code> if the unit can be loaded,
-     *          <code>false</code> otherwise.
+     * Determines if this object can accept the given unit. The unit may not be
+     * of the appropriate type or there may be no room for the unit.
+     * 
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code>
+     *         otherwise.
      */
     @Override
-    public boolean canLoad( Entity unit, boolean checkFalse ) {
+    public boolean canLoad(Entity unit, boolean checkFalse) {
         // capital fighters can load other capital fighters (becoming squadrons)
-        //but not in the deployment phase
-        if ( isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter()
-                && (getId() != unit.getId()) && (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)) {
+        // but not in the deployment phase
+        if (isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() && (getId() != unit.getId()) && (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)) {
             return true;
         }
 
@@ -3083,48 +3072,51 @@ public class Aero extends Entity
     }
 
     /***
-     * use the specified amount of fuel for this Aero. The amount may be adjusted by certain game options
+     * use the specified amount of fuel for this Aero. The amount may be
+     * adjusted by certain game options
      */
     public void useFuel(int fuelUsed) {
-        setFuel(Math.max(0,getFuel()- fuelUsed));
+        setFuel(Math.max(0, getFuel() - fuelUsed));
     }
 
-
     public void updateWeaponGroups() {
-        //first we need to reset all the weapons in our existing mounts to zero until proven otherwise
-        Set<String> set= weaponGroups.keySet();
+        // first we need to reset all the weapons in our existing mounts to zero
+        // until proven otherwise
+        Set<String> set = weaponGroups.keySet();
         Iterator<String> iter = set.iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             String key = iter.next();
             this.getEquipment(weaponGroups.get(key)).setNWeapons(0);
         }
-        //now collect a hash of all the same weapons in each location by id
+        // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<String, Integer>();
         for (Mounted mounted : getTotalWeaponList()) {
             int loc = mounted.getLocation();
-            if((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING)) {
+            if ((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING)) {
                 loc = Aero.LOC_WINGS;
             }
-            if(mounted.isRearMounted()) {
+            if (mounted.isRearMounted()) {
                 loc = Aero.LOC_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
-            if(null == groups.get(key)) {
+            if (null == groups.get(key)) {
                 groups.put(key, mounted.getNWeapons());
             } else {
                 groups.put(key, groups.get(key) + mounted.getNWeapons());
             }
         }
-        //now we just need to traverse the hash and either update our existing equipment or add new ones if there is none
+        // now we just need to traverse the hash and either update our existing
+        // equipment or add new ones if there is none
         Set<String> newSet = groups.keySet();
         Iterator<String> newIter = newSet.iterator();
-        while(newIter.hasNext()) {
+        while (newIter.hasNext()) {
             String key = newIter.next();
-            if(null != weaponGroups.get(key)) {
-                //then this equipment is already loaded, so we just need to correctly update the number of weapons
+            if (null != weaponGroups.get(key)) {
+                // then this equipment is already loaded, so we just need to
+                // correctly update the number of weapons
                 this.getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
             } else {
-                //need to add a new weapon
+                // need to add a new weapon
                 String name = key.split(":")[0];
                 int loc = Integer.parseInt(key.split(":")[1]);
                 EquipmentType etype = EquipmentType.get(name);
@@ -3139,8 +3131,7 @@ public class Aero extends Entity
                         ex.printStackTrace();
                         return;
                     }
-                }
-                else if(name != "0"){
+                } else if (name != "0") {
                     addFailedEquipment(name);
                 }
             }
@@ -3148,38 +3139,39 @@ public class Aero extends Entity
     }
 
     /**
-     * In cases where another unit occupies the same hex, determine if this Aero should be moved
-     * back a hex for targeting purposes
+     * In cases where another unit occupies the same hex, determine if this Aero
+     * should be moved back a hex for targeting purposes
+     * 
      * @param otherPos
      * @return
      */
     public boolean shouldMoveBackHex(Aero other) {
-        if(null == getPosition()) {
+        if (null == getPosition()) {
             return false;
         }
-        if(null == other.getPosition()) {
+        if (null == other.getPosition()) {
             return false;
         }
-        if(!getPosition().equals(other.getPosition())) {
+        if (!getPosition().equals(other.getPosition())) {
             return false;
         }
         int type = UnitType.determineUnitTypeCode(this);
         int otherType = UnitType.determineUnitTypeCode(other);
         int vel = getCurrentVelocity();
         int otherVel = other.getCurrentVelocity();
-        if(type > otherType) {
+        if (type > otherType) {
             return false;
-        } else if(type < otherType) {
+        } else if (type < otherType) {
             return true;
         }
-        //if we are still here then type is the same so compare velocity
-        if(vel < otherVel) {
+        // if we are still here then type is the same so compare velocity
+        if (vel < otherVel) {
             return false;
-        } else if(vel > otherVel) {
+        } else if (vel > otherVel) {
             return true;
         }
-        //if we are still here then type and velocity same, so roll for it
-        if(getWhoFirst() < other.getWhoFirst()) {
+        // if we are still here then type and velocity same, so roll for it
+        if (getWhoFirst() < other.getWhoFirst()) {
             return false;
         }
         return true;
@@ -3226,13 +3218,16 @@ public class Aero extends Entity
 
     @Override
     public int getElevation() {
-        if(game.getBoard().inSpace()) {
+        if (game.getBoard().inSpace()) {
             return 0;
         }
-        //Altitude is not the same as elevation. If an aero is at 0 altitude, then it is
-        //grounded and uses elevation normally. Otherwise, just set elevation to a very
-        //large number so that a flying aero won't interact with the ground maps in any way
-        if(isAirborne()) {
+        // Altitude is not the same as elevation. If an aero is at 0 altitude,
+        // then it is
+        // grounded and uses elevation normally. Otherwise, just set elevation
+        // to a very
+        // large number so that a flying aero won't interact with the ground
+        // maps in any way
+        if (isAirborne()) {
             return 999;
         }
         return super.getElevation();
@@ -3244,7 +3239,7 @@ public class Aero extends Entity
     }
 
     public void liftOff(int altitude) {
-        if(isSpheroid()) {
+        if (isSpheroid()) {
             setMovementMode(EntityMovementMode.SPHEROID);
         } else {
             setMovementMode(EntityMovementMode.AERODYNE);
@@ -3265,7 +3260,7 @@ public class Aero extends Entity
     }
 
     public int getTakeOffLength() {
-        if(isVSTOL()) {
+        if (isVSTOL()) {
             return 10;
         }
         return 20;
@@ -3276,23 +3271,23 @@ public class Aero extends Entity
     }
 
     public boolean hasRoomForHorizontalTakeOff() {
-        //walk along the hexes in the facing of the unit
+        // walk along the hexes in the facing of the unit
         Coords pos = getPosition();
         IHex hex = game.getBoard().getHex(pos);
         int elev = hex.getElevation();
         int facing = getFacing();
-        for(int i = 0; i < getTakeOffLength(); i++) {
+        for (int i = 0; i < getTakeOffLength(); i++) {
             pos = pos.translated(facing);
             hex = game.getBoard().getHex(pos);
-            //if the hex is null, then we are offboard. Don't let units
-            //take off offboard.
-            if(null == hex) {
+            // if the hex is null, then we are offboard. Don't let units
+            // take off offboard.
+            if (null == hex) {
                 return false;
             }
-            if(!hex.isClear()) {
+            if (!hex.isClear()) {
                 return false;
             }
-            if(hex.getElevation() != elev) {
+            if (hex.getElevation() != elev) {
                 return false;
             }
         }

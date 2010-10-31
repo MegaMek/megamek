@@ -1,15 +1,15 @@
 /*
  * MechFileParser.java - Copyright (C) 2002,2003,2004 Josh Yockey
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -32,6 +32,7 @@ import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKConvFighterFile;
 import megamek.common.loaders.BLKDropshipFile;
+import megamek.common.loaders.BLKFixedWingSupportFile;
 import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
 import megamek.common.loaders.BLKJumpshipFile;
@@ -172,6 +173,8 @@ public class MechFileParser {
                     loader = new BLKSupportVTOLFile(bb);
                 } else if (sType.equals("Aero")) {
                     loader = new BLKAeroFile(bb);
+                } else if (sType.equals("FixedWingSupport")) {
+                    loader = new BLKFixedWingSupportFile(bb);
                 } else if (sType.equals("ConvFighter")) {
                     loader = new BLKConvFighterFile(bb);
                 } else if (sType.equals("SmallCraft")) {

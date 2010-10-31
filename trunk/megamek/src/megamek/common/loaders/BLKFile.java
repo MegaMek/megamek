@@ -23,6 +23,7 @@ import megamek.common.Dropship;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
@@ -215,6 +216,8 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "SupportVTOL");
         } else if (t instanceof VTOL) {
             blk.writeBlockData("UnitType", "VTOL");
+        } else if (t instanceof FixedWingSupport) {
+            blk.writeBlockData("UnitType", "FixedWingSupport");
         } else if (t instanceof ConvFighter) {
             blk.writeBlockData("UnitType", "ConvFighter");
         } else if (t instanceof Dropship) {

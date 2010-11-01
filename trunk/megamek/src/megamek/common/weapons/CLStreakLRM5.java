@@ -45,5 +45,9 @@ public class CLStreakLRM5 extends StreakLRMWeapon {
         criticals = 1;
         bv = 86;
         cost = 75000;
+        shortAV = 5;
+        medAV = 5;
+        longAV = 5;
+        maxRange = RANGE_LONG;
     }
 }

@@ -47,5 +47,9 @@ public class CLStreakLRM5IOS extends StreakLRMWeapon {
         bv = 17;
         flags = flags.or(F_ONESHOT);
         cost = 75000;
+        shortAV = 5;
+        medAV = 5;
+        longAV = 5;
+        maxRange = RANGE_LONG;
     }
 }

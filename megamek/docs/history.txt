@@ -19,9 +19,12 @@ v0.35.20-dev (SVN)
 + Added marines tag for smallcraft and DS
 + Added otherPassenger setter and getter for smallcraft
 + Added otherPassenger for smallcraft and DS
-- Removed requirement for Passenger, battlearmor, marine, and otherpassenger tags in DS and smallcraft
++ Removed requirement for Passenger, battlearmor, marine, and otherpassenger tags in DS and smallcraft
 + Bug: Movement not completely calculated for Modular armor on Meks 
 + New FixedWingSupport Class added
++ Streak LRMs missing aero attack values
++ iHeavy Gauss has wrong long range aero attack value
++ Verifier not checking for duplicate swords/vibroblades
 
 v0.35.19 (2010-10-13, 16:39 UTC+2)
 + Patch 2948181: Random Skills for Individual Units

@@ -548,7 +548,7 @@ public abstract class TestEntity implements TestEntityOption {
     /**
      * Check if the unit has combinations of equipment which are not allowed in
      * the construction rules.
-     * 
+     *
      * @param buff
      *            diagnostics are appended to this
      * @return true if the entity is illegal
@@ -582,6 +582,25 @@ public abstract class TestEntity implements TestEntityOption {
             if (mech.hasFullHeadEject()) {
                 if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) || (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE)) {
                     buff.append("full head ejection system incompatible with cockpit type");
+                    illegal = true;
+                }
+            }
+            // only one sword/vibroblade per arm
+            for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LARM; loc++) {
+                int count = 0;
+                for (Mounted m : mech.getMisc()) {
+                    if (m.getLocation() == loc) {
+                        if (m.getType().hasFlag(MiscType.F_CLUB) &&
+                                (m.getType().hasSubType(MiscType.S_SWORD) ||
+                                 m.getType().hasSubType(MiscType.S_VIBRO_LARGE) ||
+                                 m.getType().hasSubType(MiscType.S_VIBRO_MEDIUM) ||
+                                 m.getType().hasSubType(MiscType.S_VIBRO_SMALL))) {
+                            count++;
+                        }
+                    }
+                }
+                if (count > 1) {
+                    buff.append("only one sword/vibroblade per arm");
                     illegal = true;
                 }
             }

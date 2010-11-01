@@ -57,7 +57,7 @@ public class ISIHGaussRifle extends GaussWeapon {
         cost = 700000;
         shortAV = 22;
         medAV = 22;
-        longAV = 12;
+        longAV = 22;
         maxRange = RANGE_LONG;
         explosionDamage = 30;
     }

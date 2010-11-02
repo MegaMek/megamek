@@ -1819,7 +1819,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
         ammo.shots = 5;
-        ammo.bv = 44;
+        ammo.bv = 41;
         ammo.cost = 20000;
 
         return ammo;
@@ -1840,7 +1840,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
         ammo.shots = 5;
-        ammo.bv = 44;
+        ammo.bv = 41;
         ammo.cost = 20000;
 
         return ammo;

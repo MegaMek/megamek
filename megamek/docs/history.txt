@@ -26,6 +26,7 @@ v0.35.20-dev (SVN)
 + iHeavy Gauss has wrong long range aero attack value
 + Verifier not checking for duplicate swords/vibroblades
 + Fixed Long Tom Cannon ammo BV
++ Fixed tech levels for BA manipulators
 
 v0.35.19 (2010-10-13, 16:39 UTC+2)
 + Patch 2948181: Random Skills for Individual Units

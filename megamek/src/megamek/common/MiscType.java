@@ -1912,6 +1912,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createMine() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Mine";
         misc.setInternalName("Mine");
         misc.tonnage = 0;
@@ -1942,6 +1943,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAMagneticClamp() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Magnetic Clamps";
         misc.setInternalName("BA-Magnetic Clamp");
         misc.addLookupName("Magnetic Clamp");
@@ -1961,6 +1963,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSingleHexECM() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = BattleArmor.SINGLE_HEX_ECM;
         misc.setInternalName(BattleArmor.SINGLE_HEX_ECM);
         misc.tonnage = 0;
@@ -1978,6 +1981,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createMimeticCamo() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = BattleArmor.MIMETIC_CAMO;
         misc.setInternalName(BattleArmor.MIMETIC_CAMO);
         misc.tonnage = 0;
@@ -1992,6 +1996,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSimpleCamo() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = BattleArmor.SIMPLE_CAMO;
         misc.setInternalName(BattleArmor.SIMPLE_CAMO);
         misc.addLookupName("Simple Camo");
@@ -2007,6 +2012,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createParafoil() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Parafoil";
         misc.setInternalName("Parafoil");
         misc.tonnage = 0;
@@ -2888,6 +2894,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSearchlight() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Searchlight";
         misc.setInternalName("Searchlight");
         misc.addLookupName("BASearchlight");
@@ -2903,6 +2910,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAArmoredGlove() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Armored Glove";
         misc.setInternalName("BAArmoredGlove");
         misc.tonnage = 0.0f;
@@ -2917,6 +2925,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABasicManipulator() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Basic Manipulator";
         misc.setInternalName("BABasicManipulator");
         misc.tonnage = 0.0f;
@@ -2931,6 +2940,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABasicManipulatorMineClearance() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Basic Manipulator (w/ Mine Clearance)";
         misc.setInternalName("BABasicManipulatorMineClearance");
         misc.tonnage = 0.0f;
@@ -2946,6 +2956,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABattleClaw() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Battle Claw";
         misc.setInternalName("BABattleClaw");
         misc.tonnage = 0.0f;
@@ -2960,6 +2971,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABattleClawMagnets() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Battle Magnetic Claw";
         misc.setInternalName("BABattleClawMagnets");
         misc.tonnage = 0.0f;
@@ -2974,6 +2986,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBABattleClawVibro() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Battle Vibro Claw";
         misc.setInternalName("BABattleClawVibro");
         misc.tonnage = 0.0f;
@@ -2988,6 +3001,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBACargoLifter() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Cargo Lifter";
         misc.setInternalName("BACargoLifter");
         misc.tonnage = 0.0f;
@@ -3002,6 +3016,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClaw() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Heavy Battle Claw";
         misc.setInternalName("BAHeavyBattleClaw");
         misc.tonnage = 0.0f;
@@ -3016,6 +3031,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClawMagnet() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Heavy Battle Magnetic Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Magnets)");
         misc.setInternalName("BAHeavyBattleClawMagnets");
@@ -3031,6 +3047,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAHeavyBattleClawVibro() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Heavy Battle Vibro Claw";
         misc.addLookupName("Heavy Battle Claw (w/ Vibro-Claws)");
         misc.setInternalName("BAHeavyBattleClawVibro");
@@ -3046,6 +3063,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAIndustrialDrill() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Industrial Drill";
         misc.setInternalName("BAIndustrialDrill");
         misc.tonnage = 0.0f;
@@ -3060,6 +3078,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBASalvageArm() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Salvage Arm";
         misc.setInternalName("BASalvageArm");
         misc.tonnage = 0.0f;
@@ -3074,6 +3093,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBAAPMount() {
         MiscType misc = new MiscType();
 
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Anti Personal Weapon Mount";
         misc.setInternalName("BAAPMount");
         misc.tonnage = 0.0f;

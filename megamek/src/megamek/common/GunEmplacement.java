@@ -431,7 +431,7 @@ public class GunEmplacement extends Tank implements Serializable {
     }
 
     @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.

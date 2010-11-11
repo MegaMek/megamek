@@ -27,6 +27,8 @@ v0.35.20-dev (SVN)
 + Verifier not checking for duplicate swords/vibroblades
 + Fixed Long Tom Cannon ammo BV
 + Fixed tech levels for BA manipulators
++ Added body location to fixed wing support vees
++ Allow to add transports to fixed wing support vees
 
 v0.35.19 (2010-10-13, 16:39 UTC+2)
 + Patch 2948181: Random Skills for Individual Units

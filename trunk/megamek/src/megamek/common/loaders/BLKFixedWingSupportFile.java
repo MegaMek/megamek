@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author taharqa
  * @version
  */
@@ -33,6 +33,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
 import megamek.common.LocationFullException;
 import megamek.common.TechConstants;
+import megamek.common.TroopSpace;
 import megamek.common.util.BuildingBlock;
 
 public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
@@ -84,6 +85,22 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         // get a movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
         a.setMovementMode(nMotion);
+
+        if (dataFile.exists("transporters")) {
+            String[] transporters = dataFile.getDataAsString("transporters");
+            // Walk the array of transporters.
+            for (String transporter : transporters) {
+                // TroopSpace:
+                if (transporter.startsWith("TroopSpace:", 0)) {
+                    // Everything after the ':' should be the space's size.
+                    Double fsize = new Double(transporter.substring(11));
+                    int size = fsize.intValue();
+                    a.addTransporter(new TroopSpace(size));
+                }
+
+            } // Handle the next transportation component.
+
+        } // End has-transporters
 
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
@@ -154,6 +171,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         loadEquipment(a, "Right Wing", Aero.LOC_RWING);
         loadEquipment(a, "Left Wing", Aero.LOC_LWING);
         loadEquipment(a, "Aft", Aero.LOC_AFT);
+        loadEquipment(a, "Body", FixedWingSupport.LOC_BODY);
 
         if (dataFile.exists("omni")) {
             a.setOmni(true);

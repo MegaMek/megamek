@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -240,7 +240,7 @@ public class Aero extends Entity {
 
     /**
      * Thi is the same as getWalkMP, but does not divide by 2 when grounded
-     * 
+     *
      * @return
      */
     public int getCurrentThrust() {
@@ -2251,7 +2251,7 @@ public class Aero extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -2401,7 +2401,7 @@ public class Aero extends Entity {
     }
 
     @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
         super.addEquipment(mounted, loc, rearMounted);
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
@@ -2410,7 +2410,7 @@ public class Aero extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2593,7 +2593,7 @@ public class Aero extends Entity {
 
     /**
      * check to see if case is available anywhere
-     * 
+     *
      * @return
      */
     public boolean hasCase() {
@@ -2610,7 +2610,7 @@ public class Aero extends Entity {
 
     /**
      * Used to determine net velocity of ramming attack
-     * 
+     *
      */
     public int sideTableRam(Coords src) {
 
@@ -2983,7 +2983,7 @@ public class Aero extends Entity {
 
     /**
      * What's the range of the ECM equipment?
-     * 
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */
@@ -3054,7 +3054,7 @@ public class Aero extends Entity {
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -3141,7 +3141,7 @@ public class Aero extends Entity {
     /**
      * In cases where another unit occupies the same hex, determine if this Aero
      * should be moved back a hex for targeting purposes
-     * 
+     *
      * @param otherPos
      * @return
      */

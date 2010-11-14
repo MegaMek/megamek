@@ -539,7 +539,7 @@ public class Infantry extends Entity implements Serializable {
      */
     @Override
     public boolean isSecondaryArcWeapon(int wn) {
-        if (getEquipment(wn).getLocation() == LOC_FIELD_GUNS && !hasActiveFieldArtillery()) {
+        if ((getEquipment(wn).getLocation() == LOC_FIELD_GUNS) && !hasActiveFieldArtillery()) {
             return true;
         }
         return false;
@@ -1270,5 +1270,16 @@ public class Infantry extends Entity implements Serializable {
         return hasArtillery && (getShootingStrength() >= smallestGun);
 
     }
+
+    /**
+     * Infantry don't use MP to change facing, and don't
+     * do PSRs, so just don't let them use maneuvering ace
+     * otherwise, their movement gets screwed up
+     */
+    @Override
+    public boolean isUsingManAce() {
+        return false;
+    }
+
 
 } // End class Infantry

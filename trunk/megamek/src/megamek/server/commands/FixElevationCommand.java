@@ -22,6 +22,7 @@ package megamek.server.commands;
 
 import java.util.Enumeration;
 
+import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.server.Server;
 
@@ -47,6 +48,10 @@ public class FixElevationCommand extends ServerCommand {
                 .hasMoreElements();) {
             Entity entity = e.nextElement();
             if (entity.fixElevation()) {
+                Building bldg = server.getGame().getBoard().getBuildingAt(entity.getPosition());
+                if (bldg != null) {
+                    server.checkForCollapse(bldg, server.getGame().getPositionMap(), entity.getPosition(), true);
+                }
                 server.sendServerChat(entity.getDisplayName()
                         + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");
                 countbad++;

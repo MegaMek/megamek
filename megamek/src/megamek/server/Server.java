@@ -9074,6 +9074,20 @@ public class Server implements Runnable {
                 System.err.println("error: attack packet has wrong attacker");
                 continue;
             }
+            if (ea instanceof PushAttackAction) {
+                // push attacks go the end of the displacement attacks
+                PushAttackAction paa = (PushAttackAction) ea;
+                entity.setDisplacementAttack(paa);
+                game.addCharge(paa);
+            } else if (ea instanceof DodgeAction) {
+                entity.dodging = true;
+            } else if (ea instanceof SpotAction) {
+                entity.setSpotting(true);
+                entity.setSpotTargetId(((SpotAction) ea).getTargetId());
+            } else {
+                // add to the normal attack list.
+                game.addAction(ea);
+            }
 
             // Anti-mech and pointblank attacks from
             // hiding may allow the target to respond.
@@ -9150,26 +9164,27 @@ public class Server implements Runnable {
                             firingAtNewHex = true;
                         }
                     }
-                    if (firingAtNewHex) {
-                        clearArtillerySpotters(firingEntity.getId(), aaa.getWeaponId());
-                    }
-                    Enumeration<Entity> spotters = game.getSelectedEntities(new EntitySelector() {
-                        public int player = firingEntity.getOwnerId();
-                        public Targetable target = aaa.getTarget(game);
-
-                        public boolean accept(Entity entity) {
-                            return ((player == entity.getOwnerId())
-                                    && !((LosEffects.calculateLos(game, entity.getId(), target)).isBlocked()) && entity
-                                    .isActive());
-                        }
-                    });
-                    Vector<Integer> spotterIds = new Vector<Integer>();
-                    while (spotters.hasMoreElements()) {
-                        Integer id = new Integer(spotters.nextElement().getId());
-                        spotterIds.addElement(id);
-                    }
-                    aaa.setSpotterIds(spotterIds);
                 }
+                if (firingAtNewHex) {
+                    clearArtillerySpotters(firingEntity.getId(), aaa.getWeaponId());
+                }
+                Enumeration<Entity> spotters = game.getSelectedEntities(new EntitySelector() {
+                    public int player = firingEntity.getOwnerId();
+                    public Targetable target = aaa.getTarget(game);
+
+                    public boolean accept(Entity entity) {
+                        LosEffects los = LosEffects.calculateLos(game, entity.getId(), target);
+                        return ((player == entity.getOwnerId())
+                                && !(los.isBlocked()) && entity
+                                .isActive());
+                    }
+                });
+                Vector<Integer> spotterIds = new Vector<Integer>();
+                while (spotters.hasMoreElements()) {
+                    Integer id = new Integer(spotters.nextElement().getId());
+                    spotterIds.addElement(id);
+                }
+                aaa.setSpotterIds(spotterIds);
             }
 
             // The equipment type of a club needs to be restored.
@@ -9177,21 +9192,6 @@ public class Server implements Runnable {
                 ClubAttackAction caa = (ClubAttackAction) ea;
                 Mounted club = caa.getClub();
                 club.restore();
-            }
-
-            if (ea instanceof PushAttackAction) {
-                // push attacks go the end of the displacement attacks
-                PushAttackAction paa = (PushAttackAction) ea;
-                entity.setDisplacementAttack(paa);
-                game.addCharge(paa);
-            } else if (ea instanceof DodgeAction) {
-                entity.dodging = true;
-            } else if (ea instanceof SpotAction) {
-                entity.setSpotting(true);
-                entity.setSpotTargetId(((SpotAction) ea).getTargetId());
-            } else {
-                // add to the normal attack list.
-                game.addAction(ea);
             }
 
             // Mark any AP Pod as used in this turn.
@@ -25307,7 +25307,6 @@ public class Server implements Runnable {
                     report.subject = subjectId;
                 }
                 vPhaseReport.addAll(buildingReport);
-                addNewLines();
             }
         }
 

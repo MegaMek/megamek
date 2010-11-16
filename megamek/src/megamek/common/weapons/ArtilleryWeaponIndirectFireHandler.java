@@ -116,13 +116,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING,
                                 game.getRoundCount() + aaa.turnsTilHit,
                                 game.getPlayer(aaa.getPlayerId()).getName(),
-                                "Artilery Incoming. Better text later."));
+                                "Artillery Incoming. Better text later."));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
             // off-board attack phase that follows.
             if (aaa.turnsTilHit == 0) {
-                announcedEntityFiring = false;
+                setAnnouncedEntityFiring(false);
             }
             return true;
         }

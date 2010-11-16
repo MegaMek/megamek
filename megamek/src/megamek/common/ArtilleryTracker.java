@@ -24,7 +24,7 @@ import java.util.Vector;
 public class ArtilleryTracker implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6913144265531983734L;
     /**
@@ -42,7 +42,7 @@ public class ArtilleryTracker implements Serializable {
 
     /**
      * Adds new weapon
-     * 
+     *
      * @param mounted new weapon
      */
     public void addWeapon(Mounted mounted) {
@@ -51,7 +51,7 @@ public class ArtilleryTracker implements Serializable {
 
     /**
      * Sets the modifier for the given weapon
-     * 
+     *
      * @param weapon weapon to set modifier for
      * @param modifier
      * @param coords
@@ -69,7 +69,7 @@ public class ArtilleryTracker implements Serializable {
 
     /**
      * Returns the modifier for the given weapon
-     * 
+     *
      * @param weapon weapon to get modifier for
      * @param coords
      * @return
@@ -87,7 +87,7 @@ public class ArtilleryTracker implements Serializable {
 
     /**
      * Returns the <code>Vector</code> of the modifiers for the given weapon
-     * 
+     *
      * @param mounted weapon to get modifiers for
      * @return the <code>Vector</code> of the modifiers for the given weapon
      */
@@ -103,7 +103,7 @@ public class ArtilleryTracker implements Serializable {
     /**
      * Search the given vector of modifires for the modifier which coords equals
      * to the given coords
-     * 
+     *
      * @param modifiers <code>Vector</code> of the modifiers to process
      * @param coords coordinates of the modifire looked for
      * @return modifier with coords equals to the given on <code>null</code>
@@ -126,27 +126,15 @@ public class ArtilleryTracker implements Serializable {
     private static class ArtilleryModifier implements Serializable {
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 4913880091708068708L;
         private Coords coords;
         private int modifier;
 
-        public ArtilleryModifier() {
-            coords = new Coords();
-            setModifier(0);
-        }
-
         public ArtilleryModifier(Coords coords, int modifier) {
             this.coords = coords;
             this.setModifier(modifier);
-        }
-
-        /**
-         * @param coords The coords to set.
-         */
-        public void setCoords(Coords coords) {
-            this.coords = coords;
         }
 
         /**

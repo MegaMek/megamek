@@ -25808,8 +25808,8 @@ public class Server implements Runnable {
                     r.addDesc(ae);
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
+                    lastAttackerId = aId;
                 }
-                lastAttackerId = aId;
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);
@@ -25840,8 +25840,8 @@ public class Server implements Runnable {
                     r.addDesc(ae);
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
+                    lastAttackerId = aId;
                 }
-                lastAttackerId = aId;
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);

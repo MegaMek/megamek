@@ -361,7 +361,7 @@ public class MechSummaryCache {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
         // we can only test meks and vehicles right now
-        if ((e instanceof Mech) || (e instanceof Tank && !(e instanceof GunEmplacement))) {
+        if ((e instanceof Mech) || ((e instanceof Tank) && !(e instanceof GunEmplacement))) {
             TestEntity testEntity = null;
             if (e instanceof Mech) {
                 testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);

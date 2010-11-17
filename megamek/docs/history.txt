@@ -33,6 +33,7 @@ v0.35.20-dev (SVN)
 + Make fixelevation check for building collapse
 + Artillery spotter bugfix
 + Bug 3039852: Model "0"
++ Bug: Artillery reporting bugfix
 
 v0.35.19 (2010-10-13, 16:39 UTC+2)
 + Patch 2948181: Random Skills for Individual Units

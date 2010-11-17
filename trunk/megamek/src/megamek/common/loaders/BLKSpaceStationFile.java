@@ -384,7 +384,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                     if (newmount.getType() instanceof AmmoType) {
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
                     }
-                } else if (equipName != "0") {
+                } else if (!equipName.equals("")) {
                     a.addFailedEquipment(equipName);
                 }
             }

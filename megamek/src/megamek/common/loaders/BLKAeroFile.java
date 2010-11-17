@@ -214,7 +214,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (equipName != "0") {
+                } else if (!equipName.equals("")) {
                     t.addFailedEquipment(equipName);
                 }
             }

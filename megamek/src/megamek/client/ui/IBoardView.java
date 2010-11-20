@@ -16,6 +16,7 @@ package megamek.client.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Image;
 import java.awt.event.KeyListener;
 
 import megamek.client.event.BoardViewEvent;
@@ -84,7 +85,7 @@ public interface IBoardView extends MechDisplayListener {
     /**
      * Determines if this Board contains the Coords, and if so, "selects" that
      * Coords.
-     * 
+     *
      * @param coords the Coords.
      */
     public abstract void select(Coords coords);
@@ -92,7 +93,7 @@ public interface IBoardView extends MechDisplayListener {
     /**
      * Determines if this Board contains the Coords, and if so, highlights that
      * Coords.
-     * 
+     *
      * @param coords the Coords.
      */
     public abstract void highlight(Coords coords);
@@ -100,7 +101,7 @@ public interface IBoardView extends MechDisplayListener {
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
-     * 
+     *
      * @param coords the Coords.
      */
     public abstract void cursor(Coords coords);
@@ -109,7 +110,7 @@ public interface IBoardView extends MechDisplayListener {
 
     /**
      * Adds the specified board view listener to receive events from this view.
-     * 
+     *
      * @param listener the board listener.
      * @see BoardViewListener
      */
@@ -117,16 +118,18 @@ public interface IBoardView extends MechDisplayListener {
 
     /**
      * Removes the specified board listener.
-     * 
+     *
      * @param listener the board listener.
      */
     public abstract void removeBoardViewListener(BoardViewListener listener);
 
     /**
      * Notifies attached board listeners of the event.
-     * 
+     *
      * @param event the board event.
      */
     public abstract void processBoardViewEvent(BoardViewEvent event);
+
+    public abstract Image getEntireBoardImage();
 
 }

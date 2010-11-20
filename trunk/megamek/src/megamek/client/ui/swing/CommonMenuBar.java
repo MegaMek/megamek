@@ -741,18 +741,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         // If we have a board, we can perform board actions and view the mini
         // map.
         if (hasBoard) {
-            // Save boards only in BoardEditor
-            if (client == null) {
-                fileBoardSave.setEnabled(true);
-                fileBoardSaveAs.setEnabled(true);
-                fileBoardSaveAsImage.setEnabled(true);
-            }
+            fileBoardSave.setEnabled(true);
+            fileBoardSaveAs.setEnabled(true);
+            fileBoardSaveAsImage.setEnabled(true);
             viewMiniMap.setEnabled(true);
             viewZoomIn.setEnabled(true);
             viewZoomOut.setEnabled(true);
         }
         // If we don't have a board we can't view the mini map.
         else {
+            fileBoardSave.setEnabled(false);
+            fileBoardSaveAs.setEnabled(false);
+            fileBoardSaveAsImage.setEnabled(false);
             viewMiniMap.setEnabled(false);
             viewZoomIn.setEnabled(false);
             viewZoomOut.setEnabled(false);
@@ -894,6 +894,21 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setPhase(IGame.Phase current) {
         entity = null;
         phase = current;
+        switch (current) {
+            case PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOYMENT:
+            case PHASE_FIRING:
+            case PHASE_MOVEMENT:
+            case PHASE_OFFBOARD:
+            case PHASE_PHYSICAL:
+            case PHASE_SET_ARTYAUTOHITHEXES:
+            case PHASE_TARGETING:
+                setBoard(true);
+                break;
+            default:
+                setBoard(false);
+                break;
+        }
         manageMenu();
     }
 

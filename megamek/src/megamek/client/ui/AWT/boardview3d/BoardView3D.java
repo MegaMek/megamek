@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -860,6 +861,12 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
     public boolean toggleIsometric() {
         // Only implemented in swing GUI.
         return false;
+    }
+
+    @Override
+    public Image getEntireBoardImage() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

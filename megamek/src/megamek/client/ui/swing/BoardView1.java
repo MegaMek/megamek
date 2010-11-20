@@ -1063,6 +1063,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     public Image getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics boardGraph = entireBoard.getGraphics();
+        drawRect = new Rectangle(0, 0);
         drawHexes(boardGraph, new Rectangle(boardSize));
         boardGraph.dispose();
         return entireBoard;

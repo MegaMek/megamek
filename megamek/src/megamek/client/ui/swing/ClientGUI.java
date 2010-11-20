@@ -18,6 +18,7 @@ import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -32,7 +33,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -52,7 +55,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import keypoint.PngEncoder;
 
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
@@ -138,6 +144,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private JFileChooser dlgLoadList;
     private JFileChooser dlgSaveList;
     private Client client;
+
+    private File curfileBoardImage;
+    private File curfileBoard;
 
     /**
      * Cache for the "bing" soundclip.
@@ -544,6 +553,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         if ("viewRoundReport".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showRoundReport();
+        }
+        if ("fileBoardSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            boardSave();
+        } else if ("fileBoardSaveAs".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            boardSaveAs();
+        } else if ("fileBoardSaveAsImage".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            boardSaveAsImage();
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
@@ -1449,7 +1465,157 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public RandomNameDialog getRandomNameDialog() {
         return randomNameDialog;
     }
-    
+
+    /**
+     * Checks to see if there is already a path and name stored; if not, calls
+     * "save as"; otherwise, saves the board to the specified file.
+     */
+    private void boardSave() {
+        if (curfileBoard == null) {
+            boardSaveAs();
+            return;
+        }
+        // save!
+        try {
+            OutputStream os = new FileOutputStream(curfileBoard);
+            // tell the board to save!
+            client.game.getBoard().save(os);
+            // okay, done!
+            os.close();
+        } catch (IOException ex) {
+            System.err.println("error opening file to save!"); //$NON-NLS-1$
+            System.err.println(ex);
+        }
+    }
+
+    /**
+     * Saves the board in PNG image format.
+     */
+    private void boardSaveImage() {
+        if (curfileBoardImage == null) {
+            boardSaveAsImage();
+            return;
+        }
+        JDialog waitD = new JDialog(frame, Messages
+                .getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
+        waitD.add(new JLabel(Messages
+                .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
+        waitD.setSize(250, 130);
+        // move to middle of screen
+        waitD.setLocation(
+                frame.getSize().width / 2 - waitD.getSize().width / 2, frame
+                        .getSize().height
+                        / 2 - waitD.getSize().height / 2);
+        waitD.setVisible(true);
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        // save!
+        int filter = 0; // 0 - no filter; 1 - sub; 2 - up
+        int compressionLevel = 9; // 0 to 9 with 0 being no compression
+        PngEncoder png = new PngEncoder(bv.getEntireBoardImage(),
+                PngEncoder.NO_ALPHA, filter, compressionLevel);
+        try {
+            FileOutputStream outfile = new FileOutputStream(curfileBoardImage);
+            byte[] pngbytes;
+            pngbytes = png.pngEncode();
+            if (pngbytes == null) {
+                System.out.println("Failed to save board as image:Null image"); //$NON-NLS-1$
+            } else {
+                outfile.write(pngbytes);
+            }
+            outfile.flush();
+            outfile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        waitD.setVisible(false);
+        frame.setCursor(Cursor.getDefaultCursor());
+    }
+
+    /**
+     * Opens a file dialog box to select a file to save as; saves the board to
+     * the file.
+     */
+    private void boardSaveAs() {
+        JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
+        fc
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File dir) {
+                return (null != dir.getName())
+                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
+            }
+
+            @Override
+            public String getDescription() {
+                return ".board";
+            }
+        });
+        int returnVal = fc.showSaveDialog(frame);
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return;
+        }
+        curfileBoard = fc.getSelectedFile();
+
+        // make sure the file ends in board
+        if (!curfileBoard.getName().toLowerCase().endsWith(".board")) { //$NON-NLS-1$
+            try {
+                curfileBoard = new File(curfileBoard.getCanonicalPath() + ".board"); //$NON-NLS-1$
+            } catch (IOException ie) {
+                // failure!
+                return;
+            }
+        }
+        boardSave();
+    }
+
+    /**
+     * Opens a file dialog box to select a file to save as; saves the board to
+     * the file as an image. Useful for printing boards.
+     */
+    private void boardSaveAsImage() {
+        JFileChooser fc = new JFileChooser(".");
+        fc
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
+        fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File dir) {
+                return (null != dir.getName()) && dir.getName().endsWith(".png"); //$NON-NLS-1$
+            }
+
+            @Override
+            public String getDescription() {
+                return ".png";
+            }
+        });
+        int returnVal = fc.showSaveDialog(frame);
+        if ((returnVal != JFileChooser.APPROVE_OPTION)
+                || (fc.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return;
+        }
+        curfileBoardImage = fc.getSelectedFile();
+
+        // make sure the file ends in png
+        if (!curfileBoardImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
+            try {
+                curfileBoardImage = new File(curfileBoardImage.getCanonicalPath()
+                        + ".png"); //$NON-NLS-1$
+            } catch (IOException ie) {
+                // failure!
+                return;
+            }
+        }
+        boardSaveImage();
+    }
+
     public void hexMoused(BoardViewEvent b) {
         if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
             showBoardPopup(b.getCoords());

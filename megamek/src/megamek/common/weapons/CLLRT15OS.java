@@ -35,6 +35,7 @@ public class CLLRT15OS extends LRTWeapon {
         setInternalName("CLLRTorpedo15 (OS)");
         addLookupName("Clan OS LRT-15");
         addLookupName("Clan LRT 15 (OS)");
+        addLookupName("CLLRT15OS");
         heat = 5;
         rackSize = 15;
         minimumRange = WEAPON_NA;

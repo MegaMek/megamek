@@ -36,6 +36,7 @@ public class ISLRT15IOS extends LRTWeapon {
         addLookupName("IS IOS LRT-15");
         addLookupName("ISLRTorpedo15 (IOS)");
         addLookupName("IS LRT 15 (IOS)");
+        addLookupName("ISLRT15IOS");
         heat = 5;
         rackSize = 15;
         minimumRange = 6;

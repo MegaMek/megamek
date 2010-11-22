@@ -36,6 +36,7 @@ public class ISLRT15 extends LRTWeapon {
         this.addLookupName("IS LRT-15");
         this.addLookupName("ISLRTorpedo15");
         this.addLookupName("IS LRT 5");
+        this.addLookupName("ISLRT5");
         this.heat = 5;
         this.rackSize = 15;
         this.minimumRange = 6;

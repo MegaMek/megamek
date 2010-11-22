@@ -35,6 +35,7 @@ public class CLSRT6 extends SRTWeapon {
         setInternalName("CLSRT6");
         addLookupName("Clan SRT-6");
         addLookupName("Clan SRT 6");
+        addLookupName("CLSRT6");
         heat = 4;
         rackSize = 6;
         waterShortRange = 3;

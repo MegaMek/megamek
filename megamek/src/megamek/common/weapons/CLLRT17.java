@@ -33,6 +33,7 @@ public class CLLRT17 extends LRTWeapon {
         this.techLevel = TechConstants.T_CLAN_TW;
         this.name = "LRT 17";
         this.setInternalName("CLLRTorpedo17");
+        this.setInternalName("CLLRT17");
         this.heat = 0;
         this.rackSize = 17;
         this.minimumRange = WEAPON_NA;

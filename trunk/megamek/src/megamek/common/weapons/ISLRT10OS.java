@@ -36,6 +36,7 @@ public class ISLRT10OS extends LRTWeapon {
         addLookupName("IS OS LRT-10");
         addLookupName("ISLRTorpedo10 (OS)");
         addLookupName("IS LRT 10 (OS)");
+        addLookupName("ISLRT10OS");
         heat = 4;
         rackSize = 10;
         minimumRange = 6;

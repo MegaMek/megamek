@@ -35,6 +35,7 @@ public class CLLRT10 extends LRTWeapon {
         this.setInternalName("CLLRTorpedo10");
         this.addLookupName("Clan LRT-10");
         this.addLookupName("Clan LRT 10");
+        this.setInternalName("CLLRT10");
         this.heat = 4;
         this.rackSize = 10;
         this.minimumRange = WEAPON_NA;

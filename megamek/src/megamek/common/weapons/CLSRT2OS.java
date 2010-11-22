@@ -35,6 +35,7 @@ public class CLSRT2OS extends SRTWeapon {
         setInternalName("CLSRT2 (OS)");
         addLookupName("Clan OS SRT-2");
         addLookupName("Clan SRT 2 (OS)");
+        addLookupName("CLSRT2OS");
         heat = 2;
         rackSize = 2;
         waterShortRange = 3;

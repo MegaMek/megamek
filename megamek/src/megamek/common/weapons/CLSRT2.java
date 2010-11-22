@@ -35,6 +35,7 @@ public class CLSRT2 extends SRTWeapon {
         setInternalName("CLSRT2");
         addLookupName("Clan SRT-2");
         addLookupName("Clan SRT 2");
+        addLookupName("CLSRT2");
         heat = 2;
         rackSize = 2;
         waterShortRange = 3;

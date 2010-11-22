@@ -35,6 +35,7 @@ public class CLSRT6IOS extends SRTWeapon {
         setInternalName("CLSRT6 (IOS)");
         addLookupName("Clan IOS SRT-6");
         addLookupName("Clan SRT 6 (IOS)");
+        addLookupName("CLSRT6IOS");
         heat = 4;
         rackSize = 6;
         waterShortRange = 3;

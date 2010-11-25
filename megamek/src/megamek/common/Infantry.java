@@ -1209,7 +1209,7 @@ public class Infantry extends Entity implements Serializable {
 
     public String getArmorDesc() {
         StringBuffer sArmor = new StringBuffer();
-        sArmor.append(Math.round(getDamageDivisor()));
+        sArmor.append(getDamageDivisor());
         if(isArmorEncumbering()) {
             sArmor.append("E");
         }

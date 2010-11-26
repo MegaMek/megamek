@@ -5969,7 +5969,8 @@ public class Server implements Runnable {
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation())
-                    && !(entity instanceof VTOL)) {
+                    && !(entity instanceof VTOL)
+                    && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
 
                 PilotingRollData psr = entity.getBasePilotingRoll(overallMoveType);
                 int roll = Compute.d6(2);

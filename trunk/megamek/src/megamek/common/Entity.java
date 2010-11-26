@@ -1084,7 +1084,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 int brdnex = Math.max(-(next.depth()), next.terrainLevel(Terrains.BRIDGE_ELEV));
                 if (Math.abs((next.surface() + brdnex) - (current.surface() + assumedElevation)) <= getMaxElevationChange()) {
                     // bridge is reachable at least
-                    if (climb || (Math.abs((next.surface() + retVal) - (current.surface() + assumedElevation)) > getMaxElevationChange()) || !isElevationValid(retVal, next)) {
+                    if (climb || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
                         // you prefer to by climb mode
                         retVal = brdnex;

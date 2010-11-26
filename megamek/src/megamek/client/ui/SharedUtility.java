@@ -263,11 +263,6 @@ public class SharedUtility {
             }
 
             if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL) && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
-                //
-                int curbridge = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
-                int curelev = curHex.getElevation();
-                int prevbridge = prevHex.terrainLevel(Terrains.BRIDGE_ELEV);
-                int prevelev = prevHex.getElevation();
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType),nagReport, psrList);
             }

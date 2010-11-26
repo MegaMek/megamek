@@ -31,6 +31,7 @@ import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
@@ -39,7 +40,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
-import megamek.common.MovePath.MoveStepType;
 
 public class SharedUtility {
 
@@ -99,7 +99,7 @@ public class SharedUtility {
                 break;
             }
 
-            if (entity.isAirborne() && entity instanceof Aero) {
+            if (entity.isAirborne() && (entity instanceof Aero)) {
                 // check for more than one roll
                 Aero a = (Aero) entity;
                 rollTarget = a.checkRolls(step, overallMoveType);
@@ -125,11 +125,11 @@ public class SharedUtility {
             final IHex curHex = game.getBoard().getHex(curPos);
 
             //check for vertical takeoff
-            if(step.getType() == MoveStepType.VTAKEOFF && entity instanceof Aero) {
+            if((step.getType() == MoveStepType.VTAKEOFF) && (entity instanceof Aero)) {
                 rollTarget = ((Aero)entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             //check for leap
             if(!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {
@@ -262,7 +262,12 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL)) {
+            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL) && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
+                //
+                int curbridge = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
+                int curelev = curHex.getElevation();
+                int prevbridge = prevHex.terrainLevel(Terrains.BRIDGE_ELEV);
+                int prevelev = prevHex.getElevation();
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType),nagReport, psrList);
             }
@@ -319,7 +324,7 @@ public class SharedUtility {
 
         }
 
-        if (entity.isAirborne() && entity instanceof Aero) {
+        if (entity.isAirborne() && (entity instanceof Aero)) {
             // check to see if thrust exceeded SI
             Aero a = (Aero) entity;
             int thrust = md.getMpUsed();

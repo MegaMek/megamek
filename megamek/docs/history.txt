@@ -5,6 +5,8 @@ v0.35.21-dev (SVN)
 + Bug 3118639: Unit View rounding infantry armor
 + Bug: Backwards movement onto bridge erroneously acting as backward movement
     over elevation change
++ Added construction data for field kitchen, mobile field base, and satellite
+    imagers
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

@@ -556,13 +556,23 @@ public abstract class TestEntity implements TestEntityOption {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         int tagCount = 0;
         boolean illegal = false;
+        int fieldKitchenCount = 0;
         for (Mounted m : getEntity().getWeaponList()) {
             if (m.getType().hasFlag(WeaponType.F_TAG) && !(m.getType().hasFlag(WeaponType.F_C3M) || m.getType().hasFlag(WeaponType.F_C3MBS))) {
                 tagCount++;
             }
         }
+        for (Mounted m : getEntity().getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
+                fieldKitchenCount++;
+            }
+        }
         if (tagCount > 1) {
             buff.append("Unit has more than one TAG\n");
+            illegal = true;
+        }
+        if (fieldKitchenCount > 3) {
+            buff.append("Unit has more than three Field Kitchens\n");
             illegal = true;
         }
         if (getEntity() instanceof Mech) {

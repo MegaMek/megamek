@@ -1,12 +1,12 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -15,7 +15,7 @@
 
 /**
  * MiscType.java
- * 
+ *
  * Created on April 2, 2002, 12:15 PM
  */
 
@@ -142,6 +142,13 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_NAVAL_C3 = BigInteger.valueOf(1).shiftLeft(99);
     public static final BigInteger F_MINESWEEPER = BigInteger.valueOf(1).shiftLeft(100);
     public static final BigInteger F_MOBILE_HPG = BigInteger.valueOf(1).shiftLeft(101);
+    public static final BigInteger F_FIELD_KITCHEN = BigInteger.valueOf(1).shiftLeft(102);
+    public static final BigInteger F_MOBILE_FIELD_BASE = BigInteger.valueOf(1).shiftLeft(103);
+    //TODO: add game rules for the following imagers/radars, construction data only
+    public static final BigInteger F_HIRES_IMAGER = BigInteger.valueOf(1).shiftLeft(104);
+    public static final BigInteger F_HYPERSPECTRAL_IMAGER = BigInteger.valueOf(1).shiftLeft(105);
+    public static final BigInteger F_INFRARED_IMAGER = BigInteger.valueOf(1).shiftLeft(106);
+    public static final BigInteger F_LOOKDOWN_RADAR = BigInteger.valueOf(1).shiftLeft(107);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -686,6 +693,8 @@ public class MiscType extends EquipmentType {
         // For industrials and tanks
         EquipmentType.addType(MiscType.createEnvironmentalSealing());
 
+        EquipmentType.addType(MiscType.createFieldKitchen());
+
         EquipmentType.addType(MiscType.createImprovedJumpJet());
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
         EquipmentType.addType(MiscType.createJumpBooster());
@@ -857,6 +866,13 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBASpaceOperationsAdaptation());
         EquipmentType.addType(MiscType.createBC3());
         EquipmentType.addType(MiscType.createBC3i());
+        EquipmentType.addType(MiscType.createISHIResImager());
+        EquipmentType.addType(MiscType.createCLHIResImager());
+        EquipmentType.addType(MiscType.createISHyperspectralImager());
+        EquipmentType.addType(MiscType.createISInfraredImager());
+        EquipmentType.addType(MiscType.createCLInfraredImager());
+        EquipmentType.addType(MiscType.createISLookDownRadar());
+        EquipmentType.addType(MiscType.createCLLookDownRadar());
 
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
@@ -865,6 +881,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createAdvancedFireControl());
         EquipmentType.addType(MiscType.createISMineSweeper());
         EquipmentType.addType(MiscType.createClanMineSweeper());
+        EquipmentType.addType(MiscType.createISMobileFieldBase());
+        EquipmentType.addType(MiscType.createCLMobileFieldBase());
 
     }
 
@@ -3247,7 +3265,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -4536,6 +4554,126 @@ public class MiscType extends EquipmentType {
         misc.criticals = 12;
         misc.cost = 4000000000f;
         misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createFieldKitchen() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Field Kitchen";
+        misc.setInternalName("FieldKitchen");
+        misc.tonnage = 3f;
+        misc.cost = 25000;
+        misc.flags = misc.flags.or(F_FIELD_KITCHEN).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISMobileFieldBase() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Mobile Field Base";
+        misc.setInternalName("ISMobileFieldBase");
+        misc.tonnage = 20f;
+        misc.cost = 150000;
+        misc.flags = misc.flags.or(F_MOBILE_FIELD_BASE).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLMobileFieldBase() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Mobile Field Base";
+        misc.setInternalName("CLMobileFieldBase");
+        misc.tonnage = 20f;
+        misc.cost = 150000;
+        misc.flags = misc.flags.or(F_MOBILE_FIELD_BASE).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLHIResImager() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "High-Resolution Imager";
+        misc.setInternalName("CLHighResImager");
+        misc.tonnage = 2.5f;
+        misc.cost = 150000;
+        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISHIResImager() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "High-Resolution Imager";
+        misc.setInternalName("ISHighResImager");
+        misc.tonnage = 2.5f;
+        misc.cost = 150000;
+        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISHyperspectralImager() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Hyperspectral Imager";
+        misc.setInternalName("ISHypersprectralImager");
+        misc.tonnage = 7.5f;
+        misc.cost = 550000;
+        misc.flags = misc.flags.or(F_HIRES_IMAGER).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLInfraredImager() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Infrared Imager";
+        misc.setInternalName("CLInfraredImager");
+        misc.tonnage = 5f;
+        misc.cost = 250000;
+        misc.flags = misc.flags.or(F_INFRARED_IMAGER).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISInfraredImager() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Infrared Imager";
+        misc.setInternalName("ISInfraredImager");
+        misc.tonnage = 5f;
+        misc.cost = 250000;
+        misc.flags = misc.flags.or(F_INFRARED_IMAGER).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLLookDownRadar() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Look-Down Rader";
+        misc.setInternalName("CLLookDownRadar");
+        misc.tonnage = 5f;
+        misc.cost = 400000;
+        misc.flags = misc.flags.or(F_LOOKDOWN_RADAR).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISLookDownRadar() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Look-Down Rader";
+        misc.setInternalName("ISLookDownRadar");
+        misc.tonnage = 5f;
+        misc.cost = 400000;
+        misc.flags = misc.flags.or(F_LOOKDOWN_RADAR).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 0;
         return misc;
     }

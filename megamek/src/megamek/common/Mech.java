@@ -1037,6 +1037,10 @@ public abstract class Mech extends Entity implements Serializable {
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
+        return getWalkMP(gravity, ignoreheat, false);
+    }
+
+    public int getWalkMP(boolean gravity, boolean ignorehat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
         if (null != game) {
@@ -1046,7 +1050,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
-        if (hasModularArmor()) {
+        if (!ignoremodulararmor && hasModularArmor()) {
             j--;
         }
 
@@ -3032,9 +3036,9 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endRow);
 
         // adjust for target movement modifier
-        // we use full possible movement, ignoring gravity and heat
-        // but taking into account hit actuators
-        int walkMP = getWalkMP(false, true);
+        // we use full possible movement, ignoring gravity, heat and modular
+        // armor, but taking into account hit actuators
+        int walkMP = getWalkMP(false, true, true);
         int runMP;
         if (hasTSM()) {
             walkMP++;

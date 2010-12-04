@@ -8,6 +8,7 @@ v0.35.21-dev (SVN)
 + Added construction data for field kitchen, mobile field base, and satellite
     imagers
 + Bug: Vibroblades counting twice for BV
++ Bug: Ignore modular armor effects for BV
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

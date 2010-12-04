@@ -1016,7 +1016,7 @@ public class Tank extends Entity {
 
             if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG)) || mtype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP)) {
+                    || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 // weapons
                 continue;
             }

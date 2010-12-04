@@ -761,12 +761,19 @@ public class Tank extends Entity {
         bvText.append("Total Armor Factor x 2.5 x Armor multplier x BAR Rating / 10");
         bvText.append(endColumn);
         bvText.append(startColumn);
+        double armormultiplier = 1;
+        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+            armormultiplier = 2;
+        }
+        if (blueShield) {
+            armormultiplier += 0.2;
+        }
 
         // total armor points
-        dbv += (getTotalArmor() + modularArmor) * 2.5 * (blueShield ? 1.2 : 1) * ((float) (getBARRating()) / 10);
+        dbv += (getTotalArmor() + modularArmor) * 2.5 * armormultiplier * ((float) (getBARRating()) / 10);
 
         int armor = getTotalArmor() + modularArmor;
-        bvText.append(armor + " x 2.5 x " + (blueShield ? "1.2" : "1.0") + " x " + ((float) (getBARRating()) / 10));
+        bvText.append(armor + " x 2.5 x " + armormultiplier + " x " + ((float) (getBARRating()) / 10));
         // total internal structure
         dbv += getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1);
 

@@ -9283,12 +9283,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public boolean hasStealth() {
-        for (Mounted mEquip : getMisc()) {
-            MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_STEALTH)) {
-                // The unit has Stealth Armor
-                return true;
-            }
+        if (getArmorType() == EquipmentType.T_ARMOR_STEALTH) {
+            return true;
         }
         return false;
     }

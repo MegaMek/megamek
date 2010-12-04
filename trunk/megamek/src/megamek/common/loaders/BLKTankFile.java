@@ -197,14 +197,26 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                     type = "IS Level 2";
                     break;
                 case TechConstants.T_IS_ADVANCED:
-                default:
                     type = "IS Level 3";
+                    break;
+                case TechConstants.T_IS_EXPERIMENTAL:
+                    type = "IS Level 4";
+                    break;
+                case TechConstants.T_IS_UNOFFICIAL:
+                default:
+                    type = "IS Level 5";
                     break;
                 case TechConstants.T_CLAN_TW:
                     type = "Clan Level 2";
                     break;
                 case TechConstants.T_CLAN_ADVANCED:
                     type = "Clan Level 3";
+                    break;
+                case TechConstants.T_CLAN_EXPERIMENTAL:
+                    type = "Clan Level 4";
+                    break;
+                case TechConstants.T_CLAN_UNOFFICIAL:
+                    type = "Clan Level 5";
                     break;
             }
         }

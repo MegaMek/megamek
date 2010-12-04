@@ -1472,6 +1472,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *            Should heat be ignored?
      */
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
+        return getWalkMP(gravity, ignoreheat, false);
+    }
+
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp = getOriginalWalkMP();
 
         if (!ignoreheat) {
@@ -1548,7 +1552,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-        return (int) Math.ceil(getWalkMP(gravity, ignoreheat) * 1.5);
+        return getRunMP(gravity, ignoreheat, false);
+    }
+
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return (int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
     }
 
     /**

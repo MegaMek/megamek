@@ -137,6 +137,11 @@ public class Tank extends Entity {
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
+        return getWalkMP(gravity, ignoreheat, false);
+    }
+
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
         if (null != game) {
@@ -146,7 +151,7 @@ public class Tank extends Entity {
             }
         }
 
-        if (hasModularArmor()) {
+        if (!ignoremodulararmor && hasModularArmor()) {
             j--;
         }
 
@@ -1126,7 +1131,11 @@ public class Tank extends Entity {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat);
+        return getRunMPwithoutMASC(gravity, ignoreheat, false);
+    }
+
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override

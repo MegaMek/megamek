@@ -832,7 +832,7 @@ public class Tank extends Entity {
         dbv *= typeModifier;
 
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), this instanceof VTOL, this instanceof VTOL).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), this instanceof VTOL, this instanceof VTOL).getValue();
         // for the future, when we implement jumping tanks
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false).getValue();
         if (hasStealth()) {

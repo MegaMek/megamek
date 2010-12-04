@@ -1304,13 +1304,13 @@ public class Aero extends Entity {
         bvText.append(startColumn);
         bvText.append(getBVTypeModifier());
         if (hasStealth()) {
-            bvText.append("+ 0.2 for Stealth");
+            bvText.append("+ 0.3 for Stealth");
         }
         bvText.append(endColumn);
         // unit type multiplier
-        dbv *= (getBVTypeModifier() + (hasStealth() ? 0.2 : 0));
+        dbv *= (getBVTypeModifier() + (hasStealth() ? 0.3 : 0));
         bvText.append(startColumn);
-        bvText.append("x" + (getBVTypeModifier() + (hasStealth() ? 0.2 : 0)));
+        bvText.append("x" + (getBVTypeModifier() + (hasStealth() ? 0.3 : 0)));
         bvText.append(endColumn);
         bvText.append(endRow);
 

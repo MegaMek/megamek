@@ -136,26 +136,25 @@
 	
 	<target name="mac-bundle" description="Bundle the project built from SVN into an Mac OSX distribution">
 		<mkdir dir="${osxdist}" />
-	    <jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/Contents/Resources/" vmoptions="-Xmx256m">
+		<copy todir="${osxdist}">
+			<fileset dir="${svndir}" >
+				<include name="${docdir}/" />
+				<include name="readme*.txt" />
+				<include name="license.txt" />
+				<include name="${logdir}/" />
+			    <include name="${datadir}/" />
+			    <include name="${confdir}/" />
+			</fileset>
+		</copy>
+	    <jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">
 	   		<jarfileset dir="${svndir}">
 	     	 	<include name="**/*.jar" />
 	   			<exclude name="${util}/" />
 	      	</jarfileset>
 	      	<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
 	      	<javaproperty name="apple.awt.brushMetal" value="true" />
-	      	<resourcefileset dir="${svndir}">
-	       		<include name="${logdir}/" />
-	      		<include name="${datadir}/" />
-	      		<include name="${confdir}/" />
-	      	</resourcefileset>
 	   	</jarbundler>
-		<copy todir="${osxdist}">
-			<fileset dir="${svndir}" >
-				<include name="${docdir}/" />
-				<include name="readme*.txt" />
-				<include name="license.txt" />
-			</fileset>
-		</copy>
+		
 	</target>
 	
 	<!-- I think this will only work on OS X systems -->

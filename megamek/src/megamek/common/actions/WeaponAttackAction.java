@@ -718,8 +718,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                     if (onlyBarracuda) {
                         toHit.addModifier(-2, "barracuda missile");
-                    } else if (onlyPiranha) {
-                        toHit.addModifier(-1, "piranha missile");
                     }
                 }
                 // barracuda missiles in an AR10 launcher (must all be

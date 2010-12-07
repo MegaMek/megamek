@@ -2711,6 +2711,10 @@ public class Compute {
      */
     public static boolean inSensorRange(IGame game, Entity ae, Targetable target) {
 
+        if(!game.getOptions().booleanOption("tacops_sensors")) {
+            return false;
+        }
+        
         // if either does not have a position then return false
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
@@ -2742,9 +2746,9 @@ public class Compute {
         if (target.isOffBoard()) {
             return false;
         }
-
+        
         return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && Compute.inVisualRange(game, ae, target))
-        || Compute.inSensorRange(game, ae, target);
+                    || Compute.inSensorRange(game, ae, target);
     }
 
     private static int getSensorRangeBracket(Entity ae, Targetable target) {

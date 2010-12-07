@@ -16,6 +16,7 @@ v0.35.21-dev (SVN)
 + Bug: Aero stealth should add +0.3 to unit type modifier, not 0.2
 + Keep data, log, and mmconf directory outside of the resouce bundle in Mac package
 + Bug: Fixed Wing support SI calculation
++ Manei Domini TSM Implant
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

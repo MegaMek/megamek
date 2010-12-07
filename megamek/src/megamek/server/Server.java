@@ -18119,6 +18119,12 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     break;
                 }
+                else if (en.getCrew().getOptions().booleanOption("tsm_implant")) {
+                    r = new Report(6652);
+                    r.subject = a.getId();
+                    vDesc.add(r);
+                    break;
+                }
                 if ((a instanceof SmallCraft) || (a instanceof Jumpship)) {
                     r = new Report(9197);
                 }
@@ -20436,7 +20442,8 @@ public class Server implements Runnable {
 
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
-        if ((entity instanceof Mech) && !entity.getCrew().getOptions().booleanOption("dermal_armor")) {
+        if ((entity instanceof Mech) && !entity.getCrew().getOptions().booleanOption("dermal_armor")
+                && !entity.getCrew().getOptions().booleanOption("tsm_implant")) {
             // we want to be able to avoid pilot damage even when it was
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();

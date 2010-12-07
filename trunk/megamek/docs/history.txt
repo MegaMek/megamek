@@ -19,6 +19,7 @@ v0.35.21-dev (SVN)
 + Manei Domini TSM Implant
 + Bug 3104045: Piranha Missile
 + Bug 3080525: Infantry Sneak
++ Separate TacOps Sensor game option, so players can use double-blind by LoS only
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

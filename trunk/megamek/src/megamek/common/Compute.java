@@ -836,7 +836,7 @@ public class Compute {
         //if this is an infantry weapon then we use a whole different calculation
         //to figure out range, so overwrite whatever we have at this point
         if(isWeaponInfantry) {
-        	return Compute.getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
+        	mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
         }
 
         // add any target stealth modifier

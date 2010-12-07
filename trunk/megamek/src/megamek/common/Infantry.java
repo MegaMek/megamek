@@ -1045,7 +1045,7 @@ public class Infantry extends Entity implements Serializable {
         // or mimetic armor
 
         if ((sneak_ir || dest)
-                && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+                && !(ae instanceof Infantry)) {
             switch (range) {
                 case RangeType.RANGE_MINIMUM:
                 case RangeType.RANGE_SHORT:
@@ -1068,9 +1068,9 @@ public class Infantry extends Entity implements Serializable {
         if (sneak_camo && (delta_distance < 3)) {
             int mod = Math.max(3 - delta_distance, 0);
             if (result == null) {
-                result = new TargetRoll(mod, "sneak, Camo");
+                result = new TargetRoll(mod, "Sneak, Camo");
             } else {
-                result.append(new TargetRoll(mod, "sneak, Camo"));
+                result.append(new TargetRoll(mod, "Sneak, Camo"));
             }
         }
 

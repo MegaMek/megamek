@@ -92,9 +92,19 @@ public class InfantryWeaponHandler extends WeaponHandler {
             //to get damage per trooper
             damage = ((Infantry)ae).getDamagePerTrooper();
         }
+        if((ae instanceof Infantry)
+                && nRange == 0
+                && ae.getCrew().getOptions().booleanOption("tsm_implant")) {
+            damage += 0.14;
+        }
         int damageDealt = (int) Math.round(damage * troopersHit);
         if((target instanceof Infantry) && !(target instanceof BattleArmor) && wtype.hasFlag(WeaponType.F_INF_BURST)) {
             damageDealt += Compute.d6();
+        }
+        if((ae instanceof Infantry)
+                && nRange == 0
+                && ae.getCrew().getOptions().booleanOption("tsm_implant")) {
+            
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;

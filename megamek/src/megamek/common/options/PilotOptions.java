@@ -75,7 +75,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, "comm_implant", false); //$NON-NLS-1$
         addOption(md, "boost_comm_implant", false); //$NON-NLS-1$
         addOption(md, "dermal_armor", false); //$NON-NLS-1$
-        //addOption(md, "tsm_implant", false); //$NON-NLS-1$
+        addOption(md, "tsm_implant", false); //$NON-NLS-1$
     }
 
     /*

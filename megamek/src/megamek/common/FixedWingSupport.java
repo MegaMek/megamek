@@ -73,5 +73,10 @@ public class FixedWingSupport extends ConvFighter {
         return 6;
     }
 
+    @Override
+    public void autoSetSI() {
+        initializeSI(getOriginalWalkMP());
+    }
+
 
 }

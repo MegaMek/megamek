@@ -1209,7 +1209,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 if ((null != cmd) && cmd.contains(MoveStepType.OFF)) {
                     flyoff = true;
                 }
-                if (unusedVelocity && !flyoff) {
+                boolean landing = false;
+                if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
+                    landing = true;
+                }
+                if (unusedVelocity && !flyoff && !landing) {
                     String title = Messages
                             .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
                     String body = Messages

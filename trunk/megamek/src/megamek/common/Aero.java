@@ -2585,12 +2585,13 @@ public class Aero extends Entity {
                 if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
                     rough = true;
                 }
-                if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
-                    lightWoods = true;
-                }
                 if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
                     heavyWoods = true;
+                } 
+                else if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
+                    lightWoods = true;
                 }
+                
             }
         }
         if(airstrip) {

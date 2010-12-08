@@ -37,7 +37,7 @@ public class MovePath implements Cloneable, Serializable {
     public enum MoveStepType {
         NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA, FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC, LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON, CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE, ACCN, DECN, ROLL, OFF, LAUNCH, THRUST, YAW, CRASH, RECOVER, RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP;
     }
-    
+
     public static class Key {
         private final Coords coords;
         private final int facing;
@@ -109,7 +109,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Add a new step to the movement path.
-     * 
+     *
      * @param type
      *            the type of movement.
      */
@@ -120,7 +120,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Add a new step to the movement path with the given target.
-     * 
+     *
      * @param type
      *            the type of movement.
      * @param target
@@ -166,7 +166,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Initializes a step as part of this movement path. Then adds it to the
      * list.
-     * 
+     *
      * @param step
      */
     protected MovePath addStep(final MoveStep step) {
@@ -624,35 +624,12 @@ public class MovePath implements Cloneable, Serializable {
             }
             return jump;
         }
-        return isFlying();
-    }
-
-    /**
-     * Returns if the entity is flying at the last step of this movepath.
-     * WARNING: This function will only evaluate the path of
-     * <code>LandAirMech</code>s, for all other types it will return false.
-     * 
-     * @return true if it's a flying LAM.
-     */
-    public boolean isFlying() {
-        if (entity instanceof LandAirMech) {
-            boolean flying = entity.isAirborne();
-            for (MoveStep step : steps) {
-                if (step.getType() == MoveStepType.TAKEOFF) {
-                    flying = true;
-                } else if (step.getType() == MoveStepType.LAND) {
-                    flying = false;
-                }
-            }
-            return flying;
-        }
-
         return false;
     }
 
     /**
      * Extend the current path to the destination <code>Coords</code>.
-     * 
+     *
      * @param dest
      *            the destination <code>Coords</code> of the move.
      * @param type
@@ -706,7 +683,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * An A* pathfinder to get from the end of the current path (or entity's
      * position if empty) to the destination.
-     * 
+     *
      * @param dest
      *            The goal hex
      * @param type
@@ -793,7 +770,7 @@ public class MovePath implements Cloneable, Serializable {
      * Find the shortest path to the destination <code>Coords</code> by hex
      * count. This right choice <em>only</em> when making a simple move like a
      * straight line or one with a single turn.
-     * 
+     *
      * @param dest
      *            the destination <code>Coords</code> of the move.
      * @param type
@@ -920,7 +897,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Clones this path, will contain a new clone of the steps so that the clone
      * is independent from the original.
-     * 
+     *
      * @return the cloned MovePath
      */
     @Override

@@ -40,7 +40,6 @@ import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
@@ -174,7 +173,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     public boolean isDiveBomb(IGame game) {
         return ((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB);
     }
-    
+
     public int getAltitudeLoss(IGame game) {
         if (isAirToGround(game)) {
             if (((WeaponType) getEntity(game).getEquipment(getWeaponId()).getType()).hasFlag(WeaponType.F_DIVE_BOMB)) {
@@ -698,10 +697,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         }
                     }
                 }
-                // barracuda and piranha missiles
+                // barracuda missiles
                 else if (wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
                     boolean onlyBarracuda = true;
-                    boolean onlyPiranha = true;
                     for (int wId : weapon.getBayWeapons()) {
                         Mounted bweap = ae.getEquipment(wId);
                         Mounted bammo = bweap.getLinked();
@@ -709,10 +707,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             AmmoType batype = (AmmoType) bammo.getType();
                             if (batype.getAmmoType() != AmmoType.T_BARRACUDA) {
                                 onlyBarracuda = false;
-                            }
-                            if ((batype.getAmmoType() != AmmoType.T_PIRANHA)
-                                    && (batype.getAmmoType() != AmmoType.T_BARRACUDA)) {
-                                onlyPiranha = false;
                             }
                         }
                     }
@@ -1060,35 +1054,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Electro-Magnetic Interference
         if (game.getPlanetaryConditions().hasEMI() && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
             toHit.addModifier(2, "EMI");
-        }
-
-        // handle LAM speial rules
-
-        // a temporary variable so I don't need to keep casting.
-        LandAirMech lam;
-        if (ae instanceof LandAirMech) {
-            lam = (LandAirMech) ae;
-            if (lam.isInMode(LandAirMech.MODE_AIRMECH)) {
-                toHit.addModifier(2, "Attacker is a Flying Airmek");
-            }
-        }
-        if (target instanceof LandAirMech) {
-            lam = (LandAirMech) target;
-            if (lam.isInMode(LandAirMech.MODE_AIRMECH) && target.isAirborne()) {
-                if (ae.isAirborne()) {
-                    toHit.addModifier(-1, "Target is a flying Airmek"); // and
-                    // we
-                    // are
-                    // too.
-                } else {
-                    toHit.addModifier(4, "Target is a flying Airmek");// and
-                    // we
-                    // are
-                    // on
-                    // the
-                    // ground
-                }
-            }
         }
 
         if(ae.isAirborne() && !(ae instanceof Aero)) {

@@ -53,13 +53,13 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
 import megamek.common.ManeuverType;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Protomech;
 import megamek.common.SpaceStation;
@@ -71,7 +71,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.Warship;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
@@ -113,9 +112,6 @@ DoneButtoned, KeyListener {
     public static final String MOVE_DIG_IN = "moveDigIn"; //$NON-NLS-1$
     public static final String MOVE_FORTIFY = "moveFortify"; //$NON-NLS-1$
     public static final String MOVE_SHAKE_OFF = "moveShakeOff"; //$NON-NLS-1$
-    public static final String MOVE_MODE_MECH = "moveModeMech"; //$NON-NLS-1$
-    public static final String MOVE_MODE_AIRMECH = "moveModeAirmech"; //$NON-NLS-1$
-    public static final String MOVE_MODE_AIRCRAFT = "moveModeAircraft"; //$NON-NLS-1$
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
     public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
     public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
@@ -943,28 +939,6 @@ DoneButtoned, KeyListener {
         }
         setupButtonPanel();
 
-        // handle land air mech transformations
-        updateTransformationButtons(ce);
-    }
-
-    /**
-     * This funtcion is called to update the transformation buttons.
-     *
-     * @param ce
-     *            the current entity
-     */
-    private void updateTransformationButtons(Entity ce) {
-        if (ce instanceof LandAirMech) {
-            final LandAirMech lam = (LandAirMech) ce;
-
-            setLAMmechModeEnabled(lam.canConvertToMech());
-            setLAMairmechModeEnabled(lam.canConvertToAirmech());
-            setLAMaircraftModeEnabled(lam.canConvertToAircraft());
-        } else {
-            setLAMmechModeEnabled(false);
-            setLAMairmechModeEnabled(false);
-            setLAMaircraftModeEnabled(false);
-        }
     }
 
     /**
@@ -1213,7 +1187,7 @@ DoneButtoned, KeyListener {
 
         disableButtons();
         clientgui.bv.clearMovementData();
-        if (ce().hasUMU() || (ce() instanceof LandAirMech)) {
+        if (ce().hasUMU()) {
             client.sendUpdateEntity(ce());
         }
         client.moveEntity(cen, md);
@@ -2593,25 +2567,15 @@ DoneButtoned, KeyListener {
             }
             gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
-            if ((ce instanceof LandAirMech) && ((LandAirMech) ce).isInMode(LandAirMech.MODE_AIRMECH)) {
-
-                if (cmd.isFlying()) {
-                    cmd.addStep(MoveStepType.LAND);
-                    gear = MovementDisplay.GEAR_JUMP;
-                } else {
-                    cmd.addStep(MoveStepType.TAKEOFF);
-                    gear = MovementDisplay.GEAR_JUMP;
-                }
-            } else {
-                if ((gear != MovementDisplay.GEAR_JUMP) &&
-                        !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
-                    clearAllMoves();
-                }
-                if (!cmd.isJumping()) {
-                    cmd.addStep(MoveStepType.START_JUMP);
-                }
-                gear = MovementDisplay.GEAR_JUMP;
+            if ((gear != MovementDisplay.GEAR_JUMP) &&
+                    !((cmd.getLastStep() != null) && cmd.getLastStep().isFirstStep() && (cmd.getLastStep().getType() == MoveStepType.LAY_MINE))) {
+                clearAllMoves();
             }
+            if (!cmd.isJumping()) {
+                cmd.addStep(MoveStepType.START_JUMP);
+            }
+            gear = MovementDisplay.GEAR_JUMP;
+
         } else if (ev.getActionCommand().equals(MOVE_SWIM)) {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clearAllMoves();
@@ -2831,33 +2795,6 @@ DoneButtoned, KeyListener {
         } else if (ev.getActionCommand().equals(MOVE_SHAKE_OFF)) {
             cmd.addStep(MoveStepType.SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce, cmd);
-        } else if (ev.getActionCommand().equals(MOVE_MODE_MECH)) {
-            clearAllMoves();
-            if (ce instanceof LandAirMech) {
-                final LandAirMech lam = (LandAirMech) client.getEntity(ce.getId());
-
-                lam.convertToMode(LandAirMech.MODE_MECH);
-                updateTransformationButtons(lam);
-                clientgui.mechD.displayEntity(lam);
-            }
-        } else if (ev.getActionCommand().equals(MOVE_MODE_AIRMECH)) {
-            clearAllMoves();
-            if (ce instanceof LandAirMech) {
-                final LandAirMech lam = (LandAirMech) client.getEntity(ce.getId());
-
-                lam.convertToMode(LandAirMech.MODE_AIRMECH);
-                updateTransformationButtons(lam);
-                clientgui.mechD.displayEntity(lam);
-            }
-        } else if (ev.getActionCommand().equals(MOVE_MODE_AIRCRAFT)) {
-            clearAllMoves();
-            if (ce instanceof LandAirMech) {
-                final LandAirMech lam = (LandAirMech) client.getEntity(ce.getId());
-
-                lam.convertToMode(LandAirMech.MODE_AIRCRAFT);
-                updateTransformationButtons(lam);
-                clientgui.mechD.displayEntity(lam);
-            }
         } else if (ev.getActionCommand().equals(MOVE_RECKLESS)) {
             cmd.setCareful(false);
         } else if (ev.getActionCommand().equals(MOVE_ACCN)) {
@@ -3263,18 +3200,6 @@ DoneButtoned, KeyListener {
     private void setRecklessEnabled(boolean enabled) {
         butReckless.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRecklessEnabled(enabled);
-    }
-
-    private void setLAMmechModeEnabled(boolean enabled) {
-        clientgui.getMenuBar().setMoveLAMmechModeEnabled(enabled);
-    }
-
-    private void setLAMairmechModeEnabled(boolean enabled) {
-        clientgui.getMenuBar().setMoveLAMairmechModeEnabled(enabled);
-    }
-
-    private void setLAMaircraftModeEnabled(boolean enabled) {
-        clientgui.getMenuBar().setMoveLAMaircraftModeEnabled(enabled);
     }
 
     private void setAccEnabled(boolean enabled) {

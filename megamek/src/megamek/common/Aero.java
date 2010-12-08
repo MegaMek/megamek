@@ -2539,7 +2539,7 @@ public class Aero extends Entity {
         return roll;
     }
     
-    public PilotingRollData checkHorizontalLanding(EntityMovementType moveType, int velocity, Coords pos, int face) {
+    public PilotingRollData checkHorizontalLanding(EntityMovementType moveType, int velocity, Coords currentPos, int face) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         
         int velmod = Math.max(0, velocity - 3);
@@ -2566,17 +2566,26 @@ public class Aero extends Entity {
         boolean lightWoods = false;
         boolean rough = false;
         boolean heavyWoods = false;
-        for (int i = 0; i < getLandingLength(); i++) {
-            pos = pos.translated(face);
-            IHex hex = game.getBoard().getHex(pos);
-            if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
-                rough = true;
-            }
-            if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
-                lightWoods = true;
-            }
-            if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
-                heavyWoods = true;
+        //dropships need a a landing strip three hexes wide
+        Vector<Coords> startingPos =  new Vector<Coords>();
+        startingPos.add(currentPos);
+        if(this instanceof Dropship) {
+            startingPos.add(currentPos.translated((face + 4)%6));
+            startingPos.add(currentPos.translated((face + 2)%6));
+        }
+        for(Coords pos : startingPos) {
+            for (int i = 0; i < getLandingLength(); i++) {
+                pos = pos.translated(face);
+                IHex hex = game.getBoard().getHex(pos);
+                if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+                    rough = true;
+                }
+                if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
+                    lightWoods = true;
+                }
+                if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
+                    heavyWoods = true;
+                }
             }
         }
         if(rough) {
@@ -3339,65 +3348,97 @@ public class Aero extends Entity {
         return !isSpheroid();
     }
 
-    public boolean hasRoomForHorizontalTakeOff() {
+    public String hasRoomForHorizontalTakeOff() {
         // walk along the hexes in the facing of the unit
-        Coords pos = getPosition();
-        IHex hex = game.getBoard().getHex(pos);
+        IHex hex = game.getBoard().getHex(getPosition());
         int elev = hex.getElevation();
         int facing = getFacing();
-        for (int i = 0; i < getTakeOffLength(); i++) {
-            pos = pos.translated(facing);
-            //check for buildings
-            if(game.getBoard().getBuildingAt(pos) != null) {
-                return false;
-            }
-            hex = game.getBoard().getHex(pos);
-            // if the hex is null, then we are offboard. Don't let units
-            // take off offboard.
-            if (null == hex) {
-                return false;
-            }
-            if (!hex.isClearForTakeoff()) {
-                return false;
-            }
-            if (hex.getElevation() != elev) {
-                return false;
+        String lenString = " (" + getTakeOffLength() + " hexes required)";
+        //dropships need a strip three hexes wide
+        Vector<Coords> startingPos =  new Vector<Coords>();
+        startingPos.add(getPosition());
+        if(this instanceof Dropship) {
+            startingPos.add(getPosition().translated((facing+4)%6));
+            startingPos.add(getPosition().translated((facing+2)%6));
+        }
+        for(Coords pos : startingPos) {
+            for (int i = 0; i < getTakeOffLength(); i++) {
+                pos = pos.translated(facing);
+                //check for buildings
+                if(game.getBoard().getBuildingAt(pos) != null) {
+                    return "Buildings in the way" + lenString;
+                }
+                //no units in the way
+                Enumeration<Entity> entities = game.getEntities(pos);
+                while(entities.hasMoreElements()) {
+                    Entity en = entities.nextElement();
+                    if(!en.isAirborne()) {
+                        return "Ground units in the way" + lenString;
+                    }
+                }
+                hex = game.getBoard().getHex(pos);
+                // if the hex is null, then we are offboard. Don't let units
+                // take off offboard.
+                if (null == hex) {
+                    return "Not enough room on map" + lenString;
+                }
+                if (!hex.isClearForTakeoff()) {
+                    return "Unacceptable terrain for landing" + lenString;
+                }
+                if (hex.getElevation() != elev) {
+                    return "Runway must contain no elevation change" + lenString;
+                }
             }
         }
-        //TODO: if the unit is a dropship then the landing strip must be three hexes wide      
         
-        
-        return true;
+        return null;
     }
     
-    public boolean hasRoomForHorizontalLanding() {
+    public String hasRoomForHorizontalLanding() {
         // walk along the hexes in the facing of the unit
-        Coords pos = getPosition();
-        IHex hex = game.getBoard().getHex(pos);
+        IHex hex = game.getBoard().getHex(getPosition());
         int elev = hex.getElevation();
         int facing = getFacing();
-        for (int i = 0; i < getLandingLength(); i++) {
-            pos = pos.translated(facing);
-            //check for buildings
-            if(game.getBoard().getBuildingAt(pos) != null) {
-                return false;
-            }
-            hex = game.getBoard().getHex(pos);
-            // if the hex is null, then we are offboard. Don't let units
-            // take off offboard.
-            if (null == hex) {
-                return false;
-            }
-            //landing must only be clear 
-            if (!hex.isClearForLanding()) {
-                return false;
-            }
-            
-            if (hex.getElevation() != elev) {
-                return false;
+        String lenString = " (" + getLandingLength() + " hexes required)";
+        //dropships need a a landing strip three hexes wide
+        Vector<Coords> startingPos =  new Vector<Coords>();
+        startingPos.add(getPosition());
+        if(this instanceof Dropship) {
+            startingPos.add(getPosition().translated((facing+5)%6));
+            startingPos.add(getPosition().translated((facing+1)%6));
+        }
+        for(Coords pos : startingPos) {
+            for (int i = 0; i < getLandingLength(); i++) {
+                pos = pos.translated(facing);
+                //check for buildings
+                if(game.getBoard().getBuildingAt(pos) != null) {
+                    return "Buildings in the way" + lenString;
+                }
+                //no units in the way
+                Enumeration<Entity> entities = game.getEntities(pos);
+                while(entities.hasMoreElements()) {
+                    Entity en = entities.nextElement();
+                    if(!en.isAirborne()) {
+                        return "Ground units in the way" + lenString;
+                    }
+                }
+                hex = game.getBoard().getHex(pos);
+                // if the hex is null, then we are offboard. Don't let units
+                // take off offboard.
+                if (null == hex) {
+                    return "Not enough room on map" + lenString;
+                }
+                //landing must only be clear 
+                if (!hex.isClearForLanding()) {
+                    return "Unacceptable terrain for landing" + lenString;
+                }
+                
+                if (hex.getElevation() != elev) {
+                    return "Landing strip must contain no elevation change" + lenString;
+                }
             }
         }
-        return true;
+        return null;
     }
 
     public boolean canTakeOffVertically() {

@@ -3838,7 +3838,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 break;
             case LAND:
                 // announce land
-                String land = Messages.getString("BoardView1.LAND"); //$NON-NLS-1$
+                String land = Messages.getString("BoardView1.Land"); //$NON-NLS-1$
                 if (step.isPastDanger()) {
                     land = "(" + land + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }

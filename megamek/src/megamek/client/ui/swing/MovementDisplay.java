@@ -3280,9 +3280,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             dumpBombs();
         }
         else if (ev.getActionCommand().equals(MOVE_TAKE_OFF)) {
-            if((ce() instanceof Aero) && !((Aero)ce()).hasRoomForHorizontalTakeOff()) {
+            if((ce() instanceof Aero) && null != ((Aero)ce()).hasRoomForHorizontalTakeOff()) {
                 String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
-                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).getTakeOffLength()}); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).hasRoomForHorizontalTakeOff()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
             } else {
                 if(clientgui.doYesNoDialog(Messages.getString("MovementDisplay.TakeOffDialog.title"), Messages.getString("MovementDisplay.TakeOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -3300,13 +3300,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
         else if (ev.getActionCommand().equals(MOVE_LAND)) {
-            if((ce() instanceof Aero) && !((Aero)ce()).hasRoomForHorizontalLanding()) {
-                String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
-                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).getLandingLength()}); //$NON-NLS-1$
+            if((ce() instanceof Aero) && null != ((Aero)ce()).hasRoomForHorizontalLanding()) {
+                String title = Messages.getString("MovementDisplay.NoLandingDialog.title"); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.NoLandingDialog.message", new Object[] {((Aero)ce()).hasRoomForHorizontalLanding()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
             } else {
                 cmd.addStep(MoveStepType.LAND);
-                clientgui.bv.drawMovementData(ce, cmd);
             }
         }
         updateProneButtons();

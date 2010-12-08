@@ -221,7 +221,9 @@ public interface IHex extends Cloneable {
     
     public abstract int getUnstuckModifier(int elev);
     
-    public abstract boolean isClear();
+    public abstract boolean isClearForTakeoff();
+    
+    public abstract boolean isClearForLanding();
     
     public abstract Coords getCoords();
 }

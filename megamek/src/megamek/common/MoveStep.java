@@ -747,7 +747,7 @@ public class MoveStep implements Serializable {
             setMp(0);
             break;
         case LAND:
-            setMp(2);
+            setMp(0);
             break;
         case ACCN:
             setVelocityN(getVelocityN()+1);
@@ -1591,6 +1591,11 @@ public class MoveStep implements Serializable {
                 return;
             }
 
+            //no moves after landing
+            if (!isFirstStep() && (prev.getType() == MoveStepType.LAND)) {
+                return;
+            }
+            
             //can only use safe thrust when ammo (or bomb) dumping
             //(unless out of control?)
             boolean bDumping = false;//a.isDumpingBombs();

@@ -191,6 +191,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butJoin;
     private JButton butTakeOff;
     private JButton butVTakeOff;
+    private JButton butLand;
 
     private JButton butTurnLeft;
     private JButton butTurnRight;
@@ -487,6 +488,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butVTakeOff.setActionCommand(MOVE_VERT_TAKE_OFF);
         butVTakeOff.addKeyListener(this);
 
+        butLand = new JButton(Messages.getString("MovementDisplay.butLand")); //$NON-NLS-1$
+        butLand.addActionListener(this);
+        butLand.setEnabled(false);
+        butLand.setActionCommand(MOVE_LAND);
+        butLand.addKeyListener(this);
+        
         butManeuver = new JButton(Messages
                 .getString("MovementDisplay.butManeuver")); //$NON-NLS-1$
         butManeuver.addActionListener(this);
@@ -568,6 +575,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butShakeOff);
         buttonsTank.add(butRaise);
         buttonsTank.add(butLower);
+        buttonsTank.add(butTakeOff);
+        buttonsTank.add(butVTakeOff);
 
         buttonsVtol = new ArrayList<JButton>(15);
         buttonsVtol.add(butWalk);
@@ -625,8 +634,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            buttonsAero.add(butTakeOff);
-            buttonsAero.add(butVTakeOff);
+            buttonsAero.add(butLand);
         } else {
             buttonsAero.add(butThrust);
             buttonsAero.add(butTurnLeft);
@@ -644,10 +652,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            buttonsAero.add(butTakeOff);
-            buttonsAero.add(butVTakeOff);
+            buttonsAero.add(butLand);
         }
-        // TODO: allow Aeros to taxi if on the ground
 
         // layout button grid
         panButtons = new JPanel();
@@ -830,6 +836,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateLoadButtons();
         updateElevationButtons();
         updateTakeOffButtons();
+        updateLandButton();
         updateJoinButton();
         updateRecoveryButton();
         updateDumpButton();
@@ -987,6 +994,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setJoinEnabled(false);
         setTakeOffEnabled(false);
         setVTakeOffEnabled(false);
+        setLandEnabled(false);
         setLowerEnabled(false);
         setRecklessEnabled(false);
         setEvadeAeroEnabled(false);
@@ -1028,6 +1036,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateSearchlightButton();
         updateElevationButtons();
         updateTakeOffButtons();
+        updateLandButton();
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
@@ -1546,6 +1555,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateLoadButtons();
             updateElevationButtons();
             updateTakeOffButtons();
+            updateLandButton();
             updateEvadeButton();
             updateFlyOffButton();
             updateLaunchButton();
@@ -1661,6 +1671,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setTakeOffEnabled(false);
             setVTakeOffEnabled(false);
         }
+    }
+    
+    private void updateLandButton() {
+        
+        //http://www.classicbattletech.com/forums/index.php?topic=54112.0
+        //so you can move normally and then land
+        
+        final Entity ce = ce();
+        if (null == ce) {
+            return;
+        }  
+
+        //only allow landing on the ground map not atmosphere or space map
+        if(!clientgui.getClient().game.getBoard().onGround()) {
+            return;
+        }
+        
+        if(ce instanceof Aero) {
+            if(ce.isAirborne() && cmd.getFinalAltitude() == 1) {
+               setLandEnabled(((Aero)ce).canLandHorizontally());
+            }
+        }
+        
     }
 
     private void updateRollButton() {
@@ -3266,12 +3299,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 ready();
             }
         }
+        else if (ev.getActionCommand().equals(MOVE_LAND)) {
+            if((ce() instanceof Aero) && !((Aero)ce()).hasRoomForHorizontalLanding()) {
+                String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).getLandingLength()}); //$NON-NLS-1$
+                clientgui.doAlertDialog(title, body);
+            } else {
+                cmd.addStep(MoveStepType.LAND);
+                clientgui.bv.drawMovementData(ce, cmd);
+            }
+        }
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
         updateLoadButtons();
         updateElevationButtons();
         updateTakeOffButtons();
+        updateLandButton();
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
@@ -3671,6 +3715,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setVTakeOffEnabled(boolean enabled) {
         butVTakeOff.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);
+    }
+    
+    private void setLandEnabled(boolean enabled) {
+        butLand.setEnabled(enabled);
+        //clientgui.getMenuBar().setMoveLandEnabled(enabled);
     }
 
     private void setManeuverEnabled(boolean enabled) {

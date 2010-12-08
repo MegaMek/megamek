@@ -943,7 +943,7 @@ KeyListener, ItemListener, ListSelectionListener {
         }
 
         // declare searchlight, if possible
-        if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+        if (GUIPreferences.getInstance().getAutoDeclareSearchlight() && ce().isUsingSpotlight()) {
             doSearchlight();
         }
 

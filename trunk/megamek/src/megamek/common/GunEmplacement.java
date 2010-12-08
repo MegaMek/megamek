@@ -330,7 +330,7 @@ public class GunEmplacement extends Tank implements Serializable {
     }
 
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return 0;
     }
 

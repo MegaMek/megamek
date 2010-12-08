@@ -2195,8 +2195,8 @@ public class Aero extends Entity {
      * Tanks don't have MASC
      */
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat);
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override

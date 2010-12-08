@@ -346,7 +346,7 @@ public class MechSummaryCache {
         ms.setUnloadedCost(((int) e.getCost(true)));
         ms.setCanon(e.isCanon());
         ms.setWalkMp(e.getWalkMP(false, false));
-        ms.setRunMp(e.getRunMP(false, false));
+        ms.setRunMp(e.getRunMP(false, false, false));
         ms.setJumpMp(e.getJumpMP(false));
         ms.setClan(e.isClan());
         if (e instanceof Mech) {

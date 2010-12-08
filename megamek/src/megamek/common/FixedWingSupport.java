@@ -79,4 +79,21 @@ public class FixedWingSupport extends ConvFighter {
     }
 
 
+    @Override
+    public boolean isVSTOL() {
+        if (hasWorkingMisc(MiscType.F_VSTOL_CHASSIS, -1)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isSTOL() {
+        if (hasWorkingMisc(MiscType.F_STOL_CHASSIS, -1)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

@@ -132,9 +132,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     private MenuItem moveLower = null;
     private MenuItem moveReckless = null;
     private MenuItem moveEvade = null;
-    private MenuItem moveLAMmechMode = null;
-    private MenuItem moveLAMairmechMode = null;
-    private MenuItem moveLAMaircraftMode = null;
     private MenuItem moveAcc = null;
     private MenuItem moveDec = null;
     private MenuItem moveAccN = null;
@@ -514,16 +511,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
                 submenu,
                 Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
         moveDump = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$
-        submenu.addSeparator();
-        moveLAMmechMode = createMenuItem(
-                submenu,
-                Messages.getString("CommonMenuBar.moveLAMmechMode"), MovementDisplay.MOVE_MODE_MECH); //$NON-NLS-1$
-        moveLAMairmechMode = createMenuItem(
-                submenu,
-                Messages.getString("CommonMenuBar.moveLAMairmechMode"), MovementDisplay.MOVE_MODE_AIRMECH); //$NON-NLS-1$
-        moveLAMaircraftMode = createMenuItem(
-                submenu,
-                Messages.getString("CommonMenuBar.moveLAMaircraftMode"), MovementDisplay.MOVE_MODE_AIRCRAFT); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add(submenu);
@@ -974,7 +961,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setMoveFleeEnabled(boolean enabled) {
         moveFlee.setEnabled(enabled);
     }
-    
+
     public synchronized void setMoveFlyOffEnabled(boolean enabled) {
         moveFlyOff.setEnabled(enabled);
     }
@@ -1015,17 +1002,6 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveReckless.setEnabled(enabled);
     }
 
-    public synchronized void setMoveLAMmechModeEnabled(boolean enabled) {
-        moveLAMmechMode.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveLAMairmechModeEnabled(boolean enabled) {
-        moveLAMairmechMode.setEnabled(enabled);
-    }
-
-    public synchronized void setMoveLAMaircraftModeEnabled(boolean enabled) {
-        moveLAMaircraftMode.setEnabled(enabled);
-    }
     public synchronized void setMoveAccEnabled(boolean enabled) {
         moveAcc.setEnabled(enabled);
     }
@@ -1215,7 +1191,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
     public synchronized void setFireModeEnabled(boolean enabled) {
         fireMode.setEnabled(enabled);
     }
-    
+
     public synchronized void setFireCalledEnabled(boolean enabled) {
         fireCalled.setEnabled(enabled);
     }

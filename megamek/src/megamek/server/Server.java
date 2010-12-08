@@ -3229,6 +3229,55 @@ public class Server implements Runnable {
         return true;
     }
 
+    /**
+     * Do a piloting skill check to attempt landing
+     *
+     * @param entity
+     *            The <code>Entity</code> that is landing
+     * @param roll
+     *            The <code>PilotingRollData</code> to be used for this landing.
+     *
+     * @return true if check succeeds, false otherwise.
+     *
+     */
+    private void doAttemptLanding(Entity entity, PilotingRollData roll) {
+
+        if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            return;
+        }
+
+        // okay, print the info
+        Report r = new Report(9605);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(roll.getLastPlainDesc(), true);
+        addReport(r);
+
+        // roll
+        final int diceRoll = Compute.d6(2);
+        r = new Report(9606);
+        r.subject = entity.getId();
+        r.add(roll.getValueAsString());
+        r.add(roll.getDesc());
+        r.add(diceRoll);
+        //boolean suc;
+        if (diceRoll < roll.getValue()) {
+            r.choose(false);
+            addReport(r);
+            int damage = 10*(roll.getValue() - diceRoll);
+            while(damage > 0) {
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                addReport(damageEntity(entity, hit, 10));
+                damage -= 10;
+            }
+            //suc = false;
+        } else {
+            r.choose(true);
+            addReport(r);
+            //suc = true;
+        }
+    }
+    
     private boolean launchUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int velocity,
             int altitude, int[] moveVec, int bonus) {
 
@@ -5219,6 +5268,15 @@ public class Server implements Runnable {
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
+                
+                if(step.getType() == MoveStepType.LAND) {
+                    rollTarget = a.checkHorizontalLanding(overallMoveType, md.getFinalVelocity(), md.getFinalCoords(), md.getFinalFacing());
+                    doAttemptLanding(entity, rollTarget);
+                    curPos = curPos.translated(md.getFinalFacing(), a.getLandingLength());
+                    //don't actually land the unit until later so that a variety of things can
+                    //happen for the airborne part (like fuel consumption)
+                    break;
+                }
             }
 
             // check piloting skill for getting up
@@ -6199,67 +6257,71 @@ public class Server implements Runnable {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
             }
-
-            // jumpships and space stations need to reduce accumulated thrust if
-            // they spend some
-            if (entity instanceof Jumpship) {
-                Jumpship js = (Jumpship) entity;
-                double penalty = 0.0;
-                // jumpships do not accumulate thrust when they make a turn or
-                // change velocity
-                if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
-                    // I need to subtract the station keeping thrust from their
-                    // accumulated thrust
-                    // because they did not actually use it
-                    penalty = js.getStationKeepingThrust();
-                }
-                if (thrust > 0) {
-                    penalty = thrust;
-                }
-                if (penalty > 0.0) {
-                    js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
-                }
-            }
-
-            // check to see if thrust exceeded SI
-
-            rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                game.addControlRoll(new PilotingRollData(a.getId(), 0, "Thrust spent during turn exceeds SI"));
-            }
-
-            if (!game.getBoard().inSpace()) {
-                rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "Velocity greater than 2x safe thrust"));
-                }
-
-                rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    game.addControlRoll(new PilotingRollData(a.getId(), md.getFinalNDown(),
-                            "descended more than two altitudes"));
-                }
-
-                // check for hovering
-                rollTarget = a.checkHover(md);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
-                }
-
-                // check for aero stall
-                rollTarget = a.checkStall(md);
-                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    r = new Report(9391);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.newlines = 0;
-                    addReport(r);
-                    game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
-                    a.setAltitude(a.getAltitude() - 1);
-                    // check for crash
-                    if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                        addReport(processCrash(entity, 0, entity.getPosition()));
+            
+            if(md.contains(MoveStepType.LAND)) {
+                a.land();
+            } else {
+    
+                // jumpships and space stations need to reduce accumulated thrust if
+                // they spend some
+                if (entity instanceof Jumpship) {
+                    Jumpship js = (Jumpship) entity;
+                    double penalty = 0.0;
+                    // jumpships do not accumulate thrust when they make a turn or
+                    // change velocity
+                    if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
+                        // I need to subtract the station keeping thrust from their
+                        // accumulated thrust
+                        // because they did not actually use it
+                        penalty = js.getStationKeepingThrust();
                     }
+                    if (thrust > 0) {
+                        penalty = thrust;
+                    }
+                    if (penalty > 0.0) {
+                        js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
+                    }
+                }
+    
+                // check to see if thrust exceeded SI
+    
+                rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "Thrust spent during turn exceeds SI"));
+                }
+    
+                if (!game.getBoard().inSpace()) {
+                    rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
+                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                        game.addControlRoll(new PilotingRollData(a.getId(), 0, "Velocity greater than 2x safe thrust"));
+                    }
+    
+                    rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
+                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                        game.addControlRoll(new PilotingRollData(a.getId(), md.getFinalNDown(),
+                                "descended more than two altitudes"));
+                    }
+    
+                    // check for hovering
+                    rollTarget = a.checkHover(md);
+                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                        game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
+                    }
+    
+                    // check for aero stall
+                    rollTarget = a.checkStall(md);
+                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                        r = new Report(9391);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.newlines = 0;
+                        addReport(r);
+                        game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
+                        a.setAltitude(a.getAltitude() - 1);
+                        // check for crash
+                        if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                            addReport(processCrash(entity, 0, entity.getPosition()));
+                        }
                 }
 
                 //check to see if spheroids should lose one altitude
@@ -6276,6 +6338,7 @@ public class Server implements Runnable {
                         addReport(processCrash(entity, 0, entity.getPosition()));
                     }
                 }
+            }
             }
         }
 

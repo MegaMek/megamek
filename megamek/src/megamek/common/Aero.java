@@ -2490,7 +2490,7 @@ public class Aero extends Entity {
     public PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid() && !game.getBoard().inSpace()) {
+        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid() && !game.getBoard().inSpace() && !md.contains(MoveStepType.LAND)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "stalled out"));
         } else {
@@ -2536,6 +2536,59 @@ public class Aero extends Entity {
 
         // TODO: Taking off from a crater? What constitutes a crater?
 
+        return roll;
+    }
+    
+    public PilotingRollData checkHorizontalLanding(EntityMovementType moveType, int velocity, Coords pos, int face) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
+        
+        int velmod = Math.max(0, velocity - 3);
+        if(velmod > 0) {
+            roll.addModifier(velmod, "excess velocity");
+        }
+        if ((getLeftThrustHits() + getRightThrustHits()) > 0) {
+            roll.addModifier(+4, "Maneuvering thrusters damaged");
+        }
+        if (isGearHit()) {
+            roll.addModifier(+3, "landing gear damaged");
+        }
+        if(getArmor(LOC_NOSE) <= 0) {
+            roll.addModifier(+2, "nose armor destroyed");
+        }
+        if(getCurrentThrust() <= 0) {
+            if(isSpheroid()) {
+                roll.addModifier(+8, "no thrust");
+            } else {
+                roll.addModifier(+4, "no thrust");
+            }
+        }
+        //terrain mods
+        boolean lightWoods = false;
+        boolean rough = false;
+        boolean heavyWoods = false;
+        for (int i = 0; i < getLandingLength(); i++) {
+            pos = pos.translated(face);
+            IHex hex = game.getBoard().getHex(pos);
+            if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+                rough = true;
+            }
+            if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
+                lightWoods = true;
+            }
+            if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
+                heavyWoods = true;
+            }
+        }
+        if(rough) {
+            roll.addModifier(+3, "rough/rubble in landing path");
+        }
+        if(lightWoods) {
+            roll.addModifier(+4, "light woods in landing path");
+        }
+        if(heavyWoods) {
+            roll.addModifier(+5, "heavy woods in landing path");
+        }
+        
         return roll;
     }
 
@@ -3261,6 +3314,7 @@ public class Aero extends Entity {
         setOutControl(false);
         setOutCtrlHeat(false);
         setRandomMove(false);
+        this.delta_distance = 0;
     }
 
     public int getTakeOffLength() {
@@ -3269,9 +3323,20 @@ public class Aero extends Entity {
         }
         return 20;
     }
+    
+    public int getLandingLength() {
+        if(isVSTOL()) {
+            return 5;
+        }
+        return 8;
+    }
 
     public boolean canTakeOffHorizontally() {
         return !isSpheroid() && (getCurrentThrust() > 0);
+    }
+    
+    public boolean canLandHorizontally() {
+        return !isSpheroid();
     }
 
     public boolean hasRoomForHorizontalTakeOff() {
@@ -3282,15 +3347,52 @@ public class Aero extends Entity {
         int facing = getFacing();
         for (int i = 0; i < getTakeOffLength(); i++) {
             pos = pos.translated(facing);
+            //check for buildings
+            if(game.getBoard().getBuildingAt(pos) != null) {
+                return false;
+            }
             hex = game.getBoard().getHex(pos);
             // if the hex is null, then we are offboard. Don't let units
             // take off offboard.
             if (null == hex) {
                 return false;
             }
-            if (!hex.isClear()) {
+            if (!hex.isClearForTakeoff()) {
                 return false;
             }
+            if (hex.getElevation() != elev) {
+                return false;
+            }
+        }
+        //TODO: if the unit is a dropship then the landing strip must be three hexes wide      
+        
+        
+        return true;
+    }
+    
+    public boolean hasRoomForHorizontalLanding() {
+        // walk along the hexes in the facing of the unit
+        Coords pos = getPosition();
+        IHex hex = game.getBoard().getHex(pos);
+        int elev = hex.getElevation();
+        int facing = getFacing();
+        for (int i = 0; i < getLandingLength(); i++) {
+            pos = pos.translated(facing);
+            //check for buildings
+            if(game.getBoard().getBuildingAt(pos) != null) {
+                return false;
+            }
+            hex = game.getBoard().getHex(pos);
+            // if the hex is null, then we are offboard. Don't let units
+            // take off offboard.
+            if (null == hex) {
+                return false;
+            }
+            //landing must only be clear 
+            if (!hex.isClearForLanding()) {
+                return false;
+            }
+            
             if (hex.getElevation() != elev) {
                 return false;
             }

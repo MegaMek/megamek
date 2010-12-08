@@ -498,10 +498,21 @@ public class Hex implements IHex, Serializable {
         
     }
     
-    public boolean isClear() {
-        //FIXME: for now just return true, need to loop through terrain anything but paved and fluff returns false
+    public boolean isClearForTakeoff() {
         for(int i = 0; i < Terrains.SIZE; i++) {
-            if(containsTerrain(i) && i != Terrains.PAVEMENT && i != Terrains.FLUFF && i != Terrains.ARMS && i != Terrains.LEGS) {
+            if(containsTerrain(i) && i != Terrains.PAVEMENT && i!=Terrains.ROAD
+                    && i != Terrains.FLUFF && i != Terrains.ARMS && i != Terrains.LEGS) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean isClearForLanding() {
+        for(int i = 0; i < Terrains.SIZE; i++) {
+            if(containsTerrain(i) && i != Terrains.PAVEMENT && i!=Terrains.ROAD
+                    && i != Terrains.ROUGH && i != Terrains.RUBBLE && i != Terrains.WOODS
+                    && i != Terrains.FLUFF && i != Terrains.ARMS && i != Terrains.LEGS) {
                 return false;
             }
         }

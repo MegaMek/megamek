@@ -129,6 +129,12 @@ public class SharedUtility {
                 rollTarget = ((Aero)entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
+            
+            //check for landing
+            if((step.getType() == MoveStepType.LAND) && (entity instanceof Aero)) {
+                rollTarget = ((Aero)entity).checkHorizontalLanding(moveType, step.getVelocity(), curPos, curFacing);
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             //check for leap
             if(!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)

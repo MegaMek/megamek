@@ -3836,6 +3836,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.drawString(hover, hoverX - 1, hoverY);
                 drawMovementCost(step, stepPos, graph, col, false);
                 break;
+            case LAND:
+                // announce land
+                String land = Messages.getString("BoardView1.LAND"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    land = "(" + land + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int landX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(land) / 2);
+                int landY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(land, landX, landY + 1);
+                graph.setColor(col);
+                graph.drawString(land, landX - 1, landY);
+                break;
             default:
                 break;
             }

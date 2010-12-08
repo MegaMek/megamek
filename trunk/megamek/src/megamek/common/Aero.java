@@ -2815,6 +2815,10 @@ public class Aero extends Entity {
         return vstol;
     }
 
+    public boolean isSTOL() {
+        return false;
+    }
+
     public void setVSTOL(boolean b) {
         vstol = b;
     }

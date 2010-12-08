@@ -149,6 +149,9 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_HYPERSPECTRAL_IMAGER = BigInteger.valueOf(1).shiftLeft(105);
     public static final BigInteger F_INFRARED_IMAGER = BigInteger.valueOf(1).shiftLeft(106);
     public static final BigInteger F_LOOKDOWN_RADAR = BigInteger.valueOf(1).shiftLeft(107);
+    public static final BigInteger F_COMMAND_CONSOLE = BigInteger.valueOf(1).shiftLeft(108);
+    public static final BigInteger F_VSTOL_CHASSIS = BigInteger.valueOf(1).shiftLeft(109);
+    public static final BigInteger F_STOL_CHASSIS = BigInteger.valueOf(1).shiftLeft(110);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -830,6 +833,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLHeadTurret());
         EquipmentType.addType(MiscType.createISQuadTurret());
         EquipmentType.addType(MiscType.createCLQuadTurret());
+        EquipmentType.addType(MiscType.createCLTankCommandConsole());
+        EquipmentType.addType(MiscType.createISTankCommandConsole());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -883,6 +888,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createClanMineSweeper());
         EquipmentType.addType(MiscType.createISMobileFieldBase());
         EquipmentType.addType(MiscType.createCLMobileFieldBase());
+        EquipmentType.addType(MiscType.createSTOLChassisMod());
+        EquipmentType.addType(MiscType.createVSTOLChassisMod());
 
     }
 
@@ -4674,6 +4681,54 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5f;
         misc.cost = 400000;
         misc.flags = misc.flags.or(F_LOOKDOWN_RADAR).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createSTOLChassisMod() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "STOL Chassis Modification";
+        misc.setInternalName("STOLChassisMod");
+        misc.tonnage = 0f;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createVSTOLChassisMod() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "VSTOL Chassis Modification";
+        misc.setInternalName("VSTOLChassisMod");
+        misc.tonnage = 0f;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_VSTOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLTankCommandConsole() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Cockpit Command Console";
+        misc.setInternalName("CLTankCockpitCommandConsole");
+        misc.tonnage = 3f;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISTankCommandConsole() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Cockpit Command Console";
+        misc.setInternalName("ISTankCockpitCommandConsole");
+        misc.tonnage = 3f;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         return misc;
     }

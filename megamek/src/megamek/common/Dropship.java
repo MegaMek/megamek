@@ -484,15 +484,15 @@ public class Dropship extends SmallCraft implements Serializable {
         // locations
         double[] arcBVs = new double[locations() + 2];
         double[] arcHeats = new double[locations() + 2];
-
+        double[] ammoBVs = new double[locations() + 2];
+        
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Arc BV and Heat");
         bvText.append(endColumn);
         bvText.append(endRow);
-
-        TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
-        // first cycle through normal locations (leaving out rear-facing weapons
+      
+        // cycle through locations
         for (int loc = 0; loc < (locations() + 2); loc++) {
             int l = loc;
             boolean isRear = (loc >= locations());
@@ -516,6 +516,8 @@ public class Dropship extends SmallCraft implements Serializable {
             bvText.append(endRow);
             double arcBV = 0.0;
             double arcHeat = 0.0;
+            double arcAmmoBV = 0.0;
+            TreeMap<String, Double> weaponsForExcessiveAmmo = new TreeMap<String, Double>();
             for (Mounted mounted : getTotalWeaponList()) {
                 if (mounted.getLocation() != l) {
                     continue;
@@ -603,9 +605,87 @@ public class Dropship extends SmallCraft implements Serializable {
                 arcBV += dBV;
                 arcHeat += weaponHeat;
             }
+            //now ammo
+            Map<String, Double> ammo = new HashMap<String, Double>();
+            ArrayList<String> keys = new ArrayList<String>();
+            for (Mounted mounted : getAmmo()) {               
+                if (mounted.getLocation() != l) {
+                    continue;
+                }
+                if (mounted.isRearMounted() != isRear) {
+                    continue;
+                }
+                AmmoType atype = (AmmoType) mounted.getType();
+                // we need to deal with cases where ammo is loaded in multi-ton
+                // increments
+                // (on dropships and jumpships) - lets take the ratio of shots to
+                // shots left
+                double ratio = mounted.getShotsLeft() / atype.getShots();
+
+                // if the ratio is less than one, we will treat as a full ton since
+                // we don't make that adjustment elsewhere
+                if (ratio < 1.0) {
+                    ratio = 1.0;
+                }
+
+                // don't count depleted ammo
+                if (mounted.getShotsLeft() == 0) {
+                    continue;
+                }
+
+                // don't count AMS, it's defensive
+                if (atype.getAmmoType() == AmmoType.T_AMS) {
+                    continue;
+                }
+                // don't count screen launchers, they are defensive
+                if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+                    continue;
+                }
+
+                // don't count oneshot ammo, it's considered part of the launcher.
+                if (mounted.getLocation() == Entity.LOC_NONE) {
+                    // assumption: ammo without a location is for a oneshot weapon
+                    continue;
+                }
+                double abv = ratio * atype.getBV(this); 
+                String key = atype.getAmmoType() + ":" + atype.getRackSize();
+                String key2 = atype.getName() + ";" + key;
+                if (!keys.contains(key2)) {
+                    keys.add(key2);
+                }
+                if (!ammo.containsKey(key)) {
+                    ammo.put(key, abv);
+                } else {
+                    ammo.put(key, abv + ammo.get(key));
+                }
+            }
+            //now cycle through ammo hash and deal with excessive ammo issues
+            for (String fullkey : keys) {
+                String[] k = fullkey.split(";");
+                String key = k[1];
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(k[0]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                if (weaponsForExcessiveAmmo.get(key) != null) {
+                    if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
+                        bvText.append("+" + weaponsForExcessiveAmmo.get(key) + "*");
+                        arcAmmoBV += weaponsForExcessiveAmmo.get(key);
+                    } else {
+                        bvText.append("+" + ammo.get(key));
+                        arcAmmoBV += ammo.get(key);
+                    }
+                }
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("");
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append("<b>" + getLocationName(l) + rear + " Totals</b>");
+            bvText.append("<b>" + getLocationName(l) + rear + " Weapon Totals</b>");
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append("<b>" + arcBV + "</b>");
@@ -614,8 +694,32 @@ public class Dropship extends SmallCraft implements Serializable {
             bvText.append("<b>" + arcHeat + "</b>");
             bvText.append(endColumn);
             bvText.append(endRow);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("<b>" + getLocationName(l) + rear + " Ammo Totals</b>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("<b>" + arcAmmoBV + "</b>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("<b>" + getLocationName(l) + rear + " Totals</b>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            double tempBV = arcBV + arcAmmoBV;
+            bvText.append("<b>" + tempBV + "</b>");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("");
+            bvText.append(endColumn);
+            bvText.append(endRow);
             arcBVs[loc] = arcBV;
             arcHeats[loc] = arcHeat;
+            ammoBVs[loc] = arcAmmoBV;
         }
 
         double weaponBV = 0.0;
@@ -675,75 +779,12 @@ public class Dropship extends SmallCraft implements Serializable {
                 heatUsed += adjArcCWHeat;
             }
         }
-        /*
-        //TODO: ask welshie about this because it has never been incorporated into errata
-        //According to an email with Welshman, ammo should be now added into each arc BV
-        //for the final calculation of BV, including the excessive ammo rule
-         *
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
-        for (Mounted mounted : getAmmo()) {
-            int arc = getWeaponArc(getEquipmentNum(mounted));
-            AmmoType atype = (AmmoType) mounted.getType();
 
-            // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                continue;
-            }
-            //don't count screen launchers, they are defensive
-            if(atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
-                continue;
-            }
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-
-            String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
-            double weight = mounted.getType().getTonnage(this);
-            if (atype.isCapital()) {
-                weight = mounted.getShotsLeft() * atype.getAmmoRatio();
-            }
-            // new errata: only full tons of ammo
-            weight = Math.ceil(weight);
-            if (!keys.contains(key)) {
-                keys.add(key);
-            }
-            if (!ammo.containsKey(key)) {
-                ammo.put(key, weight*atype.getBV(this));
-            } else {
-                ammo.put(key, weight*atype.getBV(this) + ammo.get(key));
-            }
+        //ok now add in ammo to arc bvs
+        for(int i=0; i<arcBVs.length; i++) {
+            arcBVs[i] = arcBVs[i]+ammoBVs[i];
         }
-
-        // Excessive ammo rule:
-        // Only count BV for ammo for a weapontype until the BV of all weapons
-        // in that arc is reached
-        for (String key : keys) {
-            double ammoBV = 0.0;
-            int arc= Integer.parseInt(key.split(";")[1]);
-            //get the arc
-            if (weaponsForExcessiveAmmo.get(key) != null) {
-                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
-                    ammoBV += weaponsForExcessiveAmmo.get(key);
-                } else {
-                    ammoBV += ammo.get(key);
-                }
-            }
-            double currentArcBV = 0.0;
-            if(null != arcBVs.get(arc)) {
-                currentArcBV = arcBVs.get(arc);
-            }
-            arcBVs.put(arc, currentArcBV + ammoBV);
-        }
-        */
-
+        
         // ok now lets go in and add the arcs
         double totalHeat = 0.0;
         if (highArc > Integer.MIN_VALUE) {
@@ -879,84 +920,6 @@ public class Dropship extends SmallCraft implements Serializable {
         bvText.append(endColumn);
         bvText.append(endRow);
         weaponBV += oEquipmentBV;
-
-        // add ammo bv
-        double ammoBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-
-            // we need to deal with cases where ammo is loaded in multi-ton
-            // increments
-            // (on dropships and jumpships) - lets take the ratio of shots to
-            // shots left
-            double ratio = mounted.getShotsLeft() / atype.getShots();
-
-            // if the ratio is less than one, we will treat as a full ton since
-            // we don't make that adjustment elsewhere
-            if (ratio < 1.0) {
-                ratio = 1.0;
-            }
-
-            // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                continue;
-            }
-            // don't count screen launchers, they are defensive
-            if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
-                continue;
-            }
-
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-            double abv = ratio * atype.getBV(this);
-            String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key)) {
-                keys.add(key);
-            }
-            if (!ammo.containsKey(key)) {
-                ammo.put(key, abv);
-            } else {
-                ammo.put(key, abv + ammo.get(key));
-            }
-        }
-
-        // Excessive ammo rule:
-        // Only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
-        // type on the mech is reached.
-        for (String key : keys) {
-            if (weaponsForExcessiveAmmo.get(key) != null) {
-                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
-                    ammoBV += weaponsForExcessiveAmmo.get(key);
-                } else {
-                    ammoBV += ammo.get(key);
-                }
-            }
-        }
-        weaponBV += ammoBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Ammo BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(ammoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
 
         // adjust
 

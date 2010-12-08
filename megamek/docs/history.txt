@@ -31,6 +31,7 @@ v0.35.21-dev (SVN)
 + Dropship horizontal landing
 + improvements to horizontal landing
 + if all landing hexes are paved/road, assume this is an "airfield"
++ light and heavy woods landing mods should not be cumulative
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

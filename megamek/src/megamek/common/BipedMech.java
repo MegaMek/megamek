@@ -88,7 +88,7 @@ public class BipedMech extends Mech {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
@@ -129,7 +129,7 @@ public class BipedMech extends Mech {
             wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
         }
 
-        if (hasModularArmor()) {
+        if (!ignoremodulararmor && hasModularArmor()) {
             wmp--;
         }
 
@@ -179,11 +179,11 @@ public class BipedMech extends Mech {
      * Returns this mech's running/flank mp modified for leg loss & stuff.
      */
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat) {
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() == 0) {
-            return super.getRunMP(gravity, ignoreheat);
+            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
-        return getWalkMP(gravity, ignoreheat);
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
@@ -191,16 +191,16 @@ public class BipedMech extends Mech {
      */
 
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() == 0) {
-            return super.getRunMPwithoutMASC(gravity, ignoreheat);
+            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
-        return getWalkMP(gravity, ignoreheat);
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head
      *            head
      * @param ct
@@ -330,7 +330,7 @@ public class BipedMech extends Mech {
 
     /**
      * Check to see if a Biped mech has a claw in one of its arms
-     * 
+     *
      * @param location
      *            (LOC_RARM or LOC_LARM)
      * @return True/False
@@ -360,7 +360,7 @@ public class BipedMech extends Mech {
 
     /**
      * Checks to see if this bipmech has any vibro blades on them.
-     * 
+     *
      * @return boolean <code>true</code> if the mech has vibroblades
      *         <code>false</code> if not.
      */
@@ -380,7 +380,7 @@ public class BipedMech extends Mech {
 
     /**
      * Checks to see if this bipedmech has a vibroblade in this location.
-     * 
+     *
      * @param location
      * @return boolean <code>true</code> if the mech has vibroblades
      *         <code>false</code> if not.
@@ -413,7 +413,7 @@ public class BipedMech extends Mech {
 
     /**
      * Does the entity have a retracted blade in the given location
-     * 
+     *
      */
     @Override
     public boolean hasRetractedBlade(int loc) {
@@ -428,7 +428,7 @@ public class BipedMech extends Mech {
     /**
      * Checks for Active Vibroblades in <code>location</code> and returns the
      * amount of heat genereated if active.
-     * 
+     *
      * @param location
      * @return <code>int</code> amount of heat genereated by an active
      *         vibroblade.
@@ -470,7 +470,7 @@ public class BipedMech extends Mech {
 
     /**
      * Does the mech have any shields. a mech can have up to 2 shields.
-     * 
+     *
      * @return <code>true</code> if unit has a shield crit.
      */
     @Override

@@ -451,16 +451,16 @@ public class Protomech extends Entity {
      * @param ignoreheat
      * @return
      */
-    public int getRunMPwithoutMyomerBooster(boolean gravity, boolean ignoreheat) {
-        return super.getRunMP(gravity, ignoreheat);
+    public int getRunMPwithoutMyomerBooster(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat) {
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (hasMyomerBooster()) {
-            return (getWalkMP(gravity, ignoreheat) * 2);
+            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
         }
-        return super.getRunMP(gravity, ignoreheat);
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
@@ -824,7 +824,7 @@ public class Protomech extends Entity {
         dbv += dEquipmentBV;
 
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true),
+        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true),
                 false, false).getValue();
         double tmmFactor = 1 + (tmmRan / 10) + 0.1;
         dbv *= tmmFactor;
@@ -986,7 +986,7 @@ public class Protomech extends Entity {
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP(false, true)
+        double speedFactor = Math.pow(1 + (((double) getRunMP(false, true, true)
                 + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
@@ -1276,8 +1276,8 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat);
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     public void setEngine(Engine engine) {

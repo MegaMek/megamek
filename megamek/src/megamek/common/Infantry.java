@@ -240,23 +240,23 @@ public class Infantry extends Entity implements Serializable {
      * Return this Infantry's run MP, which is identical to its walk MP
      */
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat) {
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if( (game != null)
                 && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
             if(getWalkMP(gravity, ignoreheat) > 0) {
                 return getWalkMP(gravity, ignoreheat) + 1;
             }
-            return getWalkMP(gravity, ignoreheat) + 2;
+            return getWalkMP(gravity, ignoreheat, ignoremodulararmor) + 2;
         }
-        return getWalkMP(gravity, ignoreheat);
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
      * Infantry don't have MASC
      */
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat);
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
 
@@ -289,8 +289,6 @@ public class Infantry extends Entity implements Serializable {
         mp = Math.max(mp - windP, 0);
         return mp;
     }
-
-
 
     /**
      * Infantry can not enter water unless they have UMU mp or hover.
@@ -606,7 +604,7 @@ public class Infantry extends Entity implements Serializable {
         double dbv;
 
         dbv = men * 1.5 * getDamageDivisor();
-        int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
+        int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false)
         .getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
                 true, false).getValue();
@@ -633,7 +631,7 @@ public class Infantry extends Entity implements Serializable {
         // is handled differently (page 315, TM, compare
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
-        double speedFactorTableLookup = getRunMP(false, true)
+        double speedFactorTableLookup = getRunMP(false, true, true)
         + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + (((double) walkMP

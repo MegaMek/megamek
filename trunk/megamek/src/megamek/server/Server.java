@@ -6260,6 +6260,10 @@ public class Server implements Runnable {
             
             if(md.contains(MoveStepType.LAND)) {
                 a.land();
+                //go ahead and set position again for droppers, so secondary is taken care of
+                if(a instanceof Dropship) {
+                    a.setPosition(a.getPosition());
+                }
             } else {
     
                 // jumpships and space stations need to reduce accumulated thrust if

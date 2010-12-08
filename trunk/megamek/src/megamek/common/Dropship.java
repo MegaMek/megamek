@@ -1265,4 +1265,8 @@ public class Dropship extends SmallCraft implements Serializable {
             secondaryPositions.put(5, position.translated(5));
         }
     }
+    
+    public int getLandingLength() {
+        return 15;
+    }
 }

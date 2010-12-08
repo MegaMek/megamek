@@ -78,7 +78,7 @@ public class QuadMech extends Mech {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
@@ -122,7 +122,7 @@ public class QuadMech extends Mech {
             wmp -= actuatorHits;
         }
 
-        if ( hasModularArmor() ) {
+        if (!ignoremodulararmor && hasModularArmor() ) {
             wmp--;
         }
 
@@ -170,20 +170,20 @@ public class QuadMech extends Mech {
      */
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat) {
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() <= 1) {
-            return super.getRunMP(gravity, ignoreheat);
+            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
-        return getWalkMP(gravity, ignoreheat);
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
      * Returns run MP without considering MASC modified for leg loss & stuff.
      */
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() <= 1) {
-            return super.getRunMPwithoutMASC(gravity, ignoreheat);
+            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat);
     }
@@ -381,7 +381,7 @@ public class QuadMech extends Mech {
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE) 
+        if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
             roll = Compute.d6(2);
 

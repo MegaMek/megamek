@@ -1548,11 +1548,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns this entity's running/flank mp modified for heat and gravity.
      */
     public int getRunMP() {
-        return getRunMP(true, false);
-    }
-
-    public int getRunMP(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat, false);
+        return getRunMP(true, false, false);
     }
 
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -1563,14 +1559,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns run MP without considering MASC
      */
     public int getRunMPwithoutMASC() {
-        return getRunMPwithoutMASC(true, false);
+        return getRunMPwithoutMASC(true, false, false);
     }
 
     /**
      * Returns run MP without considering MASC, optionally figuring in gravity
      * and possibly ignoring heat
      */
-    public abstract int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat);
+    public abstract int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor);
 
     /**
      * Returns this entity's running/flank mp as a string.
@@ -1600,8 +1596,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getRunMP();
     }
 
-    public int getSprintMP(boolean gravity, boolean ignoreheat) {
-        return getRunMP(gravity, ignoreheat);
+    public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
@@ -1615,8 +1611,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns sprint MP without considering MASC, optionally figuring in
      * gravity and possibly ignoring heat
      */
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getSprintMPwithoutMASC(gravity, ignoreheat);
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**
@@ -1637,7 +1633,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * get the gravity limit for ground movement
      */
     public int getRunningGravityLimit() {
-        return getRunMP(false, false);
+        return getRunMP(false, false, false);
     }
 
     /**

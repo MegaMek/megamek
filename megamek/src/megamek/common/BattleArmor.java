@@ -267,17 +267,12 @@ public class BattleArmor extends Infantry {
         return jumpMP;
     }
 
-    @Override
-    public int getWalkMP() {
-        return getWalkMP(true, true);
-    }
-
     /**
      * Returns this entity's walking mp, factored for extreme temperatures and
      * gravity.
      */
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
@@ -299,14 +294,14 @@ public class BattleArmor extends Infantry {
      * @param ignoreheat
      * @return
      */
-    public int getRunMPwithoutMyomerBooster(boolean gravity, boolean ignoreheat) {
-        return super.getRunMP(gravity, ignoreheat);
+    public int getRunMPwithoutMyomerBooster(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat) {
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
 
-        int walkMP = getWalkMP(gravity, ignoreheat);
+        int walkMP = getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         if (hasMyomerBooster()) {
 
             if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
@@ -777,7 +772,7 @@ public class BattleArmor extends Infantry {
                     break;
                 }
             }
-            int runMP = getRunMP(false, false);
+            int runMP = getRunMP(false, false, true);
             int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
             // get jump MP, ignoring burden
             int rawJump = getJumpMP(false, true);

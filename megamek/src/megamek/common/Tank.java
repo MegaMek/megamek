@@ -1137,10 +1137,6 @@ public class Tank extends Entity {
      * Tanks don't have MASC
      */
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return getRunMPwithoutMASC(gravity, ignoreheat, false);
-    }
-
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }

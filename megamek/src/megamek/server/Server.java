@@ -6164,7 +6164,7 @@ public class Server implements Runnable {
         // if we used protmech myomer booster, roll 2d6
         // pilot damage on a 2
         if ((entity instanceof Protomech) && ((Protomech)entity).hasMyomerBooster()
-                && (md.getMpUsed() > ((Protomech)entity).getRunMPwithoutMyomerBooster(true, false))) {
+                && (md.getMpUsed() > ((Protomech)entity).getRunMPwithoutMyomerBooster(true, false, false))) {
             r = new Report(2373);
             r.addDesc(entity);
             r.subject = entity.getId();
@@ -14670,7 +14670,7 @@ public class Server implements Runnable {
                         if (!entity.gotPavementBonus) {
                             int j = entity.mpUsed;
                             int damage = 0;
-                            while (j > entity.getRunMP(false, false) + k) {
+                            while (j > entity.getRunMP(false, false, false) + k) {
                                 j--;
                                 damage++;
                             }

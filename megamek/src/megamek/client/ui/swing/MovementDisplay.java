@@ -136,6 +136,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_TAKE_OFF = "MoveTakeOff"; //$NON-NLS-1$
     public static final String MOVE_VERT_TAKE_OFF = "MoveVertTakeOff"; //$NON-NLS-1$
     public static final String MOVE_LAND = "MoveLand"; //$NON-NLS-1$
+    public static final String MOVE_VERT_LAND = "MoveVLand"; //$NON-NLS-1$
     // Aero Vector Movement
     public static final String MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
     public static final String MOVE_TURN_RIGHT = "MoveTurnRight"; //$NON-NLS-1$
@@ -192,7 +193,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butTakeOff;
     private JButton butVTakeOff;
     private JButton butLand;
-
+    private JButton butVLand;
+    
     private JButton butTurnLeft;
     private JButton butTurnRight;
     private JButton butThrust;
@@ -494,6 +496,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butLand.setActionCommand(MOVE_LAND);
         butLand.addKeyListener(this);
         
+        butVLand = new JButton(Messages.getString("MovementDisplay.butVLand")); //$NON-NLS-1$
+        butVLand.addActionListener(this);
+        butVLand.setEnabled(false);
+        butVLand.setActionCommand(MOVE_VERT_LAND);
+        butVLand.addKeyListener(this);
+        
         butManeuver = new JButton(Messages
                 .getString("MovementDisplay.butManeuver")); //$NON-NLS-1$
         butManeuver.addActionListener(this);
@@ -635,6 +643,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
             buttonsAero.add(butLand);
+            buttonsAero.add(butVLand);
         } else {
             buttonsAero.add(butThrust);
             buttonsAero.add(butTurnLeft);
@@ -653,6 +662,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
             buttonsAero.add(butLand);
+            buttonsAero.add(butVLand);
         }
 
         // layout button grid
@@ -836,7 +846,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateLoadButtons();
         updateElevationButtons();
         updateTakeOffButtons();
-        updateLandButton();
+        updateLandButtons();
         updateJoinButton();
         updateRecoveryButton();
         updateDumpButton();
@@ -995,6 +1005,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setTakeOffEnabled(false);
         setVTakeOffEnabled(false);
         setLandEnabled(false);
+        setVLandEnabled(false);
         setLowerEnabled(false);
         setRecklessEnabled(false);
         setEvadeAeroEnabled(false);
@@ -1036,7 +1047,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateSearchlightButton();
         updateElevationButtons();
         updateTakeOffButtons();
-        updateLandButton();
+        updateLandButtons();
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
@@ -1179,7 +1190,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         //check to see if spheroids will drop an elevation
         if(ce() instanceof Aero && ((Aero)ce()).isSpheroid() && !clientgui.getClient().game.getBoard().inSpace() 
                 && ((Aero)ce()).isAirborne() 
-                && cmd.getFinalNDown()==0 && cmd.getMpUsed()==0) {
+                && cmd.getFinalNDown()==0 && cmd.getMpUsed()==0 && !cmd.contains(MoveStepType.VLAND)) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
                     .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.SpheroidAltitudeLoss") + //$NON-NLS-1$
@@ -1559,7 +1570,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateLoadButtons();
             updateElevationButtons();
             updateTakeOffButtons();
-            updateLandButton();
+            updateLandButtons();
             updateEvadeButton();
             updateFlyOffButton();
             updateLaunchButton();
@@ -1677,7 +1688,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
     }
     
-    private void updateLandButton() {
+    private synchronized void updateLandButtons() {
         
         
     	if((null != cmd) && (cmd.length() > 0)) {
@@ -1705,6 +1716,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(ce instanceof Aero) {
             if(ce.isAirborne() && cmd.getFinalAltitude() == 1) {
                setLandEnabled(((Aero)ce).canLandHorizontally());
+               setVLandEnabled(((Aero)ce).canLandVertically());
             }
         }
         
@@ -3319,7 +3331,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 String body = Messages.getString("MovementDisplay.NoLandingDialog.message", new Object[] {((Aero)ce()).hasRoomForHorizontalLanding()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
             } else {
-                cmd.addStep(MoveStepType.LAND);
+                if(clientgui.doYesNoDialog(Messages.getString("MovementDisplay.LandDialog.title"), Messages.getString("MovementDisplay.LandDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    clear();
+                    cmd.addStep(MoveStepType.LAND);
+                    ready();
+                }
+            }
+        }
+        else if (ev.getActionCommand().equals(MOVE_VERT_LAND)) {
+            if((ce() instanceof Aero) && null != ((Aero)ce()).hasRoomForVerticalLanding()) {
+                String title = Messages.getString("MovementDisplay.NoLandingDialog.title"); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.NoLandingDialog.message", new Object[] {((Aero)ce()).hasRoomForVerticalLanding()}); //$NON-NLS-1$
+                clientgui.doAlertDialog(title, body);
+            } else {
+                if(clientgui.doYesNoDialog(Messages.getString("MovementDisplay.LandDialog.title"), Messages.getString("MovementDisplay.LandDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    clear();
+                    cmd.addStep(MoveStepType.VLAND);
+                    ready();
+                }
             }
         }
         updateProneButtons();
@@ -3328,7 +3357,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateLoadButtons();
         updateElevationButtons();
         updateTakeOffButtons();
-        updateLandButton();
+        updateLandButtons();
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
@@ -3733,6 +3762,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setLandEnabled(boolean enabled) {
         butLand.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveLandEnabled(enabled);
+    }
+    
+    private void setVLandEnabled(boolean enabled) {
+        butVLand.setEnabled(enabled);
+        //clientgui.getMenuBar().setMoveVLandEnabled(enabled);
     }
 
     private void setManeuverEnabled(boolean enabled) {

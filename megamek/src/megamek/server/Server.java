@@ -3067,6 +3067,154 @@ public class Server implements Runnable {
             }
         }
     }
+    
+    private void applyDropshipLandingDamage(Coords centralPos) {
+        
+        //first cycle through hexes to figure out final elevation
+        IHex centralHex = game.getBoard().getHex(centralPos);
+        if(null == centralHex) {
+            //shouldnt happen
+            return;
+        }
+        int finalElev = centralHex.getElevation();
+        if(!centralHex.containsTerrain(Terrains.PAVEMENT) && !centralHex.containsTerrain(Terrains.ROAD)) {
+            finalElev--;
+        }
+        Vector<Coords> positions = new Vector<Coords>();
+        positions.add(centralPos);
+        for(int i=0; i<6; i++) {
+            Coords pos = centralPos.translated(i);
+            IHex hex = game.getBoard().getHex(pos);
+            if(null == hex) {
+                continue;
+            }
+            if(hex.getElevation() < finalElev) {
+                finalElev = hex.getElevation();
+            }
+            positions.add(pos);
+        }
+        //ok now cycle through hexes and make all changes
+        for(Coords pos : positions) {
+            IHex hex = game.getBoard().getHex(pos);
+            hex.setElevation(finalElev);
+            //get rid of woods and replace with rough
+            if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
+                hex.removeTerrain(Terrains.WOODS);
+                hex.removeTerrain(Terrains.JUNGLE);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+            }
+            sendChangedHex(pos);
+        }
+        
+        applyDropshipProximityDamage(centralPos);
+    }
+    
+    /**
+     * apply damage to units and buildings within a certain radius of a landing or lifting off dropship
+     * @param centralPos - the Coords for the central position of the dropship
+     */
+    private void applyDropshipProximityDamage(Coords centralPos) {
+        
+        //anything in the central hex or adjacent hexes is destroyed
+        Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
+        Enumeration<Entity> entities = game.getEntities(centralPos);
+        while(entities.hasMoreElements()) {
+            Entity en = entities.nextElement();
+            if(!en.isAirborne()) {
+                addReport(destroyEntity(en, "dropship proximity damage", false, false));
+            }
+        }
+        Building bldg = game.getBoard().getBuildingAt(centralPos);
+        if(null != bldg) {
+            collapseBuilding(bldg, positionMap, centralPos);
+        }
+        for(int i = 0; i < 6; i++) {
+            Coords pos = centralPos.translated(i);
+            entities = game.getEntities(pos);
+            while(entities.hasMoreElements()) {
+                Entity en = entities.nextElement();
+                if(!en.isAirborne()) {
+                    addReport(destroyEntity(en, "dropship proximity damage", false, false));
+                }
+            }
+            bldg = game.getBoard().getBuildingAt(pos);
+            if(null != bldg) {
+                collapseBuilding(bldg, positionMap, pos);
+            }
+        }
+        
+        Report r;
+        //ok now I need to look at the damage rings - start at 2 and go to 7
+        for(int i = 2; i < 8; i++) {
+            int damageDice = (8 - i)*2; 
+            ArrayList<Coords> ring = Compute.coordsAtRange(centralPos, i);
+            for(Coords pos : ring) {
+                IHex hex = game.getBoard().getHex(pos);
+                if(null == hex) {
+                    continue;
+                }
+                //code borrowed heavily from artilleryDamageHex
+                bldg = game.getBoard().getBuildingAt(pos);
+                int bldgAbsorbs = 0;
+                if ((bldg != null)) {
+                    bldgAbsorbs = bldg.getAbsorbtion(pos);
+                    addReport(damageBuilding(bldg, Compute.d6(damageDice), pos));
+                }
+
+                // get units in hex
+                for (Enumeration<Entity> victims = game.getEntities(pos); victims.hasMoreElements();) {
+                    Entity entity = victims.nextElement();
+                    int hits = Compute.d6(damageDice);
+                    ToHitData toHit = new ToHitData();
+                    int cluster = 5;
+
+                    // Check: is entity excluded?
+                    if (entity.isAirborne()) {
+                        continue;
+                    }
+
+                    // Check: is entity inside building?
+                    if ((bldg != null) && (bldgAbsorbs > 0) && (entity.getElevation() < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+                        cluster -= bldgAbsorbs;
+                        // some buildings scale remaining damage that is not absorbed
+                        // TODO: this isn't quite right for castles brian
+                        cluster = (int) Math.floor(bldg.getDamageToScale() * cluster);
+                        if (entity instanceof Infantry) {
+                            continue; // took its damage already from building damage
+                        } else if (cluster <= 0) {
+                            // entity takes no damage
+                            r = new Report(6426);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            addReport(r);
+                            continue;
+                        } else {
+                            r = new Report(6428);
+                            r.subject = entity.getId();
+                            r.add(bldgAbsorbs);
+                            addReport(r);
+                        }
+                    }
+
+                    // Work out hit table to use
+                    toHit.setSideTable(entity.sideTable(centralPos));
+
+                    // Do the damage
+                    r = new Report(6480);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(toHit.getTableDesc());
+                    r.add(hits);
+                    vPhaseReport.add(r);
+                    while (hits > 0) {
+                        HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+                        addReport(damageEntity(entity, hit, Math.min(cluster, hits), false, DamageType.NONE, false, true, false));
+                        hits -= Math.min(5, hits);
+                    }
+                }
+            }         
+        }      
+    }
 
     /**
      * Marks ineligible entities as not ready for this phase
@@ -3265,8 +3413,12 @@ public class Server implements Runnable {
             r.choose(false);
             addReport(r);
             int damage = 10*(roll.getValue() - diceRoll);
+            int side = ToHitData.SIDE_FRONT;
+            if((entity instanceof Aero) && ((Aero)entity).isSpheroid()) {
+                side = ToHitData.SIDE_REAR;
+            }
             while(damage > 0) {
-                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, side);
                 addReport(damageEntity(entity, hit, 10));
                 damage -= 10;
             }
@@ -4833,8 +4985,36 @@ public class Server implements Runnable {
             rollTarget = a.checkVerticalTakeOff();
             if (doVerticalTakeOffCheck(entity, rollTarget)) {
                 a.setCurrentVelocity(0);
+                if(entity instanceof Dropship) {
+                    applyDropshipProximityDamage(md.getFinalCoords());
+                }
                 a.liftOff(1);
             }
+            entity.setDone(true);
+            entityUpdate(entity.getId());
+            return;
+        }
+        
+        if(md.contains(MoveStepType.LAND) && (entity instanceof Aero)) {
+            Aero a = (Aero)entity;
+            rollTarget = a.checkHorizontalLanding(md.getLastStepMovementType(), md.getFinalVelocity(), md.getFinalCoords(), md.getFinalFacing());
+            doAttemptLanding(entity, rollTarget);       
+            a.land();
+            entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()));
+            entity.setDone(true);
+            entityUpdate(entity.getId());
+            return;
+        }
+        
+        if(md.contains(MoveStepType.VLAND) && (entity instanceof Aero)) {
+            Aero a = (Aero)entity;
+            rollTarget = a.checkVerticalLanding(md.getLastStepMovementType(), md.getFinalVelocity(), md.getFinalCoords());
+            doAttemptLanding(entity, rollTarget);
+            if(entity instanceof Dropship) {
+                applyDropshipLandingDamage(md.getFinalCoords());
+            }
+            a.land();
+            entity.setPosition(md.getFinalCoords());
             entity.setDone(true);
             entityUpdate(entity.getId());
             return;
@@ -5267,15 +5447,6 @@ public class Server implements Runnable {
                     }
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
-                }
-                
-                if(step.getType() == MoveStepType.LAND) {
-                    rollTarget = a.checkHorizontalLanding(overallMoveType, md.getFinalVelocity(), md.getFinalCoords(), md.getFinalFacing());
-                    doAttemptLanding(entity, rollTarget);
-                    curPos = curPos.translated(md.getFinalFacing(), a.getLandingLength());
-                    //don't actually land the unit until later so that a variety of things can
-                    //happen for the airborne part (like fuel consumption)
-                    break;
                 }
             }
 
@@ -6256,76 +6427,68 @@ public class Server implements Runnable {
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
+            } 
+    
+            // jumpships and space stations need to reduce accumulated thrust if
+            // they spend some
+            if (entity instanceof Jumpship) {
+                Jumpship js = (Jumpship) entity;
+                double penalty = 0.0;
+                // jumpships do not accumulate thrust when they make a turn or
+                // change velocity
+                if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
+                    // I need to subtract the station keeping thrust from their
+                    // accumulated thrust
+                    // because they did not actually use it
+                    penalty = js.getStationKeepingThrust();
+                }
+                if (thrust > 0) {
+                    penalty = thrust;
+                }
+                if (penalty > 0.0) {
+                    js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
+                }
             }
-            
-            if(md.contains(MoveStepType.LAND)) {
-                a.land();
-                //go ahead and set position again for droppers, so secondary is taken care of
-                if(a instanceof Dropship) {
-                    a.setPosition(a.getPosition());
-                }
-            } else {
     
-                // jumpships and space stations need to reduce accumulated thrust if
-                // they spend some
-                if (entity instanceof Jumpship) {
-                    Jumpship js = (Jumpship) entity;
-                    double penalty = 0.0;
-                    // jumpships do not accumulate thrust when they make a turn or
-                    // change velocity
-                    if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
-                        // I need to subtract the station keeping thrust from their
-                        // accumulated thrust
-                        // because they did not actually use it
-                        penalty = js.getStationKeepingThrust();
-                    }
-                    if (thrust > 0) {
-                        penalty = thrust;
-                    }
-                    if (penalty > 0.0) {
-                        js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
-                    }
-                }
+            // check to see if thrust exceeded SI
     
-                // check to see if thrust exceeded SI
+            rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                game.addControlRoll(new PilotingRollData(a.getId(), 0, "Thrust spent during turn exceeds SI"));
+            }
     
-                rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
+            if (!game.getBoard().inSpace()) {
+                rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "Thrust spent during turn exceeds SI"));
+                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "Velocity greater than 2x safe thrust"));
                 }
     
-                if (!game.getBoard().inSpace()) {
-                    rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        game.addControlRoll(new PilotingRollData(a.getId(), 0, "Velocity greater than 2x safe thrust"));
-                    }
+                rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData(a.getId(), md.getFinalNDown(),
+                    "descended more than two altitudes"));
+                }
     
-                    rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        game.addControlRoll(new PilotingRollData(a.getId(), md.getFinalNDown(),
-                                "descended more than two altitudes"));
-                    }
+                // check for hovering
+                rollTarget = a.checkHover(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
+                }
     
-                    // check for hovering
-                    rollTarget = a.checkHover(md);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
+                // check for aero stall
+                rollTarget = a.checkStall(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    r = new Report(9391);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.newlines = 0;
+                    addReport(r);
+                    game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
+                    a.setAltitude(a.getAltitude() - 1);
+                    // check for crash
+                    if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                        addReport(processCrash(entity, 0, entity.getPosition()));
                     }
-    
-                    // check for aero stall
-                    rollTarget = a.checkStall(md);
-                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                        r = new Report(9391);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.newlines = 0;
-                        addReport(r);
-                        game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
-                        a.setAltitude(a.getAltitude() - 1);
-                        // check for crash
-                        if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                            addReport(processCrash(entity, 0, entity.getPosition()));
-                        }
                 }
 
                 //check to see if spheroids should lose one altitude
@@ -6342,7 +6505,6 @@ public class Server implements Runnable {
                         addReport(processCrash(entity, 0, entity.getPosition()));
                     }
                 }
-            }
             }
         }
 

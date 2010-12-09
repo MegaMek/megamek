@@ -34,6 +34,7 @@ v0.35.21-dev (SVN)
 + light and heavy woods landing mods should not be cumulative
 + you do not need to spend all velocity before landing
 + Bug: double-blind option names screwed up
++ better scaling of portraits in chat lounge
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

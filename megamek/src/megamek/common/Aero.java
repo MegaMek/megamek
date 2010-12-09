@@ -2490,7 +2490,7 @@ public class Aero extends Entity {
     public PilotingRollData checkStall(MovePath md) {
         PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
-        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid() && !game.getBoard().inSpace() && !md.contains(MoveStepType.LAND)) {
+        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER) && isAirborne() && !isSpheroid() && !game.getBoard().inSpace() && !md.contains(MoveStepType.LAND) && !md.contains(MoveStepType.VLAND)) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0, "stalled out"));
         } else {
@@ -2606,9 +2606,71 @@ public class Aero extends Entity {
         	roll.addModifier(+2, "clear hex in landing path");
         }
         
+        return roll;
+    }
+    
+    public PilotingRollData checkVerticalLanding(EntityMovementType moveType, int velocity, Coords currentPos) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
         
+        int velmod = Math.max(0, velocity - 3);
+        if(velmod > 0) {
+            roll.addModifier(velmod, "excess velocity");
+        }
+        if ((getLeftThrustHits() + getRightThrustHits()) > 0) {
+            roll.addModifier(+4, "Maneuvering thrusters damaged");
+        }
+        if (isGearHit()) {
+            roll.addModifier(+3, "landing gear damaged");
+        }
+        if(getArmor(LOC_NOSE) <= 0) {
+            roll.addModifier(+2, "nose armor destroyed");
+        }
+        if(getCurrentThrust() <= 0) {
+            if(isSpheroid()) {
+                roll.addModifier(+8, "no thrust");
+            } else {
+                roll.addModifier(+4, "no thrust");
+            }
+        }
+        //terrain mods
+        boolean lightWoods = false;
+        boolean rough = false;
+        boolean heavyWoods = false;
+        boolean paved = true;
+        //dropships also need to look at all adjacent hexes
+        Vector<Coords> positions =  new Vector<Coords>();
+        positions.add(currentPos);
+        if(this instanceof Dropship) {
+            for(int i = 0; i < 6; i++) {
+                positions.add(currentPos.translated(i));
+            }
+        }
+        for(Coords pos : positions) {
+            IHex hex = game.getBoard().getHex(pos);
+            if(paved && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
+                paved = false;
+            }
+            if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+                rough = true;
+            }
+            if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
+                heavyWoods = true;
+            } 
+            else if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
+                lightWoods = true;
+            }    
+        }
+        //we only take the worst mod - terrain mods are halved for vertical landings (round down)
         if(heavyWoods) {
-            roll.addModifier(+5, "heavy woods in landing path");
+            roll.addModifier(+2, "heavy woods in landing path");
+        } else if(lightWoods) {
+            roll.addModifier(+2, "light woods in landing path");
+        } else if(rough) {
+            roll.addModifier(+1, "rough/rubble in landing path");
+        } else if(paved) {
+            roll.addModifier(+0,"paved/road landing strip");
+        } else {
+            roll.addModifier(+1, "clear hex in landing path");
         }
         
         return roll;
@@ -3437,11 +3499,11 @@ public class Aero extends Entity {
                 }
                 hex = game.getBoard().getHex(pos);
                 // if the hex is null, then we are offboard. Don't let units
-                // take off offboard.
+                // land offboard.
                 if (null == hex) {
                     return "Not enough room on map" + lenString;
                 }
-                //landing must only be clear 
+                //landing must contain only acceptable terrain 
                 if (!hex.isClearForLanding()) {
                     return "Unacceptable terrain for landing" + lenString;
                 }
@@ -3456,5 +3518,37 @@ public class Aero extends Entity {
 
     public boolean canTakeOffVertically() {
         return (isVSTOL() || isSpheroid()) && (getCurrentThrust() > 2);
+    }
+    
+    public boolean canLandVertically() {
+        return (isVSTOL() || isSpheroid());
+    }
+    
+    public String hasRoomForVerticalLanding() {
+        Coords pos = getPosition();
+        IHex hex = game.getBoard().getHex(getPosition());
+        if(game.getBoard().getBuildingAt(pos) != null) {
+            return "Buildings in the way";
+        }
+        //no units in the way
+        Enumeration<Entity> entities = game.getEntities(pos);
+        while(entities.hasMoreElements()) {
+            Entity en = entities.nextElement();
+            if(!en.isAirborne()) {
+                return "Ground units in the way";
+            }
+        }
+        hex = game.getBoard().getHex(pos);
+        // if the hex is null, then we are offboard. Don't let units
+        // land offboard.
+        if (null == hex) {
+            return "landing area not on the map";
+        }
+        //landing must contain only acceptable terrain 
+        if (!hex.isClearForLanding()) {
+            return "Unacceptable terrain for landing";
+        }
+        
+        return null;
     }
 }

@@ -16,9 +16,11 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import megamek.common.weapons.BayWeapon;
 
@@ -1266,7 +1268,34 @@ public class Dropship extends SmallCraft implements Serializable {
         }
     }
     
+    @Override
     public int getLandingLength() {
         return 15;
+    }
+    
+    @Override
+    public String hasRoomForVerticalLanding() {
+        //dropships can land just about anywhere they want, unless it is off the map 
+        Vector<Coords> positions =  new Vector<Coords>();
+        positions.add(getPosition());
+        if(this instanceof Dropship) {
+            for(int i = 0; i < 6; i++) {
+                positions.add(getPosition().translated(i));
+            }
+        }
+        for(Coords pos : positions) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            hex = game.getBoard().getHex(pos);
+            // if the hex is null, then we are offboard. Don't let units
+            // land offboard.
+            if (null == hex) {
+                return "landing area not on the map";
+            }
+            if(hex.containsTerrain(Terrains.WATER)) {
+                return "cannot land on water";
+            }
+        }
+        //TODO: what about other terrain (like jungles)?
+        return null;
     }
 }

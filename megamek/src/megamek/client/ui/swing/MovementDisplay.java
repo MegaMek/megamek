@@ -1679,9 +1679,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     
     private void updateLandButton() {
         
-        //http://www.classicbattletech.com/forums/index.php?topic=54112.0
-        //so you can move normally and then land
         
+    	if((null != cmd) && (cmd.length() > 0)) {
+            //According to the link below, you can move in the air and then land
+    		//but I have personal message to Welshman right now asking that this be changed
+    		//because it creates all kinds of rules problems, the number one being
+    		//the ability to use spheroid dropships to perform insta-Death From Above attacks
+    		//that cannot be defended against
+    		//So we are going to disallow it
+            //http://www.classicbattletech.com/forums/index.php?topic=54112.0
+            setLandEnabled(false);
+            return;
+        }
+    	
         final Entity ce = ce();
         if (null == ce) {
             return;

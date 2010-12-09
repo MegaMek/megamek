@@ -1765,37 +1765,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (entity.getPosition() == null) {
                 continue;
             }
-
-            EntitySprite sprite = new EntitySprite(entity, -1);
-            newSprites.add(sprite);
-            ArrayList<Integer> temp = new ArrayList<Integer>();
-            temp.add(entity.getId());
-            temp.add(-1);
-            newSpriteIds.put(temp, sprite);
-            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                sprite = new EntitySprite(entity, secondaryPos);
+            if (entity.getSecondaryPositions().isEmpty()) {
+                EntitySprite sprite = new EntitySprite(entity, -1);
                 newSprites.add(sprite);
-                temp = new ArrayList<Integer>();
+                ArrayList<Integer> temp = new ArrayList<Integer>();
                 temp.add(entity.getId());
-                temp.add(secondaryPos);
+                temp.add(-1);
                 newSpriteIds.put(temp, sprite);
-            }
-
-            IsometricSprite isosprite = new IsometricSprite(entity, -1);
-            newIsometricSprites.add(isosprite);
-            temp = new ArrayList<Integer>();
-            temp.add(entity.getId());
-            temp.add(-1);
-            newIsoSpriteIds.put(temp, isosprite);
-            for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                isosprite = new IsometricSprite(entity, secondaryPos);
+                IsometricSprite isosprite = new IsometricSprite(entity, -1);
                 newIsometricSprites.add(isosprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entity.getId());
-                temp.add(secondaryPos);
+                temp.add(-1);
                 newIsoSpriteIds.put(temp, isosprite);
-            }
+            } else {
+                for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+                    EntitySprite sprite = new EntitySprite(entity, secondaryPos);
+                    newSprites.add(sprite);
+                    ArrayList<Integer> temp = new ArrayList<Integer>();
+                    temp.add(entity.getId());
+                    temp.add(secondaryPos);
+                    newSpriteIds.put(temp, sprite);
 
+                    IsometricSprite isosprite = new IsometricSprite(entity, secondaryPos);
+                    newIsometricSprites.add(isosprite);
+                    temp = new ArrayList<Integer>();
+                    temp.add(entity.getId());
+                    temp.add(secondaryPos);
+                    newIsoSpriteIds.put(temp, isosprite);
+                }
+            }
 
             if (entity.hasC3() || entity.hasC3i()) {
                 addC3Link(entity);
@@ -3119,9 +3118,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (!useIsometric()) {
                 //The entity sprite is drawn when the hexes are rendered.
                 //So do no include the sprite info here.
-                graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+                graph.drawImage(tileManager.imageFor(entity, secondaryPos), 0, 0, this);
             }
-            if (secondaryPos == -1) {
+            if ((secondaryPos == -1) || (secondaryPos == 6)) {
                 // draw box with shortName
                 Color text, bkgd, bord;
                 if (entity.isDone()) {

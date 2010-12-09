@@ -327,10 +327,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // load all mech images
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
-            loadImage(e, -1);
-            for (Integer secPos : e.getSecondaryPositions().keySet()) {
-                loadImage(e, secPos);
+            if (e.getSecondaryPositions().isEmpty()) {
+                loadImage(e, -1);
+            } else {
+                for (Integer secPos : e.getSecondaryPositions().keySet()) {
+                    loadImage(e, secPos);
+                }
             }
+
         }
 
         // load minefield sign

@@ -487,13 +487,13 @@ public class Dropship extends SmallCraft implements Serializable {
         double[] arcBVs = new double[locations() + 2];
         double[] arcHeats = new double[locations() + 2];
         double[] ammoBVs = new double[locations() + 2];
-        
+
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Arc BV and Heat");
         bvText.append(endColumn);
         bvText.append(endRow);
-      
+
         // cycle through locations
         for (int loc = 0; loc < (locations() + 2); loc++) {
             int l = loc;
@@ -610,7 +610,7 @@ public class Dropship extends SmallCraft implements Serializable {
             //now ammo
             Map<String, Double> ammo = new HashMap<String, Double>();
             ArrayList<String> keys = new ArrayList<String>();
-            for (Mounted mounted : getAmmo()) {               
+            for (Mounted mounted : getAmmo()) {
                 if (mounted.getLocation() != l) {
                     continue;
                 }
@@ -649,7 +649,7 @@ public class Dropship extends SmallCraft implements Serializable {
                     // assumption: ammo without a location is for a oneshot weapon
                     continue;
                 }
-                double abv = ratio * atype.getBV(this); 
+                double abv = ratio * atype.getBV(this);
                 String key = atype.getAmmoType() + ":" + atype.getRackSize();
                 String key2 = atype.getName() + ";" + key;
                 if (!keys.contains(key2)) {
@@ -786,7 +786,7 @@ public class Dropship extends SmallCraft implements Serializable {
         for(int i=0; i<arcBVs.length; i++) {
             arcBVs[i] = arcBVs[i]+ammoBVs[i];
         }
-        
+
         // ok now lets go in and add the arcs
         double totalHeat = 0.0;
         if (highArc > Integer.MIN_VALUE) {
@@ -1259,12 +1259,13 @@ public class Dropship extends SmallCraft implements Serializable {
     public void setPosition(Coords position) {
         super.setPosition(position);
         if ((getAltitude() == 0) && !game.getBoard().inSpace() && (position != null)) {
-            secondaryPositions.put(0, position.translated(0));
-            secondaryPositions.put(1, position.translated(1));
-            secondaryPositions.put(2, position.translated(2));
-            secondaryPositions.put(3, position.translated(3));
-            secondaryPositions.put(4, position.translated(4));
-            secondaryPositions.put(5, position.translated(5));
+            secondaryPositions.put(0, position);
+            secondaryPositions.put(1, position.translated(0));
+            secondaryPositions.put(2, position.translated(1));
+            secondaryPositions.put(3, position.translated(2));
+            secondaryPositions.put(4, position.translated(3));
+            secondaryPositions.put(5, position.translated(4));
+            secondaryPositions.put(6, position.translated(5));
         }
     }
     

@@ -40,6 +40,7 @@ v0.35.21-dev (SVN)
 + vertical landing
 + proximity damage for vertical dropship take-off and landing
 + improvements to landing interface
++ new default dropship images
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

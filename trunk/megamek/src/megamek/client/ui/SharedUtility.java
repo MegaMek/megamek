@@ -135,6 +135,10 @@ public class SharedUtility {
                 rollTarget = ((Aero)entity).checkHorizontalLanding(moveType, step.getVelocity(), curPos, curFacing);
                 checkNag(rollTarget, nagReport, psrList);
             }
+            if((step.getType() == MoveStepType.VLAND) && (entity instanceof Aero)) {
+                rollTarget = ((Aero)entity).checkVerticalLanding(moveType, step.getVelocity(), curPos);
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             //check for leap
             if(!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
@@ -333,7 +337,7 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // Atmospheric checks
-            if (!game.getBoard().inSpace()) {
+            if (!game.getBoard().inSpace() && !md.contains(MoveStepType.LAND) && !md.contains(MoveStepType.VLAND)) {
                 // check to see if velocity is 2x thrust
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 checkNag(rollTarget, nagReport, psrList);

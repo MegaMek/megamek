@@ -293,6 +293,8 @@ public class MoveStep implements Serializable {
             return "Vertical Takeoff";
         case LAND:
             return "Landing";
+        case VLAND:
+            return "Vertical Landing";
         default:
             return "???";
         }
@@ -747,7 +749,9 @@ public class MoveStep implements Serializable {
             setMp(0);
             break;
         case LAND:
+        case VLAND:
             setMp(0);
+            setAltitude(0);
             break;
         case ACCN:
             setVelocityN(getVelocityN()+1);
@@ -1592,7 +1596,7 @@ public class MoveStep implements Serializable {
             }
 
             //no moves after landing
-            if (!isFirstStep() && (prev.getType() == MoveStepType.LAND)) {
+            if (!isFirstStep() && ((prev.getType() == MoveStepType.LAND) || (prev.getType() == MoveStepType.VLAND))) {
                 return;
             }
             

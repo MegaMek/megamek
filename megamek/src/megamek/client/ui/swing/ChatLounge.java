@@ -2581,7 +2581,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     }
                     // make sure no images are longer than 72 pixels
                     if (null != portrait) {
-                        portrait = portrait.getScaledInstance(-1, 50, Image.SCALE_DEFAULT);
+                        portrait = portrait.getScaledInstance(-1, 50, Image.SCALE_SMOOTH);
                         setImage(portrait);
                     }
                 } catch (Exception err) {

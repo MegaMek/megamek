@@ -211,7 +211,7 @@ public class Aero extends Entity {
      * temperatures, gravity, and bomb load.
      */
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
         if (null != game) {

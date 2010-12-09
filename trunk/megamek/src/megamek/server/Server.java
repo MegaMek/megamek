@@ -3109,11 +3109,15 @@ public class Server implements Runnable {
         applyDropshipProximityDamage(centralPos);
     }
     
+    private void applyDropshipProximityDamage(Coords centralPos) {
+        applyDropshipProximityDamage(centralPos, false, 0);
+    }
+    
     /**
      * apply damage to units and buildings within a certain radius of a landing or lifting off dropship
      * @param centralPos - the Coords for the central position of the dropship
      */
-    private void applyDropshipProximityDamage(Coords centralPos) {
+    private void applyDropshipProximityDamage(Coords centralPos, boolean rearArc, int facing) {
         
         //anything in the central hex or adjacent hexes is destroyed
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
@@ -3149,6 +3153,9 @@ public class Server implements Runnable {
             int damageDice = (8 - i)*2; 
             ArrayList<Coords> ring = Compute.coordsAtRange(centralPos, i);
             for(Coords pos : ring) {
+                if(rearArc && !Compute.isInArc(centralPos, facing, pos, Compute.ARC_AFT)) {
+                    continue;
+                }               
                 IHex hex = game.getBoard().getHex(pos);
                 if(null == hex) {
                     continue;
@@ -4974,6 +4981,9 @@ public class Server implements Runnable {
             Aero a = (Aero)entity;
             a.setCurrentVelocity(1);
             a.liftOff(1);
+            if(entity instanceof Dropship) {
+                applyDropshipProximityDamage(md.getFinalCoords(), true, md.getFinalFacing());
+            }        
             a.setPosition(a.getPosition().translated(a.getFacing(), a.getTakeOffLength()));
             entity.setDone(true);
             entityUpdate(entity.getId());
@@ -4985,10 +4995,10 @@ public class Server implements Runnable {
             rollTarget = a.checkVerticalTakeOff();
             if (doVerticalTakeOffCheck(entity, rollTarget)) {
                 a.setCurrentVelocity(0);
+                a.liftOff(1);
                 if(entity instanceof Dropship) {
                     applyDropshipProximityDamage(md.getFinalCoords());
                 }
-                a.liftOff(1);
             }
             entity.setDone(true);
             entityUpdate(entity.getId());

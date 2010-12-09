@@ -2563,11 +2563,10 @@ public class Aero extends Entity {
             }
         }
         //terrain mods
-        //lets assume that if all hexes are paved and/or road, then we have an "airstrip"
         boolean lightWoods = false;
         boolean rough = false;
         boolean heavyWoods = false;
-        boolean airstrip = true;
+        boolean paved = true;
         //dropships need a a landing strip three hexes wide
         Vector<Coords> startingPos =  new Vector<Coords>();
         startingPos.add(currentPos);
@@ -2579,8 +2578,8 @@ public class Aero extends Entity {
             for (int i = 0; i < getLandingLength(); i++) {
                 pos = pos.translated(face);
                 IHex hex = game.getBoard().getHex(pos);
-                if(airstrip && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
-                    airstrip = false;
+                if(paved && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
+                    paved = false;
                 }
                 if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
                     rough = true;
@@ -2594,15 +2593,20 @@ public class Aero extends Entity {
                 
             }
         }
-        if(airstrip) {
-            roll.addModifier(-1,"landing on airfield");
-        }
-        if(rough) {
-            roll.addModifier(+3, "rough/rubble in landing path");
-        }
-        if(lightWoods) {
+        //we only take the worst mod
+        if(heavyWoods) {
+        	roll.addModifier(+5, "heavy woods in landing path");
+        } else if(lightWoods) {
             roll.addModifier(+4, "light woods in landing path");
+        } else if(rough) {
+            roll.addModifier(+3, "rough/rubble in landing path");
+        } else if(paved) {
+            roll.addModifier(+0,"paved/road landing strip");
+        } else {
+        	roll.addModifier(+2, "clear hex in landing path");
         }
+        
+        
         if(heavyWoods) {
             roll.addModifier(+5, "heavy woods in landing path");
         }

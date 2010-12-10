@@ -296,6 +296,10 @@ public class FireProcessor extends DynamicTerrainProcessor {
         IBoard board = game.getBoard();
         int windDir = game.getPlanetaryConditions().getWindDirection();
         int windStr = game.getPlanetaryConditions().getWindStrength();
+        //if the breeze option is turned on, then treat wind strength like light gale if none
+        if(game.getOptions().booleanOption("breeze") && windStr == PlanetaryConditions.WI_NONE) {
+            windStr = PlanetaryConditions.WI_LIGHT_GALE;
+        }
 
         ArrayList<Coords> smokeToAdd;
         HashMap<SmokeCloud, ArrayList<Coords>> smokeCloudData = new HashMap<SmokeCloud, ArrayList<Coords>>();

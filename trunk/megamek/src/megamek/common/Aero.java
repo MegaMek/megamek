@@ -3402,14 +3402,14 @@ public class Aero extends Entity {
     }
 
     public int getTakeOffLength() {
-        if (isVSTOL()) {
+        if (isVSTOL() || isSTOL()) {
             return 10;
         }
         return 20;
     }
     
     public int getLandingLength() {
-        if(isVSTOL()) {
+        if(isVSTOL() || isSTOL()) {
             return 5;
         }
         return 8;

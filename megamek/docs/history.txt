@@ -46,6 +46,7 @@ v0.35.21-dev (SVN)
 + Bug: grounded aerospace units flank MP not halved
 + Bug: Dropships getting 0-range ECM in atmosphere
 + unofficial game option to allow smoke drift even with no wind (call it a 'breeze')
++ adjustments to landing/takeoff lengths for STOL-equipped aircraft
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

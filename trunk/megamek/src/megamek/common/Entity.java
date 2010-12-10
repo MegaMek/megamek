@@ -8117,7 +8117,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // if the small craft does not already have ECM, then give them a single
         // hex ECM so they can change the mode
-        if ((this instanceof SmallCraft) && !hasActiveECM() && isMilitary()) {
+        //FIXME: This is a really hacky way to to do it that results in small craft having
+        //ECM when the rule is not in effect and in non-space maps
+        if ((this instanceof SmallCraft) && !(this instanceof Dropship) && !hasActiveECM() && isMilitary()) {
             try {
                 this.addEquipment(EquipmentType.get(BattleArmor.SINGLE_HEX_ECM), Aero.LOC_NOSE, false);
             } catch (LocationFullException ex) {

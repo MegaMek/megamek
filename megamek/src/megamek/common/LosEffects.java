@@ -22,6 +22,7 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
@@ -253,13 +254,53 @@ public class LosEffects {
         return calculateLos(game, attackerId, target, false);
     }
 
-
     public static LosEffects calculateLos(IGame game, int attackerId,
             Targetable target, boolean spotting) {
+        //we need an extra step here, because units with secondary position can calculate LoS
+        //from hexes other than that returned from getPosition()
+        final Entity ae = game.getEntity(attackerId);
+        //create a vector of attacker position and a vector of target positions - double loop through them
+        //both and select the best one
+        Vector<Coords> attackPos = new Vector<Coords>();
+        attackPos.add(ae.getPosition());
+        Vector<Coords> targetPos = new Vector<Coords>();
+        targetPos.add(target.getPosition());
+        //if a grounded dropship is the attacker, then it gets to choose the best secondary position for LoS
+        if(ae instanceof Dropship && !ae.isAirborne() && !ae.isSpaceborne()) {
+            attackPos = new Vector<Coords>();
+            for(int key : ae.getSecondaryPositions().keySet()) {
+                attackPos.add(ae.getSecondaryPositions().get(key));
+            }
+        }
+        if(target instanceof Entity && target instanceof Dropship && 
+                !((Entity)target).isAirborne() && !((Entity)target).isSpaceborne()) {
+            targetPos = new Vector<Coords>();
+            for(int key : ((Entity)target).getSecondaryPositions().keySet()) {
+                targetPos.add(((Entity)target).getSecondaryPositions().get(key));
+            }
+        }
+        LosEffects bestLos = null;  
+        for(Coords apos : attackPos) {
+            for(Coords tpos : targetPos) {         
+                LosEffects newLos = calculateLos(game, attackerId, target, apos, tpos, spotting);
+                //is the new one better?
+                if(null == bestLos 
+                        || bestLos.isBlocked() 
+                        || newLos.losModifiers(game).getValue() < bestLos.losModifiers(game).getValue()) {
+                    bestLos = newLos;
+                }
+            }
+        }
+        return bestLos;
+    }
+    
+
+    public static LosEffects calculateLos(IGame game, int attackerId, Targetable target,
+            Coords attackPos, Coords targetPos, boolean spotting) {
         final Entity ae = game.getEntity(attackerId);
 
         // LOS fails if one of the entities is not deployed.
-        if ((null == ae.getPosition()) || (null == target.getPosition())
+        if ((null == attackPos) || (null == targetPos)
                 || ae.isOffBoard() || target.isOffBoard()) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
@@ -267,8 +308,8 @@ public class LosEffects {
             return los;
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        IHex attHex = game.getBoard().getHex(attackPos);
+        IHex targetHex = game.getBoard().getHex(targetPos);
         if ((attHex == null) || (targetHex == null)) {
             LosEffects los = new LosEffects();
             los.blocked = true; // TODO: come up with a better "impossible"
@@ -277,9 +318,9 @@ public class LosEffects {
         }
 
         final AttackInfo ai = new AttackInfo();
-        ai.attackPos = ae.getPosition();
+        ai.attackPos = attackPos;
         ai.attackerId = ae.getId();
-        ai.targetPos = target.getPosition();
+        ai.targetPos = targetPos;
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         if(ai.targetEntity) {
             ai.targetId = ((Entity)target).getId();
@@ -301,7 +342,7 @@ public class LosEffects {
                 || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
             targEl = target.absHeight() + targetHex.getElevation();
         } else {
-            targEl = game.getBoard().getHex(target.getPosition()).surface();
+            targEl = game.getBoard().getHex(targetPos).surface();
         }
 
 
@@ -324,7 +365,7 @@ public class LosEffects {
         }
 
         boolean targetOffBoard = !game.getBoard()
-                .contains(target.getPosition());
+                .contains(targetPos);
         boolean targetUnderWater;
         boolean targetInWater;
         boolean targetOnLand;

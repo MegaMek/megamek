@@ -1050,8 +1050,33 @@ public class Compute {
             return 0;
         }
 
-        int distance = attacker.getPosition().distance(target.getPosition());
-
+        Vector<Coords> attackPos = new Vector<Coords>();
+        attackPos.add(attacker.getPosition());
+        Vector<Coords> targetPos = new Vector<Coords>();
+        targetPos.add(target.getPosition());
+        //if a grounded dropship is the attacker, then it gets to choose the best secondary position for LoS
+        if(attacker instanceof Dropship && !attacker.isAirborne() && !attacker.isSpaceborne()) {
+            attackPos = new Vector<Coords>();
+            for(int key : attacker.getSecondaryPositions().keySet()) {
+                attackPos.add(attacker.getSecondaryPositions().get(key));
+            }
+        }
+        if(target instanceof Entity && target instanceof Dropship && 
+                !((Entity)target).isAirborne() && !((Entity)target).isSpaceborne()) {
+            targetPos = new Vector<Coords>();
+            for(int key : ((Entity)target).getSecondaryPositions().keySet()) {
+                targetPos.add(((Entity)target).getSecondaryPositions().get(key));
+            }
+        }
+        int distance = Integer.MAX_VALUE;
+        for(Coords apos : attackPos) {
+            for(Coords tpos : targetPos) { 
+                if(apos.distance(tpos) < distance) {
+                    distance = apos.distance(tpos);
+                }
+            }
+        }
+        
         // ground units that are the target of air to ground attacks always have
         // a distance of zero
         // for return fire except for altitude differences
@@ -1072,10 +1097,10 @@ public class Compute {
                     break;
                 }
                 //check for dive-bombing of this hex
-                Coords attackPos = attacker.getPosition();
+                Coords apos = attacker.getPosition();
                 if ((null != attackPos) && prevAttack.isDiveBomb(game)
                         && (prevTarget instanceof HexTarget)
-                        && ((HexTarget)prevTarget).getPosition().equals(attackPos)) {
+                        && ((HexTarget)prevTarget).getPosition().equals(apos)) {
                     distance = 0;
                     break;
                 }
@@ -1109,7 +1134,7 @@ public class Compute {
 
         if (Compute.isGroundToAir(attacker, target)) {
             distance += (2 * target.getAltitude());
-        }
+        }        
 
         return distance;
     }

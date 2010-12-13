@@ -1338,6 +1338,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // target immobile
         if (!(wtype instanceof ArtilleryCannonWeapon)) {
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+            //grounded dropships are treated as immobile as well for purpose of the mods
+            if(null != te 
+                    && !te.isAirborne() && !te.isSpaceborne() 
+                    && te instanceof Aero && ((Aero)te).isSpheroid()) {
+                immobileMod = new ToHitData(-4, "immobile dropship");
+            }
             if (immobileMod != null) {
                 toHit.append(immobileMod);
 	        toSubtract += immobileMod.getValue();

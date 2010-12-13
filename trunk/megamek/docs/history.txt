@@ -48,6 +48,8 @@ v0.35.21-dev (SVN)
 + unofficial game option to allow smoke drift even with no wind (call it a 'breeze')
 + adjustments to landing/takeoff lengths for STOL-equipped aircraft
 + added a check for secondary positions to game#getEntities(Coords c)
++ stacking limits for Large Support Vees
++ grounded dropships act like Large Support Vees for stacking purposes
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

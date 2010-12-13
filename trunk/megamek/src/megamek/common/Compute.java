@@ -173,7 +173,9 @@ public class Compute {
             return null;
         }
 
-        boolean isMech = entering instanceof Mech;
+        boolean isMech = entering instanceof Mech || entering instanceof SmallCraft;
+        boolean isLargeSupport = entering instanceof LargeSupportTank || entering instanceof Dropship;
+        boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
         int totalUnits = 1;
         int thisLowStackingLevel = entering.getElevation();
@@ -222,6 +224,15 @@ public class Compute {
                     return inHex;
                 }
 
+                //only infantry can be in the same hex as a large support vee
+                //grounded dropships are treated as large support vees
+                if(isLargeSupport && !(inHex instanceof Infantry)) {
+                    return inHex;
+                }              
+                if((inHex instanceof LargeSupportTank || inHex instanceof Dropship) && !isInfantry) {
+                    return inHex;
+                }
+                
                 totalUnits++;
                 // If the new one is the most
                 if (totalUnits > 4) {

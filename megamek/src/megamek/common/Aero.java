@@ -581,8 +581,11 @@ public class Aero extends Entity {
 
     @Override
     public boolean isImmobile() {
-        // aeros never go "immobile"
-        return false;
+        //aeros are never immobile when in the air or space
+        if(isAirborne() || isSpaceborne()) {
+            return false;
+        } 
+        return super.isImmobile();
     }
 
     @Override

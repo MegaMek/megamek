@@ -671,4 +671,12 @@ public class SmallCraft extends Aero {
         }
         return 1;
     }
+    
+    @Override
+    public boolean isImmobile() {
+        if(isSpheroid() && !isAirborne() && !isSpaceborne()) {
+            return true;
+        }
+        return super.isImmobile();
+    }
 }

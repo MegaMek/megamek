@@ -346,13 +346,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // yeech. handle damage. . different weapons do this in very different
         // ways
         int hits = 1;
-        if(!(ae.isAirborne())) {
+        if(!(target.isAirborne())) {
             hits = calcHits(vPhaseReport);
         }
         int nCluster = calcnCluster();
 
         //Now I need to adjust this for attacks by aeros because they use attack values and different rules
-        if(ae.isAirborne()) {
+        if(target.isAirborne()) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
                 bSalvo = true;

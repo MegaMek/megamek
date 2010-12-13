@@ -678,8 +678,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if ((ae instanceof Aero) && !((Aero) ae).isSpheroid() && !ae.isAirborne()) {
-                toHit.addModifier(+2, "grounded aero");
+            if (!ae.isAirborne() && !ae.isSpaceborne()) {
+                //grounded aero
+                if(!(ae instanceof Dropship)) {
+                    toHit.addModifier(+2, "grounded aero");
+                } else if(!target.isAirborne()) {
+                    toHit.addModifier(-2, "grounded dropships firing on ground units");
+                }
             }
 
             // check for particular kinds of weapons in weapon bays
@@ -2543,7 +2548,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // only one ground-to-air attack allowed per turn
-        if (!ae.isAirborne()) {
+        // grounded spheroid dropships dont have this limitation
+        if (!ae.isAirborne() && !(ae instanceof Dropship && ((Aero)ae).isSpheroid())) {
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {

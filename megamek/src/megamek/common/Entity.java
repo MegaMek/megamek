@@ -6070,6 +6070,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case RangeType.RANGE_MEDIUM:
             case RangeType.RANGE_LONG:
             case RangeType.RANGE_EXTREME:
+            case RangeType.RANGE_OUT:
                 result = new TargetRoll(0, "stealth not installed");
                 break;
             default:

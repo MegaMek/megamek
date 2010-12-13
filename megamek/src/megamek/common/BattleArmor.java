@@ -1090,6 +1090,8 @@ public class BattleArmor extends Infantry {
                         // modifier?
                         result = new TargetRoll(+2, "Basic Stealth Armor");
                         break;
+                    case RangeType.RANGE_OUT:
+                        break;
                     default:
                         throw new IllegalArgumentException("Unknown range constant: " + range);
                 }
@@ -1107,6 +1109,8 @@ public class BattleArmor extends Infantry {
                     case RangeType.RANGE_EXTREME: // TODO : what's the *real*
                         // modifier?
                         result = new TargetRoll(+2, "Prototype Stealth Armor");
+                        break;
+                    case RangeType.RANGE_OUT:
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown range constant: " + range);
@@ -1126,6 +1130,8 @@ public class BattleArmor extends Infantry {
                         // modifier?
                         result = new TargetRoll(+2, "Standard Stealth Armor");
                         break;
+                    case RangeType.RANGE_OUT:
+                        break;
                     default:
                         throw new IllegalArgumentException("Unknown range constant: " + range);
                 }
@@ -1143,6 +1149,8 @@ public class BattleArmor extends Infantry {
                     case RangeType.RANGE_EXTREME: // TODO : what's the *real*
                         // modifier?
                         result = new TargetRoll(+3, "Improved Stealth Armor");
+                        break;
+                    case RangeType.RANGE_OUT:
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown range constant: " + range);
@@ -1179,6 +1187,8 @@ public class BattleArmor extends Infantry {
                     case RangeType.RANGE_EXTREME: // TODO : what's the *real*
                         // modifier?
                         result = new TargetRoll(longStealthMod, stealthName);
+                        break;
+                    case RangeType.RANGE_OUT:
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown range constant: " + range);

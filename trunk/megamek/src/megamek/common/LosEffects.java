@@ -21,6 +21,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
@@ -46,6 +47,8 @@ public class LosEffects {
         public int targetAbsHeight;
         public int attackHeight;
         public int targetHeight;
+        public int attackerId;
+        public int targetId;
         int minimumWaterDepth = -1;
     }
 
@@ -275,8 +278,12 @@ public class LosEffects {
 
         final AttackInfo ai = new AttackInfo();
         ai.attackPos = ae.getPosition();
+        ai.attackerId = ae.getId();
         ai.targetPos = target.getPosition();
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
+        if(ai.targetEntity) {
+            ai.targetId = ((Entity)target).getId();
+        }
         ai.targetInfantry = target instanceof Infantry;
         ai.attackHeight = ae.getHeight();
         ai.targetHeight = target.getHeight();
@@ -810,6 +817,19 @@ public class LosEffects {
             bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
         }
 
+        //check for grounded dropships - treat like a building 10 elevations tall
+        if(bldgEl < 10) {
+            for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
+                final Entity inHex = i.nextElement();
+                if(ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
+                    continue;
+                }
+                if(inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne()) {
+                    bldgEl = 10;
+                }
+            }
+        }
+        
         // TODO: Identify when LOS travels *above* a building's hex.
         // Alternatively, force all building hexes to be same height.
 
@@ -1092,6 +1112,18 @@ public class LosEffects {
                int bldgEl = 0;
                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                    bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
+               }
+               //check for grounded dropships - treat like a building 10 elevations tall
+               if(bldgEl < 10) {
+                   for (Enumeration<Entity> i = game.getEntities(c); i.hasMoreElements();) {
+                       final Entity inHex = i.nextElement();
+                       if(ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
+                           continue;
+                       }
+                       if(inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne()) {
+                           bldgEl = 10;
+                       }
+                   }
                }
                int totalEl = hexEl + bldgEl;
                if(totalEl > IntElev) {

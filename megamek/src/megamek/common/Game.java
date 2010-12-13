@@ -1337,9 +1337,22 @@ public class Game implements Serializable, IGame {
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
             for (Entity entity : entities) {
-                if (c.equals(entity.getPosition()) && entity.isTargetable()) {
+                if(!entity.isTargetable()) {
+                    continue;
+                }
+                if (c.equals(entity.getPosition())) {
                     vector.addElement(entity);
                 }
+                //also check for secondary positions
+                else if(null != entity.getSecondaryPositions()) {
+                    for (int key : entity.getSecondaryPositions().keySet()) {
+                        if(c.equals(entity.getSecondaryPositions().get(key))) {
+                            vector.addElement(entity);
+                            break;
+                        }
+                    }
+                }
+                
             }
         }
         return vector.elements();

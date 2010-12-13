@@ -442,7 +442,21 @@ public class MoveStep implements Serializable {
             if(hex.containsTerrain(Terrains.ICE) && hex.containsTerrain(Terrains.WATER)) {
                 depth = 0;
             }
-            if (entity instanceof Infantry) {
+            //grounded dropships are treated as level 10 buildings for purposes of jumping over
+            boolean grdDropship = false;
+            if(building < 10) {
+                for (Enumeration<Entity> i = game.getEntities(getPosition()); i.hasMoreElements();) {
+                    final Entity inHex = i.nextElement();
+                    if(inHex.equals(entity)) {
+                        continue;
+                    }
+                    if(inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne()) {
+                        building = 10;
+                        grdDropship = true;
+                    }
+                }
+            }
+            if (entity instanceof Infantry && !grdDropship) {
                 // infantry can jump into a building
                 setElevation(Math.max(depth, Math.min(building,
                         maxElevation)));

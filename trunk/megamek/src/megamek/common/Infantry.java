@@ -1055,6 +1055,8 @@ public class Infantry extends Entity implements Serializable {
                     // modifier?
                     result = new TargetRoll(+2, "Sneak, IR/DEST suit");
                     break;
+                case RangeType.RANGE_OUT:
+                    break;
                 default:
                     throw new IllegalArgumentException(
                             "Unknown range constant: " + range);

@@ -4741,6 +4741,8 @@ public abstract class Mech extends Entity implements Serializable {
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
                     break;
+                case RangeType.RANGE_OUT:
+                    break;
                 default:
                     throw new IllegalArgumentException("Unknown range constant: " + range);
             }

@@ -1470,10 +1470,8 @@ public class Compute {
             return null;
         }
 
-        boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target
-                .getPosition(), attacker.getForwardArc());
-        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target
-                .getPosition(), attacker.getRearArc());
+        boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target, attacker.getForwardArc());
+        boolean curInRearArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target, attacker.getRearArc());
         if (!curInRearArc && attacker.getQuirks().booleanOption("multi_trac")) {
             return null;
         }
@@ -1502,7 +1500,7 @@ public class Compute {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "When targeting a stealthed Mech, can not attack secondary targets");
                 }
-                if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte.getPosition(), attacker
+                if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte, attacker
                         .getForwardArc())) {
                     primaryTarget = prevAttack.getTargetId();
                     break;
@@ -2585,8 +2583,8 @@ public class Compute {
             facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
         }
         Coords aPos = ae.getPosition();
+        Vector<Coords> tPosV = new Vector<Coords>();
         Coords tPos = t.getPosition();
-
         // aeros in the same hex in space may still be able to fire at one
         // another. First I need to translate
         // their positions to see who was further back
@@ -2598,8 +2596,15 @@ public class Compute {
             if (((Aero) t).shouldMoveBackHex((Aero) ae)) {
                 tPos = ((Entity) t).getPosition();
             }
-        }
-        return Compute.isInArc(aPos, facing, tPos, ae.getWeaponArc(weaponId));
+        }     
+        tPosV.add(tPos);
+        //check for secondary positions
+        if(t instanceof Entity && null != ((Entity)t).getSecondaryPositions()) {
+            for(int key : ((Entity)t).getSecondaryPositions().keySet()) {
+                tPosV.add(((Entity)t).getSecondaryPositions().get(key));
+            }
+        }        
+        return Compute.isInArc(aPos, facing, tPosV, ae.getWeaponArc(weaponId));
     }
 
     /**
@@ -2615,84 +2620,189 @@ public class Compute {
         return (fa > 330) || (fa < 30);
     }
 
+    public static boolean isInArc(Coords src, int facing, Targetable target, int arc) {
+        
+        Vector<Coords> tPosV = new Vector<Coords>();
+        tPosV.add(target.getPosition());
+        //check for secondary positions
+        if(target instanceof Entity && null != ((Entity)target).getSecondaryPositions()) {
+            for(int key : ((Entity)target).getSecondaryPositions().keySet()) {
+                tPosV.add(((Entity)target).getSecondaryPositions().get(key));
+            }
+        }
+        
+        return isInArc(src, facing, tPosV, arc);
+    }
+    
+    public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
+        Vector<Coords> destV = new Vector<Coords>();
+        destV.add(dest);
+        return isInArc(src, facing, destV, arc);      
+    }
+    
     /**
      * Returns true if the target is in the specified arc.
+     * Note: This has to take vectors of coordinates to account for
+     * potential secondary positions
      *
      * @param src
-     *            the attacker coordinate
+     *            the attack coordinates
      * @param facing
      *            the appropriate attacker sfacing
-     * @param dest
-     *            the target coordinate
+     * @param destV
+     *            A vector of target coordinates
      * @param arc
      *            the arc
      */
-    public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
-        if ((src == null) || (dest == null)) {
+    public static boolean isInArc(Coords src, int facing, Vector<Coords> destV, int arc) {
+        if ((src == null) || (destV == null)) {
             return true;
         }
-        // calculate firing angle
-        int fa = src.degree(dest) - facing * 60;
-        if (fa < 0) {
-            fa += 360;
+        
+        //Jay: I have to adjust this to take in vectors of coordinates to account for secondary positions of the 
+        //target - I am fairly certain that secondary positions of the attacker shouldn't matter because you don't get 
+        //to move the angle based on the secondary positions
+        
+        //if any of the destination coords are in the right place, then return true
+        for(Coords dest : destV) {
+            // calculate firing angle
+            int fa = src.degree(dest) - facing * 60;
+            if (fa < 0) {
+                fa += 360;
+            }
+            // is it in the specifed arc?
+            switch (arc) {
+                case ARC_FORWARD:
+                    if((fa >= 300) || (fa <= 60)) {
+                        return true;
+                    }
+                    break;
+                case Compute.ARC_RIGHTARM:
+                    if((fa >= 300) || (fa <= 120)) {
+                        return true;
+                    }
+                    break;
+                case Compute.ARC_LEFTARM:
+                    if((fa >= 240) || (fa <= 60)) {
+                        return true;
+                    }
+                    break;
+                case ARC_REAR:
+                    if((fa > 120) && (fa < 240)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHTSIDE:
+                    if((fa > 60) && (fa <= 120)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDE:
+                    if((fa < 300) && (fa >= 240)) {
+                        return true;
+                    }
+                    break;
+                case ARC_MAINGUN:
+                    if((fa >= 240) || (fa <= 120)) {
+                        return true;
+                    }
+                    break;
+                case ARC_360:
+                    return true;
+                case ARC_NORTH:
+                    if((fa >= 270) || (fa <= 30)) {
+                        return true;
+                    }
+                    break;
+                case ARC_EAST:
+                    if((fa >= 30) && (fa <= 150)) {
+                        return true;
+                    }
+                    break;
+                case ARC_WEST:
+                    if((fa >= 150) && (fa <= 270)) {
+                        return true;
+                    }
+                    break;
+                case ARC_NOSE:
+                    if((fa > 300) || (fa < 60)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LWING:
+                    if((fa > 300) || (fa <= 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RWING:
+                    if((fa >= 0) && (fa < 60)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LWINGA:
+                    if((fa >= 180) && (fa < 240)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RWINGA:
+                    if((fa > 120) && (fa <= 180)) {
+                        return true;
+                    }
+                    break;
+                case ARC_AFT:
+                    if((fa > 120) && (fa < 240)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDE_SPHERE:
+                    if((fa > 240) || (fa < 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHTSIDE_SPHERE:
+                    if((fa > 0) && (fa < 120)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFTSIDEA_SPHERE:
+                    if((fa > 180) && (fa < 300)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHTSIDEA_SPHERE:
+                    if((fa > 60) && (fa < 180)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFT_BROADSIDE:
+                    if((fa >= 240) && (fa <= 300)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHT_BROADSIDE:
+                    if((fa >= 60) && (fa <= 120)) {
+                        return true;
+                    }
+                    break;
+                case ARC_LEFT_SPHERE_GROUND:
+                    if((fa >= 180) && (fa < 360)) {
+                        return true;
+                    }
+                    break;
+                case ARC_RIGHT_SPHERE_GROUND:
+                    if((fa >= 0) && (fa < 180)) {
+                        return true;
+                    }
+                    break;
+                case ARC_TURRET:
+                    if((fa >= 330) || (fa <= 30)) {
+                        return true;
+                    }
+                    break;
+            }
         }
-        // is it in the specifed arc?
-        switch (arc) {
-            case ARC_FORWARD:
-                return (fa >= 300) || (fa <= 60);
-            case Compute.ARC_RIGHTARM:
-                return (fa >= 300) || (fa <= 120);
-            case Compute.ARC_LEFTARM:
-                return (fa >= 240) || (fa <= 60);
-            case ARC_REAR:
-                return (fa > 120) && (fa < 240);
-            case ARC_RIGHTSIDE:
-                return (fa > 60) && (fa <= 120);
-            case ARC_LEFTSIDE:
-                return (fa < 300) && (fa >= 240);
-            case ARC_MAINGUN:
-                return (fa >= 240) || (fa <= 120);
-            case ARC_360:
-                return true;
-            case ARC_NORTH:
-                return (fa >= 270) || (fa <= 30);
-            case ARC_EAST:
-                return (fa >= 30) && (fa <= 150);
-            case ARC_WEST:
-                return (fa >= 150) && (fa <= 270);
-            case ARC_NOSE:
-                return (fa > 300) || (fa < 60);
-            case ARC_LWING:
-                return (fa > 300) || (fa <= 0);
-            case ARC_RWING:
-                return (fa >= 0) && (fa < 60);
-            case ARC_LWINGA:
-                return (fa >= 180) && (fa < 240);
-            case ARC_RWINGA:
-                return (fa > 120) && (fa <= 180);
-            case ARC_AFT:
-                return (fa > 120) && (fa < 240);
-            case ARC_LEFTSIDE_SPHERE:
-                return (fa > 240) || (fa < 0);
-            case ARC_RIGHTSIDE_SPHERE:
-                return (fa > 0) && (fa < 120);
-            case ARC_LEFTSIDEA_SPHERE:
-                return (fa > 180) && (fa < 300);
-            case ARC_RIGHTSIDEA_SPHERE:
-                return (fa > 60) && (fa < 180);
-            case ARC_LEFT_BROADSIDE:
-                return (fa >= 240) && (fa <= 300);
-            case ARC_RIGHT_BROADSIDE:
-                return (fa >= 60) && (fa <= 120);
-            case ARC_LEFT_SPHERE_GROUND:
-                return (fa >= 180) && (fa < 360);
-            case ARC_RIGHT_SPHERE_GROUND:
-                return (fa >= 0) && (fa < 180);
-            case ARC_TURRET:
-                return (fa >= 330) || (fa <= 30);
-            default:
-                return false;
-        }
+        //if we got here then no matches
+        return false;
     }
 
     /**

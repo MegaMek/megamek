@@ -14,7 +14,10 @@
 
 package megamek.common.actions;
 
+import java.util.Vector;
+
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
@@ -213,21 +216,19 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");
         }
-
+        
         // check facing
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
                 && (mule != 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target
-                        .getPosition(), Compute.ARC_FORWARD)) {
+                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // check facing, part 2: Mule kick
         if ((0 != range)
                 && (mule == 1)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target
-                        .getPosition(), Compute.ARC_REAR)) {
+                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_REAR)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

@@ -164,8 +164,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         // check facing
         // Don't check arc for stomping infantry or tanks.
         if ((0 != range)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target
-                        .getPosition(), Compute.ARC_FORWARD)) {
+                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

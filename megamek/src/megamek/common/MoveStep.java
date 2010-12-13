@@ -2505,6 +2505,16 @@ public class MoveStep implements Serializable {
                     && (type != MoveStepType.GO_PRONE)) {
                 return false;
             }
+            
+            //cant move through a hex with a LargeSupportTank or a grounded Dropship unless infantry
+            if(!(entity instanceof Infantry)) {
+                for (Enumeration<Entity> i = game.getEntities(src); i.hasMoreElements();) {
+                    final Entity inHex = i.nextElement();
+                    if(inHex instanceof LargeSupportTank || (inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne())) {
+                        return false;
+                    }
+                }
+            }
         }
 
         // can't jump over too-high terrain

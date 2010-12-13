@@ -51,6 +51,7 @@ v0.35.21-dev (SVN)
 + stacking limits for Large Support Vees
 + grounded dropships act like Large Support Vees for stacking purposes
 + grounded dropships block LoS
++ grounded spheroid dropships are immobile targets
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

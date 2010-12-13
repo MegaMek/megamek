@@ -14,8 +14,11 @@
 
 package megamek.common.actions;
 
+import java.util.Vector;
+
 import megamek.common.BipedMech;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
@@ -217,10 +220,10 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
             }
         }
-
+        
         // Check facing if the Mek is not prone.
         else if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
-                target.getPosition(), armArc)) {
+                target, armArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

@@ -14,8 +14,11 @@
 
 package megamek.common.actions;
 
+import java.util.Vector;
+
 import megamek.common.BipedMech;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -140,9 +143,9 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         if (Math.abs(attackerElevation - targetElevation) > ae.getMaxElevationChange()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
-
+        
         // check facing
-        if (!counter && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target.getPosition(), Compute.ARC_FORWARD)) {
+        if (!counter && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

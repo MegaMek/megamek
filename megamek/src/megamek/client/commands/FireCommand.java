@@ -318,7 +318,7 @@ public class FireCommand extends ClientCommand {
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), target.getPosition(),
+                        attacker.getSecondaryFacing(), target,
                         attacker.getForwardArc());
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
@@ -341,7 +341,7 @@ public class FireCommand extends ClientCommand {
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), target.getPosition(),
+                        attacker.getSecondaryFacing(), target,
                         attacker.getForwardArc());
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa

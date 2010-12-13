@@ -2579,7 +2579,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Protomech can fire MGA only into front arc, TW page 137
-        if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target.getPosition(), Compute.ARC_FORWARD)
+        if (!Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)
                 && wtype.hasFlag(WeaponType.F_MGA) && (ae instanceof Protomech)) {
             return "Protomech can fire MGA only into front arc.";
         }

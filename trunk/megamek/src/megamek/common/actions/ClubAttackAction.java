@@ -20,8 +20,11 @@
 
 package megamek.common.actions;
 
+import java.util.Vector;
+
 import megamek.common.BipedMech;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -267,10 +270,10 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if ((targetHeight < attackerElevation) || (targetElevation > attackerHeight)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
-
+        
         // check facing
         int clubArc = bothArms ? Compute.ARC_FORWARD : (club.getLocation() == Mech.LOC_LARM ? Compute.ARC_LEFTARM : Compute.ARC_RIGHTARM);
-        if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target.getPosition(), clubArc)) {
+        if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target, clubArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

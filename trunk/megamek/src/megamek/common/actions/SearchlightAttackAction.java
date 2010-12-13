@@ -58,7 +58,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
    //     if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0)
    //         return false;
         if (!Compute.isInArc(attacker.getPosition(), attacker
-                .getSecondaryFacing(), target.getPosition(),
+                .getSecondaryFacing(), target,
                 attacker.getForwardArc()))
             return false;
         for (Enumeration<EntityAction> actions = game.getActions(); actions

@@ -712,7 +712,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 Entity attacker = waa.getEntity(client.game);
                 Targetable weapTarget = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), weapTarget.getPosition(),
+                        attacker.getSecondaryFacing(), weapTarget,
                         attacker.getForwardArc());
                 if (curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
@@ -738,7 +738,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 Entity attacker = waa.getEntity(client.game);
                 Targetable weapTarget = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(),
-                        attacker.getSecondaryFacing(), weapTarget.getPosition(),
+                        attacker.getSecondaryFacing(), weapTarget,
                         attacker.getForwardArc());
                 if (!curInFrontArc) {
                     WeaponAttackAction waa2 = new WeaponAttackAction(waa
@@ -887,10 +887,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 Targetable oldTarget = oldWaa.getTarget(client.game);
                 if (!oldTarget.equals(target)) {
                     boolean oldInFront = Compute.isInArc(ce().getPosition(),
-                            ce().getSecondaryFacing(), oldTarget.getPosition(),
+                            ce().getSecondaryFacing(), oldTarget,
                             ce().getForwardArc());
                     boolean curInFront = Compute.isInArc(ce().getPosition(),
-                            ce().getSecondaryFacing(), target.getPosition(),
+                            ce().getSecondaryFacing(), target,
                             ce().getForwardArc());
                     if (!oldInFront && curInFront) {
                         String title = Messages

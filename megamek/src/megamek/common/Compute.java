@@ -765,6 +765,7 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
         if ((distance == 0) && !isAttackerInfantry && !(ae.isAirborne())
+                && !(ae instanceof Dropship  && ((Dropship)ae).isSpheroid() && !ae.isAirborne() && !ae.isSpaceborne())
                 && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target.getTargetId()))) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }

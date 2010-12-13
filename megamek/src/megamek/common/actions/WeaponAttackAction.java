@@ -2583,14 +2583,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // TW errata 2.1
         if ((ae instanceof Aero) && ((Aero) ae).isSpheroid() && !game.getBoard().inSpace()) {
             int altDif = target.getAltitude() - ae.getAltitude();
+            int distance = Compute.effectiveDistance(game, ae, target, false);
+            if(!ae.isAirborne() && distance == 0 && weapon.getLocation() != Aero.LOC_AFT) {
+                return "Only aft weapons may target units at zero range";
+            }
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)) {
                 return "Target is too low for nose weapons";
             }
             if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)) {
                 return "Target is too low for front-side weapons";
             }
-            if ((weapon.getLocation() == Aero.LOC_AFT) && (altDif > -1)) {
-                return "Target is too high for aft weapons";
+            if ((weapon.getLocation() == Aero.LOC_AFT)) {
+                if(ae.isAirborne() && (altDif > -1)) {
+                    return "Target is too high for aft weapons";
+                } 
             }
             if ((weapon.isRearMounted()) && (altDif > 0)) {
                 return "Target is too high for aft-side weapons";

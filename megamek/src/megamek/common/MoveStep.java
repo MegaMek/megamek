@@ -2510,6 +2510,9 @@ public class MoveStep implements Serializable {
             if(!(entity instanceof Infantry)) {
                 for (Enumeration<Entity> i = game.getEntities(src); i.hasMoreElements();) {
                     final Entity inHex = i.nextElement();
+                    if(inHex.equals(entity)) {
+                        continue;
+                    }
                     if(inHex instanceof LargeSupportTank || (inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne())) {
                         return false;
                     }

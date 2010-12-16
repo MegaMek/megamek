@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -758,7 +758,12 @@ public class Tank extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Total Armor Factor x 2.5 x Armor multplier x BAR Rating / 10");
+        bvText.append("Total Armor x 2.5 x Armor Multplier x BAR / 10");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+
+        bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
         double armormultiplier = 1;
@@ -773,10 +778,54 @@ public class Tank extends Entity {
         dbv += (getTotalArmor() + modularArmor) * 2.5 * armormultiplier * ((float) (getBARRating()) / 10);
 
         int armor = getTotalArmor() + modularArmor;
-        bvText.append(armor + " x 2.5 x " + armormultiplier + " x " + ((float) (getBARRating()) / 10));
+        bvText.append(armor + modularArmor);
+        bvText.append(" x 2.5 x ");
+        bvText.append(armormultiplier);
+        bvText.append(" x ");
+        bvText.append(getBARRating());
+        bvText.append("/10");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(dbv);
+        bvText.append(endColumn);
+
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total I.S. Points x 1.5 x Blue Shield Multipler");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getTotalInternal());
+        bvText.append(" x 1.5 x ");
+        bvText.append((blueShield ? 1.2 : 1));
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1));
+        bvText.append(endColumn);
+        bvText.append(endRow);
         // total internal structure
         dbv += getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1);
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Defensive Equipment");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Mounted mounted : getEquipment()) {
@@ -787,7 +836,13 @@ public class Tank extends Entity {
                 continue;
             }
 
+            bvText.append(startColumn);
+            bvText.append(etype.getName());
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))) {
+                bvText.append(etype.getBV(this));
                 dEquipmentBV += etype.getBV(this);
             } else if (((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: ||
@@ -796,10 +851,39 @@ public class Tank extends Entity {
                     || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
+                bvText.append(bv);
                 dEquipmentBV += bv;
             }
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
         }
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(dEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+
         dbv += dEquipmentBV;
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         double typeModifier;
         switch (getMovementMode()) {
@@ -828,9 +912,23 @@ public class Tank extends Entity {
         } else if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
             typeModifier += .5;
         }
+        bvText.append(startColumn);
+        bvText.append("x Body Type Modier");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("x ");
+        bvText.append(typeModifier);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
 
         dbv *= typeModifier;
 
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("x Target Movement modifer");
+        bvText.append(endColumn);
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), this instanceof VTOL, this instanceof VTOL).getValue();
         // for the future, when we implement jumping tanks
@@ -842,6 +940,22 @@ public class Tank extends Entity {
         double tmmFactor = 1 + (Math.max(tmmRan, tmmJumped) / 10);
         dbv *= tmmFactor;
 
+        bvText.append(startColumn);
+        bvText.append("x ");
+        bvText.append(tmmFactor);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         double weaponBV = 0;
 
         // figure out base weapon bv
@@ -850,7 +964,7 @@ public class Tank extends Entity {
         boolean hasTargComp = hasTargComp();
         double targetingSystemBVMode = 1.0;
 
-        if (this instanceof SupportTank) {
+        if ((this instanceof SupportTank) || (this instanceof SupportVTOL)) {
             if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 targetingSystemBVMode = 1.0;
             } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
@@ -859,6 +973,17 @@ public class Tank extends Entity {
                 targetingSystemBVMode = .8;
             }
         }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Weapons");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         for (Mounted mounted : getWeaponList()) {
@@ -878,14 +1003,20 @@ public class Tank extends Entity {
                 continue;
             }
 
+            bvText.append(wtype.getName());
+            bvText.append(" ");
+            bvText.append(dBV);
+
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
+                    bvText.append(" x 1.2 Artemis");
                 }
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
+                    bvText.append(" x 1.3 Artemis V");
                 }
             }
 
@@ -893,21 +1024,31 @@ public class Tank extends Entity {
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
+                    bvText.append(" x 1.15 Apollo");
                 }
             }
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
+                bvText.append(" x 1.25 Direct Fire and TC");
             } else if ((this instanceof SupportTank) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 dBV *= targetingSystemBVMode;
+                bvText.append(" x ");
+                bvText.append(targetingSystemBVMode);
+                bvText.append(" Targeting System");
             }
+            bvText.append(endColumn);
+            bvText.append(startColumn);
             if (mounted.getLocation() == LOC_REAR) {
                 weaponsBVRear += dBV;
+                bvText.append(" Rear");
             } else if (mounted.getLocation() == LOC_FRONT) {
                 weaponsBVFront += dBV;
+                bvText.append(" Front");
             } else {
                 weaponBV += dBV;
+                bvText.append(" Side/Turret");
             }
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
@@ -919,7 +1060,21 @@ public class Tank extends Entity {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
                 }
             }
+            bvText.append(endColumn);
+            bvText.append(endRow);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
         }
+
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+
         if (weaponsBVFront > weaponsBVRear) {
             weaponBV += weaponsBVFront;
             weaponBV += (weaponsBVRear * 0.5);
@@ -928,6 +1083,31 @@ public class Tank extends Entity {
             weaponBV += (weaponsBVFront * 0.5);
         }
 
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(weaponBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+
+        bvText.append("Ammo BV");
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
         // add ammo bv
         double ammoBV = 0;
         // extra BV for when we have semiguided LRMs and someone else has TAG on
@@ -953,6 +1133,11 @@ public class Tank extends Entity {
                 // assumption: ammo without a location is for a oneshot weapon
                 continue;
             }
+
+            bvText.append(atype.getName());
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
             // semiguided or homing ammo might count double
             if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED) || (atype.getMunitionType() == AmmoType.M_HOMING)) {
                 Player tmpP = getOwner();
@@ -966,6 +1151,8 @@ public class Tank extends Entity {
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += atype.getBV(this);
+                                    bvText.append("Tag: ");
+                                    bvText.append(atype.getBV(this));
                                 }
                                 // A player can't be on two teams.
                                 // If we check his team and don't give the
@@ -985,7 +1172,17 @@ public class Tank extends Entity {
             } else {
                 ammo.put(key, atype.getBV(this) + ammo.get(key));
             }
+            bvText.append("BV: ");
+            bvText.append(atype.getBV(this));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
         }
+        bvText.append(endColumn);
+        bvText.append(endRow);
         // excessive ammo rule:
         // only count BV for ammo for a weapontype until the BV of all weapons
         // of that
@@ -1001,10 +1198,42 @@ public class Tank extends Entity {
                 ammoBV += ammo.get(key);
             }
         }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(ammoBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         weaponBV += ammoBV;
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Offensive Equipment");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
             MiscType mtype = (MiscType) mounted.getType();
@@ -1027,9 +1256,55 @@ public class Tank extends Entity {
                 bv = 7;
             }
             oEquipmentBV += bv;
+            bvText.append(mtype.getName());
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(bv);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
         }
 
+        bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(oEquipmentBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         weaponBV += oEquipmentBV;
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("+ weight / 2");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(getWeight());
+        bvText.append(" / 2 ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(getWeight() / 2);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         weaponBV += getWeight() / 2;
 
@@ -1039,6 +1314,31 @@ public class Tank extends Entity {
 
         obv = weaponBV * speedFactor;
 
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("+ weapons bv * speed factor");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(weaponBV);
+        bvText.append(" * ");
+        bvText.append(speedFactor);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(obv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("--------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         double finalBV = dbv + obv;
 
         // we get extra bv from some stuff
@@ -1046,7 +1346,7 @@ public class Tank extends Entity {
         // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
         if (!ignoreC3) {
-            xbv += getExtraC3BV((int)Math.round(finalBV));
+            xbv += getExtraC3BV((int) Math.round(finalBV));
         }
 
         finalBV = Math.round(dbv + obv + xbv);
@@ -1058,6 +1358,18 @@ public class Tank extends Entity {
         }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Final BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("= ");
+        bvText.append(retVal);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         return retVal;
     }
@@ -1186,7 +1498,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1458,7 +1770,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     *
+     * 
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), or heavy damage (3)
@@ -1504,7 +1816,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     *
+     * 
      * @param roll
      *            the final dice roll
      * @param loc
@@ -1857,7 +2169,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1885,7 +2197,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1908,7 +2220,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     *
+     * 
      * @return
      */
     public int getTotalSlots() {
@@ -1917,7 +2229,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     *
+     * 
      * @return
      */
     public int getFreeSlots() {

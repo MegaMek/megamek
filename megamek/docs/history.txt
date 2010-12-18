@@ -62,6 +62,7 @@ v0.35.21-dev (SVN)
 + adjust isInArc for target secondary positions
 + Bug: issue with setFluff in BLKFile.java saving to string not location [0] 
 + Updated CalculateBV expanded BV info.
++ Bug: superchargee not validating for being in same location as engine crit
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

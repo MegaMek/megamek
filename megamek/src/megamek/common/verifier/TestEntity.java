@@ -628,6 +628,22 @@ public abstract class TestEntity implements TestEntityOption {
                     }
                 }
             }
+            for (Mounted m : mech.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_MASC) && m.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                    boolean foundEngine = false;
+                    int numCrits = mech.getNumberOfCriticals(m.getLocation());
+                    for (int i = 0; i < numCrits; i++) {
+                        CriticalSlot ccs = mech.getCritical(m.getLocation(), i);
+                        if ((ccs != null) && (ccs.getType() == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == Mech.SYSTEM_ENGINE)) {
+                            foundEngine = true;
+                        }
+                    }
+                    if (!foundEngine) {
+                        buff.append("supercharge in location without engine\n");
+                        illegal = true;
+                    }
+                }
+            }
 
             if (mech.hasNullSig()) {
                 if (mech.hasStealth()) {

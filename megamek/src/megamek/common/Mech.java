@@ -3346,7 +3346,7 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(startColumn);
 
             bvText.append(name);
-            if (weapon.isTurretMounted()) {
+            if (weapon.isMechTurretMounted()) {
                 bvTurret += dBV;
                 bvText.append(" (T)");
             } else if (weapon.isRearMounted()) {
@@ -3355,7 +3355,7 @@ public abstract class Mech extends Entity implements Serializable {
             } else {
                 bvFront += dBV;
             }
-            if (!isArm(weapon.getLocation()) && !weapon.isTurretMounted()) {
+            if (!isArm(weapon.getLocation()) && !weapon.isMechTurretMounted()) {
                 if (weapon.isRearMounted()) {
                     nonArmRear += dBV;
                 } else {
@@ -3611,7 +3611,7 @@ public abstract class Mech extends Entity implements Serializable {
             // than front-mounted un-modded BV
             // or for being turret mounted, when more rear-mounted BV than front
             // mounted BV
-            if ((!isArm(mounted.getLocation()) && !mounted.isTurretMounted() && ((mounted.isRearMounted() && halveRear) || (!mounted.isRearMounted() && !halveRear))) || (mounted.isTurretMounted() && ((!turretFront && halveRear) || (turretFront && !halveRear)))) {
+            if ((!isArm(mounted.getLocation()) && !mounted.isMechTurretMounted() && ((mounted.isRearMounted() && halveRear) || (!mounted.isRearMounted() && !halveRear))) || (mounted.isMechTurretMounted() && ((!turretFront && halveRear) || (turretFront && !halveRear)))) {
                 dBV /= 2;
             }
 
@@ -5306,7 +5306,7 @@ public abstract class Mech extends Entity implements Serializable {
             if (m.isRearMounted()) {
                 return m.getType().getInternalName() + " (R)" + armoredText;
             }
-            if (m.isTurretMounted()) {
+            if (m.isMechTurretMounted()) {
                 return m.getType().getInternalName() + " (T)" + armoredText;
             }
             return m.getType().getInternalName() + armoredText;

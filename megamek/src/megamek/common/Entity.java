@@ -2221,10 +2221,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Creates a new mount for this equipment and adds it in.
      */
     public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted, boolean isArmored, boolean isTurreted) throws LocationFullException {
+        return addEquipment(etype, loc, rearMounted, bodyMounted, isArmored, isTurreted, false);
+    }
+
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted, boolean isArmored, boolean isTurreted, boolean isSponsonTurreted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBodyMounted(bodyMounted);
-        mounted.setTurretMounted(isTurreted);
+        mounted.setMechTurretMounted(isTurreted);
+        mounted.setSponsonTurretMounted(isSponsonTurreted);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }

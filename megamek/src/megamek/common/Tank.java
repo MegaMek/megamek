@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -494,11 +494,17 @@ public class Tank extends Entity {
             case LOC_TURRET_2:
                 return Compute.ARC_FORWARD;
             case LOC_RIGHT:
+                if (mounted.isSponsonTurretMounted()) {
+                    return Compute.ARC_SPONSON_TURRET_RIGHT;
+                }
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
                 return Compute.ARC_RIGHTSIDE;
             case LOC_LEFT:
+                if (mounted.isSponsonTurretMounted()) {
+                    return Compute.ARC_SPONSON_TURRET_LEFT;
+                }
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
@@ -1498,7 +1504,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1770,7 +1776,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     * 
+     *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), or heavy damage (3)
@@ -1816,7 +1822,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2169,7 +2175,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2197,7 +2203,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2220,7 +2226,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     * 
+     *
      * @return
      */
     public int getTotalSlots() {
@@ -2229,7 +2235,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     * 
+     *
      * @return
      */
     public int getFreeSlots() {

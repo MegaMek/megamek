@@ -273,6 +273,9 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         for (Mounted m : t.getEquipment()) {
             String name = m.getType().getInternalName();
             int loc = m.getLocation();
+            if (m.isSponsonTurretMounted()) {
+                name = name+"(ST)";
+            }
             if (loc != Entity.LOC_NONE) {
                 eq.get(loc).add(name);
             }

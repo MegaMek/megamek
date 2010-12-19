@@ -510,7 +510,7 @@ public class MtfFile implements IMechLoader {
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
                         m.setArmored(isArmored);
-                        m.setTurretMounted(isTurreted);
+                        m.setMechTurretMounted(isTurreted);
                         hSharedEquip.put(etype, m);
                     } else if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_SPLITABLE)) {
                         // do we already have this one in this or an outer
@@ -546,11 +546,11 @@ public class MtfFile implements IMechLoader {
                             m = new Mounted(mech, etype);
                             m.setFoundCrits(1);
                             m.setArmored(isArmored);
-                            m.setTurretMounted(isTurreted);
+                            m.setMechTurretMounted(isTurreted);
                             vSplitWeapons.addElement(m);
                         }
                         m.setArmored(isArmored);
-                        m.setTurretMounted(isTurreted);
+                        m.setMechTurretMounted(isTurreted);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
                         mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);

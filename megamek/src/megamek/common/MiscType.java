@@ -152,6 +152,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_COMMAND_CONSOLE = BigInteger.valueOf(1).shiftLeft(108);
     public static final BigInteger F_VSTOL_CHASSIS = BigInteger.valueOf(1).shiftLeft(109);
     public static final BigInteger F_STOL_CHASSIS = BigInteger.valueOf(1).shiftLeft(110);
+    public static final BigInteger F_SPONSON_TURRET = BigInteger.valueOf(1).shiftLeft(111);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -313,12 +314,24 @@ public class MiscType extends EquipmentType {
             // 10% of linked weapons' weight
             float weaponWeight = 0;
             for (Mounted m : entity.getWeaponList()) {
-                if ((m.getLocation() == locationToCheck) && m.isTurretMounted()) {
+                if ((m.getLocation() == locationToCheck) && m.isMechTurretMounted()) {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
             // round to half ton
-            return (float) (Math.ceil(weaponWeight / 20) * 2.0);
+            weaponWeight /= 10;
+            return (float) (Math.ceil(weaponWeight * 2.0))/2.0f;
+        } else if (hasFlag(F_SPONSON_TURRET)) {
+            float weaponWeight = 0;
+         // 10% of linked weapons' weight
+            for (Mounted m : entity.getWeaponList()) {
+                if ((m.isSponsonTurretMounted() && ((m.getLocation() == Tank.LOC_LEFT) || (m.getLocation() == Tank.LOC_RIGHT)))) {
+                    weaponWeight += m.getType().getTonnage(entity);
+                }
+            }
+            // round to half ton
+            weaponWeight /= 10;
+            return (float) (Math.ceil(weaponWeight * 2.0))/2.0f;
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -453,10 +466,12 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(F_DUNE_BUGGY)) {
                 float totalTons = getTonnage(entity);
                 cost = 10 * totalTons * totalTons;
-            }
-
-            if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
+            } else if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
                 cost = entity.getRunMP() * 75000;
+            } else if (hasFlag(F_HEAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_QUAD_TURRET)) {
+                cost = getTonnage(entity) * 10000;
+            } else if (hasFlag(F_SPONSON_TURRET)) {
+                cost = getTonnage(entity) * 4000;
             }
         }
 
@@ -835,6 +850,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLQuadTurret());
         EquipmentType.addType(MiscType.createCLTankCommandConsole());
         EquipmentType.addType(MiscType.createISTankCommandConsole());
+        EquipmentType.addType(MiscType.createISSponsonTurret());
+        EquipmentType.addType(MiscType.createCLSponsonTurret());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -4390,7 +4407,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLShoulderTurret");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         return misc;
@@ -4403,7 +4420,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISShoulderTurret");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         return misc;
@@ -4416,7 +4433,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLHeadTurret");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         return misc;
@@ -4429,7 +4446,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISHeadTurret");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         return misc;
@@ -4442,7 +4459,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLQuadTurret");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         return misc;
@@ -4455,7 +4472,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISQuadTurret");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
-        misc.cost = 10000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         return misc;
@@ -4729,6 +4746,34 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3f;
         misc.cost = 500000;
         misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISSponsonTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Sponson Turret";
+        misc.setInternalName("ISSponsonTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createCLSponsonTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Sponson Turret";
+        misc.setInternalName("CLSponsonTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         return misc;
     }

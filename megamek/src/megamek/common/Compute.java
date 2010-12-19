@@ -72,6 +72,8 @@ public class Compute {
     public static final int ARC_LEFT_SPHERE_GROUND = 23;
     public static final int ARC_RIGHT_SPHERE_GROUND = 24;
     public static final int ARC_TURRET = 25;
+    public static final int ARC_SPONSON_TURRET_LEFT = 26;
+    public static final int ARC_SPONSON_TURRET_RIGHT = 27;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -173,8 +175,8 @@ public class Compute {
             return null;
         }
 
-        boolean isMech = entering instanceof Mech || entering instanceof SmallCraft;
-        boolean isLargeSupport = entering instanceof LargeSupportTank || entering instanceof Dropship;
+        boolean isMech = (entering instanceof Mech) || (entering instanceof SmallCraft);
+        boolean isLargeSupport = (entering instanceof LargeSupportTank) || (entering instanceof Dropship);
         boolean isInfantry = entering instanceof Infantry;
         Entity firstEntity = transport;
         int totalUnits = 1;
@@ -228,11 +230,11 @@ public class Compute {
                 //grounded dropships are treated as large support vees
                 if(isLargeSupport && !(inHex instanceof Infantry)) {
                     return inHex;
-                }              
-                if((inHex instanceof LargeSupportTank || inHex instanceof Dropship) && !isInfantry) {
+                }
+                if(((inHex instanceof LargeSupportTank) || (inHex instanceof Dropship)) && !isInfantry) {
                     return inHex;
                 }
-                
+
                 totalUnits++;
                 // If the new one is the most
                 if (totalUnits > 4) {
@@ -765,7 +767,7 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
         if ((distance == 0) && !isAttackerInfantry && !(ae.isAirborne())
-                && !(ae instanceof Dropship  && ((Dropship)ae).isSpheroid() && !ae.isAirborne() && !ae.isSpaceborne())
+                && !((ae instanceof Dropship)  && ((Dropship)ae).isSpheroid() && !ae.isAirborne() && !ae.isSpaceborne())
                 && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target.getTargetId()))) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }
@@ -1056,13 +1058,13 @@ public class Compute {
         Vector<Coords> targetPos = new Vector<Coords>();
         targetPos.add(target.getPosition());
         //if a grounded dropship is the attacker, then it gets to choose the best secondary position for LoS
-        if(attacker instanceof Dropship && !attacker.isAirborne() && !attacker.isSpaceborne()) {
+        if((attacker instanceof Dropship) && !attacker.isAirborne() && !attacker.isSpaceborne()) {
             attackPos = new Vector<Coords>();
             for(int key : attacker.getSecondaryPositions().keySet()) {
                 attackPos.add(attacker.getSecondaryPositions().get(key));
             }
         }
-        if(target instanceof Entity && target instanceof Dropship && 
+        if((target instanceof Entity) && (target instanceof Dropship) &&
                 !((Entity)target).isAirborne() && !((Entity)target).isSpaceborne()) {
             targetPos = new Vector<Coords>();
             for(int key : ((Entity)target).getSecondaryPositions().keySet()) {
@@ -1071,13 +1073,13 @@ public class Compute {
         }
         int distance = Integer.MAX_VALUE;
         for(Coords apos : attackPos) {
-            for(Coords tpos : targetPos) { 
+            for(Coords tpos : targetPos) {
                 if(apos.distance(tpos) < distance) {
                     distance = apos.distance(tpos);
                 }
             }
         }
-        
+
         // ground units that are the target of air to ground attacks always have
         // a distance of zero
         // for return fire except for altitude differences
@@ -1135,7 +1137,7 @@ public class Compute {
 
         if (Compute.isGroundToAir(attacker, target)) {
             distance += (2 * target.getAltitude());
-        }        
+        }
 
         return distance;
     }
@@ -2579,7 +2581,7 @@ public class Compute {
         if ((ae instanceof Tank) && (ae.getEquipment(weaponId).getLocation() == Tank.LOC_TURRET_2)) {
             facing = ((Tank)ae).getDualTurretFacing();
         }
-        if (ae.getEquipment(weaponId).isTurretMounted()) {
+        if (ae.getEquipment(weaponId).isMechTurretMounted()) {
             facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
         }
         Coords aPos = ae.getPosition();
@@ -2596,14 +2598,14 @@ public class Compute {
             if (((Aero) t).shouldMoveBackHex((Aero) ae)) {
                 tPos = ((Entity) t).getPosition();
             }
-        }     
+        }
         tPosV.add(tPos);
         //check for secondary positions
-        if(t instanceof Entity && null != ((Entity)t).getSecondaryPositions()) {
+        if((t instanceof Entity) && (null != ((Entity)t).getSecondaryPositions())) {
             for(int key : ((Entity)t).getSecondaryPositions().keySet()) {
                 tPosV.add(((Entity)t).getSecondaryPositions().get(key));
             }
-        }        
+        }
         return Compute.isInArc(aPos, facing, tPosV, ae.getWeaponArc(weaponId));
     }
 
@@ -2621,25 +2623,25 @@ public class Compute {
     }
 
     public static boolean isInArc(Coords src, int facing, Targetable target, int arc) {
-        
+
         Vector<Coords> tPosV = new Vector<Coords>();
         tPosV.add(target.getPosition());
         //check for secondary positions
-        if(target instanceof Entity && null != ((Entity)target).getSecondaryPositions()) {
+        if((target instanceof Entity) && (null != ((Entity)target).getSecondaryPositions())) {
             for(int key : ((Entity)target).getSecondaryPositions().keySet()) {
                 tPosV.add(((Entity)target).getSecondaryPositions().get(key));
             }
         }
-        
+
         return isInArc(src, facing, tPosV, arc);
     }
-    
+
     public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
         Vector<Coords> destV = new Vector<Coords>();
         destV.add(dest);
-        return isInArc(src, facing, destV, arc);      
+        return isInArc(src, facing, destV, arc);
     }
-    
+
     /**
      * Returns true if the target is in the specified arc.
      * Note: This has to take vectors of coordinates to account for
@@ -2658,11 +2660,11 @@ public class Compute {
         if ((src == null) || (destV == null)) {
             return true;
         }
-        
-        //Jay: I have to adjust this to take in vectors of coordinates to account for secondary positions of the 
-        //target - I am fairly certain that secondary positions of the attacker shouldn't matter because you don't get 
+
+        //Jay: I have to adjust this to take in vectors of coordinates to account for secondary positions of the
+        //target - I am fairly certain that secondary positions of the attacker shouldn't matter because you don't get
         //to move the angle based on the secondary positions
-        
+
         //if any of the destination coords are in the right place, then return true
         for(Coords dest : destV) {
             // calculate firing angle
@@ -2799,6 +2801,16 @@ public class Compute {
                         return true;
                     }
                     break;
+                case ARC_SPONSON_TURRET_LEFT:
+                    if ((fa >= 180) || (fa == 0)) {
+                        return true;
+                    }
+                    break;
+                case ARC_SPONSON_TURRET_RIGHT:
+                    if ((fa >= 0) && (fa <= 180)) {
+                        return true;
+                    }
+                    break;
             }
         }
         //if we got here then no matches
@@ -2861,7 +2873,7 @@ public class Compute {
         if(!game.getOptions().booleanOption("tacops_sensors")) {
             return false;
         }
-        
+
         // if either does not have a position then return false
         if ((ae.getPosition() == null) || (target.getPosition() == null)) {
             return false;
@@ -2893,7 +2905,7 @@ public class Compute {
         if (target.isOffBoard()) {
             return false;
         }
-        
+
         return (LosEffects.calculateLos(game, ae.getId(), target).canSee() && Compute.inVisualRange(game, ae, target))
                     || Compute.inSensorRange(game, ae, target);
     }

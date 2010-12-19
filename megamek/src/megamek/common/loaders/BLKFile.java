@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -69,9 +69,14 @@ public class BLKFile {
             prefix = "IS ";
         }
 
+        boolean isTurreted = false;
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
                 String equipName = saEquip[x].trim();
+                if (equipName.toUpperCase().endsWith("(ST)")) {
+                    isTurreted = true;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
                 EquipmentType etype = EquipmentType.get(equipName);
 
                 if (etype == null) {
@@ -81,7 +86,7 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc);
+                        t.addEquipment(etype, nLoc, false, false, false, false, isTurreted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
@@ -333,6 +338,12 @@ public class BLKFile {
         }
         for (Mounted m : t.getEquipment()) {
             String name = m.getType().getInternalName();
+            if (m.isSponsonTurretMounted()) {
+                name = name+"(ST)";
+            }
+            if (m.isMechTurretMounted()) {
+                name = name+"(T)";
+            }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
                 eq.get(loc).add(name);

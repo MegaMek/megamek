@@ -51,7 +51,8 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean turretMounted = false; // is this mounted in a mechturret
+    private boolean mechTurretMounted = false; // is this mounted in a mechturret
+    private boolean sponsonTurretMounted = false; // is this mounted in a mechturret
     private int facing = -1; // facing for turrets
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
@@ -357,8 +358,11 @@ public class Mounted implements Serializable, RoundUpdated {
         if (rearMounted) {
             desc.append(" (R)");
         }
-        if (turretMounted) {
+        if (mechTurretMounted) {
             desc.append(" (T)");
+        }
+        if (sponsonTurretMounted) {
+            desc.append(" (ST)");
         }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
 
@@ -1180,15 +1184,23 @@ public class Mounted implements Serializable, RoundUpdated {
         return entity;
     }
 
-    public boolean isTurretMounted() {
-        return turretMounted;
+    public boolean isMechTurretMounted() {
+        return mechTurretMounted;
     }
 
-    public void setTurretMounted(boolean turret) {
-        turretMounted = turret;
-        if (turretMounted) {
+    public void setMechTurretMounted(boolean turret) {
+        mechTurretMounted = turret;
+        if (mechTurretMounted) {
             setFacing(0);
         }
+    }
+
+    public void setSponsonTurretMounted(boolean turret) {
+        sponsonTurretMounted = turret;
+    }
+
+    public boolean isSponsonTurretMounted() {
+        return sponsonTurretMounted;
     }
 
     public void setFacing(int facing) {

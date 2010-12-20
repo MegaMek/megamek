@@ -237,6 +237,10 @@ public class TestTank extends TestEntity {
             buff.append(engine.problem.toString()).append("\n\n");
             correct = false;
         }
+        if (tank.hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM) && !((tank.getMovementMode() == EntityMovementMode.WHEELED) || (tank.getMovementMode() == EntityMovementMode.TRACKED) || (tank.getMovementMode() == EntityMovementMode.HOVER) || (tank.getMovementMode() == EntityMovementMode.HYDROFOIL) || (tank.getMovementMode() == EntityMovementMode.NAVAL) || (tank.getMovementMode() == EntityMovementMode.SUBMARINE) || (tank.getMovementMode() == EntityMovementMode.WIGE))) {
+            buff.append("Armored Motive system and incompatible movemement mode!\n\n");
+            correct = false;
+        }
         if (tank.getFreeSlots() < 0) {
             buff.append("Not enough itemslots available!\n\n");
             correct = false;

@@ -306,7 +306,8 @@ public class Terrain implements ITerrain, Serializable {
         }
     }
 
-    public int movementCost(EntityMovementMode moveMode) {
+    public int movementCost(Entity e) {
+        EntityMovementMode moveMode = e.getMovementMode();
         switch (type) {
         case Terrains.MAGMA:
             return level - 1;
@@ -367,7 +368,7 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.SAND:
-            if ((moveMode == EntityMovementMode.WHEELED)
+            if (((moveMode == EntityMovementMode.WHEELED) && !e.hasWorkingMisc(MiscType.F_DUNE_BUGGY))
                     || (moveMode == EntityMovementMode.INF_JUMP)
                     || (moveMode == EntityMovementMode.INF_LEG)
                     || (moveMode == EntityMovementMode.INF_MOTORIZED)) {

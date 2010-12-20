@@ -450,13 +450,13 @@ public class MoveStep implements Serializable {
                     if(inHex.equals(entity)) {
                         continue;
                     }
-                    if(inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne()) {
+                    if((inHex instanceof Dropship) && !inHex.isAirborne() && !inHex.isSpaceborne()) {
                         building = 10;
                         grdDropship = true;
                     }
                 }
             }
-            if (entity instanceof Infantry && !grdDropship) {
+            if ((entity instanceof Infantry) && !grdDropship) {
                 // infantry can jump into a building
                 setElevation(Math.max(depth, Math.min(building,
                         maxElevation)));
@@ -1613,7 +1613,7 @@ public class MoveStep implements Serializable {
             if (!isFirstStep() && ((prev.getType() == MoveStepType.LAND) || (prev.getType() == MoveStepType.VLAND))) {
                 return;
             }
-            
+
             //can only use safe thrust when ammo (or bomb) dumping
             //(unless out of control?)
             boolean bDumping = false;//a.isDumpingBombs();
@@ -2187,7 +2187,7 @@ public class MoveStep implements Serializable {
             if ((moveMode != EntityMovementMode.BIPED_SWIM)
                     && (moveMode != EntityMovementMode.QUAD_SWIM)
                     && (!((moveMode == EntityMovementMode.WIGE) && (getElevation() > 0)))) {
-                mp += destHex.movementCost(moveMode);
+                mp += destHex.movementCost(parent.getEntity());
             }
 
             // non-hovers, non-navals and non-VTOLs check for water depth and
@@ -2519,7 +2519,7 @@ public class MoveStep implements Serializable {
                     && (type != MoveStepType.GO_PRONE)) {
                 return false;
             }
-            
+
             //cant move through a hex with a LargeSupportTank or a grounded Dropship unless infantry
             if(!(entity instanceof Infantry)) {
                 for (Enumeration<Entity> i = game.getEntities(src); i.hasMoreElements();) {
@@ -2527,7 +2527,7 @@ public class MoveStep implements Serializable {
                     if(inHex.equals(entity)) {
                         continue;
                     }
-                    if(inHex instanceof LargeSupportTank || (inHex instanceof Dropship && !inHex.isAirborne() && !inHex.isSpaceborne())) {
+                    if((inHex instanceof LargeSupportTank) || ((inHex instanceof Dropship) && !inHex.isAirborne() && !inHex.isSpaceborne())) {
                         return false;
                     }
                 }

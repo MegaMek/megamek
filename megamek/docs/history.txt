@@ -64,6 +64,7 @@ v0.35.21-dev (SVN)
 + Updated CalculateBV expanded BV info.
 + Bug: superchargee not validating for being in same location as engine crit
 + Tank Sponson Turrets
++ Dune Buggy chassis mod reduces cruise MP by 1
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

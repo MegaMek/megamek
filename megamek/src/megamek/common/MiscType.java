@@ -1826,8 +1826,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createArmoredChassis() {
         MiscType misc = new MiscType();
 
-        misc.name = "Armored Chassis";
-        misc.setInternalName(misc.name);
+        misc.name = "Armored";
+        misc.setInternalName("Armored Chassis");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
@@ -4281,7 +4281,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISLimitedAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Limited Amphibious Chassis";
+        misc.name = "Limited Amphibious";
         misc.setInternalName("ISLimitedAmphibiousChassis");
         misc.addLookupName("ISLimitedAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
@@ -4297,7 +4297,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISFullyAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Fully Amphibious Chassis";
+        misc.name = "Fully Amphibious";
         misc.setInternalName("ISFullyAmphibiousChassis");
         misc.addLookupName("ISFullyAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
@@ -4313,7 +4313,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISDuneBuggyChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Dune Buggy Chassis";
+        misc.name = "Dune Buggy";
         misc.setInternalName("ISDuneBuggyChassis");
         misc.addLookupName("ISDuneBuggy");
         misc.tonnage = 0f;
@@ -4329,7 +4329,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISOffRoadChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Off-Road Chassis";
+        misc.name = "Off-Road";
         misc.setInternalName("ISOffRoadChassis");
         misc.addLookupName("ISOffRoad");
         misc.tonnage = 0f;
@@ -4345,7 +4345,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLOffRoadChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
-        misc.name = "Off-Road Chassis";
+        misc.name = "Off-Road";
         misc.setInternalName("ClanOffRoadChassis");
         misc.addLookupName("CLOffRoad");
         misc.tonnage = 0f;
@@ -4376,7 +4376,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLLimitedAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
-        misc.name = "Limited Amphibious Chassis";
+        misc.name = "Limited Amphibious";
         misc.setInternalName("ClanLimitedAmphibiousChassis");
         misc.addLookupName("ClanLimitedAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
@@ -4392,7 +4392,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLFullyAmphibiousChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
-        misc.name = "Fully Amphibious Chassis";
+        misc.name = "Fully Amphibious";
         misc.setInternalName("ClanFullyAmphibiousChassis");
         misc.addLookupName("ClanFullyAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
@@ -4408,7 +4408,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLDuneBuggyChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
-        misc.name = "Dune Buggy Chassis";
+        misc.name = "Dune Buggy";
         misc.setInternalName("ClanDuneBuggyChassis");
         misc.addLookupName("ClanDuneBuggy");
         misc.tonnage = 0f;
@@ -4725,7 +4725,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createSTOLChassisMod() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = "STOL Chassis Modification";
+        misc.name = "STOL";
         misc.setInternalName("STOLChassisMod");
         misc.tonnage = 0f;
         misc.cost = 0;
@@ -4737,7 +4737,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createVSTOLChassisMod() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = "VSTOL Chassis Modification";
+        misc.name = "VSTOL";
         misc.setInternalName("VSTOLChassisMod");
         misc.tonnage = 0f;
         misc.cost = 0;

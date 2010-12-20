@@ -420,7 +420,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TRACKS)) {
             return entity.getWeight() / 10;
         } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
-            return (float) (Math.floor(entity.getWeight() / 10) + 0.5);
+            return (float) (Math.ceil(entity.getWeight() / 25 * 2) /2.0);
         } else if (hasFlag(F_DUMPER)) {
             // 5% of cargo
             float cargoTonnage = 0;
@@ -4758,6 +4758,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
+        misc.hittable = false;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4772,6 +4773,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
+        misc.hittable = false;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
         misc.bv = 0;

@@ -25191,6 +25191,10 @@ public class Server implements Runnable {
         if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
             modifier = Math.max(modifier - 1, 0);
         }
+
+        if (te.hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+            modifier -= 2;
+        }
         int roll = Compute.d6(2) + modifier;
         r = new Report(6305);
         r.subject = te.getId();

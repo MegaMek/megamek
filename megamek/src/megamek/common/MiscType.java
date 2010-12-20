@@ -811,7 +811,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCargoContainer());
         EquipmentType.addType(MiscType.createMechSprayer());
         EquipmentType.addType(MiscType.createTankSprayer());
-        EquipmentType.addType(MiscType.createTankSprayer());
         EquipmentType.addType(MiscType.createFrontDumper());
         EquipmentType.addType(MiscType.createRearDumper());
         EquipmentType.addType(MiscType.createLeftDumper());
@@ -4328,7 +4327,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLOffRoadChassis() {
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Off-Road Chassis";
         misc.setInternalName("ClanOffRoadChassis");
         misc.addLookupName("CLOffRoad");

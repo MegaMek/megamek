@@ -3184,7 +3184,7 @@ public class MiscType extends EquipmentType {
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.spreadable = true;
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
 
         return misc;

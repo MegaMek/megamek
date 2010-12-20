@@ -4258,6 +4258,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISFlotationHull");
         misc.tonnage = 0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4273,6 +4274,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISLimitedAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4288,6 +4290,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISFullyAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4303,6 +4306,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISDuneBuggy");
         misc.tonnage = 0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4318,6 +4322,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ISOffRoad");
         misc.tonnage = 0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4333,6 +4338,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLOffRoad");
         misc.tonnage = 0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4347,6 +4353,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ClanFlotationHull");
         misc.tonnage = 0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4362,6 +4369,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ClanLimitedAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
@@ -4377,6 +4385,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("ClanFullyAmphibious");
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT);
         misc.bv = 0;

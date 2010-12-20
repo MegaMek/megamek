@@ -4793,7 +4793,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // FIXME: no perfect solution in the current code to determine if hex is
         // clear. I will use movement costs
-        else if ((isFoggy || isDark) && !lastPos.equals(curPos) && ((curHex.movementCost(getMovementMode()) > 0) || ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
+        else if ((isFoggy || isDark) && !lastPos.equals(curPos) && ((curHex.movementCost(this) > 0) || ((null != prevHex) && (prevHex.getElevation() != curHex.getElevation())))) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {

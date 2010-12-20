@@ -26,7 +26,7 @@ public interface IHex extends Cloneable {
 
     /**
      * set the elevation
-     * 
+     *
      * @param elevation
      */
     public abstract void setElevation(int elevation);
@@ -34,14 +34,14 @@ public interface IHex extends Cloneable {
     /**
      * The theme is intended as a tag for the tileset file to indicate a special
      * graphic for the hex.
-     * 
+     *
      * @return theme name
      */
     public abstract String getTheme();
 
     /**
      * Set the hex theme.
-     * 
+     *
      * @param theme theme name
      * @see getTheme
      */
@@ -58,7 +58,7 @@ public interface IHex extends Cloneable {
      * the specified direction on the board. Does not reset connects in other
      * directions. All <code>Terrain.ROAD</code>s will exit onto
      * <code>Terrain.PAVEMENT</code> hexes automatically.
-     * 
+     *
      * @param other neighbour hex
      * @param direction - the <code>int</code> direction of the exit. This
      *            value should be between 0 and 5 (inclusive).
@@ -72,7 +72,7 @@ public interface IHex extends Cloneable {
      * directions. If the value of <code>roadsAutoExit</code> is
      * <code>true</code>, any <code>Terrain.ROAD</code> will exit onto
      * <code>Terrain.PAVEMENT</code> hexes automatically.
-     * 
+     *
      * @param other neighbour hex
      * @param direction - the <code>int</code> direction of the exit. This
      *            value should be between 0 and 5 (inclusive).
@@ -85,7 +85,7 @@ public interface IHex extends Cloneable {
     /**
      * Determine if this <code>Hex</code> contains the indicated terrain that
      * exits in the specified direction.
-     * 
+     *
      * @param terrType - the <code>int</code> type of the terrain.
      * @param direction - the <code>int</code> direction of the exit. This
      *            value should be between 0 and 5 (inclusive).
@@ -157,14 +157,14 @@ public interface IHex extends Cloneable {
 
     /**
      * Adds the specified terrain
-     * 
+     *
      * @param terrain terrain to add
      */
     public abstract void addTerrain(ITerrain terrain);
 
     /**
      * Removes the specified terrain
-     * 
+     *
      * @param type
      */
     public abstract void removeTerrain(int type);
@@ -196,34 +196,34 @@ public interface IHex extends Cloneable {
 
     /**
      * (Only if statically determinable)
-     * 
+     *
      * @return extra movement cost for entering the hex
      */
-    public abstract int movementCost(EntityMovementMode moveType);
-    
+    public abstract int movementCost(Entity e);
+
     /**
      * @return the modifier to the roll to ignite this hex
      */
     public abstract int getIgnitionModifier();
-    
+
     /**
      * @return <code>true</code> if this hex is ignitable
      */
     public abstract boolean isIgnitable();
-    
+
     public abstract int getFireTurn();
-    
+
     public abstract void incrementFireTurn();
-    
+
     public abstract void resetFireTurn();
-    
+
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
-    
+
     public abstract int getUnstuckModifier(int elev);
-    
+
     public abstract boolean isClearForTakeoff();
-    
+
     public abstract boolean isClearForLanding();
-    
+
     public abstract Coords getCoords();
 }

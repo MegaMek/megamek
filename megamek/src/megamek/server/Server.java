@@ -3067,9 +3067,9 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     private void applyDropshipLandingDamage(Coords centralPos) {
-        
+
         //first cycle through hexes to figure out final elevation
         IHex centralHex = game.getBoard().getHex(centralPos);
         if(null == centralHex) {
@@ -3105,20 +3105,20 @@ public class Server implements Runnable {
             }
             sendChangedHex(pos);
         }
-        
+
         applyDropshipProximityDamage(centralPos);
     }
-    
+
     private void applyDropshipProximityDamage(Coords centralPos) {
         applyDropshipProximityDamage(centralPos, false, 0);
     }
-    
+
     /**
      * apply damage to units and buildings within a certain radius of a landing or lifting off dropship
      * @param centralPos - the Coords for the central position of the dropship
      */
     private void applyDropshipProximityDamage(Coords centralPos, boolean rearArc, int facing) {
-        
+
         //anything in the central hex or adjacent hexes is destroyed
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
         Enumeration<Entity> entities = game.getEntities(centralPos);
@@ -3146,16 +3146,16 @@ public class Server implements Runnable {
                 collapseBuilding(bldg, positionMap, pos);
             }
         }
-        
+
         Report r;
         //ok now I need to look at the damage rings - start at 2 and go to 7
         for(int i = 2; i < 8; i++) {
-            int damageDice = (8 - i)*2; 
+            int damageDice = (8 - i)*2;
             ArrayList<Coords> ring = Compute.coordsAtRange(centralPos, i);
             for(Coords pos : ring) {
                 if(rearArc && !Compute.isInArc(centralPos, facing, pos, Compute.ARC_AFT)) {
                     continue;
-                }               
+                }
                 IHex hex = game.getBoard().getHex(pos);
                 if(null == hex) {
                     continue;
@@ -3219,8 +3219,8 @@ public class Server implements Runnable {
                         hits -= Math.min(5, hits);
                     }
                 }
-            }         
-        }      
+            }
+        }
     }
 
     /**
@@ -3436,7 +3436,7 @@ public class Server implements Runnable {
             //suc = true;
         }
     }
-    
+
     private boolean launchUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int velocity,
             int altitude, int[] moveVec, int bonus) {
 
@@ -3877,7 +3877,7 @@ public class Server implements Runnable {
             }
 
             IHex nextHex = game.getBoard().getHex(nextPos);
-            distance -= nextHex.movementCost(entity.getMovementMode()) + 1;
+            distance -= nextHex.movementCost(entity) + 1;
             // By default, the unit is going to fall to the floor of the next
             // hex
             int curAltitude = elevation + curHex.getElevation();
@@ -4983,7 +4983,7 @@ public class Server implements Runnable {
             a.liftOff(1);
             if(entity instanceof Dropship) {
                 applyDropshipProximityDamage(md.getFinalCoords(), true, md.getFinalFacing());
-            }        
+            }
             a.setPosition(a.getPosition().translated(a.getFacing(), a.getTakeOffLength()));
             entity.setDone(true);
             entityUpdate(entity.getId());
@@ -5004,18 +5004,18 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-        
+
         if(md.contains(MoveStepType.LAND) && (entity instanceof Aero)) {
             Aero a = (Aero)entity;
             rollTarget = a.checkHorizontalLanding(md.getLastStepMovementType(), md.getFinalVelocity(), md.getFinalCoords(), md.getFinalFacing());
-            doAttemptLanding(entity, rollTarget);       
+            doAttemptLanding(entity, rollTarget);
             a.land();
             entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()));
             entity.setDone(true);
             entityUpdate(entity.getId());
             return;
         }
-        
+
         if(md.contains(MoveStepType.VLAND) && (entity instanceof Aero)) {
             Aero a = (Aero)entity;
             rollTarget = a.checkVerticalLanding(md.getLastStepMovementType(), md.getFinalVelocity(), md.getFinalCoords());
@@ -6437,8 +6437,8 @@ public class Server implements Runnable {
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
-            } 
-    
+            }
+
             // jumpships and space stations need to reduce accumulated thrust if
             // they spend some
             if (entity instanceof Jumpship) {
@@ -6459,32 +6459,32 @@ public class Server implements Runnable {
                     js.setAccumulatedThrust(Math.max(0, js.getAccumulatedThrust() - penalty));
                 }
             }
-    
+
             // check to see if thrust exceeded SI
-    
+
             rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 game.addControlRoll(new PilotingRollData(a.getId(), 0, "Thrust spent during turn exceeds SI"));
             }
-    
+
             if (!game.getBoard().inSpace()) {
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData(a.getId(), 0, "Velocity greater than 2x safe thrust"));
                 }
-    
+
                 rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData(a.getId(), md.getFinalNDown(),
                     "descended more than two altitudes"));
                 }
-    
+
                 // check for hovering
                 rollTarget = a.checkHover(md);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData(a.getId(), 0, "hovering"));
                 }
-    
+
                 // check for aero stall
                 rollTarget = a.checkStall(md);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

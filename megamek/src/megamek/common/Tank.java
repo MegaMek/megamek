@@ -154,6 +154,9 @@ public class Tank extends Entity {
         if (!ignoremodulararmor && hasModularArmor()) {
             j--;
         }
+        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+            j--;
+        }
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);

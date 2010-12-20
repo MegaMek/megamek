@@ -18,7 +18,7 @@ package megamek.common;
  * Represents a single type of terrain or condition in a hex. The type of a
  * terrain is immutable, once created, but the level and exits are changable.
  * Each type of terrain should only be represented once in a hex.
- * 
+ *
  * @author Ben
  */
 public interface ITerrain {
@@ -58,14 +58,14 @@ public interface ITerrain {
 
     /**
      * Sets the exits
-     * 
+     *
      * @param exits
      */
     public abstract void setExits(int exits);
 
     /**
      * Sets the exit in specified direction
-     * 
+     *
      * @param direction - the direction to add/remove the exit
      * @param connection - true to add, false to remove
      */
@@ -74,7 +74,7 @@ public interface ITerrain {
     /**
      * Flips the exits around the vertical axis (North-for-South) and/or the
      * horizontal axis (East-for-West).
-     * 
+     *
      * @param horiz - a <code>boolean</code> value that, if <code>true</code>,
      *            indicates that the exits are being flipped North-for-South.
      * @param vert - a <code>boolean</code> value that, if <code>true</code>,
@@ -96,14 +96,14 @@ public interface ITerrain {
     /**
      * @return the additional movement cost for this terrain
      */
-    public abstract int movementCost(EntityMovementMode moveMode);
-    
+    public abstract int movementCost(Entity e);
+
     /**the fire ignition modifier for this terrain
      */
     public abstract int ignitionModifier();
-    
+
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
-    
+
     public abstract int getUnstuckModifier(int elev);
-    
+
 }

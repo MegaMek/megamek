@@ -350,7 +350,7 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            if (entity.isClan()) {
+            if (TechConstants.isClan(getTechLevel())) {
                 return (float) Math.ceil(fTons / 5.0f);
             }
             return (float) Math.ceil(fTons / 4.0f);
@@ -4272,7 +4272,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(MiscType.F_CHASSIS_MODIFICATION);
         misc.bv = 0;
 
         return misc;

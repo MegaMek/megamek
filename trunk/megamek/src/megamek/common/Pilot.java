@@ -712,4 +712,12 @@ public class Pilot implements Serializable {
         fatigue = i;
     }
 
+    public int rollGunnerySkill() {
+        if(getOptions().booleanOption("aptitude_gunnery")) {
+            return Compute.d6(3,2);
+        } else {
+             return Compute.d6(2);
+        }
+    }
+    
 }

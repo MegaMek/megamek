@@ -737,7 +737,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         //is this an underwater attack on a surface naval vessel?
         underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
-        roll = Compute.d6(2);
+        if(null != ae.getCrew()) {
+            roll = ae.getCrew().rollGunnerySkill();
+        } else {
+            roll = Compute.d6(2);
+        }
         nweapons = getNumberWeapons();
         // use ammo when creating this, so it works when shooting the last shot
         // a unit has and we fire multiple weapons of the same type

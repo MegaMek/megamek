@@ -112,6 +112,17 @@ public class Compute {
         }
         return roll.getIntValue();
     }
+    
+    /** Wrapper to random#d6(n) */
+    public static int d6(int dice, int keep) {
+        Roll roll = random.d6(dice, keep);
+        if (Server.getServerInstance() != null) {
+            if (Server.getServerInstance().getGame().getOptions().booleanOption("rng_log")) {
+                Server.getServerInstance().reportRoll(roll);
+            }
+        }
+        return roll.getIntValue();
+    }
 
     /** Wrapper to random#d6() */
     public static int d6() {

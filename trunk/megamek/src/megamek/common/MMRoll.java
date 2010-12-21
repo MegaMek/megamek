@@ -20,6 +20,7 @@
 
 package megamek.common;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -35,17 +36,17 @@ public class MMRoll extends Roll {
      */
     private int total;
 
-    /**
-     * Most rolls are for one or two virtual dice.
-     */
-    private boolean hasSecond = false;
-    private int second;
 
     /**
-     * Sometimes we have more than two virtual dice.
+     * a vector of the result for each roll of the dice
      */
-    private Vector<Integer> all = null;
+    private Vector<Integer> all = new Vector<Integer>();
 
+    /**
+     * In some cases, we may only keep the highest subset of the total dice
+     */
+    private int keep = -1;
+    
     /**
      * Most tolls use standard six sided dice.
      * 
@@ -54,6 +55,7 @@ public class MMRoll extends Roll {
     public MMRoll(MMRandom rng) {
         super(6, 1);
         this.total = rng.randomInt(this.faces) + this.min;
+        all.addElement(this.total);
     }
 
     /**
@@ -66,6 +68,7 @@ public class MMRoll extends Roll {
     public MMRoll(MMRandom rng, int max) {
         super(max, 0);
         this.total = rng.randomInt(this.faces) + this.min;
+        all.addElement(this.total);
     }
 
     /**
@@ -81,6 +84,25 @@ public class MMRoll extends Roll {
     public MMRoll(MMRandom rng, int count, int start) {
         super(count, start);
         this.total = rng.randomInt(this.faces) + this.min;
+        all.addElement(this.total);
+    }
+    
+   /**
+    * Create a set of virtual dice with the given number of faces that start
+    * with the given value, where only a subset of the highest will be kept.
+    * 
+    * @param rng - the <code>MMRandom</code> that produces random numbers.
+    * @param count - the <code>int</code> number of results possible on each
+    *            virtual die.
+    * @param start - the <code>int</code> value that is the start of the
+    *            value set of each virtual die.
+    * @param keep - the <code>int</code> number of dice to keep from the total rolled
+    */
+    public MMRoll(MMRandom rng, int count, int start, int keep) {
+        super(count, start);
+        this.total = rng.randomInt(this.faces) + this.min;
+        all.addElement(this.total);
+        this.keep = keep;
     }
 
     /**
@@ -93,25 +115,19 @@ public class MMRoll extends Roll {
         // Store the result for later processing.
         int result = rng.randomInt(this.faces) + this.min;
 
-        // Most rolls only use one or two dice.
-        if (!this.hasSecond) {
-            this.hasSecond = true;
-            this.second = result;
-        } else {
-            // Allocate the result Vector, if needed.
-            if (null == all) {
-                all = new Vector<Integer>();
-                // Add the first virtual die's roll.
-                all.addElement(new Integer(this.total - this.second));
-                // Add the second virtual die's roll.
-                all.addElement(new Integer(this.second));
-            }
-            // Add the current virtual die's roll.
-            all.addElement(new Integer(result));
-        }
+        all.addElement(new Integer(result));
 
         // Add the current virtual die's roll to the running total.
         this.total += result;
+        
+        //if we are only keeping a subset then total will be different
+        if(keep != -1 && all.size() >= keep) {
+            this.total = 0;
+            Collections.sort(all, Collections.reverseOrder());
+            for(int i = 0; i < keep; i++) {
+                this.total += all.get(i);
+            }
+        }
     }
 
     /**
@@ -139,8 +155,8 @@ public class MMRoll extends Roll {
         // Start off the report (this is all the report a single die needs).
         buffer.append(this.total);
 
-        // Handle more than two dice.
-        if (null != all) {
+        // Handle more than one die.
+        if (all.size() > 1) {
             Enumeration<Integer> iter = all.elements();
             buffer.append(" (");
             buffer.append(iter.nextElement().toString());
@@ -150,14 +166,11 @@ public class MMRoll extends Roll {
             }
             buffer.append(")");
         }
-
-        // Handle a pair of dice.
-        else if (this.hasSecond) {
-            buffer.append(" (");
-            buffer.append(this.total - this.second);
-            buffer.append("+");
-            buffer.append(this.second);
-            buffer.append(")");
+        
+        if(keep != -1) {
+            buffer.append(" [");
+            buffer.append(keep);
+            buffer.append(" highest]");
         }
 
         // Return the string.
@@ -181,8 +194,8 @@ public class MMRoll extends Roll {
                 this.min).append(",").append(this.faces + this.min - 1).append(
                 "], result: ").append(this.total);
 
-        // Handle more than two dice.
-        if (null != all) {
+        // Handle more than one die.
+        if (all.size() > 1) {
             Enumeration<Integer> iter = all.elements();
             buffer.append(", rolls: ");
             buffer.append(iter.nextElement().toString());
@@ -192,14 +205,12 @@ public class MMRoll extends Roll {
             }
         }
 
-        // Handle a pair of dice.
-        else if (this.hasSecond) {
-            buffer.append(", rolls: ");
-            buffer.append(this.total - this.second);
-            buffer.append(", ");
-            buffer.append(this.second);
+        if(keep != -1) {
+            buffer.append(" (Keep ");
+            buffer.append(keep);
+            buffer.append( " highest rolls)");
         }
-
+        
         // Return the string.
         return buffer.toString();
     }
@@ -234,7 +245,7 @@ public class MMRoll extends Roll {
                 sides = Integer.parseInt(args[1]);
                 start = Integer.parseInt(args[2]);
             }
-
+            
             // Make sure that we got good input.
             if (count < 1) {
                 System.err.println("You must specify at least one roll.");
@@ -250,6 +261,8 @@ public class MMRoll extends Roll {
             System.exit(1);
         }
 
+        count = 2;
+        
         // Generate the RNG
         rng = MMRandom.generate(whichRNG);
 
@@ -270,5 +283,4 @@ public class MMRoll extends Roll {
         Roll.output(roll2);
 
     }
-
 }

@@ -86,6 +86,23 @@ public abstract class MMRandom {
         return roll;
     }
 
+    Roll d6(int nDice, int keep) {
+        if (0 >= nDice) {
+            throw new IllegalArgumentException(
+                    "Must ask for a positive number of rolls, not " + nDice);
+        }
+        if(keep >= nDice) {
+            throw new IllegalArgumentException(
+                    "the number of dice to keep must be less than the number rolled");
+        }
+        // Use the Roll object to record the rolls.
+        MMRoll roll = new MMRoll(this, 6, 1, keep);
+        for (int i = 1; i < nDice; i++) {
+            roll.addRoll(this);
+        }
+        return roll;
+    }
+    
     /**
      * A single die
      */

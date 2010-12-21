@@ -67,6 +67,8 @@ v0.35.21-dev (SVN)
 + Dune Buggy chassis mod reduces cruise MP by 1
 + Added Tank armored motive systems
 + Bug: TC weight on mixed tech units sometime wrong
++ Removed distinction in handling between 2 dice and 3+ dice rolls in MMRoll
++ added d6(dice, keep) method for rolling nd6 and only keeping a subset
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

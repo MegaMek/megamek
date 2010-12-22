@@ -1,12 +1,12 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -15,7 +15,7 @@
 
 /**
  * MiscType.java
- *
+ * 
  * Created on April 2, 2002, 12:15 PM
  */
 
@@ -144,7 +144,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_MOBILE_HPG = BigInteger.valueOf(1).shiftLeft(101);
     public static final BigInteger F_FIELD_KITCHEN = BigInteger.valueOf(1).shiftLeft(102);
     public static final BigInteger F_MOBILE_FIELD_BASE = BigInteger.valueOf(1).shiftLeft(103);
-    //TODO: add game rules for the following imagers/radars, construction data only
+    // TODO: add game rules for the following imagers/radars, construction data
+    // only
     public static final BigInteger F_HIRES_IMAGER = BigInteger.valueOf(1).shiftLeft(104);
     public static final BigInteger F_HYPERSPECTRAL_IMAGER = BigInteger.valueOf(1).shiftLeft(105);
     public static final BigInteger F_INFRARED_IMAGER = BigInteger.valueOf(1).shiftLeft(106);
@@ -323,10 +324,10 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton
             weaponWeight /= 10;
-            return (float) (Math.ceil(weaponWeight * 2.0))/2.0f;
+            return (float) (Math.ceil(weaponWeight * 2.0)) / 2.0f;
         } else if (hasFlag(F_SPONSON_TURRET)) {
             float weaponWeight = 0;
-         // 10% of linked weapons' weight
+            // 10% of linked weapons' weight
             for (Mounted m : entity.getWeaponList()) {
                 if ((m.isSponsonTurretMounted() && ((m.getLocation() == Tank.LOC_LEFT) || (m.getLocation() == Tank.LOC_RIGHT)))) {
                     weaponWeight += m.getType().getTonnage(entity);
@@ -334,7 +335,7 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton
             weaponWeight /= 10;
-            return (float) (Math.ceil(weaponWeight * 2.0))/2.0f;
+            return (float) (Math.ceil(weaponWeight * 2.0)) / 2.0f;
         } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             if (TechConstants.isClan(getTechLevel())) {
                 return (float) (entity.getWeight() * 0.1);
@@ -429,7 +430,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_TRACKS)) {
             return entity.getWeight() / 10;
         } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
-            return (float) (Math.ceil(entity.getWeight() / 25 * 2) /2.0);
+            return (float) (Math.ceil(entity.getWeight() / 25 * 2) / 2.0);
         } else if (hasFlag(F_DUMPER)) {
             // 5% of cargo
             float cargoTonnage = 0;
@@ -1826,7 +1827,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createArmoredChassis() {
         MiscType misc = new MiscType();
 
-        misc.name = "Armored";
+        misc.name = "Armored Chassis";
         misc.setInternalName("Armored Chassis");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
@@ -3300,7 +3301,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {

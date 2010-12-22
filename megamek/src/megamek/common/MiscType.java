@@ -866,6 +866,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISTankCommandConsole());
         EquipmentType.addType(MiscType.createISSponsonTurret());
         EquipmentType.addType(MiscType.createCLSponsonTurret());
+        EquipmentType.addType(MiscType.createISArmoredMotiveSystem());
+        EquipmentType.addType(MiscType.createCLArmoredMotiveSystem());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());

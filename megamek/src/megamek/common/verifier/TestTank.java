@@ -19,6 +19,7 @@
 
 package megamek.common.verifier;
 
+import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
@@ -84,9 +85,9 @@ public class TestTank extends TestEntity {
 
     public float getTankWeightTurret() {
         float weight = 0f;
-        for (Mounted m : tank.getWeaponList()) {
-            if (m.getLocation() == Tank.LOC_TURRET) {
-                weight += ((WeaponType) m.getType()).getTonnage(tank);
+        for (Mounted m : tank.getEquipment()) {
+            if ((m.getLocation() == Tank.LOC_TURRET) && !(m.getType() instanceof AmmoType)) {
+                weight += m.getType().getTonnage(tank);
             }
         }
         return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
@@ -94,9 +95,9 @@ public class TestTank extends TestEntity {
 
     public float getTankWeightDualTurret() {
         float weight = 0f;
-        for (Mounted m : tank.getWeaponList()) {
-            if (m.getLocation() == Tank.LOC_TURRET_2) {
-                weight += ((WeaponType) m.getType()).getTonnage(tank);
+        for (Mounted m : tank.getEquipment()) {
+            if ((m.getLocation() == Tank.LOC_TURRET_2) && !(m.getType() instanceof AmmoType)) {
+                weight += m.getType().getTonnage(tank);
             }
         }
         return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());

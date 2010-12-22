@@ -526,7 +526,10 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            if (entity.isClan()) {
+            /*if (entity.isClan()) {
+                return (int) Math.ceil(fTons / 5.0f);
+            }*/
+            if (TechConstants.isClan(getTechLevel())) {
                 return (int) Math.ceil(fTons / 5.0f);
             }
             return (int) Math.ceil(fTons / 4.0f);

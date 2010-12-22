@@ -71,6 +71,7 @@ v0.35.21-dev (SVN)
 + added d6(dice, keep) method for rolling nd6 and only keeping a subset
 + Natural Aptitude (Gunnery) special ability
 + Updated name of Armored Chassis to Armored Chassis
++ Bug: TC Crits checked based on Unit's Chassis and not Equipments tech level
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

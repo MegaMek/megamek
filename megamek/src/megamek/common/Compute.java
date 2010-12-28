@@ -1091,32 +1091,41 @@ public class Compute {
             }
         }
 
-        // ground units that are the target of air to ground attacks always have
-        // a distance of zero
-        // for return fire except for altitude differences
+        
         if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
-            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-                EntityAction ea = i.nextElement();
-                if (!(ea instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                if(prevAttack.getEntityId() != ((Entity) target).getId()) {
-                    //not the aero target's attack
-                    continue;
-                }
-                Targetable prevTarget = prevAttack.getTarget(game);
-                if((prevTarget instanceof Entity) && (prevAttack.getTargetId() == attacker.getId())) {
-                    distance = 0;
-                    break;
-                }
-                //check for dive-bombing of this hex
-                Coords apos = attacker.getPosition();
-                if ((null != attackPos) && prevAttack.isDiveBomb(game)
-                        && (prevTarget instanceof HexTarget)
-                        && ((HexTarget)prevTarget).getPosition().equals(apos)) {
-                    distance = 0;
-                    break;
+            if(game.getOptions().booleanOption("stratops_aa_fire")) {
+                //distance is determined by closest point on flight path
+                distance = attacker.getPosition().distance(getClosestFlightPath(attacker.getPosition(), (Entity)target));
+                //NOTE: this will return a distance of one even when a flyover occurs
+                //That is my interpretation of this ruling
+                //http://www.classicbattletech.com/forums/index.php?topic=72723.0
+            } else {
+                // ground units that are the target of air to ground attacks always have
+                // a distance of zero
+                // for return fire except for altitude differences
+                for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if(prevAttack.getEntityId() != ((Entity) target).getId()) {
+                        //not the aero target's attack
+                        continue;
+                    }
+                    Targetable prevTarget = prevAttack.getTarget(game);
+                    if((prevTarget instanceof Entity) && (prevAttack.getTargetId() == attacker.getId())) {
+                        distance = 0;
+                        break;
+                    }
+                    //check for dive-bombing of this hex
+                    Coords apos = attacker.getPosition();
+                    if ((null != attackPos) && prevAttack.isDiveBomb(game)
+                            && (prevTarget instanceof HexTarget)
+                            && ((HexTarget)prevTarget).getPosition().equals(apos)) {
+                        distance = 0;
+                        break;
+                    }
                 }
             }
         }
@@ -1153,6 +1162,21 @@ public class Compute {
         return distance;
     }
 
+    private static Coords getClosestFlightPath(Coords aPos, Entity te) {
+        
+        Coords finalPos = te.getPosition();
+        int distance = aPos.distance(finalPos);
+        //don't return zero distance Coords, but rather the Coords immediately before this
+        //This is necessary to determine angle of attack and arc information for direct fly-overs
+        for(Coords c : te.getPassedThrough()) {
+            if(!aPos.equals(c) && aPos.distance(c) < distance) {
+                finalPos = c;
+                distance = aPos.distance(c);
+            }
+        }    
+        return finalPos;
+    }
+    
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
      * attacker.
@@ -2610,6 +2634,12 @@ public class Compute {
                 tPos = ((Entity) t).getPosition();
             }
         }
+        
+        //if using advanced AA options, then ground-to-air fire determines arc by closest position
+        if(isGroundToAir(ae, t) && (t instanceof Entity) && game.getOptions().booleanOption("stratops_aa_fire")) {
+            tPos = getClosestFlightPath(ae.getPosition(), (Entity)t);
+        }
+        
         tPosV.add(tPos);
         //check for secondary positions
         if((t instanceof Entity) && (null != ((Entity)t).getSecondaryPositions())) {
@@ -3025,11 +3055,11 @@ public class Compute {
         if (target instanceof Entity) {
             te = (Entity) target;
         }
-
+   
         boolean usePrior = false;
-        // aeros in the same hex in space need to adjust position to get side
+        // aeros in the same hex need to adjust position to get side
         // table
-        if (attacker.game.getBoard().inSpace() && attacker.getPosition().equals(target.getPosition())
+        if (isAirToAir(attacker, target) && attackPos.equals(target.getPosition())
                 && (attacker instanceof Aero) && (target instanceof Aero)) {
             if (((Aero) attacker).shouldMoveBackHex((Aero) target)) {
                 attackPos = attacker.getPriorPosition();
@@ -3040,8 +3070,13 @@ public class Compute {
         // if this is a air to ground attack, then attacker position is given by
         // the direction
         // from which they entered the target hex
-        if (attacker.isAirborne() && (null != te) && !te.isAirborne()) {
+        if (isAirToGround(attacker, target)) {
             attackPos = attacker.passedThroughPrevious(target.getPosition());
+        }
+        
+        if(isGroundToAir(attacker, target) && attacker.getGame().getOptions().booleanOption("stratops_aa_fire")
+                && (null != te)) {
+            return te.sideTable(attackPos, usePrior, te.getFacing(), Compute.getClosestFlightPath(attackPos, te));
         }
 
         if ((null != te) && (called == CalledShot.CALLED_LEFT)) {

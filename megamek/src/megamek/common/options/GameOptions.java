@@ -206,6 +206,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules,"heat_by_bay", false); //$NON-NLS-1$
         addOption(advAeroRules,"atmospheric_control", false); //$NON-NLS-1$
         addOption(advAeroRules,"ammo_explosions", false); //$NON-NLS-1$
+        addOption(advAeroRules,"stratops_aa_fire", false); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_aaa_laser", false); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_bracket_fire", false); //$NON-NLS-1$
         addOption(advAeroRules,"stratops_ecm", false); //$NON-NLS-1$

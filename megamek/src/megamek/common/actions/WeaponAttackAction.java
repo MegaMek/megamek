@@ -601,6 +601,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
+        
+        if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
+            if (te.passedWithin(ae.getPosition(), 1)) {
+                toHit.addModifier(+1, "target is NOE");
+            } else {
+                toHit.addModifier(+3, "target is NOE");
+            }
+        }
+        
+        if(Compute.isGroundToAir(ae, target) && game.getOptions().booleanOption("stratops_aa_fire") 
+                && (null != te) && (te instanceof Aero)) {
+            toHit.addModifier(((Aero)te).getCurrentVelocity(), "velocity");
+        }
+
 
         // Aeros may suffer from criticals
         if (ae instanceof Aero) {
@@ -668,16 +682,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
-            if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
-                if (te.passedWithin(ae.getPosition(), 1)) {
-                    if (!te.passedThrough(ae.getPosition())) {
-                        toHit.addModifier(+1, "target is NOE");
-                    }
-                } else {
-                    toHit.addModifier(+3, "target is NOE");
-                }
-            }
-
+            
             if (!ae.isAirborne() && !ae.isSpaceborne()) {
                 //grounded aero
                 if(!(ae instanceof Dropship)) {

@@ -7363,9 +7363,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src, usePrior, facing);
     }
-
+    
     public int sideTable(Coords src, boolean usePrior, int face) {
-        Coords effectivePos = position;
+        return sideTable(src, usePrior, face, position);
+    }
+
+    public int sideTable(Coords src, boolean usePrior, int face, Coords effectivePos) {
         if (usePrior) {
             effectivePos = getPriorPosition();
         }

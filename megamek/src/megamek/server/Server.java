@@ -2721,11 +2721,11 @@ public class Server implements Runnable {
                     player.incrementWarshipTurns();
                 } else if ((entity instanceof Jumpship) && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementJumpshipTurns();
-                } else if ((entity instanceof Dropship) && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                } else if ((entity instanceof Dropship) && entity.isAirborne() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementDropshipTurns();
-                } else if ((entity instanceof SmallCraft) && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                } else if ((entity instanceof SmallCraft) && entity.isAirborne() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementSmallCraftTurns();
-                } else if ((entity instanceof Aero) && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                } else if (entity.isAirborne() && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                     player.incrementAeroTurns();
                 } else {
                     player.incrementOtherTurns();

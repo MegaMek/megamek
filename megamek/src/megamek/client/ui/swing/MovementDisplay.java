@@ -1217,7 +1217,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     unusedVelocity = ((Aero) ce()).getCurrentVelocity() > 0;
                 }
                 boolean flyoff = false;
-                if ((null != cmd) && cmd.contains(MoveStepType.OFF)) {
+                if ((null != cmd) && (cmd.contains(MoveStepType.OFF) || cmd.contains(MoveStepType.RETURN))) {
                     flyoff = true;
                 }
                 boolean landing = false;
@@ -3112,7 +3112,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             // clear();
-            cmd.addStep(MoveStepType.OFF);
+            if(clientgui.getClient().game.getOptions().booleanOption("return_flyover") 
+                    && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ReturnFly.title"), Messages.getString("MovementDisplay.ReturnFly.message"))) {
+                cmd.addStep(MoveStepType.RETURN);
+            } else {
+                cmd.addStep(MoveStepType.OFF);
+            }
             ready();
         } else if (ev.getActionCommand().equals(MOVE_EJECT)) {
             if (ce instanceof Tank) {

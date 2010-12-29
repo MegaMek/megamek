@@ -473,7 +473,11 @@ public class SharedUtility {
                 }
                 if (!game.getBoard().contains(md.getLastStep().getPosition())) {
                     md.removeLastStep();
-                    md.addStep(MoveStepType.OFF);
+                    if(game.getOptions().booleanOption("return_flyover")) {
+                        md.addStep(MoveStepType.RETURN);
+                    } else {
+                        md.addStep(MoveStepType.OFF);
+                    }
                     break;
                 }
                 if (a.isRandomMove()) {
@@ -584,7 +588,11 @@ public class SharedUtility {
             }
 
             if(!game.getBoard().contains(c)) {
-                md.addStep(MoveStepType.OFF);
+                if(game.getOptions().booleanOption("return_flyover")) {
+                    md.addStep(MoveStepType.RETURN);
+                } else {
+                    md.addStep(MoveStepType.OFF);
+                }
                 leftMap = true;
                 break;
             }

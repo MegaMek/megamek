@@ -1170,7 +1170,7 @@ DoneButtoned, KeyListener {
                     unusedVelocity = ((Aero)ce()).getCurrentVelocity() > 0;
                 }
                 boolean flyoff = false;
-                if((null != cmd) && cmd.contains(MoveStepType.OFF)) {
+                if((null != cmd) && (cmd.contains(MoveStepType.OFF) || cmd.contains(MoveStepType.RETURN))) {
                     flyoff = true;
                 }
                 if(unusedVelocity && !flyoff) {

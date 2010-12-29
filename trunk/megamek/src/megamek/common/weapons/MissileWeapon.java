@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -32,6 +33,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
         super();
         damage = DAMAGE_MISSILE;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BA_WEAPON).or(F_AERO_WEAPON).or(F_MISSILE);
+        infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
     /*

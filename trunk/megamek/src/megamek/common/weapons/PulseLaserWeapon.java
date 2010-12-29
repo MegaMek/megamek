@@ -32,6 +32,7 @@ public abstract class PulseLaserWeapon extends LaserWeapon {
         super();
         flags = flags.or(F_PULSE);
         atClass = CLASS_PULSE_LASER;
+        infDamageClass = WEAPON_PULSE;
     }
 
     /*

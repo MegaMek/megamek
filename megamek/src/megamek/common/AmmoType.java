@@ -6320,7 +6320,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_EXLRM;
         ammo.shots = 18;
-        ammo.bv = 7;
+        ammo.bv = 8;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
@@ -6344,7 +6344,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_EXLRM;
         ammo.shots = 9;
-        ammo.bv = 15;
+        ammo.bv = 17;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
@@ -6368,7 +6368,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_EXLRM;
         ammo.shots = 6;
-        ammo.bv = 22;
+        ammo.bv = 25;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
@@ -6392,7 +6392,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_EXLRM;
         ammo.shots = 4;
-        ammo.bv = 30;
+        ammo.bv = 34;
         ammo.cost = 90000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]

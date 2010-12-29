@@ -4311,7 +4311,7 @@ public class Server implements Runnable {
                 // ASSUMPTION: infantry take no damage from the
                 // building absorbing damage from
                 // Tanks and Mechs being charged.
-                damageInfantryIn(bldg, chargeDamage, nextPos);
+                addReport(damageInfantryIn(bldg, chargeDamage, nextPos));
 
                 // If a building still stands, then end the skid,
                 // and add it to the list of affected buildings.
@@ -10546,7 +10546,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // And we're done!
             return;
@@ -10796,7 +10796,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // And we're done!
             return;
@@ -11040,7 +11040,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // And we're done!
             return;
@@ -11227,7 +11227,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // And we're done!
             return;
@@ -11857,7 +11857,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // And we're done!
             return;
@@ -12666,7 +12666,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
             // Apply damage to the attacker.
             int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg, target.getPosition());
@@ -13369,7 +13369,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage, target.getPosition());
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
 
         } else { // Target isn't building.
 
@@ -23095,7 +23095,7 @@ public class Server implements Runnable {
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
-            damageInfantryIn(bldg, toBldg, curPos);
+            addReport(damageInfantryIn(bldg, toBldg, curPos));
         }
         return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
     }
@@ -23142,10 +23142,12 @@ public class Server implements Runnable {
      * @param damage
      *            - the <code>int</code> amount of damage.
      */
-    public void damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
+    public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
 
+        Vector<Report> vDesc = new Vector<Report>();
+        
         if (bldg == null) {
-            return;
+            return vDesc;
         }
         // Calculate the amount of damage the infantry will sustain.
         float percent = 0.0f;
@@ -23189,16 +23191,16 @@ public class Server implements Runnable {
                     if (toInf == 0) {
                         r = new Report(6445);
                         r.subject = entity.getId();
-                        addReport(r);
+                        vDesc.addElement(r);
                     } else {
                         // Yup. Damage the entity.
                         // Battle Armor units use 5 point clusters.
                         r = new Report(6450);
                         r.indent(2);
                         r.subject = entity.getId();
-                        r.add(entity.getDisplayName());
                         r.add(toInf);
-                        addReport(r);
+                        r.add(entity.getDisplayName());
+                        vDesc.addElement(r);
                         int remaining = toInf;
                         int cluster = toInf;
                         if (entity instanceof BattleArmor) {
@@ -23207,10 +23209,10 @@ public class Server implements Runnable {
                         while (remaining > 0) {
                             int next = Math.min(cluster, remaining);
                             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                            addReport(damageEntity(entity, hit, next));
+                            vDesc.addAll((damageEntity(entity, hit, next)));
                             remaining -= next;
                         }
-                        addReport(new Report(1210, Report.PUBLIC));
+                        Report.addNewline(vDesc);
                     }
 
                 } // End infantry-inside-building
@@ -23221,8 +23223,10 @@ public class Server implements Runnable {
 
         // If we found any infantry, add a line to the phase report.
         if (foundInfantry) {
-            addReport(new Report(1210, Report.PUBLIC));
+            Report.addNewline(vDesc);
         }
+        
+        return vDesc;
 
     } // End private void damageInfantryIn( Building, int )
 

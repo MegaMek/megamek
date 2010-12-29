@@ -79,6 +79,7 @@ v0.35.21-dev (SVN)
 + Bug 3135550: Air-dropped units take falling damage during drop
 + allow players the option to not return when they fly off the map using return flyover option
 + Bug: spheroid dropships can't fly off the atmosphere/ground map
++ correct reporting of damage to infantry inside buildings
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

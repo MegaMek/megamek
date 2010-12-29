@@ -27,6 +27,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -57,7 +58,7 @@ public class LBXHandler extends AmmoWeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_BALLISTIC, ((Infantry)target).isMechanized());
+            double toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS()/3 : 0, WeaponType.WEAPON_CLUSTER_BALLISTIC, ((Infantry)target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }

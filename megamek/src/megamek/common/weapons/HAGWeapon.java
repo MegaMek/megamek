@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -38,6 +39,7 @@ public abstract class HAGWeapon extends GaussWeapon {
         ammoType = AmmoType.T_HAG;
         flags = flags.or(F_NO_AIM);
         atClass = CLASS_AC;
+        infDamageClass = WEAPON_CLUSTER_BALLISTIC;
     }
 
     /*

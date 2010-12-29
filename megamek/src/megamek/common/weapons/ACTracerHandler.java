@@ -57,7 +57,7 @@ public class ACTracerHandler extends AmmoWeaponHandler {
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }

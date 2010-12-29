@@ -64,7 +64,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
             if ( nRange <= nRanges[RangeType.RANGE_SHORT] ){
                 toReturn +=3;
             }else if ( nRange <= nRanges[RangeType.RANGE_MEDIUM] ){

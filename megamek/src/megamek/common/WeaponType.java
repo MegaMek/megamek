@@ -216,6 +216,14 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int NUM_CLASSES = 23;
 
+    public static final int WEAPON_DIRECT_FIRE = 0;
+    public static final int WEAPON_CLUSTER_BALLISTIC = 1;
+    public static final int WEAPON_PULSE = 2;
+    public static final int WEAPON_CLUSTER_MISSILE = 3;
+    public static final int WEAPON_CLUSTER_MISSILE_1D6 = 4;
+    public static final int WEAPON_CLUSTER_MISSILE_2D6 = 5;
+    public static final int WEAPON_CLUSTER_MISSILE_3D6 = 6;
+    
     public static String[] classNames =
         { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
 
@@ -239,6 +247,9 @@ public class WeaponType extends EquipmentType {
     public int waterMediumRange;
     public int waterLongRange;
     public int waterExtremeRange;
+    
+    //the class of weapon for infantry damage
+    public int infDamageClass = WEAPON_DIRECT_FIRE;
 
     // get stuff for AT2
     // separate attack value by range. It will make weapon bays easier
@@ -417,6 +428,10 @@ public class WeaponType extends EquipmentType {
 
     public int getMaxRange() {
         return maxRange;
+    }
+    
+    public int getInfantryDamageClass() {
+        return infDamageClass;
     }
 
     public int[] getATRanges() {

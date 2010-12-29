@@ -199,7 +199,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = 0;
             for (int i = 0; i < howManyShots; i++) {
-                toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+                toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
             }
             // plus 1 for cluster
             toReturn++;

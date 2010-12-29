@@ -22,6 +22,7 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -122,7 +123,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             toReturn = 4;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, WeaponType.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
             toReturn = Math.ceil(toReturn);
         } if (bGlancing)
             return (int) Math.floor(toReturn / 2.0);

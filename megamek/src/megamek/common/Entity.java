@@ -4177,6 +4177,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         ghostTargetRoll = Compute.d6(2);
         ghostTargetOverride = Compute.d6(2);
 
+        //update fatigue count
+        if(null != crew && isDeployed()) {
+            crew.incrementFatigueCount();
+        }
+        
         // Update the inferno tracker.
         infernos.newRound(roundNumber);
         if (taserShutdownRounds > 0) {
@@ -4618,7 +4623,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(+1, "hard to pilot");
         }
 
-        if (game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued(game.getRoundCount())) {
+        if (game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
 

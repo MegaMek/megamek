@@ -54,6 +54,7 @@ public abstract class InfantryWeapon extends Weapon {
         infantryDamage = 0;
         crew = 1;
         infantryRange = 0;
+        infDamageClass = WEAPON_NA;
     }
 
     public double getInfantryDamage() {

@@ -43,6 +43,8 @@ public class Pilot implements Serializable {
 
     // StratOps fatigue points
     private int fatigue;
+    //also need to track turns for fatigue by pilot because some may have later deployment
+    private int fatigueCount;
 
     /*** Additional RPG Skills ***/
     // MW3e uses 3 different gunnery skills
@@ -116,6 +118,7 @@ public class Pilot implements Serializable {
         dead = false;
         koThisRound = false;
         fatigue = 0;
+        fatigueCount = 0;
 
         options.initialize();
     }
@@ -632,8 +635,8 @@ public class Pilot implements Serializable {
         return turn;
     }
 
-    public boolean isPilotingFatigued(int turn) {
-        return turn >= getPilotingFatigueTurn();
+    public boolean isPilotingFatigued() {
+        return fatigueCount >= getPilotingFatigueTurn();
     }
 
     private int getGunneryFatigueTurn() {
@@ -652,11 +655,11 @@ public class Pilot implements Serializable {
 
     }
 
-    public boolean isGunneryFatigued(int turn) {
+    public boolean isGunneryFatigued() {
         if (piloting < 2) {
             return false;
         }
-        return turn >= getGunneryFatigueTurn();
+        return fatigueCount >= getGunneryFatigueTurn();
     }
 
     public String getStatusDesc() {
@@ -711,7 +714,11 @@ public class Pilot implements Serializable {
     public void setFatigue(int i) {
         fatigue = i;
     }
-
+    
+    public void incrementFatigueCount() {
+        fatigueCount++;
+    }
+    
     public int rollGunnerySkill() {
         if(getOptions().booleanOption("aptitude_gunnery")) {
             return Compute.d6(3,2);

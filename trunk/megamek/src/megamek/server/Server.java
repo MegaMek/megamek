@@ -23132,6 +23132,10 @@ public class Server implements Runnable {
         return rv;
     }
 
+    public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
+        return damageInfantryIn(bldg, damage, hexCoords, WeaponType.WEAPON_NA);
+    }
+    
     /**
      * Apply the correct amount of damage that passes on to any infantry unit in
      * the given building, based upon the amount of damage the building just
@@ -23142,7 +23146,7 @@ public class Server implements Runnable {
      * @param damage
      *            - the <code>int</code> amount of damage.
      */
-    public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
+    public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords, int infDamageClass) {
 
         Vector<Report> vDesc = new Vector<Report>();
         
@@ -23194,15 +23198,19 @@ public class Server implements Runnable {
                         vDesc.addElement(r);
                     } else {
                         // Yup. Damage the entity.
-                        // Battle Armor units use 5 point clusters.
                         r = new Report(6450);
                         r.indent(2);
                         r.subject = entity.getId();
                         r.add(toInf);
                         r.add(entity.getDisplayName());
                         vDesc.addElement(r);
+                        //need to adjust damage to conventional infantry
+                        if(!(entity instanceof BattleArmor)) {
+                            toInf = Compute.directBlowInfantryDamage(toInf, 0, infDamageClass, false);
+                        }
                         int remaining = toInf;
                         int cluster = toInf;
+                        // Battle Armor units use 5 point clusters.
                         if (entity instanceof BattleArmor) {
                             cluster = 5;
                         }

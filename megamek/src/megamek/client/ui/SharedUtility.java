@@ -462,7 +462,15 @@ public class SharedUtility {
             int vel = a.getCurrentVelocity();
 
             while (vel > 0) {
-                md.addStep(MoveStepType.FORWARDS);
+                int steps = 1;
+                //if moving on the ground map, then 16 hexes forward
+                if(game.getBoard().onGround()) {
+                    steps = 16;
+                }
+                while(steps > 0) {
+                    md.addStep(MoveStepType.FORWARDS);
+                    steps--;
+                }
                 if (!game.getBoard().contains(md.getLastStep().getPosition())) {
                     md.removeLastStep();
                     md.addStep(MoveStepType.OFF);

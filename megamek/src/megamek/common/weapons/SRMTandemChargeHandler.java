@@ -174,7 +174,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = Compute.directBlowInfantryDamage(wtype
                     .getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    Compute.WEAPON_CLUSTER_MISSILE, ((Infantry) target)
+                    wtype.getInfantryDamageClass(), ((Infantry) target)
                             .isMechanized());
             if (bGlancing) {
                 toReturn /= 2;

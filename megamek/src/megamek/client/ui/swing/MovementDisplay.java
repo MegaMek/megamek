@@ -1916,16 +1916,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setFlyOffEnabled(false);
             return;
         }
+        if(!ce.isAirborne()) {
+            setFlyOffEnabled(false);
+            return;
+        }
+        
+        Aero a = (Aero) ce;
         MoveStep step = cmd.getLastStep();
         Coords position = ce.getPosition();
         int facing = ce.getFacing();
-        Aero a = (Aero) ce;
+        
         int velocityLeft = a.getCurrentVelocity();
         if (step != null) {
             position = step.getPosition();
             facing = step.getFacing();
             velocityLeft = step.getVelocityLeft();
         }
+        
+        //for spheroids in atmosphere we just need to check being on the edge
+        if(a.isSpheroid() && !clientgui.getClient().game.getBoard().inSpace()) {
+            setFlyOffEnabled((position != null) && (a.getWalkMP() > 0) && ((position.x == 0) || (position.x == clientgui.getClient().game.getBoard().getWidth() - 1) || (position.y == 0) || (position.y == clientgui.getClient().game.getBoard().getHeight() - 1)));
+            return;
+        }
+        
+        //for all aerodynes and spheroids in space it is more complicated - the nose of the aircraft
+        //must be facing in the righ direction and there must be velocity remaining
+        
         boolean evenx = (position.x % 2) == 0;
         if ((velocityLeft > 0)
                 && (((position.x == 0) && ((facing == 5) || (facing == 4)))

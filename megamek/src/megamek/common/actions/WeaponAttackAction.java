@@ -537,7 +537,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // fatigue
-        if (game.getOptions().booleanOption("tacops_fatigue") && ae.getCrew().isGunneryFatigued(game.getRoundCount())) {
+        if (game.getOptions().booleanOption("tacops_fatigue") && ae.getCrew().isGunneryFatigued()) {
             toHit.addModifier(1, "fatigue");
         }
 

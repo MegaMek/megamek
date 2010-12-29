@@ -5206,9 +5206,15 @@ public class Server implements Runnable {
                     thrustUsed = 0;
                 }
 
-                if (step.getType() == MoveStepType.OFF) {
+                if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
+                    return;
+                }
+                
+                if (step.getType() == MoveStepType.OFF) {
+                    a.setCurrentVelocity(md.getFinalVelocity());
+                    processLeaveMap(entity, curPos, true, -1);
                     return;
                 }
 

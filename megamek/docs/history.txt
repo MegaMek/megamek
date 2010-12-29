@@ -77,6 +77,7 @@ v0.35.21-dev (SVN)
 + Bug 3139256: fatigue affecting reinforcements
 + Bug 3139217: Random movement on ground maps
 + Bug 3135550: Air-dropped units take falling damage during drop
++ allow players the option to not return when they fly off the map using return flyover option
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

@@ -14857,6 +14857,12 @@ public class Server implements Runnable {
         if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
             return vPhaseReport;
         }
+        
+        //airborne units don't make piloting rolls, they make control rolls
+        if(entity.isAirborne()) {
+            return vPhaseReport;
+        }
+        
         Report r;
 
         // first, do extreme gravity PSR, because non-mechs do these, too

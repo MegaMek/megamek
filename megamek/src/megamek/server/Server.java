@@ -15716,6 +15716,12 @@ public class Server implements Runnable {
         }
 
         int damage_orig = damage;
+        
+        //the bonus to the crit roll if using the "advanced determining critical hits rule"
+        int critBonus = 0;
+        if(game.getOptions().booleanOption("tacops_crit_roll") && damage_orig > 0 && (te instanceof Mech || te instanceof Protomech)) {
+            critBonus = Math.min((damage_orig - 1)/5, 4);
+        }
 
         // show Locations which have rerolled with Edge
         HitData undoneLocation = hit.getUndoneLocation();
@@ -16420,10 +16426,10 @@ public class Server implements Runnable {
                         if (te.hasArmoredChassis()) {
                             Report.addNewline(vDesc);
                             // crit roll with -1 mod
-                            vDesc.addAll(criticalEntity(te, hit.getLocation(), -1));
+                            vDesc.addAll(criticalEntity(te, hit.getLocation(), -1 + critBonus));
                         } else {
                             Report.addNewline(vDesc);
-                            vDesc.addAll(criticalEntity(te, hit.getLocation(), 0));
+                            vDesc.addAll(criticalEntity(te, hit.getLocation(), critBonus));
                         }
                     }
                 }
@@ -16924,7 +16930,7 @@ public class Server implements Runnable {
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
                     vDesc.elementAt(vDesc.size() - 1).newlines++;
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.glancingMod()));
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.glancingMod() + critBonus));
                 }
                 crits = 0;
 
@@ -16940,7 +16946,7 @@ public class Server implements Runnable {
                         critMod += hit.getSpecCritMod();
                         critMod += hit.glancingMod();
                     }
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), critMod));
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(), critMod + critBonus));
                 }
                 specCrits = 0;
             }
@@ -19498,23 +19504,29 @@ public class Server implements Runnable {
             r.add(rollString);
             r.newlines = 0;
             vDesc.addElement(r);
-            if (roll <= 7) {
+            boolean advancedCrit = game.getOptions().booleanOption("tacops_crit_roll");
+            if ((!advancedCrit && roll <= 7) || (advancedCrit && roll <= 8)) {
                 // no effect
                 r = new Report(6005);
                 r.subject = en.getId();
                 vDesc.addElement(r);
                 return vDesc;
-            } else if ((roll >= 8) && (roll <= 9)) {
+            } else if ((!advancedCrit && (roll >= 8) && (roll <= 9)) || (advancedCrit && (roll >= 9) && (roll <= 10))) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-            } else if ((roll >= 10) && (roll <= 11)) {
+            } else if ((!advancedCrit && (roll >= 10) && (roll <= 11)) || (advancedCrit && (roll >= 11) && (roll <= 12))) {
                 hits = 2;
                 r = new Report(6320);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-            } else if (roll >= 12) {
+            } else if(advancedCrit && (roll >= 13) && (roll <= 14)) {
+                hits = 3;
+                r = new Report(6325);
+                r.subject = en.getId();
+                vDesc.addElement(r);
+            } else if ((!advancedCrit && roll >= 12) || (advancedCrit && roll >= 15)) {
                 if (en instanceof Protomech) {
                     hits = 3;
                     r = new Report(6325);

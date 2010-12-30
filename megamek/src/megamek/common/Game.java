@@ -1662,6 +1662,11 @@ public class Game implements Serializable, IGame {
         Entity transport = getEntity(transportId);
         if ((Entity.NONE != transportId) && (null != transport)) {
 
+            //aero units don't count here
+            if(transport instanceof Aero) {
+                return false;
+            }
+            
             // Can that transport unload the unit?
             if (transport.isImmobile() || (0 == transport.getWalkMP())) {
                 return true;

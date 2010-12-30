@@ -83,6 +83,7 @@ v0.35.21-dev (SVN)
 + added infantry damage class field to WeaponType and corresponding weapons
 + Bug: damage to infantry inside buildings not adjusted for non-infantry damage to infantry rule
 + TacOps Advanced Determining Critical Hits option
++ Bug: units on grounded spheroid dropships being treated as stranded
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

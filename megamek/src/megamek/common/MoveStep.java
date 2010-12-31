@@ -584,7 +584,11 @@ public class MoveStep implements Serializable {
             // Infantry in immobilized transporters get
             // a special "unload stranded" game turn.
             hasEverUnloaded = true;
-            setMp(1);
+            if(entity instanceof Aero) {
+                setMp(0);
+            } else {
+                setMp(1);
+            }
             break;
         case LOAD:
             setMp(1);
@@ -1919,38 +1923,44 @@ public class MoveStep implements Serializable {
 
         // Is the entity unloading passengers?
         if (stepType == MoveStepType.UNLOAD) {
-            if (isFirstStep()) {
-                if (getMpUsed() <= entity.getRunMP()) {
+            
+            if(entity instanceof Aero) {
+                movementType = EntityMovementType.MOVE_NONE;
+            } else {
+            
+                if (isFirstStep()) {
+                    if (getMpUsed() <= entity.getRunMP()) {
+                        movementType = EntityMovementType.MOVE_RUN;
+                        if (getMpUsed() <= entity.getWalkMP()) {
+                            movementType = EntityMovementType.MOVE_WALK;
+                        }
+                    }
+                }
+    
+                // Prone Meks are able to unload, if they have the MP.
+                if ((getMpUsed() <= entity.getRunMP())
+                        && (entity.isProne() || entity.isHullDown())
+                        && (movementType == EntityMovementType.MOVE_ILLEGAL)) {
                     movementType = EntityMovementType.MOVE_RUN;
                     if (getMpUsed() <= entity.getWalkMP()) {
                         movementType = EntityMovementType.MOVE_WALK;
                     }
                 }
-            }
-
-            // Prone Meks are able to unload, if they have the MP.
-            if ((getMpUsed() <= entity.getRunMP())
-                    && (entity.isProne() || entity.isHullDown())
-                    && (movementType == EntityMovementType.MOVE_ILLEGAL)) {
-                movementType = EntityMovementType.MOVE_RUN;
-                if (getMpUsed() <= entity.getWalkMP()) {
-                    movementType = EntityMovementType.MOVE_WALK;
-                }
-            }
-
-            // Can't unload units into prohibited terrain
-            // or into stacking violation.
-            Targetable target = getTarget(game);
-            if (target instanceof Entity) {
-                Entity other = (Entity) target;
-                if ((null != Compute.stackingViolation(game, other, curPos,
-                        entity))
-                        || other
-                        .isHexProhibited(game.getBoard().getHex(curPos))) {
+    
+                // Can't unload units into prohibited terrain
+                // or into stacking violation.
+                Targetable target = getTarget(game);
+                if (target instanceof Entity) {
+                    Entity other = (Entity) target;
+                    if ((null != Compute.stackingViolation(game, other, curPos,
+                            entity))
+                            || other
+                            .isHexProhibited(game.getBoard().getHex(curPos))) {
+                        movementType = EntityMovementType.MOVE_ILLEGAL;
+                    }
+                } else {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
-            } else {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
             }
         }
 

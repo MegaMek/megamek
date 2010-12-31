@@ -6239,7 +6239,7 @@ public class Server implements Runnable {
             // Handle unloading units.
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(game);
-                if(entity instanceof Aero && unloaded instanceof Entity) { 
+                if(entity instanceof SmallCraft && unloaded instanceof Entity) { 
                     Entity unloader = (Entity)unloaded;
                     //TODO: need to get the bay for this entity
                     //and also increment bay door usage            

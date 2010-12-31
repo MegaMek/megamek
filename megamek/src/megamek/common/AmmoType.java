@@ -3438,7 +3438,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 8.33;
@@ -3457,7 +3457,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 3 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.kgPerShot = 8.33;
@@ -3476,7 +3476,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 4 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 8.33;
@@ -3496,7 +3496,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLLRT5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.cost = 30000;
@@ -3516,7 +3516,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 6 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 9;
         ammo.kgPerShot = 8.33;
@@ -3535,7 +3535,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 7 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 10;
         ammo.kgPerShot = 8.33;
@@ -3554,7 +3554,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 8 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 11;
         ammo.kgPerShot = 8.33;
@@ -3573,7 +3573,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 9 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
-        ammo.ammoType = AmmoType.T_LRM;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 12;
         ammo.kgPerShot = 8.33;

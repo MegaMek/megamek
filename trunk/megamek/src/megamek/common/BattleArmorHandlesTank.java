@@ -1,3 +1,17 @@
+/*
+ * MegaMek -
+ * Copyright (C) 2010 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.common;
 
 public class BattleArmorHandlesTank extends BattleArmorHandles {
@@ -5,7 +19,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
     // Private attributes, constants and helper functions.
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1031947858009941399L;
     /**
@@ -19,7 +33,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
     /**
      * Get the exterior locations that a loaded squad covers. <p/> Sub-classes
      * are encouraged to override this method.
-     * 
+     *
      * @param isRear - a <code>boolean</code> value stating if the given
      *            location is rear facing; if <code>false</code>, the
      *            location is front facing.
@@ -35,7 +49,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
      * from firing.
      * <p>
      * Sub-classes should override the <code>getBlockedLocs</code> method.
-     * 
+     *
      * @param loc - the <code>int</code> location attempting to fire.
      * @param isRear - a <code>boolean</code> value stating if the given
      *            location is rear facing; if <code>false</code>, the
@@ -50,7 +64,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
         boolean result = false;
 
         // The weapon can only be blocked if we are carrying troopers.
-        if (null != this.troopers) {
+        if (null != troopers) {
 
             // Is the relevant trooper alive?
             int tloc = BattleArmor.LOC_SQUAD;
@@ -69,10 +83,11 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
                     tloc2 = BattleArmor.LOC_TROOPER_2;
                     break;
             }
-            if ((troopers.locations() > tloc && troopers.getInternal(tloc) > 0)
-                    || (troopers.locations() > tloc2 && troopers
-                            .getInternal(tloc2) > 0))
+            if (((troopers.locations() > tloc) && (troopers.getInternal(tloc) > 0))
+                    || ((troopers.locations() > tloc2) && (troopers
+                            .getInternal(tloc2) > 0))) {
                 result = true;
+            }
         } // End carrying-troopers
 
         // Return our result.

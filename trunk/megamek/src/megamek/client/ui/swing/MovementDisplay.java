@@ -1056,6 +1056,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateManeuverButton();
 
         loadedUnits = ce.getLoadedUnits();
+        if(ce instanceof Aero) {
+            loadedUnits = ce.getUnitsUnloadableFromBays();
+        }
 
         updateLoadButtons();
         updateJoinButton();
@@ -2064,6 +2067,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (null == ce) {
             return;
         }
+        
+        if(ce instanceof Aero) {
+            setUnloadEnabled(ce.getUnitsUnloadableFromBays().size() > 0 && !ce.isAirborne());
+            setLoadEnabled(false);
+        }
+        
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
                 || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP));
         int unloadEl = cmd.getFinalElevation();
@@ -2411,6 +2420,75 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                             Messages
                                     .getString(
                                             "MovementDisplay.DropUnitDialog.title", new Object[] { //$NON-NLS-1$
+                                            currentBay.getType(), bayNum }),
+                            question, names, false, doors);
+                    choiceDialog.setVisible(true);
+                    if (choiceDialog.getAnswer() == true) {
+                        // load up the choices
+                        int[] unitsLaunched = choiceDialog.getChoices();
+                        for (int element : unitsLaunched) {
+                            bayChoices.add(currentUnits.elementAt(element)
+                                    .getId());
+                        }
+                        choices.put(i, bayChoices);
+                        // now remove them (must be a better way?)
+                        for (int l = unitsLaunched.length; l > 0; l--) {
+                            currentUnits.remove(unitsLaunched[l - 1]);
+                        }
+                    }
+                }
+                bayNum++;
+            }
+        }// End have-choices
+        // Return the chosen unit.
+        return choices;
+    }
+    
+    /**
+     * Get the units that the player wants to unload from a dropship or small craft bay. This method will remove the
+     * unit from our local copy of loaded units.
+     *
+     * @return The <code>Entity</code> that the player wants to unload. This
+     *         value will not be <code>null</code>.
+     */
+    private TreeMap<Integer, Vector<Integer>> getUnloadedUnitsFromBays() {
+        Entity ce = ce();
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+
+        Vector<Entity> unloadableUnits = ce.getUnitsUnloadableFromBays();
+
+        // Handle error condition.
+        if (unloadableUnits.size() <= 0) {
+            System.err
+                    .println("MovementDisplay#getUnloadedUnitsFromBays() called without loaded units."); //$NON-NLS-1$
+
+        } else {
+            // cycle through the bays
+            int bayNum = 1;
+            Bay currentBay;
+            Vector<Entity> currentUnits = new Vector<Entity>();
+            int doors = 0;
+            Vector<Bay> Bays = ce.getTransportBays();
+            for (int i = 0; i < Bays.size(); i++) {
+                currentBay = Bays.elementAt(i);
+                Vector<Integer> bayChoices = new Vector<Integer>();
+                currentUnits = currentBay.getUnloadableUnits();
+                doors = currentBay.getDoors();
+                if ((currentUnits.size() > 0) && (doors > 0)) {
+                    String[] names = new String[currentUnits.size()];
+                    String question = Messages
+                            .getString(
+                                    "MovementDisplay.UnloadUnitDialog.message", new Object[] { //$NON-NLS-1$
+                                     doors, bayNum });
+                    for (int loop = 0; loop < names.length; loop++) {
+                        names[loop] = currentUnits.elementAt(loop)
+                                .getShortName();
+                    }
+                    ChoiceDialog choiceDialog = new ChoiceDialog(
+                            clientgui.frame,
+                            Messages
+                                    .getString(
+                                            "MovementDisplay.UnloadUnitDialog.title", new Object[] { //$NON-NLS-1$
                                             currentBay.getType(), bayNum }),
                             question, names, false, doors);
                     choiceDialog.setVisible(true);
@@ -3178,6 +3256,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (other != null) {
                 cmd.addStep(MoveStepType.UNLOAD, other);
                 clientgui.bv.drawMovementData(ce(), cmd);
+                //if this is an aero, then we are done
+                //server will process this move and then give us another turn
+                ready();
+                
             } // else - Player canceled the unload.
         } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION)) {
             cmd.addStep(MoveStepType.UP);

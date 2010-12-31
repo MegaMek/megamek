@@ -4152,6 +4152,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         resetFiringArcs();
 
+        resetBays();
+        
         // reset evasion
         setEvading(false);
 
@@ -5601,6 +5603,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * return the bay that the given entity is loaded into
+     * @param en
+     * @return
+     */
+    public Bay getBay(Entity loaded) {
+        for (Transporter next : transports) {
+            if (next instanceof Bay) {
+                for (Entity e : next.getLoadedUnits()) {
+                    if(loaded.getId() == e.getId()) {
+                        return (Bay)next;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * @return only entities in ASF Bays
      */
     public Vector<Entity> getLoadedFighters() {
@@ -5660,6 +5680,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((next instanceof Bay) && (((Bay) next).getDoors() > 0)) {
                 Bay nextbay = (Bay) next;
                 for (Entity e : nextbay.getDroppableUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+    /**
+     * @return only entities in that can be unloaded on ground
+     *      */
+    public Vector<Entity> getUnitsUnloadableFromBays() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+
+        // I should only add entities in bays that are functional
+        for (Transporter next : transports) {
+            if ((next instanceof Bay) && (((Bay) next).canUnloadUnits())) {
+                Bay nextbay = (Bay) next;
+                for (Entity e : nextbay.getUnloadableUnits()) {
                     result.addElement(e);
                 }
             }
@@ -5738,7 +5781,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 ((Bay) next).resetDoors();
             }
         }
-
+    }
+    
+    public void resetBays() {
+        for (Transporter next : transports) {
+            if (next instanceof Bay) {
+                ((Bay) next).resetUnloadCount();
+            }
+        }
     }
 
     /**

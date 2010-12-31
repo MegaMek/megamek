@@ -33,6 +33,7 @@ public class Bay implements Transporter {
     private static final long serialVersionUID = -9056450317468016272L;
     int doors = 1;
     int doorsNext = 1;
+    int unloadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();
 
     /**
@@ -123,6 +124,10 @@ public class Bay implements Transporter {
     public void resetDoors() {
         doors = doorsNext;
     }
+    
+    public void resetUnloadCount() {
+        unloadedThisTurn = 0;
+    }
 
     /**
      * Determines if this object can accept the given unit. The unit may not be
@@ -149,6 +154,14 @@ public class Bay implements Transporter {
 
         // Return our result.
         return result;
+    }
+    
+    /**
+     * to unload units, a bay must have more doors available than units unloaded this turn
+     * @return
+     */
+    public boolean canUnloadUnits() {
+        return doors > unloadedThisTurn;
     }
 
     /**
@@ -220,6 +233,22 @@ public class Bay implements Transporter {
 
         return droppable;
     }
+    
+    /***
+     * get a vector of units that are unloadable on the ground
+     */
+    public Vector<Entity> getUnloadableUnits() {
+
+        Vector<Entity> unloadable = new Vector<Entity>();
+
+        //TODO: we need to handle aeros and VTOLs differently
+        for (int i = 0; i < troops.size(); i++) {
+            Entity nextUnit = troops.elementAt(i);
+            unloadable.add(nextUnit);
+        }
+
+        return unloadable;
+    }
 
     /**
      * Unload the given unit.
@@ -243,6 +272,7 @@ public class Bay implements Transporter {
         // If we removed it, restore our space.
         if (retval) {
             currentSpace += 1;
+            unloadedThisTurn += 1;
         }
 
         // Return our status

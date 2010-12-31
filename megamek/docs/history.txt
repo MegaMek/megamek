@@ -86,6 +86,7 @@ v0.35.21-dev (SVN)
 + Bug: units on grounded spheroid dropships being treated as stranded
 + dropship unloading of ground units (partial)
 + aerospace fighters should unload like tanks
++ Bug: Clan LRT ammo not counting for BV
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

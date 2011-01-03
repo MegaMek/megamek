@@ -3315,6 +3315,11 @@ public class Server implements Runnable {
         // The unloaded unit is no longer being carried.
         unit.setTransportId(Entity.NONE);
 
+        //TODO: this is temporary until we allow user to choose location
+        if(unloader instanceof Dropship) {
+            pos = pos.translated(0, 2);
+        }
+        
         // Place the unloaded unit onto the screen.
         unit.setPosition(pos);
 
@@ -3377,6 +3382,16 @@ public class Server implements Runnable {
         }
         addReport(doSetLocationsExposure(unit, hex, false, unit.getElevation()));
 
+        //unlike other unloaders, entities unloaded from droppers can still move (unless infantry)
+        if(unloader instanceof SmallCraft && !(unit instanceof Infantry)) {
+            unit.setUnloaded(false);
+            unit.setDone(false);
+            
+            //unit uses half of walk mp and is treated as moving one hex
+            unit.mpUsed = unloader.getOriginalWalkMP() / 2;
+            unit.delta_distance = 1;
+        }
+        
         // Update the unloaded unit.
         entityUpdate(unit.getId());
 
@@ -3556,40 +3571,6 @@ public class Server implements Runnable {
         return true;
 
     }
-    
-    public void unloadUnitFromBay(Entity unloader, Entity entity, Coords curPos) {
-        // Unload the unit.
-           entity.unload(unloader);
-           // The unloaded unit is no longer being carried.
-           unloader.setTransportId(Entity.NONE);
-
-           //OK I need to allow people to choose the location and facing for each unit, but for now
-           //lets just put them to the north for testing purposes                  
-           if(game.getBoard().onGround() && (null != curPos)) {
-               curPos = curPos.translated(0, 2);
-           }
-           // Place the unloaded unit onto the screen.
-           unloader.setPosition(curPos);
-
-           // Units unloaded onto the screen are deployed.
-           if (curPos != null) {
-               unloader.setDeployed(true);
-           }
-
-           // Point the unloaded unit in the given direction.
-           unloader.setFacing(entity.getFacing());
-           unloader.setSecondaryFacing(entity.getFacing());
-
-           unloader.setAltitude(0);
-           //unlike other unloaders, entities unloaded from droppers can still move
-           unloader.setUnloaded(false);
-           unloader.setDone(false);
-           
-           //unit uses half of walk mp and is treated as moving one hex
-           unloader.mpUsed = unloader.getOriginalWalkMP() / 2;
-           unloader.delta_distance = 1;
-           entityUpdate(unloader.getId());
-       }
 
     public void dropUnit(Entity drop, Entity entity, Coords curPos, int altitude) {
      // Unload the unit.
@@ -6239,17 +6220,13 @@ public class Server implements Runnable {
             // Handle unloading units.
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(game);
-                if(entity instanceof SmallCraft && unloaded instanceof Entity) { 
-                    Entity unloader = (Entity)unloaded;
-                    //TODO: need to get the bay for this entity
-                    //and also increment bay door usage            
-                    r = new Report(9387);
-                    r.subject = entity.getId();
-                    r.add(entity.getDisplayName());
-                    r.add(unloader.getDisplayName());
-                    r.indent(1);
-                    addReport(r);
-                    Bay currentBay = entity.getBay(unloader);
+                if (!unloadUnit(entity, unloaded, curPos, curFacing, step.getElevation())) {
+                    System.err.println("Error! Server was told to unload " + unloaded.getDisplayName() + " from "
+                            + entity.getDisplayName() + " into " + curPos.getBoardNum());
+                }
+                //some additional stuff to take care of for small craft/dropship unloading
+                if(entity instanceof SmallCraft && unloaded instanceof Entity) {          
+                    Bay currentBay = entity.getBay((Entity)unloaded);
                     if(null != currentBay && Compute.d6(2) == 2) {
                         r = new Report(9390);
                         r.subject = entity.getId();
@@ -6258,7 +6235,6 @@ public class Server implements Runnable {
                         addReport(r);
                         currentBay.destroyDoorNext();
                     }
-                    unloadUnitFromBay(unloader, entity, curPos);
                     // now apply any damage to bay doors
                     entity.resetBayDoors();
                     entityUpdate(entity.getId());
@@ -6268,17 +6244,14 @@ public class Server implements Runnable {
                         game.insertNextTurn(newTurn);
                     }
                     //ok add another turn for the unloaded entity so that it can move
-                    GameTurn newTurn = new GameTurn.SpecificEntityTurn(unloader.getOwner().getId(), unloader.getId());
-                    game.insertNextTurn(newTurn);
+                    if(!(unloaded instanceof Infantry)) {
+                        GameTurn newTurn = new GameTurn.SpecificEntityTurn(((Entity)unloaded).getOwner().getId(), ((Entity)unloaded).getId());
+                        game.insertNextTurn(newTurn);
+                    }
                     // brief everybody on the turn update
                     send(createTurnVectorPacket());
                     return;
-                } else {
-                    if (!unloadUnit(entity, unloaded, curPos, curFacing, step.getElevation())) {
-                        System.err.println("Error! Server was told to unload " + unloaded.getDisplayName() + " from "
-                                + entity.getDisplayName() + " into " + curPos.getBoardNum());
-                    }
-                }
+                } 
             }
 
             if (((step.getType() == MoveStepType.BACKWARDS)

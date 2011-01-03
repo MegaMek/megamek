@@ -9406,5 +9406,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return xbv;
     }
+    
+    public boolean hasUnloadedUnitsFromBays() {
+        for (Transporter next : transports) {
+            if (next instanceof Bay && ((Bay)next).getNumberUnloadedThisTurn() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

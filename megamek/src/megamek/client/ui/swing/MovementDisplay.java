@@ -1070,10 +1070,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkOOC();
         checkAtmosphere();
 
-      //if dropping unit only allow turning
+        //if dropping unit only allow turning
         if(ce.isDropping()) {
             gear = MovementDisplay.GEAR_TURN;
             disableButtons();
+            setNextEnabled(true);
+            butDone.setEnabled(true);
+        }
+        
+        //if small craft/dropship that has unloaded units, then only allowed 
+        //to unload more
+        if(ce.hasUnloadedUnitsFromBays()) {
+            disableButtons();
+            updateLoadButtons();
             setNextEnabled(true);
             butDone.setEnabled(true);
         }

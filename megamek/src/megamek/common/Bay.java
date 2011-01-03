@@ -33,7 +33,7 @@ public class Bay implements Transporter {
     private static final long serialVersionUID = -9056450317468016272L;
     int doors = 1;
     int doorsNext = 1;
-    int unloadedThisTurn = 0;
+    private int unloadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();
 
     /**
@@ -352,6 +352,10 @@ public class Bay implements Transporter {
 
         setDoors(getDoors() - 1);
 
+    }
+    
+    public int getNumberUnloadedThisTurn() {
+        return unloadedThisTurn;
     }
 
 } // End package class TroopSpace implements Transporter

@@ -5066,6 +5066,7 @@ public class Server implements Runnable {
         boolean wasProne;
         boolean fellDuringMovement = false;
         boolean crashedDuringMovement = false;
+        boolean dropshipStillUnloading = false;
         boolean turnOver;
         boolean wigeStartedLanded = false;
         int prevFacing = curFacing;
@@ -6240,6 +6241,7 @@ public class Server implements Runnable {
                     entityUpdate(entity.getId());
                     //ok now add another turn for the transport so it can continue to unload units
                     if(entity.getUnitsUnloadableFromBays().size() > 0) {
+                        dropshipStillUnloading = true;
                         GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
                         game.insertNextTurn(newTurn);
                     }
@@ -6250,7 +6252,6 @@ public class Server implements Runnable {
                     }
                     // brief everybody on the turn update
                     send(createTurnVectorPacket());
-                    return;
                 } 
             }
 
@@ -6852,7 +6853,7 @@ public class Server implements Runnable {
         } // End entity-is-jumping
         // update entity's locations' exposure
         doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
-
+        
         // Check the falls_end_movement option to see if it should be able to
         // move on.
         if (!(game.getOptions().booleanOption("falls_end_movement") && (entity instanceof Mech)) && fellDuringMovement
@@ -6895,6 +6896,11 @@ public class Server implements Runnable {
                 }
             }
             entity.setDone(true);
+        }
+        
+        if(dropshipStillUnloading) {
+            //turns should have already been inserted but we need to set the entity as not done
+            entity.setDone(false);
         }
 
         // If the entity is being swarmed, update the attacker's position.

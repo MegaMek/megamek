@@ -3315,11 +3315,6 @@ public class Server implements Runnable {
         // The unloaded unit is no longer being carried.
         unit.setTransportId(Entity.NONE);
 
-        //TODO: this is temporary until we allow user to choose location
-        if(unloader instanceof Dropship) {
-            pos = pos.translated(0, 2);
-        }
-        
         // Place the unloaded unit onto the screen.
         unit.setPosition(pos);
 
@@ -6221,7 +6216,13 @@ public class Server implements Runnable {
             // Handle unloading units.
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(game);
-                if (!unloadUnit(entity, unloaded, curPos, curFacing, step.getElevation())) {
+                Coords unloadPos = curPos;
+                int unloadFacing = curFacing;
+                if(null != step.getTargetPosition()) {
+                    unloadPos = step.getTargetPosition();
+                    unloadFacing = curPos.direction(unloadPos);
+                }
+                if (!unloadUnit(entity, unloaded, unloadPos, unloadFacing, step.getElevation())) {
                     System.err.println("Error! Server was told to unload " + unloaded.getDisplayName() + " from "
                             + entity.getDisplayName() + " into " + curPos.getBoardNum());
                 }

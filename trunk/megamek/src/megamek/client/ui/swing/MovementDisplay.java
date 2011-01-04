@@ -44,6 +44,7 @@ import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
@@ -62,6 +63,7 @@ import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
 import megamek.common.Report;
+import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -2182,6 +2184,52 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // Return the chosen unit.
         return choice;
     }
+    
+    private Coords getUnloadPosition(Entity unloaded) {
+        Entity ce = ce();
+        //we need to allow the user to select a hex for offloading
+        Coords pos = ce.getPosition();
+        if(null != cmd) {
+            pos = cmd.getFinalCoords();
+        }
+        int elev = clientgui.getClient().game.getBoard().getHex(pos).getElevation();
+        ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
+        if(ce instanceof Dropship) {
+            ring = Compute.coordsAtRange(pos, 2);
+        }
+        //ok now we need to go through the ring and identify available Positions
+        ring = Compute.getAcceptableUnloadPositions(ring, unloaded, clientgui.getClient().game, elev);
+        if(ring.size() < 1) {
+            String title = Messages.getString("MovementDisplay.NoPlaceToUnload.title"); //$NON-NLS-1$
+            String body = Messages.getString("MovementDisplay.NoPlaceToUnload.message"); //$NON-NLS-1$
+            clientgui.doAlertDialog(title, body);
+            return null;
+        }
+        String[] choices = new String[ring.size()];
+        int i = 0;
+        for(Coords c : ring) {
+            choices[i++] = c.toString();
+        }
+        String selected = (String) JOptionPane
+        .showInputDialog(
+                clientgui,
+                Messages
+                        .getString(
+                                "MovementDisplay.ChooseHex.message", new Object[] {//$NON-NLS-1$
+                                ce.getShortName(),
+                                        ce.getUnusedString() }),
+                Messages
+                        .getString("MovementDisplay.ChooseHex.title"), //$NON-NLS-1$
+                JOptionPane.QUESTION_MESSAGE, null, choices, null);
+        Coords choice = null;
+        for(Coords c : ring) {
+            if(selected.equals(c.toString())) {
+                choice = c;
+                break;
+            }
+        }
+        return choice;
+    }
 
     /**
      * FIGHTER RECOVERY fighter recovery will be handled differently than
@@ -3268,12 +3316,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                cmd.addStep(MoveStepType.UNLOAD, other);
-                clientgui.bv.drawMovementData(ce(), cmd);
-                //if this is an aero, then we are done
-                //server will process this move and then give us another turn
-                ready();
-                
+                if(ce() instanceof SmallCraft) {
+                    Coords pos = getUnloadPosition(other);
+                    if(null != pos) {
+                        //set other's position and end this turn - the unloading unit will get
+                        //another turn for further unloading later
+                        cmd.addStep(MoveStepType.UNLOAD, other, pos);
+                        clientgui.bv.drawMovementData(ce(), cmd);
+                        ready();
+                    }
+                } else {
+                    //some different handling for small craft/dropship unloading
+                    cmd.addStep(MoveStepType.UNLOAD, other);
+                    clientgui.bv.drawMovementData(ce(), cmd);
+                }            
             } // else - Player canceled the unload.
         } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION)) {
             cmd.addStep(MoveStepType.UP);

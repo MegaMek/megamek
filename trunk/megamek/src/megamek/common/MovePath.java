@@ -130,6 +130,10 @@ public class MovePath implements Cloneable, Serializable {
     public MovePath addStep(final MoveStepType type, final Targetable target) {
         return addStep(new MoveStep(this, type, target));
     }
+    
+    public MovePath addStep(final MoveStepType type, final Targetable target, final Coords pos) {
+        return addStep(new MoveStep(this, type, target, pos));
+    }
 
     public MovePath addStep(final MoveStepType type, final int mineToLay) {
         return addStep(type, -1, mineToLay);
@@ -220,7 +224,9 @@ public class MovePath implements Cloneable, Serializable {
         steps.removeAllElements();
         for (int i = 0; i < temp.size(); i++) {
             MoveStep step = temp.elementAt(i);
-            if (step.getTarget(game) != null) {
+            if(step.getTargetPosition() != null && step.getTarget(game) != null) {
+                step = new MoveStep(this, step.getType(), step.getTarget(game), step.getTargetPosition());
+            } else if (step.getTarget(game) != null) {
                 step = new MoveStep(this, step.getType(), step.getTarget(game));
             } else if (step.getRecoveryUnit() != -1) {
                 step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);

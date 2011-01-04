@@ -5103,6 +5103,26 @@ public class Compute {
         }
         return false;
     }
+    
+    public static ArrayList<Coords> getAcceptableUnloadPositions(ArrayList<Coords> ring, Entity unit, IGame game, int elev) {
+        
+        ArrayList<Coords> acceptable = new ArrayList<Coords>();
+        
+        for(Coords pos : ring) {
+            IHex hex = game.getBoard().getHex(pos);
+            if(null == hex) {
+                continue;
+            }
+            //no stacking violations, no prohibited terrain, and within 2 elevations
+            
+            if(!unit.isHexProhibited(hex) 
+                    && null == stackingViolation(game, unit.getId(), pos) 
+                    && Math.abs(hex.getElevation() - elev) < 3) {
+                acceptable.add(pos);
+            }
+        }       
+        return acceptable;
+    }
 
 } // End public class Compute
 

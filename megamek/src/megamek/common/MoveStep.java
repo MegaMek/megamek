@@ -40,6 +40,7 @@ public class MoveStep implements Serializable {
     private MoveStepType type = MoveStepType.NONE;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;
+    private Coords targetPos;
 
     private Coords position;
     private int facing;
@@ -153,6 +154,27 @@ public class MoveStep implements Serializable {
         }
     }
 
+    /**
+     * Create a step with the given target and a position for that target
+     *
+     * @param type - should match one of the MovePath constants, but this is not
+     *            currently checked.
+     * @param target - the <code>Targetable</code> that is the target of this
+     *            step. For example, the enemy being charged.
+     * @param pos = the <code>Coords</code> for the target position.
+     */
+    public MoveStep(MovePath path, MoveStepType type, Targetable target, Coords pos) {
+        this(path, type);
+        targetId = target.getTargetId();
+        targetType = target.getTargetType();
+        targetPos = pos;
+        if ((type == MoveStepType.UNLOAD) || (type==MoveStepType.LAUNCH) || (type==MoveStepType.DROP)) {
+            hasEverUnloaded = true;
+        } else {
+            hasEverUnloaded = false;
+        }
+    }
+    
     /**
      * Create a step with the given target.
      *
@@ -356,6 +378,10 @@ public class MoveStep implements Serializable {
             return null;
         }
         return game.getTarget(targetType, targetId);
+    }
+    
+    public Coords getTargetPosition() {
+        return targetPos;
     }
 
     public TreeMap<Integer, Vector<Integer>> getLaunched() {

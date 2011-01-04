@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -5123,6 +5124,35 @@ public class Compute {
         }       
         return acceptable;
     }
-
+    
+    public static ArrayList<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
+        
+        ArrayList<Entity> mountable = new ArrayList<Entity>();
+        //for the moment only allow small craft/dropship mounting, but 
+        //this could be expanded to include other unit types
+        
+        //the rules don't say that the unit must be facing loader
+        //so lets take the ring
+        for(Coords c : coordsAtRange(pos, 1)) {
+            IHex hex = game.getBoard().getHex(c);
+            if(null == hex) {
+                continue;
+            }
+            Enumeration<Entity> entities = game.getEntities(c);
+            while (entities.hasMoreElements()) {
+                // Is the other unit friendly and not the current entity?
+                Entity other = entities.nextElement();
+                if (en.getOwner().equals(other.getOwner()) && !en.equals(other) 
+                        && other instanceof SmallCraft && other.canLoad(en) && !other.isAirborne()
+                        && Math.abs((hex.surface() + other.getElevation()) - elev) < 3 && !mountable.contains(other)) {
+                    mountable.add(other);
+                }
+            }
+        }
+        
+        return mountable;
+        
+    }
+ 
 } // End public class Compute
 

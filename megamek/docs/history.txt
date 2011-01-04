@@ -92,6 +92,7 @@ v0.35.21-dev (SVN)
 + dropships can only unload when given a second turn after unloading
 + Don't return processMovement for-loop when dropships unload
 + dialog to allow user to select position for dropship-unloaded units
++ Dropship mounting
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

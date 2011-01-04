@@ -289,6 +289,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean unloadedThisTurn = false;
 
     /**
+     * Set to <code>true</code> if this unit was loaded this turn.
+     */
+    private boolean loadedThisTurn = false;
+    
+    /**
      * Need to keep a vector of entities loaded in the chat lounge
      */
     private Vector<Entity> loadedKeepers = new Vector<Entity>();
@@ -874,6 +879,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return unloadedThisTurn;
     }
 
+    public boolean wasLoadedThisTurn() {
+        return loadedThisTurn;
+    }
+    
     /**
      * Returns true if this entity is targetable for attacks
      */
@@ -4098,6 +4107,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void newRound(int roundNumber) {
         unloadedThisTurn = false;
+        loadedThisTurn = false;
         done = false;
         delta_distance = 0;
         mpUsedLastRound = mpUsed;
@@ -6019,6 +6029,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (transportId == Entity.NONE) {
             unloadedThisTurn = true;
             done = true;
+        } else {
+            loadedThisTurn = true;
         }
     }
 

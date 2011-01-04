@@ -76,7 +76,7 @@ public final class MechBay extends Bay {
         }
 
         // is the door functional
-        if (doors < 1) {
+        if (doors <= loadedThisTurn) {
             result = false;
         }
 

@@ -89,6 +89,7 @@ v0.35.21-dev (SVN)
 + Bug: Clan LRT ammo not counting for BV
 + consolidated unloadUnit and unloadUnitFromBay methods in Server
 + infantry can't move after unloading from small craft/dropship
++ dropships can only unload when given a second turn after unloading
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

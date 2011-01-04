@@ -913,8 +913,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         if(ce.isDropping()) {
             disableButtons();
-            setNextEnabled(true);
             butDone.setEnabled(true);
+        }
+        
+        //if small craft/dropship that has unloaded units, then only allowed 
+        //to unload more
+        if(ce.hasUnloadedUnitsFromBays()) {
+            disableButtons();
+            updateLoadButtons();
         }
 
         setupButtonPanel();
@@ -1074,7 +1080,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(ce.isDropping()) {
             gear = MovementDisplay.GEAR_TURN;
             disableButtons();
-            setNextEnabled(true);
             butDone.setEnabled(true);
         }
         
@@ -1083,7 +1088,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(ce.hasUnloadedUnitsFromBays()) {
             disableButtons();
             updateLoadButtons();
-            setNextEnabled(true);
             butDone.setEnabled(true);
         }
     }
@@ -2080,6 +2084,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(ce instanceof Aero) {
             setUnloadEnabled(ce.getUnitsUnloadableFromBays().size() > 0 && !ce.isAirborne());
             setLoadEnabled(false);
+            return;
         }
         
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
@@ -3484,6 +3489,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkFuel();
         checkOOC();
         checkAtmosphere();
+        
+        //if small craft/dropship that has unloaded units, then only allowed 
+        //to unload more
+        if(ce.hasUnloadedUnitsFromBays()) {
+            disableButtons();
+            updateLoadButtons();
+            butDone.setEnabled(true);
+        }
+        
     }
 
     /**

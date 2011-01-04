@@ -3205,7 +3205,7 @@ public class Server implements Runnable {
 
                     // Work out hit table to use
                     toHit.setSideTable(entity.sideTable(centralPos));
-
+                    
                     // Do the damage
                     r = new Report(6480);
                     r.subject = entity.getId();
@@ -4994,6 +4994,7 @@ public class Server implements Runnable {
             if(entity instanceof Dropship) {
                 applyDropshipProximityDamage(md.getFinalCoords(), true, md.getFinalFacing());
             }
+            checkForTakeoffDamage(a);
             a.setPosition(a.getPosition().translated(a.getFacing(), a.getTakeOffLength()));
             entity.setDone(true);
             entityUpdate(entity.getId());
@@ -5009,6 +5010,7 @@ public class Server implements Runnable {
                 if(entity instanceof Dropship) {
                     applyDropshipProximityDamage(md.getFinalCoords());
                 }
+                checkForTakeoffDamage(a);
             }
             entity.setDone(true);
             entityUpdate(entity.getId());
@@ -6188,6 +6190,7 @@ public class Server implements Runnable {
                             currentBay.destroyDoorNext();
                         }
                         // Stop looking.
+                        entityUpdate(dropship.getId());
                         return;
                     }
                 }
@@ -7029,6 +7032,39 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+
+    /**
+     * If an aero unit takes off in the same turn that other units loaded,
+     * then it risks damage to itself and those units
+     * @param entity - The <code>Entity</code> taking off
+     */
+    private void checkForTakeoffDamage(Aero a) {
+        
+        boolean unsecured = false;
+        for(Entity loaded : a.getLoadedUnits()) {
+            if(loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
+                unsecured = true;
+                //uh-oh, you forgot your seatbelt
+                Report r = new Report(6800);
+                r.subject = loaded.getId();
+                r.addDesc(loaded);
+                addReport(r);
+                int damage = 25;
+                ToHitData toHit = new ToHitData();
+                while(damage > 0) {
+                    HitData hit = loaded.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    addReport(damageEntity(loaded, hit, 5, false, DamageType.NONE, false, true, false));
+                    damage -= 5;
+                }
+            }
+        }
+        if(unsecured) {
+            //roll hit location to get a new critical
+            HitData hit = a.rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
+            addReport(applyCriticalHit(a, hit.getLocation(), new CriticalSlot(0, a.getPotCrit()), true, 1, false));
+        }
+        
     }
 
     /**

@@ -5796,7 +5796,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void resetBays() {
         for (Transporter next : transports) {
             if (next instanceof Bay) {
-                ((Bay) next).resetUnloadCount();
+                ((Bay) next).resetCounts();
             }
         }
     }

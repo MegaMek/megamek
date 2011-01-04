@@ -33,7 +33,8 @@ public class Bay implements Transporter {
     private static final long serialVersionUID = -9056450317468016272L;
     int doors = 1;
     int doorsNext = 1;
-    private int unloadedThisTurn = 0;
+    protected int unloadedThisTurn = 0;
+    protected int loadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();
 
     /**
@@ -125,8 +126,9 @@ public class Bay implements Transporter {
         doors = doorsNext;
     }
     
-    public void resetUnloadCount() {
+    public void resetCounts() {
         unloadedThisTurn = 0;
+        loadedThisTurn = 0;
     }
 
     /**
@@ -147,8 +149,8 @@ public class Bay implements Transporter {
             result = false;
         }
 
-        // is there at least one door available
-        if (doors < 1) {
+        // more doors than units loaded
+        if (doors <= loadedThisTurn) {
             result = false;
         }
 
@@ -180,6 +182,7 @@ public class Bay implements Transporter {
         }
 
         currentSpace -= 1;
+        loadedThisTurn += 1;
 
         // Add the unit to our list of troops.
         troops.addElement(unit);
@@ -355,6 +358,10 @@ public class Bay implements Transporter {
     }
     
     public int getNumberUnloadedThisTurn() {
+        return unloadedThisTurn;
+    }
+    
+    public int getNumberLoadedThisTurn() {
         return unloadedThisTurn;
     }
 

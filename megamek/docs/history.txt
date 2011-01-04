@@ -95,6 +95,7 @@ v0.35.21-dev (SVN)
 + Dropship mounting
 + damage to unsecured units during liftoff
 + Bug: dropship loading limited by doors available
++ Bug: dropships limited to door capacity when loading in lobby
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

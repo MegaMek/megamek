@@ -1215,6 +1215,31 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
+        
+        //check for unsafe takeoffs
+        if(cmd.contains(MoveStepType.VTAKEOFF) || cmd.contains(MoveStepType.TAKEOFF)) {
+            boolean unsecure = false;
+            for(Entity loaded : ce().getLoadedUnits()) {
+                if(loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
+                    unsecure = true;
+                    break;
+                }
+            }
+            if(unsecure) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
+                        .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                        Messages.getString("MovementDisplay.UnsecuredTakeoff"), true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIPreferences.getInstance().setNagForPSR(false);
+                    }
+                } else {
+                    return;
+                }
+            }
+        }
 
         
         //check to see if spheroids will drop an elevation

@@ -100,6 +100,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_EJECT = "moveEject"; //$NON-NLS-1$
     public static final String MOVE_LOAD = "moveLoad"; //$NON-NLS-1$
     public static final String MOVE_UNLOAD = "moveUnload"; //$NON-NLS-1$
+    public static final String MOVE_MOUNT = "moveMount"; //$NON-NLS-1$
     public static final String MOVE_UNJAM = "moveUnjam"; //$NON-NLS-1$
     public static final String MOVE_CLEAR = "moveClear"; //$NON-NLS-1$
     public static final String MOVE_CANCEL = "moveCancel"; //$NON-NLS-1$
@@ -163,6 +164,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butEject;
     private JButton butLoad;
     private JButton butUnload;
+    private JButton butMount;
     private JButton butClear;
     private JButton butNext;
     private JButton butMore;
@@ -335,6 +337,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butLoad.addActionListener(this);
         butLoad.setEnabled(false);
         butLoad.setActionCommand(MOVE_LOAD);
+        butLoad.addKeyListener(this);
+        butMount = new JButton(Messages.getString("MovementDisplay.butMount")); //$NON-NLS-1$
+        butMount.addActionListener(this);
+        butMount.setEnabled(false);
+        butMount.setActionCommand(MOVE_MOUNT);
         butLoad.addKeyListener(this);
         butUnload = new JButton(Messages.getString("MovementDisplay.butUnload")); //$NON-NLS-1$
         butUnload.addActionListener(this);
@@ -555,6 +562,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butCharge);
         buttonsMech.add(butDfa);
         buttonsMech.add(butLoad);
+        buttonsMech.add(butMount);
         buttonsMech.add(butUnload);
         buttonsMech.add(butClimbMode);
         buttonsMech.add(butSearchlight);
@@ -571,6 +579,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butBackup);
         buttonsTank.add(butTurn);
         buttonsTank.add(butLoad);
+        buttonsTank.add(butMount);
         buttonsTank.add(butUnload);
         buttonsTank.add(butCharge);
         buttonsTank.add(butClimbMode);
@@ -595,6 +604,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butRaise);
         buttonsVtol.add(butTurn);
         buttonsVtol.add(butLoad);
+        buttonsVtol.add(butMount);
         buttonsVtol.add(butUnload);
         buttonsVtol.add(butSearchlight);
         buttonsVtol.add(butEvade);
@@ -610,6 +620,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butLower);
         buttonsInf.add(butRaise);
         buttonsInf.add(butTurn);
+        buttonsInf.add(butMount);
         buttonsInf.add(butClimbMode);
         buttonsInf.add(butSearchlight);
         buttonsInf.add(butEject);
@@ -988,6 +999,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butMore.setEnabled(false);
         butDone.setEnabled(false);
         setLoadEnabled(false);
+        setMountEnabled(false);
         setUnloadEnabled(false);
         setClearEnabled(false);
         setHullDownEnabled(false);
@@ -2083,10 +2095,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         
-        if(ce instanceof Aero) {
+        if(ce instanceof SmallCraft) {
             setUnloadEnabled(ce.getUnitsUnloadableFromBays().size() > 0 && !ce.isAirborne());
             setLoadEnabled(false);
             return;
+        }
+        
+        //can this unit mount a dropship/small craft?
+        setMountEnabled(false);
+        Coords pos = ce.getPosition();
+        int elev = ce.getElevation();
+        int mpUsed = ce.mpUsed;
+        if(null != cmd) {
+            pos = cmd.getFinalCoords();
+            elev = cmd.getFinalElevation();
+            mpUsed = cmd.getMpUsed();
+        }
+        if(!ce.isAirborne() && mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)) 
+                && Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().game).size() > 0) {           
+            setMountEnabled(true);
         }
         
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
@@ -2142,6 +2169,53 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } // End ce-hasn't-moved
     } // private void updateLoadButtons
 
+    private Entity getMountedUnit() {
+        Entity ce = ce();
+        Entity choice = null;
+        Coords pos = ce.getPosition();
+        int elev = ce.getElevation();
+        if(null != cmd) {
+            pos = cmd.getFinalCoords();
+            elev = cmd.getFinalElevation();
+        }
+        IHex hex = clientgui.getClient().game.getBoard().getHex(pos);
+        if(null != hex) {
+            elev += hex.getElevation();
+        }
+        
+        ArrayList<Entity> mountableUnits = Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().game);
+        
+     // Handle error condition.
+        if (mountableUnits.size() == 0) {
+            System.err
+                    .println("MovementDisplay#getMountedUnit() called without mountable units."); //$NON-NLS-1$
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if (mountableUnits.size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages
+                                    .getString(
+                                            "MovementDisplay.MountUnitDialog.message", new Object[] {//$NON-NLS-1$
+                                            ce.getShortName()}),
+                            Messages
+                                    .getString("MovementDisplay.MountUnitDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
+                                    .getDisplayArray(mountableUnits), null);
+            choice = (Entity) SharedUtility.getTargetPicked(mountableUnits, input);
+        } // End have-choices
+
+        // Only one choice.
+        else {
+            choice = mountableUnits.get(0);
+        }
+
+        // Return the chosen unit.
+        return choice;
+    }
+    
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
@@ -2192,7 +2266,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(null != cmd) {
             pos = cmd.getFinalCoords();
         }
-        int elev = clientgui.getClient().game.getBoard().getHex(pos).getElevation();
+        int elev = clientgui.getClient().game.getBoard().getHex(pos).getElevation() + ce.getElevation();
         ArrayList<Coords> ring = Compute.coordsAtRange(pos, 1);
         if(ce instanceof Dropship) {
             ring = Compute.coordsAtRange(pos, 2);
@@ -2482,75 +2556,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                             Messages
                                     .getString(
                                             "MovementDisplay.DropUnitDialog.title", new Object[] { //$NON-NLS-1$
-                                            currentBay.getType(), bayNum }),
-                            question, names, false, doors);
-                    choiceDialog.setVisible(true);
-                    if (choiceDialog.getAnswer() == true) {
-                        // load up the choices
-                        int[] unitsLaunched = choiceDialog.getChoices();
-                        for (int element : unitsLaunched) {
-                            bayChoices.add(currentUnits.elementAt(element)
-                                    .getId());
-                        }
-                        choices.put(i, bayChoices);
-                        // now remove them (must be a better way?)
-                        for (int l = unitsLaunched.length; l > 0; l--) {
-                            currentUnits.remove(unitsLaunched[l - 1]);
-                        }
-                    }
-                }
-                bayNum++;
-            }
-        }// End have-choices
-        // Return the chosen unit.
-        return choices;
-    }
-    
-    /**
-     * Get the units that the player wants to unload from a dropship or small craft bay. This method will remove the
-     * unit from our local copy of loaded units.
-     *
-     * @return The <code>Entity</code> that the player wants to unload. This
-     *         value will not be <code>null</code>.
-     */
-    private TreeMap<Integer, Vector<Integer>> getUnloadedUnitsFromBays() {
-        Entity ce = ce();
-        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
-
-        Vector<Entity> unloadableUnits = ce.getUnitsUnloadableFromBays();
-
-        // Handle error condition.
-        if (unloadableUnits.size() <= 0) {
-            System.err
-                    .println("MovementDisplay#getUnloadedUnitsFromBays() called without loaded units."); //$NON-NLS-1$
-
-        } else {
-            // cycle through the bays
-            int bayNum = 1;
-            Bay currentBay;
-            Vector<Entity> currentUnits = new Vector<Entity>();
-            int doors = 0;
-            Vector<Bay> Bays = ce.getTransportBays();
-            for (int i = 0; i < Bays.size(); i++) {
-                currentBay = Bays.elementAt(i);
-                Vector<Integer> bayChoices = new Vector<Integer>();
-                currentUnits = currentBay.getUnloadableUnits();
-                doors = currentBay.getDoors();
-                if ((currentUnits.size() > 0) && (doors > 0)) {
-                    String[] names = new String[currentUnits.size()];
-                    String question = Messages
-                            .getString(
-                                    "MovementDisplay.UnloadUnitDialog.message", new Object[] { //$NON-NLS-1$
-                                     doors, bayNum });
-                    for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentUnits.elementAt(loop)
-                                .getShortName();
-                    }
-                    ChoiceDialog choiceDialog = new ChoiceDialog(
-                            clientgui.frame,
-                            Messages
-                                    .getString(
-                                            "MovementDisplay.UnloadUnitDialog.title", new Object[] { //$NON-NLS-1$
                                             currentBay.getType(), bayNum }),
                             question, names, false, doors);
                     choiceDialog.setVisible(true);
@@ -3312,6 +3317,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.drawMovementData(ce(), cmd);
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
+        } else if(ev.getActionCommand().equals(MOVE_MOUNT)) {           
+            Entity other = getMountedUnit();
+            if(other != null) {
+                cmd.addStep(MoveStepType.MOUNT, other);
+                ready();
+            }
         } else if (ev.getActionCommand().equals(MOVE_UNLOAD)) {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
@@ -3533,6 +3544,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateLandButtons();
         updateFlyOffButton();
         updateLaunchButton();
+        updateLoadButtons();
         updateDropButton();
         updateRecklessButton();
         updateHoverButton();
@@ -3762,6 +3774,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setLoadEnabled(boolean enabled) {
         butLoad.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLoadEnabled(enabled);
+    }
+    
+    private void setMountEnabled(boolean enabled) {
+        butMount.setEnabled(enabled);
+        //clientgui.getMenuBar().setMoveMountEnabled(enabled);
     }
 
     private void setUnloadEnabled(boolean enabled) {

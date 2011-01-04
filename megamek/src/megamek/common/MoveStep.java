@@ -619,6 +619,9 @@ public class MoveStep implements Serializable {
         case LOAD:
             setMp(1);
             break;
+        case MOUNT:
+            setMp(0);
+            break;
         case TURN_LEFT:
         case TURN_RIGHT:
             // Check for pavement movement.
@@ -2076,6 +2079,10 @@ public class MoveStep implements Serializable {
 
         }
 
+        if(stepType == MoveStepType.MOUNT) {
+            movementType = EntityMovementType.MOVE_WALK;
+        }
+        
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos, prev.getElevation())
                 || isUnloaded) {
@@ -2412,6 +2419,10 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+        if(type == MoveStepType.MOUNT) {
+            return true;
+        }
+        
         // The entity is trying to load. Check for a valid move.
         if (type == MoveStepType.LOAD) {
 

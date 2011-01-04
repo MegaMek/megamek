@@ -6166,6 +6166,33 @@ public class Server implements Runnable {
 
             } // End STEP_LOAD
 
+            // Handle mounting units to small craft/dropship
+            if (step.getType() == MoveStepType.MOUNT) {
+                Targetable mountee = step.getTarget(game);
+                if(null != mountee && mountee instanceof Entity) {
+                    Entity dropship = (Entity)mountee;
+                    if (!dropship.canLoad(entity)) {
+                            // Something is fishy in Denmark.
+                            System.err.println(dropship.getShortName() + " can not load " + entity.getShortName());
+                    } else {
+                        // Have the indicated unit load this unit.
+                        entity.setDone(true);
+                        loadUnit(dropship, entity);
+                        Bay currentBay = dropship.getBay(entity);
+                        if(null != currentBay && Compute.d6(2) == 2) {
+                            r = new Report(9390);
+                            r.subject = entity.getId();
+                            r.indent(1);
+                            r.add(currentBay.getType());
+                            addReport(r);
+                            currentBay.destroyDoorNext();
+                        }
+                        // Stop looking.
+                        return;
+                    }
+                }
+            } // End STEP_MOUNT
+            
             // handle fighter recovery
             if (step.getType() == MoveStepType.RECOVER) {
 
@@ -14910,7 +14937,7 @@ public class Server implements Runnable {
     private Vector<Report> resolvePilotingRolls(Entity entity, boolean moving, Coords src, Coords dest) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         // dead and undeployed and offboard units don't need to.
-        if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
+        if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed() || entity.getTransportId() != Entity.NONE) {
             return vPhaseReport;
         }
         

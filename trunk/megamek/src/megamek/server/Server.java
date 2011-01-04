@@ -3388,7 +3388,7 @@ public class Server implements Runnable {
             unit.setDone(false);
             
             //unit uses half of walk mp and is treated as moving one hex
-            unit.mpUsed = unloader.getOriginalWalkMP() / 2;
+            unit.mpUsed = unit.getOriginalWalkMP() / 2;
             unit.delta_distance = 1;
         }
         

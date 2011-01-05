@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- *
+ * 
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- *
+ * 
  * @author taharqa
  * @version
  */
@@ -104,11 +104,11 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
 
         // figure out heat
         if (!dataFile.exists("heatsinks")) {
-            throw new EntityLoadingException("Could not find weight block.");
+            throw new EntityLoadingException("Could not find heatsinks block.");
         }
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (!dataFile.exists("sink_type")) {
-            throw new EntityLoadingException("Could not find weight block.");
+            throw new EntityLoadingException("Could not find sink_type block.");
         }
         a.setHeatType(dataFile.getDataAsInt("sink_type")[0]);
 

@@ -1610,6 +1610,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         loadee.setTransportId(loader.getId());
         //we need to reset the bays for the loader 
         loader.resetBays();
+        loadee.setLoadedThisTurn(false);
         //TODO: it would probably be a good idea to reset deployment
         //info to equal that of the loader, and disable it in customMechDialog
         //I tried doing this but I cant quite figure out the client/server interaction in CustomMechDialog.java

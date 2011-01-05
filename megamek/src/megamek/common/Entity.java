@@ -829,6 +829,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setUnloaded(boolean unloaded) {
         unloadedThisTurn = unloaded;
     }
+    
+    public void setLoadedThisTurn(boolean loaded) {
+        loadedThisTurn = loaded;
+    }
 
     /**
      * Determine if this entity participate in the current game phase.
@@ -5713,7 +5717,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((next instanceof Bay) && (((Bay) next).canUnloadUnits())) {
                 Bay nextbay = (Bay) next;
                 for (Entity e : nextbay.getUnloadableUnits()) {
-                    result.addElement(e);
+                    if(!e.wasLoadedThisTurn()) {
+                        result.addElement(e);
+                    }
                 }
             }
         }

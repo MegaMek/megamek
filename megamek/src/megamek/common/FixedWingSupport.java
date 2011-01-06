@@ -33,8 +33,11 @@ public class FixedWingSupport extends ConvFighter {
     private static String[] LOCATION_NAMES =
         { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
     private int barRating;
-    private int damThresh[] =
-        { 0, 0, 0, 0, 0, 0 };
+
+    public FixedWingSupport() {
+        super();
+        damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
+    }
 
     public void setBARRating(int rating) {
         barRating = rating;
@@ -95,11 +98,6 @@ public class FixedWingSupport extends ConvFighter {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void setThresh(int val, int loc) {
-        damThresh[loc] = val;
     }
 
 

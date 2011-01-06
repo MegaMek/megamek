@@ -298,7 +298,7 @@ public class MtfFile implements IMechLoader {
             mech.setWeight(Integer.parseInt(tonnage.substring(5)));
 
             int engineFlags = 0;
-            if ((mech.isClan() && !mech.isMixedTech()) || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engine))) {
+            if ((mech.isClan() && !mech.isMixedTech()) || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engine)) || (mech.isMixedTech() && !mech.isClan() && mech.itemOppositeTech(engine))) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
 

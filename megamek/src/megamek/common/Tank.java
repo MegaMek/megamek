@@ -81,7 +81,7 @@ public class Tank extends Entity {
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS =
-        { 25, 25, 25, 25, 25, 25 };
+        { 25, 25, 25, 25, 25, 25, 25 };
 
     private static String[] LOCATION_ABBRS =
         { "BD", "FR", "RS", "LS", "RR", "TU", "TU2" };

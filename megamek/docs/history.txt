@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.21-dev (SVN)
+v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.
 + Bug 3118639: Unit View rounding infantry armor
 + Bug: Backwards movement onto bridge erroneously acting as backward movement

@@ -27,8 +27,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Aero;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.EntityMovementType;
+import megamek.common.GunEmplacement;
+import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -273,7 +274,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     .setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
             teamR.setVisible(true);
         }
-        weightR.setString(Integer.toString((int) en.getWeight()));
+        if (en instanceof Infantry) {
+            weightR.setString(Float.toString(en.getWeight()));
+        } else {
+            weightR.setString(Integer.toString((int) en.getWeight()));
+        }
 
         ejectR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         if (en instanceof Mech) {

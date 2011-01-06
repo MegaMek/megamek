@@ -1247,7 +1247,7 @@ public abstract class Mech extends Entity implements Serializable {
         if (gravity) {
             return applyGravityEffectsOnMP(jump);
         }
-        return jump;
+        return Math.max(jump, 0);
     }
 
     /**

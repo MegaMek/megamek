@@ -28,7 +28,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SupportTank;
 import megamek.common.Tank;
-import megamek.common.TechConstants;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -155,25 +154,13 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean hasDoubleHeatSinks() {
-        if (!engine.isFusion()) {
-            return false;
-        }
-        if (getTankCountHeatLaserWeapons() <= 10) {
-            return false;
-        }
-        if (tank.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
-            return false;
-        }
+        // tanks can't have DHS
         return false;
-        // return true;
     }
 
     @Override
     public int getCountHeatSinks() {
         float heat = getTankCountHeatLaserWeapons();
-        if (hasDoubleHeatSinks()) {
-            heat = heat / 2.0f;
-        }
         return Math.round(heat);
     }
 

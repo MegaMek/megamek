@@ -120,7 +120,7 @@ public class Aero extends Entity {
     private int structIntegrity;
     private int orig_structIntegrity;
     // set up damage threshold
-    private int damThresh[] =
+    protected int damThresh[] =
         { 0, 0, 0, 0, 0 };
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
@@ -584,7 +584,7 @@ public class Aero extends Entity {
         //aeros are never immobile when in the air or space
         if(isAirborne() || isSpaceborne()) {
             return false;
-        } 
+        }
         return super.isImmobile();
     }
 
@@ -2541,10 +2541,10 @@ public class Aero extends Entity {
 
         return roll;
     }
-    
+
     public PilotingRollData checkHorizontalLanding(EntityMovementType moveType, int velocity, Coords currentPos, int face) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        
+
         int velmod = Math.max(0, velocity - 3);
         if(velmod > 0) {
             roll.addModifier(velmod, "excess velocity");
@@ -2584,16 +2584,16 @@ public class Aero extends Entity {
                 if(paved && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
                     paved = false;
                 }
-                if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+                if((!rough && hex.containsTerrain(Terrains.ROUGH)) || hex.containsTerrain(Terrains.RUBBLE)) {
                     rough = true;
                 }
                 if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
                     heavyWoods = true;
-                } 
+                }
                 else if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
                     lightWoods = true;
                 }
-                
+
             }
         }
         //we only take the worst mod
@@ -2608,13 +2608,13 @@ public class Aero extends Entity {
         } else {
         	roll.addModifier(+2, "clear hex in landing path");
         }
-        
+
         return roll;
     }
-    
+
     public PilotingRollData checkVerticalLanding(EntityMovementType moveType, int velocity, Coords currentPos) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        
+
         int velmod = Math.max(0, velocity - 3);
         if(velmod > 0) {
             roll.addModifier(velmod, "excess velocity");
@@ -2653,15 +2653,15 @@ public class Aero extends Entity {
             if(paved && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
                 paved = false;
             }
-            if(!rough && hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+            if((!rough && hex.containsTerrain(Terrains.ROUGH)) || hex.containsTerrain(Terrains.RUBBLE)) {
                 rough = true;
             }
             if(!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
                 heavyWoods = true;
-            } 
+            }
             else if(!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
                 lightWoods = true;
-            }    
+            }
         }
         //we only take the worst mod - terrain mods are halved for vertical landings (round down)
         if(heavyWoods) {
@@ -2675,7 +2675,7 @@ public class Aero extends Entity {
         } else {
             roll.addModifier(+1, "clear hex in landing path");
         }
-        
+
         return roll;
     }
 
@@ -3401,7 +3401,7 @@ public class Aero extends Entity {
         setOutControl(false);
         setOutCtrlHeat(false);
         setRandomMove(false);
-        this.delta_distance = 0;
+        delta_distance = 0;
     }
 
     public int getTakeOffLength() {
@@ -3410,7 +3410,7 @@ public class Aero extends Entity {
         }
         return 20;
     }
-    
+
     public int getLandingLength() {
         if(isVSTOL() || isSTOL()) {
             return 5;
@@ -3421,7 +3421,7 @@ public class Aero extends Entity {
     public boolean canTakeOffHorizontally() {
         return !isSpheroid() && (getCurrentThrust() > 0);
     }
-    
+
     public boolean canLandHorizontally() {
         return !isSpheroid();
     }
@@ -3468,10 +3468,10 @@ public class Aero extends Entity {
                 }
             }
         }
-        
+
         return null;
     }
-    
+
     public String hasRoomForHorizontalLanding() {
         // walk along the hexes in the facing of the unit
         IHex hex = game.getBoard().getHex(getPosition());
@@ -3506,11 +3506,11 @@ public class Aero extends Entity {
                 if (null == hex) {
                     return "Not enough room on map" + lenString;
                 }
-                //landing must contain only acceptable terrain 
+                //landing must contain only acceptable terrain
                 if (!hex.isClearForLanding()) {
                     return "Unacceptable terrain for landing" + lenString;
                 }
-                
+
                 if (hex.getElevation() != elev) {
                     return "Landing strip must contain no elevation change" + lenString;
                 }
@@ -3522,11 +3522,11 @@ public class Aero extends Entity {
     public boolean canTakeOffVertically() {
         return (isVSTOL() || isSpheroid()) && (getCurrentThrust() > 2);
     }
-    
+
     public boolean canLandVertically() {
         return (isVSTOL() || isSpheroid());
     }
-    
+
     public String hasRoomForVerticalLanding() {
         Coords pos = getPosition();
         IHex hex = game.getBoard().getHex(getPosition());
@@ -3547,11 +3547,11 @@ public class Aero extends Entity {
         if (null == hex) {
             return "landing area not on the map";
         }
-        //landing must contain only acceptable terrain 
+        //landing must contain only acceptable terrain
         if (!hex.isClearForLanding()) {
             return "Unacceptable terrain for landing";
         }
-        
+
         return null;
     }
 }

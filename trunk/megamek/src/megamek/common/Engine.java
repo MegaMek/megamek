@@ -245,6 +245,7 @@ public class Engine implements Serializable {
                 weight *= 1.2;
                 break;
         }
+        weight = TestEntity.ceilMaxHalf(weight, roundWeight);
 
         if (hasFlag(TANK_ENGINE) && isFusion()) {
             weight *= 1.5f;

@@ -2286,10 +2286,21 @@ public class Tank extends Entity {
         }
         // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot
         // total)
+        boolean infantryBayCounted = false;
         for (Transporter transport : getTransports()) {
             if (transport instanceof TroopSpace) {
                 usedSlots++;
+                infantryBayCounted = true;
                 break;
+            }
+        }
+        // unit transport bays take 1 slot each
+        for (Bay bay : getTransportBays()) {
+            if (((bay instanceof BattleArmorBay) || (bay instanceof InfantryBay)) && !infantryBayCounted) {
+                usedSlots++;
+                infantryBayCounted = true;
+            } else {
+                usedSlots++;
             }
         }
         // different armor types take different amount of slots

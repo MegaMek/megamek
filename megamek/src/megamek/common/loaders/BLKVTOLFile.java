@@ -73,7 +73,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 // TroopSpace:
-                if (transporter.startsWith("TroopSpace:", 0)) {
+                if (transporter.toLowerCase().startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
                     Double fsize = new Double(transporter.substring(11));
                     t.addTransporter(new TroopSpace(fsize.doubleValue()));

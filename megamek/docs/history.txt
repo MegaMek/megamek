@@ -6,6 +6,7 @@ v0.35.22-dev (SVN)
 + Bug: LAC 10 and 20 should be unofficial
 + Bug: Fixed Wing Support transport bays not working right
 + Bug: Tank engine weight for fusion engines not always correct
++ Bug: Armored motive system BV cost missing
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

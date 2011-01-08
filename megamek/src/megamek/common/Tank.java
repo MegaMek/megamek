@@ -914,7 +914,7 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
-        if (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS) || hasWorkingMisc(MiscType.F_DUNE_BUGGY) || hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+        if (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS) || hasWorkingMisc(MiscType.F_DUNE_BUGGY) || hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING) || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
             typeModifier += .1;
         } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)) {
             typeModifier += .2;

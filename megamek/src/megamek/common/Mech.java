@@ -2688,6 +2688,7 @@ public abstract class Mech extends Entity implements Serializable {
                 armorMultiplier = 1.5;
                 break;
             case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 armorMultiplier = 1.2;
                 break;
             default:

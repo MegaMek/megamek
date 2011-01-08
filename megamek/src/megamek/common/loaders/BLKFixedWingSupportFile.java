@@ -31,7 +31,10 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
+import megamek.common.HeavyVehicleBay;
+import megamek.common.LightVehicleBay;
 import megamek.common.LocationFullException;
+import megamek.common.MechBay;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
 import megamek.common.util.BuildingBlock;
@@ -90,12 +93,31 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             String[] transporters = dataFile.getDataAsString("transporters");
             // Walk the array of transporters.
             for (String transporter : transporters) {
+                transporter = transporter.toLowerCase();
                 // TroopSpace:
-                if (transporter.startsWith("TroopSpace:", 0)) {
+                if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
                     Double fsize = new Double(transporter.substring(11));
                     int size = fsize.intValue();
                     a.addTransporter(new TroopSpace(size));
+                } else if (transporter.startsWith("mechbay:", 0)) {
+                    String numbers = transporter.substring(8);
+                    String temp[] = numbers.split(":");
+                    double size = Double.parseDouble(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter(new MechBay(size, doors));
+                } else if (transporter.startsWith("lightvehiclebay:", 0)) {
+                    String numbers = transporter.substring(16);
+                    String temp[] = numbers.split(":");
+                    double size = Double.parseDouble(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter(new LightVehicleBay(size, doors));
+                } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
+                    String numbers = transporter.substring(16);
+                    String temp[] = numbers.split(":");
+                    double size = Double.parseDouble(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter(new HeavyVehicleBay(size, doors));
                 }
 
             } // Handle the next transportation component.

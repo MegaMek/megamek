@@ -98,8 +98,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
                     Double fsize = new Double(transporter.substring(11));
-                    int size = fsize.intValue();
-                    a.addTransporter(new TroopSpace(size));
+                    a.addTransporter(new TroopSpace(fsize));
                 } else if (transporter.startsWith("mechbay:", 0)) {
                     String numbers = transporter.substring(8);
                     String temp[] = numbers.split(":");

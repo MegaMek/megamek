@@ -186,19 +186,20 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             String[] transporters = dataFile.getDataAsString("transporters");
             // Walk the array of transporters.
             for (String transporter : transporters) {
-                if (transporter.startsWith("InfantryBay:", 0)) {
+                transporter = transporter.toLowerCase();
+                if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new InfantryBay(size, doors));
-                } else if (transporter.startsWith("BattleArmorBay:", 0)) {
+                } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new BattleArmorBay(size, doors));
-                } else if (transporter.startsWith("CargoBay:", 0)) {
+                } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);

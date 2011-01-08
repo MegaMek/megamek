@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author taharqa
  * @version
  */
@@ -203,49 +203,50 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
             String[] transporters = dataFile.getDataAsString("transporters");
             // Walk the array of transporters.
             for (String transporter : transporters) {
-                if (transporter.startsWith("ASFBay:", 0)) {
+                transporter = transporter.toLowerCase();
+                if (transporter.startsWith("asfbay:", 0)) {
                     String numbers = transporter.substring(7);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new ASFBay(size, doors));
-                } else if (transporter.startsWith("SmallCraftBay:", 0)) {
+                } else if (transporter.startsWith("smallcraftbay:", 0)) {
                     String numbers = transporter.substring(14);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new SmallCraftBay(size, doors));
-                } else if (transporter.startsWith("MechBay:", 0)) {
+                } else if (transporter.startsWith("mechbay:", 0)) {
                     String numbers = transporter.substring(8);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new MechBay(size, doors));
-                } else if (transporter.startsWith("LightVehicleBay:", 0)) {
+                } else if (transporter.startsWith("lightvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new LightVehicleBay(size, doors));
-                } else if (transporter.startsWith("HeavyVehicleBay:", 0)) {
+                } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new HeavyVehicleBay(size, doors));
-                } else if (transporter.startsWith("InfantryBay:", 0)) {
+                } else if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new InfantryBay(size, doors));
-                } else if (transporter.startsWith("BattleArmorBay:", 0)) {
+                } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     a.addTransporter(new BattleArmorBay(size, doors));
-                } else if (transporter.startsWith("CargoBay:", 0)) {
+                } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);

@@ -775,21 +775,39 @@ public class Tank extends Entity {
         bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
-        double armormultiplier = 1;
-        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
-            armormultiplier = 2;
+        double armorMultiplier = 1.0;
+
+        switch (getArmorType()) {
+            case EquipmentType.T_ARMOR_COMMERCIAL:
+                armorMultiplier = 0.5;
+                break;
+            case EquipmentType.T_ARMOR_HARDENED:
+                armorMultiplier = 2.0;
+                break;
+            case EquipmentType.T_ARMOR_REACTIVE:
+            case EquipmentType.T_ARMOR_REFLECTIVE:
+                armorMultiplier = 1.5;
+                break;
+            case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                armorMultiplier = 1.2;
+                break;
+            default:
+                armorMultiplier = 1.0;
+                break;
         }
-        if (blueShield) {
-            armormultiplier += 0.2;
+
+        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+            armorMultiplier += 0.2;
         }
 
         // total armor points
-        dbv += (getTotalArmor() + modularArmor) * 2.5 * armormultiplier * ((float) (getBARRating()) / 10);
+        dbv += (getTotalArmor() + modularArmor) * 2.5 * armorMultiplier * ((float) (getBARRating()) / 10);
 
         int armor = getTotalArmor() + modularArmor;
         bvText.append(armor + modularArmor);
         bvText.append(" x 2.5 x ");
-        bvText.append(armormultiplier);
+        bvText.append(armorMultiplier);
         bvText.append(" x ");
         bvText.append(getBARRating());
         bvText.append("/10");

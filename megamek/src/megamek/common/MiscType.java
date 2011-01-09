@@ -157,6 +157,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SPONSON_TURRET = BigInteger.valueOf(1).shiftLeft(111);
     public static final BigInteger F_ARMORED_MOTIVE_SYSTEM = BigInteger.valueOf(1).shiftLeft(112);
     public static final BigInteger F_CHASSIS_MODIFICATION = BigInteger.valueOf(1).shiftLeft(113);
+    public static final BigInteger F_CHAFF_POD = BigInteger.valueOf(1).shiftLeft(114);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -4830,6 +4831,20 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createISChaffPod() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Chaff Pod";
+        misc.setInternalName("ISChaffPod");
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 2000;
+        misc.flags = misc.flags.or(F_CHAFF_POD).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 17;
         return misc;
     }
 

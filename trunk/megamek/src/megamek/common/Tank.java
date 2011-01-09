@@ -874,6 +874,7 @@ public class Tank extends Entity {
             } else if (((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || etype.hasFlag(MiscType.F_CHAFF_POD)
                     || etype.hasFlag(MiscType.F_BAP)))
                     || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
@@ -1272,8 +1273,7 @@ public class Tank extends Entity {
 
             if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG)) || mtype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
-                // weapons
+                    || mtype.hasFlag(MiscType.F_CHAFF_POD)|| mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 continue;
             }
             double bv = mtype.getBV(this, mounted.getLocation());

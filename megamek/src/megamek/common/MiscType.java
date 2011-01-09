@@ -158,6 +158,10 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_ARMORED_MOTIVE_SYSTEM = BigInteger.valueOf(1).shiftLeft(112);
     public static final BigInteger F_CHASSIS_MODIFICATION = BigInteger.valueOf(1).shiftLeft(113);
     public static final BigInteger F_CHAFF_POD = BigInteger.valueOf(1).shiftLeft(114);
+    public static final BigInteger F_DRONE_CARRIER_CONTROL = BigInteger.valueOf(1).shiftLeft(115);
+    public static final BigInteger F_DRONE_EXTRA = BigInteger.valueOf(1).shiftLeft(116);
+    public static final BigInteger F_MASH_EXTRA = BigInteger.valueOf(1).shiftLeft(117);
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -461,6 +465,14 @@ public class MiscType extends EquipmentType {
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
             return (float) (Math.ceil(weaponWeight / 20) * 2.0);
+        } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
+            float weight = 2;
+            for (Mounted mount : entity.getMisc()) {
+                if (mount.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
+                    weight += 0.5;
+                }
+            }
+            return weight;
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -468,9 +480,11 @@ public class MiscType extends EquipmentType {
 
     @Override
     public double getCost(Entity entity, boolean isArmored) {
-
-        if (cost == EquipmentType.COST_VARIABLE) {
-            if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
+        double cost = 0;
+        if (this.cost == EquipmentType.COST_VARIABLE) {
+            if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
+                cost = getTonnage(entity) * 10000;
+            } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
                 cost = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
                 cost = getTonnage(entity) * 10000;
@@ -495,8 +509,7 @@ public class MiscType extends EquipmentType {
 
             return armoredCost;
         }
-
-        return super.getCost(entity, isArmored);
+        return cost;
     }
 
     @Override
@@ -870,6 +883,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISArmoredMotiveSystem());
         EquipmentType.addType(MiscType.createCLArmoredMotiveSystem());
         EquipmentType.addType(MiscType.createISChaffPod());
+        EquipmentType.addType(MiscType.createISDroneCarrierControlSystem());
+        EquipmentType.addType(MiscType.createCLDroneCarrierControlSystem());
+        EquipmentType.addType(MiscType.createISDroneExtra());
+        EquipmentType.addType(MiscType.createCLDroneExtra());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -4066,7 +4083,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3.5f;
         misc.criticals = 1;
         misc.cost = 35000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MASH);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
@@ -4081,7 +4098,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.tankslots = 0;
         misc.cost = 10000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MASH_EXTRA);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;
@@ -4846,6 +4863,54 @@ public class MiscType extends EquipmentType {
         misc.cost = 2000;
         misc.flags = misc.flags.or(F_CHAFF_POD).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 17;
+        return misc;
+    }
+
+    public static MiscType createCLDroneCarrierControlSystem() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Drone Carrier Control System";
+        misc.setInternalName("CLDroneCarrierControlSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISDroneCarrierControlSystem() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Drone Carrier Control System";
+        misc.setInternalName("ISDroneCarrierControlSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISDroneExtra() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Drone Extra Equipment";
+        misc.setInternalName("ISDroneExtra");
+        misc.tonnage = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createCLDroneExtra() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "Drone Extra Equipment";
+        misc.setInternalName("CLDroneExtra");
+        misc.tonnage = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         return misc;
     }
 

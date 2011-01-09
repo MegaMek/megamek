@@ -11,6 +11,7 @@ v0.35.22-dev (SVN)
 + Bug: Vehicle flamer ammo not counting for BV
 + Bug: Chemical laser ammo not counting for BV
 + Added construction data for chaff pods
++ Added drone carrier control system construction data
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

@@ -263,12 +263,6 @@ public class Bay implements Transporter {
      */
     public boolean unload(Entity unit) {
 
-        // check to see if unloading possible
-        // is the door functional
-        if (doors < 1) {
-            return false;
-        }
-
         // Remove the unit if we are carrying it.
         boolean retval = troops.removeElement(unit);
 

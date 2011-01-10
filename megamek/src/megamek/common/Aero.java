@@ -3450,6 +3450,9 @@ public class Aero extends Entity {
                 Enumeration<Entity> entities = game.getEntities(pos);
                 while(entities.hasMoreElements()) {
                     Entity en = entities.nextElement();
+                    if(en.equals(this)) {
+                        continue;
+                    }
                     if(!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }

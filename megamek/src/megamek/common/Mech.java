@@ -1537,10 +1537,6 @@ public abstract class Mech extends Entity implements Serializable {
             System.out.println("Mech: can't find heat sink to add to engine");
         }
 
-        if ((toAllocate == 0) && getEngine().isFusion()) {
-            System.out.println("Mech: not putting any heat sinks in the engine?!?!");
-        }
-
         for (int i = 0; i < toAllocate; i++) {
             try {
                 addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE, false);

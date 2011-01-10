@@ -3279,9 +3279,12 @@ public class Server implements Runnable {
         entityUpdate(unit.getId());
     }
 
+    private boolean unloadUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int elevation) {
+        return unloadUnit(unloader, unloaded, pos, facing, elevation, false);
+    }
+    
     /**
-     * Have the unloader unload the indicated unit. The unit being unloaded does
-     * *not* gain a turn.
+     * Have the unloader unload the indicated unit. The unit being unloaded may or may not gain a turn
      *
      * @param unloader
      *            - the <code>Entity</code> that is unloading the unit.
@@ -3294,10 +3297,11 @@ public class Server implements Runnable {
      * @param elevation
      *            - the <code>int</code> elevation at which to unload, if both
      *            loader and loaded units use VTOL movement.
+     * @param evacuate - a <code>boolean</code> indicating whether this unit is being unloaded as a result of its carrying units destruction
      * @return <code>true</code> if the unit was successfully unloaded,
      *         <code>false</code> if the unit isn't carried in unloader.
      */
-    private boolean unloadUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int elevation) {
+    private boolean unloadUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int elevation, boolean evacuation) {
 
         // We can only unload Entities.
         Entity unit = null;
@@ -3378,7 +3382,7 @@ public class Server implements Runnable {
         addReport(doSetLocationsExposure(unit, hex, false, unit.getElevation()));
 
         //unlike other unloaders, entities unloaded from droppers can still move (unless infantry)
-        if(unloader instanceof SmallCraft && !(unit instanceof Infantry)) {
+        if(!evacuation && unloader instanceof SmallCraft && !(unit instanceof Infantry)) {
             unit.setUnloaded(false);
             unit.setDone(false);
             
@@ -20136,8 +20140,10 @@ public class Server implements Runnable {
 
         // regardless of what was passed in, units loaded onto aeros not on the
         // ground are destroyed
-        if ((entity instanceof Aero) && !game.getBoard().onGround()) {
+        if (entity.isAirborne()) {
             survivable = false;
+        } else if(entity instanceof Aero) {
+            survivable = true;
         }
 
         // The unit can suffer an ammo explosion after it has been destroyed.
@@ -20240,7 +20246,7 @@ public class Server implements Runnable {
                     } // End can-not-unload
                     else {
                         // The other unit survives.
-                        unloadUnit(entity, other, curPos, curFacing, entity.getElevation());
+                        unloadUnit(entity, other, curPos, curFacing, entity.getElevation(), true);
                     }
 
                 } // Handle the next transported unit.

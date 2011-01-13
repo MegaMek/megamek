@@ -39,10 +39,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
-import javax.swing.RowSorter.SortKey;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
@@ -257,7 +257,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
-        comboWeight.setSelectedIndex(5);
+        comboWeight.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
         comboWeight.setPreferredSize(new java.awt.Dimension(200, 27));
         comboWeight.addActionListener(this);
@@ -279,7 +279,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
-        unitTypeModel.setSelectedItem(UnitType.getTypeDisplayableName(0));
+        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
         comboUnitType.setPreferredSize(new java.awt.Dimension(200, 27));
@@ -460,7 +460,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                                      || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
                             && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                             /*Advanced Search*/
-                            && (searchFilter==null || MechSearchFilter.isMatch(mech, searchFilter))) {
+                            && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))) {
                         //yuck, I have to pull up a full Entity to get MechView to search in
                         //TODO: why not put mechview into the mech summary itself?
                         if(txtFilter.getText().length() > 0) {
@@ -575,10 +575,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         if(cs.useAverageSkills()) {
             int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e, true);
-        
-            int gunnery = skills[0];   
+
+            int gunnery = skills[0];
             int piloting = skills[1];
-      
+
             e.getCrew().setGunnery(gunnery);
             e.getCrew().setPiloting(piloting);
         }
@@ -802,10 +802,6 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
     public int getType() {
         return comboType.getSelectedIndex();
-    }
-
-    public int getUnitType() {
-        return comboUnitType.getSelectedIndex();
     }
 
     public void enableResetButton(boolean b) {

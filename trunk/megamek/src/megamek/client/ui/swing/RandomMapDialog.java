@@ -2600,9 +2600,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
     }
 
     private void setProperLocation() {
-        int x = (getParent().getSize().width - getSize().width) / 2;
-        int y = (getParent().getSize().height - getSize().height) / 2;
-        setLocation(x, y);
+        setLocationRelativeTo(frame);
 
     }
 

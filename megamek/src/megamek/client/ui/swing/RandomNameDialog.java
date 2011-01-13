@@ -31,6 +31,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.RandomNameGenerator;
@@ -44,16 +45,16 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     private ClientGUI clientgui;
     private Vector<Entity> units;
     private RandomNameGenerator rng;
-    
+
     private JLabel lblFaction;
     private JLabel lblGender;
     private JComboBox comboFaction;
     private JSlider sldGender;
-    
+
     private JButton butOkay;
     private JButton butSave;
     private JButton butCancel;
-    
+
     private JPanel panButtons;
     private JPanel panMain;
 
@@ -64,11 +65,11 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     }
 
     private void init() {
-        
+
         initComponents();
 
-        this.client = clientgui.getClient();
-        this.rng = client.getRandomNameGenerator();
+        client = clientgui.getClient();
+        rng = client.getRandomNameGenerator();
 
         //Fill the combobox with choices
         Iterator<String> factions = rng.getFactions();
@@ -77,12 +78,13 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             comboFaction.addItem(faction);
         }
         comboFaction.setSelectedItem(rng.getChosenFaction());
-       
+
         updatePlayerChoice();
-        
+
         butOkay.addActionListener(this);
         butSave.addActionListener(this);
         butCancel.addActionListener(this);
+        setLocationRelativeTo(clientgui.frame);
 
     }
 
@@ -95,7 +97,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         rng.setChosenFaction((String)comboFaction.getSelectedItem());
         rng.setPerentFemale(sldGender.getValue());
     }
-    
+
     @Override
     public void setVisible(boolean show) {
         if (show) {
@@ -116,7 +118,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
-        if (ev.getSource() == butOkay) {           
+        if (ev.getSource() == butOkay) {
             saveSettings();
             // go through all of the units provided for this player and assign random names
             for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {
@@ -129,22 +131,22 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             clientgui.chatlounge.refreshEntities();
             // need to notify about customization
             // not updating entities in server
-            this.setVisible(false);
+            setVisible(false);
         }
         if(ev.getSource() == butSave) {
             saveSettings();
-            this.setVisible(false);
+            setVisible(false);
         }
-        
+
         if (ev.getSource() == butCancel) {
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 
     public void setClient(Client client) {
         this.client = client;
     }
-    
+
     private void initComponents() {
 
         panButtons = new JPanel();
@@ -155,7 +157,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         lblFaction = new JLabel(Messages.getString("RandomNameDialog.lblFaction"));
         lblGender = new JLabel(Messages.getString("RandomNameDialog.lblGender"));
         comboFaction = new JComboBox();
-        sldGender = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        sldGender = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 50);
         sldGender.setMajorTickSpacing(25);
         sldGender.setPaintTicks(true);
         sldGender.setPaintLabels(true);
@@ -169,7 +171,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         getContentPane().add(panButtons, java.awt.BorderLayout.PAGE_END);
 
         panMain.setLayout(new GridBagLayout());
-        
+
         GridBagConstraints c;
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -180,7 +182,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         c.weightx = 1.0;
         c.weighty = 1.0;
         panMain.add(lblFaction, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -190,7 +192,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         c.weightx = 1.0;
         c.weighty = 1.0;
         panMain.add(comboFaction, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -200,7 +202,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         c.weightx = 1.0;
         c.weighty = 1.0;
         panMain.add(lblGender, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
@@ -214,5 +216,5 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         getContentPane().add(panMain, java.awt.BorderLayout.PAGE_START);
 
         pack();
-    } 
+    }
 }

@@ -55,7 +55,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         WindowListener {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4072453002423681675L;
     private ClientGUI m_clientgui;
@@ -227,6 +227,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         add(m_pPreview, BorderLayout.EAST);
         validate();
         pack();
+        setLocationRelativeTo(cl.frame);
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -263,7 +264,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             searchFilter=null;
             m_bAdvSearchClear.setEnabled(false);
         } else if (ev.getSource().equals(m_bRoll)) {
-            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
                 RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                 p.advancedSearchFilter=searchFilter;
@@ -289,7 +290,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             } catch (NumberFormatException ex) {
                 //ignored
             }finally{
-                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
         }
     }
@@ -303,7 +304,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
     }
 
     public void windowClosing(WindowEvent arg0) {
-        this.setVisible(false);
+        setVisible(false);
     }
 
     public void windowDeactivated(WindowEvent arg0) {
@@ -336,8 +337,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             m_chPlayer.setEnabled(false);
         }
         m_chPlayer.setSelectedItem(lastChoice);
-        if (m_chPlayer.getSelectedIndex() < 0)
+        if (m_chPlayer.getSelectedIndex() < 0) {
             m_chPlayer.setSelectedIndex(0);
+        }
     }
 
     private void updateTechChoice(boolean force) {
@@ -345,7 +347,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                 "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
-        if (includeMaxTech == maxTechOption && !force) {
+        if ((includeMaxTech == maxTechOption) && !force) {
             return;
         }
         includeMaxTech = maxTechOption;
@@ -368,15 +370,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         }
         super.setVisible(show);
     }
-    
+
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         if(cs.useAverageSkills()) {
             int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-        
-            int gunnery = skills[0];   
+
+            int gunnery = skills[0];
             int piloting = skills[1];
-      
+
             e.getCrew().setGunnery(gunnery);
             e.getCrew().setPiloting(piloting);
         }

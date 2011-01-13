@@ -879,8 +879,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         //setup the board preview window.
         gameBoardPreviewW = new JDialog(clientgui.frame, Messages.getString("BoardSelectionDialog.ViewGameBoard"), false); //$NON-NLS-1$
 
-        gameBoardPreviewW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
-                GUIPreferences.getInstance().getMinimapPosY());
+        gameBoardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         gameBoardPreviewW.setVisible(false);
         try {
@@ -1608,7 +1607,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         }
         loader.load(loadee, false);
         loadee.setTransportId(loader.getId());
-        //we need to reset the bays for the loader 
+        //we need to reset the bays for the loader
         loader.resetBays();
         loadee.setLoadedThisTurn(false);
         //TODO: it would probably be a good idea to reset deployment
@@ -1657,7 +1656,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.sendUpdateEntity(swapee);
         c.sendUpdateEntity(swapper);
     }
-    
+
     /**
      * Delete an entity from the lobby
      * @param entity
@@ -2745,7 +2744,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             }
             int[] rows = tableEntities.getSelectedRows();
             int row = tableEntities.getSelectedRow();
-            boolean oneSelected = tableEntities.getSelectedRowCount() == 1;        
+            boolean oneSelected = tableEntities.getSelectedRowCount() == 1;
             Entity entity = mekModel.getEntityAt(row);
             Vector<Entity> entities = new Vector<Entity>();
             for(int i = 0; i<rows.length; i++) {
@@ -2763,7 +2762,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             	} else {
             		allUnloaded = false;
             	}
-            	if(!en.isCapitalFighter() || en instanceof FighterSquadron) {
+            	if(!en.isCapitalFighter() || (en instanceof FighterSquadron)) {
             		allCapFighter = false;
             	}
             }
@@ -2782,7 +2781,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 	                menuItem.addActionListener(this);
 	                menuItem.setEnabled(isOwner || isBot);
 	                menuItem.setMnemonic(KeyEvent.VK_C);
-	                popup.add(menuItem);    
+	                popup.add(menuItem);
                 }
                 menuItem = new JMenuItem("Delete...");
                 menuItem.setActionCommand("DELETE");
@@ -2802,7 +2801,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_S);
                 menu.add(menuItem);
-                popup.add(menu);              
+                popup.add(menu);
                 if(allUnloaded) {
                     menu = new JMenu("Load into");
                     boolean canLoad = false;
@@ -2817,13 +2816,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                         }
                     	boolean loadable = true;
                     	for(Entity en : entities) {
-	                        if(!loader.canLoad(en, false) || loader.getId() == en.getId()
+	                        if(!loader.canLoad(en, false) || (loader.getId() == en.getId())
 	                                || (loader.getOwnerId() != en.getOwnerId())) {
 	                            loadable = false;
 	                            break;
 	                        }
                     	}
-	                    if(loadable) {        
+	                    if(loadable) {
 	                    	canLoad = true;
 	                    	menuItem = new JMenuItem(loader.getShortName());
 	                    	menuItem.setActionCommand("LOAD|" + loader.getId());
@@ -2844,7 +2843,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                     menuItem.setEnabled((isOwner || isBot) && allLoaded);
                     popup.add(menuItem);
                 }
-                if(oneSelected && entity.getLoadedUnits().size() > 0) {
+                if(oneSelected && (entity.getLoadedUnits().size() > 0)) {
                     menuItem = new JMenuItem("Unload All Carried Units");
                     menuItem.setActionCommand("UNLOADALL");
                     menuItem.addActionListener(this);
@@ -2866,9 +2865,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 	                		continue;
 	                	}
 	                    //only swap your own pilots and with the same unit type
-	                    if(swapper.getOwnerId() == entity.getOwnerId()
-	                            && swapper.getId() != entity.getId()
-	                            && UnitType.determineUnitTypeCode(swapper) == UnitType.determineUnitTypeCode(entity)) {
+	                    if((swapper.getOwnerId() == entity.getOwnerId())
+	                            && (swapper.getId() != entity.getId())
+	                            && (UnitType.determineUnitTypeCode(swapper) == UnitType.determineUnitTypeCode(entity))) {
 	                        canSwap = true;
 	                        menuItem = new JMenuItem(swapper.getShortName());
 	                        menuItem.setActionCommand("SWAP|" + swapper.getId());

@@ -43,7 +43,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
 
     /** Creates new form RandomSkillDialog2 */
     public RandomSkillDialog(ClientDialog ui,ClientGUI clientgui) {
-        super(ui, Messages.getString("RandomSkillDialog.title"),DEFAULT_MODALITY_TYPE.APPLICATION_MODAL); //$NON-NLS-1$
+        super(ui, Messages.getString("RandomSkillDialog.title"),ModalityType.APPLICATION_MODAL); //$NON-NLS-1$
         this.clientgui = clientgui;
         init();
     }
@@ -55,11 +55,11 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     }
 
     private void init(){
-        
+
         initComponents();
 
-        this.client = clientgui.getClient();
-        this.rsg = client.getRandomSkillsGenerator();
+        client = clientgui.getClient();
+        rsg = client.getRandomSkillsGenerator();
 
         butOkay.setText(Messages.getString("RandomSkillDialog.Okay")); //$NON-NLS-1$
         butSave.setText(Messages.getString("RandomSkillDialog.Save")); //$NON-NLS-1$
@@ -76,23 +76,24 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
 
         for(int i = 0; i < RandomSkillsGenerator.M_SIZE; i++) {
             chMethod.addItem(RandomSkillsGenerator.getMethodDisplayableName(i));
-        }       
+        }
         chMethod.addItemListener(this);
         texDesc.setText(Messages.getString("RandomSkillDialog.descTW"));
 
         for(int i = 0; i < RandomSkillsGenerator.T_SIZE; i++) {
             chType.addItem(RandomSkillsGenerator.getTypeDisplayableName(i));
         }
-        
+
         for(int i = 0; i < RandomSkillsGenerator.L_SIZE; i++) {
             chLevel.addItem(RandomSkillsGenerator.getLevelDisplayableName(i));
         }
-   
+
         updatePlayerChoice();
-        
+
         butOkay.addActionListener(this);
         butSave.addActionListener(this);
         butCancel.addActionListener(this);
+        setLocationRelativeTo(clientgui.frame);
 
     }
 
@@ -124,7 +125,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         rsg.setLevel(chLevel.getSelectedIndex());
         rsg.setClose(cForceClose.isSelected());
     }
-    
+
     @Override
     public void setVisible(boolean show) {
         if (show) {
@@ -145,7 +146,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
-        if (ev.getSource() == butOkay) {           
+        if (ev.getSource() == butOkay) {
             saveSettings();
             // go through all of the units provided for this player and assign random
             // skill levels
@@ -175,15 +176,15 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             clientgui.chatlounge.refreshEntities();
             // need to notify about customization
             // not updating entities in server
-            this.setVisible(false);
+            setVisible(false);
         }
         if(ev.getSource() == butSave) {
             saveSettings();
-            this.setVisible(false);
+            setVisible(false);
         }
-        
+
         if (ev.getSource() == butCancel) {
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 
@@ -208,7 +209,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
 
 
 
- 
+
     private void initComponents() {
 
         panButtons = new javax.swing.JPanel();
@@ -235,7 +236,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
 
         butSave.setText("Save Settings");
         panButtons.add(butSave);
-        
+
         butCancel.setText("Cancel");
         panButtons.add(butCancel);
 
@@ -330,5 +331,5 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     private javax.swing.JLabel labelType;
     private javax.swing.JPanel panButtons;
     private javax.swing.JTextArea texDesc;
- 
+
 }

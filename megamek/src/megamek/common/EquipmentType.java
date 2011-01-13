@@ -67,7 +67,11 @@ public class EquipmentType {
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
     public static final String[] armorNames =
-        { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth", "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide", "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial", "Heavy Industrial", "Ferro-Lamellor" };
+        { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened",
+          "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
+          "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
+          "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial",
+          "Heavy Industrial", "Ferro-Lamellor" };
 
     public static final String[] structureNames =
         { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Endo-Composite" };

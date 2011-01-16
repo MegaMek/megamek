@@ -8,7 +8,7 @@ shell script is called "startup.sh").  The release file is a ZIP file, and it
 does not place everything into a directory with a version number; many files
 are deposited directly into the directory that you unzip into.  As is typical
 in a Windows-centric Java app, all third party libraries (i.e. JAR files) are
-supplied by the project iteslf.  Finally, MegaMek is very particular about the
+supplied by the project itself.  Finally, MegaMek is very particular about the
 contents of the directory in which it runs; the startup.sh script attempt to
 solve this problem, but let me know if it doesn't work in your setup.
 

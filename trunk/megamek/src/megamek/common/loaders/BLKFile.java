@@ -203,7 +203,6 @@ public class BLKFile {
     public static void encode(String fileName, Entity t) {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
-        blk.writeBlockData("UnitType", "LargeSupportTank");
 
         if (t instanceof BattleArmor) {
             blk.writeBlockData("UnitType", "BattleArmor");

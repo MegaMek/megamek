@@ -14,6 +14,8 @@ v0.35.22-dev (SVN)
 + Added drone carrier control system construction data
 + consolidated Server#unloadUnit and Server#unloadUnitFromBay functionality
 + Bug 3153520: Aerodyne dropships won't take off
++ Bug: BA BV not accounting for myomer booster in speed factor calculation
++ Bug: Mech Mortar ammo BV wrong
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

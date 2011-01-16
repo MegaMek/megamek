@@ -23,7 +23,7 @@ Operations, and Strategic Operations.
 
 RUNNING MEGAMEK
 ---------------
-Java programs run in their own enviroment, called a Virtual Machine or VM
+Java programs run in their own environment, called a Virtual Machine or VM
 for short.  These Java VMs are available on most systems from a variety of 
 sources.  Most modern systems have one installed by default.
 
@@ -36,7 +36,7 @@ allow you to double-click the .jar file to run it.  If this does not work,
 try running MegaMek from the command line.
 
 Running MegaMek from the command line: To do this using Sun Java, or most 
-other implementaions, navigate to the directory containing the .jar file and 
+other implementations, navigate to the directory containing the .jar file and 
 run:
 
 java -jar MegaMek.jar

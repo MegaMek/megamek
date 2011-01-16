@@ -351,7 +351,9 @@ public class BLKFile {
         for (int i = 0; i < t.locations(); i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
-        blk.writeBlockData("barrating", t.getBARRating());
+        if (t.hasBARArmor()) {
+            blk.writeBlockData("barrating", t.getBARRating());
+        }
 
         if (t.getFluff().getHistory().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());

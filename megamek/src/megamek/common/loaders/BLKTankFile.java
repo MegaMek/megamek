@@ -25,17 +25,12 @@
  */
 package megamek.common.loaders;
 
-import java.util.Vector;
-
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
-import megamek.common.Mounted;
 import megamek.common.Tank;
-import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
-import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;
 
 public class BLKTankFile extends BLKFile implements IMechLoader {
@@ -166,131 +161,5 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         }
 
         return t;
-    }
-
-    public static void encode(String fileName, Tank t) {
-        BuildingBlock blk = new BuildingBlock();
-        blk.createNewBlock();
-        if (t instanceof VTOL) {
-            blk.writeBlockData("UnitType", "VTOL");
-        } else {
-            blk.writeBlockData("UnitType", "Tank");
-        }
-        blk.writeBlockData("blockversion", 1);
-        blk.writeBlockData("Name", t.getChassis());
-        blk.writeBlockData("Model", t.getModel());
-        blk.writeBlockData("year", t.getYear());
-        String type;
-        if (t.isMixedTech()) {
-            if (!t.isClan()) {
-                type = "Mixed (IS Chassis)";
-            } else {
-                type = "Mixed (Clan Chassis)";
-            }
-        } else {
-            switch (t.getTechLevel()) {
-                case TechConstants.T_INTRO_BOXSET:
-                    type = "IS Level 1";
-                    break;
-                case TechConstants.T_IS_TW_NON_BOX:
-                    type = "IS Level 2";
-                    break;
-                case TechConstants.T_IS_ADVANCED:
-                    type = "IS Level 3";
-                    break;
-                case TechConstants.T_IS_EXPERIMENTAL:
-                    type = "IS Level 4";
-                    break;
-                case TechConstants.T_IS_UNOFFICIAL:
-                default:
-                    type = "IS Level 5";
-                    break;
-                case TechConstants.T_CLAN_TW:
-                    type = "Clan Level 2";
-                    break;
-                case TechConstants.T_CLAN_ADVANCED:
-                    type = "Clan Level 3";
-                    break;
-                case TechConstants.T_CLAN_EXPERIMENTAL:
-                    type = "Clan Level 4";
-                    break;
-                case TechConstants.T_CLAN_UNOFFICIAL:
-                    type = "Clan Level 5";
-                    break;
-            }
-        }
-        blk.writeBlockData("type", type);
-        blk.writeBlockData("tonnage", t.getWeight());
-        blk.writeBlockData("motion_type", t.getMovementModeAsString());
-        if (t.getTroopCarryingSpace() > 0) {
-            blk.writeBlockData("transporters", "TroopSpace: " + t.getTroopCarryingSpace());
-        }
-        int engineCode = BLKFile.FUSION;
-        switch (t.getEngine().getEngineType()) {
-            case Engine.COMBUSTION_ENGINE:
-                engineCode = BLKFile.ICE;
-                break;
-            case Engine.LIGHT_ENGINE:
-                engineCode = BLKFile.LIGHT;
-                break;
-            case Engine.XL_ENGINE:
-                engineCode = BLKFile.XL;
-                break;
-            case Engine.XXL_ENGINE:
-                engineCode = BLKFile.XXL;
-                break;
-            case Engine.FUEL_CELL:
-                engineCode = BLKFile.FUELCELL;
-                break;
-            case Engine.FISSION:
-                engineCode = BLKFile.FISSION;
-                break;
-        }
-        blk.writeBlockData("engine_type", engineCode);
-        blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
-        if (t.getArmorType() != 0) {
-            blk.writeBlockData("armor_type", t.getArmorType());
-            blk.writeBlockData("armor_tech", t.getArmorTechLevel());
-        }
-        if (t.getStructureType() != 0) {
-            blk.writeBlockData("internal_type", t.getStructureType());
-        }
-        if (t.isOmni()) {
-            blk.writeBlockData("omni", 1);
-        }
-        int armor_array[];
-        armor_array = new int[t.locations() - 1];
-        for (int i = 1; i < t.locations(); i++) {
-            armor_array[i - 1] = t.getOArmor(i);
-        }
-        blk.writeBlockData("armor", armor_array);
-
-        Vector<Vector<String>> eq = new Vector<Vector<String>>(t.locations());
-        for (int i = 0; i < t.locations(); i++) {
-            eq.add(new Vector<String>());
-        }
-        for (Mounted m : t.getEquipment()) {
-            String name = m.getType().getInternalName();
-            int loc = m.getLocation();
-            if (m.isSponsonTurretMounted()) {
-                name = name+"(ST)";
-            }
-            if (loc != Entity.LOC_NONE) {
-                eq.get(loc).add(name);
-            }
-        }
-        for (int i = 0; i < t.locations(); i++) {
-            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
-        }
-
-        if (t.getFluff().getHistory().trim().length() > 0) {
-            blk.writeBlockData("history", t.getFluff().getHistory());
-        }
-
-        if (t.getFluff().getMMLImagePath().trim().length() > 0) {
-            blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
-        }
-
-        blk.writeBlockFile(fileName);
     }
 }

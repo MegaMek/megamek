@@ -1,11 +1,11 @@
 /*
  * MechFileParser.java - Copyright (C) 2002,2003,2004 Josh Yockey
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -32,6 +32,7 @@ import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKConvFighterFile;
 import megamek.common.loaders.BLKDropshipFile;
+import megamek.common.loaders.BLKFile;
 import megamek.common.loaders.BLKFixedWingSupportFile;
 import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
@@ -579,15 +580,7 @@ public class MechFileParser {
                     out.write(((Mech) e).getMtf());
                 } else if (e instanceof Tank) {
                     outFilename += ".blk";
-                    if (e instanceof SupportTank) {
-                        if (e instanceof LargeSupportTank) {
-                            BLKLargeSupportTankFile.encode(outFilename, (LargeSupportTank) e);
-                        } else {
-                            BLKSupportTankFile.encode(outFilename, (SupportTank) e);
-                        }
-                    } else {
-                        BLKTankFile.encode(outFilename, (Tank) e);
-                    }
+                    BLKFile.encode(outFilename, e);
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());

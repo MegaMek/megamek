@@ -854,7 +854,7 @@ public class BattleArmor extends Infantry {
                     }
                 }
             }
-            int movement = Math.max(getWalkMP(false, false), getJumpMP(false, true));
+            int movement = Math.max(getRunMP(false, false, true), getJumpMP(false, true));
             double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;

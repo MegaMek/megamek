@@ -7576,7 +7576,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 24;
-        ammo.bv = 1;
+        ammo.bv = 1.2;
         ammo.cost = 10000;
 
         return ammo;
@@ -7595,7 +7595,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 12;
-        ammo.bv = 2;
+        ammo.bv = 2.4;
         ammo.cost = 10000;
 
         return ammo;
@@ -7614,7 +7614,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 6;
-        ammo.bv = 3;
+        ammo.bv = 3.6;
         ammo.cost = 10000;
 
         return ammo;
@@ -7633,7 +7633,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 4;
-        ammo.bv = 6;
+        ammo.bv = 7.2;
         ammo.cost = 10000;
 
         return ammo;
@@ -7652,7 +7652,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 24;
-        ammo.bv = 4;
+        ammo.bv = 1.2;
         ammo.cost = 10000;
 
         return ammo;
@@ -7671,7 +7671,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 12;
-        ammo.bv = 7;
+        ammo.bv = 2.4;
         ammo.cost = 10000;
 
         return ammo;
@@ -7690,7 +7690,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 6;
-        ammo.bv = 11;
+        ammo.bv = 3.6;
         ammo.cost = 10000;
 
         return ammo;
@@ -7709,7 +7709,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
         ammo.shots = 4;
-        ammo.bv = 14;
+        ammo.bv = 7.2;
         ammo.cost = 10000;
 
         return ammo;

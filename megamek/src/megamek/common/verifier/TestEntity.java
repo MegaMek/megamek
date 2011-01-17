@@ -22,6 +22,7 @@ package megamek.common.verifier;
 import java.util.Iterator;
 
 import megamek.common.AmmoType;
+import megamek.common.Bay;
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
@@ -856,14 +857,28 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public float getWeightCarryingSpace() {
-        return getEntity().getTroopCarryingSpace();
+        float carryingSpace = getEntity().getTroopCarryingSpace();
+        float cargoWeight = 0;
+        for (Bay bay : getEntity().getTransportBays()) {
+            cargoWeight += bay.getWeight();
+        }
+        return carryingSpace + cargoWeight;
     }
 
     public String printWeightCarryingSpace() {
+        String carryingSpace = "";
         if (getEntity().getTroopCarryingSpace() != 0) {
-            return StringUtil.makeLength("Carrying Capacity:", getPrintSize() - 5) + TestEntity.makeWeightString(getEntity().getTroopCarryingSpace()) + "\n";
+            carryingSpace = StringUtil.makeLength("Carrying Capacity:", getPrintSize() - 5) + TestEntity.makeWeightString(getEntity().getTroopCarryingSpace()) + "\n";
         }
-        return "";
+        String cargoWeightString = "";
+        float cargoWeight = 0;
+        for (Bay bay: getEntity().getTransportBays()) {
+            cargoWeight += bay.getWeight();
+        }
+        if (cargoWeight > 0) {
+            cargoWeightString = StringUtil.makeLength("Cargo Weight:", getPrintSize() - 5) + TestEntity.makeWeightString(cargoWeight) + "\n";
+        }
+        return carryingSpace + cargoWeightString;
     }
 
     public String printArmorLocation(int loc) {

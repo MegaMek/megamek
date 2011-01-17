@@ -52,31 +52,6 @@ public class Bay implements Transporter {
      */
     /* package */double currentSpace;
 
-    /*
-     * ### I don't think that I need this code ### *#/ /** Write our current
-     * state into the output stream.
-     *
-     * @param out - the <code>ObjectOutputStream</code> we write to.
-     *
-     * @exception - This method does not catch <code>IOException</code>s thrown
-     * during the write.#/ private void writeObject(java.io.ObjectOutputStream
-     * out) throws IOException { // Write our total and current space, followed
-     * by our troops. out.writeInt( this.totalSpace ); out.writeInt(
-     * this.currentSpace ); out.writeObject( this.troops ); }
-     *
-     * /** Read our state from the input stream.
-     *
-     * @param out - the <code>ObjectInputStream</code> we read from.
-     *
-     * @exception - This method does not catch <code>IOException</code>s or
-     * <code>ClassNotFoundException</code>s thrown during the read.#/ private
-     * void readObject(java.io.ObjectInputStream in) throws IOException,
-     * ClassNotFoundException { // Read our total and current space, followed by
-     * our troops. this.totalSpace = in.readInt(); this.currentSpace =
-     * in.readInt(); this.troops = (List)in.readObject(); } /* ### I don't think
-     * that I need this code ###
-     */
-
     // Protected constructors and methods.
 
     /**
@@ -357,6 +332,10 @@ public class Bay implements Transporter {
 
     public int getNumberLoadedThisTurn() {
         return unloadedThisTurn;
+    }
+
+    public float getWeight() {
+        return (float)totalSpace;
     }
 
 } // End package class TroopSpace implements Transporter

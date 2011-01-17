@@ -22,7 +22,6 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
-import megamek.common.TroopSpace;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -73,20 +72,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         }
         t.setMovementMode(nMotion);
 
-        if (dataFile.exists("transporters")) {
-            String[] transporters = dataFile.getDataAsString("transporters");
-            // Walk the array of transporters.
-            for (String transporter : transporters) {
-                // TroopSpace:
-                if (transporter.toLowerCase().startsWith("troopspace:", 0)) {
-                    // Everything after the ':' should be the space's size.
-                    Double fsize = new Double(transporter.substring(11));
-                    t.addTransporter(new TroopSpace(fsize.doubleValue()));
-                }
-
-            } // Handle the next transportation component.
-
-        } // End has-transporters
+        addTransports(t);
 
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {

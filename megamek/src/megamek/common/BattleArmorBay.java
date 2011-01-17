@@ -95,4 +95,9 @@ public final class BattleArmorBay extends Bay {
         return "Battle Armor";
     }
 
+    @Override
+    public float getWeight() {
+        return (float)totalSpace * 2;
+    }
+
 }

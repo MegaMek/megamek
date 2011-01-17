@@ -26,13 +26,10 @@
 package megamek.common.loaders;
 
 import megamek.common.Aero;
-import megamek.common.BattleArmorBay;
-import megamek.common.CargoBay;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
-import megamek.common.InfantryBay;
 import megamek.common.LocationFullException;
 import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
@@ -180,34 +177,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         loadEquipment(a, "Left Side", Aero.LOC_LWING);
         loadEquipment(a, "Aft", Aero.LOC_AFT);
 
-        // get the bays on this dropship
-        // should be of format name:units:doors
-        if (dataFile.exists("transporters")) {
-            String[] transporters = dataFile.getDataAsString("transporters");
-            // Walk the array of transporters.
-            for (String transporter : transporters) {
-                transporter = transporter.toLowerCase();
-                if (transporter.startsWith("infantrybay:", 0)) {
-                    String numbers = transporter.substring(12);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    a.addTransporter(new InfantryBay(size, doors));
-                } else if (transporter.startsWith("battlearmorbay:", 0)) {
-                    String numbers = transporter.substring(15);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    a.addTransporter(new BattleArmorBay(size, doors));
-                } else if (transporter.startsWith("cargobay:", 0)) {
-                    String numbers = transporter.substring(9);
-                    String temp[] = numbers.split(":");
-                    double size = Double.parseDouble(temp[0]);
-                    int doors = Integer.parseInt(temp[1]);
-                    a.addTransporter(new CargoBay(size, doors));
-                }
-            }
-        }
+        addTransports(a);
 
         return a;
     }

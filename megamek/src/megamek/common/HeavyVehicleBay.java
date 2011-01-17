@@ -95,4 +95,9 @@ public final class HeavyVehicleBay extends Bay {
         return "Heavy Vehicle";
     }
 
+    @Override
+    public float getWeight() {
+        return (float)totalSpace * 100;
+    }
+
 } // End package class TroopSpace implements Transporter

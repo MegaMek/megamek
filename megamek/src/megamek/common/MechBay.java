@@ -94,4 +94,9 @@ public final class MechBay extends Bay {
         return "Mech";
     }
 
+    @Override
+    public float getWeight() {
+        return (float)totalSpace * 150;
+    }
+
 } // End package class TroopSpace implements Transporter

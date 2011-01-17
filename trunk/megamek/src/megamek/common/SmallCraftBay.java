@@ -231,4 +231,9 @@ public final class SmallCraftBay extends Bay {
 
     }
 
+    @Override
+    public float getWeight() {
+        return (float)totalSpace * 200;
+    }
+
 } // End package class TroopSpace implements Transporter

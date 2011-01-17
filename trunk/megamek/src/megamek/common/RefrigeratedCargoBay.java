@@ -15,21 +15,22 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represtents a volume of space set aside for carrying refrigerated cargo
  */
 
-public final class CargoBay extends Bay {
+public final class RefrigeratedCargoBay extends Bay {
 
     /**
      *
      */
     private static final long serialVersionUID = 4161027191694822726L;
 
+    private float weight = 0;
+
     /**
      * The default constructor is only for serialization.
      */
-    protected CargoBay() {
+    protected RefrigeratedCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -44,9 +45,10 @@ public final class CargoBay extends Bay {
      * @param space
      *            - The weight of troops (in tons) this space can carry.
      */
-    public CargoBay(double space, int doors) {
-        totalSpace = space;
-        currentSpace = space;
+    public RefrigeratedCargoBay(double space, int doors) {
+        totalSpace = space * 0.87;
+        weight = (float)space;
+        currentSpace = space * 0.87;
         this.doors = doors;
     }
 
@@ -69,7 +71,7 @@ public final class CargoBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        StringBuffer returnString = new StringBuffer("Cargo Space - ");
+        StringBuffer returnString = new StringBuffer("Refrigerated Cargo Space - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.2f", currentSpace));
@@ -83,7 +85,13 @@ public final class CargoBay extends Bay {
 
     @Override
     public String getType() {
-        return "Cargo";
+        return "Refrigerated Cargo";
     }
 
-} // End package class TroopSpace implements Transporter
+    @Override
+    public float getWeight() {
+        return weight;
+    }
+
+
+}

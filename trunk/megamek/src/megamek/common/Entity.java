@@ -292,7 +292,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Set to <code>true</code> if this unit was loaded this turn.
      */
     private boolean loadedThisTurn = false;
-    
+
     /**
      * Need to keep a vector of entities loaded in the chat lounge
      */
@@ -829,7 +829,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setUnloaded(boolean unloaded) {
         unloadedThisTurn = unloaded;
     }
-    
+
     public void setLoadedThisTurn(boolean loaded) {
         loadedThisTurn = loaded;
     }
@@ -886,7 +886,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean wasLoadedThisTurn() {
         return loadedThisTurn;
     }
-    
+
     /**
      * Returns true if this entity is targetable for attacks
      */
@@ -4167,7 +4167,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         resetFiringArcs();
 
         resetBays();
-        
+
         // reset evasion
         setEvading(false);
 
@@ -4194,10 +4194,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         ghostTargetOverride = Compute.d6(2);
 
         //update fatigue count
-        if(null != crew && isDeployed()) {
+        if((null != crew) && isDeployed()) {
             crew.incrementFatigueCount();
         }
-        
+
         // Update the inferno tracker.
         infernos.newRound(roundNumber);
         if (taserShutdownRounds > 0) {
@@ -5702,7 +5702,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Return the list.
         return result;
     }
-    
+
     /**
      * @return only entities in that can be unloaded on ground
      *      */
@@ -5798,7 +5798,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
     }
-    
+
     public void resetBays() {
         for (Transporter next : transports) {
             if (next instanceof Bay) {
@@ -7436,7 +7436,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src, usePrior, facing);
     }
-    
+
     public int sideTable(Coords src, boolean usePrior, int face) {
         return sideTable(src, usePrior, face, position);
     }
@@ -9424,10 +9424,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return xbv;
     }
-    
+
     public boolean hasUnloadedUnitsFromBays() {
         for (Transporter next : transports) {
-            if (next instanceof Bay && ((Bay)next).getNumberUnloadedThisTurn() > 0) {
+            if ((next instanceof Bay) && (((Bay)next).getNumberUnloadedThisTurn() > 0)) {
                 return true;
             }
         }

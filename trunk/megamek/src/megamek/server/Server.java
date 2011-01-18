@@ -20251,6 +20251,11 @@ public class Server implements Runnable {
                         } else {
                             survived = Compute.d6() <= 4;
                         }
+                    } else if (entity instanceof Mech){
+                        // mechanized BA can escape on a roll of 1 or 2
+                        if (externalUnits.contains(other)) {
+                            survived = Compute.d6() < 3;
+                        }
                     }
                     if (!survivable || (externalUnits.contains(other) && !survived)) {
                         // Nope.

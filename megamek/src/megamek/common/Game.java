@@ -1352,7 +1352,7 @@ public class Game implements Serializable, IGame {
                         }
                     }
                 }
-                
+
             }
         }
         return vector.elements();
@@ -1377,7 +1377,7 @@ public class Game implements Serializable, IGame {
 
         return vector;
     }
-    
+
     /**
      * Return a Vector of gun emplacements at Coords <code>c</code>
      * @param c
@@ -1389,7 +1389,7 @@ public class Game implements Serializable, IGame {
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
             for (Entity entity : entities) {
-                if (c.equals(entity.getPosition()) && entity instanceof GunEmplacement) {
+                if (c.equals(entity.getPosition()) && (entity instanceof GunEmplacement)) {
                     vector.addElement((GunEmplacement)entity);
                 }
             }
@@ -1412,7 +1412,7 @@ public class Game implements Serializable, IGame {
         if (board.contains(c)) {
             for (Entity entity : entities) {
                 if (c.equals(entity.getPosition()) && entity.isTargetable()
-                        && entity.getElevation() == 0 && entity.getAltitude() == 0
+                        && (entity.getElevation() == 0) && (entity.getAltitude() == 0)
                         && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);
                 }
@@ -1666,7 +1666,7 @@ public class Game implements Serializable, IGame {
             if(transport instanceof Aero) {
                 return false;
             }
-            
+
             // Can that transport unload the unit?
             if (transport.isImmobile() || (0 == transport.getWalkMP())) {
                 return true;
@@ -1752,6 +1752,9 @@ public class Game implements Serializable, IGame {
      * Used when, say, an entity dies mid-phase.
      */
     public void removeTurnFor(Entity entity) {
+        if (turnVector.size() == 0) {
+            return;
+        }
         // If the game option "move multiple infantry per mech" is selected,
         // then we might not need to remove a turn at all.
         // A turn only needs to be removed when going from 4 inf (2 turns) to

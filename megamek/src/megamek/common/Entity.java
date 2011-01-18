@@ -145,6 +145,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int delta_distance = 0;
     public int mpUsed = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
+    private boolean movedBackwards = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public boolean hitThisRoundByAntiTSM = false;
@@ -4121,6 +4122,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             assaultDropInProgress = 0;
         }
         moved = EntityMovementType.MOVE_NONE;
+        movedBackwards = false;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
         inReverse = false;
@@ -9432,6 +9434,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return false;
+    }
+
+    public boolean getMovedBackwards() {
+        return movedBackwards;
+    }
+
+    public void setMovedBackwards(boolean back) {
+        movedBackwards = back;
     }
 
 }

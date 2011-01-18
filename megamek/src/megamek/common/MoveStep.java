@@ -174,7 +174,7 @@ public class MoveStep implements Serializable {
             hasEverUnloaded = false;
         }
     }
-    
+
     /**
      * Create a step with the given target.
      *
@@ -379,7 +379,7 @@ public class MoveStep implements Serializable {
         }
         return game.getTarget(targetType, targetId);
     }
-    
+
     public Coords getTargetPosition() {
         return targetPos;
     }
@@ -566,6 +566,9 @@ public class MoveStep implements Serializable {
                 && !((elevation == 0) && (entity.getMovementMode() == EntityMovementMode.SUBMARINE))
                 && (entity.getMovementMode() != EntityMovementMode.VTOL)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
+            setRunProhibited(true);
+        }
+        if (entity.getMovedBackwards()) {
             setRunProhibited(true);
         }
 
@@ -1952,11 +1955,11 @@ public class MoveStep implements Serializable {
 
         // Is the entity unloading passengers?
         if (stepType == MoveStepType.UNLOAD) {
-            
+
             if(entity instanceof Aero) {
                 movementType = EntityMovementType.MOVE_NONE;
             } else {
-            
+
                 if (isFirstStep()) {
                     if (getMpUsed() <= entity.getRunMP()) {
                         movementType = EntityMovementType.MOVE_RUN;
@@ -1965,7 +1968,7 @@ public class MoveStep implements Serializable {
                         }
                     }
                 }
-    
+
                 // Prone Meks are able to unload, if they have the MP.
                 if ((getMpUsed() <= entity.getRunMP())
                         && (entity.isProne() || entity.isHullDown())
@@ -1975,7 +1978,7 @@ public class MoveStep implements Serializable {
                         movementType = EntityMovementType.MOVE_WALK;
                     }
                 }
-    
+
                 // Can't unload units into prohibited terrain
                 // or into stacking violation.
                 Targetable target = getTarget(game);
@@ -2082,7 +2085,7 @@ public class MoveStep implements Serializable {
         if(stepType == MoveStepType.MOUNT) {
             movementType = EntityMovementType.MOVE_WALK;
         }
-        
+
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos, prev.getElevation())
                 || isUnloaded) {
@@ -2422,7 +2425,7 @@ public class MoveStep implements Serializable {
         if(type == MoveStepType.MOUNT) {
             return true;
         }
-        
+
         // The entity is trying to load. Check for a valid move.
         if (type == MoveStepType.LOAD) {
 

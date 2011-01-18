@@ -39,12 +39,12 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.EntityAction;
@@ -566,10 +566,7 @@ public class TestBot extends BotClient {
                                                             .getValue()) / 100);
                                     option.setState();
                                 } else {
-                                    // TODO Ram for Aero units
-
-                                    // Get a default toHit
-                                    toHit = new ToHitData();
+                                    toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "");
                                 }
                                 damage = target.getThreatUtility(damage, toHit
                                         .getSideTable())

@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -24,6 +24,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.Targetable;
 
 /**
@@ -32,7 +33,7 @@ import megamek.common.Targetable;
 public class SearchlightAttackAction extends AbstractAttackAction {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6699459935811592434L;
 
@@ -53,23 +54,30 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     public static boolean isPossible(IGame game, int attackerId,
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
-    //    if (attacker == null || !attacker.isUsingSpotlight() || target == null)
-    //        return false;
-   //     if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0)
-   //         return false;
+        if ((attacker == null) || !attacker.isUsingSpotlight() || (target == null)) {
+            return false;
+        }
+        if ((attacker instanceof Tank) && (((Tank)attacker).getStunnedTurns() > 0)) {
+            return false;
+        }
         if (!Compute.isInArc(attacker.getPosition(), attacker
                 .getSecondaryFacing(), target,
-                attacker.getForwardArc()))
+                attacker.getForwardArc())) {
             return false;
+        }
         for (Enumeration<EntityAction> actions = game.getActions(); actions
                 .hasMoreElements();) {
             EntityAction action = actions.nextElement();
             if (action instanceof SearchlightAttackAction) {
                 SearchlightAttackAction act = (SearchlightAttackAction) action;
                 if (act == exempt)
+                 {
                     break; // 1st in list is OK
+                }
                 if (act.getEntityId() == attackerId)
+                 {
                     return false; // can only declare searchlight once!
+                }
             }
         }
         LosEffects los = LosEffects.calculateLos(game, attackerId, target);
@@ -84,7 +92,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         Report r;
         if (!isPossible(game)) {
             r = new Report(3445);
-            r.subject = this.getEntityId();
+            r.subject = getEntityId();
             r.newlines = 1;
             reports.addElement(r);
             return reports;
@@ -96,7 +104,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
 
         if (attacker.usedSearchlight()) {
             r = new Report(3450);
-            r.subject = this.getEntityId();
+            r.subject = getEntityId();
             r.add(attacker.getDisplayName());
             r.newlines = 1;
             reports.addElement(r);
@@ -116,7 +124,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                 if (los.canSee()) {
                     en.setIlluminated(true);
                     r = new Report(3455);
-                    r.subject = this.getEntityId();
+                    r.subject = getEntityId();
                     r.newlines = 1;
                     r.add(en.getDisplayName());
                     r.add(attacker.getDisplayName());
@@ -128,8 +136,9 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     }
 
     public boolean willIlluminate(IGame game, Entity who) {
-        if (!isPossible(game))
+        if (!isPossible(game)) {
             return false;
+        }
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
@@ -144,8 +153,9 @@ public class SearchlightAttackAction extends AbstractAttackAction {
                 Entity en = e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);
-                if (los.canSee() && en.equals(who))
+                if (los.canSee() && en.equals(who)) {
                     return true;
+                }
             }
         }
         return false;

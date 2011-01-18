@@ -267,7 +267,7 @@ public class Infantry extends Entity implements Serializable {
     @Override
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
-        if((getSecondaryN() > 1) 
+        if((getSecondaryN() > 1)
                 && !getCrew().getOptions().booleanOption("tsm_implant")
                 && !getCrew().getOptions().booleanOption("dermal_armor")
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
@@ -1157,26 +1157,28 @@ public class Infantry extends Entity implements Serializable {
     public void setMovementMode(EntityMovementMode movementMode) {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp
-        switch (getMovementMode()) {
-            case INF_MOTORIZED:
-                setOriginalWalkMP(3);
-                break;
-            case HOVER:
-                setOriginalWalkMP(5);
-                break;
-            case TRACKED:
-                setOriginalWalkMP(3);
-                break;
-            case WHEELED:
-                setOriginalWalkMP(4);
-                break;
-            case INF_JUMP:
-                setOriginalJumpMP(3);
-            case INF_LEG:
-                setOriginalWalkMP(1);
-
+        if (!(this instanceof BattleArmor)) {
+            switch (getMovementMode()) {
+                case INF_MOTORIZED:
+                    setOriginalWalkMP(3);
+                    break;
+                case HOVER:
+                    setOriginalWalkMP(5);
+                    break;
+                case TRACKED:
+                    setOriginalWalkMP(3);
+                    break;
+                case WHEELED:
+                    setOriginalWalkMP(4);
+                    break;
+                case INF_JUMP:
+                    setOriginalJumpMP(3);
+                case INF_LEG:
+                    setOriginalWalkMP(1);
+            }
         }
     }
+
 
     public boolean canAttackMeks() {
         return !isMechanized() && isAntiMek();

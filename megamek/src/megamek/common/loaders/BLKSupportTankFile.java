@@ -94,6 +94,9 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
         int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight() - t.getSuspensionFactor();
+        if (engineRating%5 > 0 ) {
+            engineRating += (5-engineRating%5);
+        }
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 

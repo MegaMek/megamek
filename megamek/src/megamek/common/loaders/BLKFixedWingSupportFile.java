@@ -106,6 +106,9 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
+        if (engineRating%5 > 0 ) {
+            engineRating += (5-engineRating%5);
+        }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("armor_type")) {

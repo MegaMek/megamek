@@ -279,6 +279,10 @@ public class Server implements Runnable {
 
     private static Server serverInstance = null;
 
+    private String serverAccessKey = null;
+
+    private Timer t = new Timer(true);
+
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
         /**
@@ -390,6 +394,13 @@ public class Server implements Runnable {
         // Fully initialised, now accept connections
         connector = new Thread(this, "Connection Listener");
         connector.start();
+        final TimerTask register = new TimerTask() {
+            @Override
+            public void run() {
+                registerWithServerBrowser(true);
+            }
+        };
+        t.schedule(register, 1, 40000);
     }
 
     /**
@@ -514,6 +525,8 @@ public class Server implements Runnable {
 
         connections.removeAllElements();
         connectionIds.clear();
+        t.cancel();
+        registerWithServerBrowser(false);
         System.out.flush();
     }
 
@@ -3205,7 +3218,7 @@ public class Server implements Runnable {
 
                     // Work out hit table to use
                     toHit.setSideTable(entity.sideTable(centralPos));
-                    
+
                     // Do the damage
                     r = new Report(6480);
                     r.subject = entity.getId();
@@ -3282,7 +3295,7 @@ public class Server implements Runnable {
     private boolean unloadUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int elevation) {
         return unloadUnit(unloader, unloaded, pos, facing, elevation, false);
     }
-    
+
     /**
      * Have the unloader unload the indicated unit. The unit being unloaded may or may not gain a turn
      *
@@ -3382,15 +3395,15 @@ public class Server implements Runnable {
         addReport(doSetLocationsExposure(unit, hex, false, unit.getElevation()));
 
         //unlike other unloaders, entities unloaded from droppers can still move (unless infantry)
-        if(!evacuation && unloader instanceof SmallCraft && !(unit instanceof Infantry)) {
+        if(!evacuation && (unloader instanceof SmallCraft) && !(unit instanceof Infantry)) {
             unit.setUnloaded(false);
             unit.setDone(false);
-            
+
             //unit uses half of walk mp and is treated as moving one hex
             unit.mpUsed = unit.getOriginalWalkMP() / 2;
             unit.delta_distance = 1;
         }
-        
+
         // Update the unloaded unit.
         entityUpdate(unit.getId());
 
@@ -4990,6 +5003,9 @@ public class Server implements Runnable {
         if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
+        if (md.contains(MoveStepType.BACKWARDS)) {
+            entity.setMovedBackwards(true);
+        }
 
         if (md.contains(MoveStepType.TAKEOFF) && (entity instanceof Aero)) {
             Aero a = (Aero)entity;
@@ -5228,7 +5244,7 @@ public class Server implements Runnable {
                     processLeaveMap(entity, curPos, true, Compute.roundsUntilReturn(game, entity));
                     return;
                 }
-                
+
                 if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     processLeaveMap(entity, curPos, true, -1);
@@ -6175,7 +6191,7 @@ public class Server implements Runnable {
             // Handle mounting units to small craft/dropship
             if (step.getType() == MoveStepType.MOUNT) {
                 Targetable mountee = step.getTarget(game);
-                if(null != mountee && mountee instanceof Entity) {
+                if((null != mountee) && (mountee instanceof Entity)) {
                     Entity dropship = (Entity)mountee;
                     if (!dropship.canLoad(entity)) {
                             // Something is fishy in Denmark.
@@ -6185,7 +6201,7 @@ public class Server implements Runnable {
                         entity.setDone(true);
                         loadUnit(dropship, entity);
                         Bay currentBay = dropship.getBay(entity);
-                        if(null != currentBay && Compute.d6(2) == 2) {
+                        if((null != currentBay) && (Compute.d6(2) == 2)) {
                             r = new Report(9390);
                             r.subject = entity.getId();
                             r.indent(1);
@@ -6199,7 +6215,7 @@ public class Server implements Runnable {
                     }
                 }
             } // End STEP_MOUNT
-            
+
             // handle fighter recovery
             if (step.getType() == MoveStepType.RECOVER) {
 
@@ -6261,9 +6277,9 @@ public class Server implements Runnable {
                             + entity.getDisplayName() + " into " + curPos.getBoardNum());
                 }
                 //some additional stuff to take care of for small craft/dropship unloading
-                if(entity instanceof SmallCraft && unloaded instanceof Entity) {          
+                if((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
                     Bay currentBay = entity.getBay((Entity)unloaded);
-                    if(null != currentBay && Compute.d6(2) == 2) {
+                    if((null != currentBay) && (Compute.d6(2) == 2)) {
                         r = new Report(9390);
                         r.subject = entity.getId();
                         r.indent(1);
@@ -6287,9 +6303,10 @@ public class Server implements Runnable {
                     }
                     // brief everybody on the turn update
                     send(createTurnVectorPacket());
-                } 
+                }
             }
 
+            // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation())
@@ -6310,6 +6327,7 @@ public class Server implements Runnable {
                 addReport(r);
 
                 if (roll < psr.getValue()) {
+                    distance -= 1;
                     if (entity instanceof Mech) {
                         if (curHex.getElevation() < game.getBoard().getHex(lastPos).getElevation()) {
                             entity.setElevation(Integer.MIN_VALUE);
@@ -6888,7 +6906,7 @@ public class Server implements Runnable {
         } // End entity-is-jumping
         // update entity's locations' exposure
         doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
-        
+
         // Check the falls_end_movement option to see if it should be able to
         // move on.
         if (!(game.getOptions().booleanOption("falls_end_movement") && (entity instanceof Mech)) && fellDuringMovement
@@ -6932,7 +6950,7 @@ public class Server implements Runnable {
             }
             entity.setDone(true);
         }
-        
+
         if(dropshipStillUnloading) {
             //turns should have already been inserted but we need to set the entity as not done
             entity.setDone(false);
@@ -7044,7 +7062,7 @@ public class Server implements Runnable {
      * @param entity - The <code>Entity</code> taking off
      */
     private void checkForTakeoffDamage(Aero a) {
-        
+
         boolean unsecured = false;
         for(Entity loaded : a.getLoadedUnits()) {
             if(loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
@@ -7068,7 +7086,7 @@ public class Server implements Runnable {
             HitData hit = a.rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
             addReport(applyCriticalHit(a, hit.getLocation(), new CriticalSlot(0, a.getPotCrit()), true, 1, false));
         }
-        
+
     }
 
     /**
@@ -14977,15 +14995,15 @@ public class Server implements Runnable {
     private Vector<Report> resolvePilotingRolls(Entity entity, boolean moving, Coords src, Coords dest) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         // dead and undeployed and offboard units don't need to.
-        if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed() || entity.getTransportId() != Entity.NONE) {
+        if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed() || (entity.getTransportId() != Entity.NONE)) {
             return vPhaseReport;
         }
-        
+
         //airborne units don't make piloting rolls, they make control rolls
         if(entity.isAirborne()) {
             return vPhaseReport;
         }
-        
+
         Report r;
 
         // first, do extreme gravity PSR, because non-mechs do these, too
@@ -15833,10 +15851,10 @@ public class Server implements Runnable {
         }
 
         int damage_orig = damage;
-        
+
         //the bonus to the crit roll if using the "advanced determining critical hits rule"
         int critBonus = 0;
-        if(game.getOptions().booleanOption("tacops_crit_roll") && damage_orig > 0 && (te instanceof Mech || te instanceof Protomech)) {
+        if(game.getOptions().booleanOption("tacops_crit_roll") && (damage_orig > 0) && ((te instanceof Mech) || (te instanceof Protomech))) {
             critBonus = Math.min((damage_orig - 1)/5, 4);
         }
 
@@ -19622,7 +19640,7 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
             boolean advancedCrit = game.getOptions().booleanOption("tacops_crit_roll");
-            if ((!advancedCrit && roll <= 7) || (advancedCrit && roll <= 8)) {
+            if ((!advancedCrit && (roll <= 7)) || (advancedCrit && (roll <= 8))) {
                 // no effect
                 r = new Report(6005);
                 r.subject = en.getId();
@@ -19643,7 +19661,7 @@ public class Server implements Runnable {
                 r = new Report(6325);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-            } else if ((!advancedCrit && roll >= 12) || (advancedCrit && roll >= 15)) {
+            } else if ((!advancedCrit && (roll >= 12)) || (advancedCrit && (roll >= 15))) {
                 if (en instanceof Protomech) {
                     hits = 3;
                     r = new Report(6325);
@@ -23266,7 +23284,7 @@ public class Server implements Runnable {
     public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
         return damageInfantryIn(bldg, damage, hexCoords, WeaponType.WEAPON_NA);
     }
-    
+
     /**
      * Apply the correct amount of damage that passes on to any infantry unit in
      * the given building, based upon the amount of damage the building just
@@ -23280,7 +23298,7 @@ public class Server implements Runnable {
     public Vector<Report> damageInfantryIn(Building bldg, int damage, Coords hexCoords, int infDamageClass) {
 
         Vector<Report> vDesc = new Vector<Report>();
-        
+
         if (bldg == null) {
             return vDesc;
         }
@@ -23364,7 +23382,7 @@ public class Server implements Runnable {
         if (foundInfantry) {
             Report.addNewline(vDesc);
         }
-        
+
         return vDesc;
 
     } // End private void damageInfantryIn( Building, int )
@@ -26443,4 +26461,54 @@ public class Server implements Runnable {
         addReport(r);
     }
 
+    private void registerWithServerBrowser(boolean register) {
+        /*try {
+            URL url = new URL("http://maltemuth.com/announce");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setDoOutput(true);
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            DataOutputStream printout = new DataOutputStream (conn.getOutputStream ());
+            String content = "";
+            content =
+                "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), "UTF-8");
+            if (register) {
+                for (IConnection iconn : connections) {
+                    content+="&players[]="+(getPlayer(iconn.getId()).getName());
+                }
+                if ((game.getPhase() != Phase.PHASE_LOUNGE) && (game.getPhase() != Phase.PHASE_UNKNOWN)) {
+                    content += "&close=yes";
+                }
+                content += "&version="+MegaMek.VERSION;
+                if (isPassworded()) {
+                    content += "&pw=yes";
+                }
+            } else {
+                content += "&delete=yes";
+            }
+            if (serverAccessKey != null) {
+                content += "&key="+serverAccessKey;
+            }
+            System.out.println(content);
+            printout.writeBytes(content);
+            printout.flush ();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            System.out.println(conn.getResponseCode()+ " "+conn.getResponseMessage());
+            if (conn.getResponseCode() == 200) {
+                while ((line = rd.readLine()) != null) {
+                    System.out.println(line);
+                    if (serverAccessKey == null) {
+                        serverAccessKey = line;
+                    }
+                }
+            } else {
+                while ((line = rd.readLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+            rd.close();
+            printout.close ();
+        } catch (Exception e) {
+        }*/
+    }
 }

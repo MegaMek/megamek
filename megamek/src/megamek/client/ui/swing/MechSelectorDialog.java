@@ -648,7 +648,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             private final static int COL_BV = 3;
             private final static int COL_YEAR = 4;
             private final static int COL_COST = 5;
-            private final static int N_COL = 6;
+            private final static int COL_LEVEL = 6;
+            private final static int N_COL = 7;
 
             private MechSummary[] data = new MechSummary[0];
 
@@ -675,6 +676,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                         return "Year";
                     case COL_COST:
                         return "Price";
+                    case COL_LEVEL:
+                         return "Level";
                     default:
                         return "?";
                 }
@@ -720,6 +723,9 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                 if(col == COL_COST) {
                     //return NumberFormat.getInstance().format(ms.getCost());
                     return ms.getCost();
+                }
+                if (col == COL_LEVEL) {
+                    return ms.getLevel();
                 }
                 return "?";
             }

@@ -16417,11 +16417,22 @@ public class Server implements Runnable {
                 if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     tmpDamageHold = damage;
-                    damage = (int) Math.ceil(((double) damage) / 2);
+                    double hardenedDamage = ((double) damage)/2;
+                    if (hardenedDamage%1 > 0) {
+                        if (te.isHardenedArmorDamaged(hit.getLocation())) {
+                            damage = (int) Math.ceil(hardenedDamage);
+                            te.setHardenedArmorDamaged(hit.getLocation(), false);
+                        } else {
+                            damage = (int) Math.floor(hardenedDamage);
+                            te.setHardenedArmorDamaged(hit.getLocation(), true);
+                        }
+                    } else {
+                        damage = (int) hardenedDamage;
+                    }
                     r = new Report(6069);
                     r.subject = te_n;
                     r.indent(2);
-                    r.add(damage);
+                    r.add(Double.toString(hardenedDamage));
                     vDesc.addElement(r);
                 } else if (isPlatoon) {
                     // infantry armour works differently
@@ -16505,7 +16516,12 @@ public class Server implements Runnable {
                         te.damageThisPhase += damage;
                     }
                     damage = 0;
-                    r = new Report(6085);
+                    if (!te.isHardenedArmorDamaged(hit.getLocation())) {
+                        r = new Report(6085);
+                    } else {
+                        r = new Report(6086);
+                    }
+
                     r.subject = te_n;
                     if (spotlightHittable) {
                         r.indent(3);

@@ -18,7 +18,6 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -105,7 +104,7 @@ public class Compute {
         }
         return roll.getIntValue();
     }
-    
+
     /** Wrapper to random#d6(n) */
     public static int d6(int dice, int keep) {
         Roll roll = random.d6(dice, keep);
@@ -1084,7 +1083,7 @@ public class Compute {
             }
         }
 
-        
+
         if (Compute.isGroundToAir(attacker, target) && (target instanceof Entity)) {
             if(game.getOptions().booleanOption("stratops_aa_fire")) {
                 //distance is determined by closest point on flight path
@@ -1156,20 +1155,20 @@ public class Compute {
     }
 
     private static Coords getClosestFlightPath(Coords aPos, Entity te) {
-        
+
         Coords finalPos = te.getPosition();
         int distance = aPos.distance(finalPos);
         //don't return zero distance Coords, but rather the Coords immediately before this
         //This is necessary to determine angle of attack and arc information for direct fly-overs
         for(Coords c : te.getPassedThrough()) {
-            if(!aPos.equals(c) && aPos.distance(c) < distance) {
+            if(!aPos.equals(c) && (aPos.distance(c) < distance)) {
                 finalPos = c;
                 distance = aPos.distance(c);
             }
-        }    
+        }
         return finalPos;
     }
-    
+
     /**
      * Attempts to find a C3 spotter that is closer to the target than the
      * attacker.
@@ -2627,12 +2626,12 @@ public class Compute {
                 tPos = ((Entity) t).getPosition();
             }
         }
-        
+
         //if using advanced AA options, then ground-to-air fire determines arc by closest position
         if(isGroundToAir(ae, t) && (t instanceof Entity) && game.getOptions().booleanOption("stratops_aa_fire")) {
             tPos = getClosestFlightPath(ae.getPosition(), (Entity)t);
         }
-        
+
         tPosV.add(tPos);
         //check for secondary positions
         if((t instanceof Entity) && (null != ((Entity)t).getSecondaryPositions())) {
@@ -3048,7 +3047,7 @@ public class Compute {
         if (target instanceof Entity) {
             te = (Entity) target;
         }
-   
+
         boolean usePrior = false;
         // aeros in the same hex need to adjust position to get side
         // table
@@ -3066,7 +3065,7 @@ public class Compute {
         if (isAirToGround(attacker, target)) {
             attackPos = attacker.passedThroughPrevious(target.getPosition());
         }
-        
+
         if(isGroundToAir(attacker, target) && attacker.getGame().getOptions().booleanOption("stratops_aa_fire")
                 && (null != te)) {
             return te.sideTable(attackPos, usePrior, te.getFacing(), Compute.getClosestFlightPath(attackPos, te));
@@ -5104,33 +5103,33 @@ public class Compute {
         }
         return false;
     }
-    
+
     public static ArrayList<Coords> getAcceptableUnloadPositions(ArrayList<Coords> ring, Entity unit, IGame game, int elev) {
-        
+
         ArrayList<Coords> acceptable = new ArrayList<Coords>();
-        
+
         for(Coords pos : ring) {
             IHex hex = game.getBoard().getHex(pos);
             if(null == hex) {
                 continue;
             }
             //no stacking violations, no prohibited terrain, and within 2 elevations
-            
-            if(!unit.isHexProhibited(hex) 
-                    && null == stackingViolation(game, unit.getId(), pos) 
-                    && Math.abs(hex.getElevation() - elev) < 3) {
+
+            if(!unit.isHexProhibited(hex)
+                    && (null == stackingViolation(game, unit.getId(), pos))
+                    && (Math.abs(hex.getElevation() - elev) < 3)) {
                 acceptable.add(pos);
             }
-        }       
+        }
         return acceptable;
     }
-    
+
     public static ArrayList<Entity> getMountableUnits(Entity en, Coords pos, int elev, IGame game) {
-        
+
         ArrayList<Entity> mountable = new ArrayList<Entity>();
-        //for the moment only allow small craft/dropship mounting, but 
+        //for the moment only allow small craft/dropship mounting, but
         //this could be expanded to include other unit types
-        
+
         //the rules don't say that the unit must be facing loader
         //so lets take the ring
         for(Coords c : coordsAtRange(pos, 1)) {
@@ -5142,17 +5141,17 @@ public class Compute {
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
                 Entity other = entities.nextElement();
-                if (en.getOwner().equals(other.getOwner()) && !en.equals(other) 
-                        && other instanceof SmallCraft && other.canLoad(en) && !other.isAirborne()
-                        && Math.abs((hex.surface() + other.getElevation()) - elev) < 3 && !mountable.contains(other)) {
+                if (en.getOwner().equals(other.getOwner()) && !en.equals(other)
+                        && (other instanceof SmallCraft) && other.canLoad(en) && !other.isAirborne()
+                        && (Math.abs((hex.surface() + other.getElevation()) - elev) < 3) && !mountable.contains(other)) {
                     mountable.add(other);
                 }
             }
         }
-        
+
         return mountable;
-        
+
     }
- 
+
 } // End public class Compute
 

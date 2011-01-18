@@ -136,6 +136,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int taggedBy = -1;
     protected boolean layingMines = false;
     protected boolean _isEMId = false;
+    protected boolean[] hardenedArmorDamaged;
 
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -485,6 +486,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (int i = 0; i < locations(); i++) {
             crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
+        hardenedArmorDamaged = new boolean[locations()];
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<Integer, Coords>();
@@ -9442,6 +9444,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setMovedBackwards(boolean back) {
         movedBackwards = back;
+    }
+
+    public void setHardenedArmorDamaged(int location, boolean damaged) {
+        hardenedArmorDamaged[location] = damaged;
+    }
+
+    public boolean isHardenedArmorDamaged(int location) {
+        return hardenedArmorDamaged[location];
     }
 
 }

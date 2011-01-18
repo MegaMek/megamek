@@ -73,22 +73,14 @@ public class MechFileParser {
     private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
 
     public MechFileParser(File f) throws EntityLoadingException {
-        this(f, null, false);
+        this(f, null);
     }
 
     public MechFileParser(File f, String entryName) throws EntityLoadingException {
-        this(f, entryName, false);
-    }
-
-    public MechFileParser(File f, boolean MMLoaded) throws EntityLoadingException {
-        this(f, null, MMLoaded);
-    }
-
-    public MechFileParser(File f, String entryName, boolean MMLLoaded) throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try {
-                parse(new FileInputStream(f.getAbsolutePath()), f.getName(), MMLLoaded);
+                parse(new FileInputStream(f.getAbsolutePath()), f.getName());
             } catch (Exception ex) {
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
@@ -102,7 +94,7 @@ public class MechFileParser {
             ZipFile zFile;
             try {
                 zFile = new ZipFile(f.getAbsolutePath());
-                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName, MMLLoaded);
+                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
             } catch (NullPointerException npe) {
@@ -131,10 +123,6 @@ public class MechFileParser {
     }
 
     public void parse(InputStream is, String fileName) throws EntityLoadingException {
-        parse(is, fileName, false);
-    }
-
-    public void parse(InputStream is, String fileName, boolean MMLLoaded) throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -201,9 +189,7 @@ public class MechFileParser {
         }
 
         m_entity = loader.getEntity();
-        if (!MMLLoaded) {
-            MechFileParser.postLoadInit(m_entity);
-        }
+        MechFileParser.postLoadInit(m_entity);
     }
 
     /**

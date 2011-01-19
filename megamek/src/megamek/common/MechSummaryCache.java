@@ -375,8 +375,15 @@ public class MechSummaryCache {
         return ms;
     }
 
-    // Loading a complete mech object for each summary is a bear and should be
-    // changed, but it lets me use the existing parsers
+    /**
+     *  Loading a complete mech object for each summary is a bear and should be
+     *  changed, but it lets me use the existing parsers
+     * @param vMechs
+     * @param sKnownFiles
+     * @param lLastCheck
+     * @param fDir
+     * @return
+     */
     private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fDir) {
         boolean bNeedsUpdate = false;
         loadReport.append("  Looking in ").append(fDir.getPath()).append("...\n");

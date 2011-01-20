@@ -127,25 +127,26 @@ public abstract class Mech extends Entity implements Serializable {
 
     public static final int COCKPIT_STANDARD = 0;
 
-    public static final int COCKPIT_INDUSTRIAL = 1;
+    public static final int COCKPIT_SMALL = 1;
 
-    public static final int COCKPIT_PRIMITIVE = 2;
+    public static final int COCKPIT_COMMAND_CONSOLE = 2;
 
-    public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 3;
+    public static final int COCKPIT_TORSO_MOUNTED = 3;
 
-    public static final int COCKPIT_SMALL = 4;
+    public static final int COCKPIT_DUAL = 4;
 
-    public static final int COCKPIT_COMMAND_CONSOLE = 5;
+    public static final int COCKPIT_INDUSTRIAL = 5;
 
-    public static final int COCKPIT_TORSO_MOUNTED = 6;
+    public static final int COCKPIT_PRIMITIVE = 6;
 
-    public static final int COCKPIT_DUAL = 7;
+    public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
+
 
     public static final String[] COCKPIT_STRING =
-        { "Standard Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit", "Small Cockpit", "Command Console", "Torso-Mounted Cockpit", "Dual Cockpit" };
+        { "Standard Cockpit", "Small Cockpit", "Command Console", "Torso-Mounted Cockpit", "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING =
-        { "Standard", "Industrial", "Primitive", "Primitive Industrial", "Small", "Command Console", "Torso Mounted", "Dual" };
+        { "Standard", "Small", "Command Console", "Torso Mounted", "Dual" , "Industrial", "Primitive", "Primitive Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -4608,6 +4609,7 @@ public abstract class Mech extends Entity implements Serializable {
         return false;
     }
 
+    @Override
     public boolean isNullSigOn() {
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {

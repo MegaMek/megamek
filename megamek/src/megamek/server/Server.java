@@ -24368,6 +24368,9 @@ public class Server implements Runnable {
             toHit = caa.toHit(game);
             damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), (caa.getTarget(game) instanceof Infantry)
                     && !(caa.getTarget(game) instanceof BattleArmor));
+            if ((caa.getTargetType() == Targetable.TYPE_BUILDING) && caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)) {
+                damage += Compute.d6(4);
+            }
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction) aaa;
             toHit = daa.toHit(game);

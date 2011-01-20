@@ -14035,7 +14035,7 @@ public class Server implements Runnable {
             }
 
             // void sig adds 10 heat
-            if ((entity instanceof Mech) && entity.isVoidSigActive()) {
+            if ((entity instanceof Mech) && entity.isVoidSigOn()) {
                 entity.heatBuildup += 10;
                 r = new Report(5016);
                 r.subject = entity.getId();
@@ -14043,7 +14043,7 @@ public class Server implements Runnable {
             }
 
             // null sig adds 10 heat
-            if ((entity instanceof Mech) && entity.isNullSigActive()) {
+            if ((entity instanceof Mech) && entity.isNullSigOn()) {
                 entity.heatBuildup += 10;
                 r = new Report(5017);
                 r.subject = entity.getId();
@@ -14051,7 +14051,7 @@ public class Server implements Runnable {
             }
 
             // chameleon polarization field adds 6
-            if ((entity instanceof Mech) && entity.isChameleonShieldActive()) {
+            if ((entity instanceof Mech) && entity.isChameleonShieldOn()) {
                 entity.heatBuildup += 6;
                 r = new Report(5014);
                 r.subject = entity.getId();

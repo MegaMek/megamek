@@ -478,6 +478,12 @@ public class BLKFile {
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     e.addTransporter(new Bay(size, doors));
+                } else if (transporter.startsWith("protomechbay:", 0)) {
+                    String numbers = transporter.substring(13);
+                    String temp[] = numbers.split(":");
+                    double size = Double.parseDouble(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    e.addTransporter(new Bay(size, doors));
                 }
 
             } // Handle the next transportation component.

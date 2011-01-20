@@ -33,12 +33,12 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.common.MovePath.MoveStepType;
 
 public class CEntity {
 

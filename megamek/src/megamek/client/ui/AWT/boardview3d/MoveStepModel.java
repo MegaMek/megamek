@@ -33,9 +33,9 @@ import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.IHex;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
-import megamek.common.MovePath.MoveStepType;
 
 class MoveStepModel extends ArrowModel {
     public MoveStepModel(MoveStep step, int count, IHex hex, ViewTransform currentView) {

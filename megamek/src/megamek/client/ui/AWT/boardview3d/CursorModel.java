@@ -22,7 +22,9 @@ import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Vector3d;
+
 import megamek.common.Coords;
 import megamek.common.IHex;
 

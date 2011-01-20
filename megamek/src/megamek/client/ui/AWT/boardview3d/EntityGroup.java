@@ -20,10 +20,12 @@ package megamek.client.ui.AWT.boardview3d;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Vector;
+
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 import javax.media.j3d.Node;
 import javax.vecmath.Point3d;
+
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.Compute;
 import megamek.common.Coords;

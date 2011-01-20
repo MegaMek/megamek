@@ -24,8 +24,8 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Entity;
 import megamek.common.Aero;
+import megamek.common.Entity;
 import megamek.common.SmallCraft;
 
 /**

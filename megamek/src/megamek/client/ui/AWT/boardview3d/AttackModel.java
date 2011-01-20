@@ -18,6 +18,7 @@
 package megamek.client.ui.AWT.boardview3d;
 
 import java.util.Enumeration;
+
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.Material;
@@ -25,7 +26,11 @@ import javax.media.j3d.Node;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.vecmath.*;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Quat4d;
+import javax.vecmath.Vector3d;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
@@ -34,7 +39,16 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
-import megamek.common.actions.*;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.ChargeAttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.ProtomechPhysicalAttackAction;
+import megamek.common.actions.PunchAttackAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 
 class AttackModel extends ArrowModel {
     IGame game;

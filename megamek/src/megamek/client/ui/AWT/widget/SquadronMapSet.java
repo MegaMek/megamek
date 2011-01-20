@@ -23,8 +23,8 @@ import java.awt.Image;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.FighterSquadron;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 
 /**
  * Class which keeps set of all areas required to 

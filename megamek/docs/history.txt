@@ -32,6 +32,7 @@ v0.35.22-dev (SVN)
     mech make it act like a null-sig
 + Bug 3081641: wrecking ball should do 4d6 extra damage to buildings
 + Bug 3081741: wrecking ball critical miss against infantry causes no damage
++ Bug 3015225: AMS vs. single-missile weapons not working
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -32,7 +32,7 @@ import megamek.server.Server;
 public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1655014339855184419L;
 
@@ -50,14 +50,15 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
+        getAMSHitsMod(vPhaseReport);
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
                 return ((BattleArmor) ae).getShootingStrength();
@@ -68,7 +69,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         if (ae instanceof BattleArmor) {
             if (amsEnganged) {
                 return Compute.missilesHit(((BattleArmor) ae)
-                        .getShootingStrength(), -2); 
+                        .getShootingStrength(), -2);
             }
             return Compute.missilesHit(((BattleArmor) ae)
                     .getShootingStrength());
@@ -86,11 +87,13 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             if (destroyRoll <= 3) {
                 r = new Report(3240);
                 r.subject = subjectId;
+                r.add("pod");
                 r.add(destroyRoll);
                 vPhaseReport.add(r);
                 return 0;
             }
             r = new Report(3241);
+            r.add("pod");
             r.add(destroyRoll);
             r.subject = subjectId;
             vPhaseReport.add(r);
@@ -100,7 +103,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -110,7 +113,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -122,11 +125,12 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         } else {
             toReturn = 4;
         }
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, WeaponType.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
             toReturn = Math.ceil(toReturn);
-        } if (bGlancing)
+        } if (bGlancing) {
             return (int) Math.floor(toReturn / 2.0);
+        }
         return (int)toReturn;
     }
 }

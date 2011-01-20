@@ -2358,4 +2358,15 @@ public class Tank extends Entity {
         return availableSlots - usedSlots;
     }
 
+    @Override
+    public void setArmorType(int armType) {
+        super.setArmorType(armType);
+        if (armType == EquipmentType.T_ARMOR_STEALTH) {
+            try {
+                this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH)), LOC_BODY);
+            } catch (LocationFullException e) {
+            }
+        }
+    }
+
 }

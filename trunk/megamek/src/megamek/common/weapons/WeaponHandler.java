@@ -563,6 +563,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
+        } else {
+            Report.addNewline(vPhaseReport);
         }
 
         // for non-salvo shots, report that the aimed shot was successfull

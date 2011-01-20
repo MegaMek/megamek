@@ -1740,4 +1740,9 @@ public class BattleArmor extends Infantry {
         return Compute.ARC_360;
     }
 
+    @Override
+    public boolean isHardenedArmorDamaged(int loc) {
+        return false;
+    }
+
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -11868,7 +11868,7 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             addReport(r);
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "hit with own flail/wrecking ball");
-            pr.damage /= 2;
+            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false)/2;
             newToHit.setHitTable(ToHitData.HIT_NORMAL);
             newToHit.setSideTable(ToHitData.SIDE_FRONT);
             pr.toHit = newToHit;

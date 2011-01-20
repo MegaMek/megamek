@@ -13,11 +13,14 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -62,6 +65,40 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
         return (int) Math.ceil(toReturn);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
+     */
+    @Override
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        getAMSHitsMod(vPhaseReport);
+        bSalvo = true;
+        if (amsEnganged) {
+            Report r = new Report(3235);
+            r.subject = subjectId;
+            vPhaseReport.add(r);
+            r = new Report(3230);
+            r.indent(1);
+            r.subject = subjectId;
+            vPhaseReport.add(r);
+            int destroyRoll = Compute.d6();
+            if (destroyRoll <= 3) {
+                r = new Report(3240);
+                r.subject = subjectId;
+                r.add("missile");
+                r.add(destroyRoll);
+                vPhaseReport.add(r);
+                return 0;
+            }
+            r = new Report(3241);
+            r.add("missile");
+            r.add(destroyRoll);
+            r.subject = subjectId;
+            vPhaseReport.add(r);
+        }
+        return 1;
     }
 
 }

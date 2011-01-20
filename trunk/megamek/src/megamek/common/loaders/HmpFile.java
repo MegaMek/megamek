@@ -379,7 +379,7 @@ implements IMechLoader
             // Get cockpit and gyro type, if any.
             if (rulesLevel > 2) {
                 gyroType = readUnsignedShort(dis);
-                cockpitType = readUnsignedShort(dis)+4;
+                cockpitType = readUnsignedShort(dis);
                 dis.skipBytes(16);
                 readUnsignedShort(dis);
             } else {

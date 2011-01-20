@@ -34,6 +34,8 @@ v0.35.22-dev (SVN)
 + Bug 3081741: wrecking ball critical miss against infantry causes no damage
 + Bug 3015225: AMS vs. single-missile weapons not working
 + Bug 2983525: server starts with invalid map
++ Bug 2982926: unable to load CASE II from HMP
++ Bug 2980124: MFUK RAC/20 should be splitable
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

@@ -48,7 +48,7 @@ import megamek.common.WeaponType;
  * Based on the hmpread.c program and the MtfFile object. Note that this class
  * doubles as both a MM Heavy Metal Pro parser and a HMP to MTF file converter
  * (when the "main" method is used).
- * 
+ *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
  *          help from Ian Hamilton.
@@ -379,7 +379,7 @@ implements IMechLoader
             // Get cockpit and gyro type, if any.
             if (rulesLevel > 2) {
                 gyroType = readUnsignedShort(dis);
-                cockpitType = readUnsignedShort(dis);
+                cockpitType = readUnsignedShort(dis)+4;
                 dis.skipBytes(16);
                 readUnsignedShort(dis);
             } else {
@@ -830,7 +830,6 @@ implements IMechLoader
         criticals.put(new Long(0x21), "Light Ferro-Fibrous");
         criticals.put(new Long(0x22), "Heavy Ferro-Fibrous");
         criticals.put(new Long(0x25), "IS2 Compact Heat Sinks");
-        criticals.put(new Long(0x26), "CASE II");
         criticals.put(new Long(0x27), "Null Signature System");
         criticals.put(new Long(0x28), "Coolant Pod");
         criticals.put(new Long(0x2B), "Claw (THB)");
@@ -963,6 +962,8 @@ implements IMechLoader
 
         isCriticals.put(new Long(0x23), "Stealth Armor");
         isCriticals.put(new Long(0x24), "Blue Shield (UB)");
+
+        isCriticals.put(new Long(0x26), "ISCASEII");
 
         isCriticals.put(new Long(0x33), "ISERLargeLaser");
         isCriticals.put(new Long(0x34), "ISERPPC");
@@ -1290,6 +1291,8 @@ implements IMechLoader
 
         clanCriticals.put(new Long(0x21), "Light Ferro-Fibrous"); // ?
         clanCriticals.put(new Long(0x22), "Heavy Ferro-Fibrous"); // ?
+
+        clanCriticals.put(new Long(0x26), "CLCASEII");
 
         clanCriticals.put(new Long(0x33), "CLERLargeLaser");
         clanCriticals.put(new Long(0x34), "CLERMediumLaser");

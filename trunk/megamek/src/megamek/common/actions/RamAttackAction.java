@@ -33,6 +33,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Jumpship;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Player;
 import megamek.common.SpaceStation;
@@ -40,7 +41,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.Warship;
-import megamek.common.MovePath.MoveStepType;
 
 /**
  * Represents one unit charging another. Stores information about where the

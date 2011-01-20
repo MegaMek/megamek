@@ -21,6 +21,7 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3d;
+
 import megamek.client.ui.AWT.TilesetManager;
 import megamek.common.Coords;
 import megamek.common.IGame;

@@ -17,7 +17,9 @@
 
 package megamek.client.ui.AWT.boardview3d;
 
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.common.Entity;
 import megamek.common.IGame;

@@ -17,7 +17,6 @@
 
 package megamek.client.ui.AWT.boardview3d;
 
-import com.sun.j3d.utils.image.TextureLoader;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -32,11 +31,13 @@ import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
+
 import javax.media.j3d.Appearance;
 import javax.media.j3d.Node;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
+
 import megamek.client.ui.AWT.TilesetManager;
 import megamek.client.ui.AWT.util.ImageCache;
 import megamek.common.Entity;
@@ -46,6 +47,8 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+
+import com.sun.j3d.utils.image.TextureLoader;
 
 
 

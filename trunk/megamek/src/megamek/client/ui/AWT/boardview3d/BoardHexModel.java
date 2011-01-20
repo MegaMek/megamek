@@ -18,6 +18,7 @@
 package megamek.client.ui.AWT.boardview3d;
 
 import java.util.List;
+
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.Link;
@@ -29,7 +30,10 @@ import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Color4f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.GUIPreferences;

@@ -17,16 +17,18 @@
 
 package megamek.client.ui.AWT.boardview3d;
 
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.geometry.Stripifier;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Vector;
+
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Shape3D;
 import javax.vecmath.Point3d;
+
+import com.sun.j3d.utils.geometry.GeometryInfo;
+import com.sun.j3d.utils.geometry.NormalGenerator;
+import com.sun.j3d.utils.geometry.Stripifier;
 
 /**
  *

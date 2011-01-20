@@ -18,6 +18,7 @@
 package megamek.client.ui.AWT.boardview3d;
 
 import java.util.Enumeration;
+
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 

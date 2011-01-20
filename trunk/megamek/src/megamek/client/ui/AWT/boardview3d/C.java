@@ -23,7 +23,9 @@ import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransparencyAttributes;
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Color4f;
+import javax.vecmath.Quat4d;
 
 /**
  * generic reusable 3D constants

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -34,7 +34,7 @@ import megamek.server.Server;
 public class NarcHandler extends MissileWeaponHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3195613885543781820L;
 
@@ -50,12 +50,13 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
+        getAMSHitsMod(vPhaseReport);
         if (amsEnganged) {
             Report r = new Report(3235);
             r.subject = subjectId;
@@ -68,11 +69,13 @@ public class NarcHandler extends MissileWeaponHandler {
             if (destroyRoll <= 3) {
                 r = new Report(3240);
                 r.subject = subjectId;
+                r.add("pod");
                 r.add(destroyRoll);
                 vPhaseReport.add(r);
                 return 0;
             }
             r = new Report(3241);
+            r.add("pod");
             r.add(destroyRoll);
             r.subject = subjectId;
             vPhaseReport.add(r);
@@ -82,7 +85,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -92,7 +95,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -102,7 +105,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */

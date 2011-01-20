@@ -2559,10 +2559,10 @@ public class RandomMapDialog extends JDialog implements ActionListener,
 
         //if we have a client then send an update to the server
         if(null != client) {
-        	client.sendMapSettings(mapSettings);
+            client.sendMapSettings(mapSettings);
         } else {
-        	//otherwise just update the local settings
-        	bsd.updateMapSettings(mapSettings);
+            //otherwise just update the local settings
+            bsd.updateMapSettings(mapSettings);
         }
 
         return true;

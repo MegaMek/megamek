@@ -14,11 +14,8 @@
 
 package megamek.common.actions;
 
-import java.util.Vector;
-
 import megamek.common.BipedMech;
 import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;

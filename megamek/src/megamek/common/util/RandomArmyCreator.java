@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import megamek.common.Compute;
+import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
-import megamek.common.MechSearchFilter;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 

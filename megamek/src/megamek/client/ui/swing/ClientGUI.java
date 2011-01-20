@@ -59,7 +59,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import keypoint.PngEncoder;
-
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewEvent;

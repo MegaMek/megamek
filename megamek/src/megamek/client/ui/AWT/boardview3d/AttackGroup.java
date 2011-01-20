@@ -18,6 +18,7 @@
 package megamek.client.ui.AWT.boardview3d;
 
 import java.util.Enumeration;
+
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 
@@ -30,7 +31,10 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.PhysicalAttackAction;
 
 /**
  *

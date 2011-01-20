@@ -17,13 +17,9 @@
 
 package megamek.client.ui.AWT.boardview3d;
 
-import com.sun.j3d.utils.behaviors.interpolators.*;
-import com.sun.j3d.utils.geometry.Cone;
-import com.sun.j3d.utils.geometry.GeometryInfo;
-import com.sun.j3d.utils.geometry.NormalGenerator;
-import com.sun.j3d.utils.geometry.Stripifier;
 import java.awt.Color;
 import java.util.Vector;
+
 import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BranchGroup;
@@ -38,7 +34,11 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TransparencyAttributes;
 import javax.media.j3d.TransparencyInterpolator;
-import javax.vecmath.*;
+import javax.vecmath.Color3f;
+import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3d;
+
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.common.BattleArmor;
 import megamek.common.Coords;
@@ -49,6 +49,13 @@ import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.UnitLocation;
+
+import com.sun.j3d.utils.behaviors.interpolators.KBKeyFrame;
+import com.sun.j3d.utils.behaviors.interpolators.KBRotPosScaleSplinePathInterpolator;
+import com.sun.j3d.utils.geometry.Cone;
+import com.sun.j3d.utils.geometry.GeometryInfo;
+import com.sun.j3d.utils.geometry.NormalGenerator;
+import com.sun.j3d.utils.geometry.Stripifier;
 
 /**
  *

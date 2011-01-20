@@ -4589,10 +4589,26 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     /**
-     * Does the mech have a functioning null signature system?
+     * Does the mech have a functioning null signature system, or a void sig
+     * that is acting as a a null sig because of externally carried BA?
      */
     @Override
     public boolean isNullSigActive() {
+        if (isVoidSigOn() && !isVoidSigActive()) {
+            return true;
+        }
+        if (!isShutDown()) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type.hasFlag(MiscType.F_NULLSIG) && m.curMode().equals("On") && m.isReady()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean isNullSigOn() {
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4609,6 +4625,26 @@ public abstract class Mech extends Entity implements Serializable {
      */
     @Override
     public boolean isVoidSigActive() {
+        // per the rules questions forum, externally mounted BA invalidates Void Sig
+        if (getExternalUnits().size() > 0) {
+            return false;
+        }
+        if (!isShutDown()) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type.hasFlag(MiscType.F_VOIDSIG) && m.curMode().equals("On") && m.isReady()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does the mech have a functioning void signature system?
+     */
+    @Override
+    public boolean isVoidSigOn() {
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4625,6 +4661,26 @@ public abstract class Mech extends Entity implements Serializable {
      */
     @Override
     public boolean isChameleonShieldActive() {
+     // per the rules questions forum, externally mounted BA invalidates Void Sig
+        if (getExternalUnits().size() > 0) {
+            return false;
+        }
+        if (!isShutDown()) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type.hasFlag(MiscType.F_CHAMELEON_SHIELD) && m.curMode().equals("On") && m.isReady()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does the mech have a functioning Chameleon Light Polarization Field?
+     */
+    @Override
+    public boolean isChameleonShieldOn() {
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();

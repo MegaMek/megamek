@@ -6095,7 +6095,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Determine if this unit has an active void signature system.
+     * Determine if this unit has an active null-signature system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a null signature system that
+     *         is currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    public boolean isNullSigOn() {
+        return false;
+    }
+
+    /**
+     * Determine if this unit has an active void signature system that is
+     * providing its benefits.
      * <p/>
      * Sub-classes are encouraged to override this method.
      *
@@ -6104,6 +6118,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *         system or if it is inactive.
      */
     public boolean isVoidSigActive() {
+        return false;
+    }
+
+    /**
+     * Determine if this unit has an active void signature system.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a void signature system that
+     *         is currently active, <code>false</code> if there is no stealth
+     *         system or if it is turned off.
+     */
+    public boolean isVoidSigOn() {
         return false;
     }
 
@@ -6117,6 +6144,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *         system or if it is inactive.
      */
     public boolean isChameleonShieldActive() {
+        return false;
+    }
+
+    /**
+     * Determine if this unit has an active chameleon light polarization field.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a void signature system that
+     *         is currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    public boolean isChameleonShieldOn() {
         return false;
     }
 

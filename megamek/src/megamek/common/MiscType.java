@@ -2111,6 +2111,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Stealth Armor");
         misc.tonnage = 0; // ???
         misc.criticals = 12;
+        misc.tankslots = 0;
         misc.hittable = false;
         misc.spreadable = true;
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;

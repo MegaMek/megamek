@@ -1254,6 +1254,7 @@ public class Game implements Serializable, IGame {
         victoryPlayerId = Player.PLAYER_NONE;
         victoryTeam = Player.TEAM_NONE;
         lastEntityId = 0;
+        planetaryConditions = new PlanetaryConditions();
     }
 
     private void removeArtyAutoHitHexes() {

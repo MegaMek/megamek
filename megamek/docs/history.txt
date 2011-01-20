@@ -31,6 +31,7 @@ v0.35.22-dev (SVN)
 + Bug 3052521: BA riding on a CLPS mech make it not work, BA riding on a voidsig
     mech make it act like a null-sig
 + Bug 3081641: wrecking ball should do 4d6 extra damage to buildings
++ Bug 3081741: wrecking ball critical miss against infantry causes no damage
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

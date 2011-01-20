@@ -16475,7 +16475,10 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
                     tmpDamageHold = damage;
-                    damage = (int) Math.ceil(((double) damage) / 2);
+                    damage = (int) Math.floor(((double) damage) / 2);
+                    if (tmpDamageHold == 1) {
+                        damage = 1;
+                    }
                     r = new Report(6067);
                     r.subject = te_n;
                     r.indent(2);

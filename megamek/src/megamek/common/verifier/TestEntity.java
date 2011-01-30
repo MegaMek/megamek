@@ -44,7 +44,7 @@ public abstract class TestEntity implements TestEntityOption {
     public final static float CEIL_TENTHTON = 10.0f;
 
     protected Engine engine = null;
-    protected Armor armor = null;
+    protected Armor[] armor = null;
     protected Structure structure = null;
     private TestEntityOption options = null;
 
@@ -78,7 +78,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public String fileString = null; // where the unit came from
 
-    public TestEntity(TestEntityOption options, Engine engine, Armor armor, Structure structure) {
+    public TestEntity(TestEntityOption options, Engine engine, Armor[] armor, Structure structure) {
         this.options = options;
         this.engine = engine;
         this.armor = armor;
@@ -90,7 +90,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public boolean isClanArmor() {
-        return getEntity().isClanArmor();
+        return getEntity().isClanArmor(0) && !getEntity().hasPatchworkArmor();
     }
 
     public float getWeight() {
@@ -233,11 +233,19 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printWeightArmor() {
-        return StringUtil.makeLength("Armor: " + Integer.toString(getTotalOArmor()) + " " + armor.getShortName(), getPrintSize() - 5) + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+        return StringUtil.makeLength("Armor: " + Integer.toString(getTotalOArmor()) + " " + armor[0].getShortName(), getPrintSize() - 5) + TestEntity.makeWeightString(getWeightArmor()) + "\n";
     }
 
     public float getWeightArmor() {
-        return armor.getWeightArmor(getTotalOArmor(), getWeightCeilingArmor());
+        float armorWeight = 0;
+        if (!getEntity().hasPatchworkArmor()) {
+            armorWeight += armor[0].getWeightArmor(getTotalOArmor(), getWeightCeilingArmor());
+        } else {
+            for (int i = 0; i < armor.length; i++) {
+                armorWeight += armor[i].getWeightArmor(getEntity().getOArmor(i), getWeightCeilingArmor());
+            }
+        }
+        return armorWeight;
     }
 
     public float getWeightMiscEquip() {
@@ -751,12 +759,12 @@ public abstract class TestEntity implements TestEntityOption {
                     illegal = true;
                 }
                 if (mech.isIndustrial()) {
-                    if (mech.getArmorType() != EquipmentType.T_ARMOR_COMMERCIAL) {
+                    if (mech.getArmorType(0) != EquipmentType.T_ARMOR_COMMERCIAL) {
                         buff.append("primitive industrialmechs must mount commercial armor\n");
                         illegal = true;
                     }
                 } else {
-                    if (mech.getArmorType() != EquipmentType.T_ARMOR_INDUSTRIAL) {
+                    if (mech.getArmorType(0) != EquipmentType.T_ARMOR_INDUSTRIAL) {
                         buff.append("primitive battlemechs must mount primitive battlemech (industrial) armor\n");
                         illegal = true;
                     }

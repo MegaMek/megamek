@@ -23,6 +23,7 @@ package megamek.client.ui.AWT;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 
+import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
@@ -146,9 +147,9 @@ public class MechView {
             sBasic.append(entity.getEngine().getShortEngineName());
             sBasic.append("\n"); //$NON-NLS-1$
         }
-        if (entity.hasBARArmor()) {
+        if (entity.hasBARArmor(1) && !entity.hasPatchworkArmor()) {
             sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
-            sBasic.append(entity.getBARRating());
+            sBasic.append(entity.getBARRating(1));
             sBasic.append("\n"); //$NON-NLS-1$
         }
 
@@ -197,7 +198,7 @@ public class MechView {
             } else {
                 sBasic.append( getInternalAndArmor() );
             }
-        } 
+        }
 
         if (entity.getFluff() != null) {
             sFluff.append(entity.getFluff());
@@ -241,9 +242,9 @@ public class MechView {
             sIntArm.append("/") //$NON-NLS-1$
                     .append(maxArmor);
         }
-        if (!isInf && !isProto) {
+        if (!isInf && !isProto && !entity.hasPatchworkArmor()) {
             sIntArm.append(Messages.getString("MechView."
-                    + EquipmentType.getArmorTypeName(entity.getArmorType())));
+                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
         }
         sIntArm.append("\n"); //$NON-NLS-1$
         // Walk through the entity's locations.
@@ -268,6 +269,16 @@ public class MechView {
                 sIntArm.append(" (") //$NON-NLS-1$
                         .append(renderArmor(entity.getArmor(loc, true))).append(
                                 ")"); //$NON-NLS-1$
+            }
+            if (entity.hasPatchworkArmor()) {
+                sIntArm.append(" ");
+                sIntArm.append(Messages.getString("MechView."
+                        + EquipmentType.getArmorTypeName(entity.getArmorType(loc))));
+                sIntArm.append(" ");
+                if (entity.hasBARArmor(loc)) {
+                    sIntArm.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
+                    sIntArm.append(entity.getBARRating(loc));
+                }
             }
             sIntArm.append("\n"); //$NON-NLS-1$
         }
@@ -316,7 +327,7 @@ public class MechView {
         }
 
         sIntArm.append(Messages.getString("MechView."
-               + EquipmentType.getArmorTypeName(entity.getArmorType())));
+               + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
 
         sIntArm.append( "\n" ); //$NON-NLS-1$
         // Walk through the entity's locations.

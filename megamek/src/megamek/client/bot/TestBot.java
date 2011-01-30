@@ -1782,7 +1782,8 @@ public class TestBot extends BotClient {
 
         // If unit has stealth armor, turn it on
         if ((getEntity(entNum) instanceof Mech)
-                && (getEntity(entNum).getArmorType() == EquipmentType.T_ARMOR_STEALTH)) {
+                && (getEntity(entNum).getArmorType(0) == EquipmentType.T_ARMOR_STEALTH)
+                && !getEntity(entNum).hasPatchworkArmor()) {
             for (Mounted test_equip : getEntity(entNum).getMisc()) {
                 MiscType test_type = (MiscType) test_equip.getType();
                 if (test_type.hasFlag(MiscType.F_STEALTH)) {

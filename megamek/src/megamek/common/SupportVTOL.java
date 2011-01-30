@@ -26,19 +26,31 @@ public class SupportVTOL extends VTOL implements Serializable {
      *
      */
     private static final long serialVersionUID = 2771230410747098997L;
-    private int barRating;
+    private int[] barRating;
+
+    public SupportVTOL() {
+        super();
+        barRating = new int[locations()];
+    }
+
+    public void setBARRating(int rating, int loc) {
+        barRating[loc] = rating;
+    }
 
     public void setBARRating(int rating) {
-        barRating = rating;
+        for (int i = 0; i < locations(); i++) {
+            barRating[i] = rating;
+        }
     }
+
 
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
-    public int getBARRating() {
-        return barRating;
+    public int getBARRating(int loc) {
+        return barRating[loc];
     }
 
     /*
@@ -46,7 +58,7 @@ public class SupportVTOL extends VTOL implements Serializable {
      * @see megamek.common.Entity#hasBARArmor()
      */
     @Override
-    public boolean hasBARArmor() {
+    public boolean hasBARArmor(int loc) {
         return true;
     }
 

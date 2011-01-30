@@ -373,7 +373,48 @@ public class MtfFile implements IMechLoader {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
             for (int x = 0; x < locationOrder.length; x++) {
-                mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].indexOf(':') + 1)), locationOrder[x]);
+                mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
+                if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
+                    mech.setArmorType(EquipmentType.getArmorType(armorValues[x].substring(armorValues[x].indexOf(':')+1, armorValues[x].indexOf('('))), locationOrder[x]);
+                    if (armorValues[x].toLowerCase().indexOf("clan") != -1) {
+                        switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                            case 2:
+                                mech.setArmorTechLevel(TechConstants.T_CLAN_TW, locationOrder[x]);
+                                break;
+                            case 3:
+                                mech.setArmorTechLevel(TechConstants.T_CLAN_ADVANCED, locationOrder[x]);
+                                break;
+                            case 4:
+                                mech.setArmorTechLevel(TechConstants.T_CLAN_EXPERIMENTAL, locationOrder[x]);
+                                break;
+                            case 5:
+                                mech.setArmorTechLevel(TechConstants.T_CLAN_UNOFFICIAL, locationOrder[x]);
+                                break;
+                            default:
+                                throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                        }
+                    } else if (armorValues[x].toLowerCase().indexOf("inner sphere") != -1) {
+                        switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                            case 1:
+                                mech.setArmorTechLevel(TechConstants.T_INTRO_BOXSET, locationOrder[x]);
+                                break;
+                            case 2:
+                                mech.setArmorTechLevel(TechConstants.T_IS_TW_NON_BOX, locationOrder[x]);
+                                break;
+                            case 3:
+                                mech.setArmorTechLevel(TechConstants.T_IS_ADVANCED, locationOrder[x]);
+                                break;
+                            case 4:
+                                mech.setArmorTechLevel(TechConstants.T_IS_EXPERIMENTAL, locationOrder[x]);
+                                break;
+                            case 5:
+                                mech.setArmorTechLevel(TechConstants.T_IS_UNOFFICIAL, locationOrder[x]);
+                                break;
+                            default:
+                                throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
+                        }
+                    }
+                }
             }
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);

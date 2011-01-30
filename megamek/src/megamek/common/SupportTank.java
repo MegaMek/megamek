@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 /**
  * This is a support vehicle
- * 
+ *
  * @author beerockxs
  */
 public class SupportTank extends Tank implements Serializable {
@@ -27,35 +27,47 @@ public class SupportTank extends Tank implements Serializable {
      *
      */
     private static final long serialVersionUID = -9028127010133768714L;
-    private int barRating;
+    private int[] barRating;
+
+    public SupportTank() {
+        super();
+        barRating = new int[locations()];
+    }
+
+    public void setBARRating(int rating, int loc) {
+        barRating[loc] = rating;
+    }
 
     public void setBARRating(int rating) {
-        barRating = rating;
+        for (int i = 0; i < locations(); i++) {
+            barRating[i] = rating;
+        }
     }
+
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
-    public int getBARRating() {
-        return barRating;
+    public int getBARRating(int loc) {
+        return barRating[loc];
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#hasBARArmor()
      */
     @Override
-    public boolean hasBARArmor() {
+    public boolean hasBARArmor(int loc) {
         return true;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#hasArmoredChassis()
      */
     @Override
@@ -97,7 +109,7 @@ public class SupportTank extends Tank implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override

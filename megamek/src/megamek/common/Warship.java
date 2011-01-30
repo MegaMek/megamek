@@ -225,7 +225,7 @@ public class Warship extends Jumpship {
         cost += 200 * getFuel() / getFuelPerTon();
 
         //armor
-        cost += getArmorWeight(locations()-2)*EquipmentType.getArmorCost(armorType);
+        cost += getArmorWeight(locations()-2)*EquipmentType.getArmorCost(armorType[0]);
 
         //heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;

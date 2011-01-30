@@ -328,9 +328,15 @@ public class BLKFile {
         }
         blk.writeBlockData("engine_type", engineCode);
         blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
-        if (t.getArmorType() != 0) {
-            blk.writeBlockData("armor_type", t.getArmorType());
-            blk.writeBlockData("armor_tech", t.getArmorTechLevel());
+        if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
+            blk.writeBlockData("armor_type", t.getArmorType(1));
+            blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
+        } else if (t.hasPatchworkArmor()) {
+            blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
+            for (int i = 1; i < t.locations(); i++) {
+                blk.writeBlockData(t.getLocationName(i)+"_armor_type", t.getArmorType(i));
+                blk.writeBlockData(t.getLocationName(i)+"_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
+            }
         }
         if (t.getStructureType() != 0) {
             blk.writeBlockData("internal_type", t.getStructureType());
@@ -365,8 +371,8 @@ public class BLKFile {
         for (int i = 0; i < t.locations(); i++) {
             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
-        if (t.hasBARArmor()) {
-            blk.writeBlockData("barrating", t.getBARRating());
+        if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
+            blk.writeBlockData("barrating", t.getBARRating(1));
         }
 
         if (t.getFluff().getHistory().trim().length() > 0) {

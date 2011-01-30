@@ -851,4 +851,12 @@ public class QuadMech extends Mech {
         // quads don't have arms
         return false;
     }
+
+    @Override
+    public boolean hasMPReducingHardenedArmor() {
+        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED)
+            || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED)
+            || (armorType[LOC_LARM] == EquipmentType.T_ARMOR_HARDENED)
+            || (armorType[LOC_RARM] == EquipmentType.T_ARMOR_HARDENED);
+    }
 }

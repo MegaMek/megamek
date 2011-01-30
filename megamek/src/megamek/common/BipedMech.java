@@ -834,4 +834,11 @@ public class BipedMech extends Mech {
         }
         return (i >= 1) || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY));
     }
+
+    @Override
+    public boolean hasMPReducingHardenedArmor() {
+        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED)
+            || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED);
+    }
+
 }

@@ -202,7 +202,7 @@ public class ChatterBox implements KeyListener {
             historyBookmark--;
             fetchHistory();
         }
-        //cb2.setMessage(inputField.getText()+ev.getKeyChar());
+        cb2.setMessage(inputField.getText()+ev.getKeyChar());
         moveToEnd();
     }
 

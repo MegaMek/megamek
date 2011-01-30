@@ -1067,132 +1067,38 @@ public class BattleArmor extends Infantry {
         // Note: infantry are immune to stealth, but not camoflage
         // or mimetic armor
 
-        // TODO: eliminate duplicate code
-        if (armorType != -1) {
-            /*
-             * Here, in order, are the armor types used by custom Battle Armor
-             * at this point: 0: "Standard", 1: "Advanced", 2: "Prototype", 3:
-             * "Basic Stealth", 4: "Prototype Stealth", 5: "Standard Stealth",
-             * 6: "Improved Stealth", 7: "Fire Resistant", 8: "Mimetic"
-             */
-            if ((armorType == 3) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-                // Basic Stealth
-                switch (range) {
-                    case RangeType.RANGE_MINIMUM:
-                    case RangeType.RANGE_SHORT:
-                        // At short range, basic stealth doesn't get a mod!
-                        break;
-                    case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+1, "Basic Stealth Armor");
-                        break;
-                    case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                        // modifier?
-                        result = new TargetRoll(+2, "Basic Stealth Armor");
-                        break;
-                    case RangeType.RANGE_OUT:
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown range constant: " + range);
-                }
-            } else if ((armorType == 4) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-                // Prototype Stealth
-                switch (range) {
-                    case RangeType.RANGE_MINIMUM:
-                    case RangeType.RANGE_SHORT:
-                        // At short range, prototype stealth doesn't get a mod!
-                        break;
-                    case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+1, "Prototype Stealth Armor");
-                        break;
-                    case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                        // modifier?
-                        result = new TargetRoll(+2, "Prototype Stealth Armor");
-                        break;
-                    case RangeType.RANGE_OUT:
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown range constant: " + range);
-                }
-            } else if ((armorType == 5) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-                // Standard Stealth
-                switch (range) {
-                    case RangeType.RANGE_MINIMUM:
-                    case RangeType.RANGE_SHORT:
-                        result = new TargetRoll(+1, "Standard Stealth Armor");
-                        break;
-                    case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+1, "Standard Stealth Armor");
-                        break;
-                    case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                        // modifier?
-                        result = new TargetRoll(+2, "Standard Stealth Armor");
-                        break;
-                    case RangeType.RANGE_OUT:
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown range constant: " + range);
-                }
-            } else if ((armorType == 6) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-                // Improved Stealth
-                switch (range) {
-                    case RangeType.RANGE_MINIMUM:
-                    case RangeType.RANGE_SHORT:
-                        result = new TargetRoll(+1, "Improved Stealth Armor");
-                        break;
-                    case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+2, "Improved Stealth Armor");
-                        break;
-                    case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                        // modifier?
-                        result = new TargetRoll(+3, "Improved Stealth Armor");
-                        break;
-                    case RangeType.RANGE_OUT:
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown range constant: " + range);
-                }
-            } else if (armorType == 8) {
-                int mmod = 3 - delta_distance;
-                mmod = Math.max(0, mmod);
-                result = new TargetRoll(mmod, "mimetic armor");
-            }
-        } else {
-            // Mimetic armor modifier is based upon the number of hexes moved,
-            // and adds to existing movement modifier (Total Warfare p228):
-            // 0 hexes moved +3 movement modifier
-            // 1 hex moved +2 movement modifier
-            // 2 hexes moved +1 movement modifier
-            // 3+ hexes moved +0 movement modifier
-            if (isMimetic) {
-                int mmod = 3 - delta_distance;
-                mmod = Math.max(0, mmod);
-                result = new TargetRoll(mmod, "mimetic armor");
-            }
 
-            // Stealthy units alreay have their to-hit mods defined.
-            if (isStealthy && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
-                switch (range) {
-                    case RangeType.RANGE_MINIMUM:
-                    case RangeType.RANGE_SHORT:
-                        result = new TargetRoll(shortStealthMod, stealthName);
-                        break;
-                    case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(mediumStealthMod, stealthName);
-                        break;
-                    case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                        // modifier?
-                        result = new TargetRoll(longStealthMod, stealthName);
-                        break;
-                    case RangeType.RANGE_OUT:
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown range constant: " + range);
-                }
+        // Mimetic armor modifier is based upon the number of hexes moved,
+        // and adds to existing movement modifier (Total Warfare p228):
+        // 0 hexes moved +3 movement modifier
+        // 1 hex moved +2 movement modifier
+        // 2 hexes moved +1 movement modifier
+        // 3+ hexes moved +0 movement modifier
+        if (isMimetic) {
+            int mmod = 3 - delta_distance;
+            mmod = Math.max(0, mmod);
+            result = new TargetRoll(mmod, "mimetic armor");
+        }
+
+        // Stealthy units alreay have their to-hit mods defined.
+        if (isStealthy && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+            switch (range) {
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    result = new TargetRoll(shortStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    result = new TargetRoll(mediumStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                    // modifier?
+                    result = new TargetRoll(longStealthMod, stealthName);
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -1618,15 +1524,9 @@ public class BattleArmor extends Infantry {
      * @return
      */
     public boolean isFireResistant() {
-        // when BA is created from custom BA dialog
-        if (armorType == 7) {
-            return true;
-            // else
-        } else if (armorType == -1) {
-            for (Mounted equip : getMisc()) {
-                if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
-                    return true;
-                }
+        for (Mounted equip : getMisc()) {
+            if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+                return true;
             }
         }
         return false;

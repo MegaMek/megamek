@@ -136,7 +136,7 @@ public class Dropship extends SmallCraft implements Serializable {
         cost += 200 * getFuel() / getFuelPerTon();
 
         // armor
-        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType);
+        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
@@ -1254,34 +1254,46 @@ public class Dropship extends SmallCraft implements Serializable {
         return 5;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#setPosition(megamek.common.Coords)
+     */
     @Override
     public void setPosition(Coords position) {
         super.setPosition(position);
         if ((getAltitude() == 0) && !game.getBoard().inSpace() && (position != null)) {
             secondaryPositions.put(0, position);
-            secondaryPositions.put(1, position.translated(0));
-            secondaryPositions.put(2, position.translated(1));
-            secondaryPositions.put(3, position.translated(2));
-            secondaryPositions.put(4, position.translated(3));
-            secondaryPositions.put(5, position.translated(4));
-            secondaryPositions.put(6, position.translated(5));
+            secondaryPositions.put(1, position.translated(getFacing()));
+            secondaryPositions.put(2, position.translated(getFacing()));
+            secondaryPositions.put(3, position.translated(getFacing()));
+            secondaryPositions.put(4, position.translated(getFacing()));
+            secondaryPositions.put(5, position.translated(getFacing()));
+            secondaryPositions.put(6, position.translated(getFacing()));
         }
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.Entity#setFacing(int)
+     */
+    @Override
+    public void setFacing(int facing) {
+        super.setFacing(facing);
+        setPosition(getPosition());
+    }
+
     @Override
     public int getLandingLength() {
         return 15;
     }
-    
+
     @Override
     public String hasRoomForVerticalLanding() {
-        //dropships can land just about anywhere they want, unless it is off the map 
+        //dropships can land just about anywhere they want, unless it is off the map
         Vector<Coords> positions =  new Vector<Coords>();
         positions.add(getPosition());
-        if(this instanceof Dropship) {
-            for(int i = 0; i < 6; i++) {
-                positions.add(getPosition().translated(i));
-            }
+        for(int i = 0; i < 6; i++) {
+            positions.add(getPosition().translated(i));
         }
         for(Coords pos : positions) {
             IHex hex = game.getBoard().getHex(getPosition());

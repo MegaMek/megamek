@@ -160,7 +160,7 @@ public class LargeSupportTankMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
-        vLabels[15].setValue(String.valueOf(((SupportTank)t).getBARRating()));
+        vLabels[15].setValue(String.valueOf(((SupportTank)t).getBARRating(1)));
     }
 
     private void setContent() {

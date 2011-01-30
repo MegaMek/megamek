@@ -53,13 +53,29 @@ public class TestMech extends TestEntity {
         return new Structure(type, flag);
     }
 
-    private static Armor getArmor(Mech mech) {
-        int type = mech.getArmorType();
-        int flag = 0;
-        if (mech.isClanArmor()) {
-            flag |= Armor.CLAN_ARMOR;
+    private static Armor[] getArmor(Mech mech) {
+        Armor[] armor;
+        if (!mech.hasPatchworkArmor()) {
+            armor = new Armor[1];
+            int type = mech.getArmorType(1);
+            int flag = 0;
+            if (mech.isClanArmor(1)) {
+                flag |= Armor.CLAN_ARMOR;
+            }
+            armor[0] = new Armor(type, flag);
+            return armor;
+        } else {
+            armor = new Armor[mech.locations()];
+            for (int i = 0; i < mech.locations(); i++) {
+                int type = mech.getArmorType(1);
+                int flag = 0;
+                if (mech.isClanArmor(1)) {
+                    flag |= Armor.CLAN_ARMOR;
+                }
+                armor[i] = new Armor(type, flag);
+            }
         }
-        return new Armor(type, flag);
+        return armor;
     }
 
     @Override

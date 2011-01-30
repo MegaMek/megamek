@@ -3,7 +3,7 @@
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -500,7 +500,7 @@ public class SmallCraft extends Aero {
             }
         }
 
-        double armorPerTon = baseArmor * EquipmentType.getArmorPointMultiplier(armorType, techLevel);
+        double armorPerTon = baseArmor * EquipmentType.getArmorPointMultiplier(armorType[0], techLevel);
         double armWeight = 0.0;
         for (; ((int) Math.round(armWeight * armorPerTon)) < armorPoints; armWeight += .5) {
             // add armor weight in discrete batches
@@ -552,7 +552,7 @@ public class SmallCraft extends Aero {
         cost += 200 * getFuel() / 80.0;
 
         // armor
-        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType);
+        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
@@ -620,7 +620,7 @@ public class SmallCraft extends Aero {
 
     /**
      * What's the range of the ECM equipment?
-     * 
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */

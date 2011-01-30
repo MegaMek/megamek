@@ -128,8 +128,8 @@ public class TankMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
-        if (t.hasBARArmor()) {
-            vLabels[12].setValue(String.valueOf(((SupportTank)t).getBARRating()));
+        if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
+            vLabels[12].setValue(String.valueOf(((SupportTank)t).getBARRating(1)));
         } else {
             labels[12].setVisible(false);
             vLabels[12].setVisible(false);

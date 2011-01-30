@@ -132,10 +132,24 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             mech.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
         }
 
+        boolean patchworkArmor = false;
         if (dataFile.exists("armor_type")) {
-            mech.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
+                patchworkArmor = true;
+            } else {
+                mech.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            }
         } else {
             mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        if (!patchworkArmor && dataFile.exists("armor_tech")) {
+            mech.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
+        if (patchworkArmor) {
+            for (int i = 0; i < mech.locations(); i++) {
+                mech.setArmorType(dataFile.getDataAsInt(mech.getLocationName(i)+"_armor_type")[0], i);
+                mech.setArmorTechLevel(dataFile.getDataAsInt(mech.getLocationName(i)+"_armor_type")[0], i);
+            }
         }
 
         if (!dataFile.exists("armor")) {

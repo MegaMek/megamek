@@ -764,59 +764,54 @@ public class Tank extends Entity {
         }
 
         bvText.append(startTable);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Armor x 2.5 x Armor Multplier x BAR / 10");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
         double armorMultiplier = 1.0;
 
-        switch (getArmorType()) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMultiplier = 0.5;
-                break;
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMultiplier = 2.0;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-                armorMultiplier = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                armorMultiplier = 1.2;
-                break;
-            default:
-                armorMultiplier = 1.0;
-                break;
+        for (int loc = 1; loc < locations(); loc++) {
+            // total armor points
+
+            switch (getArmorType(loc)) {
+                case EquipmentType.T_ARMOR_COMMERCIAL:
+                    armorMultiplier = 0.5;
+                    break;
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorMultiplier = 2.0;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                    armorMultiplier = 1.5;
+                    break;
+                case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    armorMultiplier = 1.2;
+                    break;
+                default:
+                    armorMultiplier = 1.0;
+                    break;
+            }
+
+            if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+                armorMultiplier += 0.2;
+            }
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" x ");
+            bvText.append(armorMultiplier);
+            bvText.append(" x ");
+            bvText.append(getBARRating(loc));
+            bvText.append("/10");
+            bvText.append(endColumn);
+            dbv += getArmor(loc) + modularArmor * armorMultiplier *  ((float) (getBARRating(loc)) / 10);
         }
-
-        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
-            armorMultiplier += 0.2;
-        }
-
-        // total armor points
-        dbv += (getTotalArmor() + modularArmor) * 2.5 * armorMultiplier * ((float) (getBARRating()) / 10);
-
-        int armor = getTotalArmor() + modularArmor;
-        bvText.append(armor + modularArmor);
-        bvText.append(" x 2.5 x ");
-        bvText.append(armorMultiplier);
-        bvText.append(" x ");
-        bvText.append(getBARRating());
-        bvText.append("/10");
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total modified armor BV x 2.5 ");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append("= ");
+        dbv *= 2.5;
         bvText.append(dbv);
         bvText.append(endColumn);
-
         bvText.append(endRow);
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -1680,7 +1675,10 @@ public class Tank extends Entity {
         cost += 20000 * paWeight;
         cost += 2000 * Math.max(0, sinks - freeHeatSinks);
         cost += turretWeight * 5000;
-        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType);// armor
+        // armor
+        for (int loc = 0; loc < locations(); loc++) {
+            cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+        }
         double diveTonnage;
         switch (movementMode) {
             case HOVER:
@@ -2324,36 +2322,39 @@ public class Tank extends Entity {
             }
         }
         // different armor types take different amount of slots
-        int armorType = getArmorType();
-        switch (armorType) {
-            case EquipmentType.T_ARMOR_FERRO_FIBROUS:
-                if (TechConstants.isClan(getArmorTechLevel())) {
+        if (!hasPatchworkArmor()) {
+            int armorType = getArmorType(1);
+            switch (armorType) {
+                case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                    if (TechConstants.isClan(getArmorTechLevel(1))) {
+                        usedSlots++;
+                    } else {
+                        usedSlots += 2;
+                    }
+                    break;
+                case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                    usedSlots += 3;
+                    break;
+                case EquipmentType.T_ARMOR_LIGHT_FERRO:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_HARDENED:
                     usedSlots++;
-                } else {
+                    break;
+                case EquipmentType.T_ARMOR_STEALTH:
                     usedSlots += 2;
-                }
-                break;
-            case EquipmentType.T_ARMOR_HEAVY_FERRO:
-                usedSlots += 3;
-                break;
-            case EquipmentType.T_ARMOR_LIGHT_FERRO:
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-            case EquipmentType.T_ARMOR_HARDENED:
-                usedSlots++;
-                break;
-            case EquipmentType.T_ARMOR_STEALTH:
-                usedSlots += 2;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-                if (TechConstants.isClan(getArmorTechLevel())) {
-                    usedSlots++;
-                } else {
-                    usedSlots += 2;
-                }
-                break;
-            default:
-                break;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                    if (TechConstants.isClan(getArmorTechLevel(1))) {
+                        usedSlots++;
+                    } else {
+                        usedSlots += 2;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
         }
         return availableSlots - usedSlots;
     }

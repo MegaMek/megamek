@@ -56,15 +56,29 @@ public class TestTank extends TestEntity {
         return new Structure(type, flag);
     }
 
-    private static Armor getArmor(Tank tank) {
-        int type = EquipmentType.T_ARMOR_STANDARD;
-        int flag = 0;
-
-        type = tank.getArmorType();
-        if (tank.isClanArmor()) {
-            flag |= Armor.CLAN_ARMOR;
+    private static Armor[] getArmor(Tank tank) {
+        Armor[] armor;
+        if (!tank.hasPatchworkArmor()) {
+            armor = new Armor[1];
+            int type = tank.getArmorType(1);
+            int flag = 0;
+            if (tank.isClanArmor(1)) {
+                flag |= Armor.CLAN_ARMOR;
+            }
+            armor[0] = new Armor(type, flag);
+            return armor;
+        } else {
+            armor = new Armor[tank.locations()];
+            for (int i = 0; i < tank.locations(); i++) {
+                int type = tank.getArmorType(1);
+                int flag = 0;
+                if (tank.isClanArmor(1)) {
+                    flag |= Armor.CLAN_ARMOR;
+                }
+                armor[i] = new Armor(type, flag);
+            }
         }
-        return new Armor(type, flag);
+        return armor;
     }
 
     @Override

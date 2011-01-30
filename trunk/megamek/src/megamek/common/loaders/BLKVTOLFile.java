@@ -86,13 +86,24 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
+        boolean patchworkArmor = false;
         if (dataFile.exists("armor_type")) {
-            t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
+                patchworkArmor = true;
+            } else {
+                t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            }
         } else {
             t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (dataFile.exists("armor_tech")) {
+        if (!patchworkArmor && dataFile.exists("armor_tech")) {
             t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
+        if (patchworkArmor) {
+            for (int i = 1; i < t.locations(); i++) {
+                t.setArmorType(dataFile.getDataAsInt(t.getLocationName(i)+"_armor_type")[0], i);
+                t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i)+"_armor_type")[0], i);
+            }
         }
         if (dataFile.exists("internal_type")) {
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);

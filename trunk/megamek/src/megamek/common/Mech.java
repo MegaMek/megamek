@@ -1067,12 +1067,12 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (hasArmedMASCAndSuperCharger()) {
-            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2.5)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2.5)) - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
         if (hasArmedMASC()) {
-            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2) - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /*
@@ -1082,11 +1082,11 @@ public abstract class Mech extends Entity implements Serializable {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     public int getOriginalRunMPwithoutMASC() {
-        return super.getRunMP(false, false, false) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        return super.getRunMP(false, false, false) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /**
@@ -1132,10 +1132,10 @@ public abstract class Mech extends Entity implements Serializable {
             return getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         if (hasArmedMASCAndSuperCharger()) {
-            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 3.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 3.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
         if (hasArmedMASC()) {
-            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2.5)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+            return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2.5)) - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
         return getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -1160,14 +1160,14 @@ public abstract class Mech extends Entity implements Serializable {
         if (hasHipCrit()) {
             return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
-        return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        return ((int) Math.ceil(getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     public int getOriginalSprintMPwithoutMASC() {
         if (hasHipCrit()) {
             return getOriginalSprintMPwithoutMASC();
         }
-        return ((int) Math.ceil(getWalkMP(false, false) * 2.0)) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
+        return ((int) Math.ceil(getWalkMP(false, false) * 2.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /**
@@ -2670,65 +2670,67 @@ public abstract class Mech extends Entity implements Serializable {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
-        // total armor points
         double armorMultiplier = 1.0;
-
-        switch (getArmorType()) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMultiplier = 0.5;
-                break;
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMultiplier = 2.0;
-                break;
-            case EquipmentType.T_ARMOR_REACTIVE:
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-                armorMultiplier = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                armorMultiplier = 1.2;
-                break;
-            default:
-                armorMultiplier = 1.0;
-                break;
-        }
-
-        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
-            armorMultiplier += 0.2;
-        }
-
         bvText.append(startTable);
+        for (int loc = 0; loc < locations(); loc++) {
+            // total armor points
+
+            switch (getArmorType(loc)) {
+                case EquipmentType.T_ARMOR_COMMERCIAL:
+                    armorMultiplier = 0.5;
+                    break;
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorMultiplier = 2.0;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                    armorMultiplier = 1.5;
+                    break;
+                case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    armorMultiplier = 1.2;
+                    break;
+                default:
+                    armorMultiplier = 1.0;
+                    break;
+            }
+
+            if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
+                armorMultiplier += 0.2;
+            }
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" x ");
+            bvText.append(armorMultiplier);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
+            // BV for torso mounted cockpit.
+            if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (loc == LOC_CT)) {
+                dbv += this.getArmor(Mech.LOC_CT);
+                dbv += this.getArmor(Mech.LOC_CT, true);
+            }
+            int modularArmor = 0;
+            for (Mounted mounted : getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
+                    modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
+                }
+            }
+
+            dbv += (getArmor(loc) + modularArmor) * armorMultiplier;
+            bvText.append(dbv);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
         bvText.append(startRow);
         bvText.append(startColumn);
-
-        bvText.append("Total Armor Factor x ");
-        bvText.append(armorMultiplier);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        // BV for torso mounted cockpit.
-        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            dbv += this.getArmor(Mech.LOC_CT);
-            dbv += this.getArmor(Mech.LOC_CT, true);
-        }
-        int modularArmor = 0;
-        for (Mounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
-            }
-        }
-
-        dbv += (getTotalArmor() + modularArmor);
-
-        bvText.append(dbv);
-        bvText.append(" x 2.5 x ");
-        bvText.append(armorMultiplier);
+        bvText.append("Total modified armor BV x 2.5 ");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append("= ");
-
-        dbv *= 2.5 * armorMultiplier;
-
+        dbv *= 2.5;
         bvText.append(dbv);
         bvText.append(endColumn);
         bvText.append(endRow);
@@ -3044,7 +3046,7 @@ public abstract class Mech extends Entity implements Serializable {
         } else {
             runMP = (int) Math.ceil(walkMP * 1.5);
         }
-        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+        if (hasMPReducingHardenedArmor()) {
             runMP--;
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
@@ -4245,7 +4247,7 @@ public abstract class Mech extends Entity implements Serializable {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[15];
+        double[] costs = new double[14+locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -4307,7 +4309,10 @@ public abstract class Mech extends Entity implements Serializable {
         // cost of sinks
         costs[i++] = sinkCost * (heatSinks() - freeSinks);
         costs[i++] = hasFullHeadEject() ? 1725000 : 0;
-        costs[i++] = getArmorWeight() * EquipmentType.getArmorCost(armorType);
+        for (int loc = 0; loc < locations(); loc++) {
+            costs[i++] = getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+        }
+
         costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double cost = 0; // calculate the total
@@ -4508,7 +4513,7 @@ public abstract class Mech extends Entity implements Serializable {
             roll.addModifier(1, "cramped cockpit");
         }
 
-        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
+        if (hasHardenedArmor()) {
             roll.addModifier(1, "Hardened Armor");
         }
 
@@ -5289,12 +5294,19 @@ public abstract class Mech extends Entity implements Serializable {
         sb.append("Jump MP:").append(jumpMP).append(nl);
         sb.append(nl);
 
-        sb.append("Armor:").append(EquipmentType.getArmorTypeName(getArmorType()));
-        sb.append("(" + TechConstants.getTechName(getArmorTechLevel()) + ")");
+        if (hasPatchworkArmor()) {
+            sb.append("Armor:").append(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
+        } else {
+            sb.append("Armor:").append(EquipmentType.getArmorTypeName(getArmorType(0)));
+            sb.append("(" + TechConstants.getTechName(getArmorTechLevel(0)) + ")");
+        }
         sb.append(nl);
 
         for (int element : MtfFile.locationOrder) {
             sb.append(getLocationAbbr(element)).append(" Armor:");
+            if (hasPatchworkArmor()) {
+                sb.append(EquipmentType.getArmorTypeName(getArmorType(element))).append('(').append(TechConstants.getTechName(getArmorTechLevel(element))).append("):");
+            }
             sb.append(getOArmor(element, false)).append(nl);
         }
         for (int element : MtfFile.rearLocationOrder) {
@@ -5957,11 +5969,12 @@ public abstract class Mech extends Entity implements Serializable {
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
-    public int getBARRating() {
-        if (armorType == EquipmentType.T_ARMOR_COMMERCIAL) {
+    public int getBARRating(int loc) {
+        if (armorType[loc] == EquipmentType.T_ARMOR_COMMERCIAL) {
             return 5;
         }
-        if ((armorType == EquipmentType.T_ARMOR_INDUSTRIAL) || (armorType == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
+        if ((armorType[loc] == EquipmentType.T_ARMOR_INDUSTRIAL)
+                || (armorType[loc] == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
             return 10;
         }
         return 10;
@@ -6290,19 +6303,19 @@ public abstract class Mech extends Entity implements Serializable {
     @Override
     public long getBattleForceMovementPoints() {
         int baseBFMove = getWalkMP();
-        long ModBFMove = getWalkMP();
+        long modBFMove = getWalkMP();
 
         if (hasMASCAndSuperCharger()) {
-            ModBFMove = Math.round(baseBFMove * 1.5);
+            modBFMove = Math.round(baseBFMove * 1.5);
         } else if (hasMASC()) {
-            ModBFMove = Math.round(baseBFMove * 1.25);
+            modBFMove = Math.round(baseBFMove * 1.25);
         }
 
-        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
-            ModBFMove--;
+        if (hasMPReducingHardenedArmor()) {
+            modBFMove--;
         }
 
-        return ModBFMove;
+        return modBFMove;
     }
 
     @Override
@@ -6325,13 +6338,13 @@ public abstract class Mech extends Entity implements Serializable {
         double armorMod = 1;
         double armorPoints = 0;
 
-        switch (getArmorType()) {
+        switch (getArmorType(0)) {
             case EquipmentType.T_ARMOR_COMMERCIAL:
                 armorMod = .5;
                 break;
             case EquipmentType.T_ARMOR_INDUSTRIAL:
             case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
-                armorMod = getBARRating() / 10;
+                armorMod = getBARRating(0) / 10;
                 break;
             case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                 armorMod = 1.2;
@@ -6918,7 +6931,7 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
-        if (hasBARArmor()) {
+        if (hasBARArmor(0)) {
             results.append("BAR, ");
         }
 
@@ -7136,6 +7149,8 @@ public abstract class Mech extends Entity implements Serializable {
     public int getBattleForceSize() {
         return getWeightClass() - 4;
     }
+
+    public abstract boolean hasMPReducingHardenedArmor();
 
     /**
      * End of Battle Force Conversion Methods

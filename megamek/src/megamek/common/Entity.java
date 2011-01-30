@@ -137,6 +137,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean layingMines = false;
     protected boolean _isEMId = false;
     protected boolean[] hardenedArmorDamaged;
+    protected int[] armorType;
+    protected int[] armorTechLevel;;
+
 
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -195,8 +198,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int c3Master = NONE;
     protected int c3CompanyMasterIndex = LOC_DESTROYED;
 
-    protected int armorType = EquipmentType.T_ARMOR_UNKNOWN;
-    protected int armorTechLevel = TechConstants.T_TECH_UNKNOWN;
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
 
     protected String source = "";
@@ -483,8 +484,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         orig_internal = new int[locations()];
         crits = new CriticalSlot[locations()][];
         exposure = new int[locations()];
+        armorType = new int[locations()];
+        armorTechLevel = new int[locations()];
         for (int i = 0; i < locations(); i++) {
             crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
+            armorType[i] = EquipmentType.T_ARMOR_UNKNOWN;
+            armorTechLevel[i] = TechConstants.T_TECH_UNKNOWN;
         }
         hardenedArmorDamaged = new boolean[locations()];
         setC3NetId(this);
@@ -664,11 +669,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return ((techLevel == TechConstants.T_CLAN_TW) || (techLevel == TechConstants.T_CLAN_ADVANCED) || (techLevel == TechConstants.T_CLAN_EXPERIMENTAL) || (techLevel == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
-    public boolean isClanArmor() {
-        if (getArmorTechLevel() == TechConstants.T_TECH_UNKNOWN) {
+    public boolean isClanArmor(int loc) {
+        if (getArmorTechLevel(loc) == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
         }
-        return ((getArmorTechLevel() == TechConstants.T_CLAN_TW) || (getArmorTechLevel() == TechConstants.T_CLAN_ADVANCED) || (getArmorTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) || (getArmorTechLevel() == TechConstants.T_CLAN_UNOFFICIAL));
+        return ((getArmorTechLevel(loc) == TechConstants.T_CLAN_TW) || (getArmorTechLevel(loc) == TechConstants.T_CLAN_ADVANCED) || (getArmorTechLevel(loc) == TechConstants.T_CLAN_EXPERIMENTAL) || (getArmorTechLevel(loc) == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public boolean isMixedTech() {
@@ -7233,8 +7238,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setArmorType(int armType) {
-        armorType = armType;
+        for (int i = 0; i < locations(); i++) {
+            armorType[i] = armType;
+        }
     }
+
+    public void setArmorType(int armType, int loc) {
+        armorType[loc] = armType;
+    }
+
 
     public void setStructureType(int strucType) {
         structureType = strucType;
@@ -7248,16 +7260,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setStructureType(EquipmentType.getStructureType(strucType));
     }
 
-    public int getArmorType() {
-        return armorType;
+    public int getArmorType(int loc) {
+        return armorType[loc];
     }
 
     public void setArmorTechLevel(int newTL) {
-        armorTechLevel = newTL;
+        for (int i = 0; i < locations(); i++) {
+            armorTechLevel[i] = newTL;
+        }
     }
 
-    public int getArmorTechLevel() {
-        return armorTechLevel;
+    public void setArmorTechLevel(int newTL, int loc) {
+        armorTechLevel[loc] = newTL;
+    }
+
+    public int getArmorTechLevel(int loc) {
+        return armorTechLevel[loc];
     }
 
     public int getStructureType() {
@@ -7397,17 +7415,36 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public abstract boolean doomedInSpace();
 
-    public double getArmorWeight() {
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(armorType, armorTechLevel);
-        if (armorType == EquipmentType.T_ARMOR_HARDENED) {
+    public double getArmorWeight(int loc) {
+        double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(armorType[loc], armorTechLevel[loc]);
+        if (armorType[loc] == EquipmentType.T_ARMOR_HARDENED) {
             armorPerTon = 8.0;
         }
-        double points = getTotalOArmor();
+        double points = getOArmor(loc);
         double armorWeight = points / armorPerTon;
-        armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
-        return armorWeight;
+        return Math.ceil(armorWeight * 2.0) / 2.0;
+
+    }
+
+    public double getArmorWeight() {
+        if (!hasPatchworkArmor()) {
+            // this roundabout method is actually necessary to avoid rounding
+            // weirdness. Yeah, it's dumb.
+            double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(armorType[0], armorTechLevel[0]);
+            if (armorType[0] == EquipmentType.T_ARMOR_HARDENED) {
+                armorPerTon = 8.0;
+            }
+            double points = getTotalOArmor();
+            double armorWeight = points / armorPerTon;
+            armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
+            return armorWeight;
+        } else {
+            double total = 0;
+            for (int loc = 0; loc < locations(); loc++) {
+                total += getArmorWeight(loc);
+            }
+            return total;
+        }
     }
 
     public boolean hasTAG() {
@@ -8806,7 +8843,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return the BAR rating
      */
-    public int getBARRating() {
+    public int getBARRating(int loc) {
         // normal armor has a BAR rating of 10
         return 10;
     }
@@ -8816,8 +8853,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @return
      */
-    public boolean hasBARArmor() {
-        return getBARRating() < 10;
+    public boolean hasBARArmor(int loc) {
+        return getBARRating(loc) < 10;
     }
 
     /**
@@ -9407,7 +9444,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public boolean hasStealth() {
-        if (getArmorType() == EquipmentType.T_ARMOR_STEALTH) {
+        // only non-patchwork stealth actually works as stealth
+        if ((getArmorType(1) == EquipmentType.T_ARMOR_STEALTH) && !hasPatchworkArmor()) {
             return true;
         }
         return false;
@@ -9490,8 +9528,37 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         hardenedArmorDamaged[location] = damaged;
     }
 
+    /**
+     * do we have a half-hit hardened armor point in the location?
+     * @param location
+     * @return
+     */
     public boolean isHardenedArmorDamaged(int location) {
         return hardenedArmorDamaged[location];
+    }
+
+    /**
+     * does this entity have patchwork armor?
+     * @return
+     */
+    public boolean hasPatchworkArmor() {
+        int type = armorType[0];
+        int level = armorTechLevel[0];
+        for (int i = 1; i < locations(); i++) {
+            if ((armorType[i] != type) || (armorTechLevel[i] != level)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasHardenedArmor() {
+        for (int i = 0; i < locations(); i++) {
+            if ((armorType[i] == EquipmentType.T_ARMOR_HARDENED)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

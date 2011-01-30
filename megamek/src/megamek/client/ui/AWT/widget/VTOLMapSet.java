@@ -177,8 +177,8 @@ public class VTOLMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
-        if (t instanceof SupportVTOL) {
-            vLabels[16].setValue(String.valueOf(((SupportVTOL)t).getBARRating()));
+        if ((t instanceof SupportVTOL) && !t.hasPatchworkArmor()) {
+            vLabels[16].setValue(String.valueOf(((SupportVTOL)t).getBARRating(1)));
         } else {
             vLabels[16].setVisible(false);
             labels[22].setVisible(false);

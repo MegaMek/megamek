@@ -828,6 +828,7 @@ public class Jumpship extends Aero {
         return points;
     }
 
+    @Override
     public double getArmorWeight(int loc) {
         //first I need to subtract SI bonus from total armor
         double armorPoints = getTotalOArmor();
@@ -854,11 +855,11 @@ public class Jumpship extends Aero {
 
 
 
-        if(armorType == EquipmentType.T_ARMOR_FERRO_IMP) {
+        if(armorType[0] == EquipmentType.T_ARMOR_FERRO_IMP) {
             baseArmor += 0.2;
-        } else if (armorType == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
             baseArmor += 0.4;
-        } else if (armorType == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
+        } else if (armorType[0] == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
             baseArmor += 0.6;
         }
 
@@ -914,7 +915,7 @@ public class Jumpship extends Aero {
         cost += 200 * getFuel() / getFuelPerTon();
 
         //armor
-        cost += getArmorWeight(locations())*EquipmentType.getArmorCost(armorType);
+        cost += getArmorWeight(locations())*EquipmentType.getArmorCost(armorType[0]);
 
         //heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;

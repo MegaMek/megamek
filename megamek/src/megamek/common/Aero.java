@@ -2326,7 +2326,9 @@ public class Aero extends Entity {
         cost += 200 * getFuel() / 80.0;
 
         // armor
-        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType);
+        for (int loc = 0; loc < locations(); loc++) {
+            cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+        }
 
         // heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:

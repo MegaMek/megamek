@@ -362,24 +362,43 @@ public class MiscType extends EquipmentType {
             return (float) Math.ceil(fTons / 4.0f);
         } else if (EquipmentType.getArmorTypeName(T_ARMOR_FERRO_FIBROUS).equals(internalName)) {
             double tons = 0.0;
-            if (entity.isClanArmor()) {
-                tons = entity.getTotalOArmor() / (16 * 1.2);
+            if (!entity.hasPatchworkArmor()) {
+                if (entity.isClanArmor(1)) {
+                    tons = entity.getTotalOArmor() / (16 * 1.2);
+                } else {
+                    tons = entity.getTotalOArmor() / (16 * 1.12);
+                }
+                tons = Math.ceil(tons * 2.0) / 2.0;
             } else {
-                tons = entity.getTotalOArmor() / (16 * 1.12);
+                // TODO
             }
-            tons = Math.ceil(tons * 2.0) / 2.0;
             return (float) tons;
         } else if (EquipmentType.getArmorTypeName(T_ARMOR_LIGHT_FERRO).equals(internalName)) {
-            double tons = entity.getTotalOArmor() / (16 * 1.06);
-            tons = Math.ceil(tons * 2.0) / 2.0;
+            double tons = 0;
+            if (!entity.hasPatchworkArmor()) {
+                tons = entity.getTotalOArmor() / (16 * 1.06);
+                tons = Math.ceil(tons * 2.0) / 2.0;
+            } else {
+                // TODO
+            }
             return (float) tons;
         } else if (EquipmentType.getArmorTypeName(T_ARMOR_HEAVY_FERRO).equals(internalName)) {
-            double tons = entity.getTotalOArmor() / (16 * 1.24);
-            tons = Math.ceil(tons * 2.0) / 2.0;
+            double tons = 0;
+            if (!entity.hasPatchworkArmor()) {
+                tons = entity.getTotalOArmor() / (16 * 1.24);
+                tons = Math.ceil(tons * 2.0) / 2.0;
+            } else {
+                // TODO
+            }
             return (float) tons;
         } else if (EquipmentType.getArmorTypeName(T_ARMOR_FERRO_LAMELLOR).equals(internalName)) {
-            double tons = entity.getTotalOArmor() / (16 * 0.875);
-            tons = Math.ceil(tons * 2.0) / 2.0;
+            double tons = 0;
+            if (!entity.hasPatchworkArmor()) {
+                tons = entity.getTotalOArmor() / (16 * 0.875);
+                tons = Math.ceil(tons * 2.0) / 2.0;
+            } else {
+                // TODO
+            }
             return (float) tons;
         } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) || hasFlag(F_ENDO_STEEL)) {
             double tons = 0.0;
@@ -540,24 +559,95 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            /*if (entity.isClan()) {
-                return (int) Math.ceil(fTons / 5.0f);
-            }*/
             if (TechConstants.isClan(getTechLevel())) {
                 return (int) Math.ceil(fTons / 5.0f);
             }
             return (int) Math.ceil(fTons / 4.0f);
         } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(internalName) || EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE).equals(internalName)) {
-            if (entity.isClanArmor()) {
+            if (entity.isClanArmor(1) && !entity.hasPatchworkArmor()) {
                 return 7;
+            } else if (entity.hasPatchworkArmor()) {
+                int slots = 0;
+                for (int i = 0; i < entity.locations(); i++ ) {
+                    if ((entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_FIBROUS)
+                            || (entity.getArmorType(i) == EquipmentType.T_ARMOR_REACTIVE)) {
+                        if (TechConstants.isClan(entity.getArmorTechLevel(i))) {
+                            slots++;
+                        } else {
+                            slots += 2;
+                        }
+                    }
+                }
+                return slots;
+            } else {
+                return 14;
             }
-            return 14;
         } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE).equals(internalName)) {
-            if (entity.isClanArmor()) {
+            if (entity.isClanArmor(1) && !entity.hasPatchworkArmor()) {
                 return 5;
+            } else if (entity.hasPatchworkArmor()) {
+                int slots = 0;
+                for (int i = 0; i < entity.locations(); i++ ) {
+                    if (entity.getArmorType(i) == EquipmentType.T_ARMOR_REFLECTIVE) {
+                        if (TechConstants.isClan(entity.getArmorTechLevel(i))) {
+                            slots++;
+                        } else {
+                            slots += 2;
+                        }
+                    }
+                }
+                return slots;
             }
             return 10;
-        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
+        } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO).equals(internalName)) {
+            if (!entity.hasPatchworkArmor()) {
+                return 7;
+            } else {
+                int slots = 0;
+                for (int i = 0; i < entity.locations(); i++ ) {
+                    if (entity.getArmorType(i) == EquipmentType.T_ARMOR_LIGHT_FERRO) {
+                        slots++;
+                    }
+                }
+                return slots;
+            }
+        } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO).equals(internalName)) {
+            if (!entity.hasPatchworkArmor()) {
+                return 21;
+            } else {
+                int slots = 0;
+                for (int i = 0; i < entity.locations(); i++ ) {
+                    if (entity.getArmorType(i) == EquipmentType.T_ARMOR_HEAVY_FERRO) {
+                        slots += 3;
+                    }
+                }
+                return slots;
+            }
+        } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR).equals(internalName)) {
+            if (!entity.hasPatchworkArmor()) {
+                return 12;
+            } else {
+                int slots = 0;
+                for (int i = 0; i < entity.locations(); i++ ) {
+                    if (entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_LAMELLOR) {
+                        slots += 2;
+                    }
+                }
+                return slots;
+            }
+        }  else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(internalName)) {
+            if (!entity.hasPatchworkArmor()) {
+                return 16;
+            } else {
+                int slots = 0;
+                for (int i = 0; i < entity.locations(); i++ ) {
+                    if (entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO) {
+                        slots += 2;
+                    }
+                }
+                return slots;
+            }
+        }else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
             if (entity.isClan()) {
                 return 7;
             }
@@ -2213,7 +2303,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO));
         misc.addLookupName("Ferro-Fibrous Armor Prototype");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 16;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);
@@ -2231,7 +2321,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Light Ferro-Fibrous Armor");
         misc.addLookupName("LightFerro");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 7;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);
@@ -2248,7 +2338,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO));
         misc.addLookupName("Heavy Ferro-Fibrous Armor");
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 21;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS);
@@ -2289,7 +2379,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR));
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 12;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.bv = 0;

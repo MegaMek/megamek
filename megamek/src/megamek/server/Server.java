@@ -12066,8 +12066,8 @@ public class Server implements Runnable {
         // On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of
         // internal damage
         if (((MiscType) caa.getClub().getType()).hasSubType(MiscType.S_LANCE) && (te.getArmor(hit) > 0)
-                && (te.getArmorType() != EquipmentType.T_ARMOR_HARDENED)
-                && (te.getArmorType() != EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
+                && (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED)
+                && (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             roll = Compute.d6(2);
             // Pierce checking report
             r = new Report(4021);
@@ -15901,20 +15901,20 @@ public class Server implements Runnable {
         boolean reflectiveArmor = false;
         boolean reactiveArmor = false;
 
-        if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_HARDENED)) {
+        if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
         }
 
         if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                && (te.getArmorType() == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
             ferroLamellorArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)) {
+        if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
             reflectiveArmor = true;
         }
 
-        if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType() == EquipmentType.T_ARMOR_REACTIVE)) {
+        if (((te instanceof Mech) || (te instanceof Tank)) && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) {
             reactiveArmor = true;
         }
 
@@ -15965,8 +15965,8 @@ public class Server implements Runnable {
         }
 
         if ((te.getArmor(hit) > 0)
-                && ((te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS)
-                        || (te.getArmorType() == EquipmentType.T_ARMOR_LIGHT_FERRO) || (te.getArmorType() == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
+                && ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_FIBROUS)
+                        || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_LIGHT_FERRO) || (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAVY_FERRO))) {
             isFerroFibrousTarget = true;
         }
 
@@ -16083,7 +16083,7 @@ public class Server implements Runnable {
             break;
         case NAIL_RIVET:
             // no damage against armor of BAR rating >=5
-            if ((te.getBARRating() >= 5) && (te.getArmor(hit.getLocation()) > 0)) {
+            if ((te.getBARRating(hit.getLocation()) >= 5) && (te.getArmor(hit.getLocation()) > 0)) {
                 damage = 0;
                 r = new Report(6065);
                 r.subject = te_n;
@@ -16575,8 +16575,8 @@ public class Server implements Runnable {
 
                 // targets with BAR armor get crits, depending on damage and BAR
                 // rating
-                if (te.hasBARArmor()) {
-                    if (origDamage > te.getBARRating()) {
+                if (te.hasBARArmor(hit.getLocation())) {
+                    if (origDamage > te.getBARRating(hit.getLocation())) {
                         if (te.hasArmoredChassis()) {
                             Report.addNewline(vDesc);
                             // crit roll with -1 mod
@@ -17056,7 +17056,7 @@ public class Server implements Runnable {
                         // transfer
                         // to a location that has armor, and BAR >=5, no damage
                         if ((bFrag == DamageType.NAIL_RIVET) && (te.getArmor(nextHit.getLocation()) > 0)
-                                && (te.getBARRating() >= 5)) {
+                                && (te.getBARRating(nextHit.getLocation()) >= 5)) {
                             damage = 0;
                             r = new Report(6065);
                             r.subject = te_n;
@@ -17091,7 +17091,7 @@ public class Server implements Runnable {
                 for (int i = 0; i < specCrits; i++) {
                     vDesc.elementAt(vDesc.size() - 1).newlines++;
                     // against BAR armor, we get a +2 mod
-                    int critMod = te.hasBARArmor() ? 2 : 0;
+                    int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
                     if (hardenedArmor) {
                         // against hardened armor, it's a flat -2 mod
                         critMod = -2;
@@ -19832,7 +19832,7 @@ public class Server implements Runnable {
                 }
 
                 // check for reactive armor
-                if (en.getArmorType() == EquipmentType.T_ARMOR_REACTIVE) {
+                if (en.getArmorType(loc) == EquipmentType.T_ARMOR_REACTIVE) {
                     Mounted mount = en.getEquipment(slot.getIndex());
                     if ((mount != null) && (mount.getType() instanceof MiscType)
                             && ((MiscType) mount.getType()).hasFlag(MiscType.F_REACTIVE)) {
@@ -25747,6 +25747,7 @@ public class Server implements Runnable {
         if (hex == null) {
             return; // not on board.
         }
+        DamageType damageType = DamageType.NONE;
 
         int flakElevation = altitude - hex.surface();
 
@@ -25855,6 +25856,7 @@ public class Server implements Runnable {
             if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
                 hits *= 2;
             }
+            boolean specialCaseFlechette = false;
 
             // Entity/ammo specific damage modifiers
             if (ammo != null) {
@@ -25864,6 +25866,7 @@ public class Server implements Runnable {
                         hits *= 2;
                     }
                 } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+
                     // wheeled and hover tanks take movement critical
                     if ((entity instanceof Tank)
                             && ((entity.getMovementMode() == EntityMovementMode.WHEELED) || (entity.getMovementMode() == EntityMovementMode.HOVER))) {
@@ -25877,40 +25880,77 @@ public class Server implements Runnable {
                         continue;
                     }
                     // only infantry and support vees with bar < 5 are affected
-                    if ((entity instanceof BattleArmor) || (entity.getBARRating() > 4)) {
+                    if ((entity instanceof BattleArmor) || (!entity.hasPatchworkArmor() && (entity.getBARRating(1) > 4))) {
                         continue;
                     }
                     if (entity instanceof Infantry) {
                         hits = Compute.d6(damage);
                         hits *= 2;
-                    }
-                    if (entity.getBARRating() < 5) {
-                        switch (ammo.getAmmoType()) {
-                        case AmmoType.T_LONG_TOM:
-                            // hack: check if damage is still at 4, so we're in
-                            // the
-                            // center hex. otherwise, do no damage
-                            if (damage == 4) {
-                                damage = (5 - entity.getBARRating()) * 5;
-                            } else {
-                                continue;
+                    } else {
+                        if ((entity.getBARRating(1) < 5) && !entity.hasPatchworkArmor()) {
+                            switch (ammo.getAmmoType()) {
+                                case AmmoType.T_LONG_TOM:
+                                    // hack: check if damage is still at 4, so we're in
+                                    // the
+                                    // center hex. otherwise, do no damage
+                                    if (damage == 4) {
+                                        damage = (5 - entity.getBARRating(1)) * 5;
+                                    } else {
+                                        continue;
+                                    }
+                                    break;
+                                case AmmoType.T_SNIPER:
+                                    // hack: check if damage is still at 2, so we're in
+                                    // the
+                                    // center hex. otherwise, do no damage
+                                    if (damage == 2) {
+                                        damage = (5 - entity.getBARRating(1)) * 3;
+                                    } else {
+                                        continue;
+                                    }
+                                    break;
+                                case AmmoType.T_THUMPER:
+                                    // no need to check for damage, because falloff =
+                                    // damage for the thumper
+                                    damage = 5 - entity.getBARRating(1);
+                                    break;
                             }
-                            break;
-                        case AmmoType.T_SNIPER:
-                            // hack: check if damage is still at 2, so we're in
-                            // the
-                            // center hex. otherwise, do no damage
-                            if (damage == 2) {
-                                damage = (5 - entity.getBARRating()) * 3;
-                            } else {
-                                continue;
+                        } else {
+                            // ugh, patchwork armor
+                            // rules as written don't deal with this
+                            // reset the damage to standard arty damage
+                            // when we have each cluster's hit location,
+                            // we'll multiply by the
+                            // BAR-difference to BAR 5, per a rules question
+                            // email
+                            specialCaseFlechette = true;
+                            switch (ammo.getAmmoType()) {
+                                case AmmoType.T_LONG_TOM:
+                                    // hack: check if damage is still at 4, so we're in
+                                    // the
+                                    // center hex. otherwise, do no damage
+                                    if (damage == 4) {
+                                        damage = 25;
+                                    } else {
+                                        continue;
+                                    }
+                                    break;
+                                case AmmoType.T_SNIPER:
+                                    // hack: check if damage is still at 2, so we're in
+                                    // the
+                                    // center hex. otherwise, do no damage
+                                    if (damage == 2) {
+                                        damage = 15;
+                                    } else {
+                                        continue;
+                                    }
+                                    break;
+                                case AmmoType.T_THUMPER:
+                                    // no need to check for damage, because falloff =
+                                    // damage for the thumper
+                                    damage = 10;
+                                    break;
                             }
-                            break;
-                        case AmmoType.T_THUMPER:
-                            // no need to check for damage, because falloff =
-                            // damage for the thumper
-                            damage = 5 - entity.getBARRating();
-                            break;
                         }
                     }
                 }
@@ -25934,11 +25974,15 @@ public class Server implements Runnable {
                 }
             } else {
                 while (hits > 0) {
+                    int damageToDeal = Math.min(cluster, hits);
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-
-                    vPhaseReport.addAll(damageEntity(entity, hit, Math.min(cluster, hits), false, DamageType.NONE,
+                    // per a rules question, for patchwork armor, we do this:
+                    if (specialCaseFlechette && !(entity instanceof Infantry)) {
+                        damageToDeal *= (5 - entity.getBARRating(hit.getLocation()));
+                    }
+                    vPhaseReport.addAll(damageEntity(entity, hit, damageToDeal, false, DamageType.NONE,
                             false, true, false));
-                    hits -= Math.min(5, hits);
+                    hits -= Math.min(cluster, hits);
                 }
             }
             if (killer != null) {

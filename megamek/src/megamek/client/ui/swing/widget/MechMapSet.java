@@ -205,10 +205,10 @@ public class MechMapSet implements DisplayMapSet {
         drawHeatControl(m.heat, mtHeat);
         //TODO: this messes up the layout a bit, but only for industrial
         // mechs FIXME
-        if (m.hasBARArmor()) {
+        if (!m.hasPatchworkArmor() && m.hasBARArmor(1)) {
             content.addArea(labels[19]);
             content.addArea(vLabels[20]);
-            vLabels[20].setValue(String.valueOf(m.getBARRating()));
+            vLabels[20].setValue(String.valueOf(m.getBARRating(1)));
         } else {
             content.removeArea(labels[19]);
             content.removeArea(vLabels[20]);

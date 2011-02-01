@@ -3503,12 +3503,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     // Beagle Isn't effected by normal ECM
                     if (type.getName().equals("Beagle Active Probe")) {
 
-                        if (checkECM && Compute.isAffectedByAngelECM(this, getPosition(), getPosition())) {
+                        if ((game != null) && checkECM && Compute.isAffectedByAngelECM(this, getPosition(), getPosition())) {
                             return false;
                         }
                         return true;
                     }
-                    return !checkECM || !Compute.isAffectedByECM(this, getPosition(), getPosition());
+                    return !checkECM || (game == null) || !Compute.isAffectedByECM(this, getPosition(), getPosition());
                 }
             }
         }

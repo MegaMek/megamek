@@ -2718,8 +2718,9 @@ public abstract class Mech extends Entity implements Serializable {
                     modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
                 }
             }
+            int armor = getArmor(loc) + (hasRearArmor(loc) ? getArmor(loc, true) : 0);
 
-            dbv += (getArmor(loc) + modularArmor) * armorMultiplier;
+            dbv += (armor + modularArmor) * armorMultiplier;
             bvText.append(dbv);
             bvText.append(endColumn);
             bvText.append(endRow);

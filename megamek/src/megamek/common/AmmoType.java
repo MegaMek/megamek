@@ -5376,7 +5376,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_ARROW_IV;
         ammo.shots = 5;
-        ammo.bv = 21;
+        ammo.bv = 30;
         ammo.cost = 10000;
 
         return ammo;

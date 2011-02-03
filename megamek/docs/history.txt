@@ -42,6 +42,10 @@ v0.35.22-dev (SVN)
 + Some XTR and Golden Century units added.
 + Patchwork armor
 + Bug: dropship facings and secondary positions
++ Bug: Clan Arrow IV ammo BV wrong
++ Bug: units with mechanical jump boosters add 0 heat for movement heat for BV
+    calculations
++ Bug: sometimes returning -1 jump MP
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

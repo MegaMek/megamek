@@ -1222,10 +1222,6 @@ public abstract class Mech extends Entity implements Serializable {
             return 0;
         }
 
-        if (hasModularArmor()) {
-            jump--;
-        }
-
         for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump++;
@@ -1245,8 +1241,13 @@ public abstract class Mech extends Entity implements Serializable {
             }
         }
 
+        if (hasModularArmor()) {
+            jump--;
+        }
+
+
         if (gravity) {
-            return applyGravityEffectsOnMP(jump);
+            return Math.max(applyGravityEffectsOnMP(jump), 0);
         }
         return Math.max(jump, 0);
     }
@@ -3077,7 +3078,7 @@ public abstract class Mech extends Entity implements Serializable {
         bvText.append(endColumn);
         bvText.append(endRow);
         // use UMU for JJ, unless we have more jump MP than UMU (then we have
-        // mechanical jumpboosters
+        // mechanical jumpboosters)
         int jumpMP = Math.max(getActiveUMUCount(), getJumpMP(false));
         int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
         bvText.append(startRow);
@@ -3241,7 +3242,7 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(" + Coolant Pods ");
         }
 
-        if (getJumpMP() > 0) {
+        if ((getJumpMP() > 0) && (getJumpHeat(getJumpMP()) > getRunHeat())) {
             mechHeatEfficiency -= getJumpHeat(getJumpMP());
             bvText.append(" - Jump Heat ");
         } else {

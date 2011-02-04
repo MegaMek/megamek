@@ -2700,14 +2700,6 @@ public abstract class Mech extends Entity implements Serializable {
                 armorMultiplier += 0.2;
             }
 
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" x ");
-            bvText.append(armorMultiplier);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
             // BV for torso mounted cockpit.
             if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (loc == LOC_CT)) {
                 dbv += this.getArmor(Mech.LOC_CT);
@@ -2720,6 +2712,14 @@ public abstract class Mech extends Entity implements Serializable {
                 }
             }
             int armor = getArmor(loc) + (hasRearArmor(loc) ? getArmor(loc, true) : 0);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+"( "+armor+") x ");
+            bvText.append(armorMultiplier);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
 
             dbv += (armor + modularArmor) * armorMultiplier;
             bvText.append(dbv);

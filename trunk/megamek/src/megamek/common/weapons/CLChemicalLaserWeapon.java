@@ -39,8 +39,6 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
         damage = DAMAGE_VARIABLE;
         ammoType = AmmoType.T_CHEMICAL_LASER;
         minimumRange = WEAPON_NA;
-        //TODO: for protos and Tanks, these don't need power amps
-        //this probably needs a special casing in MML
         flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);
         atClass = CLASS_LASER;
     }

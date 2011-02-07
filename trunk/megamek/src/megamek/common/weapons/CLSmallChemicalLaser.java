@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -27,7 +26,7 @@ import megamek.server.Server;
 /**
  * @author Jason Tighe
  */
-public class CLSmallChemicalLaser extends AmmoWeapon {
+public class CLSmallChemicalLaser extends CLChemicalLaserWeapon {
 
     /**
      *
@@ -35,7 +34,6 @@ public class CLSmallChemicalLaser extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLSmallChemicalLaser() {
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         name = "Small Chem Laser";
         setInternalName("CLSmallChemicalLaser");
         setInternalName("CLSmallChemLaser");
@@ -54,7 +52,6 @@ public class CLSmallChemicalLaser extends AmmoWeapon {
         waterExtremeRange = 3;
         tonnage = 0.5f;
         criticals = 1;
-        flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY);
         bv = 7;
         cost = 100000;
         shortAV = 3;

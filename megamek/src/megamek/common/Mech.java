@@ -2715,14 +2715,13 @@ public abstract class Mech extends Entity implements Serializable {
 
             bvText.append(startRow);
             bvText.append(startColumn);
-
-            bvText.append("Total Armor "+this.getLocationAbbr(loc)+"( "+armor+") x ");
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+") x ");
             bvText.append(armorMultiplier);
             bvText.append(endColumn);
             bvText.append(startColumn);
-
-            dbv += (armor + modularArmor) * armorMultiplier;
-            bvText.append(dbv);
+            double armorBV = (armor + modularArmor) * armorMultiplier;
+            dbv += armorBV;
+            bvText.append(armorBV);
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -3659,7 +3658,7 @@ public abstract class Mech extends Entity implements Serializable {
 
                             ArrayList<Object> weaponValues = new ArrayList<Object>();
                             weaponValues.add(((MiscType) mount.getType()).getBV(this));
-                            weaponValues.add(getActiveVibrobladeHeat(location));
+                            weaponValues.add((double)getActiveVibrobladeHeat(location, true));
                             weaponValues.add(mount.getName());
                             heatBVs.add(weaponValues);
 
@@ -3672,10 +3671,10 @@ public abstract class Mech extends Entity implements Serializable {
                             bvText.append(endColumn);
                             bvText.append(startColumn);
                             bvText.append("+ ");
-                            bvText.append(getActiveVibrobladeHeat(location));
+                            bvText.append(getActiveVibrobladeHeat(location, true));
                             bvText.append(endColumn);
                             bvText.append(endRow);
-                            maximumHeat += getActiveVibrobladeHeat(location);
+                            maximumHeat += getActiveVibrobladeHeat(location, true);
                             break;
                         }
                     }

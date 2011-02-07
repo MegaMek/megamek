@@ -435,6 +435,10 @@ public class BipedMech extends Mech {
      */
     @Override
     public int getActiveVibrobladeHeat(int location) {
+        return getActiveVibrobladeHeat(location, false);
+    }
+
+    public int getActiveVibrobladeHeat(int location, boolean ignoreMode) {
         // Only arms have VibroBlades.
         if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {
             return 0;
@@ -451,7 +455,7 @@ public class BipedMech extends Mech {
             }
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && m.curMode().equals("Active") && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
+            if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && (m.curMode().equals("Active") || ignoreMode) && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
                 MiscType blade = (MiscType) type;
                 if (blade.hasSubType(MiscType.S_VIBRO_LARGE)) {
                     return 7;

@@ -796,13 +796,17 @@ public class Tank extends Entity {
             bvText.append(startColumn);
 
             int armor = getArmor(loc) + modularArmor;
-            bvText.append("Total Armor "+this.getLocationAbbr(loc)+"("+armor+") x ");
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+") x ");
             bvText.append(armorMultiplier);
             bvText.append(" x ");
             bvText.append(getBARRating(loc));
             bvText.append("/10");
             bvText.append(endColumn);
-            dbv += getArmor(loc) + modularArmor * armorMultiplier *  ((float) (getBARRating(loc)) / 10);
+            bvText.append(startColumn);
+            double armorBV = getArmor(loc) + modularArmor * armorMultiplier *  ((float) (getBARRating(loc)) / 10);
+            bvText.append(armorBV);
+            dbv += armorBV;
+            bvText.append(endColumn);
         }
         bvText.append(startRow);
         bvText.append(startColumn);

@@ -3196,6 +3196,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return 0;
     }
 
+    public int getActiveVibrobladeHeat(int location, boolean ignoreMode) {
+        return 0;
+    }
+
     /**
      * Does the mech have any shields. a mech can have up to 2 shields.
      *

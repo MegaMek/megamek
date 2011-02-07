@@ -53,7 +53,6 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
         criticals = 2;
         bv = 119;
         cost = 175000;
-        flags = flags.or(F_PULSE);
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;

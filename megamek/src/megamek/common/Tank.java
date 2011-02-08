@@ -803,7 +803,7 @@ public class Tank extends Entity {
             bvText.append("/10");
             bvText.append(endColumn);
             bvText.append(startColumn);
-            double armorBV = getArmor(loc) + modularArmor * armorMultiplier *  ((float) (getBARRating(loc)) / 10);
+            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier * ((float) (getBARRating(loc)) / 10);
             bvText.append(armorBV);
             dbv += armorBV;
             bvText.append(endColumn);

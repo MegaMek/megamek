@@ -2702,6 +2702,15 @@ public abstract class Mech extends Entity implements Serializable {
 
             // BV for torso mounted cockpit.
             if ((getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (loc == LOC_CT)) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                double cockpitArmor = this.getArmor(Mech.LOC_CT) + this.getArmor(Mech.LOC_CT, true);
+                bvText.append("extra BV for torso mounted cockpit");
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(cockpitArmor);
+                bvText.append(endColumn);
+                bvText.append(endRow);
                 dbv += this.getArmor(Mech.LOC_CT);
                 dbv += this.getArmor(Mech.LOC_CT, true);
             }
@@ -3577,14 +3586,6 @@ public abstract class Mech extends Entity implements Serializable {
                 dBV = mgaBV * 0.67;
             }
 
-            // if linked to AES, multiply by 1.5
-            if (hasFunctionalArmAES(mounted.getLocation())) {
-                dBV *= 1.5;
-            }
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                dBV *= 1.25;
-            }
             // artemis bumps up the value
             // PPC caps do, too
             if (mounted.getLinkedBy() != null) {
@@ -3607,6 +3608,14 @@ public abstract class Mech extends Entity implements Serializable {
                     dBV *= 1.15;
                     weaponName = weaponName.concat(" with Apollo");
                 }
+            }
+            // if linked to AES, multiply by 1.5
+            if (hasFunctionalArmAES(mounted.getLocation())) {
+                dBV *= 1.5;
+            }
+            // and we'll add the tcomp here too
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                dBV *= 1.25;
             }
             // half for being rear mounted (or front mounted, when more rear-
             // than front-mounted un-modded BV

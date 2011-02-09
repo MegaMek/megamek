@@ -4953,7 +4953,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 2000;
         misc.flags = misc.flags.or(F_CHAFF_POD).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
-        misc.bv = 17;
+        misc.bv = 19;
         return misc;
     }
 

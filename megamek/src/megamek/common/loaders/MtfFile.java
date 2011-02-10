@@ -207,15 +207,7 @@ public class MtfFile implements IMechLoader {
             }
             mech.setFullHeadEject(fullHead);
 
-            // aarg! those stupid sub-names in parenthesis screw everything up
-            // we may do something different in the future, but for now, I'm
-            // going to strip them out
-            int pindex = name.indexOf("(");
-            if (pindex == -1) {
-                mech.setChassis(name.trim());
-            } else {
-                mech.setChassis(name.substring(0, pindex - 1).trim());
-            }
+            mech.setChassis(name.trim());
             mech.setModel(model.trim());
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
             mech.setSource(source.substring("Source:".length()).trim());

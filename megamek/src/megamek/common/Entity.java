@@ -4831,7 +4831,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
             // ice conditions
         } else if (curHex.containsTerrain(Terrains.ICE)) {
-            roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
+            roll.append(new PilotingRollData(getId(), 4, "moving recklessly"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "not moving recklessly");
         }

@@ -3474,11 +3474,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 if ((type instanceof MiscType) && type.hasFlag(MiscType.F_ECM) && !m.isInoperable()) {
-                    if (BattleArmor.SINGLE_HEX_ECM.equals(type.getInternalName())) {
+                    if (type.hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
                         return 0;
                     }
                     int toReturn = 6;
-                    if (type.getInternalName().equals(Sensor.EW_EQUIPMENT)) {
+                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
                         toReturn = 3;
                     }
                     if (game.getPlanetaryConditions().hasEMI()) {

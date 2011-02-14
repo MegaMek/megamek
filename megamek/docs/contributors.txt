@@ -156,6 +156,7 @@
      ruff
      DarkISI
      Diezle
+     walter@nebulastation.net
 
   Translations
      Jörg Harder <joergharder@t-online.de>

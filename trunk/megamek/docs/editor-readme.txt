@@ -100,7 +100,7 @@ information on the board file format, and the tileset file format.
     the map.  The level of fluff in the terrain, coupled with the exits that
     are specified for the fluff, determine the image that appears.  The full
     list of fluff images available, and the level and exits needed to display
-    them, can be seen in the file, "data/hexes/defaulthexset.txt".
+    them, can be seen in the file, "data/images/hexes/atmospheric.tileset".
 
     The terrain feature types and their expected values:
 
@@ -210,8 +210,8 @@ board files by hand.  This refrence is just for creating a different editor.
     level 0, clear terrain.
     
 The graphics for maps are stored in tileset files.  These are located in the
-data/hexes directory.  The default tileset is called "defaulthexset.txt".  
-Image files should be located in a subdirectory off of the data/hexes directory.
+data/images/hexes directory.  The default tileset is called "atmospheric.tileset".  
+Image files should be located in a subdirectory off of the data/images/hexes directory.
 The tileset used by the game can be changed in the MegaMek.cfg file, in the
 game base directory.
 

@@ -118,13 +118,21 @@ public class RandomNameGenerator implements Serializable {
                     continue;
                 }
                 String name = values[0];
+                int weight = Integer.parseInt(values[1]);
                 String key = values[2];
+                int i = 0;
                 if (!firstm.containsKey(key)) {
                     Vector<String> v = new Vector<String>();
-                    v.add(name);
+                    while(i < weight) {
+                        v.add(name);
+                        i++;
+                    }
                     firstm.put(key, v);
                 } else {
-                    firstm.get(key).add(name);
+                    while(i < weight) {
+                        firstm.get(key).add(name);
+                        i++;
+                    }
                 }
             }
         } catch (FileNotFoundException fne) {
@@ -147,13 +155,21 @@ public class RandomNameGenerator implements Serializable {
                     continue;
                 }
                 String name = values[0];
+                int weight = Integer.parseInt(values[1]);
                 String key = values[2];
+                int i = 0;
                 if (!firstf.containsKey(key)) {
                     Vector<String> v = new Vector<String>();
-                    v.add(name);
+                    while(i < weight) {
+                        v.add(name);
+                        i++;
+                    }
                     firstf.put(key, v);
                 } else {
-                    firstf.get(key).add(name);
+                    while(i < weight) {
+                        firstf.get(key).add(name);
+                        i++;
+                    }
                 }
             }
         } catch (FileNotFoundException fne) {
@@ -175,13 +191,21 @@ public class RandomNameGenerator implements Serializable {
                     continue;
                 }
                 String name = values[0];
+                int weight = Integer.parseInt(values[1]);
                 String key = values[2];
+                int i = 0;
                 if (!last.containsKey(key)) {
                     Vector<String> v = new Vector<String>();
-                    v.add(name);
+                    while(i < weight) {
+                        v.add(name);
+                        i++;
+                    }
                     last.put(key, v);
                 } else {
-                    last.get(key).add(name);
+                    while(i < weight) {
+                        last.get(key).add(name);
+                        i++;
+                    }
                 }
             }
         } catch (FileNotFoundException fne) {

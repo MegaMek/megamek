@@ -538,6 +538,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         try {
             mechView = new MechView(selectedUnit, false);
         } catch (Exception e) {
+            e.printStackTrace();
             // error unit didn't load right. this is bad news.
             populateTextFields = false;
         }

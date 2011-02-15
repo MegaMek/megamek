@@ -1645,4 +1645,9 @@ public class BattleArmor extends Infantry {
         return false;
     }
 
+    @Override
+    public boolean hasPatchworkArmor() {
+        return false;
+    }
+
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -155,6 +155,7 @@ v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Bug: missing heatsinks and sink_type blocks showing the wrong message
 + Bug: modular armor and no jump jets results in -1 jump movement
 + Bug: Mechdisplay rounding infantry tonnage
++ use frequency weights when selecting random names (NOTE: this *might* have the potential to slow down MM, so watch user reports)
 
 v0.35.20 (2010-11-22, 16:21 UTC+1)
 + Dropship BV determined by two arcs adjacent to "front" not opposite arc

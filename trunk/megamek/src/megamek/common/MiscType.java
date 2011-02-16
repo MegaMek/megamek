@@ -287,7 +287,7 @@ public class MiscType extends EquipmentType {
             if (getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) {
                 return (float) (Math.ceil(entity.getWeight() / 20.0 * 2.0) / 2.0);
             } else if (getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) {
-                return (float) (Math.ceil(entity.getWeight() * 0.15) / 2.0);
+                return (float) (Math.ceil(entity.getWeight() * 0.14) / 2.0);
             }
         } else if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
             return (float) Math.ceil(entity.getWeight() / 15.0);

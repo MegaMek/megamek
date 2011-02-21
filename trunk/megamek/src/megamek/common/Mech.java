@@ -460,6 +460,9 @@ public abstract class Mech extends Entity implements Serializable {
         if (masc != null) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
+            if (isIndustrial() && masc.getType().hasSubType(MiscType.S_SUPERCHARGER)) {
+                nRoll -= 1;
+            }
 
             usedMASC = true;
             Report r = new Report(2365);

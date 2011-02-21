@@ -983,6 +983,15 @@ public class Tank extends Entity {
         bvText.append("--------------");
         bvText.append(endColumn);
         bvText.append(endRow);
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
 
         double weaponBV = 0;
 

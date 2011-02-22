@@ -5171,14 +5171,21 @@ public class Server implements Runnable {
             }
 
             // check for MASC failure on first step
-            if (firstStep && (entity instanceof Mech)) {
+            // also check Tanks because they can have superchargers that act like MASc
+            if (firstStep && ((entity instanceof Mech) || (entity instanceof Tank))) {
                 HashMap<Integer, CriticalSlot> crits = new HashMap<Integer, CriticalSlot>();
                 Vector<Report> vReport = new Vector<Report>();
-                if (((Mech) entity).checkForMASCFailure(md, vReport, crits)) {
+                if (entity.checkForMASCFailure(md, vReport, crits)) {
                     addReport(vReport);
                     for (Integer loc : crits.keySet()) {
                         CriticalSlot cs = crits.get(loc);
-                        addReport(applyCriticalHit(entity, loc, cs, true));
+                        // HACK: if loc is -1, we need to deal motive damage to
+                        // the tank, the severity of which is stored in the critslot index
+                        if (loc == -1) {
+                            addReport(vehicleMotiveDamage((Tank)entity, 0, true, cs.getIndex()));
+                        } else {
+                            addReport(applyCriticalHit(entity, loc, cs, true));
+                        }
                     }
                     // do any PSR immediately
                     addReport(resolvePilotingRolls(entity));
@@ -25363,6 +25370,18 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
+        return vehicleMotiveDamage(te, modifier, false, -1);
+    }
+
+    /**
+     * do vehicle movement damage
+     * @param te the Tank to damage
+     * @param modifier the modifier to the roll
+     * @param noroll don't roll, immediately deal damage
+     * @param damagetype the type to deal (1 = minor, 2 = moderate, 3 = heavy
+     * @return
+     */
+    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier, boolean noroll, int damagetype) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         r = new Report(1210, Report.PUBLIC);
@@ -25440,10 +25459,6 @@ public class Server implements Runnable {
             r.indent(3);
             vDesc.add(r);
             te.addMovementDamage(2);
-            int nMP = te.getOriginalWalkMP();
-            if (nMP > 0) {
-                te.setOriginalWalkMP(nMP - 1);
-            }
         } else if (roll <= 11) {
             // heavy damage
             r = new Report(6472);
@@ -25451,10 +25466,6 @@ public class Server implements Runnable {
             r.indent(3);
             vDesc.add(r);
             te.addMovementDamage(3);
-            int nMP = te.getOriginalWalkMP();
-            if (nMP > 0) {
-                te.setOriginalWalkMP(nMP / 2);
-            }
         } else {
             r = new Report(6473);
             r.subject = te.getId();

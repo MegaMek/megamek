@@ -803,6 +803,8 @@ public class Tank extends Entity {
             bvText.append("/10");
             bvText.append(endColumn);
             bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
             double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier * ((float) (getBARRating(loc)) / 10);
             bvText.append(armorBV);
             dbv += armorBV;
@@ -811,6 +813,8 @@ public class Tank extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append("Total modified armor BV x 2.5 ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append("= ");
@@ -1486,8 +1490,23 @@ public class Tank extends Entity {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
+     */
+    @Override
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        if (hasArmedMASC()) {
+            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
+        } else {
+            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+
 
     @Override
     public int getHeatCapacity() {
@@ -1827,13 +1846,33 @@ public class Tank extends Entity {
                     moderateMovementDamage = true;
                     movementDamage += level;
                 }
+                int nMP = getOriginalWalkMP();
+                if (nMP > 0) {
+                    setOriginalWalkMP(nMP - 1);
+                }
                 break;
             case 3:
                 if (!heavyMovementDamage) {
                     heavyMovementDamage = true;
                     movementDamage += level;
                 }
+                nMP = getOriginalWalkMP();
+                if (nMP > 0) {
+                    setOriginalWalkMP(nMP / 2);
+                }
         }
+    }
+
+    public boolean hasMinorMovementDamage() {
+        return minorMovementDamage;
+    }
+
+    public boolean hasModerateMovementDamage() {
+        return moderateMovementDamage;
+    }
+
+    public boolean hasHeavyMovementDamage() {
+        return heavyMovementDamage;
     }
 
     public void setEngine(Engine e) {
@@ -2382,6 +2421,30 @@ public class Tank extends Entity {
             } catch (LocationFullException e) {
             }
         }
+    }
+
+    /**
+     * Checks if a mech has an armed MASC system. Note that the mech will have
+     * to exceed its normal run to actually engage the MASC system
+     */
+    public boolean hasArmedMASC() {
+        for (Mounted m : getEquipment()) {
+            if (!m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("Armed")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns this entity's running/flank mp as a string.
+     */
+    @Override
+    public String getRunMPasString() {
+        if (hasArmedMASC()) {
+            return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+        }
+        return Integer.toString(getRunMP());
     }
 
 }

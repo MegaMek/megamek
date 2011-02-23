@@ -4352,7 +4352,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISCollapsibleCommandModule() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        misc.name = "Collapsible Command Modual";
+        misc.name = "Collapsible Command Module";
         misc.setInternalName("ISCollapsibleCommandModule");
         misc.addLookupName("ISCCM");
         misc.addLookupName("CollapsibleCommandModule");

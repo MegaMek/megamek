@@ -460,12 +460,13 @@ public class MoveStep implements Serializable {
         } else if (parent.isJumping()) {
             IHex hex = game.getBoard().getHex(getPosition());
             int maxElevation = entity.getJumpMP() + entity.getElevation()
-            + game.getBoard().getHex(entity.getPosition()).surface()
-            - hex.surface();
+                + game.getBoard().getHex(entity.getPosition()).surface()
+                - hex.surface();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth();
             //need to adjust depth for potential ice over water
-            if(hex.containsTerrain(Terrains.ICE) && hex.containsTerrain(Terrains.WATER)) {
+            if((hex.containsTerrain(Terrains.ICE) && hex.containsTerrain(Terrains.WATER)) ||
+                    (entity.getMovementMode() == EntityMovementMode.HOVER)) {
                 depth = 0;
             }
             //grounded dropships are treated as level 10 buildings for purposes of jumping over

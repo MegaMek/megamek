@@ -129,7 +129,7 @@ public class SharedUtility {
                 rollTarget = ((Aero)entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             //check for landing
             if((step.getType() == MoveStepType.LAND) && (entity instanceof Aero)) {
                 rollTarget = ((Aero)entity).checkHorizontalLanding(moveType, step.getVelocity(), curPos, curFacing);
@@ -323,8 +323,11 @@ public class SharedUtility {
                     nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
                 }
             } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
-                rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
-                checkNag(rollTarget, nagReport, psrList);
+                if (!(entity.getMovementMode() == EntityMovementMode.HOVER)) {
+                    rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
+                    checkNag(rollTarget, nagReport, psrList);
+                }
+
             }
 
         }

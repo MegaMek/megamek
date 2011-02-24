@@ -574,7 +574,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
 
-        buttonsTank = new ArrayList<JButton>(19);
+        buttonsTank = new ArrayList<JButton>(20);
         buttonsTank.add(butWalk);
         buttonsTank.add(butBackup);
         buttonsTank.add(butTurn);
@@ -590,6 +590,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butEject);
         buttonsTank.add(butFlee);
         buttonsTank.add(butRAC);
+        buttonsTank.add(butJump);
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
         buttonsTank.add(butRaise);

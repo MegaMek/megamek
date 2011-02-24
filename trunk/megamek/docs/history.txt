@@ -61,6 +61,7 @@ v0.35.22-dev (SVN)
 + show when a unit is using evading movement in tooltip
 + VTOL Jet Boosters
 + Bug 3177375: Dual turret tank armor type bug
++ Bug 3176934: fire/smoke + changing wind null pointer exceptions
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

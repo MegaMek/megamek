@@ -6765,7 +6765,7 @@ public class Server implements Runnable {
                         }
                     }
                 }
-            } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE))) {
+            } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE)) && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     doSkillCheckInPlace(entity, rollTarget);

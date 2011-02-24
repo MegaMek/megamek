@@ -21150,19 +21150,23 @@ public class Server implements Runnable {
     public void ignite(Coords c, boolean bInferno, Vector<Report> vReport) {
         // you can't start fires in some planetary conditions!
         if (null != game.getPlanetaryConditions().cannotStartFire()) {
-            Report r = new Report(3007);
-            r.indent(2);
-            r.add(game.getPlanetaryConditions().cannotStartFire());
-            r.type = Report.PUBLIC;
-            vReport.add(r);
+            if (null != vReport) {
+                Report r = new Report(3007);
+                r.indent(2);
+                r.add(game.getPlanetaryConditions().cannotStartFire());
+                r.type = Report.PUBLIC;
+                vReport.add(r);
+            }
             return;
         }
 
         if (!game.getOptions().booleanOption("tacops_start_fire")) {
-            Report r = new Report(3008);
-            r.indent(2);
-            r.type = Report.PUBLIC;
-            vReport.add(r);
+            if (null != vReport) {
+                Report r = new Report(3008);
+                r.indent(2);
+                r.type = Report.PUBLIC;
+                vReport.add(r);
+            }
             return;
         }
 

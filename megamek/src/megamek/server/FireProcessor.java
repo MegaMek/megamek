@@ -297,7 +297,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         int windDir = game.getPlanetaryConditions().getWindDirection();
         int windStr = game.getPlanetaryConditions().getWindStrength();
         //if the breeze option is turned on, then treat wind strength like light gale if none
-        if(game.getOptions().booleanOption("breeze") && windStr == PlanetaryConditions.WI_NONE) {
+        if(game.getOptions().booleanOption("breeze") && (windStr == PlanetaryConditions.WI_NONE)) {
             windStr = PlanetaryConditions.WI_LIGHT_GALE;
         }
 
@@ -398,6 +398,10 @@ public class FireProcessor extends DynamicTerrainProcessor {
         //if it is no longer on the board then return it now to avoid getting null arguments later
         if(!board.contains(nextCoords)) {
             return nextCoords;
+        }
+        //if the smoke didn't start on the board because of shifting wind then return it
+        if(!board.contains(src)) {
+            return src;
         }
 
         int hexElevation = board.getHex(src).getElevation();

@@ -256,7 +256,6 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "Aero");
         }
 
-        blk.writeBlockData("blockversion", 1);
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
         blk.writeBlockData("year", t.getYear());

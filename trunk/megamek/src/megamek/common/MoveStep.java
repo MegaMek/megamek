@@ -1842,18 +1842,21 @@ public class MoveStep implements Serializable {
                 entity.gotPavementBonus = true;
             } else if (((getMpUsed() <= entity.getRunMPwithoutMASC()) || ((getMpUsed() <= entity
                     .getRunMP())
-                    && (entity instanceof Mech) && ((Mech) entity).isMASCUsed()))
+                    && entity.isMASCUsed()))
                     && !isRunProhibited()) {
-                if (parent.getEntity().getMovementMode() == EntityMovementMode.VTOL) {
+                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
             } else if ((getMpUsed() <= entity.getRunMP()) && !isRunProhibited() && !isEvading()) {
                 setUsingMASC(true);
-                Mech m = (Mech) entity;
-                setTargetNumberMASC(m.getMASCTarget());
-                movementType = EntityMovementType.MOVE_RUN;
+                setTargetNumberMASC(entity.getMASCTarget());
+                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                    movementType = EntityMovementType.MOVE_VTOL_RUN;
+                } else {
+                    movementType = EntityMovementType.MOVE_RUN;
+                }
             } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
                     && isOnlyPavement()
                     && (getMpUsed() <= (entity.getRunMP() + 1))
@@ -1871,8 +1874,7 @@ public class MoveStep implements Serializable {
             } else if ((getMpUsed() <= entity.getSprintMP()) && !isRunProhibited() && !isEvading()
                     && game.getOptions().booleanOption("tacops_sprint")) {
                 setUsingMASC(true);
-                Mech m = (Mech) entity;
-                setTargetNumberMASC(m.getMASCTarget());
+                setTargetNumberMASC(entity.getMASCTarget());
                 movementType = EntityMovementType.MOVE_SPRINT;
             }
         }

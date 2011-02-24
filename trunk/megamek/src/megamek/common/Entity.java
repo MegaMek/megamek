@@ -7887,6 +7887,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (isUsingManAce()) {
                 roll.addModifier(-1, "Maneuvering Ace");
             }
+            if ((getMovementMode() == EntityMovementMode.VTOL)
+                    && isMASCUsed() && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+                roll.addModifier(3, "used VTOL Jet Booster");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: not apparently sideslipping");
         }
@@ -9605,8 +9609,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determine if MASC has been used this turn.
-     * <p/>
-     * This method should <strong>only</strong> be used during serialization.
      *
      * @return <code>true</code> if MASC has been used.
      */
@@ -9654,6 +9656,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 Mounted superCharger = getSuperCharger();
                 bFailure = doMASCCheckFor(masc, vDesc, vCriticals);
                 boolean bSuperChargeFailure = doMASCCheckFor(superCharger, vDesc, vCriticals);
+                usedMASC = true;
                 return bFailure || bSuperChargeFailure;
             }
         }
@@ -9807,7 +9810,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Mounted getMASC() {
         for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType) m.getType();
-            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady() && !mtype.hasSubType(MiscType.S_SUPERCHARGER)) {
+            if (mtype.hasFlag(MiscType.F_MASC) && m.isReady() && !mtype.hasSubType(MiscType.S_SUPERCHARGER) && !mtype.hasSubType(MiscType.S_JETBOOSTER)) {
                 return m;
             }
         }

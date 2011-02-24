@@ -198,7 +198,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butVTakeOff;
     private JButton butLand;
     private JButton butVLand;
-    
+
     private JButton butTurnLeft;
     private JButton butTurnRight;
     private JButton butThrust;
@@ -504,13 +504,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butLand.setEnabled(false);
         butLand.setActionCommand(MOVE_LAND);
         butLand.addKeyListener(this);
-        
+
         butVLand = new JButton(Messages.getString("MovementDisplay.butVLand")); //$NON-NLS-1$
         butVLand.addActionListener(this);
         butVLand.setEnabled(false);
         butVLand.setActionCommand(MOVE_VERT_LAND);
         butVLand.addKeyListener(this);
-        
+
         butManeuver = new JButton(Messages
                 .getString("MovementDisplay.butManeuver")); //$NON-NLS-1$
         butManeuver.addActionListener(this);
@@ -928,8 +928,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             disableButtons();
             butDone.setEnabled(true);
         }
-        
-        //if small craft/dropship that has unloaded units, then only allowed 
+
+        //if small craft/dropship that has unloaded units, then only allowed
         //to unload more
         if(ce.hasUnloadedUnitsFromBays()) {
             disableButtons();
@@ -1096,8 +1096,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             disableButtons();
             butDone.setEnabled(true);
         }
-        
-        //if small craft/dropship that has unloaded units, then only allowed 
+
+        //if small craft/dropship that has unloaded units, then only allowed
         //to unload more
         if(ce.hasUnloadedUnitsFromBays()) {
             disableButtons();
@@ -1148,21 +1148,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         if (cmd.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) {
             // pop up are you sure dialog
-            Mech m = (Mech) ce();
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                    Messages
-                            .getString(
-                                    "MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(m.getMASCTarget()) }), //$NON-NLS-1$
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForMASC(false);
+            if (!((ce() instanceof VTOL) && ce().hasWorkingMisc(MiscType.F_JET_BOOSTER))) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(ce().getMASCTarget()) }), //$NON-NLS-1$
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIPreferences.getInstance().setNagForMASC(false);
+                    }
+                } else {
+                    return;
                 }
-            } else {
-                return;
             }
         }
 
@@ -1215,7 +1216,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
-        
+
         //check for unsafe takeoffs
         if(cmd.contains(MoveStepType.VTAKEOFF) || cmd.contains(MoveStepType.TAKEOFF)) {
             boolean unsecure = false;
@@ -1241,11 +1242,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        
+
         //check to see if spheroids will drop an elevation
-        if(ce() instanceof Aero && ((Aero)ce()).isSpheroid() && !clientgui.getClient().game.getBoard().inSpace() 
-                && ((Aero)ce()).isAirborne() 
-                && cmd.getFinalNDown()==0 && cmd.getMpUsed()==0 && !cmd.contains(MoveStepType.VLAND)) {
+        if((ce() instanceof Aero) && ((Aero)ce()).isSpheroid() && !clientgui.getClient().game.getBoard().inSpace()
+                && ((Aero)ce()).isAirborne()
+                && (cmd.getFinalNDown()==0) && (cmd.getMpUsed()==0) && !cmd.contains(MoveStepType.VLAND)) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
                     .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.SpheroidAltitudeLoss") + //$NON-NLS-1$
@@ -1260,7 +1261,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
         }
-        
+
         if (ce().isAirborne() && (ce() instanceof Aero)) {
             if (!clientgui.getClient().game.useVectorMove()
                     && !((Aero) ce()).isOutControlTotal()) {
@@ -1742,10 +1743,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setVTakeOffEnabled(false);
         }
     }
-    
+
     private synchronized void updateLandButtons() {
-        
-        
+
+
     	if((null != cmd) && (cmd.length() > 0)) {
             //According to the link below, you can move in the air and then land
     		//but I have personal message to Welshman right now asking that this be changed
@@ -1757,24 +1758,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setLandEnabled(false);
             return;
         }
-    	
+
         final Entity ce = ce();
         if (null == ce) {
             return;
-        }  
+        }
 
         //only allow landing on the ground map not atmosphere or space map
         if(!clientgui.getClient().game.getBoard().onGround()) {
             return;
         }
-        
+
         if(ce instanceof Aero) {
-            if(ce.isAirborne() && cmd.getFinalAltitude() == 1) {
+            if(ce.isAirborne() && (cmd.getFinalAltitude() == 1)) {
                setLandEnabled(((Aero)ce).canLandHorizontally());
                setVLandEnabled(((Aero)ce).canLandVertically());
             }
         }
-        
+
     }
 
     private void updateRollButton() {
@@ -1975,28 +1976,28 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setFlyOffEnabled(false);
             return;
         }
-        
+
         Aero a = (Aero) ce;
         MoveStep step = cmd.getLastStep();
         Coords position = ce.getPosition();
         int facing = ce.getFacing();
-        
+
         int velocityLeft = a.getCurrentVelocity();
         if (step != null) {
             position = step.getPosition();
             facing = step.getFacing();
             velocityLeft = step.getVelocityLeft();
         }
-        
+
         //for spheroids in atmosphere we just need to check being on the edge
         if(a.isSpheroid() && !clientgui.getClient().game.getBoard().inSpace()) {
             setFlyOffEnabled((position != null) && (a.getWalkMP() > 0) && ((position.x == 0) || (position.x == clientgui.getClient().game.getBoard().getWidth() - 1) || (position.y == 0) || (position.y == clientgui.getClient().game.getBoard().getHeight() - 1)));
             return;
         }
-        
+
         //for all aerodynes and spheroids in space it is more complicated - the nose of the aircraft
         //must be facing in the righ direction and there must be velocity remaining
-        
+
         boolean evenx = (position.x % 2) == 0;
         if ((velocityLeft > 0)
                 && (((position.x == 0) && ((facing == 5) || (facing == 4)))
@@ -2119,13 +2120,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (null == ce) {
             return;
         }
-        
+
         if(ce instanceof SmallCraft) {
-            setUnloadEnabled(ce.getUnitsUnloadableFromBays().size() > 0 && !ce.isAirborne());
+            setUnloadEnabled((ce.getUnitsUnloadableFromBays().size() > 0) && !ce.isAirborne());
             setLoadEnabled(false);
             return;
         }
-        
+
         //can this unit mount a dropship/small craft?
         setMountEnabled(false);
         Coords pos = ce.getPosition();
@@ -2136,11 +2137,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
-        if(!ce.isAirborne() && mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)) 
-                && Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().game).size() > 0) {           
+        if(!ce.isAirborne() && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+                && (Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().game).size() > 0)) {
             setMountEnabled(true);
         }
-        
+
         boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
                 || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP));
         int unloadEl = cmd.getFinalElevation();
@@ -2207,9 +2208,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(null != hex) {
             elev += hex.getElevation();
         }
-        
+
         ArrayList<Entity> mountableUnits = Compute.getMountableUnits(ce, pos, elev, clientgui.getClient().game);
-        
+
      // Handle error condition.
         if (mountableUnits.size() == 0) {
             System.err
@@ -2240,7 +2241,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // Return the chosen unit.
         return choice;
     }
-    
+
     /**
      * Get the unit that the player wants to unload. This method will remove the
      * unit from our local copy of loaded units.
@@ -2283,7 +2284,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // Return the chosen unit.
         return choice;
     }
-    
+
     private Coords getUnloadPosition(Entity unloaded) {
         Entity ce = ce();
         //we need to allow the user to select a hex for offloading
@@ -3298,7 +3299,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString("MovementDisplay.FlyOffDialog.title"), Messages.getString("MovementDisplay.FlyOffDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
             // clear();
-            if(clientgui.getClient().game.getOptions().booleanOption("return_flyover") 
+            if(clientgui.getClient().game.getOptions().booleanOption("return_flyover")
                     && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ReturnFly.title"), Messages.getString("MovementDisplay.ReturnFly.message"))) {
                 cmd.addStep(MoveStepType.RETURN);
             } else {
@@ -3342,7 +3343,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 clientgui.bv.drawMovementData(ce(), cmd);
                 gear = MovementDisplay.GEAR_LAND;
             } // else - didn't find a unit to load
-        } else if(ev.getActionCommand().equals(MOVE_MOUNT)) {           
+        } else if(ev.getActionCommand().equals(MOVE_MOUNT)) {
             Entity other = getMountedUnit();
             if(other != null) {
                 cmd.addStep(MoveStepType.MOUNT, other);
@@ -3365,7 +3366,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     //some different handling for small craft/dropship unloading
                     cmd.addStep(MoveStepType.UNLOAD, other);
                     clientgui.bv.drawMovementData(ce(), cmd);
-                }            
+                }
             } // else - Player canceled the unload.
         } else if (ev.getActionCommand().equals(MOVE_RAISE_ELEVATION)) {
             cmd.addStep(MoveStepType.UP);
@@ -3515,7 +3516,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             dumpBombs();
         }
         else if (ev.getActionCommand().equals(MOVE_TAKE_OFF)) {
-            if((ce() instanceof Aero) && null != ((Aero)ce()).hasRoomForHorizontalTakeOff()) {
+            if((ce() instanceof Aero) && (null != ((Aero)ce()).hasRoomForHorizontalTakeOff())) {
                 String title = Messages.getString("MovementDisplay.NoTakeOffDialog.title"); //$NON-NLS-1$
                 String body = Messages.getString("MovementDisplay.NoTakeOffDialog.message", new Object[] {((Aero)ce()).hasRoomForHorizontalTakeOff()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
@@ -3535,7 +3536,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
         else if (ev.getActionCommand().equals(MOVE_LAND)) {
-            if((ce() instanceof Aero) && null != ((Aero)ce()).hasRoomForHorizontalLanding()) {
+            if((ce() instanceof Aero) && (null != ((Aero)ce()).hasRoomForHorizontalLanding())) {
                 String title = Messages.getString("MovementDisplay.NoLandingDialog.title"); //$NON-NLS-1$
                 String body = Messages.getString("MovementDisplay.NoLandingDialog.message", new Object[] {((Aero)ce()).hasRoomForHorizontalLanding()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
@@ -3548,7 +3549,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
         }
         else if (ev.getActionCommand().equals(MOVE_VERT_LAND)) {
-            if((ce() instanceof Aero) && null != ((Aero)ce()).hasRoomForVerticalLanding()) {
+            if((ce() instanceof Aero) && (null != ((Aero)ce()).hasRoomForVerticalLanding())) {
                 String title = Messages.getString("MovementDisplay.NoLandingDialog.title"); //$NON-NLS-1$
                 String body = Messages.getString("MovementDisplay.NoLandingDialog.message", new Object[] {((Aero)ce()).hasRoomForVerticalLanding()}); //$NON-NLS-1$
                 clientgui.doAlertDialog(title, body);
@@ -3582,15 +3583,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkFuel();
         checkOOC();
         checkAtmosphere();
-        
-        //if small craft/dropship that has unloaded units, then only allowed 
+
+        //if small craft/dropship that has unloaded units, then only allowed
         //to unload more
         if(ce.hasUnloadedUnitsFromBays()) {
             disableButtons();
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-        
+
     }
 
     /**
@@ -3800,7 +3801,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butLoad.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLoadEnabled(enabled);
     }
-    
+
     private void setMountEnabled(boolean enabled) {
         butMount.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveMountEnabled(enabled);
@@ -3982,12 +3983,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butVTakeOff.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveVTakeOffEnabled(enabled);
     }
-    
+
     private void setLandEnabled(boolean enabled) {
         butLand.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveLandEnabled(enabled);
     }
-    
+
     private void setVLandEnabled(boolean enabled) {
         butVLand.setEnabled(enabled);
         //clientgui.getMenuBar().setMoveVLandEnabled(enabled);

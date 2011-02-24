@@ -2429,7 +2429,7 @@ public class Tank extends Entity {
      */
     public boolean hasArmedMASC() {
         for (Mounted m : getEquipment()) {
-            if (!m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MASC) && m.curMode().equals("Armed")) {
+            if (!m.isDestroyed() && !m.isBreached() && (m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MASC) && (m.curMode().equals("Armed") || m.getType().hasSubType(MiscType.S_JETBOOSTER))) {
                 return true;
             }
         }

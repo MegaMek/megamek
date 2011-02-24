@@ -1113,18 +1113,19 @@ DoneButtoned, KeyListener {
 
         if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) {
             // pop up are you sure dialog
-            Mech m = (Mech) ce();
-            ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                    Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(m.getMASCTarget()) }), //$NON-NLS-1$
-                    true);
-            nag.setVisible(true);
-            if (nag.getAnswer()) {
-                // do they want to be bothered again?
-                if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForMASC(false);
+            if (!((ce() instanceof VTOL) && ce().hasWorkingMisc(MiscType.F_JET_BOOSTER))) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                        Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[] { new Integer(ce().getMASCTarget()) }), //$NON-NLS-1$
+                        true);
+                nag.setVisible(true);
+                if (nag.getAnswer()) {
+                    // do they want to be bothered again?
+                    if (!nag.getShowAgain()) {
+                        GUIPreferences.getInstance().setNagForMASC(false);
+                    }
+                } else {
+                    return;
                 }
-            } else {
-                return;
             }
         }
 

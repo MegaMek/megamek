@@ -97,6 +97,7 @@ import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Minefield;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -4033,7 +4034,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 costStringBuf.append(")"); //$NON-NLS-1$
             }
 
-            if (step.isUsingMASC()) {
+            if (step.isUsingMASC() && !step.getParent().getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
                 costStringBuf.append("["); //$NON-NLS-1$
                 costStringBuf.append(step.getTargetNumberMASC());
                 costStringBuf.append("+]"); //$NON-NLS-1$

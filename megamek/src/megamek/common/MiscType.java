@@ -161,6 +161,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_DRONE_CARRIER_CONTROL = BigInteger.valueOf(1).shiftLeft(115);
     public static final BigInteger F_DRONE_EXTRA = BigInteger.valueOf(1).shiftLeft(116);
     public static final BigInteger F_MASH_EXTRA = BigInteger.valueOf(1).shiftLeft(117);
+    public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
 
 
     // Secondary Flags for Physical Weapons
@@ -217,6 +218,9 @@ public class MiscType extends EquipmentType {
 
     // Secondary flags for MASC
     public static final long S_SUPERCHARGER = 1L << 0;
+    // this kind of works like MASC for the double cruise MP, so we will make it
+    // a subtype
+    public static final long S_JETBOOSTER = 1L << 1;
 
     // Secondary flags for Jump Jets
     public static final long S_STANDARD = 1L << 0;
@@ -492,6 +496,8 @@ public class MiscType extends EquipmentType {
                 }
             }
             return weight;
+        } else if (hasFlag(MiscType.F_JET_BOOSTER)) {
+            return entity.getEngine().getWeightEngine(entity) / 10;
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -518,6 +524,8 @@ public class MiscType extends EquipmentType {
                 cost = getTonnage(entity) * 4000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
                 cost = getTonnage(entity) * 100000;
+            } else if (hasFlag(F_JET_BOOSTER)) {
+                cost = entity.getEngine().getRating() * 10000;
             }
         }
 
@@ -977,6 +985,18 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLDroneCarrierControlSystem());
         EquipmentType.addType(MiscType.createISDroneExtra());
         EquipmentType.addType(MiscType.createCLDroneExtra());
+        EquipmentType.addType(MiscType.createBC3());
+        EquipmentType.addType(MiscType.createBC3i());
+        EquipmentType.addType(MiscType.createISHIResImager());
+        EquipmentType.addType(MiscType.createCLHIResImager());
+        EquipmentType.addType(MiscType.createISHyperspectralImager());
+        EquipmentType.addType(MiscType.createISInfraredImager());
+        EquipmentType.addType(MiscType.createCLInfraredImager());
+        EquipmentType.addType(MiscType.createISLookDownRadar());
+        EquipmentType.addType(MiscType.createCLLookDownRadar());
+        EquipmentType.addType(MiscType.createISVTOLJetBooster());
+        EquipmentType.addType(MiscType.createCLVTOLJetBooster());
+
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -1011,16 +1031,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRemoteSensorDispenser());
         EquipmentType.addType(MiscType.createBACuttingTorch());
         EquipmentType.addType(MiscType.createBASpaceOperationsAdaptation());
-        EquipmentType.addType(MiscType.createBC3());
-        EquipmentType.addType(MiscType.createBC3i());
-        EquipmentType.addType(MiscType.createISHIResImager());
-        EquipmentType.addType(MiscType.createCLHIResImager());
-        EquipmentType.addType(MiscType.createISHyperspectralImager());
-        EquipmentType.addType(MiscType.createISInfraredImager());
-        EquipmentType.addType(MiscType.createCLInfraredImager());
-        EquipmentType.addType(MiscType.createISLookDownRadar());
-        EquipmentType.addType(MiscType.createCLLookDownRadar());
-
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
@@ -5002,6 +5012,30 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISVTOLJetBooster() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "VTOL Jet Booster";
+        misc.setInternalName("ISVTOLJetBooster");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
+        misc.subType |= S_JETBOOSTER;
+        return misc;
+    }
+
+    public static MiscType createCLVTOLJetBooster() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name = "VTOL Jet Booster";
+        misc.setInternalName("CLVTOLJetBooster");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
+        misc.subType |= S_JETBOOSTER;
         return misc;
     }
 

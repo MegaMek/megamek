@@ -3494,7 +3494,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                         .append(Compute.getTargetMovementModifier(game, entity.getId()).getValue())
                         .append(");") //$NON-NLS-1$
                         .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
-                        .append(entity.heat);
+                        .append(entity.heat)
+                        .append(entity.isEvading()?Messages.getString("BoardView1.Evade"):"");
                 if (entity.isCharging()) {
                     buffer.append(" ") //$NON-NLS-1$
                             .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$

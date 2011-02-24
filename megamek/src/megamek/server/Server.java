@@ -5667,7 +5667,6 @@ public class Server implements Runnable {
 
             if (step.getType() == MoveStepType.EVADE) {
                 entity.setEvading(true);
-
             }
 
             if (step.getType() == MoveStepType.ROLL) {

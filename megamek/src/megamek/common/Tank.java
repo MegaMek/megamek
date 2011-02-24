@@ -2316,7 +2316,9 @@ public class Tank extends Entity {
         int availableSlots = getTotalSlots();
         int usedSlots = 0;
         for (Mounted mount : this.getEquipment()) {
-            usedSlots += mount.getType().getTankslots(this);
+            if (!(mount.getType() instanceof AmmoType)) {
+                usedSlots += mount.getType().getTankslots(this);
+            }
         }
         // JJs take just 1 slot
         if (this.getJumpMP(false) > 0) {
@@ -2349,6 +2351,10 @@ public class Tank extends Entity {
         // submunition type
         Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
         for (Mounted ammo : getAmmo()) {
+            // don't count oneshot ammo
+            if ((ammo.getLocation() == Entity.LOC_NONE) && (ammo.getShotsLeft() == 1)) {
+                continue;
+            }
             AmmoType at = (AmmoType) ammo.getType();
             if (foundAmmo.get(at.getAmmoType() + ":" + at.getRackSize()) == null) {
                 usedSlots++;

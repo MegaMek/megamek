@@ -1310,4 +1310,12 @@ public class Dropship extends SmallCraft implements Serializable {
         //TODO: what about other terrain (like jungles)?
         return null;
     }
+    
+    @Override
+    public boolean usesWeaponBays() {      
+        if(null == game) {
+            return true;
+        }
+        return !game.getOptions().booleanOption("ind_weapons_grounded_dropper") || (isAirborne() || isSpaceborne());
+    }
 }

@@ -1175,4 +1175,9 @@ public class Jumpship extends Aero {
     public double getBVTypeModifier() {
         return 0.75;
     }
+    
+    @Override
+    public boolean usesWeaponBays() {      
+        return true;
+    }
 }

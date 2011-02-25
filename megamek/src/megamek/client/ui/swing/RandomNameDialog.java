@@ -57,6 +57,8 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private JPanel panButtons;
     private JPanel panMain;
+    
+    private JComboBox chPlayer;
 
     public RandomNameDialog(ClientGUI clientgui) {
         super(clientgui.frame, Messages.getString("RandomNameDialog.title"), true); //$NON-NLS-1$
@@ -84,11 +86,27 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         butOkay.addActionListener(this);
         butSave.addActionListener(this);
         butCancel.addActionListener(this);
+        chPlayer.addActionListener(this);
         setLocationRelativeTo(clientgui.frame);
 
     }
 
     private void updatePlayerChoice() {
+        String lastChoice = (String) chPlayer.getSelectedItem();
+        String clientName = clientgui.getClient().getName();
+        chPlayer.removeAllItems();
+        chPlayer.setEnabled(true);
+        chPlayer.addItem(clientName);
+        for (Iterator<Client> i = clientgui.getBots().values().iterator(); i.hasNext();) {
+            chPlayer.addItem(i.next().getName());
+        }
+        if (chPlayer.getItemCount() == 1) {
+            chPlayer.setEnabled(false);
+        }
+        chPlayer.setSelectedItem(lastChoice);
+        if (chPlayer.getSelectedIndex() < 0) {
+            chPlayer.setSelectedIndex(0);
+        }
         comboFaction.setSelectedItem(rng.getChosenFaction());
         sldGender.setValue(rng.getPercentFemale());
     }
@@ -119,13 +137,22 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource() == butOkay) {
+            Client c = null;           
+            if (chPlayer.getSelectedIndex() > 0) {
+                String name = (String) chPlayer.getSelectedItem();
+                c = clientgui.getBots().get(name);
+            }
+            if (c == null) {
+                c = client;
+            }
+            
             saveSettings();
             // go through all of the units provided for this player and assign random names
             for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {
                 Entity ent = e.nextElement();
-                if (ent.getOwnerId() == client.getLocalPlayer().getId()) {
+                if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     ent.getCrew().setName(rng.generate());
-                    client.sendUpdateEntity(ent);
+                    c.sendUpdateEntity(ent);
                 }
             }
             clientgui.chatlounge.refreshEntities();
@@ -140,6 +167,18 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
         if (ev.getSource() == butCancel) {
             setVisible(false);
+        }
+        if(ev.getSource() == chPlayer) {
+            Client c = client;
+            if (chPlayer.getSelectedIndex() > 0) {
+                String name = (String) chPlayer.getSelectedItem();
+                c = clientgui.getBots().get(name);
+            }
+            if(null == c) {
+                c = client;
+            }
+            rng = c.getRandomNameGenerator();
+            updatePlayerChoice();
         }
     }
 
@@ -161,12 +200,15 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         sldGender.setMajorTickSpacing(25);
         sldGender.setPaintTicks(true);
         sldGender.setPaintLabels(true);
+        chPlayer = new JComboBox();
+        chPlayer.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         panButtons.add(butOkay);
         panButtons.add(butSave);
         panButtons.add(butCancel);
+        panButtons.add(chPlayer);
 
         getContentPane().add(panButtons, java.awt.BorderLayout.PAGE_END);
 

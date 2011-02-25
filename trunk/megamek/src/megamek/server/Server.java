@@ -6909,6 +6909,17 @@ public class Server implements Runnable {
             // one more check for inferno wash-off
             checkForWashedInfernos(entity, curPos);
 
+            // a jumping tank needs to roll for movement damage
+            if (entity instanceof Tank) {
+                int modifier = 0;
+                if (curHex.containsTerrain(Terrains.ROUGH)
+                        || curHex.containsTerrain(Terrains.WOODS)
+                        || curHex.containsTerrain(Terrains.JUNGLE)) {
+                    modifier = 1;
+                }
+                vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, modifier, false, -1, true));
+            }
+
         } // End entity-is-jumping
         // update entity's locations' exposure
         doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
@@ -25373,7 +25384,12 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
-        return vehicleMotiveDamage(te, modifier, false, -1);
+        return vehicleMotiveDamage(te, modifier, false, -1, false);
+    }
+
+
+    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier, boolean noroll, int damagetype) {
+        return vehicleMotiveDamage(te, modifier, noroll, damagetype, false);
     }
 
     /**
@@ -25382,9 +25398,10 @@ public class Server implements Runnable {
      * @param modifier the modifier to the roll
      * @param noroll don't roll, immediately deal damage
      * @param damagetype the type to deal (1 = minor, 2 = moderate, 3 = heavy
+     * @param jumpDamage is this a movement daamge roll from using vehicular JJs
      * @return
      */
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier, boolean noroll, int damagetype) {
+    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier, boolean noroll, int damagetype, boolean jumpDamage) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         r = new Report(1210, Report.PUBLIC);
@@ -25392,13 +25409,30 @@ public class Server implements Runnable {
         switch (te.getMovementMode()) {
         case HOVER:
         case HYDROFOIL:
-            modifier += 3;
+            if (jumpDamage) {
+                modifier -= 1;
+            } else {
+                modifier += 3;
+            }
             break;
         case WHEELED:
-            modifier += 2;
+            if (jumpDamage) {
+                modifier += 1;
+            } else {
+                modifier += 2;
+            }
             break;
         case WIGE:
-            modifier += 4;
+            if (jumpDamage) {
+                modifier -= 2;
+            } else {
+                modifier += 4;
+            }
+            break;
+        case TRACKED:
+            if (jumpDamage) {
+                modifier += 2;
+            }
             break;
         case VTOL:
             // VTOL don't roll, auto -1 MP

@@ -27,11 +27,13 @@ import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -571,11 +573,33 @@ public abstract class TestEntity implements TestEntityOption {
                 tagCount++;
             }
         }
+        boolean hasSponsonTurret = false;
         for (Mounted m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 fieldKitchenCount++;
             }
+            if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
+                hasSponsonTurret = true;
+            }
         }
+        if (getEntity() instanceof Tank) {
+            for (Mounted m : getEntity().getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    if (hasSponsonTurret) {
+                        buff.append("can't combine vehicular jump jets and sponson turret");
+                        illegal = true;
+                    }
+                    if ((getEntity().getMovementMode() != EntityMovementMode.HOVER)
+                            && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)
+                            && (getEntity().getMovementMode() != EntityMovementMode.TRACKED)
+                            && (getEntity().getMovementMode() != EntityMovementMode.WIGE)) {
+                        buff.append("jump jets only possible on vehicles with hover, wheeled, tracked, or Wing-in-Ground Effect movement mode");
+                        illegal = true;
+                    }
+                }
+            }
+        }
+
         if (tagCount > 1) {
             buff.append("Unit has more than one TAG\n");
             illegal = true;

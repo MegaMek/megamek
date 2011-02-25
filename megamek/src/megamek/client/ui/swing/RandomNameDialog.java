@@ -144,8 +144,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             }
             if (c == null) {
                 c = client;
-            }
-            
+            }          
             saveSettings();
             // go through all of the units provided for this player and assign random names
             for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {

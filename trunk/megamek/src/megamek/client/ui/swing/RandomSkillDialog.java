@@ -93,6 +93,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         butOkay.addActionListener(this);
         butSave.addActionListener(this);
         butCancel.addActionListener(this);
+        chPlayer.addActionListener(this);
         setLocationRelativeTo(clientgui.frame);
 
     }
@@ -185,6 +186,18 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
 
         if (ev.getSource() == butCancel) {
             setVisible(false);
+        }
+        if(ev.getSource() == chPlayer) {
+            Client c = client;
+            if (chPlayer.getSelectedIndex() > 0) {
+                String name = (String) chPlayer.getSelectedItem();
+                c = clientgui.getBots().get(name);
+            }
+            if(null == c) {
+                c = client;
+            }
+            rsg = c.getRandomSkillsGenerator();
+            updatePlayerChoice();
         }
     }
 

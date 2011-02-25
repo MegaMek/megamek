@@ -7975,13 +7975,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public boolean usesWeaponBays() {
-
-        if ((this instanceof Jumpship) || (this instanceof Dropship)) {
-            return true;
-        }
-
         return false;
-
     }
 
     /**

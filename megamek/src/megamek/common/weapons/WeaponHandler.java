@@ -351,7 +351,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         int nCluster = calcnCluster();
 
-        //Now I need to adjust this for attacks by aeros because they use attack values and different rules
+        //Now I need to adjust this for attacks on aeros because they use attack values and different rules
         if(target.isAirborne()) {
             //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
             if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
@@ -478,15 +478,27 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int calcAttackValue() {
         int av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
-        if(range == WeaponType.RANGE_SHORT) {
-            av = wtype.getRoundShortAV();
-        } else if(range == WeaponType.RANGE_MED) {
-            av = wtype.getRoundMedAV();
-        } else if (range == WeaponType.RANGE_LONG) {
-            av = wtype.getRoundLongAV();
-        } else if (range == WeaponType.RANGE_EXT) {
-            av = wtype.getRoundExtAV();
+        //if we have a ground firing unit, then AV should not be determined by aero range brackets
+        if(!ae.isAirborne()) {
+            if(usesClusterTable()) {
+                //for cluster weapons just use the short range AV
+                av = wtype.getRoundShortAV();
+            } else {
+                //otherwise just use the full weapon damage by range
+                av = wtype.getDamage(nRange);
+            }
+        } else {
+            //we have an airborne attacker, so we need to use aero range brackets
+            int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+            if(range == WeaponType.RANGE_SHORT) {
+                av = wtype.getRoundShortAV();
+            } else if(range == WeaponType.RANGE_MED) {
+                av = wtype.getRoundMedAV();
+            } else if (range == WeaponType.RANGE_LONG) {
+                av = wtype.getRoundLongAV();
+            } else if (range == WeaponType.RANGE_EXT) {
+                av = wtype.getRoundExtAV();
+            }
         }
         return av;
     }

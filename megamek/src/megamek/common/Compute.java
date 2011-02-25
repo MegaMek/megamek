@@ -740,7 +740,7 @@ public class Compute {
         }
 
         // if Aero then adjust to stanard ranges
-        if (ae.isAirborne()) {
+        if (ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard().onGround())) {
             weaponRanges = wtype.getATRanges();
         }
 
@@ -761,7 +761,7 @@ public class Compute {
         }
 
         // if aero and greater than max range then swith to range_out
-        if ((ae.isAirborne()) && (range > maxRange)) {
+        if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard().onGround())) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
@@ -1091,6 +1091,13 @@ public class Compute {
                 //NOTE: this will return a distance of one even when a flyover occurs
                 //That is my interpretation of this ruling
                 //http://www.classicbattletech.com/forums/index.php?topic=72723.0
+                
+                //if the ground attacker uses weapon bays and we are on a ground map, then we will divide this distance by 16
+                //This is totally crazy, but I don't see how else to do it. Use the unofficial 
+                //"grounded dropships use individual weapons" for sanity.
+                if(attacker.usesWeaponBays() && game.getBoard().onGround()) {
+                    distance = (int) Math.ceil(distance / 16.0);
+                }               
             } else {
                 // ground units that are the target of air to ground attacks always have
                 // a distance of zero
@@ -1148,7 +1155,11 @@ public class Compute {
         }
 
         if (Compute.isGroundToAir(attacker, target)) {
-            distance += (2 * target.getAltitude());
+            if(attacker.usesWeaponBays() && game.getBoard().onGround()) {
+                distance += (target.getAltitude());
+            } else {
+                distance += (2 * target.getAltitude());
+            }
         }
 
         return distance;

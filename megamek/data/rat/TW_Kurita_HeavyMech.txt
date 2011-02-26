@@ -1,0 +1,12 @@
+TW Heavy Mech (Kurita)
+1,Ninja-To NJT-2
+2,Dragon Fire DGR-3F
+3,Avatar AV1-OA
+4,Black Hawk-KU BHKU-O
+5,Daikyu DAI-01
+6,Grand Dragon DRG-5K
+5,Grand Dragon DRG-5K
+4,Maelstrom MTR-5K
+3,Shugenja SJA-7D
+2,Crusader CRD-5K
+1,No-Dachi NDA-1K

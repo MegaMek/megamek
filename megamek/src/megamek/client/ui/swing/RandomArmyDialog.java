@@ -36,10 +36,12 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
+import megamek.client.RandomUnitGenerator;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MechFileParser;
@@ -71,7 +73,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
     private JComboBox m_chPlayer = new JComboBox();
     private JComboBox m_chType = new JComboBox();
+    private JComboBox m_chRAT = new JComboBox();
 
+    private JTabbedPane m_pMain = new JTabbedPane();
+    private JPanel m_pRAT = new JPanel();
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
@@ -98,6 +103,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             .getString("RandomArmyDialog.Infantry"));
     private JLabel m_labTech = new JLabel(Messages
             .getString("RandomArmyDialog.Tech"));
+    private JLabel m_labRAT = new JLabel(Messages
+            .getString("RandomArmyDialog.RAT"));
+    private JLabel m_labUnits = new JLabel(Messages
+            .getString("RandomArmyDialog.Unit"));
 
     private JTextField m_tBVmin = new JTextField(6);
     private JTextField m_tBVmax = new JTextField(6);
@@ -107,16 +116,21 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
     private JTextField m_tVees = new JTextField(3);
     private JTextField m_tBA = new JTextField(3);
     private JTextField m_tInfantry = new JTextField(3);
+    private JTextField m_tUnits = new JTextField(3);
     private JCheckBox m_chkPad = new JCheckBox(Messages
             .getString("RandomArmyDialog.Pad"));
     private JCheckBox m_chkCanon = new JCheckBox(Messages
             .getString("RandomArmyDialog.Canon"));
     private ArrayList<MechSummary> army = new ArrayList<MechSummary>(0);
 
+    private RandomUnitGenerator rug;
+    
+    
     public RandomArmyDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
         m_clientgui = cl;
         m_client = cl.getClient();
+        rug = m_client.getRandomUnitGenerator();
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui);
         // set defaults
@@ -215,15 +229,70 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
 
+        //construct the RAT panel
+        m_tUnits.setText("4");
+        Iterator<String> rats = rug.getRatList();
+        while(rats.hasNext()) {
+            String rat = rats.next();
+            m_chRAT.addItem(rat);
+        }
+        m_chRAT.setSelectedItem(rug.getChosenRAT());
+         
+        m_pRAT.setLayout(new GridBagLayout());
+
+        GridBagConstraints c;
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRAT.add(m_labRAT, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        m_pRAT.add(m_chRAT, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRAT.add(m_labUnits, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRAT.add(m_tUnits, c);
+        
         // construct the preview panel
         m_pPreview.setLayout(new GridLayout(1, 1));
         JScrollPane scoll = new JScrollPane(m_lMechs);
         m_pPreview.add(scoll);
 
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
+        
         // contruct the main dialog
         setLayout(new BorderLayout());
         add(m_pButtons, BorderLayout.SOUTH);
-        add(m_pParameters, BorderLayout.WEST);
+        add(m_pMain, BorderLayout.WEST);
         add(m_pPreview, BorderLayout.EAST);
         validate();
         pack();
@@ -266,20 +335,28 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         } else if (ev.getSource().equals(m_bRoll)) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
-                RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
-                p.advancedSearchFilter=searchFilter;
-                p.mechs = Integer.parseInt(m_tMechs.getText());
-                p.tanks = Integer.parseInt(m_tVees.getText());
-                p.ba = Integer.parseInt(m_tBA.getText());
-                p.infantry = Integer.parseInt(m_tInfantry.getText());
-                p.canon = m_chkCanon.isSelected();
-                p.maxBV = Integer.parseInt(m_tBVmax.getText());
-                p.minBV = Integer.parseInt(m_tBVmin.getText());
-                p.padWithInfantry = m_chkPad.isSelected();
-                p.tech = m_chType.getSelectedIndex();
-                p.minYear = Integer.parseInt(m_tMinYear.getText());
-                p.maxYear = Integer.parseInt(m_tMaxYear.getText());
-                army = RandomArmyCreator.generateArmy(p);
+                if(m_pMain.getSelectedIndex() == 1) {
+                    int units = Integer.parseInt(m_tUnits.getText());
+                    if(units > 0) {
+                        army = m_client.getRandomUnitGenerator().generate(units);
+                    }
+                } else {
+                    RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
+                    p.advancedSearchFilter=searchFilter;
+                    p.mechs = Integer.parseInt(m_tMechs.getText());
+                    p.tanks = Integer.parseInt(m_tVees.getText());
+                    p.ba = Integer.parseInt(m_tBA.getText());
+                    p.infantry = Integer.parseInt(m_tInfantry.getText());
+                    p.canon = m_chkCanon.isSelected();
+                    p.maxBV = Integer.parseInt(m_tBVmax.getText());
+                    p.minBV = Integer.parseInt(m_tBVmin.getText());
+                    p.padWithInfantry = m_chkPad.isSelected();
+                    p.tech = m_chType.getSelectedIndex();
+                    p.minYear = Integer.parseInt(m_tMinYear.getText());
+                    p.maxYear = Integer.parseInt(m_tMaxYear.getText());
+                    army = RandomArmyCreator.generateArmy(p);
+                }
+                
                 Vector<String> mechs = new Vector<String>();
                 for (MechSummary m : army) {
                     mechs.add(m.getName());

@@ -65,31 +65,38 @@ public class RandomUnitGenerator implements Serializable {
         this.chosenRAT = "TW Heavy Mech (Kurita)";     
     }
     
-    public void populateUnits() {
-       
-        //TODO: I should probably thread the loading of units, like the cache file 
-        
+    public void populateUnits() {       
         rats = new HashMap<String, Vector<String>>();
-       
-        Scanner input = null;
-        
         File dir = new File("./data/rat/");    
+        loadRatsFromDirectory(dir);       
+    }
+    
+    private void loadRatsFromDirectory(File dir) {
         if(null == dir) {
             return;
-        }
-        FileFilter fileFilter = new FileFilter() {
-            public boolean accept(File file) {
-                return file.getName().endsWith(".txt");
-            }
-        };       
+        }  
         
-        File[] files = dir.listFiles(fileFilter);   
+        File[] files = dir.listFiles();   
+        
+        Scanner input = null;
         
         for(int i = 0; i < files.length; i++) {
             //READ IN RATS
-            File rat = files[i];
+            File file = files[i];
+            if (file.isDirectory()) {
+                if (file.getName().toLowerCase().equals("_svn")) {
+                    // This is a Subversion work directory. Lets ignore it.
+                    continue;
+                }
+                // recursion is fun
+                loadRatsFromDirectory(file);
+                continue;
+            }
+            if (!file.getName().toLowerCase().endsWith(".txt")) {
+                continue;
+            }
             try {
-                FileInputStream ratst = new FileInputStream(rat);
+                FileInputStream ratst = new FileInputStream(file);
                 input = new Scanner(ratst, "UTF-8");
                 int linen = 0;
                 String key = "Huh";
@@ -106,11 +113,17 @@ public class RandomUnitGenerator implements Serializable {
                     else {
                         String[] values = line.split(",");
                         if(values.length < 2) {
-                            System.err.println("Not enough fields in " + rat.getName() + " on " + linen);
+                            System.err.println("Not enough fields in " + file.getName() + " on " + linen);
                             continue;
                         }
                         String name = values[0];
-                        int weight = Integer.parseInt(values[1]);
+                        int weight = 0;
+                        try {
+                            weight = Integer.parseInt(values[1].trim());
+                        } catch (NumberFormatException nef) {
+                            System.err.println("the frequency field could not be interpreted on line "  + linen + " of " + file.getName());
+                            continue;
+                        }
                         MechSummary unit = MechSummaryCache.getInstance().getMech(name);
                         if(null == unit) {
                             System.err.println("The unit " + name + " could not be found in the " + key + " RAT");
@@ -127,10 +140,9 @@ public class RandomUnitGenerator implements Serializable {
                     rats.put(key, v);
                 }
             } catch (FileNotFoundException fne) {
-                System.err.println("Unable to find " + rat.getName());
+                System.err.println("Unable to find " + file.getName());
             }
         }
-        
     }
     
     /**

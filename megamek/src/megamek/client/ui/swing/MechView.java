@@ -358,9 +358,10 @@ public class MechView {
             sIntArm.append(Messages.getString("MechView.CapitalArmor"));
         }
 
-        sIntArm.append(Messages.getString("MechView."
-                + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
-
+        if (!entity.hasPatchworkArmor()) {
+            sIntArm.append(Messages.getString("MechView."
+                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
+        }
 
         sIntArm.append( "<br>" ); //$NON-NLS-1$
         // Walk through the entity's locations.
@@ -386,6 +387,18 @@ public class MechView {
                 .append( "</td>" ); //$NON-NLS-1$
                 if ( IArmorState.ARMOR_NA != entity.getArmor(loc) ) {
                     sIntArm.append( renderArmor(entity.getArmor(loc), entity.getOArmor(loc)) );
+                }
+                if (entity.hasPatchworkArmor()) {
+                    sIntArm.append("<td>");
+                    sIntArm.append(Messages.getString("MechView."
+                            + EquipmentType.getArmorTypeName(entity.getArmorType(loc))));
+                    sIntArm.append("</td>");
+                    if (entity.hasBARArmor(loc)) {
+                        sIntArm.append("<td>");
+                        sIntArm.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
+                        sIntArm.append(entity.getBARRating(loc));
+                        sIntArm.append("</td>");
+                    }
                 }
                 /*
                 if ( entity.hasRearArmor(loc) ) {

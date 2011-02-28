@@ -1029,7 +1029,7 @@ public class Aero extends Entity {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        for (int loc = 1; loc < locations(); loc++) {
+        for (int loc = 0; loc < locations()-1; loc++) {
 
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {

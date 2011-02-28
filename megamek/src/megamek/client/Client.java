@@ -429,6 +429,10 @@ public class Client implements IClientCommandHandler {
                     rug.populateUnits();
                 }
             });
+            if (MechSummaryCache.getInstance().isInitialized()) {
+                rng.populateNames();
+                rug.populateUnits();
+            }
             duplicateNameHash.clear(); // reset this
             break;
         default:

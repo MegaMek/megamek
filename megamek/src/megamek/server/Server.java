@@ -9088,6 +9088,25 @@ public class Server implements Runnable {
                 checkBuildingCollapseWhileMoving(bldg, entity, dest);
             }
         }
+        if (destHex.containsTerrain(Terrains.MAGMA, 1)) {
+            int d6= Compute.d6(1);
+            r = new Report(2395);
+            r.addDesc(entity);
+            r.add(d6);
+            r.subject = entity.getId();
+            addReport(r);
+            if (d6 == 6) {
+                destHex.removeTerrain(Terrains.MAGMA);
+                destHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                sendChangedHex(dest);
+                for (Enumeration<Entity> e = game.getEntities(dest); e.hasMoreElements();) {
+                    Entity en = e.nextElement();
+                    if (en != entity) {
+                        doMagmaDamage(en, false);
+                    }
+                }
+            }
+        }
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
         if (violation == null) {
             // move and roll normally

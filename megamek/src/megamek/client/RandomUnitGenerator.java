@@ -62,13 +62,13 @@ public class RandomUnitGenerator implements Serializable {
     private String chosenRAT;
     
     public RandomUnitGenerator() {  
-        this.chosenRAT = "TW Heavy Mech (Kurita)";
-        //TODO: I should probably thread the loading of names, like for units
-        populateUnits();        
+        this.chosenRAT = "TW Heavy Mech (Kurita)";     
     }
     
     public void populateUnits() {
        
+        //TODO: I should probably thread the loading of units, like the cache file 
+        
         rats = new HashMap<String, Vector<String>>();
        
         Scanner input = null;
@@ -79,10 +79,11 @@ public class RandomUnitGenerator implements Serializable {
         }
         FileFilter fileFilter = new FileFilter() {
             public boolean accept(File file) {
-                return !file.isDirectory() && file.getName().endsWith(".txt");
+                return file.getName().endsWith(".txt");
             }
         };       
-        File[] files = dir.listFiles(fileFilter);      
+        
+        File[] files = dir.listFiles(fileFilter);   
         
         for(int i = 0; i < files.length; i++) {
             //READ IN RATS
@@ -122,7 +123,9 @@ public class RandomUnitGenerator implements Serializable {
                         }
                     }
                 }
-                rats.put(key, v);
+                if(v.size() > 0) {
+                    rats.put(key, v);
+                }
             } catch (FileNotFoundException fne) {
                 System.err.println("Unable to find " + rat.getName());
             }
@@ -161,7 +164,14 @@ public class RandomUnitGenerator implements Serializable {
     }
     
     public Iterator<String> getRatList() {
+        if(null == rats) {
+            return null;
+        }
         return rats.keySet().iterator();
     }
     
+    public void clear() {
+        rats = null;
+    }
+     
 }

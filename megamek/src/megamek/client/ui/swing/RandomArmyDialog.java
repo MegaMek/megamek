@@ -231,12 +231,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
         //construct the RAT panel
         m_tUnits.setText("4");
-        Iterator<String> rats = rug.getRatList();
-        while(rats.hasNext()) {
-            String rat = rats.next();
-            m_chRAT.addItem(rat);
-        }
-        m_chRAT.setSelectedItem(rug.getChosenRAT());
+        updateRATs();
          
         m_pRAT.setLayout(new GridBagLayout());
 
@@ -438,12 +433,25 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             m_chType.setSelectedItem(TechConstants.T_IS_TW_NON_BOX);
         }
     }
+    
+    private void updateRATs() {
+        Iterator<String> rats = rug.getRatList();
+        if(null == rats) {
+            return;
+        }
+        while(rats.hasNext()) {
+            String rat = rats.next();
+            m_chRAT.addItem(rat);
+        }
+        m_chRAT.setSelectedItem(rug.getChosenRAT());
+    }
 
     @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
             updateTechChoice(false);
+            updateRATs();
         }
         super.setVisible(show);
     }

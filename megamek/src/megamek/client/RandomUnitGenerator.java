@@ -43,6 +43,7 @@ import megamek.common.UnitType;
  * The second line of the file should give the unit type number corresponding to UnitType.java
  * The remaining lines should be comma split. The first field should give the frequency of that unit
  * and the second line should give the name of that unit written as <Model> <Chassis>
+ * Comment lines can also be added with "#"
  * 
  */
 
@@ -91,10 +92,12 @@ public class RandomUnitGenerator implements Serializable {
                 input = new Scanner(ratst, "UTF-8");
                 int linen = 0;
                 String key = "Huh";
-                int type = -1;
                 Vector<String> v = new Vector<String>();
                 while (input.hasNextLine()) {
                     String line = input.nextLine();
+                    if(line.startsWith("#")) {
+                        continue;
+                    }
                     linen++;
                     if(linen==1) {
                         key = line;
@@ -105,8 +108,8 @@ public class RandomUnitGenerator implements Serializable {
                             System.err.println("Not enough fields in " + rat.getName() + " on " + linen);
                             continue;
                         }
-                        int weight = Integer.parseInt(values[0]);
-                        String name = values[1];
+                        String name = values[0];
+                        int weight = Integer.parseInt(values[1]);
                         MechSummary unit = MechSummaryCache.getInstance().getMech(name);
                         if(null == unit) {
                             System.err.println("The unit " + name + " could not be found in the " + key + " RAT");

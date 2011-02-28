@@ -108,14 +108,26 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
+        boolean patchworkArmor = false;
         if (dataFile.exists("armor_type")) {
-            a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
+                patchworkArmor = true;
+            } else {
+                a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            }
         } else {
             a.setArmorType(EquipmentType.T_ARMOR_STANDARD);
         }
-        if (dataFile.exists("armor_tech")) {
+        if (!patchworkArmor && dataFile.exists("armor_tech")) {
             a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
+        if (patchworkArmor) {
+            for (int i = 0; i < a.locations()-1; i++) {
+                a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
+                a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
+            }
+        }
+
         if (dataFile.exists("internal_type")) {
             a.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {

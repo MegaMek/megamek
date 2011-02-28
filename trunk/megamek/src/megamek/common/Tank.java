@@ -750,12 +750,7 @@ public class Tank extends Entity {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
-        int modularArmor = 0;
-        for (Mounted mounted : getEquipment()) {
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
-            }
-        }
+
         boolean blueShield = false;
         // a blueshield system means a +0.2 on the armor and internal modifier,
         // like for mechs
@@ -767,6 +762,12 @@ public class Tank extends Entity {
         double armorMultiplier = 1.0;
 
         for (int loc = 1; loc < locations(); loc++) {
+            int modularArmor = 0;
+            for (Mounted mounted : getEquipment()) {
+                if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
+                    modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
+                }
+            }
             // total armor points
 
             switch (getArmorType(loc)) {

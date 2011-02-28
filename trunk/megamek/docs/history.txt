@@ -72,6 +72,7 @@ v0.35.22-dev (SVN)
 + option for user-created Random Assignment Tables in Random Army Dialog (only one example RAT so far)
 + reversed order of frequency and name in RATs to be consistent with RUS format
 + added comment lines (starting with "#") to RAT files.
++ better memory management of random unit and random name generators
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

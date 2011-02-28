@@ -403,6 +403,8 @@ public class Client implements IClientCommandHandler {
             // free some memory thats only needed in lounge
             MechSummaryCache.dispose();
             MechFileParser.dispose();
+            rug.clear();
+            rng.clear();
             memDump("entering deployment phase"); //$NON-NLS-1$
             break;
         case PHASE_TARGETING:
@@ -420,8 +422,13 @@ public class Client implements IClientCommandHandler {
         case PHASE_PHYSICAL:
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
-        case PHASE_LOUNGE:
-            MechSummaryCache.getInstance();
+        case PHASE_LOUNGE:  
+            MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
+                public void doneLoading() {
+                    rng.populateNames();
+                    rug.populateUnits();
+                }
+            });
             duplicateNameHash.clear(); // reset this
             break;
         default:

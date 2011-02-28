@@ -78,8 +78,6 @@ public class RandomNameGenerator implements Serializable {
     public RandomNameGenerator() {  
         this.percentFemale = 50;
         this.chosenFaction = "General";
-        //TODO: I should probably thread the loading of names, like for units
-        populateNames();        
     }
     
     public void populateNames() {
@@ -268,12 +266,12 @@ public class RandomNameGenerator implements Serializable {
      */
     public String generate() {
         
-        //this is a total hack, but for now lets assume that 
-        //if the chosenFaction name contains the word "clan" 
-        //we should only spit out first names
-        boolean isClan = chosenFaction.toLowerCase().contains("clan");
-        
-        if(null != factionLast && null!=factionFirst && null!=firstm && null != firstf && null!=last) {
+        if(null != chosenFaction && null != factionLast && null!=factionFirst && null!=firstm && null != firstf && null!=last) {
+            //this is a total hack, but for now lets assume that 
+            //if the chosenFaction name contains the word "clan" 
+            //we should only spit out first names
+            boolean isClan = chosenFaction.toLowerCase().contains("clan");
+            
             Vector<String> ethnicities = factionLast.get(chosenFaction);
             if(null != ethnicities && ethnicities.size() > 0) {
                 String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
@@ -305,6 +303,9 @@ public class RandomNameGenerator implements Serializable {
     }
     
     public Iterator<String> getFactions() {
+        if(null == factionLast) {
+            return null;
+        }
         return factionLast.keySet().iterator();
     }
     
@@ -324,4 +325,11 @@ public class RandomNameGenerator implements Serializable {
         this.percentFemale = i;
     }
     
+    public void clear() {
+        firstm = null;
+        firstf = null;
+        last = null;
+        factionFirst = null;
+        factionLast = null;
+    }
 }

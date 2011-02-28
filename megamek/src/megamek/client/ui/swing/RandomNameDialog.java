@@ -73,14 +73,8 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         client = clientgui.getClient();
         rng = client.getRandomNameGenerator();
 
-        //Fill the combobox with choices
-        Iterator<String> factions = rng.getFactions();
-        while(factions.hasNext()) {
-            String faction = factions.next();
-            comboFaction.addItem(faction);
-        }
-        comboFaction.setSelectedItem(rng.getChosenFaction());
-
+        updateFactions();
+        
         updatePlayerChoice();
 
         butOkay.addActionListener(this);
@@ -88,6 +82,20 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         butCancel.addActionListener(this);
         chPlayer.addActionListener(this);
         setLocationRelativeTo(clientgui.frame);
+
+    }
+    
+    private void updateFactions() {
+        //Fill the combobox with choices
+        Iterator<String> factions = rng.getFactions();
+        if(null == factions) {
+            return;
+        }
+        while(factions.hasNext()) {
+            String faction = factions.next();
+            comboFaction.addItem(faction);
+        }
+        comboFaction.setSelectedItem(rng.getChosenFaction());
 
     }
 
@@ -119,6 +127,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     @Override
     public void setVisible(boolean show) {
         if (show) {
+            updateFactions();
             updatePlayerChoice();
         }
         super.setVisible(show);

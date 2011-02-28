@@ -1039,6 +1039,26 @@ public class Aero extends Entity {
             }
             // total armor points
 
+            switch (getArmorType(loc)) {
+                case EquipmentType.T_ARMOR_COMMERCIAL:
+                    armorMultiplier = 0.5;
+                    break;
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorMultiplier = 2.0;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                    armorMultiplier = 1.5;
+                    break;
+                case EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                    armorMultiplier = 1.2;
+                    break;
+                default:
+                    armorMultiplier = 1.0;
+                    break;
+            }
+
             if (blueShield) {
                 armorMultiplier += 0.2;
             }

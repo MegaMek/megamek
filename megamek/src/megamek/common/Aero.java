@@ -1025,41 +1025,47 @@ public class Aero extends Entity {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
-        int modularArmor = 0;
-        for (Mounted mounted : getEquipment()) {
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
-            }
-        }
+        double armorMultiplier = 1.0;
 
-        // a blueshield system means a +0.2 on the armor and SI modifiers,
-        // like for mechs
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
-        double armorMod = 1.0;
-        if (blueShield) {
-            armorMod += 0.2;
-        }
 
-        bvText.append(startTable);
+        for (int loc = 1; loc < locations(); loc++) {
+
+            int modularArmor = 0;
+            for (Mounted mounted : getEquipment()) {
+                if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
+                    modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
+                }
+            }
+            // total armor points
+
+            if (blueShield) {
+                armorMultiplier += 0.2;
+            }
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            int armor = getArmor(loc) + modularArmor;
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+") x ");
+            bvText.append(armorMultiplier);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier;
+            bvText.append(armorBV);
+            dbv += armorBV;
+            bvText.append(endColumn);
+        }
         bvText.append(startRow);
         bvText.append(startColumn);
-
-        bvText.append("Total Armor Factor x 2.5 x");
-        bvText.append(armorMod);
+        bvText.append("Total modified armor BV x 2.5 ");
         bvText.append(endColumn);
         bvText.append(startColumn);
-
-        dbv += (getTotalArmor() + modularArmor);
-
-        bvText.append(dbv);
-        bvText.append(" x 2.5 x ");
-        bvText.append(armorMod);
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append("= ");
-
-        dbv *= 2.5 * armorMod;
-
+        dbv *= 2.5;
         bvText.append(dbv);
         bvText.append(endColumn);
         bvText.append(endRow);

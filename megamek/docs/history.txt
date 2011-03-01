@@ -75,6 +75,7 @@ v0.35.22-dev (SVN)
 + better memory management of random unit and random name generators
 + Bug: RATs not loading when unit.cache exists
 + Bug: random unit generator not looking in subdirectories for RATs
++ Added document describing inner workings of *.BLK vehicle files.
 
 v0.35.21 (2011-01-06, 21:45 UTC+1)
 + Added more LRT/SRT look up names following another LRM/SRM naming convention.

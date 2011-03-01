@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.22-dev (SVN)
+v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion
 + Bug: LACs missing aero damage values
 + Bug: LAC 10 and 20 should be unofficial

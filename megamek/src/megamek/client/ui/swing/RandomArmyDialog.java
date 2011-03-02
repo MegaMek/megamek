@@ -231,8 +231,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
         //construct the RAT panel
         m_tUnits.setText("4");
-        updateRATs();
-         
+        updateRATs();      
+        m_chRAT.addActionListener(this);
+        
         m_pRAT.setLayout(new GridBagLayout());
 
         GridBagConstraints c;
@@ -321,7 +322,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             setVisible(false);
         } else if (ev.getSource().equals(m_bCancel)) {
             setVisible(false);
-        } else if (ev.getSource().equals(m_bAdvSearch)){
+        } else if (ev.getSource().equals(m_chRAT)) {
+            updateRATChoice();
+        }else if (ev.getSource().equals(m_bAdvSearch)){
             searchFilter=asd.showDialog();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
         } else if (ev.getSource().equals(m_bAdvSearchClear)){
@@ -412,6 +415,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         if (m_chPlayer.getSelectedIndex() < 0) {
             m_chPlayer.setSelectedIndex(0);
         }
+    }
+    
+    private void updateRATChoice() {
+        rug.setChosenRAT((String)m_chRAT.getSelectedItem());
     }
 
     private void updateTechChoice(boolean force) {

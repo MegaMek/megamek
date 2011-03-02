@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.23-dev (SVN)
++ Bug: RAT selector not actually changing chosen RAT
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

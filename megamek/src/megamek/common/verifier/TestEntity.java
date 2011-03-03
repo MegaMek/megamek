@@ -654,7 +654,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (mech.hasSystem(Mech.ACTUATOR_HAND, loc)) {
                     for (Mounted m : mech.getMisc()) {
                         EquipmentType et = m.getType();
-                        if ((m.getLocation() == loc) && (et.hasSubType(MiscType.S_CHAINSAW) || et.hasSubType(MiscType.S_BACKHOE) || et.hasSubType(MiscType.S_DUAL_SAW) || et.hasSubType(MiscType.S_COMBINE) || et.hasSubType(MiscType.S_PILE_DRIVER) || et.hasSubType(MiscType.S_MINING_DRILL) || et.hasSubType(MiscType.S_ROCK_CUTTER) || et.hasSubType(MiscType.S_SPOT_WELDER) || et.hasSubType(MiscType.S_WRECKING_BALL) || et.hasSubType(MiscType.S_COMBINE) || et.hasFlag(MiscType.F_SALVAGE_ARM))) {
+                        if ((m.getLocation() == loc) && (et.hasSubType(MiscType.S_CHAINSAW) || et.hasSubType(MiscType.S_BACKHOE) || et.hasSubType(MiscType.S_DUAL_SAW) || et.hasSubType(MiscType.S_PILE_DRIVER) || et.hasSubType(MiscType.S_MINING_DRILL) || et.hasSubType(MiscType.S_ROCK_CUTTER) || et.hasSubType(MiscType.S_SPOT_WELDER) || et.hasSubType(MiscType.S_WRECKING_BALL) || et.hasSubType(MiscType.S_COMBINE) || et.hasFlag(MiscType.F_SALVAGE_ARM))) {
                             buff.append("Unit mounts hand-actuator incompatible system in arm with hand\n");
                             illegal = true;
                         }

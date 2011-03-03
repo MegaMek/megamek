@@ -1,6 +1,4 @@
-#Here is a comment
-TW Heavy Mech (Kurita)
-#Here is another comment
+House Kurita Heavy 'Mech
 Ninja-To NJT-2,1
 Dragon Fire DGR-3F,2
 Avatar AV1-OA,3
@@ -12,3 +10,6 @@ Maelstrom MTR-5K,4
 Shugenja SJA-7D,3
 Crusader CRD-5K,2
 No-Dachi NDA-1K,1
+
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

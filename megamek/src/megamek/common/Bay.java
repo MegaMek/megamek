@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -68,7 +68,7 @@ public class Bay implements Transporter {
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
-     *
+     * 
      * @param space
      *            - The weight of troops (in tons) this space can carry.
      */
@@ -109,7 +109,7 @@ public class Bay implements Transporter {
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -134,7 +134,9 @@ public class Bay implements Transporter {
     }
 
     /**
-     * to unload units, a bay must have more doors available than units unloaded this turn
+     * to unload units, a bay must have more doors available than units unloaded
+     * this turn
+     * 
      * @return
      */
     public boolean canUnloadUnits() {
@@ -143,7 +145,7 @@ public class Bay implements Transporter {
 
     /**
      * Load the given unit.
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @exception - If the unit can't be loaded, an
@@ -165,7 +167,7 @@ public class Bay implements Transporter {
 
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
-     *
+     * 
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
      *         returned <code>List</code> is independant from the under- lying
@@ -219,7 +221,7 @@ public class Bay implements Transporter {
 
         Vector<Entity> unloadable = new Vector<Entity>();
 
-        //TODO: we need to handle aeros and VTOLs differently
+        // TODO: we need to handle aeros and VTOLs differently
         for (int i = 0; i < troops.size(); i++) {
             Entity nextUnit = troops.elementAt(i);
             unloadable.add(nextUnit);
@@ -230,7 +232,7 @@ public class Bay implements Transporter {
 
     /**
      * Unload the given unit.
-     *
+     * 
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contained in this space,
@@ -253,17 +255,17 @@ public class Bay implements Transporter {
 
     /**
      * Return a string that identifies the unused capacity of this transporter.
-     *
+     * 
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-        return " - " + currentSpace + (currentSpace>1?" units":" unit");
+        return " - " + currentSpace + (currentSpace > 1 ? " units" : " unit");
     }
 
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     *
+     * 
      * @param loc
      *            - the <code>int</code> location attempting to fire.
      * @param isRear
@@ -282,7 +284,7 @@ public class Bay implements Transporter {
      * suffer damage when the transporter is hit by an attack. Currently, no
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
-     *
+     * 
      * @param loc
      *            - the <code>int</code> location hit by attack.
      * @param isRear
@@ -335,7 +337,12 @@ public class Bay implements Transporter {
     }
 
     public float getWeight() {
-        return (float)totalSpace;
+        return (float) totalSpace;
+    }
+
+    @Override
+    public String toString() {
+        return "bay:" + totalSpace + ":" + doors;
     }
 
 } // End package class TroopSpace implements Transporter

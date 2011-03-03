@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -51,6 +51,7 @@ import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.Warship;
@@ -151,6 +152,10 @@ public class BLKFile {
 
         if (dataFile.exists("imagepath")) {
             e.getFluff().setMMLImagePath(dataFile.getDataAsString("imagepath")[0]);
+        }
+
+        if (dataFile.exists("source")) {
+            e.setSource(dataFile.getDataAsString("source")[0]);
         }
 
     }
@@ -301,9 +306,11 @@ public class BLKFile {
         blk.writeBlockData("type", type);
         blk.writeBlockData("tonnage", t.getWeight());
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
-        if (t.getTroopCarryingSpace() > 0) {
-            blk.writeBlockData("transporters", "TroopSpace: " + t.getTroopCarryingSpace());
+
+        for (Transporter tran : t.getTransports()) {
+            blk.writeBlockData("transporters", tran.toString());
         }
+
         int engineCode = BLKFile.FUSION;
         switch (t.getEngine().getEngineType()) {
             case Engine.COMBUSTION_ENGINE:
@@ -333,8 +340,8 @@ public class BLKFile {
         } else if (t.hasPatchworkArmor()) {
             blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
             for (int i = 1; i < t.locations(); i++) {
-                blk.writeBlockData(t.getLocationName(i)+"_armor_type", t.getArmorType(i));
-                blk.writeBlockData(t.getLocationName(i)+"_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
+                blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
+                blk.writeBlockData(t.getLocationName(i) + "_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
             }
         }
         if (t.getStructureType() != 0) {
@@ -357,10 +364,10 @@ public class BLKFile {
         for (Mounted m : t.getEquipment()) {
             String name = m.getType().getInternalName();
             if (m.isSponsonTurretMounted()) {
-                name = name+"(ST)";
+                name = name + "(ST)";
             }
             if (m.isMechTurretMounted()) {
-                name = name+"(T)";
+                name = name + "(T)";
             }
             int loc = m.getLocation();
             if (loc != Entity.LOC_NONE) {
@@ -380,6 +387,10 @@ public class BLKFile {
 
         if (t.getFluff().getMMLImagePath().trim().length() > 0) {
             blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
+        }
+
+        if (t.getSource().trim().length() > 0) {
+            blk.writeBlockData("source", t.getSource());
         }
 
         if (t instanceof BattleArmor) {
@@ -435,7 +446,7 @@ public class BLKFile {
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     e.addTransporter(new LivestockCargoBay(size, doors));
-                }if (transporter.startsWith("asfbay:", 0)) {
+                } else if (transporter.startsWith("asfbay:", 0)) {
                     String numbers = transporter.substring(7);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);

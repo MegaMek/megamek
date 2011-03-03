@@ -1,16 +1,15 @@
 /*
- * MegaMek -
- * Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -23,7 +22,7 @@ import java.util.Vector;
  * Represtents a set of handles on an OmniMech used by Battle Armor units
  * equiped with Boarding Claws to attach themselves for transport. This is
  * standard equipment on OmniMechs.
- *
+ * 
  * @see megamek.common.MechFileParser#postLoadInit
  */
 
@@ -44,14 +43,14 @@ import java.util.Vector;
     /**
      * The set of front locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_FRONT = { Mech.LOC_RT,
-            Mech.LOC_LT };
+    private static final int[] EXTERIOR_LOCATIONS_FRONT =
+        { Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The set of rear locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_REAR = { Mech.LOC_CT,
-            Mech.LOC_RT, Mech.LOC_LT };
+    private static final int[] EXTERIOR_LOCATIONS_REAR =
+        { Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The <code>String</code> reported when the handles are in use.
@@ -66,12 +65,14 @@ import java.util.Vector;
     // Protected constructors and methods.
 
     /**
-     * Get the exterior locations that a loaded squad covers. <p/> Sub-classes
-     * are encouraged to override this method.
-     *
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
+     * Get the exterior locations that a loaded squad covers.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     * 
+     * @param isRear
+     *            - a <code>boolean</code> value stating if the given location
+     *            is rear facing; if <code>false</code>, the location is front
+     *            facing.
      * @return an array of <code>int</code> listing the exterior locations.
      */
     protected int[] getExteriorLocs(boolean isRear) {
@@ -82,13 +83,15 @@ import java.util.Vector;
     }
 
     /**
-     * Get the <code>String</code> to report the presence (or lack thereof) of
-     * a loaded squad of Battle Armor troopers. <p/> Sub-classes are encouraged
-     * to override this method.
-     *
-     * @param isLoaded - a <code>boolean</code> that indicates that troopers
-     *            are currently loaded (if the value is <code>true</code>) or
-     *            not (if the value is <code>false</code>).
+     * Get the <code>String</code> to report the presence (or lack thereof) of a
+     * loaded squad of Battle Armor troopers.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     * 
+     * @param isLoaded
+     *            - a <code>boolean</code> that indicates that troopers are
+     *            currently loaded (if the value is <code>true</code>) or not
+     *            (if the value is <code>false</code>).
      * @return a <code>String</code> describing the occupancy state of this
      *         transporter.
      */
@@ -112,8 +115,9 @@ import java.util.Vector;
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      * <p>
-     *
-     * @param unit - the <code>Entity</code> to be loaded.
+     * 
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
@@ -133,7 +137,7 @@ import java.util.Vector;
 
         // The unit must be capable of doing mechanized BA
         else {
-            result = ((BattleArmor)unit).canDoMechanizedBA();
+            result = ((BattleArmor) unit).canDoMechanizedBA();
         }
 
         // Return our result.
@@ -142,17 +146,18 @@ import java.util.Vector;
 
     /**
      * Load the given unit.
-     *
-     * @param unit - the <code>Entity</code> to be loaded.
-     * @exception IllegalArgumentException - If the unit can't be loaded, an
+     * 
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
+     * @exception IllegalArgumentException
+     *                - If the unit can't be loaded, an
      *                <code>IllegalArgumentException</code> exception will be
      *                thrown.
      */
     public final void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load "
-                    + unit.getShortName() + " onto this OmniMech.");
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " onto this OmniMech.");
         }
 
         // Assign the unit as our carried troopers.
@@ -160,9 +165,8 @@ import java.util.Vector;
     }
 
     /**
-     * Get a <code>List</code> of the units currently loaded into this
-     * payload.
-     *
+     * Get a <code>List</code> of the units currently loaded into this payload.
+     * 
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
      *         returned <code>List</code> is independant from the under- lying
@@ -179,8 +183,9 @@ import java.util.Vector;
 
     /**
      * Unload the given unit.
-     *
-     * @param unit - the <code>Entity</code> to be unloaded.
+     * 
+     * @param unit
+     *            - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contain is loadeded in this
      *         space, <code>false</code> otherwise.
      */
@@ -200,7 +205,7 @@ import java.util.Vector;
      * Return a string that identifies the unused capacity of this transporter.
      * <p>
      * Sub-classes should override the <code>getVacancyString</code> method.
-     *
+     * 
      * @return A <code>String</code> meant for a human.
      * @see megamek.common.BattleArmorHandles#getUnusedString()
      */
@@ -211,11 +216,13 @@ import java.util.Vector;
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     *
-     * @param loc - the <code>int</code> location attempting to fire.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
+     * 
+     * @param loc
+     *            - the <code>int</code> location attempting to fire.
+     * @param isRear
+     *            - a <code>boolean</code> value stating if the given location
+     *            is rear facing; if <code>false</code>, the location is front
+     *            facing.
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
@@ -231,16 +238,13 @@ import java.util.Vector;
             int tloc = BattleArmor.LOC_SQUAD;
             switch (loc) {
                 case Mech.LOC_CT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_5
-                            : BattleArmor.LOC_TROOPER_6;
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
                     break;
                 case Mech.LOC_LT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_4
-                            : BattleArmor.LOC_TROOPER_2;
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
                     break;
                 case Mech.LOC_RT:
-                    tloc = isRear ? BattleArmor.LOC_TROOPER_3
-                            : BattleArmor.LOC_TROOPER_1;
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                     break;
             }
             if ((troopers.locations() > tloc) && (troopers.getInternal(tloc) > 0)) {
@@ -259,14 +263,16 @@ import java.util.Vector;
      * "spread" over multiple locations.
      * <p>
      * Sub-classes should override the <code>getExteriorLocs</code> method.
-     *
-     * @param loc - the <code>int</code> location hit by attack.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
-     * @return The <code>Entity</code> being transported on the outside at
-     *         that location. This value will be <code>null</code> if no unit
-     *         is transported on the outside at that location.
+     * 
+     * @param loc
+     *            - the <code>int</code> location hit by attack.
+     * @param isRear
+     *            - a <code>boolean</code> value stating if the given location
+     *            is rear facing; if <code>false</code>, the location is front
+     *            facing.
+     * @return The <code>Entity</code> being transported on the outside at that
+     *         location. This value will be <code>null</code> if no unit is
+     *         transported on the outside at that location.
      * @see megamek.common.BattleArmorHandles#getExteriorLocs(boolean)
      */
     public final Entity getExteriorUnitAt(int loc, boolean isRear) {
@@ -297,5 +303,10 @@ import java.util.Vector;
 
     public int getCargoMpReduction() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "";
     }
 } // End package class BattleArmorHandles implements Transporter

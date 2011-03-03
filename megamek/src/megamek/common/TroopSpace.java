@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -71,8 +71,8 @@ public final class TroopSpace implements Transporter {
      * The default constructor is only for serialization.
      */
     protected TroopSpace() {
-        this.totalSpace = 0;
-        this.currentSpace = 0;
+        totalSpace = 0;
+        currentSpace = 0;
     }
 
     // Public constructors and methods.
@@ -82,18 +82,20 @@ public final class TroopSpace implements Transporter {
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      * 
-     * @param space - The weight of troops (in tons) this space can carry.
+     * @param space
+     *            - The weight of troops (in tons) this space can carry.
      */
     public TroopSpace(double space) {
-        this.totalSpace = space;
-        this.currentSpace = space;
+        totalSpace = space;
+        currentSpace = space;
     }
 
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      * 
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
@@ -108,7 +110,7 @@ public final class TroopSpace implements Transporter {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        else if (this.currentSpace < unit.getWeight()) {
+        else if (currentSpace < unit.getWeight()) {
             result = false;
         }
 
@@ -119,29 +121,28 @@ public final class TroopSpace implements Transporter {
     /**
      * Load the given unit.
      * 
-     * @param unit - the <code>Entity</code> to be loaded.
+     * @param unit
+     *            - the <code>Entity</code> to be loaded.
      * @exception - If the unit can't be loaded, an
-     *                <code>IllegalArgumentException</code> exception will be
-     *                thrown.
+     *            <code>IllegalArgumentException</code> exception will be
+     *            thrown.
      */
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
-        if (!this.canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load "
-                    + unit.getShortName() + " into this troop space.");
+        if (!canLoad(unit)) {
+            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this troop space.");
         }
 
         // Decrement the available space.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        this.currentSpace -= unit.getWeight();
+        currentSpace -= unit.getWeight();
 
         // Add the unit to our list of troops.
-        this.troops.addElement(unit);
+        troops.addElement(unit);
     }
 
     /**
-     * Get a <code>List</code> of the units currently loaded into this
-     * payload.
+     * Get a <code>List</code> of the units currently loaded into this payload.
      * 
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
@@ -156,17 +157,18 @@ public final class TroopSpace implements Transporter {
     /**
      * Unload the given unit.
      * 
-     * @param unit - the <code>Entity</code> to be unloaded.
+     * @param unit
+     *            - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
      */
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
-        boolean retval = this.troops.removeElement(unit);
+        boolean retval = troops.removeElement(unit);
 
         // If we removed it, restore our space.
         if (retval) {
-            this.currentSpace += unit.getWeight();
+            currentSpace += unit.getWeight();
         }
 
         // Return our status
@@ -179,17 +181,19 @@ public final class TroopSpace implements Transporter {
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-        return "Troops - " + this.currentSpace + " tons";
+        return "Troops - " + currentSpace + " tons";
     }
 
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
      * 
-     * @param loc - the <code>int</code> location attempting to fire.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
+     * @param loc
+     *            - the <code>int</code> location attempting to fire.
+     * @param isRear
+     *            - a <code>boolean</code> value stating if the given location
+     *            is rear facing; if <code>false</code>, the location is front
+     *            facing.
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
@@ -203,13 +207,15 @@ public final class TroopSpace implements Transporter {
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
      * 
-     * @param loc - the <code>int</code> location hit by attack.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
-     * @return The <code>Entity</code> being transported on the outside at
-     *         that location. This value will be <code>null</code> if no unit
-     *         is transported on the outside at that location.
+     * @param loc
+     *            - the <code>int</code> location hit by attack.
+     * @param isRear
+     *            - a <code>boolean</code> value stating if the given location
+     *            is rear facing; if <code>false</code>, the location is front
+     *            facing.
+     * @return The <code>Entity</code> being transported on the outside at that
+     *         location. This value will be <code>null</code> if no unit is
+     *         transported on the outside at that location.
      */
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
@@ -222,5 +228,10 @@ public final class TroopSpace implements Transporter {
 
     public int getCargoMpReduction() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "troopspace:" + totalSpace;
     }
 } // End package class TroopSpace implements Transporter

@@ -1,0 +1,15 @@
+Clan Aerospace Light
+Vandal Prime,1
+Avar Prime,2
+Charonea,3
+Bashkir Prime,4
+Sulla Prime,5
+Batu Prime,6
+Bashkir Prime,5
+Batu Prime,4
+Issus,3
+Vandal Prime,2
+Corax,1
+
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

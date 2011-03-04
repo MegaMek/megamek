@@ -9,7 +9,6 @@ Cerberus MR-V2,5
 Viking VKG-2F,4
 Salamander PPR-5S,3
 Stalker STK-5S,2
-Thunder Hawk TDR-7K,1
-
+Thunder Hawk TDK-7Y,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

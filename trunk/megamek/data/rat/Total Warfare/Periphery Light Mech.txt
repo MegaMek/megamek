@@ -10,6 +10,5 @@ Javelin JVN-10N, 4
 Stinger STG-3R, 3
 Hammer HMR-3M, 2
 Brigand LDT-1, 1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

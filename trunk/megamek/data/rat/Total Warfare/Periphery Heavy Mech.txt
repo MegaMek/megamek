@@ -10,6 +10,5 @@ Orion ON1-K,4
 Catapult CPLT-C1,3
 JagerMech JM6-S,2
 Quickdraw QKD-4G,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

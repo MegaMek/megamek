@@ -10,6 +10,5 @@ Jenner JR7-K,4
 Spider SDR-7M,3
 Kabuto KBO-7A,2
 Panther PNT-9R,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

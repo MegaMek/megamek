@@ -10,6 +10,5 @@ Valkyrie VLK-QD1,4
 Dart DRT-3S,3
 Battle Hawk BH-K305,2
 Spector SPR-5F,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

@@ -10,6 +10,5 @@ Ryoken (Stormcrow) C,4
 Dragonfly (Viper) C,3
 Ursus,2
 Arctic Wolf,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

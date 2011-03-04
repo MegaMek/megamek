@@ -10,6 +10,5 @@ Turk Prime,4
 Tyre,3
 Issus,2
 Jagatai Prime,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

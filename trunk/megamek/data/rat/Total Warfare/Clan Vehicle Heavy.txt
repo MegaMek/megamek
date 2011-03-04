@@ -10,6 +10,5 @@ Athena Combat Vehicle,4
 Shoden Assault Vehicle,3
 Oro Heavy Tank,2
 Magi Infantry Support Vehicle,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

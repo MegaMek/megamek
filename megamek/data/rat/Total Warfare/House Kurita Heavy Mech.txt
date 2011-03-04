@@ -10,6 +10,5 @@ Maelstrom MTR-5K,4
 Shugenja SJA-7D,3
 Crusader CRD-5K,2
 No-Dachi NDA-1K,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

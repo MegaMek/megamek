@@ -10,6 +10,5 @@ Catapult CPLT-C1,4
 Anvil ANV-3M,3
 Ostroc OSR-4L,2
 Helios HEL-3D,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

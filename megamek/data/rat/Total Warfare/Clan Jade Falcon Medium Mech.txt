@@ -10,6 +10,5 @@ Black Hawk (Nova) A,4
 Grendel (Mongrel) Prime,3
 Hunchback IIC,2
 Phantom C,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

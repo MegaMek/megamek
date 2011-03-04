@@ -10,6 +10,5 @@ Eagle EGL-2M, 4
 Gurkha GUR-2G, 3
 Locust LCT-5M, 2
 Talon TLN-5W, 1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

@@ -9,7 +9,6 @@ Masakari (Warhawk) B,5
 Daishi (Dire Wolf) Prime,4
 Daishi (Dire Wolf) A,3
 Masakari (Warhawk) A,2
-Mad Cat MK II,1
-
+Mad Cat Mk II,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

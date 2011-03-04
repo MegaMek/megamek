@@ -10,6 +10,5 @@ Stingray F-90,4
 Lancer LX-2,3
 Oni ON-1,2
 Tatsu MIK-O,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

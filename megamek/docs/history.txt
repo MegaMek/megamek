@@ -5,6 +5,7 @@ v0.35.23-dev (SVN)
 + RFE: Added toString properties to all Transporters for easier file saving.
 + RFE: Updated BLKFile.encode to save source and all transporters.
 + Added all Total Warfare RATs.
++ Bug fixes to TW RATs.  Also tweaked Clan BA tables.
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

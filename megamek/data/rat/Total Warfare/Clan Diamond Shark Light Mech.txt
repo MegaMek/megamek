@@ -8,8 +8,7 @@ Puma (Adder) Prime,6
 Hellion A,5
 Koshi (Mist Lynx) Prime,4
 Hankyu (Arctic Cheetah) H,3
-Pirahna,2
+Piranha,2
 Pack Hunter,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

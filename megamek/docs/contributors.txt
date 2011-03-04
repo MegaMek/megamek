@@ -47,7 +47,7 @@
      Robin Toll <fastsammy@users.sourceforge.net>
      Shane Kearns <shane.kearns@ntlworld.com>
      David Gorsuch <dgorsman@users.sourceforge.net>
-     BATTLEMASTER <s_d@users.sourceforge.net>
+     Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>
      Steven Smolinski <stevens@users.sourceforge.net>
      Anton Sabadash <prophet_roshak@users.sourceforge.net>
      Michael Gratton <mjog@users.sourceforge.net>

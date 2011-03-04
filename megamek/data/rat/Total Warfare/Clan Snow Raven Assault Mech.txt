@@ -10,6 +10,5 @@ Man O' War (Gargoyle) C,4
 Masakari (Warhawk) Prime,3
 Daishi (Dire Wolf) A,2
 Daishi (Dire Wolf) C,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

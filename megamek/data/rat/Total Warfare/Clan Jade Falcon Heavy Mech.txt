@@ -10,6 +10,5 @@ Night Gyr Prime,4
 Night Gyr A,3
 Loki (Hellbringer) A,2
 Night Gyr C,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

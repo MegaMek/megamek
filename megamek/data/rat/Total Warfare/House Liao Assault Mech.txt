@@ -10,6 +10,5 @@ Pillager PLG-3Z,4
 Grand Titan T-IT-N10M,3
 Cyclops CP-11-A,2
 Yu Huang Y-H9G,1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

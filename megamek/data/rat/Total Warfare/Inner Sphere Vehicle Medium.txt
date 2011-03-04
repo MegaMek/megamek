@@ -10,6 +10,5 @@ Condor Heavy Hover Tank, 4
 Vedette Medium Tank, 3
 Maxim Heavy Hover Transport (BA Factory Upgrade), 2
 Regulator Hovertank, 1
-
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

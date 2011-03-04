@@ -1,5 +1,5 @@
 House Marik Medium 'Mech
-FS9-OF Firestarter,1
+Firestarter FS9-OF,1
 Apollo APL-1M,2
 Cicada CDA-3M,3
 Hermes II HER-2S,4
@@ -9,7 +9,6 @@ Hunchback HBK-5M,5
 Bloodhound B1-HND,4
 Trebuchet TBT-7M,3
 Wraith TR1,2
-Blackjack BJ-2OE,1
-
+Blackjack BJ2-OE,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

@@ -1,5 +1,5 @@
 Clan Snow Raven Light 'Mech
-Baboon 'Howler' 2,1
+Baboon (Howler) 2,1
 Dasher (Fire Moth) A,2
 Puma (Adder) C,3
 Puma (Adder) A,4

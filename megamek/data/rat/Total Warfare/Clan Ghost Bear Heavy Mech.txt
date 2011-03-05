@@ -7,7 +7,7 @@ Thor (Summoner) Prime,5
 Vulture (Mad Dog) Prime,6
 Vulture (Mad Dog) A,5
 Thor (Summoner) C,4
-Cauldron-Born 'Ebon Jaguar' Prime,3
+Cauldron-Born (Ebon Jaguar) Prime,3
 Nova Cat A,2
 Grizzly,1
 #Edited by Harold "BATTLEMASTER" N.

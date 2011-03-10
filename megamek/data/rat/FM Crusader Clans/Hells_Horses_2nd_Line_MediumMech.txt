@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Medium Mechs (Hell's Horses),
+Hunchback IIC,1
+Sentinel STN-3L,2
+Hellhound (Conjurer),3
+Shadow Hawk IIC,4
+Shadow Hawk IIC,5
+Shadow Hawk IIC,6
+Kintaro KTO-19,5
+Griffin IIC,4
+Wyvern WVE-5N,3
+Goshawk (Vapor Eagle),2
+Goshawk (Vapor Eagle),1

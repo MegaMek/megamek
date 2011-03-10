@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Assault Mechs (Fire Mandrill),
+Behemoth (Stone Rhino),1
+Phoenix Hawk IIC,2
+Thug THG-11E,3
+King Crab KGC-000,4
+Warhammer IIC,5
+Phoenix Hawk IIC,6
+Thug THG-11E,5
+Kraken (Bane),4
+Warhammer IIC,3
+Highlander HGN-732,2
+Kraken (Bane),1

@@ -9,6 +9,8 @@ v0.35.23-dev (SVN)
 + Fixed unit dates
 + Created Unofficial folder in RAT directory for unofficial RATs.
 + Added FM Crusader Clan RATs, compiled by Nicholas Ristow.  Thanks!
++ Errata: Power amplifiers now round to 0.5 tons
++ Bug: VTOL armor display wrong 
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

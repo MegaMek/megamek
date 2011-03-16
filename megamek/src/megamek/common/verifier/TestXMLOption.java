@@ -56,7 +56,7 @@ public class TestXMLOption implements TestEntityOption {
     private float ceilWeapons = TestEntity.CEIL_TON;
     private float ceilTargComp = TestEntity.CEIL_TON;
     private float ceilTurret = TestEntity.CEIL_HALFTON;
-    private float ceilPowerAmp = TestEntity.CEIL_TENTHTON;
+    private float ceilPowerAmp = TestEntity.CEIL_HALFTON;
     private float ceilGyro = TestEntity.CEIL_HALFTON;
 
     private float maxOverweight = 0.25f;

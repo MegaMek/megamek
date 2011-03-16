@@ -23,7 +23,7 @@
     1.0
     </minUnderweight>
     <ignoreFailedEquipment>
-    Reactive, Claw (THB), CC Sensors, Command Console, Dual Cockpit
+    Claw (THB), CC Sensors, Command Console, Dual Cockpit
     </ignoreFailedEquipment>
     <skip>
     false
@@ -53,7 +53,7 @@
       <weapons>1.0</weapons>
       <targcomp>1.0</targcomp>
       <turret>0.5</turret>
-      <poweramp>0.1</poweramp>
+      <poweramp>0.5</poweramp>
     </ceilWeight>
     <showOverweighted>
     true

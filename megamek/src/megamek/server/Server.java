@@ -15888,12 +15888,6 @@ public class Server implements Runnable {
 
         int damage_orig = damage;
 
-        //the bonus to the crit roll if using the "advanced determining critical hits rule"
-        int critBonus = 0;
-        if(game.getOptions().booleanOption("tacops_crit_roll") && (damage_orig > 0) && ((te instanceof Mech) || (te instanceof Protomech))) {
-            critBonus = Math.min((damage_orig - 1)/5, 4);
-        }
-
         // show Locations which have rerolled with Edge
         HitData undoneLocation = hit.getUndoneLocation();
         while (undoneLocation != null) {
@@ -15954,17 +15948,22 @@ public class Server implements Runnable {
             reactiveArmor = true;
         }
 
-        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1 : 0;
 
-        int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL)
-                && (hardenedArmor || ferroLamellorArmor) ? 1 : 0;
+        // TACs
+        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL)
+                && (!hardenedArmor && !ferroLamellorArmor) ? 1 : 0;
 
-        // if our mech has Hardened or Ferro-Lamellor armor, ignore extra crits
-        // from AP effects.
-        if ((hardenedArmor || ferroLamellorArmor)
-                && (((hit.getGeneralDamageType() & HitData.DAMAGE_ARMOR_PIERCING_MISSILE) == HitData.DAMAGE_ARMOR_PIERCING_MISSILE) || ((hit
-                        .getGeneralDamageType() & HitData.DAMAGE_ARMOR_PIERCING) == HitData.DAMAGE_ARMOR_PIERCING))) {
-            specCrits -= 1;
+        // this is for special crits, like AP and tandem-charge
+        int specCrits = 0;
+
+        //the bonus to the crit roll if using the "advanced determining critical hits rule"
+        int critBonus = 0;
+        if(game.getOptions().booleanOption("tacops_crit_roll") && (damage_orig > 0) && ((te instanceof Mech) || (te instanceof Protomech))) {
+            critBonus = Math.min((damage_orig - 1)/5, 4);
+        }
+        // hardened armor get's a -2 modifier on the critroll
+        if (hardenedArmor) {
+            critBonus -= 2;
         }
 
         HitData nextHit = null;
@@ -17102,9 +17101,12 @@ public class Server implements Runnable {
                     }
                 }
             } else if (hit.getSpecCritMod() < 0) {
-                // If there ISN'T any armor left but we did damage, then there's
-                // a chance of a crit, using Armor Piercing.
-                specCrits++;
+                // ok, we dealt damage but didn't go on to internal
+                // we get a chance of a crit, using Armor Piercing.
+                // but only if we don't have hardened or ferro-lamellor armor
+                if (!hardenedArmor && !ferroLamellorArmor && !reactiveArmor) {
+                    specCrits++;
+                }
             }
             // check for breaching
             vDesc.addAll(breachCheck(te, hit.getLocation(), null, underWater));
@@ -17126,13 +17128,12 @@ public class Server implements Runnable {
 
                 for (int i = 0; i < specCrits; i++) {
                     vDesc.elementAt(vDesc.size() - 1).newlines++;
-                    // against BAR armor, we get a +2 mod
+                    // against BAR or reflective armor, we get a +2 mod
                     int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
-                    if (hardenedArmor) {
-                        // against hardened armor, it's a flat -2 mod
-                        critMod = -2;
-                    } else {
-                        // otherwise, use the normal mods
+                    critMod += reflectiveArmor ? 2 : 0;
+                    if (!hardenedArmor) {
+                        // non-hardened armor gets modifiers
+                        // the -2 for hardened is handled in the critBonus variable
                         critMod += hit.getSpecCritMod();
                         critMod += hit.glancingMod();
                     }

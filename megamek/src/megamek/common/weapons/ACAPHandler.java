@@ -160,18 +160,13 @@ public class ACAPHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         } else {
-
             int critModifer = 0;
-
-
             if (bGlancing) {
                 hit.makeGlancingBlow();
                 critModifer -= 2;
-            }else if ( bDirect ) {
+            }else if (bDirect) {
                 critModifer += toHit.getMoS()/3;
-
             }
-
             hit.makeArmorPiercing(atype,critModifer);
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,

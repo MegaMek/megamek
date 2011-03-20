@@ -58,7 +58,7 @@ public class FlamerHandler extends WeaponHandler {
     @Override
     protected int calcDamagePerHit() {
         int toReturn;
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 toReturn = Compute.d6(3);
             }
@@ -73,6 +73,8 @@ public class FlamerHandler extends WeaponHandler {
             if (bGlancing) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
+        } else if ((target instanceof BattleArmor) && ((BattleArmor)target).isFireResistant()) {
+            toReturn = 0;
         } else {
             toReturn = super.calcDamagePerHit();
         }
@@ -90,8 +92,8 @@ public class FlamerHandler extends WeaponHandler {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
-        if (entityTarget != null
-                && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
+        if ((entityTarget != null)
+                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
                     3, vPhaseReport);
         }
@@ -101,7 +103,7 @@ public class FlamerHandler extends WeaponHandler {
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if (!targetInBuilding || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        if (!targetInBuilding || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
         return true;
@@ -147,7 +149,7 @@ public class FlamerHandler extends WeaponHandler {
         // Buildings can't be accidentally ignited.
         //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
         //you do a normal ignition as though for intentional fires
-        if (bldg != null
+        if ((bldg != null)
                 && server.tryIgniteHex(target.getPosition(), subjectId, true,false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;

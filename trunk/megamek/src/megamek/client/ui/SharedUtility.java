@@ -272,7 +272,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation()) && !(entity instanceof VTOL) && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
+            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() - game.getBoard().getHex(lastPos).depth() != curHex.getElevation() - curHex.depth()) && !(entity instanceof VTOL) && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType),nagReport, psrList);
             }

@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -35,7 +35,7 @@ import megamek.server.Server;
  */
 public class LegAttackHandler extends WeaponHandler {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4429993211361286138L;
 
@@ -51,7 +51,7 @@ public class LegAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -76,8 +76,13 @@ public class LegAttackHandler extends WeaponHandler {
         }
         hit.setGeneralDamageType(generalDamageType);
         int damage = 4;
-        if (ae instanceof BattleArmor)
+        if (ae instanceof BattleArmor) {
             damage += ((BattleArmor) ae).getVibroClaws();
+            if (((BattleArmor)ae).hasMyomerBooster()) {
+                damage += ((BattleArmor)ae).getTroopers() * 2;
+            }
+        }
+
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
         vPhaseReport.addAll(server.damageEntity(entityTarget, hit, damage,
                 false, damageType, false, false, throughFront, underWater));

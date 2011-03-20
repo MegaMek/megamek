@@ -1074,14 +1074,14 @@ public class BattleArmor extends Infantry {
         // 1 hex moved +2 movement modifier
         // 2 hexes moved +1 movement modifier
         // 3+ hexes moved +0 movement modifier
-        if (isMimetic) {
+        if (isMimetic && !hasMyomerBooster()) {
             int mmod = 3 - delta_distance;
             mmod = Math.max(0, mmod);
             result = new TargetRoll(mmod, "mimetic armor");
         }
 
         // Stealthy units alreay have their to-hit mods defined.
-        if (isStealthy && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
+        if (isStealthy && !((ae instanceof Infantry) && !(ae instanceof BattleArmor)) && !hasMyomerBooster()) {
             switch (range) {
                 case RangeType.RANGE_MINIMUM:
                 case RangeType.RANGE_SHORT:

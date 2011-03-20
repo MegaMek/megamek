@@ -190,6 +190,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         }
                         nDamPerHit += addToDamage;
                     }
+                    if (ba.hasMyomerBooster()) {
+                        nDamPerHit += ba.getTroopers() * 2;
+                    }
                 }
                 ba.setAttacksDuringSwarmResolved(true);
             } else {

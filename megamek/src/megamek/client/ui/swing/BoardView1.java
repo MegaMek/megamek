@@ -5496,17 +5496,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (mhex.containsTerrain(Terrains.BUILDING)) {
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
-                // Each hex of a building has its own elevation.
-                buf.append(mhex.terrainLevel(Terrains.BLDG_ELEV));
-                buf.append(" "); //$NON-NLS-1$
-                buf.append(bldg.toString());
-                buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                buf.append(bldg.getCurrentCF(mcoords));
-                buf.append(Messages.getString("BoardView1.BldgArmor")); //$NON-NLS-1$
-                buf.append(bldg.getArmor(mcoords));
-                strings[stringsIndex] = buf.toString();
-                stringsIndex += 1;
+                // in the map editor, the building might not exist
+                if (bldg != null) {
+                    StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
+                    // Each hex of a building has its own elevation.
+                    buf.append(mhex.terrainLevel(Terrains.BLDG_ELEV));
+                    buf.append(" "); //$NON-NLS-1$
+                    buf.append(bldg.toString());
+                    buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
+                    buf.append(bldg.getCurrentCF(mcoords));
+                    buf.append(Messages.getString("BoardView1.BldgArmor")); //$NON-NLS-1$
+                    buf.append(bldg.getArmor(mcoords));
+                    strings[stringsIndex] = buf.toString();
+                    stringsIndex += 1;
+                }
             }
 
             // Do we have a bridge?

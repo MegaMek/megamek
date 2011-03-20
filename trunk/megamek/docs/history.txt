@@ -13,6 +13,7 @@ v0.35.23-dev (SVN)
 + Bug: VTOL armor display wrong
 + Bug: BA Myomer booster should add damage during swarm and leg attacks and make
     stealth and mimetic armor not work
++ Bug 3225559: mech marked as illegal when using mechanical jump boosters
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

@@ -151,9 +151,6 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 } else {
                     hit.setSpecCritmod(-2);
                 }
-                if (entityTarget.hasBARArmor(hit.getLocation())) {
-                    hit.setSpecCritmod(hit.getSpecCritMod() + 2);
-                }
             }
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,

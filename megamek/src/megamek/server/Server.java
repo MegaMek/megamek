@@ -7655,15 +7655,13 @@ public class Server implements Runnable {
                     }
                 }
             } else if (te instanceof BattleArmor) {
-                for (Mounted equip : te.getMisc()) {
-                    if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
-                        r = new Report(3395);
-                        r.indent(2);
-                        r.subject = te.getId();
-                        r.addDesc(te);
-                        vPhaseReport.add(r);
-                        return vPhaseReport;
-                    }
+                if (((BattleArmor)te).isFireResistant()) {
+                    r = new Report(3395);
+                    r.indent(2);
+                    r.subject = te.getId();
+                    r.addDesc(te);
+                    vPhaseReport.add(r);
+                    return vPhaseReport;
                 }
                 te.heatFromExternal += missiles;
                 while (te.heatFromExternal >= 3) {
@@ -14619,17 +14617,15 @@ public class Server implements Runnable {
         // Battle Armor squads equipped with fire protection
         // gear automatically avoid flaming damage
         // TODO: can conv. infantry mount fire-resistant armor?
-        for (Mounted mount : entity.getMisc()) {
-            EquipmentType equip = mount.getType();
-            if (equip.hasFlag(MiscType.F_FIRE_RESISTANT)) {
-                r = new Report(5095);
-                r.subject = entity.getId();
-                r.indent(1);
-                r.addDesc(entity);
-                addReport(r);
-                return;
-            }
+        if ((entity instanceof BattleArmor) && ((BattleArmor)entity).isFireResistant()) {
+            r = new Report(5095);
+            r.subject = entity.getId();
+            r.indent(1);
+            r.addDesc(entity);
+            addReport(r);
+            return;
         }
+
 
         // mechs shouldn't be here, but just in case
         // TODO: what to do with Aeros?

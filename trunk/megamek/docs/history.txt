@@ -15,6 +15,7 @@ v0.35.23-dev (SVN)
     stealth and mimetic armor not work
 + Bug 3225559: mech marked as illegal when using mechanical jump boosters
 + Bug: AP crits not working correctly
++ Bug: BA fire resistant armor not working correctly
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

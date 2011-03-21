@@ -160,8 +160,9 @@
      Julio Prina <jjj.ladob@gmail.com>
      
   Random Assignment Tables
-     Harold "BATTLEMASTER" N.
+     Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>
      Nicholas "starbird7" Ristow
+     Magnus Kerensky <mkerensky@users.sourceforge.net>
 
   Translations
      Jörg Harder <joergharder@t-online.de>

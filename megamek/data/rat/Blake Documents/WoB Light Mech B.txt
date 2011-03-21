@@ -1,0 +1,12 @@
+WoB Light Mech B
+Ostscout OTT-9CS,1
+Commando COM-7B,2
+Gurkha GUR-2G,3
+Locust LCT-5M,4
+Nexus NXS1-A,5
+Mercury MCY-102,6
+Hussar HSR-500-D,5
+Nexus NXS1-B,4
+Falcon Hawk FNHK-9K1B,3
+Firestarter FS9-B,2
+Panther PNT-14S,1

@@ -18,6 +18,7 @@ v0.35.23-dev (SVN)
 + Bug: BA fire resistant armor not working correctly
 + Bug: moving backwards over elevation change under water didn't cause PSR
 + Added Blake Documents RATs, compiled by Magnus Kerensky.  Thanks!
++ Bug 3231030: ArrayIndexOutOfBoundsException when attacking BA
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

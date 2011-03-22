@@ -233,8 +233,9 @@ public class BattleArmor extends Infantry {
                 retVal = 6 + 1;
             } else if (isClan()) {
                 retVal = 5 + 1;
+            } else {
+                retVal = 4 + 1;
             }
-            retVal = 4 + 1;
         } else {
             retVal++;
         }

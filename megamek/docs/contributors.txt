@@ -83,6 +83,7 @@
      Kolja "Flashhawk" Geldmacher
      Endreffy Janos <endrosz@freemail.hu>
      Blood Falcon <blood_falcon@users.sourceforge.net>
+     Jayof9s
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

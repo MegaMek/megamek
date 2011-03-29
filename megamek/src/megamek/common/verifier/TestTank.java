@@ -144,7 +144,11 @@ public class TestTank extends TestEntity {
         int heat = 0;
         for (Mounted m : tank.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC) || wt.hasFlag(WeaponType.F_PLASMA) || wt.hasFlag(WeaponType.F_PLASMA_MFUK)) {
+            if (wt.hasFlag(WeaponType.F_LASER)
+                    || wt.hasFlag(WeaponType.F_PPC)
+                    || wt.hasFlag(WeaponType.F_PLASMA)
+                    || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+                    || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
                 heat += wt.getHeat();
             }
             // laser insulator reduce heat by 1, to a minimum of 1

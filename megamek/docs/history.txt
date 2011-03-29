@@ -22,7 +22,7 @@ v0.35.23-dev (SVN)
 + Added unofficial Map Set "Randon Canyons"
 + 3085 units added (and some images)
 + Bug: Mace damage should round up, not down
-+ Bug: plasma weapons should need heat sinks on tanks
++ Bug: plasma weapons and mech flamers should need heat sinks on tanks
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

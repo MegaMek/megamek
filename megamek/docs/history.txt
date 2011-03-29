@@ -21,6 +21,7 @@ v0.35.23-dev (SVN)
 + Bug 3231030: ArrayIndexOutOfBoundsException when attacking BA
 + Added unofficial Map Set "Randon Canyons"
 + 3085 units added (and some images)
++ Bug: Mace damage should round up, not down
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

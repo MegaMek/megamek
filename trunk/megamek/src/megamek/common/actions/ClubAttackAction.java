@@ -77,7 +77,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
             nDamage = (int) Math.ceil(entity.getWeight() / 10.0);
         } else if (mType.hasSubType(MiscType.S_MACE)) {
-            nDamage = (int) Math.floor(entity.getWeight() / 4.0);
+            nDamage = (int) Math.ceil(entity.getWeight() / 4.0);
         } else if (mType.hasSubType(MiscType.S_PILE_DRIVER)) {
             // Pile Drivers have constant damage, not variable like most.
             nDamage = 10;

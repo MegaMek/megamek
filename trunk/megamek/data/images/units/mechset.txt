@@ -343,6 +343,7 @@ chassis "Theseus Medium Battle Armor" "battle armor/yinglong.gif"
 chassis "Thunderbird Battle Armor" "battle armor/Thunderbird.gif"
 chassis "Tornado PA(L)" "battle armor/tornado.gif"
 chassis "Void Medium Battle Armor" "battle armor/void.gif"
+exact "Void Medium Battle Armor (Nova Cat)" "battle armor/void nova cat.gif"
 chassis "Ying Long Medium Battle Armor" "battle armor/yinglong.gif"
 
 

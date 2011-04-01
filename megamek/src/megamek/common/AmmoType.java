@@ -8425,6 +8425,7 @@ public class AmmoType extends EquipmentType {
                  * munition.shortName = munition.name; munition.addToEnd(base,
                  * nameBuf.toString()); break;
                  */
+                case AmmoType.T_VGL:
                 case AmmoType.T_LONG_TOM:
                 case AmmoType.T_SNIPER:
                 case AmmoType.T_THUMPER:

@@ -238,7 +238,7 @@ public class MechFileParser {
                 // check location
                 if (weapon.getLocation() == m.getLocation()) {
                     m.setLinked(weapon);
-                    break;
+                    continue;
                 }
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen

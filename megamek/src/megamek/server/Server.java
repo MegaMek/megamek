@@ -21987,7 +21987,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * receive and process an entity mode change packet
+     * receive and process an entity mounted facing change packet
      *
      * @param c
      * @param connIndex

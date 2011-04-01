@@ -531,19 +531,19 @@ public class MtfFile implements IMechLoader {
             }
             // keep track of facing for vehicular grenade launchers
             int facing = -1;
-            if (critName.toLowerCase().endsWith("(FL)")) {
+            if (critName.toUpperCase().endsWith("(FL)")) {
                 facing = 5;
                 critName = critName.substring(0, critName.length() - 4).trim();
             }
-            if (critName.toLowerCase().endsWith("(FR)")) {
+            if (critName.toUpperCase().endsWith("(FR)")) {
                 facing = 1;
                 critName = critName.substring(0, critName.length() - 4).trim();
             }
-            if (critName.toLowerCase().endsWith("(RL)")) {
+            if (critName.toUpperCase().endsWith("(RL)")) {
                 facing = 4;
                 critName = critName.substring(0, critName.length() - 4).trim();
             }
-            if (critName.toLowerCase().endsWith("(RR)")) {
+            if (critName.toUpperCase().endsWith("(RR)")) {
                 facing = 2;
                 critName = critName.substring(0, critName.length() - 4).trim();
             }

@@ -118,7 +118,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_PAC = 90;
     public static final int T_NLRM = 91;
     public static final int T_RIFLE = 92;
-    public static final int NUM_TYPES = 93;
+    public static final int T_VGL = 93;
+    public static final int NUM_TYPES = 94;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -255,6 +256,11 @@ public class AmmoType extends EquipmentType {
     public static final long M_CORROSIVE = 11 << 50;
     public static final long M_COOLANT = 11 << 51;
 
+    //vehicular grenade launcher
+    public static final long M_CHAFF = 1l << 52;
+    public static final long M_INCENDIARY = 1l << 53;
+    public static final long M_SMOKEGRENADE = 1l << 54;
+
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
      * "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -387,6 +393,8 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanLrtAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> srtAmmos = new ArrayList<AmmoType>(26);
         ArrayList<AmmoType> clanSrtAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> vglAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> clanVGLAmmos = new ArrayList<AmmoType>();
 
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
 
@@ -994,6 +1002,13 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createCLSRT6Ammo();
         clanSrtAmmos.add(base);
 
+        base = AmmoType.createISVGLAmmo();
+        EquipmentType.addType(base);
+        vglAmmos.add(base);
+        base = AmmoType.createCLVGLAmmo();
+        clanVGLAmmos.add(base);
+        EquipmentType.addType(base);
+
         // Create the munition types for IS SRM launchers.
         munitions.clear();
         munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO, TechConstants.T_IS_TW_NON_BOX));
@@ -1140,9 +1155,27 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, TechConstants.T_CLAN_ADVANCED));
 
+
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanArrowAmmos, munitions);
+
+        // create the munition types for clan vehicular grenade launchers
+        munitions.clear();
+        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, TechConstants.T_CLAN_ADVANCED));
+
+        AmmoType.createMunitions(clanVGLAmmos, munitions);
+
+        // create the munition types for IS vehicular grenade launchers
+        munitions.clear();
+        munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, TechConstants.T_IS_ADVANCED));
+
+        AmmoType.createMunitions(vglAmmos, munitions);
+
 
         // Create the munition types for Artillery launchers.
         munitions.clear();
@@ -8121,6 +8154,44 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 1000;
 
+        return ammo;
+    }
+
+    private static AmmoType createCLVGLAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "Vehicular Grenade Launcher Ammo";
+        ammo.shortName = "VGL";
+        ammo.setInternalName("CL Ammo VGL");
+        ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_VGL;
+        ammo.munitionType = AmmoType.M_STANDARD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+        return ammo;
+    }
+
+    private static AmmoType createISVGLAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "Vehicular Grenade Launcher Ammo";
+        ammo.shortName = "VGL";
+        ammo.setInternalName("IS Ammo VGL");
+        ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_VGL;
+        ammo.munitionType = AmmoType.M_STANDARD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
         return ammo;
     }
 

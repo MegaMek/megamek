@@ -529,6 +529,24 @@ public class MtfFile implements IMechLoader {
             if (critName.toLowerCase().endsWith("(split)")) {
                 critName = critName.substring(0, critName.length() - 7).trim();
             }
+            // keep track of facing for vehicular grenade launchers
+            int facing = -1;
+            if (critName.toLowerCase().endsWith("(FL)")) {
+                facing = 5;
+                critName = critName.substring(0, critName.length() - 4).trim();
+            }
+            if (critName.toLowerCase().endsWith("(FR)")) {
+                facing = 1;
+                critName = critName.substring(0, critName.length() - 4).trim();
+            }
+            if (critName.toLowerCase().endsWith("(RL)")) {
+                facing = 4;
+                critName = critName.substring(0, critName.length() - 4).trim();
+            }
+            if (critName.toLowerCase().endsWith("(RR)")) {
+                facing = 2;
+                critName = critName.substring(0, critName.length() - 4).trim();
+            }
 
             try {
                 EquipmentType etype = EquipmentType.get(critName);
@@ -586,7 +604,21 @@ public class MtfFile implements IMechLoader {
                         m.setMechTurretMounted(isTurreted);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
-                        mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
+                        Mounted mount = mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
+                        // vehicular grenade launchers need to have their facing set
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
+                            if (facing == -1) {
+                                // if facing has not been set earlier, we are
+                                // front or rear mounted
+                                if (rearMounted) {
+                                    mount.setFacing(3);
+                                } else {
+                                    mount.setFacing(0);
+                                }
+                            } else {
+                                mount.setFacing(facing);
+                            }
+                        }
                     }
                 } else {
                     if (!critName.equals(MtfFile.EMPTY)) {

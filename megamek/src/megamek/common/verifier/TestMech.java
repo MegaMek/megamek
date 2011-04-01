@@ -67,9 +67,9 @@ public class TestMech extends TestEntity {
         } else {
             armor = new Armor[mech.locations()];
             for (int i = 0; i < mech.locations(); i++) {
-                int type = mech.getArmorType(1);
+                int type = mech.getArmorType(i);
                 int flag = 0;
-                if (mech.isClanArmor(1)) {
+                if (mech.isClanArmor(i)) {
                     flag |= Armor.CLAN_ARMOR;
                 }
                 armor[i] = new Armor(type, flag);

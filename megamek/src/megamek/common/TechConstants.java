@@ -204,4 +204,28 @@ public class TechConstants {
                 return false;
         }
     }
+
+    public static int getOppositeTechLevel(int level) {
+        switch (level) {
+            case T_INTRO_BOXSET:
+            case T_IS_TW_NON_BOX:
+                return T_CLAN_TW;
+            case T_IS_ADVANCED:
+                return T_CLAN_ADVANCED;
+            case T_IS_EXPERIMENTAL:
+                return T_CLAN_EXPERIMENTAL;
+            case T_IS_UNOFFICIAL:
+                return T_CLAN_UNOFFICIAL;
+            case T_CLAN_TW:
+                return T_IS_TW_NON_BOX;
+            case T_CLAN_ADVANCED:
+                return T_IS_ADVANCED;
+            case T_CLAN_EXPERIMENTAL:
+                return T_IS_EXPERIMENTAL;
+            case T_CLAN_UNOFFICIAL:
+                return T_IS_UNOFFICIAL;
+            default:
+                return T_TECH_UNKNOWN;
+        }
+    }
 }

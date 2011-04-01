@@ -34,8 +34,10 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKMechFile extends BLKFile implements IMechLoader {
@@ -249,6 +251,23 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     armored = true;
                     critName = critName.substring(4);
                 }
+                int facing = -1;
+                if (critName.startsWith("(FL) ")) {
+                    facing = 5;
+                    critName = critName.substring(5);
+                }
+                if (critName.startsWith("(RL) ")) {
+                    facing = 5;
+                    critName = critName.substring(4);
+                }
+                if (critName.startsWith("(FR) ")) {
+                    facing = 5;
+                    critName = critName.substring(1);
+                }
+                if (critName.startsWith("(RR) ")) {
+                    facing = 5;
+                    critName = critName.substring(2);
+                }
                 if (critName.indexOf("Engine") != -1) {
                     mech.setCritical(loc, c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, armored, null));
                     continue;
@@ -273,7 +292,21 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                 }
                 if (etype != null) {
                     try {
-                        mech.addEquipment(etype, loc, rearMounted, false, false, turretMounted);
+                        Mounted mount = mech.addEquipment(etype, loc, rearMounted, false, false, turretMounted);
+                        if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
+                            // vehicular grenade launchers need to have their facing set
+                            if (facing == -1) {
+                             // if facing has not been set earlier, we are
+                                // front or rear mounted
+                                if (rearMounted) {
+                                    mount.setFacing(3);
+                                } else {
+                                    mount.setFacing(0);
+                                }
+                            } else {
+                                mount.setFacing(facing);
+                            }
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

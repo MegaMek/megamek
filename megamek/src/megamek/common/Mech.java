@@ -3136,17 +3136,25 @@ public abstract class Mech extends Entity implements Serializable {
             bvText.append(startColumn);
 
             bvText.append(name);
+            boolean rearVGL = false;
+            if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
+                // vehicular grenade launchers facing to the rear sides count
+                // for rear BV, too
+                if ((weapon.getFacing() == 2) || (weapon.getFacing() == 4)) {
+                    rearVGL = true;
+                }
+            }
             if (weapon.isMechTurretMounted()) {
                 bvTurret += dBV;
                 bvText.append(" (T)");
-            } else if (weapon.isRearMounted()) {
+            } else if (weapon.isRearMounted() || rearVGL) {
                 bvRear += dBV;
                 bvText.append(" (R)");
             } else {
                 bvFront += dBV;
             }
             if (!isArm(weapon.getLocation()) && !weapon.isMechTurretMounted()) {
-                if (weapon.isRearMounted()) {
+                if (weapon.isRearMounted() || rearVGL) {
                     nonArmRear += dBV;
                 } else {
                     nonArmFront += dBV;
@@ -5165,6 +5173,22 @@ public abstract class Mech extends Entity implements Serializable {
             }
             if (m.isMechTurretMounted()) {
                 return m.getType().getInternalName() + " (T)" + armoredText;
+            }
+            if ((m.getType() instanceof WeaponType) && m.getType().hasFlag(WeaponType.F_VGL)) {
+                switch (m.getFacing()) {
+                    case 1:
+                        return m.getType().getInternalName() + " (FR)" + armoredText;
+                    case 2:
+                        return m.getType().getInternalName() + " (RR)" + armoredText;
+                    // case 3:
+                        //already handled by isRearMounted() above
+                    case 4:
+                        return m.getType().getInternalName() + " (RL)" + armoredText;
+                    case 5:
+                        return m.getType().getInternalName() + " (FL)" + armoredText;
+                    default:
+                        break;
+                }
             }
             return m.getType().getInternalName() + armoredText;
         } else {

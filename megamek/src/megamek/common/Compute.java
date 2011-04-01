@@ -1091,13 +1091,13 @@ public class Compute {
                 //NOTE: this will return a distance of one even when a flyover occurs
                 //That is my interpretation of this ruling
                 //http://www.classicbattletech.com/forums/index.php?topic=72723.0
-                
+
                 //if the ground attacker uses weapon bays and we are on a ground map, then we will divide this distance by 16
-                //This is totally crazy, but I don't see how else to do it. Use the unofficial 
+                //This is totally crazy, but I don't see how else to do it. Use the unofficial
                 //"grounded dropships use individual weapons" for sanity.
                 if(attacker.usesWeaponBays() && game.getBoard().onGround()) {
                     distance = (int) Math.ceil(distance / 16.0);
-                }               
+                }
             } else {
                 // ground units that are the target of air to ground attacks always have
                 // a distance of zero
@@ -2620,6 +2620,9 @@ public class Compute {
             facing = ((Tank)ae).getDualTurretFacing();
         }
         if (ae.getEquipment(weaponId).isMechTurretMounted()) {
+            facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
+        }
+        if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_VGL) && (ae instanceof Mech)) {
             facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
         }
         Coords aPos = ae.getPosition();

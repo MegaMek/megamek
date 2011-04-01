@@ -184,6 +184,8 @@ public class WeaponType extends EquipmentType {
     // Master
     // Booster
     // System
+    public static final BigInteger F_VGL = BigInteger.valueOf(1).shiftLeft(57);
+
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
     public static final int RANGE_MED = 2;
@@ -223,7 +225,7 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_CLUSTER_MISSILE_1D6 = 4;
     public static final int WEAPON_CLUSTER_MISSILE_2D6 = 5;
     public static final int WEAPON_CLUSTER_MISSILE_3D6 = 6;
-    
+
     public static String[] classNames =
         { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
 
@@ -247,7 +249,7 @@ public class WeaponType extends EquipmentType {
     public int waterMediumRange;
     public int waterLongRange;
     public int waterExtremeRange;
-    
+
     //the class of weapon for infantry damage
     public int infDamageClass = WEAPON_DIRECT_FIRE;
 
@@ -429,7 +431,7 @@ public class WeaponType extends EquipmentType {
     public int getMaxRange() {
         return maxRange;
     }
-    
+
     public int getInfantryDamageClass() {
         return infDamageClass;
     }
@@ -959,6 +961,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMediumRifle());
         EquipmentType.addType(new ISHeavyRifle());
 
+        // VGLs
+        EquipmentType.addType(new ISVehicularGrenadeLauncher());
+        EquipmentType.addType(new CLVehicularGrenadeLauncher());
+
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());
@@ -1273,7 +1279,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAFlamer());
         EquipmentType.addType(new CLBAFlamer());
         EquipmentType.addType(new ISBATaser());
-        
+
         // Unofficial BA Weapons
         EquipmentType.addType(new CLBearhunterSuperheavyACi());
 

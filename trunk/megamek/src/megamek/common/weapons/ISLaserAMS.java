@@ -43,7 +43,7 @@ public class ISLaserAMS extends LaserWeapon {
         criticals = 2;
         bv = 45;
         // we need to remove the direct fire flag again, so TC weight is not affected
-        flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_DIRECT_FIRE.not());
+        flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_DIRECT_FIRE);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;

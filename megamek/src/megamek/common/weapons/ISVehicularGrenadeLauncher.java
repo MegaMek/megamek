@@ -22,7 +22,7 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class ISVehicularGrenadeLauncher extends AmmoWeapon {
+public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
 
     /**
      *

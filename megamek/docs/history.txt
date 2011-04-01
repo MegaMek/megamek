@@ -24,6 +24,8 @@ v0.35.23-dev (SVN)
 + Bug: Mace damage should round up, not down
 + Bug: plasma weapons and mech flamers should need heat sinks on tanks
 + Added FM Updates CCAF Tables, compiled by Magnus Kerensky.
++ Bug 3262733: Laser AMS should not count for TC weight
++ Added construction data for Vehicular Grenade Launchers
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

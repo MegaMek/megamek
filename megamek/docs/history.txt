@@ -27,6 +27,7 @@ v0.35.23-dev (SVN)
 + Bug 3262733: Laser AMS should not count for TC weight
 + Added construction data for Vehicular Grenade Launchers
 + Bug 3247919: more than one laser insulator on a unit not linking correctly
++ Bug: Aeros in space in same hex can't attack each other correctly
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

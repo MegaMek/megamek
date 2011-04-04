@@ -2637,7 +2637,7 @@ public class Compute {
                 aPos = ae.getPriorPosition();
             }
             if (((Aero) t).shouldMoveBackHex((Aero) ae)) {
-                tPos = ((Entity) t).getPosition();
+                tPos = ((Entity) t).getPriorPosition();
             }
         }
 

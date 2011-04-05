@@ -201,15 +201,15 @@ public class MechDisplay extends BufferedPanel {
      */
     public void showPanel(String s) {
         ((CardLayout) displayP.getLayout()).show(displayP, s);
-        if (s == "movement") { //$NON-NLS-1$
+        if (s.equals("movement")) { //$NON-NLS-1$
             tabStrip.setTab(0);
-        } else if (s == "armor") { //$NON-NLS-1$
+        } else if (s.equals("armor")) { //$NON-NLS-1$
             tabStrip.setTab(1);
-        } else if (s == "weapons") { //$NON-NLS-1$
+        } else if (s.equals("weapons")) { //$NON-NLS-1$
             tabStrip.setTab(3);
-        } else if (s == "systems") { //$NON-NLS-1$
+        } else if (s.equals("systems")) { //$NON-NLS-1$
             tabStrip.setTab(2);
-        } else if (s == "extras") { //$NON-NLS-1$
+        } else if (s.equals("extras")) { //$NON-NLS-1$
             tabStrip.setTab(4);
         }
     }

@@ -10854,11 +10854,11 @@ public class Server implements Runnable {
         String legName = (kaa.getLeg() == KickAttackAction.LEFT) || (kaa.getLeg() == KickAttackAction.LEFTMULE) ? "Left "
                 : "Right ";
         if ((kaa.getLeg() == KickAttackAction.LEFTMULE) || (kaa.getLeg() == KickAttackAction.RIGHTMULE)) {
-            legName.concat(" rear ");
-        } else {
-            legName.concat(" front ");
+            legName = legName.concat("rear ");
+        } else if (ae instanceof QuadMech) {
+            legName = legName.concat("front ");
         }
-        legName.concat("leg");
+        legName = legName.concat("leg");
         Report r;
 
         // get damage, ToHitData and roll from the PhysicalResult

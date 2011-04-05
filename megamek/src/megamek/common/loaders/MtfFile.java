@@ -482,7 +482,7 @@ public class MtfFile implements IMechLoader {
             // parse out and add the critical
             String critName = critData[loc][i];
 
-            critName.trim();
+            critName = critName.trim();
             boolean rearMounted = false;
             boolean isArmored = false;
             boolean isTurreted = false;

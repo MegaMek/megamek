@@ -70,6 +70,7 @@
      Numien Deathwyrm <numien@users.sourceforge.net>
      Søren Krum <s_krum@users.sourceforge.net>
      Jason Smyrloglou <jasonsmyr@users.sourceforge.net>
+     Thomasz Nitecki <tmnn@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

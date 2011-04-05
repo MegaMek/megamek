@@ -28,6 +28,10 @@ v0.35.23-dev (SVN)
 + Added construction data for Vehicular Grenade Launchers
 + Bug 3247919: more than one laser insulator on a unit not linking correctly
 + Bug: Aeros in space in same hex can't attack each other correctly
++ Patch 3270784: Code clarity and readability improvement
++ Patch 3270742: Mtf file reader crit parsing fix
++ Patch 3270731: Minor string comparison issues
++ Patch 3270721: Kick attack log message fix
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

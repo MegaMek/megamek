@@ -2,7 +2,7 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
  *
- * This file also (C) 2008 Jörg Walter <j.walter@syntax-k.de>
+ * This file also (C) 2008 JÃ¶rg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -848,7 +848,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
 
     public void mouseMoved(MouseEvent me) {
         Coords c = pickCoords(me);
-        if ((c == null ? c != hoverInfo.coords : !c.equals(hoverInfo.coords))) {
+        if ((c == null ? hoverInfo.coords != null : !c.equals(hoverInfo.coords))) {
             if (hoverInfo.getLOS() != null) {
                 secondLOSCursor.move(c, game.getBoard().getHex(c));
                 secondLOSCursor.setColor(LOS_COLOR);

@@ -5154,7 +5154,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int mod = 0;
         String desc;
 
-        if (why == "") {
+        if (why.equals("")) {
             desc = "moving through ";
         } else {
             desc = why + " ";

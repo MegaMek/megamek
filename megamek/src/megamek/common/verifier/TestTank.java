@@ -144,7 +144,7 @@ public class TestTank extends TestEntity {
         int heat = 0;
         for (Mounted m : tank.getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
-            if (wt.hasFlag(WeaponType.F_LASER)
+            if (wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA)
                     || wt.hasFlag(WeaponType.F_PPC)
                     || wt.hasFlag(WeaponType.F_PLASMA)
                     || wt.hasFlag(WeaponType.F_PLASMA_MFUK)

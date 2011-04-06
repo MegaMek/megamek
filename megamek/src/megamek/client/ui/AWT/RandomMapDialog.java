@@ -1030,7 +1030,6 @@ public class RandomMapDialog extends Dialog implements ActionListener,
         gridbag.setConstraints(label, c);
         panOptions.add(label);
 
-        c.gridwidth = 1;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(choice, c);

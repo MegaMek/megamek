@@ -49,7 +49,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
      *
      */
     private static final long serialVersionUID = -2459992981678758743L;
-    public MechSearchFilter MechFilter = null;
+    public MechSearchFilter mechFilter = null;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
@@ -197,11 +197,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource().equals(butOkay)) {
-            MechFilter = getMechSearchFilter();
+            mechFilter = getMechSearchFilter();
             setVisible(false);
         }
         if (ev.getSource().equals(butCancel)) {
-            MechFilter = null;
+            mechFilter = null;
             setVisible(false);
         }
     }

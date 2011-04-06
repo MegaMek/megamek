@@ -719,7 +719,11 @@ public class MiscType extends EquipmentType {
             }
         }
 
-        return this.getBV(entity, linkedTo.getLocation());
+        if (linkedTo != null) {
+        	return this.getBV(entity, linkedTo.getLocation());        	
+        } else {
+        	return this.getBV(entity);
+        }
     }
 
     @Override

@@ -569,7 +569,7 @@ public class HmvFile implements IMechLoader {
 
             return vehicle;
         } catch (Exception e) {
-            System.out.println(structureType.toString());
+            // System.out.println(structureType.toString());
             e.printStackTrace();
             throw new EntityLoadingException(e.getMessage());
         }

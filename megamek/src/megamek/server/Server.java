@@ -16261,7 +16261,6 @@ public class Server implements Runnable {
                     r = new Report(3530);
                     r.subject = te_n;
                     r.indent(3);
-                    r.newlines = 0;
                     r.add(absorb);
                     vDesc.addElement(r);
 
@@ -16285,7 +16284,6 @@ public class Server implements Runnable {
                     r = new Report(3520);
                     r.subject = te_n;
                     r.indent(3);
-                    r.newlines = 0;
                     r.add(damageDiff);
                     vDesc.addElement(r);
                 }
@@ -16462,8 +16460,13 @@ public class Server implements Runnable {
                     }
                     r = new Report(6069);
                     r.subject = te_n;
-                    r.indent(2);
-                    r.add(Double.toString(hardenedDamage));
+                    r.newlines = 0;
+                    if (hardenedDamage%1>0) {
+                        r.add(Double.toString(hardenedDamage));
+                    } else {
+                        r.add((int)hardenedDamage);
+                    }
+
                     vDesc.addElement(r);
                 } else if (isPlatoon) {
                     // infantry armour works differently
@@ -16493,7 +16496,7 @@ public class Server implements Runnable {
                     }
                     r = new Report(6073);
                     r.subject = te_n;
-                    r.indent(2);
+                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
@@ -16501,7 +16504,7 @@ public class Server implements Runnable {
                     damage *= 2;
                     r = new Report(6066);
                     r.subject = te_n;
-                    r.indent(2);
+                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
@@ -16512,7 +16515,7 @@ public class Server implements Runnable {
                     }
                     r = new Report(6067);
                     r.subject = te_n;
-                    r.indent(2);
+                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reactiveArmor
@@ -16521,7 +16524,7 @@ public class Server implements Runnable {
                     damage = (int) Math.ceil(((double) damage) / 2);
                     r = new Report(6068);
                     r.subject = te_n;
-                    r.indent(2);
+                    r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
                 }

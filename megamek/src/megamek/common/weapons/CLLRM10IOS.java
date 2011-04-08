@@ -1,11 +1,11 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -30,7 +30,7 @@ public class CLLRM10IOS extends LRMWeapon {
      */
     public CLLRM10IOS() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel = TechConstants.T_CLAN_ADVANCED;
         name = "LRM 10 (I-OS)";
         setInternalName("CLLRM10 (IOS)");
         addLookupName("Clan IOS LRM-10");

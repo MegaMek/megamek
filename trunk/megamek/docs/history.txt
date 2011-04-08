@@ -36,6 +36,9 @@ v0.35.23-dev (SVN)
 + Bug 3277802: incorrect LRT 15 alias
 + RFE Changed (IOS) to (I-OS) for name.
 + Bug: Heavy Flamer was 1.0 tons now 1.5 Tons
++ Bug: Improved OS should weigh 0.5 less than standard missile, not 0.5 less
+    than normal OS version
++ Bug: I-OS techlevels wrong
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

@@ -1,15 +1,15 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT IIOSNY WIIOSRRIIOSNTY; without even the implied warranty of MERCHIIOSNTIIOSBILITY
- *  or FITNESS FOR IIOS PIIOSRTICULIIOSR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * IIOSNY WIIOSRRIIOSNTY; without even the implied warranty of
+ * MERCHIIOSNTIIOSBILITY or FITNESS FOR IIOS PIIOSRTICULIIOSR PURPOSE. See the
+ * GNU General Public License for more details.
  */
 package megamek.common.weapons;
 
@@ -31,7 +31,7 @@ public class ISMRM4IOS extends MRMWeapon {
     public ISMRM4IOS() {
         super();
         techLevel = TechConstants.T_IS_TW_NON_BOX;
-        name = "MRM 4 (IOS)";
+        name = "MRM 4 (I-OS)";
         setInternalName(name);
         addLookupName("ISMRM4IOS");
         rackSize = 4;

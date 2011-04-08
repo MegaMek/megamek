@@ -1,12 +1,12 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -15,7 +15,7 @@
 
 /**
  * MiscType.java
- *
+ * 
  * Created on April 2, 2002, 12:15 PM
  */
 
@@ -162,7 +162,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_DRONE_EXTRA = BigInteger.valueOf(1).shiftLeft(116);
     public static final BigInteger F_MASH_EXTRA = BigInteger.valueOf(1).shiftLeft(117);
     public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
-
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -576,9 +575,8 @@ public class MiscType extends EquipmentType {
                 return 7;
             } else if (entity.hasPatchworkArmor()) {
                 int slots = 0;
-                for (int i = 0; i < entity.locations(); i++ ) {
-                    if ((entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_FIBROUS)
-                            || (entity.getArmorType(i) == EquipmentType.T_ARMOR_REACTIVE)) {
+                for (int i = 0; i < entity.locations(); i++) {
+                    if ((entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_FIBROUS) || (entity.getArmorType(i) == EquipmentType.T_ARMOR_REACTIVE)) {
                         if (TechConstants.isClan(entity.getArmorTechLevel(i))) {
                             slots++;
                         } else {
@@ -595,7 +593,7 @@ public class MiscType extends EquipmentType {
                 return 5;
             } else if (entity.hasPatchworkArmor()) {
                 int slots = 0;
-                for (int i = 0; i < entity.locations(); i++ ) {
+                for (int i = 0; i < entity.locations(); i++) {
                     if (entity.getArmorType(i) == EquipmentType.T_ARMOR_REFLECTIVE) {
                         if (TechConstants.isClan(entity.getArmorTechLevel(i))) {
                             slots++;
@@ -612,7 +610,7 @@ public class MiscType extends EquipmentType {
                 return 7;
             } else {
                 int slots = 0;
-                for (int i = 0; i < entity.locations(); i++ ) {
+                for (int i = 0; i < entity.locations(); i++) {
                     if (entity.getArmorType(i) == EquipmentType.T_ARMOR_LIGHT_FERRO) {
                         slots++;
                     }
@@ -624,7 +622,7 @@ public class MiscType extends EquipmentType {
                 return 21;
             } else {
                 int slots = 0;
-                for (int i = 0; i < entity.locations(); i++ ) {
+                for (int i = 0; i < entity.locations(); i++) {
                     if (entity.getArmorType(i) == EquipmentType.T_ARMOR_HEAVY_FERRO) {
                         slots += 3;
                     }
@@ -636,26 +634,26 @@ public class MiscType extends EquipmentType {
                 return 12;
             } else {
                 int slots = 0;
-                for (int i = 0; i < entity.locations(); i++ ) {
+                for (int i = 0; i < entity.locations(); i++) {
                     if (entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_LAMELLOR) {
                         slots += 2;
                     }
                 }
                 return slots;
             }
-        }  else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(internalName)) {
+        } else if (EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO).equals(internalName)) {
             if (!entity.hasPatchworkArmor()) {
                 return 16;
             } else {
                 int slots = 0;
-                for (int i = 0; i < entity.locations(); i++ ) {
+                for (int i = 0; i < entity.locations(); i++) {
                     if (entity.getArmorType(i) == EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO) {
                         slots += 2;
                     }
                 }
                 return slots;
             }
-        }else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
+        } else if (EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName)) {
             if (entity.isClan()) {
                 return 7;
             }
@@ -720,9 +718,9 @@ public class MiscType extends EquipmentType {
         }
 
         if (linkedTo != null) {
-        	return this.getBV(entity, linkedTo.getLocation());        	
+            return this.getBV(entity, linkedTo.getLocation());
         } else {
-        	return this.getBV(entity);
+            return this.getBV(entity);
         }
     }
 
@@ -1001,7 +999,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISVTOLJetBooster());
         EquipmentType.addType(MiscType.createCLVTOLJetBooster());
 
-
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
         EquipmentType.addType(MiscType.createBasicStealth());
@@ -1086,8 +1083,10 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Improved Jump Jet";
-        misc.setInternalName(misc.name);
+        misc.setInternalName("IS Improved Jump Jet");
+        misc.addLookupName("ISImprovedJump Jet");
         misc.addLookupName("ImprovedJump Jet");
+        misc.addLookupName("Improved Jump Jet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
@@ -3430,7 +3429,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -4958,7 +4957,7 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createISChaffPod() {
-        //TODO: add game rules for this
+        // TODO: add game rules for this
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Chaff Pod";
@@ -4972,7 +4971,7 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createCLDroneCarrierControlSystem() {
-        //TODO: add game rules for this
+        // TODO: add game rules for this
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Drone Carrier Control System";
@@ -4984,7 +4983,7 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createISDroneCarrierControlSystem() {
-        //TODO: add game rules for this
+        // TODO: add game rules for this
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Drone Carrier Control System";
@@ -4996,7 +4995,7 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createISDroneExtra() {
-        //TODO: add game rules for this
+        // TODO: add game rules for this
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
         misc.name = "Drone Extra Equipment";
@@ -5008,7 +5007,7 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createCLDroneExtra() {
-        //TODO: add game rules for this
+        // TODO: add game rules for this
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         misc.name = "Drone Extra Equipment";

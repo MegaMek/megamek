@@ -46,7 +46,7 @@ public class CLStreakLRM10IOS extends StreakLRMWeapon {
         criticals = 2;
         bv = 35;
         flags = flags.or(F_ONESHOT);
-        cost = 225000;
+        cost = 180000;
         shortAV = 15;
         medAV = 15;
         longAV = 15;

@@ -46,7 +46,7 @@ public class ISStreakSRM6IOS extends StreakSRMWeapon {
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         bv = 18;
-        cost = 80000;
+        cost = 96000;
         shortAV = 12;
         maxRange = RANGE_SHORT;
     }

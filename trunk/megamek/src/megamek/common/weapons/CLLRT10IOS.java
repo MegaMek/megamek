@@ -47,6 +47,6 @@ public class CLLRT10IOS extends LRTWeapon {
         criticals = 1;
         bv = 22;
         flags = flags.or(F_ONESHOT);
-        cost = 100000;
+        cost = 80000;
     }
 }

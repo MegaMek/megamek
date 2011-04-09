@@ -42,11 +42,11 @@ public class CLLRM10OS extends LRMWeapon {
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 2.5f;
+        tonnage = 3.0f;
         criticals = 1;
         bv = 22;
         flags = flags.or(F_ONESHOT);
-        cost = 100000;
+        cost = 50000;
         shortAV = 6;
         medAV = 6;
         longAV = 6;

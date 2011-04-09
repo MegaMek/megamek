@@ -45,7 +45,7 @@ public class CLSRM6IOS extends SRMWeapon {
         criticals = 1;
         bv = 12;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        cost = 80000;
+        cost = 64000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
     }

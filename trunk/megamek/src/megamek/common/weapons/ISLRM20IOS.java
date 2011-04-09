@@ -47,7 +47,7 @@ public class ISLRM20IOS extends LRMWeapon {
         criticals = 5;
         bv = 36;
         flags = flags.or(F_ONESHOT);
-        cost = 250000;
+        cost = 200000;
         shortAV = 12;
         medAV = 12;
         longAV = 12;

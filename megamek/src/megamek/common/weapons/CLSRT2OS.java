@@ -42,10 +42,10 @@ public class CLSRT2OS extends SRTWeapon {
         waterMediumRange = 6;
         waterLongRange = 9;
         waterExtremeRange = 12;
-        tonnage = 1.5f;
+        tonnage = 1.0f;
         criticals = 1;
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        cost = 10000;
+        cost = 5000;
     }
 }

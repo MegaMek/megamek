@@ -46,7 +46,7 @@ public class ISSRM4IOS extends SRMWeapon {
         criticals = 1;
         bv = 8;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        cost = 60000;
+        cost = 48000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
     }

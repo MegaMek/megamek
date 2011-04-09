@@ -47,7 +47,7 @@ public class CLLRM5OS extends LRMWeapon {
         criticals = 1;
         bv = 11;
         flags = flags.or(F_ONESHOT);
-        cost = 30000;
+        cost = 15000;
         shortAV = 3;
         medAV = 3;
         longAV = 3;

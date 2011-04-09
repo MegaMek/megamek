@@ -46,6 +46,6 @@ public class ISSRT2OS extends SRTWeapon {
         criticals = 1;
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
-        cost = 10000;
+        cost = 5000;
     }
 }

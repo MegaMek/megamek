@@ -42,11 +42,11 @@ public class ISStreakSRM4OS extends StreakSRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 2.5f;
+        tonnage = 3.5f;
         criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         bv = 12;
-        cost = 60000;
+        cost = 45000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
     }

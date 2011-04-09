@@ -47,6 +47,6 @@ public class ISLRT5IOS extends LRTWeapon {
         criticals = 1;
         bv = 9;
         flags = flags.or(F_ONESHOT);
-        cost = 30000;
+        cost = 24000;
     }
 }

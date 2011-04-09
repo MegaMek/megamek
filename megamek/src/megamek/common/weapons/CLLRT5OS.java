@@ -47,6 +47,6 @@ public class CLLRT5OS extends LRTWeapon {
         criticals = 1;
         bv = 11;
         flags = flags.or(F_ONESHOT);
-        cost = 30000;
+        cost = 15000;
     }
 }

@@ -46,7 +46,7 @@ public class ISMRM40OS extends MRMWeapon {
         criticals = 7;
         bv = 49;
         flags = flags.or(F_ONESHOT);
-        cost = 250000;
+        cost = 175000;
         shortAV = 24;
         medAV = 24;
         maxRange = RANGE_MED;

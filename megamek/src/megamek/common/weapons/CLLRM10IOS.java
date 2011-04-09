@@ -46,7 +46,7 @@ public class CLLRM10IOS extends LRMWeapon {
         criticals = 1;
         bv = 22;
         flags = flags.or(F_ONESHOT);
-        cost = 100000;
+        cost = 80000;
         shortAV = 6;
         medAV = 6;
         longAV = 6;

@@ -44,7 +44,7 @@ public class CLStreakSRM6OS extends StreakSRMWeapon {
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         bv = 24;
-        cost = 120000;
+        cost = 60000;
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;

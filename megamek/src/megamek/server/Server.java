@@ -6315,6 +6315,7 @@ public class Server implements Runnable {
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
+                    && (lastHex.getElevation() + entity.calcElevation(curHex, lastHex) != curHex.getElevation() + entity.getElevation())
                     && (lastHex.getElevation() - lastHex.depth() != curHex.getElevation() - curHex.depth())
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {

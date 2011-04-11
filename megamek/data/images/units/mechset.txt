@@ -578,7 +578,7 @@ chassis "Interloper Urban Scout Tank" "vehicles/Interloper.gif"
 #chassis "Iroquois Helicopter Transport" " .gif"
 chassis "Ishtar Heavy Fire Support Tank" "vehicles/ishtar.gif"
 chassis "J. Edgar Light Hover Tank" "vehicles/jedgar.gif"
-exact "J. Edgar Light Hover Tank II" "vehicles/jedgar.gif"
+Chassis "J. Edgar Light Hover Tank II" "vehicles/jedgar.gif"
 chassis "J-27 Ordnance Transport" "vehicles/j27.gif
 exact "J-27 Ordnance Transport (+ Trailer)" "vehicles/j27t.gif
 chassis "Jagdpanzer II" "vehicles/hetzer.gif"

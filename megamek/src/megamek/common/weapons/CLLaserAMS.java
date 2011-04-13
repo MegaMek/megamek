@@ -47,7 +47,7 @@ public class CLLaserAMS extends LaserWeapon {
         criticals = 1;
         bv = 45;
         //we need to remove the direct fire flag again, so TC weight is not affected
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_DIRECT_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_AUTO_TARGET).or(F_AMS).and(F_DIRECT_FIRE.not());
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;

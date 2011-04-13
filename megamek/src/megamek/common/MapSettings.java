@@ -265,7 +265,7 @@ public class MapSettings implements Serializable {
         mapHeight = other.getMapHeight();
 
         medium = other.getMedium();
-        
+
         boardsSelected = (ArrayList<String>) other
                 .getBoardsSelectedVector().clone();
         boardsAvailable = (ArrayList<String>) other
@@ -469,7 +469,7 @@ public class MapSettings implements Serializable {
     public void removeUnavailable() {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if ((boardsSelected.get(i) == null) || (boardsAvailable.size() == 0)
-                    || (boardsAvailable.indexOf(boardsSelected.get(i)) == -1)) {
+                    || (boardsAvailable.indexOf(boardsSelected.get(i).startsWith(Board.BOARD_REQUEST_ROTATION)?boardsSelected.get(i).substring(Board.BOARD_REQUEST_ROTATION.length()):boardsSelected.get(i)) == -1)) {
                 boardsSelected.set(i, null);
             }
         }

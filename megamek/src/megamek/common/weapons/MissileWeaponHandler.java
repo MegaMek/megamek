@@ -30,6 +30,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -114,9 +115,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             nMissilesModifier -= 2;
         }
 
-        boolean bMekStealthActive = false;
-        if (ae instanceof Mech) {
-            bMekStealthActive = ae.isStealthActive();
+        boolean bMekTankStealthActive = false;
+        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+            bMekTankStealthActive = ae.isStealthActive();
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
@@ -140,7 +141,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
+            } else if (bMekTankStealthActive) {
                 // stealth prevents bonus
                 Report r = new Report(3335);
                 r.subject = subjectId;
@@ -160,7 +161,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
+            } else if (bMekTankStealthActive) {
                 // stealth prevents bonus
                 Report r = new Report(3335);
                 r.subject = subjectId;
@@ -182,7 +183,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
+            } else if (bMekTankStealthActive) {
                 // stealth prevents bonus
                 Report r = new Report(3335);
                 r.subject = subjectId;

@@ -2457,4 +2457,77 @@ public class Tank extends Entity {
         return Integer.toString(getRunMP());
     }
 
+    /**
+     * Determine the stealth modifier for firing at this unit from the given
+     * range. If the value supplied for <code>range</code> is not one of the
+     * <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @param range
+     *            - an <code>int</code> value that must match one of the
+     *            <code>Compute</code> class range constants.
+     * @param ae
+     *            - entity making the attack
+     * @return a <code>TargetRoll</code> value that contains the stealth
+     *         modifier for the given range.
+     */
+    @Override
+    public TargetRoll getStealthModifier(int range, Entity ae) {
+        TargetRoll result = null;
+
+        boolean isInfantry = (ae instanceof Infantry) && !(ae instanceof BattleArmor);
+        // Stealth or null sig must be active.
+        if (!isStealthActive()) {
+            result = new TargetRoll(0, "stealth not active");
+        }
+        // Determine the modifier based upon the range.
+        else {
+            switch (range) {
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(0, "stealth");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(1, "stealth");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_LONG:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(2, "stealth");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_EXTREME:
+                    if (isStealthActive() && !isInfantry) {
+                        result = new TargetRoll(2, "stealth");
+                    } else {
+                        // must be infantry
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
+            }
+        }
+
+        // Return the result.
+        return result;
+
+    } // End public TargetRoll getStealthModifier( char )
+
 }

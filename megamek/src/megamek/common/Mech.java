@@ -4585,9 +4585,9 @@ public abstract class Mech extends Entity implements Serializable {
                     }
                     break;
                 case RangeType.RANGE_EXTREME:
-                    if (isStealthActive()) {
+                    if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
-                    } else if (isNullSigActive()) {
+                    } else if (isNullSigActive() && !isInfantry) {
                         result = new TargetRoll(2, "null-sig");
                         if (isChameleonShieldActive()) {
                             result.addModifier(2, "chameleon");

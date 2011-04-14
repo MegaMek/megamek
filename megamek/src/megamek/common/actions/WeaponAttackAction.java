@@ -243,9 +243,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        boolean bMekStealthActive = false;
-        if (ae instanceof Mech) {
-            bMekStealthActive = ae.isStealthActive();
+        boolean bMekTankStealthActive = false;
+        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+            bMekTankStealthActive = ae.isStealthActive();
         }
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect")) || (wtype instanceof ArtilleryCannonWeapon);
         boolean isInferno = ((atype != null)
@@ -281,7 +281,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (atype.getAmmoType() == AmmoType.T_MRM);
         boolean bArtemisV = ((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed()
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
-                && !isECMAffected && !bMekStealthActive && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
+                && !isECMAffected && !bMekTankStealthActive && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
         if (te != null) {
@@ -601,7 +601,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
-        
+
         if (Compute.isGroundToAir(ae, target) && (null != te) && te.isNOE()) {
             if (te.passedWithin(ae.getPosition(), 1)) {
                 toHit.addModifier(+1, "target is NOE");
@@ -609,8 +609,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(+3, "target is NOE");
             }
         }
-        
-        if(Compute.isGroundToAir(ae, target) && game.getOptions().booleanOption("stratops_aa_fire") 
+
+        if(Compute.isGroundToAir(ae, target) && game.getOptions().booleanOption("stratops_aa_fire")
                 && (null != te) && (te instanceof Aero)) {
             toHit.addModifier(((Aero)te).getCurrentVelocity(), "velocity");
         }
@@ -682,7 +682,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
-            
+
             if (!ae.isAirborne() && !ae.isSpaceborne()) {
                 //grounded aero
                 if(!(ae instanceof Dropship)) {
@@ -1349,9 +1349,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (!(wtype instanceof ArtilleryCannonWeapon)) {
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
             //grounded dropships are treated as immobile as well for purpose of the mods
-            if(null != te 
-                    && !te.isAirborne() && !te.isSpaceborne() 
-                    && te instanceof Aero && ((Aero)te).isSpheroid()) {
+            if((null != te)
+                    && !te.isAirborne() && !te.isSpaceborne()
+                    && (te instanceof Aero) && ((Aero)te).isSpheroid()) {
                 immobileMod = new ToHitData(-4, "immobile dropship");
             }
             if (immobileMod != null) {
@@ -2554,7 +2554,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // only one ground-to-air attack allowed per turn
         // grounded spheroid dropships dont have this limitation
-        if (!ae.isAirborne() && !(ae instanceof Dropship && ((Aero)ae).isSpheroid())) {
+        if (!ae.isAirborne() && !((ae instanceof Dropship) && ((Aero)ae).isSpheroid())) {
             for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                 EntityAction ea = i.nextElement();
                 if (!(ea instanceof WeaponAttackAction)) {
@@ -2595,7 +2595,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((ae instanceof Aero) && ((Aero) ae).isSpheroid() && !game.getBoard().inSpace()) {
             int altDif = target.getAltitude() - ae.getAltitude();
             int distance = Compute.effectiveDistance(game, ae, target, false);
-            if(!ae.isAirborne() && distance == 0 && weapon.getLocation() != Aero.LOC_AFT) {
+            if(!ae.isAirborne() && (distance == 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
                 return "Only aft weapons may target units at zero range";
             }
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)) {
@@ -2607,7 +2607,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((weapon.getLocation() == Aero.LOC_AFT)) {
                 if(ae.isAirborne() && (altDif > -1)) {
                     return "Target is too high for aft weapons";
-                } 
+                }
             }
             if ((weapon.isRearMounted()) && (altDif > 0)) {
                 return "Target is too high for aft-side weapons";

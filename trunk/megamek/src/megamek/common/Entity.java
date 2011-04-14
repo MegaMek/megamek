@@ -4074,10 +4074,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Active Mek Stealth prevents entity from participating in C3.
         // Turn off the stealth, and your back in the network.
-        if ((this instanceof Mech) && isStealthActive()) {
+        if (((this instanceof Mech) || (this instanceof Tank)) && isStealthActive()) {
             return false;
         }
-        if ((e instanceof Mech) && e.isStealthActive()) {
+        if (((e instanceof Mech) || (e instanceof Tank)) && e.isStealthActive()) {
             return false;
         }
 

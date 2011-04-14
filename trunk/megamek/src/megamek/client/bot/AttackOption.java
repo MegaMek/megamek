@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -18,14 +18,16 @@ import java.util.Comparator;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
+import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 
 public class AttackOption extends ToHitData {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8566472187475019360L;
 
@@ -85,7 +87,7 @@ public class AttackOption extends ToHitData {
         this.toHit = toHit;
         this.value = value;
 
-        if (target != null && weapon != null) {
+        if ((target != null) && (weapon != null)) {
             if (weapon.getType().getModesCount() > 0) {
                 use_mode = weapon.curMode().getName();
             }
@@ -99,7 +101,7 @@ public class AttackOption extends ToHitData {
             // for secondary to-hit odds. Since units with active Stealth armor
             // cannot be secondary targets, chances of hitting are 0.
 
-            if (target.getEntity().isStealthActive()) {
+            if (target.getEntity().isStealthActive() && ((target.getEntity() instanceof Mech) || (target.getEntity() instanceof Tank))) {
                 odds = 0.0;
             } else {
                 odds = sec_mod <= 12 ? (Compute.oddsAbove(toHit.getValue()
@@ -113,10 +115,10 @@ public class AttackOption extends ToHitData {
             // weapons do NOT return AmmoType.T_NA
 
             final boolean isInfantryWeapon = w.hasFlag(WeaponType.F_INFANTRY);
-            final boolean usesAmmo = (!isInfantryWeapon & w.getAmmoType() != AmmoType.T_NA);
+            final boolean usesAmmo = (!isInfantryWeapon & (w.getAmmoType() != AmmoType.T_NA));
 
             final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
-            if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {
+            if (usesAmmo && ((ammo == null) || (ammo.getShotsLeft() == 0))) {
                 this.value = 0.0; // should have already been caught...
                 primary_expected = 0.0;
                 expected = 0.0;

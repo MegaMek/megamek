@@ -3101,7 +3101,7 @@ public class MechDisplay extends JPanel {
             }
 
             // Active Stealth Armor? If yes, we're under ECM
-            if (en.isStealthActive()) {
+            if (en.isStealthActive() && ((en instanceof Mech) || (en instanceof Tank))) {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.UnderStealth")); //$NON-NLS-1$
             }

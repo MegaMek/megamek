@@ -30,6 +30,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -197,9 +198,9 @@ public class ATMHandler extends MissileWeaponHandler {
             nMissilesModifier -= 2;
         }
 
-        boolean bMekStealthActive = false;
-        if (ae instanceof Mech) {
-            bMekStealthActive = ae.isStealthActive();
+        boolean bMekTankStealthActive = false;
+        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+            bMekTankStealthActive = ae.isStealthActive();
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
@@ -223,7 +224,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
+            } else if (bMekTankStealthActive) {
                 // stealth prevents bonus
                 Report r = new Report(3335);
                 r.subject = subjectId;
@@ -239,7 +240,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
-            } else if (bMekStealthActive) {
+            } else if (bMekTankStealthActive) {
                 // stealth prevents bonus
                 Report r = new Report(3335);
                 r.subject = subjectId;

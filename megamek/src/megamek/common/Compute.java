@@ -1536,9 +1536,9 @@ public class Compute {
                 }
                 // When targeting a stealthed Mech, you can _only_ target it,
                 // not anything else (BMRr, pg. 147)
-                if ((pte instanceof Mech) && ((Entity) pte).isStealthActive() && (pte != target) && !isSwarm) {
+                if (((pte instanceof Mech) || (pte instanceof Tank)) && ((Entity) pte).isStealthActive() && (pte != target) && !isSwarm) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "When targeting a stealthed Mech, can not attack secondary targets");
+                    "When targeting a stealthed unit, can not attack secondary targets");
                 }
                 if (Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), pte, attacker
                         .getForwardArc())) {
@@ -1558,9 +1558,9 @@ public class Compute {
         // current target is secondary
 
         // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
-        if ((target instanceof Mech) && ((Entity) target).isStealthActive()) {
+        if (((target instanceof Tank) || (target instanceof Mech)) && ((Entity) target).isStealthActive()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-            "Can't target Mech with active stealth armor as secondary target");
+            "Can't target unit with active stealth armor as secondary target");
         }
 
         int mod = 2;

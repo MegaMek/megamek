@@ -22,6 +22,7 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -69,9 +70,9 @@ public class LRMAntiTSMHandler extends LRMHandler {
         int missilesHit;
         int nMissilesModifier = 0;
 
-        boolean bMekStealthActive = false;
-        if (ae instanceof Mech) {
-            bMekStealthActive = ae.isStealthActive();
+        boolean bMekTankStealthActive = false;
+        if ((ae instanceof Mech) || (ae instanceof Tank)) {
+            bMekTankStealthActive = ae.isStealthActive();
         }
         if (bGlancing) {
             nMissilesModifier -= 4;
@@ -107,7 +108,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        if (bMekStealthActive) {
+        if (bMekTankStealthActive) {
             // stealth prevents bonus
             r = new Report(3335);
             r.subject = subjectId;

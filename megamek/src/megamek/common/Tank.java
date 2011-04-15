@@ -1574,14 +1574,6 @@ public class Tank extends Entity {
         return retval;
     }
 
-    /**
-     * Restores the entity after serialization
-     */
-    @Override
-    public void restore() {
-        super.restore();
-    }
-
     @Override
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs

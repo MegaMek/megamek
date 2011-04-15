@@ -1,12 +1,12 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -15,7 +15,7 @@
 
 /**
  * MiscType.java
- * 
+ *
  * Created on April 2, 2002, 12:15 PM
  */
 
@@ -162,6 +162,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_DRONE_EXTRA = BigInteger.valueOf(1).shiftLeft(116);
     public static final BigInteger F_MASH_EXTRA = BigInteger.valueOf(1).shiftLeft(117);
     public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
+    public static final BigInteger F_SENSOR_DISPENSER = BigInteger.valueOf(1).shiftLeft(119);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -998,6 +999,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLLookDownRadar());
         EquipmentType.addType(MiscType.createISVTOLJetBooster());
         EquipmentType.addType(MiscType.createCLVTOLJetBooster());
+        EquipmentType.addType(MiscType.createRemoteSensorDispenser());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -1029,7 +1031,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLImprovedSensors());
         EquipmentType.addType(MiscType.createCLBALightActiveProbe());
         EquipmentType.addType(MiscType.createISBALightActiveProbe());
-        EquipmentType.addType(MiscType.createRemoteSensorDispenser());
+        EquipmentType.addType(MiscType.createBARemoteSensorDispenser());
         EquipmentType.addType(MiscType.createBACuttingTorch());
         EquipmentType.addType(MiscType.createBASpaceOperationsAdaptation());
         // support vee stuff
@@ -3385,20 +3387,38 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createBARemoteSensorDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Remote Sensor Dispenser";
+        misc.addLookupName("BARemoteSensorDispenser");
+        misc.tonnage = 0.004f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_SENSOR_DISPENSER);
+        misc.bv = 0;
+        misc.techRating = RATING_D;
+        misc.availRating = new int[] {RATING_F, RATING_F, RATING_D};
+        misc.cost = 28500;
+
+        return misc;
+    }
+
     public static MiscType createRemoteSensorDispenser() {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Remote Sensor Dispenser";
         misc.addLookupName("BARemoteSensorDispenser");
-        misc.setInternalName("RemoteSensorDispenser");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.hittable = true;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
-        misc.toHitModifier = 0;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SENSOR_DISPENSER);
         misc.bv = 0;
-        misc.cost = 21000;
+        misc.techRating = RATING_C;
+        misc.availRating = new int[] {RATING_E, RATING_F, RATING_D};
+        misc.cost = 51000;
 
         return misc;
     }
@@ -3429,7 +3449,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     * 
+     *
      * @return MiscType
      */
     public static MiscType createISClaw() {

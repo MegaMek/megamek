@@ -1,0 +1,153 @@
+Version:1.0
+Orca
+(Clan)
+
+Config:Biped
+TechBase:Clan
+Era:3067
+Rules Level:2
+
+Mass:200
+Engine:400 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:19 Double
+Walk MP:2
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:60
+RA Armor:60
+LT Armor:60
+RT Armor:60
+CT Armor:90
+HD Armor:12
+LL Armor:80
+RL Armor:80
+RTL Armor:20
+RTR Armor:20
+RTC Armor:30
+
+Weapons:8
+1 CLUltraAC10, Right Arm, Ammo:30
+1 CLGaussRifle, Left Arm, Ammo:16
+1 CLERLargeLaser, Left Arm
+1 CLERPPC, Right Torso
+1 CLERPPC, Left Torso
+1 CLLRM20, Left Torso, Ammo:18
+1 CLSRM6, Center Torso, Ammo:30
+1 CLSmallPulseLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLERLargeLaser
+CLGauss Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLERPPC
+CLERPPC
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLGauss Ammo
+CLLRM20 Ammo
+CLLRM20 Ammo
+CLLRM20 Ammo
+CLSRM6 Ammo
+CLSRM6 Ammo
+
+Right Torso:
+CLERPPC
+CLERPPC
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLSRM6
+CLSmallPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

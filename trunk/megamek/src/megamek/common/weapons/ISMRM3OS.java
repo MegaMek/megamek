@@ -38,7 +38,7 @@ public class ISMRM3OS extends MRMWeapon {
         shortRange = 3;
         mediumRange = 8;
         longRange = 15;
-        extremeRange = 22;
+        extremeRange = 16;
         bv = 4;
         flags = flags.or(F_ONESHOT);
     }

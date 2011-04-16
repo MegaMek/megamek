@@ -41,7 +41,7 @@ public class ISMRM40 extends MRMWeapon {
         this.shortRange = 3;
         this.mediumRange = 8;
         this.longRange = 15;
-        this.extremeRange = 22;
+        this.extremeRange = 16;
         this.tonnage = 12.0f;
         this.criticals = 7;
         this.bv = 224;

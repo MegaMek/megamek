@@ -20913,7 +20913,6 @@ public class Server implements Runnable {
                 roll.addModifier(height - 1, "height of fall");
             }
 
-            entity.addPilotingModifierForTerrain(roll, fallPos);
             if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
                 r = new Report(2320);
                 r.subject = entity.getId();

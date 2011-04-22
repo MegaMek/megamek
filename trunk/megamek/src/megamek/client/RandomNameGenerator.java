@@ -265,7 +265,11 @@ public class RandomNameGenerator implements Serializable {
      * @return - a string giving the name
      */
     public String generate() {
+        return generate(isFemale());
+    }
         
+    public String generate(boolean isFemale) {
+
         if(null != chosenFaction && null != factionLast && null!=factionFirst && null!=firstm && null != firstf && null!=last) {
             //this is a total hack, but for now lets assume that 
             //if the chosenFaction name contains the word "clan" 
@@ -284,7 +288,7 @@ public class RandomNameGenerator implements Serializable {
                         eFirst = eLast;
                     }
                     Vector<String> fnames = firstm.get(eFirst);
-                    if(Compute.randomInt(100) < percentFemale) {
+                    if(isFemale) {
                         fnames = firstf.get(eFirst);
                     }
                     Vector<String> lnames = last.get(eLast);                
@@ -323,6 +327,14 @@ public class RandomNameGenerator implements Serializable {
     
     public void setPerentFemale(int i) {
         this.percentFemale = i;
+    }
+    
+    /**
+     * randomly select gender
+     * @return true if female
+     */
+    public boolean isFemale() {
+        return Compute.randomInt(100) < percentFemale;
     }
     
     public void clear() {

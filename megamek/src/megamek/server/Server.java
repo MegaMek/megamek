@@ -5702,7 +5702,7 @@ public class Server implements Runnable {
 
             // set last step parameters
             curPos = step.getPosition();
-            if ((moveType != EntityMovementType.MOVE_JUMP) || (entity.getJumpType() != Mech.JUMP_BOOSTER)) {
+            if ((entity.getJumpType() != Mech.JUMP_BOOSTER)) {
                 curFacing = step.getFacing();
             }
             // check if a building PSR will be needed later, before setting the

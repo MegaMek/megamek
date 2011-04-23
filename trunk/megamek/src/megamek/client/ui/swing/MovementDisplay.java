@@ -851,8 +851,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             butDigIn.setEnabled(false);
             butFortify.setEnabled(false);
         }
-        setTurnEnabled(!ce.isImmobile() && !ce.isStuck()
-                && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0)));
+        updateTurnButton();
 
         updateProneButtons();
         updateRACButton();
@@ -1638,6 +1637,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateSpeedButtons();
             updateThrustButton();
             updateRollButton();
+            updateTurnButton();
             checkFuel();
             checkOOC();
             checkAtmosphere();
@@ -4031,5 +4031,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public void removeAllListeners() {
         clientgui.getClient().game.removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
+    }
+
+    private void updateTurnButton() {
+        final Entity ce = ce();
+        if (null == ce) {
+            return;
+        }
+
+        setTurnEnabled(!ce.isImmobile() && !ce.isStuck()
+                && ((ce.getWalkMP() > 0) || (ce.getJumpMP() > 0))
+                && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
     }
 }

@@ -132,6 +132,8 @@ public class Client implements IClientCommandHandler {
     // we might want to keep a game log...
     private GameLog log;
 
+    private ArrayList<ArrayList<Integer>> availableSizes = new ArrayList<ArrayList<Integer>>();
+
     private Vector<Coords> artilleryAutoHitHexes = null;
 
     private boolean disconnectFlag = false;
@@ -186,7 +188,7 @@ public class Client implements IClientCommandHandler {
         rsg = new RandomSkillsGenerator();
         rng = new RandomNameGenerator();
         rug = new RandomUnitGenerator();
-        
+
         TimerSingleton ts = TimerSingleton.getInstance();
         /*
          * this should be moved to UI implementations so that they are
@@ -422,7 +424,7 @@ public class Client implements IClientCommandHandler {
         case PHASE_PHYSICAL:
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
-        case PHASE_LOUNGE:  
+        case PHASE_LOUNGE:
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {
                     rng.populateNames();
@@ -1145,7 +1147,7 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SENDING_REPORTS:
         case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
-            phaseReport = receiveReport((Vector) c.getObject(0));
+            phaseReport = receiveReport((Vector<Report>) c.getObject(0));
             if (keepGameLog()) {
                 if ((log == null) && (game.getRoundCount() == 1)) {
                     initGameLog();
@@ -1162,7 +1164,7 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
             game.processGameEvent(new GameReportEvent(this,
-                    receiveReport((Vector) c.getObject(0))));
+                    receiveReport((Vector<Report>) c.getObject(0))));
             break;
         case Packet.COMMAND_SENDING_REPORTS_ALL:
             Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
@@ -1247,7 +1249,10 @@ public class Client implements IClientCommandHandler {
             game.getBoard().setSpecialHexDisplayTable(
                     (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
                             .getObject(0));
-            // System.err.println("Specials updated");
+            break;
+        case Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES:
+            availableSizes = (ArrayList<ArrayList<Integer>>)c.getObject(0);
+            game.processGameEvent(new GameSettingsChangeEvent(this));
             break;
         }
     }
@@ -1399,16 +1404,20 @@ public class Client implements IClientCommandHandler {
     public Enumeration<String> getAllCommandNames() {
         return commandsHash.keys();
     }
-    
+
     public RandomSkillsGenerator getRandomSkillsGenerator() {
         return rsg;
     }
-    
+
     public RandomNameGenerator getRandomNameGenerator() {
         return rng;
     }
-    
+
     public RandomUnitGenerator getRandomUnitGenerator() {
         return rug;
+    }
+
+    public ArrayList<ArrayList<Integer>> getAvailableMapSizes() {
+        return availableSizes;
     }
 }

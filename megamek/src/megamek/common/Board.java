@@ -28,6 +28,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -513,6 +514,39 @@ public class Board implements Serializable, IBoard {
 
         // check and return
         return (boardx == x) && (boardy == y);
+    }
+
+    public static ArrayList<Integer> getSize(String filename) {
+        int boardx = 0;
+        int boardy = 0;
+        try {
+            // make inpustream for board
+            Reader r = new BufferedReader(new FileReader("data/boards"
+                    + File.separator + filename));
+            // read board, looking for "size"
+            StreamTokenizer st = new StreamTokenizer(r);
+            st.eolIsSignificant(true);
+            st.commentChar('#');
+            st.quoteChar('"');
+            st.wordChars('_', '_');
+            while (st.nextToken() != StreamTokenizer.TT_EOF) {
+                if ((st.ttype == StreamTokenizer.TT_WORD)
+                        && st.sval.equalsIgnoreCase("size")) {
+                    st.nextToken();
+                    boardx = (int) st.nval;
+                    st.nextToken();
+                    boardy = (int) st.nval;
+                    break;
+                }
+            }
+            r.close();
+        } catch (IOException ex) {
+            return null;
+        }
+        ArrayList<Integer> size = new ArrayList<Integer>();
+        size.add(boardx);
+        size.add(boardy);
+        return size;
     }
 
     /**

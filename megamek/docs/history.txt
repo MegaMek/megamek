@@ -48,6 +48,7 @@ v0.35.23-dev (SVN)
 + Lots of new Aerospace images. Thanks to the MegaMekNet Community!
 + allow for specific gender in generating random names
 + Bug: turn button enabled when jumping with mechanical jump boosters
++ RFE 2270717: map size drop down
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

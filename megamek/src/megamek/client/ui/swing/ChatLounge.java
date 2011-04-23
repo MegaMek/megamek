@@ -154,6 +154,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private JPanel panGroundMap;
     private JPanel panSpaceMap;
     private JComboBox comboMapType;
+    private JComboBox comboMapSizes;
     private JButton butMapSize;
     private JButton butRandomMap;
     private JButton buttonBoardPreview;
@@ -170,6 +171,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
     private JCheckBox chkIncludeGround;
     private JCheckBox chkIncludeSpace;
     private JButton butSpaceSize;
+    private ArrayList<ArrayList<Integer>> mapSizes = new ArrayList<ArrayList<Integer>>();
 
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;
@@ -691,6 +693,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         butMapSize = new JButton(Messages.getString("ChatLounge.MapSize")); //$NON-NLS-1$
         butMapSize.addActionListener(this);
 
+        comboMapSizes = new JComboBox();
+        setupMapSizes();
+
         buttonBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
         buttonBoardPreview.addActionListener(this);
 
@@ -739,13 +744,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         gridbag.setConstraints(comboMapType, c);
         panGroundMap.add(comboMapType);
 
-
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(1, 1, 1, 1);
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridx = 0;
         c.gridy = 2;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        gridbag.setConstraints(comboMapSizes, c);
+        panGroundMap.add(comboMapSizes);
+
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(1, 1, 1, 1);
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
@@ -757,7 +774,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.weightx = 0.0;
         c.weighty = 0.0;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 4;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
@@ -771,7 +788,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.weightx = 0.0;
         c.weighty = 1.0;
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 5;
         c.gridwidth = 1;
         c.gridheight = 1;
         c.anchor = GridBagConstraints.NORTHWEST;
@@ -797,7 +814,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 1;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 3;
+        c.gridheight = 4;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(scrBoardsSelected, c);
         panGroundMap.add(scrBoardsSelected);
@@ -831,7 +848,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 3;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 3;
+        c.gridheight = 4;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(scrBoardsAvailable, c);
@@ -856,7 +873,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         c.gridx = 4;
         c.gridy = 2;
         c.gridwidth = 1;
-        c.gridheight = 3;
+        c.gridheight = 4;
         c.anchor = GridBagConstraints.NORTHWEST;
         gridbag.setConstraints(mapPreviewPanel, c);
         panGroundMap.add(mapPreviewPanel);
@@ -950,6 +967,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         refreshMapChoice();
     }
 
+    private void setupMapSizes() {
+        int oldSelection = comboMapSizes.getSelectedIndex();
+        mapSizes = clientgui.getClient().getAvailableMapSizes();
+        comboMapSizes.removeActionListener(this);
+        comboMapSizes.removeAllItems();
+        for (ArrayList<Integer> size : mapSizes) {
+            comboMapSizes.addItem(size.get(0) + "x" + size.get(1));
+        }
+        comboMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
+        comboMapSizes.setSelectedIndex(oldSelection!=-1?oldSelection:0);
+        comboMapSizes.addActionListener(this);
+    }
+
     private void refreshMapChoice() {
         comboMapType.removeActionListener(this);
         if(mapSettings.getMedium() < MapSettings.MEDIUM_SPACE) {
@@ -966,6 +996,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         chkIncludeGround.setSelected(!inSpace);
         comboMapType.setEnabled(!inSpace);
         butMapSize.setEnabled(!inSpace);
+        comboMapSizes.setEnabled(!inSpace);
         buttonBoardPreview.setEnabled(!inSpace);
         lisBoardsSelected.setEnabled(!inSpace);
         butChange.setEnabled(!inSpace);
@@ -1912,6 +1943,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         refreshGameSettings();
         refreshEntities();
         refreshPlayerInfo();
+        setupMapSizes();
     }
 
     /*
@@ -2037,6 +2069,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         } else if (ev.getSource().equals(butMapSize) || ev.getSource().equals(butSpaceSize)) {
             MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui);
             mdd.setVisible(true);
+        } else if (ev.getSource().equals(comboMapSizes)) {
+            if ((comboMapSizes.getSelectedItem() != null) && !comboMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"))) {
+                String[] sizes = comboMapSizes.getSelectedItem().toString().split("x");
+                mapSettings.setBoardSize(Integer.parseInt(sizes[0]), Integer.parseInt(sizes[1]));
+                clientgui.getClient().sendMapSettings(mapSettings);
+            }
         } else if(ev.getSource().equals(chkRotateBoard) && (lisBoardsAvailable.getSelectedIndex() != -1)) {
             previewMapsheet();
         } else if (ev.getSource().equals(comboMapType)) {

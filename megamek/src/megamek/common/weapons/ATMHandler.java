@@ -297,10 +297,10 @@ public class ATMHandler extends MissileWeaponHandler {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, weapon.isHotLoaded());
+                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, weapon.isHotLoaded());
+                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
             }
         }
 

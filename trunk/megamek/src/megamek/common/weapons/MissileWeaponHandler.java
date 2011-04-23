@@ -241,12 +241,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier,
-                        weapon.isHotLoaded(), false, advancedAMS);
+                        weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier,
                         weapon.isHotLoaded(),
-                        false, advancedAMS);
+                        false, advancedAMS && amsEnganged);
             }
         }
 

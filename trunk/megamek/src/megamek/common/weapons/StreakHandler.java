@@ -114,7 +114,7 @@ public class StreakHandler extends MissileWeaponHandler {
             missilesHit = wtype.getRackSize();
         } else {
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    amsMod, weapon.isHotLoaded(), true, advancedAMS);
+                    amsMod, weapon.isHotLoaded(), true, advancedAMS && amsEnganged);
             if (amsMod != 0) {
                 Report r;
                 if (amsMod > 0) {

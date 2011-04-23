@@ -98,7 +98,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
         } else {
             // anti tsm hit with half the normal number, round up
             missilesHit = Compute
-                    .missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing );
+                    .missilesHit(wtype.getRackSize(), nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged );
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         Report r = new Report(3325);

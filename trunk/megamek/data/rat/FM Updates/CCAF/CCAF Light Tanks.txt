@@ -4,7 +4,7 @@ Galleon Light Tank GAL-100,2
 Skulker Wheeled Scout Tank,3
 Saracen Medium Hover Tank,4
 Scorpion Light Tank,5
-Pegasus Scout Hovertank,6
+Pegasus Scout Hover Tank,6
 Pegasus Scout Hover Tank (3058 Upgrade),5
 Harasser Missile Platform,4
 Minion Advanced Tactical Vehicle (TAG),3

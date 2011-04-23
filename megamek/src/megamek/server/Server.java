@@ -734,6 +734,7 @@ public class Server implements Runnable {
             switch (game.getPhase()) {
             case PHASE_LOUNGE:
                 send(connId, createMapSettingsPacket());
+                send(createMapSizesPacket());
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, game.getPhase()));
                 if (doBlind()) {
@@ -21322,9 +21323,9 @@ public class Server implements Runnable {
         String fileList[] = dir.list();
         ArrayList<String> tempList = new ArrayList<String>();
         for (String element : fileList) {
-            File x = new File(addPath.concat("/").concat(element));
+            File x = new File(addPath.concat(File.separator).concat(element));
             if (x.isDirectory()) {
-                tempList.addAll(scanForBoardsInDir(addPath.concat("/").concat(element), basePath.concat("/").concat(
+                tempList.addAll(scanForBoardsInDir(addPath.concat(File.separator).concat(element), basePath.concat(File.separator).concat(
                         element), w, h));
                 continue;
             }
@@ -21334,11 +21335,63 @@ public class Server implements Runnable {
             if (element.indexOf(".board") == -1) {
                 continue;
             }
-            if (Board.boardIsSize(basePath.concat("/").concat(element), w, h)) {
-                tempList.add(basePath.concat("/").concat(element.substring(0, element.lastIndexOf(".board"))));
+            if (Board.boardIsSize(basePath.concat(File.separator).concat(element), w, h)) {
+                tempList.add(basePath.concat(File.separator).concat(element.substring(0, element.lastIndexOf(".board"))));
             }
         }
         return tempList;
+    }
+
+    private ArrayList<ArrayList<Integer>> getBoardSizesInDir(String addPath, String basePath) {
+        File dir = new File(addPath);
+        String fileList[] = dir.list();
+        ArrayList<ArrayList<Integer>> tempList = new ArrayList<ArrayList<Integer>>();
+        for (String element : fileList) {
+            File x = new File(addPath.concat("/").concat(element));
+            if (x.isDirectory()) {
+                ArrayList<ArrayList<Integer>> tempList2 = getBoardSizesInDir(addPath.concat(File.separator).concat(element), basePath.concat(File.separator).concat(element));
+                for (ArrayList<Integer> size : tempList2) {
+                    if (!tempList.contains(size)) {
+                        tempList.add(size);
+                    }
+                }
+                continue;
+            }
+            if (element.indexOf(".svn") != -1) {
+                continue; // Ignore Subversion directories
+            }
+            if (element.indexOf(".board") == -1) {
+                continue;
+            }
+            ArrayList<Integer> temp = Board.getSize(basePath.concat(File.separator).concat(element));
+            if ((temp != null) && !tempList.contains(temp)) {
+                tempList.add(temp);
+            }
+        }
+        return tempList;
+    }
+
+    private ArrayList<ArrayList<Integer>> getBoardSizes() {
+        ArrayList<ArrayList<Integer>> sizes = new ArrayList<ArrayList<Integer>>();
+
+        File boardDir = new File("data/boards");
+        // just a check...
+        if (!boardDir.isDirectory()) {
+            return sizes;
+        }
+
+        // scan files
+        ArrayList<ArrayList<Integer>> tempList = new ArrayList<ArrayList<Integer>>();
+        tempList = getBoardSizesInDir("data/boards", "");
+        if (tempList.size() > 0) {
+            for (ArrayList<Integer> size : tempList) {
+                if (!sizes.contains(size)) {
+                    sizes.add(size);
+                }
+            }
+        }
+        return sizes;
+
     }
 
     private ArrayList<String> scanForBoards(int boardWidth, int boardHeight) {
@@ -22402,6 +22455,11 @@ public class Server implements Runnable {
      */
     private Packet createMapSettingsPacket() {
         return new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, mapSettings);
+    }
+
+    private Packet createMapSizesPacket() {
+        ArrayList<ArrayList<Integer>> sizes = getBoardSizes();
+        return new Packet(Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES, sizes);
     }
 
     /**

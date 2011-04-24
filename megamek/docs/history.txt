@@ -50,6 +50,7 @@ v0.35.23-dev (SVN)
 + Bug: turn button enabled when jumping with mechanical jump boosters
 + RFE 2270717: map size drop down
 + Bug: TacOps enhanced missile defense applied to non-AMS cluster penalties
++ Bug 3292237: Ammo explosion hits BA first
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

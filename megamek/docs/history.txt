@@ -51,6 +51,8 @@ v0.35.23-dev (SVN)
 + RFE 2270717: map size drop down
 + Bug: TacOps enhanced missile defense applied to non-AMS cluster penalties
 + Bug 3292237: Ammo explosion hits BA first
++ Bug: Remote Dispensers did not have Internal name.
++ Bug: BA and Normal Remote Dispensers had the same lookup names
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

@@ -54,6 +54,7 @@ v0.35.23-dev (SVN)
 + Bug: Remote Dispensers did not have Internal name.
 + Bug: BA and Normal Remote Dispensers had the same lookup names
 + Bug: Equipment in Turrets for Large Support Vehicles loading in Tank Turret Location
++ Lots of new unofficial maps (http://www.classicbattletech.com/forums/index.php/topic,520.0.html)
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

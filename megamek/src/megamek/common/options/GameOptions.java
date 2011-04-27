@@ -239,6 +239,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
         addOption(rpg, "pilot_advantages", false); //$NON-NLS-1$
+        addOption(rpg, "edge", false); //$NON-NLS-1$
         addOption(rpg, "manei_domini", false); //$NON-NLS-1$
         addOption(rpg, "individual_initiative", false); //$NON-NLS-1$
         addOption(rpg, "command_init", false); //$NON-NLS-1$

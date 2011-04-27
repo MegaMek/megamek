@@ -1185,6 +1185,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             if (!clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
+            
+            if (!clientgui.getClient().game.getOptions().booleanOption("edge")) { //$NON-NLS-1$
+                entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
+            }
 
             if (!clientgui.getClient().game.getOptions().booleanOption("manei_domini")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);

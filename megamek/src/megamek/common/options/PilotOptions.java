@@ -24,6 +24,7 @@ import java.util.Vector;
 public class PilotOptions extends AbstractOptions {
     private static final long serialVersionUID = 6628080570425023949L;
     public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
+    public static final String EDGE_ADVANTAGES = "edgeAdvantages"; //$NON-NLS-1$
     public static final String MD_ADVANTAGES = "MDAdvantages"; //$NON-NLS-1$
     
     public PilotOptions() {
@@ -53,13 +54,13 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "iron_man", false); //$NON-NLS-1$
         addOption(adv, "clan_pilot_training", false); //$NON-NLS-1$
         
-        addOption(adv, "edge", 0); //$NON-NLS-1$
-
+        IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES); //$NON-NLS-1$
+        addOption(edge, "edge", 0); //$NON-NLS-1$
         /* different edge triggers */
-        addOption(adv, "edge_when_headhit", false); //$NON-NLS-1$
-        addOption(adv, "edge_when_tac", false); //$NON-NLS-1$
-        addOption(adv, "edge_when_ko", false); //$NON-NLS-1$
-        addOption(adv, "edge_when_explosion", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_headhit", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_tac", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_ko", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_explosion", false); //$NON-NLS-1$
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$

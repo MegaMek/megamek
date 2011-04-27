@@ -53,6 +53,7 @@ v0.35.23-dev (SVN)
 + Bug 3292237: Ammo explosion hits BA first
 + Bug: Remote Dispensers did not have Internal name.
 + Bug: BA and Normal Remote Dispensers had the same lookup names
++ Bug: Equipment in Turrets for Large Support Vehicles loading in Tank Turret Location
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

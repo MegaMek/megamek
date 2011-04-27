@@ -478,6 +478,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "pilot_advantages") //$NON-NLS-1$
                 || clientgui.getClient().game.getOptions().booleanOption(
+                "edge") //$NON-NLS-1$
+                || clientgui.getClient().game.getOptions().booleanOption(
                         "manei_domini")) { //$NON-NLS-1$
 
             panPilot.add(panOptions, GBC.eop());
@@ -1462,6 +1464,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)
                     && !clientgui.getClient().game.getOptions().booleanOption(
                             "pilot_advantages")) {
+                continue;
+            }
+            
+            if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES)
+                    && !clientgui.getClient().game.getOptions().booleanOption(
+                            "edge")) {
                 continue;
             }
 

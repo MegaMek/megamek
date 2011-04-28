@@ -1,19 +1,18 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 /*
  * Created on Sep 25, 2004
- *
  */
 package megamek.common.weapons;
 
@@ -34,11 +33,12 @@ public class ISAC10 extends ACWeapon {
     public ISAC10() {
         super();
         techLevel = TechConstants.T_INTRO_BOXSET;
-        name = "Autocannon/10";
-        setInternalName(name);
+        name = "AC/10";
+        setInternalName("Autocannon/10");
         addLookupName("IS Auto Cannon/10");
         addLookupName("Auto Cannon/10");
         addLookupName("AutoCannon/10");
+        addLookupName("AC/10");
         addLookupName("ISAC10");
         addLookupName("IS Autocannon/10");
         heat = 3;

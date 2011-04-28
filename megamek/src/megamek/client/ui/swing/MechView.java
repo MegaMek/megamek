@@ -65,6 +65,7 @@ public class MechView {
     private boolean isJumpship;
     private boolean isSpaceStation;
 
+    StringBuffer sHead = new StringBuffer();
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
     StringBuffer sFluff = new StringBuffer("");
@@ -98,32 +99,32 @@ public class MechView {
         .append("<br>") //$NON-NLS-1$
         .append(getFailed()).append("<br>");
         //sBasic.append(getFluffImage(entity)).append("<br>");
-        sBasic.append("<font size=+1><b>" + entity.getShortNameRaw() + "</b></font>");
-        sBasic.append("<br>"); //$NON-NLS-1$
+        sHead.append("<font size=+1><b>" + entity.getShortNameRaw() + "</b></font>");
+        sHead.append("<br>"); //$NON-NLS-1$
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
-                sBasic.append(Messages.getString("MechView.MixedClan"));
+                sHead.append(Messages.getString("MechView.MixedClan"));
             } else {
-                sBasic.append(Messages.getString("MechView.MixedIS"));
+                sHead.append(Messages.getString("MechView.MixedIS"));
             }
         } else {
-            sBasic.append(TechConstants.getLevelDisplayableName(entity
+            sHead.append(TechConstants.getLevelDisplayableName(entity
                     .getTechLevel()));
         }
-        sBasic.append("<br>"); //$NON-NLS-1$
+        sHead.append("<br>"); //$NON-NLS-1$
         if (!isInf) {
-            sBasic.append(Math.round(entity.getWeight())).append(
+            sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
         }
-        sBasic.append("<br>"); //$NON-NLS-1$
+        sHead.append("<br>"); //$NON-NLS-1$
         DecimalFormat dFormatter = new DecimalFormat("#,###.##");
-        sBasic.append("BV: ");
-        sBasic.append(dFormatter.format(entity.calculateBattleValue()));
-        sBasic.append("<br>"); //$NON-NLS-1$
-        sBasic.append("Cost: ");
-        sBasic.append(dFormatter.format(entity.getCost(false)));
-        sBasic.append(" C-bills");
-        sBasic.append("<br>"); //$NON-NLS-1$
+        sHead.append("BV: ");
+        sHead.append(dFormatter.format(entity.calculateBattleValue()));
+        sHead.append("<br>"); //$NON-NLS-1$
+        sHead.append("Cost: ");
+        sHead.append(dFormatter.format(entity.getCost(false)));
+        sHead.append(" C-bills");
+        sHead.append("<br>"); //$NON-NLS-1$
 
         if (!isGunEmplacement) {
             sBasic.append("<br>"); //$NON-NLS-1$
@@ -206,6 +207,10 @@ public class MechView {
         sFluff.append("<br>");
     }
 
+    public String getMechReadoutHead() {
+        return sHead.toString();
+    }
+    
     public String getMechReadoutBasic() {
         return sBasic.toString();
     }
@@ -219,7 +224,7 @@ public class MechView {
     }
 
     public String getMechReadout() {
-        return "<div style='font: 12pt monospaced'>" + getMechReadoutBasic()
+        return "<div style='font: 12pt monospaced'>" + getMechReadoutHead() + getMechReadoutBasic()
         + "<br>" + getMechReadoutLoadout() + "<br>" + getMechReadoutFluff()
         + "</div>";
     }

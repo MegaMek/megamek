@@ -56,6 +56,7 @@ v0.35.23-dev (SVN)
 + Bug: Equipment in Turrets for Large Support Vehicles loading in Tank Turret Location
 + Lots of new unofficial maps (http://www.classicbattletech.com/forums/index.php/topic,520.0.html)
 + separate edge option group to separate edge and triggers from special abilities
++ RFE: Changed Display Name of AutoCannons to AC
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

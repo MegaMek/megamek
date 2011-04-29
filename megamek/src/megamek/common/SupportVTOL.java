@@ -84,4 +84,16 @@ public class SupportVTOL extends VTOL implements Serializable {
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
     }
-}
+    
+    @Override
+    public int getBattleForceSize() {
+        //The tables are on page 356 of StartOps
+        if (getWeight() < 5) {
+            return 1;
+        }
+        if (getWeight() < 30) {
+            return 2;
+        }
+        return 3;
+    }
+ }

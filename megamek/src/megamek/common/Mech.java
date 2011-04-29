@@ -6959,11 +6959,6 @@ public abstract class Mech extends Entity implements Serializable {
         return results.toString();
     }
 
-    @Override
-    public int getBattleForceSize() {
-        return getWeightClass() - 4;
-    }
-
     public abstract boolean hasMPReducingHardenedArmor();
 
     /**

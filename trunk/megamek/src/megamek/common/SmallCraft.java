@@ -671,4 +671,16 @@ public class SmallCraft extends Aero {
         }
         return 1;
     }
+
+    @Override
+    public int getBattleForceSize() {
+        //The tables are on page 356 of StartOps
+        if (getWeight() < 2500) {
+            return 1;
+        }
+        if (getWeight() < 10000) {
+            return 2;
+        }
+        return 3;
+    }
 }

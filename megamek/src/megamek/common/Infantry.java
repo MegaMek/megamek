@@ -1287,6 +1287,11 @@ public class Infantry extends Entity implements Serializable {
     public boolean isUsingManAce() {
         return false;
     }
-
+    
+    @Override
+    public int getBattleForceSize() {
+        //The tables are on page 356 of StartOps
+        return 1;
+    }
 
 } // End class Infantry

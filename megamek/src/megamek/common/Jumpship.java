@@ -1180,4 +1180,16 @@ public class Jumpship extends Aero {
     public boolean usesWeaponBays() {      
         return true;
     }
+    
+    @Override
+    public int getBattleForceSize() {
+        //The tables are on page 356 of StartOps
+        if (getWeight() < 100000) {
+            return 1;
+        }
+        if (getWeight() < 300000) {
+            return 2;
+        }
+        return 3;
+    }
 }

@@ -715,6 +715,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return weight;
     }
 
+    //TODO: WeightClass is no longer correct.  See the Tech Manual
     public int getWeightClass() {
         return EntityWeightClass.getWeightClass(getWeight());
     }
@@ -9395,7 +9396,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getBattleForceSize() {
-        return getWeightClass() + 1;
+        //the default BF Size is for ground Combat elements.  Other types will need to override this
+        //The tables are on page 356 of StartOps
+        if (getWeight() < 40) {
+            return 1;
+        }
+        if (getWeight() < 60) {
+            return 2;
+        }
+        if (getWeight() < 80) {
+            return 3;
+        }
+       
+        return 4;
     }
 
     protected void printDebugToFile() {

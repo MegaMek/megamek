@@ -116,5 +116,52 @@ public class SupportTank extends Tank implements Serializable {
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
     }
-
+    
+    @Override
+    public int getBattleForceSize() {
+        //The tables are on page 356 of StartOps
+        if (getWeight() < 5) {
+            return 1;
+        }
+        int mediumCeil= 0;
+        int largeCeil=0;
+        int veryLargeCeil = 0;
+        switch (movementMode) {
+        case TRACKED:
+            mediumCeil = 100;
+            largeCeil = 200;
+            break;
+        case WHEELED:
+            mediumCeil = 80;
+            largeCeil = 160;
+            break;
+        case HOVER:
+            mediumCeil = 50;
+            largeCeil = 100;
+            break;
+        case NAVAL:
+        case HYDROFOIL:
+        case SUBMARINE:
+            mediumCeil = 300;
+            largeCeil = 6000;
+            veryLargeCeil = 30000;
+            break;
+        case WIGE:
+            mediumCeil = 80;
+            largeCeil = 240;
+            break;
+        default:
+            break;
+        }
+        if (getWeight() < mediumCeil) {
+            return 2;
+        }
+        if (getWeight() < largeCeil) {
+            return 3;
+        }
+        if ((getWeight() < veryLargeCeil) || (veryLargeCeil == 0)) {
+            return 4;
+        }
+        return 5;
+    }
 }

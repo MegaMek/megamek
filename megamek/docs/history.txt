@@ -59,6 +59,7 @@ v0.35.23-dev (SVN)
 + RFE: Changed Display Name of AutoCannons to AC
 + split sBasic in MechView into sHead and sBasic
 + Infantry cleanup, added Handbook infantry
++ Bug: Infantry sometimes have incorrect run MP
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

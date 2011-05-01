@@ -206,7 +206,7 @@ public class Infantry extends Entity implements Serializable {
      * return this infantry's walk mp, adjusted for planetary conditions
      */
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp = getOriginalWalkMP();
         //encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
         if(encumbering) {
@@ -243,8 +243,8 @@ public class Infantry extends Entity implements Serializable {
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if( (game != null)
                 && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
-            if(getWalkMP(gravity, ignoreheat) > 0) {
-                return getWalkMP(gravity, ignoreheat) + 1;
+            if(getWalkMP(gravity, ignoreheat, ignoremodulararmor) > 0) {
+                return getWalkMP(gravity, ignoreheat, ignoremodulararmor) + 1;
             }
             return getWalkMP(gravity, ignoreheat, ignoremodulararmor) + 2;
         }
@@ -1287,7 +1287,7 @@ public class Infantry extends Entity implements Serializable {
     public boolean isUsingManAce() {
         return false;
     }
-    
+
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps

@@ -1,4 +1,4 @@
-CCAF Assault Mech C 3067
+CCAF Assault Mechs C 3067
 Striker STC-2D,1
 Stalker STK-5M,2
 Longbow LGB-7V,3

@@ -92,8 +92,8 @@ public class TechConstants {
         throw new IllegalArgumentException("Unknown tech level");
     }
 
-    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel) {
-        return isLegal(entityTechlevel, equipmentTechlevel, false);
+    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean mixed) {
+        return isLegal(entityTechlevel, equipmentTechlevel, false, mixed);
     }
 
     /**
@@ -101,7 +101,7 @@ public class TechConstants {
      * levels; Returns false if it is not.
      */
     public static boolean isLegal(int entityTechlevel, int equipmentTechlevel,
-            boolean ignoreUnknown) {
+            boolean ignoreUnknown, boolean mixed) {
         // If it's allowed to all, ALWAYS return true.
         if (equipmentTechlevel == T_ALLOWED_ALL) {
             return true;
@@ -121,13 +121,16 @@ public class TechConstants {
             return true;
         }
 
-        // If the entity is experimental or unofficial, it can legally be mixed
-        // tech, so we pretty much just smile and nod.
-        if ((entityTechlevel == T_IS_EXPERIMENTAL)
-                || (entityTechlevel == T_CLAN_EXPERIMENTAL)
-                || (entityTechlevel == T_IS_UNOFFICIAL)
-                || (entityTechlevel == T_CLAN_UNOFFICIAL)) {
-            return true;
+        // If the entity is experimental and mixed, allow all but unofficial
+        // if it's unofficial and mixed, allow everything
+        if (mixed) {
+            if (((entityTechlevel == T_IS_EXPERIMENTAL) || (entityTechlevel == T_CLAN_EXPERIMENTAL))
+                    && ((equipmentTechlevel != T_IS_UNOFFICIAL) && (equipmentTechlevel != T_CLAN_UNOFFICIAL))) {
+                return true;
+            }
+            if ((entityTechlevel == T_IS_UNOFFICIAL) || (entityTechlevel == T_CLAN_UNOFFICIAL)) {
+                return true;
+            }
         }
 
         // If none of the catch-alls above are true, we go to specific cases

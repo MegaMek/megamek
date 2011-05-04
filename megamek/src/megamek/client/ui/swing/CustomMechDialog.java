@@ -245,7 +245,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JPanel panButtons = new JPanel();
 
     private JButton butRandomName = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
-    
+
     private JButton butRandomSkill = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
 
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -376,7 +376,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot.add(butPortrait, GBC.std().gridheight(2));
         panPilot.add(butRandomName, GBC.eop());
         panPilot.add(butRandomSkill, GBC.eop());
-        
+
         panPilot.add(labName, GBC.std());
         panPilot.add(fldName, GBC.eol());
 
@@ -803,7 +803,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(entity
-                        .getTechLevel(), atCheck.getTechLevel());
+                        .getTechLevel(), atCheck.getTechLevel(), true, entity.isMixedTech());
 
                 // allow all lvl2 IS units to use level 1 ammo
                 // lvl1 IS units don't need to be allowed to use lvl1 ammo,
@@ -1466,7 +1466,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             "pilot_advantages")) {
                 continue;
             }
-            
+
             if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES)
                     && !clientgui.getClient().game.getOptions().booleanOption(
                             "edge")) {
@@ -1887,7 +1887,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             butOffBoardDistance.setText(Integer.toString(distance));
             return;
         }
-     
+
         if (!actionEvent.getSource().equals(butCancel)) {
             // get values
             String name = fldName.getText();

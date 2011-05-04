@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -73,7 +74,32 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
     private JComboBox m_chPlayer = new JComboBox();
     private JComboBox m_chType = new JComboBox();
-    private JComboBox m_chRAT = new JComboBox();
+    private JComboBox m_chRAT = new JComboBox() {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -494654855050298510L;
+
+        @Override
+        public void addItem(Object anObject) {
+            int size = ((DefaultComboBoxModel) dataModel).getSize();
+            Object obj;
+            boolean added = false;
+            for (int i=0; i<size; i++) {
+                obj = dataModel.getElementAt(i);
+                int compare = anObject.toString().compareToIgnoreCase(obj.toString());
+                if (compare <= 0) { // if anObject less than or equal obj
+                    super.insertItemAt(anObject, i);
+                    added = true;
+                    break;
+                }
+            }
+
+            if (!added) {
+                super.addItem(anObject);
+            }
+        }
+    };
 
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
@@ -124,8 +150,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
     private ArrayList<MechSummary> army = new ArrayList<MechSummary>(0);
 
     private RandomUnitGenerator rug;
-    
-    
+
+
     public RandomArmyDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
         m_clientgui = cl;
@@ -231,9 +257,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
         //construct the RAT panel
         m_tUnits.setText("4");
-        updateRATs();      
+        updateRATs();
         m_chRAT.addActionListener(this);
-        
+
         m_pRAT.setLayout(new GridBagLayout());
 
         GridBagConstraints c;
@@ -246,7 +272,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_labRAT, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -256,7 +282,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 0.0;
         m_pRAT.add(m_chRAT, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -266,7 +292,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_labUnits, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
@@ -276,7 +302,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_tUnits, c);
-        
+
         // construct the preview panel
         m_pPreview.setLayout(new GridLayout(1, 1));
         JScrollPane scoll = new JScrollPane(m_lMechs);
@@ -284,7 +310,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
         m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
-        
+
         // contruct the main dialog
         setLayout(new BorderLayout());
         add(m_pButtons, BorderLayout.SOUTH);
@@ -354,7 +380,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                     p.maxYear = Integer.parseInt(m_tMaxYear.getText());
                     army = RandomArmyCreator.generateArmy(p);
                 }
-                
+
                 Vector<String> mechs = new Vector<String>();
                 for (MechSummary m : army) {
                     mechs.add(m.getName());
@@ -416,7 +442,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             m_chPlayer.setSelectedIndex(0);
         }
     }
-    
+
     private void updateRATChoice() {
         rug.setChosenRAT((String)m_chRAT.getSelectedItem());
     }
@@ -440,7 +466,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             m_chType.setSelectedItem(TechConstants.T_IS_TW_NON_BOX);
         }
     }
-    
+
     private void updateRATs() {
         Iterator<String> rats = rug.getRatList();
         if(null == rats) {

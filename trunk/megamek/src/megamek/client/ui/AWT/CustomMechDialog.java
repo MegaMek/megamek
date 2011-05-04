@@ -639,7 +639,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(entity
-                        .getTechLevel(), atCheck.getTechLevel());
+                        .getTechLevel(), atCheck.getTechLevel(), true, entity.isMixedTech());
 
                 // allow all lvl2 IS units to use level 1 ammo
                 // lvl1 IS units don't need to be allowed to use lvl1 ammo,

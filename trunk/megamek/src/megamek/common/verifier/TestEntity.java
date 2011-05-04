@@ -529,7 +529,7 @@ public abstract class TestEntity implements TestEntityOption {
             EquipmentType nextE = mounted.getType();
             if ((ignoreAmmo) && (nextE instanceof AmmoType)) {
                 continue;
-            } else if (!(TechConstants.isLegal(eTechLevel, nextE.getTechLevel(), true))) {
+            } else if (!(TechConstants.isLegal(eTechLevel, nextE.getTechLevel(), true, getEntity().isMixedTech()))) {
                 if (!retVal) {
                     buff.append("Equipment illegal at unit's tech level:\n");
                 }

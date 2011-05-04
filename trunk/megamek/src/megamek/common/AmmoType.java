@@ -360,7 +360,7 @@ public class AmmoType extends EquipmentType {
         AmmoType at = null;
         for (int i = 0; i < vAmmo.size(); i++) {
             at = vAmmo.elementAt(i);
-            if ((at.getRackSize() == wt.getRackSize()) && (TechConstants.isLegal(mounted.getType().getTechLevel(), at.getTechLevel()))) {
+            if ((at.getRackSize() == wt.getRackSize()) && (TechConstants.isLegal(mounted.getType().getTechLevel(), at.getTechLevel(), false, mounted.getEntity().isMixedTech()))) {
                 return at;
             }
         }
@@ -686,6 +686,11 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISNailRivetGunAmmoHalf());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
+
+
+        EquipmentType.addType(AmmoType.createCLRL10PrototypeAmmo());
+        EquipmentType.addType(AmmoType.createCLRL15PrototypeAmmo());
+        EquipmentType.addType(AmmoType.createCLRL20PrototypeAmmo());
 
         // Unofficial Ammo
         base = AmmoType.createISAC15Ammo();
@@ -2755,6 +2760,54 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
         ammo.name = "RL 20 Ammo";
         ammo.setInternalName("IS Ammo RL-20");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 2000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLRL10PrototypeAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "RL 10 Ammo";
+        ammo.setInternalName("IS Ammo RL-10");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLRL15PrototypeAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "RL 15 Ammo";
+        ammo.setInternalName("CL Ammo RL-15");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 1500;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLRL20PrototypeAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "RL 20 Ammo";
+        ammo.setInternalName("CL Ammo RL-20");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;

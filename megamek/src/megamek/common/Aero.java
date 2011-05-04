@@ -1122,6 +1122,10 @@ public class Aero extends Entity {
             if (mounted.isDestroyed()) {
                 continue;
             }
+            // don't count weapon groups
+            if (mounted.isWeaponGroup()) {
+                continue;
+            }
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(this);
                 bvText.append(startRow);

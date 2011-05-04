@@ -63,6 +63,7 @@ v0.35.23-dev (SVN)
 + Added TRO 3085 infantry
 + New volcano map theme. Text is a bit difficult to read, though
 + Mixed tech tech legality
++ Bug: defensive equipment counted twice for aero BV
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

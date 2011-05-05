@@ -93,7 +93,7 @@ public class TechConstants {
     }
 
     public static boolean isLegal(int entityTechlevel, int equipmentTechlevel, boolean mixed) {
-        return isLegal(entityTechlevel, equipmentTechlevel, false, mixed);
+        return TechConstants.isLegal(entityTechlevel, equipmentTechlevel, false, mixed);
     }
 
     /**
@@ -135,50 +135,65 @@ public class TechConstants {
 
         // If none of the catch-alls above are true, we go to specific cases
 
-        // IS box set can be in any IS, or in clan advanced (mixed tech)
+        // IS box set can be in any IS
         if ((equipmentTechlevel == T_INTRO_BOXSET)
                 && ((entityTechlevel == T_IS_TW_NON_BOX)
                         || (entityTechlevel == T_IS_TW_ALL)
                         || (entityTechlevel == T_TW_ALL)
                         || (entityTechlevel == T_IS_ADVANCED)
-                        || (entityTechlevel == T_CLAN_ADVANCED)
+                        || (entityTechlevel == T_IS_EXPERIMENTAL)
+                        || (entityTechlevel == T_IS_UNOFFICIAL)
                         || (entityTechlevel == T_ALL))) {
             return true;
         }
 
-        // IS TW stuff can be in any IS unit, or in clan advanced (mixed tech)
+        // IS TW stuff can be in any IS unit
         if ((equipmentTechlevel == T_IS_TW_NON_BOX)
                 && ((entityTechlevel == T_IS_TW_ALL)
                         || (entityTechlevel == T_TW_ALL)
                         || (entityTechlevel == T_IS_ADVANCED)
-                        || (entityTechlevel == T_CLAN_ADVANCED)
+                        || (entityTechlevel == T_IS_EXPERIMENTAL)
+                        || (entityTechlevel == T_IS_UNOFFICIAL)
                         || (entityTechlevel == T_ALL))) {
             return true;
         }
-        // clan TW stuff can be in any clan, or in IS advanced (mixed tech)
+        // clan TW stuff can be in any clan
         if ((equipmentTechlevel == T_CLAN_TW)
                 && ((entityTechlevel == T_CLAN_TW)
                         || (entityTechlevel == T_CLAN_ADVANCED)
-                        || (entityTechlevel == T_IS_ADVANCED)
+                        || (entityTechlevel == T_CLAN_EXPERIMENTAL)
+                        || (entityTechlevel == T_CLAN_UNOFFICIAL)
                         || (entityTechlevel == T_ALL))) {
             return true;
         }
-        // IS advanced stuff can be in clan advanced (IS advanced is caught by
-        // the identical level if further up)
+        // IS advanced stuff can be in IS advanced or higher
         if ((equipmentTechlevel == T_IS_ADVANCED)
-                && ((entityTechlevel == T_CLAN_ADVANCED)
-                        || (entityTechlevel == T_ALL))) {
+                && (entityTechlevel == T_IS_EXPERIMENTAL
+                        || entityTechlevel == T_IS_UNOFFICIAL
+                        || entityTechlevel == T_ALL)) {
             return true;
         }
-        // clan advanced stuff can be in IS advanced (clan advanced is caught by
-        // the identical level if further up)
-        if (((equipmentTechlevel == T_CLAN_ADVANCED)
-                && ((entityTechlevel == T_IS_ADVANCED)))
-                || (entityTechlevel == T_ALL)) {
+        // clan advanced stuff can be in clan advanced or higher
+        if ((equipmentTechlevel == T_CLAN_ADVANCED)
+                && (entityTechlevel == T_CLAN_EXPERIMENTAL
+                        || entityTechlevel == T_CLAN_UNOFFICIAL
+                        || entityTechlevel == T_ALL)) {
             return true;
         }
-        // no need to check for the unofficial stuff, that is caught by identical
-        // level further up or by the unofficial check
+        // IS experimental stuff can be in IS unoffical or all (identical level
+        // is caught above
+        if ((equipmentTechlevel == T_IS_EXPERIMENTAL)
+                && (entityTechlevel == T_IS_UNOFFICIAL
+                        || entityTechlevel == T_ALL)) {
+            return true;
+        }
+        // clan experimental stuff can be in clan unoffical or all (identical level
+        // is caught above
+        if ((equipmentTechlevel == T_CLAN_EXPERIMENTAL)
+                && (entityTechlevel == T_CLAN_UNOFFICIAL
+                        || entityTechlevel == T_ALL)) {
+            return true;
+        }
         return false;
     }
 

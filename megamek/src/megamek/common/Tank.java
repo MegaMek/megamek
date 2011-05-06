@@ -310,7 +310,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isImmobile() {
-        if (game != null && game.getOptions().booleanOption("no_immobile_vehicles")) {
+        if ((game != null) && game.getOptions().booleanOption("no_immobile_vehicles")) {
             return super.isImmobile();
         }
         return super.isImmobile() || m_bImmobile;
@@ -2311,7 +2311,16 @@ public class Tank extends Entity {
     public int getFreeSlots() {
         int availableSlots = getTotalSlots();
         int usedSlots = 0;
+        boolean addedCargo = false;
         for (Mounted mount : this.getEquipment()) {
+            if ((mount.getType() instanceof MiscType) && mount.getType().hasFlag(MiscType.F_CARGO)) {
+                if (!addedCargo) {
+                    usedSlots++;
+                    addedCargo = true;
+                } else {
+                    continue;
+                }
+            }
             if (!(mount.getType() instanceof AmmoType)) {
                 usedSlots += mount.getType().getTankslots(this);
             }

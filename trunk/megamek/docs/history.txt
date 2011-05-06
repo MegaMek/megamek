@@ -4,6 +4,7 @@ v0.35.24-dev (SVN)
 + Sort RATs alphabetically
 + Bug 3297649: tech level legality bugfix
 + Tank cargo itemslots fixed
++ Clan case should take no tank itemslots
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

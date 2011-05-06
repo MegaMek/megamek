@@ -1247,6 +1247,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan CASE");
         misc.tonnage = 0.0f;
         misc.criticals = 0;
+        misc.tankslots = 0;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_CASE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.cost = 50000;

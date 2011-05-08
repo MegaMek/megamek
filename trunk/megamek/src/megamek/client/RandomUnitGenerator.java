@@ -15,7 +15,6 @@
 package megamek.client;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
@@ -29,62 +28,64 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
-import megamek.common.UnitType;
 
 /**
  * Author: Jay Lawson
  * This class sets up a random unit generator that can then be used
  * to read in user-created input files of random assignment tables
- * 
+ *
  * Files should be located in data/rat/
  * All files should comma-delimited text files.
- * 
+ *
  * The first line of the file should contain the title of the RAT
  * The second line of the file should give the unit type number corresponding to UnitType.java
  * The remaining lines should be comma split. The first field should give the frequency of that unit
  * and the second line should give the name of that unit written as <Model> <Chassis>
  * Comment lines can also be added with "#"
- * 
+ *
  */
 
 public class RandomUnitGenerator implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5765118329881301375L;
-    
+
     //The RATs are stored in a hashmap of string vectors. The keys are the RAT names
     //and the vectors just contain the unit names listed a number of times equal to
     //the frequency
     Map<String, Vector<String>> rats;
-    
+
     private String chosenRAT;
-    
-    public RandomUnitGenerator() {  
-        this.chosenRAT = "TW Heavy Mech (Kurita)";     
+
+    public RandomUnitGenerator() {
+        chosenRAT = "TW Heavy Mech (Kurita)";
     }
-    
-    public void populateUnits() {       
+
+    public void populateUnits() {
         rats = new HashMap<String, Vector<String>>();
-        File dir = new File("./data/rat/");    
-        loadRatsFromDirectory(dir);       
+        File dir = new File("./data/rat/");
+        loadRatsFromDirectory(dir);
     }
-    
+
     private void loadRatsFromDirectory(File dir) {
         if(null == dir) {
             return;
-        }  
-        
-        File[] files = dir.listFiles();   
-        
+        }
+
+        File[] files = dir.listFiles();
+        if (files == null) {
+            return;
+        }
+
         Scanner input = null;
-        
+
         for(int i = 0; i < files.length; i++) {
             //READ IN RATS
             File file = files[i];
             if (file.isDirectory()) {
-                if (file.getName().toLowerCase().equals("_svn")) {
+                if (file.getName().toLowerCase().equals("_svn") || file.getName().toLowerCase().equals(".svn")) {
                     // This is a Subversion work directory. Lets ignore it.
                     continue;
                 }
@@ -144,17 +145,17 @@ public class RandomUnitGenerator implements Serializable {
             }
         }
     }
-    
+
     /**
      * Generate a single random name
      * @return - a string giving the name
      */
-    public ArrayList<MechSummary> generate(int n) { 
+    public ArrayList<MechSummary> generate(int n) {
         ArrayList<MechSummary> units = new ArrayList<MechSummary>();
-        
+
         if(null != rats) {
             Vector<String> rat = rats.get(chosenRAT);
-            if(null != rat && rat.size() > 0) {
+            if((null != rat) && (rat.size() > 0)) {
                 for(int i = 0; i < n; i++) {
                     String name =  rat.get(Compute.randomInt(rat.size()));
                     MechSummary unit = MechSummaryCache.getInstance().getMech(name);
@@ -166,24 +167,24 @@ public class RandomUnitGenerator implements Serializable {
         }
         return units;
     }
-    
+
     public String getChosenRAT() {
         return chosenRAT;
     }
-    
+
     public void setChosenRAT(String s) {
-        this.chosenRAT = s;
+        chosenRAT = s;
     }
-    
+
     public Iterator<String> getRatList() {
         if(null == rats) {
             return null;
         }
         return rats.keySet().iterator();
     }
-    
+
     public void clear() {
         rats = null;
     }
-     
+
 }

@@ -16049,18 +16049,19 @@ public class Server implements Runnable {
             }
             break;
         case FRAGMENTATION:
+            // Fragmentation missiles deal full damage to conventional infantry
+            // (only) and no damage to other target types.
             if (!isPlatoon) {
                 damage = 0;
-                r = new Report(6050);
+                r = new Report(6050); // For some reason this report never actually shows up...
                 r.subject = te_n;
                 r.indent(2);
                 vDesc.addElement(r);
-            } else if (isPlatoon) {
-                    damage *= 2;
-                    r = new Report(6045);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
+            } else {
+                r = new Report(6045); // ...but this one displays just fine.
+                r.subject = te_n;
+                r.indent(2);
+                vDesc.addElement(r);
             }
             break;
         case NONPENETRATING:
@@ -16073,13 +16074,15 @@ public class Server implements Runnable {
             }
             break;
         case FLECHETTE:
-            if (!isPlatoon && !isBattleArmor) {
+            // Flechette ammo deals full damage to conventional infantry and
+            // half damage to other targets (including battle armor).
+            if (!isPlatoon) {
                 damage /= 2;
                 r = new Report(6060);
                 r.subject = te_n;
                 r.indent(2);
                 vDesc.addElement(r);
-            } else if (isPlatoon && !isBattleArmor) {
+            } else {
                 r = new Report(6055);
                 r.subject = te_n;
                 r.indent(2);

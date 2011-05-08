@@ -119,7 +119,7 @@ public class MechView {
         sHead.append("<br>"); //$NON-NLS-1$
         DecimalFormat dFormatter = new DecimalFormat("#,###.##");
         sHead.append("BV: ");
-        sHead.append(dFormatter.format(entity.calculateBattleValue()));
+        sHead.append(dFormatter.format(entity.calculateBattleValue(false, null == entity.getCrew())));
         sHead.append("<br>"); //$NON-NLS-1$
         sHead.append("Cost: ");
         sHead.append(dFormatter.format(entity.getCost(false)));

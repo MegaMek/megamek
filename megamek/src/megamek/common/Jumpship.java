@@ -34,12 +34,9 @@ public class Jumpship extends Aero {
      *
      */
     private static final long serialVersionUID = 9154398176617208384L;
-    //     locations
-    public static final int        LOC_NOSE               = 0;
+    // Additional Jumpship locations (FLS, FRS and ALS override Aero locations)
     public static final int        LOC_FLS                = 1;
     public static final int        LOC_FRS                = 2;
-    public static final int        LOC_AFT                = 3;
-    //aft comes first so it is consistent with Aero
     public static final int        LOC_ALS                = 4;
     public static final int        LOC_ARS                = 5;
 
@@ -48,12 +45,6 @@ public class Jumpship extends Aero {
 
     private int kf_integrity = 0;
     private int sail_integrity = 0;
-
-    private int damThresh[] = {0,0,0,0,0,0};
-
-    //this may be bizarre, but I am going to put
-    //the sum of standard damage here for standard-to-capital damage conversion
-    private int standard_damage[] = {0,0,0,0,0,0};
 
     //crew and passengers
     private int nCrew = 0;
@@ -78,8 +69,12 @@ public class Jumpship extends Aero {
     private double stationThrust = 0.2;
     private double accumulatedThrust = 0.0;
 
-    //just give it some engine
 
+    public Jumpship() {
+        super();
+        damThresh = new int[] {0,0,0,0,0,0};   
+    }
+    
     @Override
     public int locations() {
         return 6;
@@ -162,32 +157,6 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public void setThresh(int val, int loc) {
-        damThresh[loc] = val;
-    }
-
-    @Override
-    public int getThresh(int loc) {
-        return damThresh[loc];
-    }
-
-    @Override
-    public void autoSetThresh()
-    {
-        for(int x = 0; x < locations(); x++)
-        {
-            initializeThresh(x);
-        }
-    }
-
-    @Override
-    public void initializeThresh(int loc)
-    {
-        int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
-        setThresh(nThresh,loc);
-    }
-
-    @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
     }
@@ -230,23 +199,6 @@ public class Jumpship extends Aero {
     @Override
     public void setEngine(Engine e) {
         engine = e;
-    }
-
-    @Override
-    public int getStandardDamage(int loc) {
-        return standard_damage[loc];
-    }
-
-    @Override
-    public void resetStandardDamage() {
-        for(int i = 0; i < locations(); i++) {
-            standard_damage[i] = 0;
-        }
-    }
-
-    @Override
-    public void addStandardDamage(int damage, HitData hit) {
-        standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
     }
 
     //different firing arcs
@@ -1036,20 +988,20 @@ public class Jumpship extends Aero {
     @Override
     public int getOppositeLocation(int loc) {
         switch(loc) {
-        case Jumpship.LOC_NOSE:
-            return Jumpship.LOC_AFT;
-        case Jumpship.LOC_FLS:
-            return Jumpship.LOC_ARS;
-        case Jumpship.LOC_FRS:
-            return Jumpship.LOC_ALS;
-        case Jumpship.LOC_ALS:
-            return Jumpship.LOC_FRS;
-        case Jumpship.LOC_ARS:
-            return Jumpship.LOC_FLS;
-        case Jumpship.LOC_AFT:
-            return Jumpship.LOC_NOSE;
+        case LOC_NOSE:
+            return LOC_AFT;
+        case LOC_FLS:
+            return LOC_ARS;
+        case LOC_FRS:
+            return LOC_ALS;
+        case LOC_ALS:
+            return LOC_FRS;
+        case LOC_ARS:
+            return LOC_FLS;
+        case LOC_AFT:
+            return LOC_NOSE;
         default:
-            return Jumpship.LOC_NOSE;
+            return LOC_NOSE;
         }
     }
 

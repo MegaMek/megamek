@@ -26,8 +26,6 @@ public class LargeSupportTank extends SupportTank {
      */
     private static final long serialVersionUID = -3177191060629774478L;
     // locations
-    public static final int LOC_BODY = 0;
-    public static final int LOC_FRONT = 1;
     public static final int LOC_FRONTRIGHT = 2;
     public static final int LOC_FRONTLEFT = 3;
     public static final int LOC_REARRIGHT = 4;

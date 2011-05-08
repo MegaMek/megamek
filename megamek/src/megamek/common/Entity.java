@@ -452,10 +452,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected String nl = "<BR>";
 
-    // Battle Force Global Variables
-    protected boolean DEBUGBATTLEFORCE = true;
-    protected StringBuffer battleForceDebugString;
-
     // Max range modifer is 6
     protected double[] battleForceMinRangeModifier = new double[]
         { 1, .92, .83, .75, .66, .58, .50 };
@@ -8466,10 +8462,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasModularArmor() {
-        return hasModularArmor(0);
+        return hasModularArmor(-1);
     }
 
     public boolean hasModularArmor(int loc) {
+        for (Mounted mount : this.getEquipment()) {
+            if (loc == -1 || (mount.getLocation() == loc))
+            if ( !mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -9238,30 +9241,47 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             result.append("j");
         }
 
-        if (DEBUGBATTLEFORCE) {
-            battleForceDebugString = new StringBuffer("Battle Force Debug For ");
-            battleForceDebugString.append(getChassis());
-            battleForceDebugString.append(" ");
-            battleForceDebugString.append(getModel());
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Walk Points: ");
-            battleForceDebugString.append(walkPoints);
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Jump Points: ");
-            battleForceDebugString.append(jumpPoints);
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Movement Result: ");
-            battleForceDebugString.append(result.toString());
-            battleForceDebugString.append('\n');
-        }
-
         return result.toString();
     }
 
     public int getBattleForceArmorPoints() {
-        return 0;
-    }
+        double armorPoints = 0;
 
+        for (int loc = 0; loc < locations(); loc++) {
+            double armorMod = 1;
+            switch (getArmorType(loc)) {
+            case EquipmentType.T_ARMOR_COMMERCIAL:
+                armorMod = .5;
+                break;
+            case EquipmentType.T_ARMOR_INDUSTRIAL:
+            case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+                armorMod = getBARRating(0) / 10;
+                break;
+            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                armorMod = 1.2;
+                break;
+            case EquipmentType.T_ARMOR_HARDENED:
+                armorMod = 1.5;
+                break;
+            case EquipmentType.T_ARMOR_REFLECTIVE:
+            case EquipmentType.T_ARMOR_REACTIVE:
+                armorMod = .75;
+                break;
+            }
+            armorPoints += Math.ceil(getTotalArmor() * armorMod);
+            
+        }
+        if (this.hasModularArmor()) {
+            //Modular armor is always "regular" armor
+            for (Mounted mount : this.getEquipment()) {
+                if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                    armorPoints += 10;
+                }
+            }
+        }
+        
+        return (int) Math.round(armorPoints / 30);
+    }
     /**
      * only used for Aerospace and Dropships
      *
@@ -9355,7 +9375,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         int standardDamageValue = 0;
         int damageValueNoHeat = 0;
-        boolean debugStatus = DEBUGBATTLEFORCE;
 
         int totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
 
@@ -9363,7 +9382,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return "None";
         }
 
-        DEBUGBATTLEFORCE = false;
         standardDamageValue = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, false, true);
 
         if (standardDamageValue <= 0) {
@@ -9373,17 +9391,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             damageValueNoHeat = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, true, true);
         }
 
-        DEBUGBATTLEFORCE = debugStatus;
-
-        if (DEBUGBATTLEFORCE) {
-            battleForceDebugString.append("Standard Damage Value With Heat Modifier: ");
-            battleForceDebugString.append(standardDamageValue);
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Standard Damage Value Without Heat Modifier: ");
-            battleForceDebugString.append(damageValueNoHeat);
-            battleForceDebugString.append('\n');
-        }
-
         if (damageValueNoHeat > standardDamageValue) {
             return Integer.toString(Math.min(4, damageValueNoHeat - standardDamageValue));
         }
@@ -9391,7 +9398,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public String getBattleForceSpecialAbilites() {
-        printDebugToFile();
         return "None";
     }
 
@@ -9409,28 +9415,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
        
         return 4;
-    }
-
-    protected void printDebugToFile() {
-
-        if (!DEBUGBATTLEFORCE) {
-            return;
-        }
-        if (!(new File("./debug").exists())) {
-            new File("./debug").mkdir();
-        }
-
-        String fileName = getChassis() + " " + getModel() + ".txt";
-        fileName = fileName.replaceAll("\"", "");
-        try {
-            File file = new File("./debug/" + fileName);
-            BufferedWriter w = new BufferedWriter(new FileWriter(file));
-            w.write(battleForceDebugString.toString());
-            w.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
     }
 
     /**

@@ -302,16 +302,16 @@ public class BattleArmor extends Infantry {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
 
-        int walkMP = getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+        int runMP = getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         if (hasMyomerBooster()) {
 
             if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
-                walkMP++;
+                runMP++;
             } else {
-                walkMP += 2;
+                runMP += 2;
             }
         }
-        return walkMP;
+        return runMP;
     }
 
     /**
@@ -431,17 +431,6 @@ public class BattleArmor extends Infantry {
 
         // Pick a random number between 1 and 6.
         int loc = Compute.d6();
-
-        /*        if ((aimedLocation != LOC_NONE)
-                        && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
-                    int roll = Compute.d6(2);
-
-                    if ((5 < roll) && (roll < 9)) {
-                        return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                                true);
-                    }
-                }*/
 
         // Pick a new random number if that trooper is dead or never existed.
         // Remember that there's one more location than the number of troopers.
@@ -1433,6 +1422,9 @@ public class BattleArmor extends Infantry {
                 break;
             case INF_UMU:
                 buff.append("submarine");
+                break;
+            default:
+                buff.append("none");
                 break;
         }
         buff.append(newline);

@@ -36,16 +36,20 @@ public class TeleMissile extends Aero {
     private int originalRideId;
     private int originalRideExternalId;
 
-    private int damThresh[] = {0};
-
     private int critMod = 0;
 
     //need another type of boolean for out-of-control status that indicates
     //lack of contact with originating unit
     private boolean outContact = false;
+    
+    public TeleMissile() {
+        super();
+        damThresh = new int[] {0};
+    }
 
     public TeleMissile(Entity originalRide, int damageValue, float weight, int type, int capMisMod) {
-        super();
+        this();
+                
         //fuel
         int fuel = 0;
         String name = "T-Op Missile";

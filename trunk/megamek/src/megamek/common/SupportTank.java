@@ -14,14 +14,12 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-
 /**
  * This is a support vehicle
  *
  * @author beerockxs
  */
-public class SupportTank extends Tank implements Serializable {
+public class SupportTank extends Tank{
 
     /**
      *

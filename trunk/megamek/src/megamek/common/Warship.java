@@ -26,25 +26,22 @@ public class Warship extends Jumpship {
      *
      */
     private static final long serialVersionUID = 4650692419224312511L;
-    //     locations
-    public static final int        LOC_NOSE               = 0;
-    public static final int        LOC_FLS                = 1;
-    public static final int        LOC_FRS                = 2;
-    public static final int        LOC_AFT                = 3;
-    public static final int        LOC_ALS                = 4;
-    public static final int        LOC_ARS                = 5;
+    
+    //     additional Warship locations 
     public static final int           LOC_LBS                  = 6;
     public static final int           LOC_RBS                  = 7;
 
     private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side", "Left Broadsides", "Right Broadsides" };
 
-    private int damThresh[] = {0,0,0,0,0,0,0,0};
-    private int standard_damage[] = {0,0,0,0,0,0,0,0};
-
     private int kf_integrity = 0;
     private int sail_integrity = 0;
 
+    public Warship() {
+        super();
+        damThresh = new int[] {0,0,0,0,0,0,0,0};
+    }
+    
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -58,25 +55,6 @@ public class Warship extends Jumpship {
     @Override
     public int locations() {
         return 8;
-    }
-
-    @Override
-    public void setThresh(int val, int loc) {
-        damThresh[loc] = val;
-    }
-
-    @Override
-    public int getThresh(int loc) {
-        return damThresh[loc];
-    }
-
-    @Override
-    public void autoSetThresh()
-    {
-        for(int x = 0; x < locations(); x++)
-        {
-            initializeThresh(x);
-        }
     }
 
     @Override
@@ -115,33 +93,7 @@ public class Warship extends Jumpship {
     public boolean canJump() {
         return kf_integrity > 0;
     }
-
-    //do damage threshhold using standard armor values
-    //or I will have a big rounding issue
-    @Override
-    public void initializeThresh(int loc)
-    {
-        int nThresh = (int)Math.ceil(getArmor(loc)/ 10.0 );
-        setThresh(nThresh,loc);
-    }
-
-    @Override
-    public int getStandardDamage(int loc) {
-        return standard_damage[loc];
-    }
-
-    @Override
-    public void resetStandardDamage() {
-        for(int i = 0; i < locations(); i++) {
-            standard_damage[i] = 0;
-        }
-    }
-
-    @Override
-    public void addStandardDamage(int damage, HitData hit) {
-        standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
-    }
-
+    
     //broadside weapon arcs
     @Override
     public int getWeaponArc(int wn) {

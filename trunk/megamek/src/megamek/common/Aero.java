@@ -124,9 +124,7 @@ public class Aero extends Entity {
         { 0, 0, 0, 0, 0 };
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
-    // need to set up standard damage here
-    private int[] standard_damage =
-        { 0, 0, 0, 0, 0 };
+    
     // ignored crew hit for harjel
     private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
@@ -202,6 +200,7 @@ public class Aero extends Entity {
     private int eccmRoll = 0;
 
     public Aero() {
+        super();
         // need to set altitude to something different than entity
         altitude = 5;
     }
@@ -214,7 +213,7 @@ public class Aero extends Entity {
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
-        if (null != game) {
+        if (null != game && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
@@ -2848,21 +2847,7 @@ public class Aero extends Entity {
         }
         return side;
     }
-
-    public int getStandardDamage(int loc) {
-        return standard_damage[loc];
-    }
-
-    public void resetStandardDamage() {
-        for (int i = 0; i < locations(); i++) {
-            standard_damage[i] = 0;
-        }
-    }
-
-    public void addStandardDamage(int damage, HitData hit) {
-        standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
-    }
-
+    
     public int getMaxEngineHits() {
         return 3;
     }
@@ -3044,31 +3029,6 @@ public class Aero extends Entity {
 
         }
 
-    }
-
-    @Override
-    public boolean hasModularArmor() {
-
-        for (Mounted mount : this.getEquipment()) {
-            if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean hasModularArmor(int loc) {
-
-        for (Mounted mount : this.getEquipment()) {
-            if ((mount.getLocation() == loc) && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /*
@@ -3588,5 +3548,13 @@ public class Aero extends Entity {
         }
 
         return null;
+    }
+    
+    @Override
+    public int getBattleForceArmorPoints() {
+        if (this.isCapitalScale()) {
+            return (int) Math.round(this.getCapArmor() /3.0);
+        }
+        return super.getBattleForceArmorPoints();
     }
 }

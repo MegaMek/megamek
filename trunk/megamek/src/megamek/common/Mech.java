@@ -16,7 +16,6 @@
 package megamek.common;
 
 import java.io.PrintWriter;
-import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +41,7 @@ import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 /**
  * You know what mechs are, silly.
  */
-public abstract class Mech extends Entity implements Serializable {
+public abstract class Mech extends Entity {
     /**
      *
      */
@@ -5718,32 +5717,6 @@ public abstract class Mech extends Entity implements Serializable {
     }
 
     @Override
-    public boolean hasModularArmor() {
-
-        for (Mounted mount : this.getEquipment()) {
-            if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean hasModularArmor(int loc) {
-
-        for (Mounted mount : this.getEquipment()) {
-            if ((mount.getLocation() == loc) && !mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
-    @Override
     public int getCoolantFailureAmount() {
         return heatSinkCoolantFailureFactor;
     }
@@ -6147,53 +6120,6 @@ public abstract class Mech extends Entity implements Serializable {
         return finalBFJump;
     }
 
-    @Override
-    public int getBattleForceArmorPoints() {
-        double armorMod = 1;
-        double armorPoints = 0;
-
-        switch (getArmorType(0)) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMod = .5;
-                break;
-            case EquipmentType.T_ARMOR_INDUSTRIAL:
-            case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
-                armorMod = getBARRating(0) / 10;
-                break;
-            case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                armorMod = 1.2;
-                break;
-            case EquipmentType.T_ARMOR_HARDENED:
-                armorMod = 1.5;
-                break;
-            case EquipmentType.T_ARMOR_REFLECTIVE:
-            case EquipmentType.T_ARMOR_REACTIVE:
-                armorMod = .75;
-                break;
-        }
-
-        armorPoints = Math.ceil(getTotalArmor() * armorMod);
-
-        if (this.hasModularArmor()) {
-
-            for (Mounted mount : this.getEquipment()) {
-                if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                    armorPoints += 10;
-                }
-            }
-
-        }
-
-        if (DEBUGBATTLEFORCE) {
-            battleForceDebugString.append("Armor Points: ");
-            battleForceDebugString.append(getTotalArmor());
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Armor Modifier: ");
-            battleForceDebugString.append(armorMod);
-            battleForceDebugString.append('\n');
-        }
-        return (int) Math.round(armorPoints / 30);
-    }
 
     @Override
     /*
@@ -6278,29 +6204,10 @@ public abstract class Mech extends Entity implements Serializable {
 
         battleForceStructure = battleForceStructureTable[battleForceEngineType - 1][((int) getWeight() / 5) - 2];
 
-        if (DEBUGBATTLEFORCE) {
-            battleForceDebugString.append("Engine Type: ");
-            battleForceDebugString.append(battleForceEngineType);
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Strucutre: ");
-            battleForceDebugString.append(battleForceStructure);
-            battleForceDebugString.append('\n');
-        }
-
         if (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE) {
             battleForceStructure = (int) Math.ceil(battleForceStructure * .5);
-            if (DEBUGBATTLEFORCE) {
-                battleForceDebugString.append("Composite Structure: ");
-                battleForceDebugString.append(battleForceStructure);
-                battleForceDebugString.append('\n');
-            }
         } else if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED) {
             battleForceStructure *= 2;
-            if (DEBUGBATTLEFORCE) {
-                battleForceDebugString.append("Reinforced Structure: ");
-                battleForceDebugString.append(battleForceStructure);
-                battleForceDebugString.append('\n');
-            }
         }
         return battleForceStructure;
 
@@ -6319,13 +6226,6 @@ public abstract class Mech extends Entity implements Serializable {
         TreeSet<String> weaponsUsed = new TreeSet<String>();
 
         ArrayList<Mounted> weaponsList = getWeaponList();
-
-        if (DEBUGBATTLEFORCE) {
-            battleForceDebugString.append('\n');
-            battleForceDebugString.append("Weapons Range: ");
-            battleForceDebugString.append(range);
-            battleForceDebugString.append('\n');
-        }
 
         for (int pos = 0; pos < weaponList.size(); pos++) {
             double damageModifier = 1;
@@ -6384,24 +6284,8 @@ public abstract class Mech extends Entity implements Serializable {
                     }
                 }
 
-                if (DEBUGBATTLEFORCE) {
-                    battleForceDebugString.append("Ammo Weapon ");
-                    battleForceDebugString.append(weapon.getName());
-                    battleForceDebugString.append(" ammo count: ");
-                    battleForceDebugString.append(ammoCount);
-                    battleForceDebugString.append('\n');
-                    battleForceDebugString.append("Weapon Count: ");
-                    battleForceDebugString.append(weaponCount);
-                    battleForceDebugString.append('\n');
-                }
-
                 if (ammoCount / weaponCount < 10) {
                     damageModifier *= .75;
-                    if (DEBUGBATTLEFORCE) {
-                        battleForceDebugString.append("Damage Modifier *.75: ");
-                        battleForceDebugString.append(damageModifier);
-                        battleForceDebugString.append('\n');
-                    }
                 }
             }
 
@@ -6412,20 +6296,9 @@ public abstract class Mech extends Entity implements Serializable {
                 baseDamage = weapon.getDamage() * weaponCount;
             }
 
-            if (DEBUGBATTLEFORCE) {
-                battleForceDebugString.append("Base Damage: ");
-                battleForceDebugString.append(baseDamage);
-                battleForceDebugString.append('\n');
-            }
-
             if (range == Entity.BATTLEFORCESHORTRANGE) {
                 int minRange = Math.min(6, Math.max(0, weapon.getMinimumRange()));
                 minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
-                if (DEBUGBATTLEFORCE && (minRange > 0)) {
-                    battleForceDebugString.append("Min range damage modifier: ");
-                    battleForceDebugString.append(minRangeDamageModifier);
-                    battleForceDebugString.append('\n');
-                }
             }
             int toHitMod = weapon.getToHitModifier() + 4;
 
@@ -6534,31 +6407,12 @@ public abstract class Mech extends Entity implements Serializable {
 
             damageModifier *= battleForceToHitModifier[toHitMod];
 
-            if (DEBUGBATTLEFORCE) {
-                battleForceDebugString.append("Base Damage: ");
-                battleForceDebugString.append(baseDamage);
-                battleForceDebugString.append('\n');
-                battleForceDebugString.append("To Hit Modifier Damage Modifier: ");
-                battleForceDebugString.append(damageModifier);
-                battleForceDebugString.append('\n');
-            }
-
             if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
                 damageModifier *= .1;
-                if (DEBUGBATTLEFORCE) {
-                    battleForceDebugString.append("One Shot Modifier Damage Modifier: ");
-                    battleForceDebugString.append(damageModifier);
-                    battleForceDebugString.append('\n');
-                }
             }
 
             if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE) && (weapon.getAmmoType() != AmmoType.T_AC_LBX) && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
                 damageModifier *= 1.10;
-                if (DEBUGBATTLEFORCE) {
-                    battleForceDebugString.append("TC Modifier Damage Modifier: ");
-                    battleForceDebugString.append(damageModifier);
-                    battleForceDebugString.append('\n');
-                }
             }
 
             if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_LAC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
@@ -6572,11 +6426,6 @@ public abstract class Mech extends Entity implements Serializable {
                         damage *= minRangeDamageModifier;
                     }
                     frontArcWeaponsTotalDamage += damage;
-                    if (DEBUGBATTLEFORCE) {
-                        battleForceDebugString.append("LRM/SRM/AC/MML Damage No Special Ability: ");
-                        battleForceDebugString.append(damage);
-                        battleForceDebugString.append('\n');
-                    }
                 }
             } else if (weapon.hasFlag(WeaponType.F_PPC)) {
                 Mounted mLinker = mount.getLinkedBy();
@@ -6585,18 +6434,8 @@ public abstract class Mech extends Entity implements Serializable {
                 }
                 if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
                     frontArcWeaponsTotalDamage += ((baseDamage + 5) * .5) * damageModifier;
-                    if (DEBUGBATTLEFORCE) {
-                        battleForceDebugString.append("PPC with Cap Damage: ");
-                        battleForceDebugString.append(((baseDamage + 5) * .5) * damageModifier);
-                        battleForceDebugString.append('\n');
-                    }
                 } else {
                     frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-                    if (DEBUGBATTLEFORCE) {
-                        battleForceDebugString.append("PPC Damage: ");
-                        battleForceDebugString.append(baseDamage * damageModifier);
-                        battleForceDebugString.append('\n');
-                    }
                 }
             } else if (weapon.getAmmoType() == AmmoType.T_MML) {
                 double ammoDamage = 1;
@@ -6629,52 +6468,20 @@ public abstract class Mech extends Entity implements Serializable {
                 if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis && (damage >= 10)) || (!ignoreSpecialAbility && hasArtemis)) {
 
                     frontArcWeaponsTotalDamage += damage * ammoDamage;
-                    if (DEBUGBATTLEFORCE) {
-                        battleForceDebugString.append("MML Damage: ");
-                        battleForceDebugString.append(baseDamage * ammoDamage * damageModifier);
-                        battleForceDebugString.append('\n');
-                    }
                 }
             } else {
                 if (range == Entity.BATTLEFORCESHORTRANGE) {
                     baseDamage *= minRangeDamageModifier;
                 }
                 frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-                if (DEBUGBATTLEFORCE) {
-                    battleForceDebugString.append(weapon.getName());
-                    battleForceDebugString.append(" Damage: ");
-                    battleForceDebugString.append(baseDamage * damageModifier);
-                    battleForceDebugString.append('\n');
-                }
             }
         }
 
         totalDamage = Math.max(frontArcWeaponsTotalDamage, rearArcWeaponsTotalDamage);
-        if (DEBUGBATTLEFORCE) {
-            battleForceDebugString.append("Total Damage: ");
-            battleForceDebugString.append(totalDamage);
-            battleForceDebugString.append('\n');
-        }
 
         totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
 
         if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
-            if (DEBUGBATTLEFORCE) {
-                battleForceDebugString.append("Total Heat -4: ");
-                battleForceDebugString.append(totalHeat);
-                battleForceDebugString.append('\n');
-                battleForceDebugString.append("Total Damage: ");
-                battleForceDebugString.append(totalDamage);
-                battleForceDebugString.append('\n');
-                battleForceDebugString.append(totalDamage);
-                battleForceDebugString.append(" * ");
-                battleForceDebugString.append(getHeatCapacity());
-                battleForceDebugString.append(" / ");
-                battleForceDebugString.append(totalHeat);
-                battleForceDebugString.append(" = ");
-                battleForceDebugString.append((totalDamage * getHeatCapacity()) / totalHeat);
-                battleForceDebugString.append('\n');
-            }
             totalDamage = Math.ceil((totalDamage * getHeatCapacity()) / totalHeat);
         }
 
@@ -6690,9 +6497,6 @@ public abstract class Mech extends Entity implements Serializable {
 
     @Override
     public String getBattleForceSpecialAbilites() {
-
-        boolean debugStatus = DEBUGBATTLEFORCE;
-        DEBUGBATTLEFORCE = false;
 
         StringBuffer results = new StringBuffer("");
 
@@ -6878,9 +6682,6 @@ public abstract class Mech extends Entity implements Serializable {
             results.append("LTAG, ");
         }
 
-        DEBUGBATTLEFORCE = true;
-
-        battleForceDebugString.append("\nLRM Ability:\n");
         int lrmDamage = getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
         lrmDamage += getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
 
@@ -6894,7 +6695,6 @@ public abstract class Mech extends Entity implements Serializable {
             results.append(String.format("LRM: %1$s/%2$s/%3$s, ", lrmShortDamage, lrmDamage, lrmLongDamage));
         }
 
-        DEBUGBATTLEFORCE = false;
         if (hasWorkingMisc(MiscType.F_CLUB, -1) || hasWorkingMisc(MiscType.F_HAND_WEAPON, -1)) {
             results.append("MEL, ");
         }
@@ -6950,10 +6750,6 @@ public abstract class Mech extends Entity implements Serializable {
         if (results.length() < 1) {
             return "None";
         }
-
-        DEBUGBATTLEFORCE = debugStatus;
-
-        printDebugToFile();
 
         results.setLength(results.length() - 2);
         return results.toString();

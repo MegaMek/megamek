@@ -15,7 +15,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Vector;
 
 /**
@@ -24,7 +23,7 @@ import java.util.Vector;
  * GunEmplacements will not simply be the weapon loadouts that can be attached to buildings.
  * They will not be targetable in game, but will be destroyed if their building hex is reduced.
  */
-public class GunEmplacement extends Tank implements Serializable {
+public class GunEmplacement extends Tank {
 
     /**
      *

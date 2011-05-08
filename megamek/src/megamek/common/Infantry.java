@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.Vector;
 
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -33,7 +32,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * PLEASE NOTE!!! My programming style is to put constants first in tests so the
  * compiler catches my "= for ==" errors.
  */
-public class Infantry extends Entity implements Serializable {
+public class Infantry extends Entity {
     // Private attributes and helper functions.
 
     /**
@@ -1172,8 +1171,12 @@ public class Infantry extends Entity implements Serializable {
                     setOriginalWalkMP(4);
                     break;
                 case INF_JUMP:
+                    //fall through to get the original Walk MP is deliberate
                     setOriginalJumpMP(3);
                 case INF_LEG:
+                    setOriginalWalkMP(1);
+                    break;
+                default:
                     setOriginalWalkMP(1);
             }
         }
@@ -1294,4 +1297,10 @@ public class Infantry extends Entity implements Serializable {
         return 1;
     }
 
+    @Override
+    public int getBattleForceArmorPoints() {
+        // Infantry armor points is # of men / 15
+        return (int) Math.ceil(getArmor(0)/15.0);
+    }
+    
 } // End class Infantry

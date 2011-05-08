@@ -191,10 +191,8 @@ public class Tank extends Entity {
     public int locations() {
         if (m_bHasNoDualTurret) {
             return m_bHasNoTurret ? 5 : 6;
-        } else {
-            return 7;
         }
-        // return 6;
+        return 7;
     }
 
     @Override
@@ -1503,9 +1501,8 @@ public class Tank extends Entity {
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (hasArmedMASC()) {
             return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
-        } else {
-            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
+        return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
 
@@ -1662,8 +1659,9 @@ public class Tank extends Entity {
                 if (weight <= 80) {
                     return 140;
                 }
+            default:
+                return 0;
         }
-        return 0;
     }
 
     @Override
@@ -1742,6 +1740,7 @@ public class Tank extends Entity {
             case VTOL:
                 multiplier += weight / 30.0;
                 break;
+            default:
         }
 
         if (hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
@@ -2143,31 +2142,6 @@ public class Tank extends Entity {
         }
     }
 
-    @Override
-    public boolean hasModularArmor() {
-
-        for (Mounted mount : this.getEquipment()) {
-            if (!mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean hasModularArmor(int loc) {
-
-        for (Mounted mount : this.getEquipment()) {
-            if ((mount.getLocation() == loc) && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -2387,8 +2361,8 @@ public class Tank extends Entity {
         }
         // different armor types take different amount of slots
         if (!hasPatchworkArmor()) {
-            int armorType = getArmorType(1);
-            switch (armorType) {
+            int type = getArmorType(1);
+            switch (type) {
                 case EquipmentType.T_ARMOR_FERRO_FIBROUS:
                     if (TechConstants.isClan(getArmorTechLevel(1))) {
                         usedSlots++;
@@ -2430,6 +2404,7 @@ public class Tank extends Entity {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH)), LOC_BODY);
             } catch (LocationFullException e) {
+                //this should never happen
             }
         }
     }

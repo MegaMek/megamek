@@ -438,6 +438,7 @@ public class BipedMech extends Mech {
         return getActiveVibrobladeHeat(location, false);
     }
 
+    @Override
     public int getActiveVibrobladeHeat(int location, boolean ignoreMode) {
         // Only arms have VibroBlades.
         if ((location != Mech.LOC_RARM) && (location != Mech.LOC_LARM)) {

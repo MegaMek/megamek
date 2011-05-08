@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +25,7 @@ import megamek.common.weapons.BayWeapon;
 /**
  * @author Jay Lawson
  */
-public class Dropship extends SmallCraft implements Serializable {
+public class Dropship extends SmallCraft {
 
     /**
      *
@@ -176,9 +175,8 @@ public class Dropship extends SmallCraft implements Serializable {
     private String getArcName(int loc) {
         if (loc < locations()) {
             return getLocationName(loc);
-        } else {
-            return getLocationName(loc - 3) + " (R)";
         }
+        return getLocationName(loc - 3) + " (R)";
     }
 
     @Override
@@ -1075,9 +1073,8 @@ public class Dropship extends SmallCraft implements Serializable {
             case Compute.ARC_NOSE:
                 if (isSpheroid()) {
                     return Compute.ARC_RIGHTSIDE_SPHERE;
-                } else {
-                    return Compute.ARC_RWING;
                 }
+                return Compute.ARC_RWING;
             case Compute.ARC_LWING:
                 return Compute.ARC_NOSE;
             case Compute.ARC_RWING:
@@ -1097,9 +1094,8 @@ public class Dropship extends SmallCraft implements Serializable {
             case Compute.ARC_AFT:
                 if (isSpheroid()) {
                     return Compute.ARC_LEFTSIDEA_SPHERE;
-                } else {
-                    return Compute.ARC_LWINGA;
                 }
+                return Compute.ARC_LWINGA;
             default:
                 return Integer.MIN_VALUE;
         }
@@ -1113,9 +1109,8 @@ public class Dropship extends SmallCraft implements Serializable {
             case Compute.ARC_NOSE:
                 if (isSpheroid()) {
                     return Compute.ARC_LEFTSIDE_SPHERE;
-                } else {
-                    return Compute.ARC_LWING;
                 }
+                return Compute.ARC_LWING;
             case Compute.ARC_LWING:
                 return Compute.ARC_LWINGA;
             case Compute.ARC_RWING:
@@ -1135,9 +1130,8 @@ public class Dropship extends SmallCraft implements Serializable {
             case Compute.ARC_AFT:
                 if (isSpheroid()) {
                     return Compute.ARC_RIGHTSIDEA_SPHERE;
-                } else {
-                    return Compute.ARC_RWINGA;
                 }
+                return Compute.ARC_RWINGA;
             default:
                 return Integer.MIN_VALUE;
         }

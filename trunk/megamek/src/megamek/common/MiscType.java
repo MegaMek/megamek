@@ -4999,7 +4999,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLDroneCarrierControlSystem() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Drone Carrier Control System";
         misc.setInternalName("CLDroneCarrierControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -5011,7 +5011,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISDroneCarrierControlSystem() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Drone Carrier Control System";
         misc.setInternalName("ISDroneCarrierControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -5023,7 +5023,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISDroneExtra() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Drone Extra Equipment";
         misc.setInternalName("ISDroneExtra");
         misc.tonnage = 0;
@@ -5035,7 +5035,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLDroneExtra() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
-        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
         misc.name = "Drone Extra Equipment";
         misc.setInternalName("CLDroneExtra");
         misc.tonnage = 0;

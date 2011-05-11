@@ -495,15 +495,16 @@ public class Engine implements Serializable {
             default:
                 return Math.max(3, movedMP);
         }
-
     }
 
-    public double getBVMultiplier() {
+    double getBVMultiplier() {
         int sideCrits = getSideTorsoCriticalSlots().length;
-        if (sideCrits >= 3) {
+        if (sideCrits >= 6) {
+            return 0.25; // IS XXL
+        } else if (sideCrits >= 3) {
             return 0.5; // IS XL, clan XXL
-        } else if (sideCrits > 0) {
-            return 0.75; // IS L, clan XL
+        } else if (sideCrits >= 2) {
+            return 0.75; // IS light, clan XL
         } else {
             return 1; // standard, compact, ice, fuel cell, fission
         }

@@ -13,6 +13,7 @@ v0.35.24-dev (SVN)
 + Drone Carrier Control System has wrong techlevel
 + New scenarios from Lucho
 + Fixed unit names in old scenarios
++ engine BV modifier errata
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

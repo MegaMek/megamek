@@ -10,11 +10,11 @@ Factions=FalconsClaws,WotanTMM
 Location_FalconsClaws=N
 Location_WotanTMM=any
 # Falcon's Claws, Command Star: 
-Unit_FalconsClaws_1=Summoner M,Star Colonel Nicolia Malthus,1,2,S,07,03
-Unit_FalconsClaws_2=Timber Wolf Prime,Mechwarrior Douglas,3,4,S,06,02
-Unit_FalconsClaws_3=Timber Wolf Prime,Mechwarrior Jala,3,4,S,08,02
-Unit_FalconsClaws_4=Mad Dog Prime,Mechwarrior Leopold,3,4,S,05,02
-Unit_FalconsClaws_5=Mad Dog Prime,Mechwarrior Erin,3,4,S,09,02
+Unit_FalconsClaws_1=Thor (Summoner) M,Star Colonel Nicolia Malthus,1,2,S,07,03
+Unit_FalconsClaws_2=Mad Cat (Timber Wolf) Prime,Mechwarrior Douglas,3,4,S,06,02
+Unit_FalconsClaws_3=Mad Cat (Timber Wolf) Prime,Mechwarrior Jala,3,4,S,08,02
+Unit_FalconsClaws_4=Vulture (Mad Dog) Prime,Mechwarrior Leopold,3,4,S,05,02
+Unit_FalconsClaws_5=Vulture (Mad Dog) Prime,Mechwarrior Erin,3,4,S,09,02
 # Wotan TMM, Command Lance: 
 Unit_WotanTMM_1=Mauler MAL-1R,Lt. General Ansel Cabrillo,4,3,N,10,34
 Unit_WotanTMM_2=Centurion CN9-A,Mechwarrior Wilma Stenson,4,4,N,08,34

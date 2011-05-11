@@ -497,7 +497,7 @@ public class Engine implements Serializable {
         }
     }
 
-    double getBVMultiplier() {
+    public double getBVMultiplier() {
         int sideCrits = getSideTorsoCriticalSlots().length;
         if (sideCrits >= 6) {
             return 0.25; // IS XXL

@@ -10,22 +10,22 @@ Factions=FalconsClaws,1stSomersetStrikers
 Location_FalconsClaws=S
 Location_1stSomersetStrikers=any
 # Command Star:
-Unit_FalconsClaws_1=Summoner M,Star Colonel Nicolai Malthus,1,2,N,08,33
-Unit_FalconsClaws_2=Timber Wolf Prime,Mechwarrior Ciro,4,5,N,07,34
+Unit_FalconsClaws_1=Thor (Summoner) M,Star Colonel Nicolai Malthus,1,2,N,08,33
+Unit_FalconsClaws_2=Mad Cat (Timber Wolf) Prime,Mechwarrior Ciro,4,5,N,07,34
 Unit_FalconsClaws_3=Hunchback IIC,Mechwarrior Ross,3,4,N,09,34
-Unit_FalconsClaws_4=Mad Dog Prime,Mechwarrior Uri,3,4,N,06,34
-Unit_FalconsClaws_5=Mad Dog Prime,Mechwarrior Elaine,3,4,N,10,34
+Unit_FalconsClaws_4=Vulture (Mad Dog) Prime,Mechwarrior Uri,3,4,N,06,34
+Unit_FalconsClaws_5=Vulture (Mad Dog) Prime,Mechwarrior Elaine,3,4,N,10,34
 # Elemental Star:
-Unit_FalconsClaws_6=Clan Elemental (Laser),Commander Natalya,4,4,N,08,32
-Unit_FalconsClaws_7=Clan Elemental (Laser),Point 2,4,4,N,06,33
-Unit_FalconsClaws_8=Clan Elemental (Flamer),Point 3,4,4,N,07,33
-Unit_FalconsClaws_9=Clan Elemental (MG),Point 4,4,4,N,09,33
-Unit_FalconsClaws_10=Clan Elemental (MG),Point 5,4,4,N,10,33
+Unit_FalconsClaws_6=Elemental Battle Armor [Laser],Commander Natalya,4,4,N,08,32
+Unit_FalconsClaws_7=Elemental Battle Armor [Laser],Point 2,4,4,N,06,33
+Unit_FalconsClaws_8=Elemental Battle Armor [Flamer],Point 3,4,4,N,07,33
+Unit_FalconsClaws_9=Elemental Battle Armor [MG],Point 4,4,4,N,09,33
+Unit_FalconsClaws_10=Elemental Battle Armor [MG],Point 5,4,4,N,10,33
 # Strikers Lance: 
-Unit_1stSomersetStrikers_1=Awesome AWS-9MA,Major Adam Steiner,1,1,N,17,08
+Unit_1stSomersetStrikers_1=Awesome AWS-9MA-UK,Major Adam Steiner,1,1,N,17,08
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,3,4,N,08,12
 Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,4,3,N,17,09
-Unit_1stSomersetStrikers_4=Sloth Assault, Franklin Sakamoto,5,5,N,17,10
+Unit_1stSomersetStrikers_4=Sloth Battle Armor, Franklin Sakamoto,5,5,N,17,10
 # Somerset Cadet Corps:
 Unit_1stSomersetStrikers_5=Axman AXM-2N,Commander Andrew Steiner,3,4,N,07,06
 Unit_1stSomersetStrikers_6=Foot Platoon (Laser),A1,5,5,N,07,12

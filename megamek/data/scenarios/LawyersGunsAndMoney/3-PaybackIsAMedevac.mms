@@ -44,7 +44,7 @@ Unit_LoneStar_2=Charger CGR-3K,MechWarrior Alex Popov,2,3
 Unit_LoneStar_3=Snake SNK-1V,MechWarrior Charles Taylor,3,4
 Unit_LoneStar_4=Vindicator VND-3L,MechWarrior Kelley McManus,3,3
 #Pursuit Lance, DeGroot's Deputies
-Unit_LoneStar_5=Scorpion SCP-10,Ranger-Sergeant John DeGroot,2,3
+Unit_LoneStar_5=Scorpion SCP-1O,Ranger-Sergeant John DeGroot,2,3
 Unit_LoneStar_6=Jenner JR7-K,MechWarrior Carolyn Hancock,3,4
 Unit_LoneStar_7=Raven RVN-3L,MechWarrior Sarah Kimbrough,3,4
 Unit_LoneStar_8=Spider SDR-7M,MechWarrior Daniel Ling,3,3

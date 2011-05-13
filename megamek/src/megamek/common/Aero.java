@@ -3557,4 +3557,9 @@ public class Aero extends Entity {
         }
         return super.getBattleForceArmorPoints();
     }
+    
+    @Override
+    public int getBattleForceStructurePoints() {
+        return (int)Math.ceil(this.getSI() *0.50);
+    }
 }

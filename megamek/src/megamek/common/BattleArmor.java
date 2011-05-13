@@ -1642,5 +1642,13 @@ public class BattleArmor extends Infantry {
     public boolean hasPatchworkArmor() {
         return false;
     }
+    
+    @Override
+    /*
+     * Each BA squad has 2 structure points
+     */
+    public int getBattleForceStructurePoints() {
+        return 2;
+    }
 
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -1283,4 +1283,13 @@ public class Protomech extends Entity {
     public void setEngine(Engine engine) {
         this.engine = engine;
     }
+    
+    @Override
+    /*
+     * Each ProtoMech has 1 Structure point
+     */
+    public int getBattleForceStructurePoints() {
+        return 1;
+    }
+
 }

@@ -1303,4 +1303,12 @@ public class Infantry extends Entity {
         return (int) Math.ceil(getArmor(0)/15.0);
     }
     
+    @Override
+    /*
+     * Each squad has 1 structure point
+     */
+    public int getBattleForceStructurePoints() {
+        return 1;
+    }
+
 } // End class Infantry

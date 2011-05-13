@@ -2503,7 +2503,19 @@ public class Tank extends Entity {
 
         // Return the result.
         return result;
-
     } // End public TargetRoll getStealthModifier( char )
+
+    @Override
+    /*
+     * returns the battle force structure points for a vehicle.
+     * Composite and Reinforced structures are Mech only, so we don't need to worry
+     */
+    public int getBattleForceStructurePoints() {
+        int struct = 0;
+        for (int i = 0; i < this.getLocationNames().length; i++) {
+            struct += this.getInternal(i);
+        }
+        return (int)Math.ceil(struct/10.0);
+    }
 
 }

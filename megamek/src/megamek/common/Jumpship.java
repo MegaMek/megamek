@@ -1144,4 +1144,10 @@ public class Jumpship extends Aero {
         }
         return 3;
     }
+    
+    @Override
+    public int getBattleForceStructurePoints() {
+        return 1;
+    }
+
 }

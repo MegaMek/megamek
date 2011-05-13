@@ -342,4 +342,10 @@ public class Warship extends Jumpship {
         }
         return 4;
     }
+
+    @Override
+    public int getBattleForceStructurePoints() {
+        return (int)Math.ceil(this.getSI() *0.66);
+    }
+
 }

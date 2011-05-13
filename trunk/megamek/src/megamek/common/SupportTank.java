@@ -162,4 +162,38 @@ public class SupportTank extends Tank{
         }
         return 5;
     }
+    
+    @Override
+    /*
+     * returns the battle force structure points for a mech
+     */
+    public int getBattleForceStructurePoints() {
+        switch (movementMode) {
+        case NAVAL:
+        case HYDROFOIL:
+        case SUBMARINE:
+            if (this.getWeight() <= 300) {
+                return 10;
+            }
+            if (this.getWeight() <= 500) {
+                return 15;
+            }
+            if (this.getWeight() <= 6000) {
+                return 20;
+            }
+            if (this.getWeight() <= 12000) {
+                return 25;
+            }
+            if (this.getWeight() <= 30000) {
+                return 30;
+            }
+            if (this.getWeight() <= 100000) {
+                return 35;
+            }
+        default:
+            //TODO add rail in here when ready
+            return super.getBattleForceStructurePoints();
+        }
+    }
+
 }

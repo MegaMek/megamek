@@ -15,9 +15,6 @@
 
 package megamek.common;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -28,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
@@ -45,11 +43,16 @@ import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
+import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
+import megamek.common.weapons.ISLAC5;
+import megamek.common.weapons.ISSnubNosePPC;
+import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
+import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
 
 /**
@@ -138,7 +141,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean _isEMId = false;
     protected boolean[] hardenedArmorDamaged;
     protected int[] armorType;
-    protected int[] armorTechLevel;;
+    protected int[] armorTechLevel;
 
 
     protected DisplacementAttackAction displacementAttack = null;
@@ -2510,9 +2513,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getNextWeapon(int start) {
         boolean past = false;
         for (Mounted mounted : getWeaponList()) {
-            // FIXME
-            // Logic must be inserted here to NOT always skip AMS once the
-            // MaxTech rule for firing AMSes is implemented.
+
             if (past && (mounted != null) && (mounted.isReady()) && (!mounted.getType().hasFlag(WeaponType.F_AMS)) && ((mounted.getLinked() == null) || (mounted.getLinked().getShotsLeft() > 0))) {
                 if (mounted.getType().hasFlag(WeaponType.F_TAG) && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
                     continue;
@@ -6926,9 +6927,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((0 == distance) && (OffBoardDirection.NONE != direction)) {
             throw new IllegalArgumentException("onboard unit was given an offboard direction");
         }
-        if ((0 != distance) && (OffBoardDirection.NONE == direction)) {
-            throw new IllegalArgumentException("offboard unit was not given an offboard direction");
-        }
         switch (direction) {
             case NORTH:
                 setFacing(3);
@@ -6942,6 +6940,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case EAST:
                 setFacing(4);
                 break;
+            case NONE:
+                throw new IllegalArgumentException("offboard unit was not given an offboard direction");
         }
         offBoardDistance = distance;
         offBoardDirection = direction;
@@ -7318,12 +7318,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         bvText = new StringBuffer();
         int cost = 0;
 
-        String startRow = "<TR>";
-        String endRow = "</TR>";
-
-        String startColumn = "<TD>";
-        String endColumn = "</TD>";
-
         NumberFormat commafy = NumberFormat.getInstance();
 
         for (Mounted mounted : getEquipment()) {
@@ -7454,13 +7448,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             double armorWeight = points / armorPerTon;
             armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
             return armorWeight;
-        } else {
-            double total = 0;
-            for (int loc = 0; loc < locations(); loc++) {
-                total += getArmorWeight(loc);
-            }
-            return total;
         }
+        double total = 0;
+        for (int loc = 0; loc < locations(); loc++) {
+            total += getArmorWeight(loc);
+        }
+        return total;
     }
 
     public boolean hasTAG() {
@@ -9340,8 +9333,298 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *            calculate special attacks into total damage if set to true
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType, boolean ignoreHeat, boolean ignoreSpecialAbilities) {
-        return 0;
+    public int getBattleForceStandardWeaponsDamage(int range, int ammoType, boolean ignoreHeat, boolean ignoreSpecialAbility) {
+        double totalDamage = 0;
+        double frontArcWeaponsTotalDamage = 0;
+        double rearArcWeaponsTotalDamage = 0;
+        double totalHeat = 0;
+        boolean hasArtemis = false;
+        boolean hasTC = hasTargComp();
+        double baseDamage = 0;
+
+        TreeSet<String> weaponsUsed = new TreeSet<String>();
+
+        ArrayList<Mounted> weaponsList = getWeaponList();
+
+        for (int pos = 0; pos < weaponList.size(); pos++) {
+            double damageModifier = 1;
+            double weaponCount = 1;
+            double minRangeDamageModifier = 1;
+            hasArtemis = false;
+            Mounted mount = weaponsList.get(pos);
+            if ((mount == null) || mount.isRearMounted() || weaponsUsed.contains(mount.getName())) {
+                continue;
+            }
+
+            WeaponType weapon = (WeaponType) mount.getType();
+
+            if ((weapon.getLongRange() < range) && !(weapon instanceof ISLAC5) && !(weapon instanceof ATMWeapon) && !(weapon instanceof MMLWeapon)) {
+                continue;
+            }
+
+            if ((ammoType != AmmoType.T_NA) && (weapon.getAmmoType() != ammoType)) {
+                continue;
+            }
+
+            if ((weapon.getAmmoType() == AmmoType.T_INARC) || (weapon.getAmmoType() == AmmoType.T_NARC)) {
+                continue;
+            }
+            
+            if (weapon.hasFlag(WeaponType.F_ARTILLERY)) {
+                //Each Artillery weapon is separately accounted for
+                continue;
+            }
+
+            // Check ammo weapons first since they had a hidden modifier
+            if ((weapon.getAmmoType() != AmmoType.T_NA) && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
+                weaponsUsed.add(weapon.getName());
+                for (int nextPos = pos + 1; nextPos < weaponList.size(); nextPos++) {
+                    Mounted nextWeapon = weaponList.get(nextPos);
+
+                    if ((nextWeapon == null) || nextWeapon.isRearMounted()) {
+                        continue;
+                    }
+
+                    if (nextWeapon.getType().equals(weapon)) {
+                        weaponCount++;
+                    }
+
+                }
+                int ammoCount = 0;
+                // Check if they have enough ammo for all the guns to last at
+                // least 10 rounds
+                for (Mounted ammo : getAmmo()) {
+
+                    AmmoType at = (AmmoType) ammo.getType();
+                    if ((at.getAmmoType() == weapon.getAmmoType()) && (at.getRackSize() == weapon.getRackSize())) {
+                        // RACs are always fired on 6 shot so that means you
+                        // need 6 times the ammo to avoid the ammo damage
+                        // modifier
+                        if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                            ammoCount += at.getShots() / 6;
+                        } else {
+                            ammoCount += at.getShots();
+                        }
+                    }
+                }
+
+                if (ammoCount / weaponCount < 10) {
+                    damageModifier *= .75;
+                }
+            }
+
+            if (weapon.hasFlag(WeaponType.F_MISSILE)) {
+                baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize());
+                baseDamage *= weaponCount;
+            } else {
+                baseDamage = weapon.getDamage() * weaponCount;
+            }
+
+            if (range == Entity.BATTLEFORCESHORTRANGE) {
+                int minRange = Math.min(6, Math.max(0, weapon.getMinimumRange()));
+                minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
+            }
+            int toHitMod = weapon.getToHitModifier() + 4;
+
+            switch (weapon.getAmmoType()) {
+                case AmmoType.T_AC_LBX:
+                case AmmoType.T_AC_LBX_THB:
+                    baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
+                    toHitMod--;
+                    break;
+                case AmmoType.T_MRM:
+                    Mounted mLinker = mount.getLinkedBy();
+                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))) {
+                        toHitMod--;
+                        baseDamage = Compute.calculateClusterHitTableAmount(6, weapon.getRackSize()) * weaponCount;
+                    }
+                    break;
+                case AmmoType.T_LRM:
+                    mLinker = mount.getLinkedBy();
+                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                        hasArtemis = true;
+                    } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * weaponCount;
+                        hasArtemis = true;
+                    }
+                    break;
+                case AmmoType.T_SRM:
+                    mLinker = mount.getLinkedBy();
+                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * 2 * weaponCount;
+                        hasArtemis = true;
+                    } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
+                        baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * 2 * weaponCount;
+                        hasArtemis = true;
+                    } else {
+                        baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * 2 * weaponCount;
+                    }
+                    break;
+                case AmmoType.T_ATM:
+                    minRangeDamageModifier = 1;
+                    switch (range) {
+                        case Entity.BATTLEFORCESHORTRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 3;
+                            break;
+                        case Entity.BATTLEFORCEMEDIUMRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 2;
+                            break;
+                        case Entity.BATTLEFORCELONGRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                            break;
+                    }
+                    break;
+                case AmmoType.T_AC_ULTRA:
+                case AmmoType.T_AC_ULTRA_THB:
+                    damageModifier *= 1.5;
+                    break;
+                case AmmoType.T_HAG:
+                    switch (range) {
+                        case Entity.BATTLEFORCESHORTRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                            break;
+                        case Entity.BATTLEFORCELONGRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(5, weapon.getRackSize()) * weaponCount;
+                            break;
+                        case Entity.BATTLEFORCEMEDIUMRANGE:
+                            baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
+                            break;
+                    }
+                    break;
+                case AmmoType.T_SRM_STREAK:
+                    baseDamage = weapon.getRackSize() * 2 * weaponCount;
+                    break;
+                case AmmoType.T_AC_ROTARY:
+                    baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount * 5;
+                    break;
+
+            }
+
+            if (weapon instanceof ISSnubNosePPC) {
+                switch (range) {
+                    case Entity.BATTLEFORCESHORTRANGE:
+                        baseDamage = 10;
+                        break;
+                    case Entity.BATTLEFORCELONGRANGE:
+                        baseDamage = 0;
+                        break;
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
+                        baseDamage = 5;
+                        break;
+                }
+            }
+
+            if (weapon instanceof VariableSpeedPulseLaserWeapon) {
+                switch (range) {
+                    case Entity.BATTLEFORCESHORTRANGE:
+                        toHitMod = 1;
+                        break;
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
+                        toHitMod = 2;
+                        break;
+                    case Entity.BATTLEFORCELONGRANGE:
+                        toHitMod = 3;
+                        break;
+                }
+            }
+
+            damageModifier *= battleForceToHitModifier[toHitMod];
+
+            //For those entities that has a capital weapon but 
+            if (weapon.isCapital() ) {
+                damageModifier *= 10;
+            }
+
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
+                damageModifier *= .1;
+            }
+
+            //Targetting Computer
+            if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE) && (weapon.getAmmoType() != AmmoType.T_AC_LBX) && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
+                damageModifier *= 1.10;
+            }
+
+            if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_LAC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
+                double damage = baseDamage * damageModifier;
+
+                // TODO if damage is greater than 10 then we do not add it to the
+                // standard damage it will be used in special weapons
+                if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
+
+                    if (range == Entity.BATTLEFORCESHORTRANGE) {
+                        damage *= minRangeDamageModifier;
+                    }
+                    frontArcWeaponsTotalDamage += damage;
+                }
+            } else if (weapon.hasFlag(WeaponType.F_PPC)) {
+                Mounted mLinker = mount.getLinkedBy();
+                if (range == Entity.BATTLEFORCESHORTRANGE) {
+                    baseDamage *= minRangeDamageModifier;
+                }
+                //PPC Capacitors?
+                if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
+                    frontArcWeaponsTotalDamage += ((baseDamage + 5) * .5) * damageModifier;
+                } else {
+                    frontArcWeaponsTotalDamage += baseDamage * damageModifier;
+                }
+            } else if (weapon.getAmmoType() == AmmoType.T_MML) {
+                double ammoDamage = 1;
+
+                Mounted mLinker = mount.getLinkedBy();
+                if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
+                    baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
+                    hasArtemis = true;
+                } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
+                    baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * weaponCount;
+                    hasArtemis = true;
+                }
+
+                switch (range) {
+                    case Entity.BATTLEFORCESHORTRANGE:
+                        ammoDamage = 2;
+                        break;
+                    case Entity.BATTLEFORCELONGRANGE:
+                        ammoDamage = 1;
+                        break;
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
+                        ammoDamage = 1;
+                        baseDamage = Math.round((baseDamage * 3) / 2);
+                        break;
+                }
+
+                double damage = baseDamage * damageModifier;
+                // if damage is greater than 10 then we do not add it to the
+                // standard damage it will be used in special weapons
+                if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis && (damage >= 10)) || (!ignoreSpecialAbility && hasArtemis)) {
+
+                    frontArcWeaponsTotalDamage += damage * ammoDamage;
+                }
+            } else {
+                if (range == Entity.BATTLEFORCESHORTRANGE) {
+                    baseDamage *= minRangeDamageModifier;
+                }
+                frontArcWeaponsTotalDamage += baseDamage * damageModifier;
+            }
+        }
+        
+
+        totalDamage = Math.max(frontArcWeaponsTotalDamage, rearArcWeaponsTotalDamage);
+
+        totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
+
+        if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
+            totalDamage = Math.ceil((totalDamage * getHeatCapacity()) / totalHeat);
+        }
+
+        if (ignoreSpecialAbility && (totalDamage < 10)) {
+            totalDamage = 0;
+        } else if ((ammoType != AmmoType.T_NA)) {
+            totalDamage = Math.round(totalDamage / 10);
+        } else {
+            totalDamage = Math.ceil(totalDamage / 10);
+        }
+        return (int) totalDamage;
     }
 
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
@@ -9474,7 +9757,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         private String mmlImageFilePath = "";
 
         public EntityFluff() {
-
+            // Constructor
         }
 
         public String getHistory() {

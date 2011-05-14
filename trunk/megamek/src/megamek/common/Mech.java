@@ -23,20 +23,14 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.ISLAC5;
 import megamek.common.weapons.ISMekTaser;
-import megamek.common.weapons.ISSnubNosePPC;
-import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.PPCWeapon;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -2823,17 +2817,17 @@ public abstract class Mech extends Entity {
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity, heat and modular
         // armor, but taking into account hit actuators
-        int walkMP = getWalkMP(false, true, true);
+        int bvWalk = getWalkMP(false, true, true);
         int runMP;
         if (hasTSM()) {
-            walkMP++;
+            bvWalk++;
         }
         if (hasMASCAndSuperCharger()) {
-            runMP = (int) Math.ceil(walkMP * 2.5);
+            runMP = (int) Math.ceil(bvWalk * 2.5);
         } else if (hasMASC()) {
-            runMP = walkMP * 2;
+            runMP = bvWalk * 2;
         } else {
-            runMP = (int) Math.ceil(walkMP * 1.5);
+            runMP = (int) Math.ceil(bvWalk * 1.5);
         }
         if (hasMPReducingHardenedArmor()) {
             runMP--;
@@ -2866,8 +2860,8 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
         // use UMU for JJ, unless we have more jump MP than UMU (then we have
         // mechanical jumpboosters)
-        int jumpMP = Math.max(getActiveUMUCount(), getJumpMP(false));
-        int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false).getValue();
+        int jumpCheck = Math.max(getActiveUMUCount(), getJumpMP(false));
+        int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true, false).getValue();
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -3810,7 +3804,6 @@ public abstract class Mech extends Entity {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        double weight = getWeight();
         double aesMultiplier = 1;
         if (hasFunctionalArmAES(Mech.LOC_LARM)) {
             aesMultiplier += 0.1;
@@ -3896,7 +3889,7 @@ public abstract class Mech extends Entity {
             bvText.append(endRow);
         }
 
-        double speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpCheck / 2)) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         bvText.append(startRow);
@@ -4077,7 +4070,6 @@ public abstract class Mech extends Entity {
         costs[i++] = muscCost * weight;// musculature
         costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = getActuatorCost();// arm and/or leg actuators
-        Engine engine = getEngine();
         costs[i++] = engine.getBaseCost() * engine.getRating() * weight / 75.0;
         if (getGyroType() == Mech.GYRO_XL) {
             costs[i++] = 750000 * (int) Math.ceil(getOriginalWalkMP() * weight / 100f) * 0.5;
@@ -4137,17 +4129,6 @@ public abstract class Mech extends Entity {
             { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators", "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System", "Armor", "Equipment", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
-
-        String startTable = "<TABLE>";
-        String endTable = "</TABLE>";
-
-        String startRow = "<TR>";
-        String endRow = "</TR>";
-
-        String startColumn = "<TD>";
-        String endColumn = "</TD>";
-
-        String nl = "<BR>";
 
         bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
         bvText.append(getChassis());
@@ -4991,20 +4972,20 @@ public abstract class Mech extends Entity {
      */
     public String getMtf() {
         StringBuffer sb = new StringBuffer();
-        String nl = "\r\n"; // DOS friendly
+        String newLine = "\r\n"; // DOS friendly
 
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD) && (getGyroType() == Mech.GYRO_STANDARD);
         boolean fullHead = hasFullHeadEject();
         if (standard && !fullHead) {
-            sb.append("Version:1.0").append(nl);
+            sb.append("Version:1.0").append(newLine);
         } else if (!fullHead) {
-            sb.append("Version:1.1").append(nl);
+            sb.append("Version:1.1").append(newLine);
         } else {
-            sb.append("Version:1.2").append(nl);
+            sb.append("Version:1.2").append(newLine);
         }
-        sb.append(chassis).append(nl);
-        sb.append(model).append(nl);
-        sb.append(nl);
+        sb.append(chassis).append(newLine);
+        sb.append(model).append(newLine);
+        sb.append(newLine);
 
         sb.append("Config:");
         if (this instanceof BipedMech) {
@@ -5017,7 +4998,7 @@ public abstract class Mech extends Entity {
             sb.append(" Omnimech");
         }
 
-        sb.append(nl);
+        sb.append(newLine);
         sb.append("TechBase:");
         if (isMixedTech()) {
             if (isClan()) {
@@ -5028,22 +5009,22 @@ public abstract class Mech extends Entity {
         } else {
             sb.append(TechConstants.getTechName(techLevel));
         }
-        sb.append(nl);
-        sb.append("Era:").append(year).append(nl);
+        sb.append(newLine);
+        sb.append("Era:").append(year).append(newLine);
         if ((source != null) && (source.trim().length() > 0)) {
-            sb.append("Source:").append(source).append(nl);
+            sb.append("Source:").append(source).append(newLine);
         }
         sb.append("Rules Level:").append(TechConstants.T_SIMPLE_LEVEL[techLevel]);
-        sb.append(nl);
-        sb.append(nl);
+        sb.append(newLine);
+        sb.append(newLine);
 
         Float tonnage = new Float(weight);
-        sb.append("Mass:").append(tonnage.intValue()).append(nl);
+        sb.append("Mass:").append(tonnage.intValue()).append(newLine);
         sb.append("Engine:").append(getEngine().getEngineName()).append(" Engine").append(!(getEngine().hasFlag(Engine.CLAN_ENGINE) && isMixedTech()) ? ("(IS)") : "");
-        sb.append(nl);
+        sb.append(newLine);
         sb.append("Structure:");
         sb.append(EquipmentType.getStructureTypeName(getStructureType()));
-        sb.append(nl);
+        sb.append(newLine);
 
         sb.append("Myomer:");
         if (hasTSM()) {
@@ -5053,23 +5034,23 @@ public abstract class Mech extends Entity {
         } else {
             sb.append("Standard");
         }
-        sb.append(nl);
+        sb.append(newLine);
 
         if (!standard) {
             sb.append("Cockpit:");
             sb.append(getCockpitTypeString());
-            sb.append(nl);
+            sb.append(newLine);
 
             sb.append("Gyro:");
             sb.append(getGyroTypeString());
-            sb.append(nl);
+            sb.append(newLine);
         }
         if (hasFullHeadEject()) {
             sb.append("Ejection:");
             sb.append(Mech.FULL_HEAD_EJECT_STRING);
-            sb.append(nl);
+            sb.append(newLine);
         }
-        sb.append(nl);
+        sb.append(newLine);
 
         sb.append("Heat Sinks:").append(heatSinks()).append(" ");
         if (hasLaserHeatSinks()) {
@@ -5079,17 +5060,17 @@ public abstract class Mech extends Entity {
         } else {
             sb.append("Single");
         }
-        sb.append(nl);
+        sb.append(newLine);
 
         if (isOmni()) {
             sb.append("Base Chassis Heat Sinks:");
             sb.append(getEngine().getBaseChassisHeatSinks());
-            sb.append(nl);
+            sb.append(newLine);
         }
 
-        sb.append("Walk MP:").append(walkMP).append(nl);
-        sb.append("Jump MP:").append(jumpMP).append(nl);
-        sb.append(nl);
+        sb.append("Walk MP:").append(walkMP).append(newLine);
+        sb.append("Jump MP:").append(jumpMP).append(newLine);
+        sb.append(newLine);
 
         if (hasPatchworkArmor()) {
             sb.append("Armor:").append(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
@@ -5097,40 +5078,40 @@ public abstract class Mech extends Entity {
             sb.append("Armor:").append(EquipmentType.getArmorTypeName(getArmorType(0)));
             sb.append("(" + TechConstants.getTechName(getArmorTechLevel(0)) + ")");
         }
-        sb.append(nl);
+        sb.append(newLine);
 
         for (int element : MtfFile.locationOrder) {
             sb.append(getLocationAbbr(element)).append(" Armor:");
             if (hasPatchworkArmor()) {
                 sb.append(EquipmentType.getArmorTypeName(getArmorType(element))).append('(').append(TechConstants.getTechName(getArmorTechLevel(element))).append("):");
             }
-            sb.append(getOArmor(element, false)).append(nl);
+            sb.append(getOArmor(element, false)).append(newLine);
         }
         for (int element : MtfFile.rearLocationOrder) {
             sb.append("RT").append(getLocationAbbr(element).charAt(0)).append(" Armor:");
-            sb.append(getOArmor(element, true)).append(nl);
+            sb.append(getOArmor(element, true)).append(newLine);
         }
-        sb.append(nl);
+        sb.append(newLine);
 
-        sb.append("Weapons:").append(weaponList.size()).append(nl);
+        sb.append("Weapons:").append(weaponList.size()).append(newLine);
         for (int i = 0; i < weaponList.size(); i++) {
             Mounted m = weaponList.get(i);
-            sb.append(m.getName()).append(", ").append(getLocationName(m.getLocation())).append(nl);
+            sb.append(m.getName()).append(", ").append(getLocationName(m.getLocation())).append(newLine);
         }
-        sb.append(nl);
+        sb.append(newLine);
 
         for (int l : MtfFile.locationOrder) {
             String locationName = getLocationName(l);
             sb.append(locationName + ":");
-            sb.append(nl);
+            sb.append(newLine);
             for (int y = 0; y < 12; y++) {
                 if (y < getNumberOfCriticals(l)) {
-                    sb.append(decodeCritical(getCritical(l, y))).append(nl);
+                    sb.append(decodeCritical(getCritical(l, y))).append(newLine);
                 } else {
-                    sb.append(MtfFile.EMPTY).append(nl);
+                    sb.append(MtfFile.EMPTY).append(newLine);
                 }
             }
-            sb.append(nl);
+            sb.append(newLine);
         }
 
         if (getFluff().getHistory().trim().length() > 0) {
@@ -6211,288 +6192,6 @@ public abstract class Mech extends Entity {
         }
         return battleForceStructure;
 
-    }
-
-    @Override
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType, boolean ignoreHeat, boolean ignoreSpecialAbility) {
-        double totalDamage = 0;
-        double frontArcWeaponsTotalDamage = 0;
-        double rearArcWeaponsTotalDamage = 0;
-        double totalHeat = 0;
-        boolean hasArtemis = false;
-        boolean hasTC = hasTargComp();
-        double baseDamage = 0;
-
-        TreeSet<String> weaponsUsed = new TreeSet<String>();
-
-        ArrayList<Mounted> weaponsList = getWeaponList();
-
-        for (int pos = 0; pos < weaponList.size(); pos++) {
-            double damageModifier = 1;
-            double weaponCount = 1;
-            double minRangeDamageModifier = 1;
-            hasArtemis = false;
-            Mounted mount = weaponsList.get(pos);
-            if ((mount == null) || mount.isRearMounted() || weaponsUsed.contains(mount.getName())) {
-                continue;
-            }
-
-            WeaponType weapon = (WeaponType) mount.getType();
-
-            if ((weapon.getLongRange() < range) && !(weapon instanceof ISLAC5) && !(weapon instanceof ATMWeapon) && !(weapon instanceof MMLWeapon)) {
-                continue;
-            }
-
-            if ((ammoType != AmmoType.T_NA) && (weapon.getAmmoType() != ammoType)) {
-                continue;
-            }
-
-            if ((weapon.getAmmoType() == AmmoType.T_INARC) || (weapon.getAmmoType() == AmmoType.T_NARC)) {
-                continue;
-            }
-
-            // Check ammo weapons first since they had a hidden modifier
-            if ((weapon.getAmmoType() != AmmoType.T_NA) && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponsUsed.add(weapon.getName());
-                for (int nextPos = pos + 1; nextPos < weaponList.size(); nextPos++) {
-                    Mounted nextWeapon = weaponList.get(nextPos);
-
-                    if ((nextWeapon == null) || nextWeapon.isRearMounted()) {
-                        continue;
-                    }
-
-                    if (nextWeapon.getType().equals(weapon)) {
-                        weaponCount++;
-                    }
-
-                }
-                int ammoCount = 0;
-                // Check if they have enough ammo for all the guns to last at
-                // least 10 rounds
-                for (Mounted ammo : getAmmo()) {
-
-                    AmmoType at = (AmmoType) ammo.getType();
-                    if ((at.getAmmoType() == weapon.getAmmoType()) && (at.getRackSize() == weapon.getRackSize())) {
-                        // RACs are always fired on 6 shot so that means you
-                        // need 6 times the ammo to avoid the ammo damage
-                        // modifier
-                        if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                            ammoCount += at.getShots() / 6;
-                        } else {
-                            ammoCount += at.getShots();
-                        }
-                    }
-                }
-
-                if (ammoCount / weaponCount < 10) {
-                    damageModifier *= .75;
-                }
-            }
-
-            if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-                baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize());
-                baseDamage *= weaponCount;
-            } else {
-                baseDamage = weapon.getDamage() * weaponCount;
-            }
-
-            if (range == Entity.BATTLEFORCESHORTRANGE) {
-                int minRange = Math.min(6, Math.max(0, weapon.getMinimumRange()));
-                minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
-            }
-            int toHitMod = weapon.getToHitModifier() + 4;
-
-            switch (weapon.getAmmoType()) {
-                case AmmoType.T_AC_LBX:
-                case AmmoType.T_AC_LBX_THB:
-                    baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
-                    toHitMod--;
-                    break;
-                case AmmoType.T_MRM:
-                    Mounted mLinker = mount.getLinkedBy();
-                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO))) {
-                        toHitMod--;
-                        baseDamage = Compute.calculateClusterHitTableAmount(6, weapon.getRackSize()) * weaponCount;
-                    }
-                    break;
-                case AmmoType.T_LRM:
-                    mLinker = mount.getLinkedBy();
-                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
-                        hasArtemis = true;
-                    } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * weaponCount;
-                        hasArtemis = true;
-                    }
-                    break;
-                case AmmoType.T_SRM:
-                    mLinker = mount.getLinkedBy();
-                    if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * 2 * weaponCount;
-                        hasArtemis = true;
-                    } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * 2 * weaponCount;
-                        hasArtemis = true;
-                    } else {
-                        baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * 2 * weaponCount;
-                    }
-                    break;
-                case AmmoType.T_ATM:
-                    minRangeDamageModifier = 1;
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 3;
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount * 2;
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
-                            break;
-                    }
-                    break;
-                case AmmoType.T_AC_ULTRA:
-                case AmmoType.T_AC_ULTRA_THB:
-                    damageModifier *= 1.5;
-                    break;
-                case AmmoType.T_HAG:
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            baseDamage = Compute.calculateClusterHitTableAmount(5, weapon.getRackSize()) * weaponCount;
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount;
-                            break;
-                    }
-                    break;
-                case AmmoType.T_SRM_STREAK:
-                    baseDamage = weapon.getRackSize() * 2 * weaponCount;
-                    break;
-                case AmmoType.T_AC_ROTARY:
-                    baseDamage = Compute.calculateClusterHitTableAmount(7, weapon.getRackSize()) * weaponCount * 5;
-                    break;
-
-            }
-
-            if (weapon instanceof ISSnubNosePPC) {
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        baseDamage = 10;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        baseDamage = 0;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        baseDamage = 5;
-                        break;
-                }
-            }
-
-            if (weapon instanceof VariableSpeedPulseLaserWeapon) {
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        toHitMod = 1;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        toHitMod = 2;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        toHitMod = 3;
-                        break;
-                }
-            }
-
-            damageModifier *= battleForceToHitModifier[toHitMod];
-
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                damageModifier *= .1;
-            }
-
-            if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE) && (weapon.getAmmoType() != AmmoType.T_AC_LBX) && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
-                damageModifier *= 1.10;
-            }
-
-            if ((weapon.getAmmoType() == AmmoType.T_LRM) || (weapon.getAmmoType() == AmmoType.T_AC) || (weapon.getAmmoType() == AmmoType.T_LAC) || (weapon.getAmmoType() == AmmoType.T_SRM)) {
-                double damage = baseDamage * damageModifier;
-
-                // if damage is greater than 10 then we do not add it to the
-                // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis) || (!ignoreSpecialAbility && hasArtemis)) {
-
-                    if (range == Entity.BATTLEFORCESHORTRANGE) {
-                        damage *= minRangeDamageModifier;
-                    }
-                    frontArcWeaponsTotalDamage += damage;
-                }
-            } else if (weapon.hasFlag(WeaponType.F_PPC)) {
-                Mounted mLinker = mount.getLinkedBy();
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_PPC_CAPACITOR))) {
-                    frontArcWeaponsTotalDamage += ((baseDamage + 5) * .5) * damageModifier;
-                } else {
-                    frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-                }
-            } else if (weapon.getAmmoType() == AmmoType.T_MML) {
-                double ammoDamage = 1;
-
-                Mounted mLinker = mount.getLinkedBy();
-                if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS))) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(9, weapon.getRackSize()) * weaponCount;
-                    hasArtemis = true;
-                } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType) && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V))) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(10, weapon.getRackSize()) * weaponCount;
-                    hasArtemis = true;
-                }
-
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        ammoDamage = 2;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        ammoDamage = 1;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        ammoDamage = 1;
-                        baseDamage = Math.round((baseDamage * 3) / 2);
-                        break;
-                }
-
-                double damage = baseDamage * damageModifier;
-                // if damage is greater than 10 then we do not add it to the
-                // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility) || (ignoreSpecialAbility && !hasArtemis && (damage >= 10)) || (!ignoreSpecialAbility && hasArtemis)) {
-
-                    frontArcWeaponsTotalDamage += damage * ammoDamage;
-                }
-            } else {
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-            }
-        }
-
-        totalDamage = Math.max(frontArcWeaponsTotalDamage, rearArcWeaponsTotalDamage);
-
-        totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
-
-        if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
-            totalDamage = Math.ceil((totalDamage * getHeatCapacity()) / totalHeat);
-        }
-
-        if (ignoreSpecialAbility && (totalDamage < 10)) {
-            totalDamage = 0;
-        } else if ((ammoType != AmmoType.T_NA)) {
-            totalDamage = Math.round(totalDamage / 10);
-        } else {
-            totalDamage = Math.ceil(totalDamage / 10);
-        }
-        return (int) totalDamage;
     }
 
     @Override

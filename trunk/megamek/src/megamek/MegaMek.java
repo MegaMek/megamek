@@ -188,7 +188,7 @@ public class MegaMek {
      * @return An that can start a GUI such as
      *         {@link megamek.client.ui.AWT.MegaMekGUI}.
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings("unchecked")
     private static IMegaMekGUI getGui(String guiName) {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         String guiClassName = MegaMek.getGUIClassName(guiName);
@@ -543,6 +543,8 @@ public class MegaMek {
                         w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceStructurePoints()));
                         w.write("\t");
+                        //Most Aero units and some ground units have multiple facings.
+                        //Also, each facing potentially has Capital, Capital Missile, and Sub Capital brackets as well.
                         w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
                         w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));

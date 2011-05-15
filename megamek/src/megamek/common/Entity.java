@@ -6920,12 +6920,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *             if a negative distance, an invalid direction is selected, or
      *             the distance does not match the direction.
      */
-    public void setOffBoard(int distance, OffBoardDirection direction) {
+   public void setOffBoard(int distance, OffBoardDirection direction) {
         if (distance < 0) {
             throw new IllegalArgumentException("negative number given for distance offboard");
         }
         if ((0 == distance) && (OffBoardDirection.NONE != direction)) {
             throw new IllegalArgumentException("onboard unit was given an offboard direction");
+        }
+        if ((0 != distance) && (OffBoardDirection.NONE == direction)) {
+            throw new IllegalArgumentException("offboard unit was not given an offboard direction");
         }
         switch (direction) {
             case NORTH:
@@ -6940,8 +6943,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case EAST:
                 setFacing(4);
                 break;
-            case NONE:
-                throw new IllegalArgumentException("offboard unit was not given an offboard direction");
         }
         offBoardDistance = distance;
         offBoardDirection = direction;

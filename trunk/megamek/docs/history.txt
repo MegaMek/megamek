@@ -15,6 +15,8 @@ v0.35.24-dev (SVN)
 + Fixed unit names in old scenarios
 + engine BV modifier errata
 + New camos
++ Primitive ASF construction
+
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

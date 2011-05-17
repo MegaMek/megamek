@@ -807,7 +807,6 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                         buff.append("Unable to load AES due to incompatible location\n");
                     }
-
                 }
 
                 if (mounted.getType().hasFlag(MiscType.F_HARJEL) && (mounted.getLocation() == Mech.LOC_HEAD)) {

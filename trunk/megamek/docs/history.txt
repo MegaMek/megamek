@@ -16,6 +16,7 @@ v0.35.24-dev (SVN)
 + engine BV modifier errata
 + New camos
 + Primitive ASF construction
++ proper UTF-8 coding for female first names
 
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)

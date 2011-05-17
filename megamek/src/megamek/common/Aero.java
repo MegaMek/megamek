@@ -59,10 +59,11 @@ public class Aero extends Entity {
     public static final int COCKPIT_STANDARD = 0;
     public static final int COCKPIT_SMALL = 1;
     public static final int COCKPIT_COMMAND_CONSOLE = 2;
+    public static final int COCKPIT_PRIMITIVE = 3;
     public static final String[] COCKPIT_STRING =
-        { "Standard Cockpit", "Small Cockpit", "Command Console" };
+        { "Standard Cockpit", "Small Cockpit", "Command Console", "Primitive Cockpit" };
     public static final String[] COCKPIT_SHORT_STRING =
-        { "Standard", "Small", "Command Console" };
+        { "Standard", "Small", "Command Console", "Primitive" };
 
     // critical hits
     public static final int CRIT_NONE = -1;
@@ -124,7 +125,7 @@ public class Aero extends Entity {
         { 0, 0, 0, 0, 0 };
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
-    
+
     // ignored crew hit for harjel
     private int ignoredCrewHits = 0;
     private int cockpitType = COCKPIT_STANDARD;
@@ -213,7 +214,7 @@ public class Aero extends Entity {
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
-        if (null != game && gravity) {
+        if ((null != game) && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
@@ -2426,6 +2427,14 @@ public class Aero extends Entity {
     }
 
     protected int calculateWalk() {
+        if (isPrimitive()) {
+            double rating = getEngine().getRating();
+            rating /= 1.2;
+            if (rating % 5 != 0) {
+                return (int) ((rating - rating % 5 + 5) / (int) weight) +2;
+            }
+            return (int) (rating / (int) weight) + 2;
+        }
         return (getEngine().getRating() / (int) weight) + 2;
     }
 
@@ -2847,7 +2856,7 @@ public class Aero extends Entity {
         }
         return side;
     }
-    
+
     public int getMaxEngineHits() {
         return 3;
     }
@@ -3549,17 +3558,26 @@ public class Aero extends Entity {
 
         return null;
     }
-    
+
     @Override
     public int getBattleForceArmorPoints() {
-        if (this.isCapitalScale()) {
-            return (int) Math.round(this.getCapArmor() /3.0);
+        if (isCapitalScale()) {
+            return (int) Math.round(getCapArmor() /3.0);
         }
         return super.getBattleForceArmorPoints();
     }
-    
+
+    /**
+     * Is this a primitive ASF?
+     *
+     * @return
+     */
+    public boolean isPrimitive() {
+        return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
+    }
+
     @Override
     public int getBattleForceStructurePoints() {
-        return (int)Math.ceil(this.getSI() *0.50);
+        return (int)Math.ceil(getSI() *0.50);
     }
 }

@@ -105,7 +105,19 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("SafeThrust")) {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
+
+        // set cockpit type if not default
+        if (dataFile.exists("cockpit_type")) {
+            a.setCockpitType(dataFile.getDataAsInt("cockpit_type")[0]);
+        }
+
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
+        if (a.isPrimitive()) {
+            engineRating *= 1.2;
+            if (engineRating % 5 != 0) {
+                engineRating  = engineRating + engineRating % 5;
+            }
+        }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         boolean patchworkArmor = false;
@@ -142,11 +154,6 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
         if (armor.length != 4) {
             throw new EntityLoadingException("Incorrect armor array length");
-        }
-
-        // set cockpit type if not default
-        if (dataFile.exists("cockpit_type")) {
-            a.setCockpitType(dataFile.getDataAsInt("cockpit_type")[0]);
         }
 
         if (dataFile.exists("source")) {

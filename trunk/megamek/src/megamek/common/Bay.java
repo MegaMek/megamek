@@ -344,5 +344,9 @@ public class Bay implements Transporter {
     public String toString() {
         return "bay:" + totalSpace + ":" + doors;
     }
+    
+    public double getCapacity() {
+    	return totalSpace;
+    }
 
 } // End package class TroopSpace implements Transporter

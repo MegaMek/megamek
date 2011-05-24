@@ -1905,6 +1905,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int velocity = 0;
             int altitude = 0;
             int offBoardDistance;
+            int externalId = entity.getCrew().getExternalId();
             boolean autoEject = chAutoEject.isSelected();
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());
@@ -2002,6 +2003,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.getCrew().setNickname(nick);
             entity.getCrew().setPortraitCategory(portraitDialog.getCategory());
             entity.getCrew().setPortraitFileName(portraitDialog.getFileName());
+            entity.getCrew().setExternalId(externalId);
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);

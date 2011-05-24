@@ -18,6 +18,7 @@ v0.35.24-dev (SVN)
 + Primitive ASF construction
 + proper UTF-8 coding for female first names
 + Bay#getCapacity method
++ Bug: pilot externalIds being lost when customizing unit
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

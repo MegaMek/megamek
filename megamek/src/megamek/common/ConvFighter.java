@@ -16,7 +16,6 @@
  */
 package megamek.common;
 
-
 /**
  * @author Jay Lawson
  */
@@ -60,4 +59,76 @@ public class ConvFighter extends Aero {
         return 1.1;
     }
     
+    @Override
+    public double getCost(boolean ignoreAmmo) {
+
+        double cost = 0;
+
+        // add in cockpit
+        double avionicsWeight  = Math.ceil(weight / 5) / 2;
+        cost += 4000 * avionicsWeight;
+        
+        // add VSTOL gear if applicable
+        if (isVSTOL()) {
+          double vstolWeight = Math.ceil(weight / 10) / 2;
+          cost += 5000 * vstolWeight;
+}
+
+        // Structural integrity
+        cost += 4000 * getSI();
+
+        // additional flight systems (attitude thruster and landing gear)
+        cost += 25000 + 10 * getWeight();
+
+        // engine
+        cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
+
+        // fuel tanks
+        cost += 200 * getFuel() / 160.0;
+
+        // armor
+        if (!hasPatchworkArmor()) {
+            cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
+        }
+        else for (int loc = 0; loc < locations(); loc++) {
+            cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+        }
+
+        // heat sinks
+        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
+        // 2000;
+        cost += sinkCost * getHeatSinks();
+
+        // weapons
+        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
+        
+        // power amplifiers, if any
+        cost += 20000 * getPowerAmplifierWeight();
+        
+        // omni multiplier (leaving this in for now even though conventional fighters
+        // don't make for legal omnis)
+        double omniMultiplier = 1;
+        if (isOmni()) {
+            omniMultiplier = 1.25f;
+        }
+
+        double weightMultiplier = 1 + (weight / 200.0);
+
+        return Math.round(cost * omniMultiplier * weightMultiplier);
+
+    }
+    
+    @Override
+    protected int calculateWalk() {
+        if (isPrimitive()) {
+            double rating = getEngine().getRating();
+            rating /= 1.2;
+            if (rating % 5 != 0) {
+                return (int) ((rating - rating % 5 + 5) / (int) weight);
+            }
+            return (int) (rating / (int) weight);
+        }
+        return (getEngine().getRating() / (int) weight);
+    }
+
 }

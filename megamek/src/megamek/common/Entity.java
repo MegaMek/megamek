@@ -9749,6 +9749,34 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+  /** Computes and returns the power amplifier weight for this entity, if any.
+   * Returns 0.0 if the entity needs no amplifiers due to engine type or not
+   * carrying any weapons requiring them.
+   *
+   * @return the power amplifier weight in tons.
+   */
+  public double getPowerAmplifierWeight() {
+    // If we're fusion- or fission-powered, we need no amplifiers to begin with.
+    if (engine.isFusion() || engine.getEngineType() == Engine.FISSION) {
+      return 0.0;
+    }
+    // Otherwise we need to iterate over our weapons, find out which of them
+    // require amplification, and keep a running weight total of those.
+    double total = 0.0;
+    for (Mounted m : getWeaponList()) {
+      WeaponType wt = (WeaponType) m.getType();
+      if ((wt.hasFlag(WeaponType.F_LASER) && (wt.getAmmoType() == AmmoType.T_NA))
+           || wt.hasFlag(WeaponType.F_PPC)
+           || wt.hasFlag(WeaponType.F_PLASMA)
+           || wt.hasFlag(WeaponType.F_PLASMA_MFUK)
+           || (wt.hasFlag(WeaponType.F_FLAMER) && (wt.getAmmoType() == AmmoType.T_NA))) {
+        total += wt.getTonnage(this);
+      }
+    }
+    // Finally use that total to compute and return the actual power amplifier weight.
+    return (double) Math.ceil(total / 5) / 2;
+  }
+
     public class EntityFluff implements Serializable {
         /**
          *

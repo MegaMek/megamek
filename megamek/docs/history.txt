@@ -19,6 +19,7 @@ v0.35.24-dev (SVN)
 + proper UTF-8 coding for female first names
 + Bay#getCapacity method
 + Bug: pilot externalIds being lost when customizing unit
++ Conventional fighter engine rating and cost fix
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

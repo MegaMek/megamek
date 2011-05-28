@@ -36,6 +36,7 @@ public class ISMekMortar2 extends MekMortarWeapon{
         this.addLookupName("ISMekMortar2");
         this.addLookupName("IS Mek Mortar 2");
         this.rackSize = 2;
+        this.minimumRange = 6;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;

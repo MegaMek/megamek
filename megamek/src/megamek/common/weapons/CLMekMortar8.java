@@ -36,6 +36,7 @@ public class CLMekMortar8 extends MekMortarWeapon{
         addLookupName("CLMekMortar8");
         addLookupName("Clan Mek Mortar 8");
         rackSize = 8;
+        minimumRange = 6;
         shortRange = 7;
         mediumRange = 14;
         longRange = 21;

@@ -119,25 +119,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcnCluster() {
-        return 2;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
-     */
-    @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
-        // targeting a hex for clearing
-        if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
-            int nDamage = nDamPerHit *calcHits(vPhaseReport);
-            int[] damages = { nDamage };
-            Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-            handleClearDamage(vPhaseReport, bldg, nDamage);
-            server.doExplosion(damages, false, target.getPosition(), true, vPhaseReport, null, calcnCluster());
-            return true;
-        }
-        return false;
+        return 1;
     }
 
     /*

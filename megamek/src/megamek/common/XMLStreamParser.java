@@ -166,6 +166,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String COMMANDB = "commandB";
     public static final String HITS = "hits";
     public static final String ADVS = "advantages";
+    public static final String EDGE = "edge";
     public static final String IMPLANTS = "implants";
     public static final String QUIRKS = "quirks";
     public static final String COMMANDER = "commander";
@@ -516,6 +517,7 @@ public class XMLStreamParser implements XMLResponder {
                 String commandB = (String) attr.get(COMMANDB);
                 String hits = (String) attr.get(HITS);
                 String advantages = (String) attr.get(ADVS);
+                String edge = (String) attr.get(EDGE);
                 String implants = (String) attr.get(IMPLANTS);
                 String autoeject = (String) attr.get(AUTOEJECT);
                 String ejected = (String) attr.get(EJECTED);
@@ -682,7 +684,25 @@ public class XMLStreamParser implements XMLResponder {
                         }
 
                     }
+                    if ((null != edge)
+                            && (edge.trim().length() > 0)) {
+                        StringTokenizer st = new StringTokenizer(edge,
+                                "::");
+                        while (st.hasMoreTokens()) {
+                            String edg = st.nextToken();
+                            String edgeName = Pilot.parseAdvantageName(edg);
+                            Object value = Pilot.parseAdvantageValue(edg);
 
+                            try {
+                                crew.getOptions().getOption(edgeName).setValue(
+                                        value);
+                            } catch (Exception e) {
+                                warning.append(
+                                        "Error restoring edge: ").append(
+                                        edg).append(".\n");
+                            }
+                        }
+                    }
                     if ((null != implants) && (implants.trim().length() > 0)) {
                         StringTokenizer st = new StringTokenizer(implants, "::");
                         while (st.hasMoreTokens()) {
@@ -696,7 +716,7 @@ public class XMLStreamParser implements XMLResponder {
                                         .setValue(value);
                             } catch (Exception e) {
                                 warning.append(
-                                        "Error restoring advantage: ").append(
+                                        "Error restoring implants: ").append(
                                         implant).append(".\n");
                             }
                         }

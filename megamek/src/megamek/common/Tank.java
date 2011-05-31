@@ -1002,15 +1002,15 @@ public class Tank extends Entity {
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        double targetingSystemBVMode = 1.0;
+        double targetingSystemBVMod = 1.0;
 
         if ((this instanceof SupportTank) || (this instanceof SupportVTOL)) {
             if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                targetingSystemBVMode = 1.0;
+                targetingSystemBVMod = 1.0;
             } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
-                targetingSystemBVMode = .9;
+                targetingSystemBVMod = .9;
             } else {
-                targetingSystemBVMode = .8;
+                targetingSystemBVMod = .8;
             }
         }
 
@@ -1073,9 +1073,9 @@ public class Tank extends Entity {
                 dBV *= 1.25;
                 bvText.append(" x 1.25 Direct Fire and TC");
             } else if ((this instanceof SupportTank) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
-                dBV *= targetingSystemBVMode;
+                dBV *= targetingSystemBVMod;
                 bvText.append(" x ");
-                bvText.append(targetingSystemBVMode);
+                bvText.append(targetingSystemBVMod);
                 bvText.append(" Targeting System");
             }
             bvText.append(endColumn);
@@ -1238,6 +1238,7 @@ public class Tank extends Entity {
                 ammoBV += ammo.get(key);
             }
         }
+        ammoBV *= targetingSystemBVMod;
 
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -2512,7 +2513,7 @@ public class Tank extends Entity {
      */
     public int getBattleForceStructurePoints() {
         int struct = 0;
-        for (int i = 0; i < this.getLocationNames().length; i++) {
+        for (int i = 0; i < getLocationNames().length; i++) {
             struct += this.getInternal(i);
         }
         return (int)Math.ceil(struct/10.0);

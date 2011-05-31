@@ -23,6 +23,7 @@ v0.35.24-dev (SVN)
 + Bugs 3017177, 3284415, 3308537: MekMortar hex clearing autohits/unit damage
 + MekMortar minimum ranges added as per TacOps
 + Bug: edge not saving and loading to/from mul file
++ More unit images (mainly TRO 3085)
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

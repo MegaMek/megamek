@@ -33,61 +33,61 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
-    
+
     // marks any weapon affected by a targetting computer
-    public static final BigInteger F_DIRECT_FIRE = BigInteger.valueOf(1).shiftLeft(0); 
+    public static final BigInteger F_DIRECT_FIRE = BigInteger.valueOf(1).shiftLeft(0);
     public static final BigInteger F_FLAMER = BigInteger.valueOf(1).shiftLeft(1);
     // Glaze armor
     public static final BigInteger F_LASER = BigInteger.valueOf(1).shiftLeft(2);
-    public static final BigInteger F_PPC = BigInteger.valueOf(1).shiftLeft(3); 
+    public static final BigInteger F_PPC = BigInteger.valueOf(1).shiftLeft(3);
     // for weapons that target Automatically (AMS)
     public static final BigInteger F_AUTO_TARGET = BigInteger.valueOf(1).shiftLeft(4);
     //can not start fires
     public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5);
     //must be only weapon attacking
-    public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7); 
+    public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7);
     //Weapons that can be split between locations
     public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(8);
     // MGL for rapid fire setup
-    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9); 
+    public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9);
     //Inferno weapon
     public static final BigInteger F_INFERNO = BigInteger.valueOf(1).shiftLeft(10);
     // Infantry caliber weapon, damage based on # of men shooting
     public static final BigInteger F_INFANTRY = BigInteger.valueOf(1).shiftLeft(11);
     // use missile rules for # of hits
-    public static final BigInteger F_MISSILE_HITS = BigInteger.valueOf(1).shiftLeft(13); 
-    public static final BigInteger F_ONESHOT = BigInteger.valueOf(1).shiftLeft(14); 
+    public static final BigInteger F_MISSILE_HITS = BigInteger.valueOf(1).shiftLeft(13);
+    public static final BigInteger F_ONESHOT = BigInteger.valueOf(1).shiftLeft(14);
     public static final BigInteger F_ARTILLERY = BigInteger.valueOf(1).shiftLeft(15);
-    
+
     //for Gunnery/Ballistic
     public static final BigInteger F_BALLISTIC = BigInteger.valueOf(1).shiftLeft(16);
     //for Gunnery/Energy
     public static final BigInteger F_ENERGY = BigInteger.valueOf(1).shiftLeft(17);
     //for Gunnery/Missile
     public static final BigInteger F_MISSILE = BigInteger.valueOf(1).shiftLeft(18);
- 
+
     //fires
     public static final BigInteger F_PLASMA = BigInteger.valueOf(1).shiftLeft(19);
     public static final BigInteger F_INCENDIARY_NEEDLES = BigInteger.valueOf(1).shiftLeft(20);
-    
+
     //War of 3039 prototypes
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(21);
     //Variable heat, heat is listed in dice, not points
-    public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22); 
-    public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23); 
+    public static final BigInteger F_HEATASDICE = BigInteger.valueOf(1).shiftLeft(22);
+    public static final BigInteger F_AMS = BigInteger.valueOf(1).shiftLeft(23);
 
     //may only target Infantry
-    public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25); 
+    public static final BigInteger F_INFANTRY_ONLY = BigInteger.valueOf(1).shiftLeft(25);
 
-    public static final BigInteger F_TAG = BigInteger.valueOf(1).shiftLeft(26); 
+    public static final BigInteger F_TAG = BigInteger.valueOf(1).shiftLeft(26);
     //C3 Master with Target Acquisition gear
-    public static final BigInteger F_C3M = BigInteger.valueOf(1).shiftLeft(27); 
-    
+    public static final BigInteger F_C3M = BigInteger.valueOf(1).shiftLeft(27);
+
     //Plasma Rifle
-    public static final BigInteger F_PLASMA_MFUK = BigInteger.valueOf(1).shiftLeft(28); 
+    public static final BigInteger F_PLASMA_MFUK = BigInteger.valueOf(1).shiftLeft(28);
     //fire Extinguisher
-    public static final BigInteger F_EXTINGUISHER = BigInteger.valueOf(1).shiftLeft(29); 
-    public static final BigInteger F_PULSE = BigInteger.valueOf(1).shiftLeft(30); 
+    public static final BigInteger F_EXTINGUISHER = BigInteger.valueOf(1).shiftLeft(29);
+    public static final BigInteger F_PULSE = BigInteger.valueOf(1).shiftLeft(30);
     // Full Damage vs. Infantry
     public static final BigInteger F_BURST_FIRE = BigInteger.valueOf(1).shiftLeft(31);
     //Machine Gun Array
@@ -97,7 +97,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_CRUISE_MISSILE = BigInteger.valueOf(1).shiftLeft(35);
     public static final BigInteger F_B_POD = BigInteger.valueOf(1).shiftLeft(36);
     public static final BigInteger F_TASER = BigInteger.valueOf(1).shiftLeft(37);
-    
+
     //Anti-ship missiles
     public static final BigInteger F_ANTI_SHIP = BigInteger.valueOf(1).shiftLeft(38);
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(39);
@@ -122,7 +122,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
 
     // C3 Master Booster System
-    public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56); 
+    public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
     public static final BigInteger F_VGL = BigInteger.valueOf(1).shiftLeft(57);
 
     // add maximum range for AT2
@@ -1378,16 +1378,4 @@ public class WeaponType extends EquipmentType {
         return super.getCost(entity, isArmored);
     }
 
-    @Override
-    public double getBV(Entity entity) {
-        double returnBV = bv;
-        if ((entity instanceof SupportTank) || (entity instanceof SupportVTOL)) {
-            if (!entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                returnBV *= 0.8;
-            } else if (entity.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL) && !entity.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                returnBV *= 0.9;
-            }
-        }
-        return returnBV;
-    }
 }

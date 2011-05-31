@@ -447,6 +447,10 @@ public class EntityListFile {
                 output.write("\" advantages=\"");
                 output.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));
             }
+            if (crew.countOptions(PilotOptions.EDGE_ADVANTAGES) > 0) {
+                output.write("\" edge=\"");
+                output.write(String.valueOf(crew.getOptionList("::", PilotOptions.EDGE_ADVANTAGES)));
+            }
             if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
                 output.write("\" implants=\"");
                 output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));

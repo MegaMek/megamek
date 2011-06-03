@@ -163,6 +163,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_MASH_EXTRA = BigInteger.valueOf(1).shiftLeft(117);
     public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
     public static final BigInteger F_SENSOR_DISPENSER = BigInteger.valueOf(1).shiftLeft(119);
+    public static final BigInteger F_DRONE_OPERATING_SYSTEM = BigInteger.valueOf(1).shiftLeft(120);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -498,6 +499,9 @@ public class MiscType extends EquipmentType {
             return weight;
         } else if (hasFlag(MiscType.F_JET_BOOSTER)) {
             return entity.getEngine().getWeightEngine(entity) / 10;
+        } else if (hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+            // 10% of the weight, plus 0.5 tons for the extra sensors
+            return entity.getWeight() / 10 + 0.5f;
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -526,6 +530,8 @@ public class MiscType extends EquipmentType {
                 cost = getTonnage(entity) * 100000;
             } else if (hasFlag(F_JET_BOOSTER)) {
                 cost = entity.getEngine().getRating() * 10000;
+            } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
+                cost = getTonnage(entity) * 10000 + 5000;
             }
         }
 
@@ -1000,6 +1006,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISVTOLJetBooster());
         EquipmentType.addType(MiscType.createCLVTOLJetBooster());
         EquipmentType.addType(MiscType.createRemoteSensorDispenser());
+        EquipmentType.addType(MiscType.createCLDroneOperatingSystem());
+        EquipmentType.addType(MiscType.createISDroneOperatingSystem());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -5041,6 +5049,32 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_DRONE_EXTRA).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createCLDroneOperatingSystem() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Drone (Remove) Operating System";
+        misc.setInternalName("CLDroneOperatingSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
+        misc.availRating = new int[]{RATING_E, RATING_F, RATING_F};
+        return misc;
+    }
+
+    public static MiscType createISDroneOperatingSystem() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Drone (Remote) Operating System";
+        misc.setInternalName("ISDroneOperatingSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.availRating = new int[]{RATING_E, RATING_F, RATING_F};
+        misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
         return misc;
     }
 

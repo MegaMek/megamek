@@ -904,6 +904,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISVehicularGrenadeLauncher());
         EquipmentType.addType(new CLVehicularGrenadeLauncher());
 
+        EquipmentType.addType(new ISC3RemoteSensorLauncher());
+
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());

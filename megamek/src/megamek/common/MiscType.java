@@ -1008,6 +1008,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRemoteSensorDispenser());
         EquipmentType.addType(MiscType.createCLDroneOperatingSystem());
         EquipmentType.addType(MiscType.createISDroneOperatingSystem());
+        EquipmentType.addType(MiscType.createISVehicularMineDispenser());
+        EquipmentType.addType(MiscType.createCLVehicularMineDispenser());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -2111,6 +2113,42 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(F_MINE).or(F_BA_EQUIPMENT);
         misc.bv = 4;
+
+        return misc;
+    }
+
+    public static MiscType createISVehicularMineDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Mine dispenser";
+        misc.setInternalName("ISVehicularMineDispenser");
+        misc.cost = 20000;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.techRating = RATING_B;
+        misc.availRating = new int[]{RATING_E, RATING_E, RATING_F};
+        // TODO: implement game rules for this, analog to the mine for BAs
+        misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 8; // because it includes 2 mines
+
+        return misc;
+    }
+
+    public static MiscType createCLVehicularMineDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Mine Dispenser";
+        misc.setInternalName("CLVehicularMineDispenser");
+        misc.cost = 20000;
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.techRating = RATING_B;
+        misc.availRating = new int[]{RATING_E, RATING_E, RATING_F};
+        // TODO: implement game rules for this, analog to the mine for BAs
+        misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.bv = 8; // because it includes 2 mines
 
         return misc;
     }

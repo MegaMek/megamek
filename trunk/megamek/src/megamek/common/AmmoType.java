@@ -119,7 +119,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_NLRM = 91;
     public static final int T_RIFLE = 92;
     public static final int T_VGL = 93;
-    public static final int NUM_TYPES = 94;
+    public static final int T_C3_REMOTE_SENSOR = 94;
+    public static final int NUM_TYPES = 95;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -686,11 +687,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISNailRivetGunAmmoHalf());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
         EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
-
-
         EquipmentType.addType(AmmoType.createCLRL10PrototypeAmmo());
         EquipmentType.addType(AmmoType.createCLRL15PrototypeAmmo());
         EquipmentType.addType(AmmoType.createCLRL20PrototypeAmmo());
+        EquipmentType.addType(AmmoType.createISC3RemoteSensorAmmo());
 
         // Unofficial Ammo
         base = AmmoType.createISAC15Ammo();
@@ -8245,6 +8245,23 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+        return ammo;
+    }
+
+    private static AmmoType createISC3RemoteSensorAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "C³ Remote Sensors";
+        ammo.shortName = "C³ Remote Sensor";
+        ammo.setInternalName("ISC3Sensors");
+        ammo.explosive = false;
+        ammo.damagePerShot = 0; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_C3_REMOTE_SENSOR;
+        ammo.shots = 4;
+        ammo.bv = 6;
+        ammo.cost = 100000;
+
         return ammo;
     }
 

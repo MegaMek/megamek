@@ -64,6 +64,6 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             return new PrototypeLBXHandler(toHit, waa, game, server);
         }
-        return super.getCorrectHandler(toHit, waa, game, server);
+        return new PrototypeACWeaponHandler(toHit, waa, game, server);
     }
 }

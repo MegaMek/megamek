@@ -11,10 +11,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-/*
- * Created on Sep 8, 2005
- *
- */
 package megamek.common.weapons;
 
 import java.util.Vector;
@@ -28,20 +24,20 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class PrototypeGaussHandler extends GRHandler {
-
+public class PrototypeACWeaponHandler extends ACWeaponHandler {
 
     /**
      *
      */
-    private static final long serialVersionUID = -156828547249911617L;
+    private static final long serialVersionUID = 1562727719699124106L;
 
     /**
      * @param t
      * @param w
      * @param g
+     * @param s
      */
-    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
 

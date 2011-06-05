@@ -1,12 +1,12 @@
 /**
  * * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -15,7 +15,7 @@
 
 /**
  * MiscType.java
- *
+ * 
  * Created on April 2, 2002, 12:15 PM
  */
 
@@ -2127,7 +2127,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.techRating = RATING_B;
-        misc.availRating = new int[]{RATING_E, RATING_E, RATING_F};
+        misc.availRating = new int[]
+            { RATING_E, RATING_E, RATING_F };
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
@@ -2145,7 +2146,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.techRating = RATING_B;
-        misc.availRating = new int[]{RATING_E, RATING_E, RATING_F};
+        misc.availRating = new int[]
+            { RATING_E, RATING_E, RATING_F };
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
@@ -3500,7 +3502,7 @@ public class MiscType extends EquipmentType {
 
     /**
      * Creates a claw MiscType Object
-     *
+     * 
      * @return MiscType
      */
     public static MiscType createISClaw() {
@@ -5094,12 +5096,13 @@ public class MiscType extends EquipmentType {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
-        misc.name = "Drone (Remove) Operating System";
+        misc.name = "Drone (Remote) Operating System";
         misc.setInternalName("CLDroneOperatingSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
-        misc.availRating = new int[]{RATING_E, RATING_F, RATING_F};
+        misc.availRating = new int[]
+            { RATING_E, RATING_F, RATING_F };
         return misc;
     }
 
@@ -5111,7 +5114,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISDroneOperatingSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.availRating = new int[]{RATING_E, RATING_F, RATING_F};
+        misc.availRating = new int[]
+            { RATING_E, RATING_F, RATING_F };
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
         return misc;
     }

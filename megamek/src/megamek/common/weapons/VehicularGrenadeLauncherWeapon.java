@@ -39,7 +39,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         damage = 0;
         ammoType = AmmoType.T_VGL;
         rackSize = 1;
-        minimumRange = 1;
+        minimumRange = 0;
         shortRange = 1;
         mediumRange = 1;
         longRange = 1;

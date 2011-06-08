@@ -143,6 +143,9 @@ public class Tank extends Entity {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
+        if(engineHit) {
+        	return 0;
+        }
         j = Math.max(0, j - getCargoMpReduction());
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
@@ -303,7 +306,6 @@ public class Tank extends Entity {
 
     public void immobilize() {
         m_bImmobileHit = true;
-        setOriginalWalkMP(0);
     }
 
     @Override
@@ -2141,6 +2143,23 @@ public class Tank extends Entity {
                 // unpowered
             }
         }
+    }
+    
+    public void engineFix() {
+    	engineHit = false;
+    	m_bImmobile = false;
+    	unlockTurret();
+    	for (Mounted m : getWeaponList()) {
+            WeaponType wtype = (WeaponType) m.getType();
+            if (wtype.hasFlag(WeaponType.F_ENERGY)) {
+                m.setBreached(false); // not destroyed, just
+                // unpowered
+            }
+        }
+    }
+    
+    public boolean isEngineHit() {
+    	return engineHit;
     }
 
     /*

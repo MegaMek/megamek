@@ -213,6 +213,12 @@ public class Aero extends Entity {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
+        //adjust for engine hits
+        int engineLoss = 2;
+        if(this instanceof SmallCraft || this instanceof Jumpship) {
+        	engineLoss = 1;
+        }
+        j = Math.max(0, j - (engineHits * engineLoss));
         j = Math.max(0, j - getCargoMpReduction());
         if ((null != game) && gravity) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);

@@ -434,8 +434,8 @@ public class VTOL extends Tank {
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
-        if (movementDamage > 0) {
-            prd.addModifier(movementDamage, "Steering Damage");
+        if (motivePenalty > 0) {
+            prd.addModifier(motivePenalty, "Steering Damage");
         }
         if (isDriverHit()) {
             prd.addModifier(2, "pilot injured");

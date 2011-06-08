@@ -42,7 +42,8 @@ public class Tank extends Entity {
     private boolean m_bImmobile = false;
     private boolean m_bImmobileHit = false;
     private int burningLocations = 0;
-    protected int movementDamage = 0;
+    protected int motivePenalty = 0;
+    protected int motiveDamage = 0;
     private boolean minorMovementDamage = false;
     private boolean moderateMovementDamage = false;
     private boolean heavyMovementDamage = false;
@@ -131,6 +132,22 @@ public class Tank extends Entity {
         m_bHasNoDualTurret = b;
     }
 
+    public int getMotiveDamage() {
+    	return motiveDamage;
+    }
+    
+    public void setMotiveDamage(int d) {
+    	motiveDamage = d;
+    }
+    
+    public int getMotivePenalty() {
+    	return motivePenalty;
+    }
+    
+    public void setMotivePenalty(int p) {
+    	motivePenalty = p;
+    }
+    
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
@@ -146,6 +163,7 @@ public class Tank extends Entity {
         if(engineHit) {
         	return 0;
         }
+        j = Math.max(0, j - motiveDamage);
         j = Math.max(0, j - getCargoMpReduction());
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
@@ -1418,8 +1436,8 @@ public class Tank extends Entity {
 
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
-        if (movementDamage > 0) {
-            prd.addModifier(movementDamage, "Steering Damage");
+        if (motivePenalty > 0) {
+            prd.addModifier(motivePenalty, "Steering Damage");
         }
         if (commanderHit) {
             prd.addModifier(1, "commander injured");
@@ -1826,35 +1844,36 @@ public class Tank extends Entity {
      *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
-     *            damage (2), or heavy damage (3)
+     *            damage (2), heavy damage (3), or immobilized (4)
      */
     public void addMovementDamage(int level) {
         switch (level) {
             case 1:
                 if (!minorMovementDamage) {
                     minorMovementDamage = true;
-                    movementDamage += level;
+                    motivePenalty += level;
                 }
                 break;
             case 2:
                 if (!moderateMovementDamage) {
                     moderateMovementDamage = true;
-                    movementDamage += level;
+                    motivePenalty += level;
                 }
-                int nMP = getOriginalWalkMP();
-                if (nMP > 0) {
-                    setOriginalWalkMP(nMP - 1);
-                }
+                motiveDamage++;
                 break;
             case 3:
                 if (!heavyMovementDamage) {
                     heavyMovementDamage = true;
-                    movementDamage += level;
+                    motivePenalty += level;
                 }
-                nMP = getOriginalWalkMP();
+                int nMP = getOriginalWalkMP() - motiveDamage;
                 if (nMP > 0) {
-                    setOriginalWalkMP(nMP / 2);
+                    motiveDamage = getOriginalWalkMP() - (int)Math.ceil(nMP / 2.0);
                 }
+                break;
+            case 4:
+            	motiveDamage = getOriginalWalkMP();
+            	immobilize();
         }
     }
 
@@ -2147,7 +2166,6 @@ public class Tank extends Entity {
     
     public void engineFix() {
     	engineHit = false;
-    	m_bImmobile = false;
     	unlockTurret();
     	for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
@@ -2220,11 +2238,12 @@ public class Tank extends Entity {
     }
 
     public boolean hasMovementDamage() {
-        return movementDamage > 0;
+        return motivePenalty > 0;
     }
 
     public void resetMovementDamage() {
-        movementDamage = 0;
+        motivePenalty = 0;
+        motiveDamage = 0;
         minorMovementDamage = false;
         moderateMovementDamage = false;
         heavyMovementDamage = false;

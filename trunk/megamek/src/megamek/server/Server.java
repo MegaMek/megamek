@@ -25582,7 +25582,7 @@ public class Server implements Runnable {
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
-            te.immobilize();
+            te.addMovementDamage(4);
         }
         if ((te.getOriginalWalkMP() == 0) || te.isImmobile()) {
             // Hovercraft reduced to 0MP over water sink

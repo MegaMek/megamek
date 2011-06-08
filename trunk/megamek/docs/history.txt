@@ -31,7 +31,9 @@ v0.35.24-dev (SVN)
 + Bug: No Name or lookup name or internal name for ISC3RemoteSensorLauncher
 + aero engine hits should affect walkmp in Aero#getWalkMP, not by setting the original walkmp
 + vee engine hits should affect walkmp in Tank#getWalkMP, not by setting the original walkmp
-+ some further adjustments to aero engine hits
++ some further adjustments to aero engine hits 
++ vee motive system damage should not reset the original walkmp
++ added motive damage to MUL input/output
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

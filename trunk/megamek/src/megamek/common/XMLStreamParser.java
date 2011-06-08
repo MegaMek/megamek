@@ -133,7 +133,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String LOCATION = "location";
     public static final String ARMOR = "armor";
     public static final String SLOT = "slot";
-    public static final String MOVEMENT = "movement";
+    public static final String MOVEMENT = "motive";
     public static final String TURRETLOCK = "turretlock";
     public static final String TURRET2LOCK = "turret2lock";
     public static final String SI = "structural";
@@ -197,6 +197,9 @@ public class XMLStreamParser implements XMLResponder {
     public static final String RIGHT_THRUST = "rightThrust";
     public static final String LIFE_SUPPORT = "lifeSupport";
     public static final String GEAR = "gear";
+    public static final String MDAMAGE = "damage";
+    public static final String MPENALTY = "penalty";
+
 
     /**
      * Special values recognized by this parser.
@@ -890,17 +893,25 @@ public class XMLStreamParser implements XMLResponder {
                 warning
                         .append("Movement crit record found outside a Tank.\n");
             }
-            String value = (String) attr.get(SPEED);
-            if (value.equals("immobile")) {
-                ((Tank) (entity)).immobilize();
-            } else {
-                try {
-                    int newSpeed = Integer.parseInt(value);
-                    entity.setOriginalWalkMP(newSpeed);
-                } catch (Exception e) {
-                    warning
-                            .append("Invalid speed value in movement tag.\n");
-                }
+            String value = (String) attr.get(MDAMAGE);
+            try {
+            	int motiveDamage = Integer.parseInt(value);
+            	((Tank)entity).setMotiveDamage(motiveDamage);
+            	if(motiveDamage >= ((Tank)entity).getOriginalWalkMP()) {
+            		((Tank)entity).immobilize();
+            		((Tank)entity).applyDamage();
+            	}
+            } catch (Exception e) {
+            	warning
+            	.append("Invalid motive damage value in movement tag.\n");
+            }
+            value = (String) attr.get(MPENALTY);
+            try {
+            	int motivePenalty = Integer.parseInt(value);
+            	((Tank)entity).setMotivePenalty(motivePenalty);
+            } catch (Exception e) {
+            	warning
+            	.append("Invalid motive penalty value in movement tag.\n");
             }
         } else if (name.equals(ARMOR)) {
 

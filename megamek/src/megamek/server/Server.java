@@ -18747,11 +18747,6 @@ public class Server implements Runnable {
                 boolean engineExploded = checkEngineExplosion(a, vDesc, 1);
                 if (((a.getEngineHits() + 1) < a.getMaxEngineHits()) && !engineExploded) {
                     a.setEngineHits(a.getEngineHits() + 1);
-                    if ((a instanceof SmallCraft) || (a instanceof Jumpship)) {
-                        a.setOriginalWalkMP(Math.max(0, a.getOriginalWalkMP() - 1));
-                    } else {
-                        a.setOriginalWalkMP(Math.max(0, a.getOriginalWalkMP() - 2));
-                    }
                 } else {
                     // this engine hit puts the ASF out of commission
                     vDesc.addAll(destroyEntity(a, "engine destruction", true, true));

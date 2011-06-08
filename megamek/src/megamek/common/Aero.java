@@ -214,6 +214,9 @@ public class Aero extends Entity {
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
         //adjust for engine hits
+        if(engineHits >= getMaxEngineHits()) {
+        	return 0;
+        }
         int engineLoss = 2;
         if(this instanceof SmallCraft || this instanceof Jumpship) {
         	engineLoss = 1;

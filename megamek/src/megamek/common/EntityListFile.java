@@ -560,12 +560,10 @@ public class EntityListFile {
     }
 
     private static String getMovementString(Tank e) {
-        String retVal = "      <movement speed=\"";
-        if (e.isImmobile()) {
-            retVal = retVal.concat("immobile");
-        } else {
-            retVal = retVal.concat(Integer.toString(e.getOriginalWalkMP()));
-        }
+        String retVal = "      <motive damage=\"";     
+        retVal = retVal.concat(Integer.toString(e.getMotiveDamage()));
+        retVal = retVal.concat( "\" penalty=\"");
+        retVal = retVal.concat(Integer.toString(e.getMotivePenalty()));
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }

@@ -142,6 +142,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String KF = "KF";
     public static final String SAIL = "sail";
     public static final String AEROCRIT = "acriticals";
+    public static final String TANKCRIT = "tcriticals";
 
 
     /**
@@ -1142,6 +1143,30 @@ public class XMLStreamParser implements XMLResponder {
 
                 if ( gear != null ) {
                     a.setGearHit(true);
+                }
+            }
+        } else if ( name.equals(TANKCRIT) ) {
+            if ( entity == null ) {
+                warning.append
+                    ( "Found tank crits outside of an Entity.\n" );
+            } else if (!(entity instanceof Tank)) {
+                warning.append
+                ( "Found tank crits outside of an Tank.\n" );
+            }
+            else
+            {
+                String sensors = (String) attr.get( SENSORS );
+                String engine = (String) attr.get( ENGINE );
+
+                Tank t = (Tank)entity;
+
+                if ( sensors != null ) {
+                    t.setSensorHits(Integer.parseInt( sensors ));
+                }
+
+                if ( engine != null && engine.equalsIgnoreCase("hit")) {
+                    t.engineHit();
+                    t.applyDamage();
                 }
             }
         } else if (name.equals(SLOT)) {

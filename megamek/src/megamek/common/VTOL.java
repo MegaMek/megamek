@@ -452,4 +452,37 @@ public class VTOL extends Tank {
 
         return prd;
     }
+    
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int j = getOriginalWalkMP();
+        if(engineHit) {
+        	return 0;
+        }
+        if(isLocationBad(LOC_ROTOR)) {
+        	return 0;
+        }
+        j = Math.max(0, j - motiveDamage);
+        j = Math.max(0, j - getCargoMpReduction());
+        if (null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if (weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            }
+        }
+
+        if (!ignoremodulararmor && hasModularArmor()) {
+            j--;
+        }
+        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+            j--;
+        }
+
+        if (gravity) {
+            j = applyGravityEffectsOnMP(j);
+        }
+
+        return j;
+
+    }
 }

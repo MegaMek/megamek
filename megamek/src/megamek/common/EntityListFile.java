@@ -484,6 +484,8 @@ public class EntityListFile {
                 if (tentity.isTurretLocked(Tank.LOC_TURRET)) {
                     output.write(EntityListFile.getTurretLockedString(tentity));
                 }
+                //crits
+                output.write(EntityListFile.getTankCritString(tentity));
             }
 
             //add a bunch of stuff for aeros
@@ -568,7 +570,7 @@ public class EntityListFile {
         return retVal;
     }
 
-//  Aero crits
+    //  Aero crits
     private static String getAeroCritString(Aero a) {
 
         String retVal = "      <acriticals";
@@ -617,6 +619,36 @@ public class EntityListFile {
             critVal = critVal.concat(" gear=\"none\"");
         }
 
+
+        if(!critVal.equals("")) {
+            //then add beginning and end
+            retVal = retVal.concat(critVal);
+            retVal = retVal.concat("/>\n");
+        } else {
+            return critVal;
+        }
+
+        return retVal;
+
+    }
+    
+//  Aero crits
+    private static String getTankCritString(Tank t) {
+
+        String retVal = "      <tcriticals";
+        String critVal = "";
+
+        //        crits
+        if(t.getSensorHits() > 0) {
+            critVal = critVal.concat(" sensors=\"");
+            critVal = critVal.concat(Integer.toString(t.getSensorHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(t.isEngineHit()) {
+            critVal = critVal.concat(" engine=\"");
+            critVal = critVal.concat("hit");
+            critVal = critVal.concat("\"");
+        }
 
         if(!critVal.equals("")) {
             //then add beginning and end

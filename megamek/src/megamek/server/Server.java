@@ -16988,7 +16988,7 @@ public class Server implements Runnable {
                         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)) {
                             // if rotor is destroyed, movement goes bleh.
                             // I think this will work?
-                            te.setOriginalWalkMP(0);
+                            ((VTOL)te).immobilize();
                             vDesc.addAll(crashVTOLorWiGE((VTOL) te));
 
                         }
@@ -18453,11 +18453,9 @@ public class Server implements Runnable {
                 r = new Report(6660);
                 r.subject = t.getId();
                 vDesc.add(r);
-                int mp = t.getOriginalWalkMP();
-                if (mp > 1) {
-                    t.setOriginalWalkMP(mp - 1);
-                } else if (mp == 1) {
-                    t.setOriginalWalkMP(0);
+                t.setMotiveDamage(t.getMotiveDamage() + 1);
+                if(t.getMotiveDamage() >= t.getOriginalWalkMP()) {
+                    t.immobilize();
                     vDesc.addAll(crashVTOLorWiGE(t));
                 }
                 break;
@@ -25510,11 +25508,8 @@ public class Server implements Runnable {
             break;
         case VTOL:
             // VTOL don't roll, auto -1 MP
-            int nMP = te.getOriginalWalkMP();
-            if (nMP > 0) {
-                te.setOriginalWalkMP(nMP - 1);
-            }
-            if (nMP > 1) {
+        	te.setMotiveDamage(te.getMotiveDamage()+1);
+            if (te.getOriginalWalkMP() > te.getMotiveDamage()) {        	
                 r = new Report(6660);
                 r.subject = te.getId();
                 vDesc.add(r);
@@ -25522,6 +25517,7 @@ public class Server implements Runnable {
                 r = new Report(6670);
                 r.subject = te.getId();
                 vDesc.add(r);
+                te.immobilize();
                 vDesc.addAll(crashVTOLorWiGE(te));
             }
             return vDesc;

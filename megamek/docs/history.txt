@@ -38,6 +38,8 @@ v0.35.24-dev (SVN)
 + added vehicle stabilizier hits to MUL input/output
 + Tank#clearStabiliserHit() method
 + spelle stabilizer correctly in MUL input/output
++ VTOL rotor hits should affect walkmp in VTOL#getWalkMP, not by setting the original walkmp
+
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

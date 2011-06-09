@@ -143,6 +143,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String SAIL = "sail";
     public static final String AEROCRIT = "acriticals";
     public static final String TANKCRIT = "tcriticals";
+    public static final String STABILIZIER = "stabilizier";
 
 
     /**
@@ -1002,6 +1003,29 @@ public class XMLStreamParser implements XMLResponder {
                     }
                 } // End have-required-fields
             } // End ready-for-armor
+        } else if (name.equals(STABILIZIER)) {
+
+            // Are we in the outside of an Entity?
+            if (entity == null) {
+                warning.append("Found stabilizier outside of an Entity.\n");
+            }
+            //are we in a tank?
+            else if(!(entity instanceof Tank)) {
+            	 warning.append("Found stabilizier outside of an Tank.\n");
+            }
+            // Are we in the outside of parsing an Entity's location?
+            else if (loc == Entity.LOC_NONE) {
+                warning
+                        .append("Found stabilizier while outside of a location.\n");
+            }
+            // Handle the location.
+            else {
+                // Look for the element's attributes.
+                String hit = (String) attr.get(IS_HIT);
+                if(null != hit) {
+                	((Tank)entity).setStabiliserHit(loc);
+                }
+            } // End ready-for-stabilizier
         } else if ( name.equals(SI) ) {
             if ( entity == null ) {
                 warning.append

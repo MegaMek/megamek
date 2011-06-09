@@ -35,6 +35,7 @@ v0.35.24-dev (SVN)
 + vee motive system damage should not reset the original walkmp
 + added motive damage to MUL input/output
 + added vehicle sensor and engine damage to MUL input/output
++ added vehicle stabilizier hits to MUL input/output
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

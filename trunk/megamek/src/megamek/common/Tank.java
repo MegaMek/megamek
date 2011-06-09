@@ -265,6 +265,10 @@ public class Tank extends Entity {
     public void setStabiliserHit(int loc) {
         stabiliserHits |= (1 << loc);
     }
+    
+    public void clearStabiliserHit(int loc) {
+        stabiliserHits &= ~(1 << loc);
+    }
 
     public int getSensorHits() {
         return sensorHits;

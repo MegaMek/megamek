@@ -259,6 +259,9 @@ public class EntityListFile {
             // Tanks don't have slots, and Protomechs only have
             // system slots, so we have to handle the ammo specially.
             if ((entity instanceof Tank) || (entity instanceof Protomech)) {
+            	if(entity instanceof Tank && ((Tank)entity).isStabiliserHit(loc)) {
+            		thisLoc.append("         <stabilizier isHit=\"true\"/>\n");
+            	}
                 for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
@@ -270,8 +273,6 @@ public class EntityListFile {
                 } // Check the next ammo.
 
                 // TODO: handle slotless equipment.
-
-                // TODO: handle tank crits.
 
             } // End is-tank-or-proto
 

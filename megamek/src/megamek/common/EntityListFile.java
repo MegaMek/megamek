@@ -260,7 +260,7 @@ public class EntityListFile {
             // system slots, so we have to handle the ammo specially.
             if ((entity instanceof Tank) || (entity instanceof Protomech)) {
             	if(entity instanceof Tank && ((Tank)entity).isStabiliserHit(loc)) {
-            		thisLoc.append("         <stabilizier isHit=\"true\"/>\n");
+            		thisLoc.append("         <stabilizer isHit=\"true\"/>\n");
             	}
                 for (Mounted mount : entity.getAmmo()) {
 

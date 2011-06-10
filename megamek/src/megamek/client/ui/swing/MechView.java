@@ -135,6 +135,9 @@ public class MechView {
                 sBasic.append("/") //$NON-NLS-1$
                 .append(entity.getJumpMP());
             }
+            if(entity.damagedJumpJets() > 0) {
+            	sBasic.append("<font color='red'> (" + entity.damagedJumpJets() + " damaged jump jets)</font>");
+            }
         }
         if (isBA && ((BattleArmor)entity).isBurdened()) {
             sBasic.append("<br><i>(").append(Messages.getString("MechView.Burdened")).append(")</i>"); //$NON-NLS-1$
@@ -142,11 +145,17 @@ public class MechView {
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
             .append(Messages.getString("MovementType."+entity.getMovementModeAsString())).append(")"); //$NON-NLS-1$
+            if(((Tank)entity).getMotiveDamage() > 0 || ((Tank)entity).getMotivePenalty() > 0) {
+            	sBasic.append("<font color='red'> (motive damage: -" + ((Tank)entity).getMotiveDamage() + "MP/-" + ((Tank)entity).getMotivePenalty() + " piloting)</font>");
+            }
         }
         sBasic.append("<br>"); //$NON-NLS-1$
         if (isMech || isVehicle|| (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
             sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
             sBasic.append(entity.getEngine().getShortEngineName());
+            if(entity.getEngineHits() > 0) {
+            	sBasic.append("<font color='red'> (" + entity.getEngineHits() + " hits)</font>");
+            }
             sBasic.append("<br>"); //$NON-NLS-1$
         }
         if (!entity.hasPatchworkArmor() && entity.hasBARArmor(1)) {
@@ -179,15 +188,19 @@ public class MechView {
                 sBasic.append(" [") //$NON-NLS-1$
                 .append(aMech.getHeatCapacity()).append("]"); //$NON-NLS-1$
             }
+            if(aMech.damagedHeatSinks() > 0) {
+            	sBasic.append("<font color='red'> (" + aMech.damagedHeatSinks() + " damaged)</font>");
+            }
             if (aMech.getCockpitType() != Mech.COCKPIT_STANDARD) {
                 sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(aMech.getCockpitTypeString());
             }
-            if (aMech.getGyroType() != Mech.GYRO_STANDARD) {
-                sBasic.append("<br>");
-                sBasic.append(Messages.getString("MechView.Gyro"));
-                sBasic.append(aMech.getGyroTypeString());
+            sBasic.append("<br>");
+            sBasic.append(Messages.getString("MechView.Gyro"));
+            sBasic.append(aMech.getGyroTypeString());
+            if(aMech.getGyroHits() > 0) {
+            	sBasic.append("<font color='red'> (" + aMech.getGyroHits() + " hits)</font>");
             }
             sBasic.append("<br>");
         }
@@ -280,7 +293,11 @@ public class MechView {
                 }
 
                 sIntArm.append("<tr>");
-                sIntArm.append("<td>").append(entity.getLocationName(loc)).append("</td>"); //$NON-NLS-1$
+                sIntArm.append("<td>").append(entity.getLocationName(loc)); //$NON-NLS-1$
+                if(isVehicle && ((Tank)entity).isTurretLocked(loc)) {
+                	sIntArm.append("<font color='red'> (LOCKED)</font>");
+                }
+                sIntArm.append("</td>");
                 sIntArm.append(renderArmor(entity.getInternal(loc), entity.getOInternal(loc))); //$NON-NLS-1$
                 if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
                     sIntArm.append(renderArmor(entity.getArmor(loc), entity.getOArmor(loc)));

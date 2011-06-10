@@ -516,6 +516,7 @@ public class Aero extends Entity {
         return ignoredCrewHits;
     }
 
+    @Override
     public int getEngineHits() {
         return engineHits;
     }

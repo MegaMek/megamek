@@ -10154,4 +10154,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return jumpJets;
     }
     
+    public abstract String getLocationDamage(int loc);
+    
 }

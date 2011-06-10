@@ -282,7 +282,7 @@ public class MechView {
 
         if(!(isInf && !isBA)) {
             sIntArm.append("<table cellspacing=0 cellpadding=1 border=0>");
-            sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Internal</th><th>&nbsp;&nbsp;Armor</th><th></th></tr>");
+            sIntArm.append("<tr><th></th><th>&nbsp;&nbsp;Internal</th><th>&nbsp;&nbsp;Armor</th><th></th><th></th></tr>");
             for (int loc = 0; loc < entity.locations(); loc++) {
 
                 // Skip empty sections.
@@ -294,9 +294,6 @@ public class MechView {
 
                 sIntArm.append("<tr>");
                 sIntArm.append("<td>").append(entity.getLocationName(loc)); //$NON-NLS-1$
-                if(isVehicle && ((Tank)entity).isTurretLocked(loc)) {
-                	sIntArm.append("<font color='red'> (LOCKED)</font>");
-                }
                 sIntArm.append("</td>");
                 sIntArm.append(renderArmor(entity.getInternal(loc), entity.getOInternal(loc))); //$NON-NLS-1$
                 if (IArmorState.ARMOR_NA != entity.getArmor(loc)) {
@@ -314,6 +311,7 @@ public class MechView {
                         sIntArm.append("</td>");
                     }
                 }
+                sIntArm.append("<td><font color='red'> " + entity.getLocationDamage(loc) + "</font></td>");
                 sIntArm.append("</tr>"); //$NON-NLS-1$
                 if (entity.hasRearArmor(loc)) {
                     sIntArm.append("<tr>"); //$NON-NLS-1$

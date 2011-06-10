@@ -2570,4 +2570,22 @@ public class Tank extends Entity {
     	}
     }
     
+    @Override
+	public String getLocationDamage(int loc) {
+    	String toReturn = "";
+    	boolean first = true;
+    	if(isTurretLocked(loc)) {
+    		toReturn += "Locked";
+    		first = false;
+    	}
+    	if(isStabiliserHit(loc)) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Stabilizer hit";
+    		first = false;
+    	}
+		return toReturn;
+	}
+    
 }

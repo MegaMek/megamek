@@ -1316,4 +1316,9 @@ public class Infantry extends Entity {
     	return 0;
     }
     
+    @Override
+	public String getLocationDamage(int loc) {
+		return "";
+	}
+    
 } // End class Infantry

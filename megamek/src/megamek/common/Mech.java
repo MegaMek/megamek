@@ -6489,4 +6489,94 @@ public abstract class Mech extends Entity {
     public int getGyroHits() {
     	return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
     }
+    
+    @Override
+	public String getLocationDamage(int loc) {
+    	String toReturn = "";
+    	boolean first = true;
+    	if(isLocationBad(loc)) {
+    		return toReturn;
+    	}
+    	if(hasSystem(SYSTEM_LIFE_SUPPORT, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Life Spt.";
+    		first = false;
+    	}
+    	if(hasSystem(SYSTEM_SENSORS, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Sensors";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_SHOULDER, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Shoulder";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_UPPER_ARM, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Upper Arm";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_LOWER_ARM, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Lower Arm";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_HAND, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Hand";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_HIP, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Hip";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_UPPER_LEG, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Upper Leg";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_LOWER_LEG, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Lower Leg";
+    		first = false;
+    	}
+    	if(hasSystem(ACTUATOR_FOOT, loc) 
+    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Foot";
+    		first = false;
+    	}
+		return toReturn;
+	}
 }

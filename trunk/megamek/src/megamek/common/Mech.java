@@ -1024,7 +1024,7 @@ public abstract class Mech extends Entity {
         }
         return Math.max(jump, 0);
     }
-
+    
     /**
      * Gives the bonus to Jump MP conferred by a mech partial wing.
      *
@@ -1342,6 +1342,23 @@ public abstract class Mech extends Entity {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
+            if (etype.hasFlag(MiscType.F_HEAT_SINK) || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                sinks++;
+            }
+        }
+        return sinks;
+    }
+    
+    /**
+     * Returns the number of destroyed heat sinks.
+     */
+    public int damagedHeatSinks() {
+        int sinks = 0;
+        for (Mounted mounted : getMisc()) {
+            EquipmentType etype = mounted.getType();
+            if(!mounted.isDestroyed()) {
+            	continue;
+            }
             if (etype.hasFlag(MiscType.F_HEAT_SINK) || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 sinks++;
             }
@@ -6460,4 +6477,16 @@ public abstract class Mech extends Entity {
      * End of Battle Force Conversion Methods
      */
 
+    @Override
+    public int getEngineHits() {
+    	int engineHits = 0;
+    	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+    	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+    	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+		return engineHits;
+    }
+    
+    public int getGyroHits() {
+    	return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+    }
 }

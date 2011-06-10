@@ -1311,4 +1311,9 @@ public class Infantry extends Entity {
         return 1;
     }
 
+    @Override
+    public int getEngineHits() {
+    	return 0;
+    }
+    
 } // End class Infantry

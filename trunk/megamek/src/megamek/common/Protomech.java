@@ -1291,5 +1291,10 @@ public class Protomech extends Entity {
     public int getBattleForceStructurePoints() {
         return 1;
     }
+    
+    @Override
+    public int getEngineHits() {
+    	return 0;
+    }
 
 }

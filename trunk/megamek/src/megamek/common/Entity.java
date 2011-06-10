@@ -10134,5 +10134,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return null;
     }
+    
+    public abstract int getEngineHits();
 
+    /**
+     * Returns the number of destroyed jump jets.
+     */
+    public int damagedJumpJets() {
+        int jumpJets = 0;
+        for (Mounted mounted : getMisc()) {
+            EquipmentType etype = mounted.getType();
+            if(!mounted.isDestroyed()) {
+            	continue;
+            }
+            if (etype.hasFlag(MiscType.F_JUMP_JET)) {
+            	jumpJets++;
+            }
+        }
+        return jumpJets;
+    }
+    
 }

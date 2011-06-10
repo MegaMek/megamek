@@ -2561,4 +2561,13 @@ public class Tank extends Entity {
         return (int)Math.ceil(struct/10.0);
     }
 
+    @Override
+    public int getEngineHits() {
+    	if(isEngineHit()) {
+    		return 1;
+    	} else {
+    		return 0;
+    	}
+    }
+    
 }

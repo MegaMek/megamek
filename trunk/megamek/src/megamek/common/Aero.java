@@ -3590,4 +3590,9 @@ public class Aero extends Entity {
     public int getBattleForceStructurePoints() {
         return (int)Math.ceil(getSI() *0.50);
     }
+
+	@Override
+	public String getLocationDamage(int loc) {
+		return "";
+	}
 }

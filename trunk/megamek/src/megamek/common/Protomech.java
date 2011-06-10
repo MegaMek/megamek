@@ -1296,5 +1296,10 @@ public class Protomech extends Entity {
     public int getEngineHits() {
     	return 0;
     }
+    
+    @Override
+	public String getLocationDamage(int loc) {
+		return "";
+	}
 
 }

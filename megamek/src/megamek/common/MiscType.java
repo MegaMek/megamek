@@ -195,6 +195,7 @@ public class MiscType extends EquipmentType {
     public static final long S_RETRACTABLE_BLADE = 1L << 23;
     public static final long S_CHAIN_WHIP = 1L << 24;
     public static final long S_SPOT_WELDER = 1L << 25; // TODO: add game rules
+    public static final long S_MINING_DRILL = 1L << 26; // Miniatures
 
     public static final String S_ACTIVE_SHIELD = "Active";
     public static final String S_PASSIVE_SHIELD = "Passive";
@@ -206,7 +207,6 @@ public class MiscType extends EquipmentType {
     // the above weapons are treated as club or hatchet attacks.
     // these are subtypes of F_HAND_WEAPON
     public static final long S_CLAW = 1L << 0; // Solaris 7
-    public static final long S_MINING_DRILL = 1L << 1; // Miniatures
     // Rulebook; TODO
 
     // Secondary flags for infantry tools
@@ -1010,6 +1010,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISDroneOperatingSystem());
         EquipmentType.addType(MiscType.createISVehicularMineDispenser());
         EquipmentType.addType(MiscType.createCLVehicularMineDispenser());
+        EquipmentType.addType(MiscType.createMiningDrill());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -2151,6 +2152,24 @@ public class MiscType extends EquipmentType {
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
+
+        return misc;
+    }
+
+    public static MiscType createMiningDrill() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Mining Drill";
+        misc.setInternalName("MinigDrill");
+        misc.cost = 10000;
+        misc.tonnage = 3.0f;
+        misc.criticals = 4;
+        misc.techRating = RATING_B;
+        misc.availRating = new int[]
+            { RATING_C, RATING_D, RATING_D };
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.bv = 6;
 
         return misc;
     }

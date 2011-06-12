@@ -204,6 +204,11 @@ public class MechView {
             }
             sBasic.append("<br>");
         }
+        
+        if(isAero && !((Aero)entity).getCritDamageString().equals("")) {
+        	sBasic.append("<br><br>System Damage: <font color='red'>" + ((Aero)entity).getCritDamageString() + "</font>");
+        }
+        
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {
             if( isSquadron ) {

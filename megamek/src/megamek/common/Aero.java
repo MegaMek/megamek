@@ -139,6 +139,7 @@ public class Aero extends Entity {
     private boolean spheroid = false;
 
     // deal with heat
+    private int heatSinksOriginal;
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
 
@@ -541,12 +542,24 @@ public class Aero extends Entity {
         gearHit = hit;
     }
 
+    public void setOHeatSinks(int hs) {
+        heatSinksOriginal = hs;
+    }
+
+    public int getOHeatSinks() {
+        return heatSinksOriginal;
+    }
+    
     public void setHeatSinks(int hs) {
         heatSinks = hs;
     }
 
     public int getHeatSinks() {
         return heatSinks;
+    }
+    
+    public int getHeatSinkHits() {
+    	return heatSinksOriginal - heatSinks;
     }
 
     public void setHeatType(int hstype) {

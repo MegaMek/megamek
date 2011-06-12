@@ -173,6 +173,9 @@ public class MechView {
                 .append( a.getHeatCapacity() )
                 .append( "]" ); //$NON-NLS-1$
             }
+            if(a.getHeatSinkHits() > 0) {
+            	sBasic.append("<font color='red'> (" + a.getHeatSinkHits() + " damaged)</font>");
+            }
             if (a.getCockpitType() != Mech.COCKPIT_STANDARD) {
                 sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));

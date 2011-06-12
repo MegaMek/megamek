@@ -137,7 +137,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String TURRETLOCK = "turretlock";
     public static final String TURRET2LOCK = "turret2lock";
     public static final String SI = "structural";
-    public static final String HEAT = "Heat";
+    public static final String HEAT = "heat";
     public static final String FUEL = "fuel";
     public static final String KF = "KF";
     public static final String SAIL = "sail";

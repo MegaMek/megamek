@@ -42,6 +42,7 @@ v0.35.24-dev (SVN)
 + improvements to damage reporting in MechView
 + getLocationDamage report for location-specific system damage (for MechView)
 + Added Mining Drill
++ aero critical damage displayed in MechView
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

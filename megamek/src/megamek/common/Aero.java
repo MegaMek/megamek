@@ -3595,4 +3595,38 @@ public class Aero extends Entity {
 	public String getLocationDamage(int loc) {
 		return "";
 	}
+	
+	public String getCritDamageString() {
+    	String toReturn = "";
+    	boolean first = true;
+    	if(getSensorHits() > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Sensors (" + getSensorHits() + ")";
+    		first = false;
+    	}
+    	if(getAvionicsHits() > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Avionics (" + getAvionicsHits() + ")";
+    		first = false;
+    	}
+    	if(getFCSHits() > 0) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "FCS (" + getFCSHits() + ")";
+    		first = false;
+    	}
+    	if(isGearHit()) {
+    		if(!first) {
+    			toReturn +=", ";
+    		}
+    		toReturn += "Landing Gear";
+    		first = false;
+    	}
+		return toReturn;
+	}
 }

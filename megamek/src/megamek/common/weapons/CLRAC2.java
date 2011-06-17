@@ -41,15 +41,15 @@ public class CLRAC2 extends RACWeapon {
         heat = 1;
         damage = 2;
         rackSize = 2;
-        minimumRange = 2;
-        shortRange = 9;
-        mediumRange = 18;
-        longRange = 27;
-        extremeRange = 36;
+        minimumRange = 0;
+        shortRange = 8;
+        mediumRange = 17;
+        longRange = 25;
+        extremeRange = 34;
         tonnage = 8.0f;
         criticals = 4;
         bv = 161;
-        cost = 240000;
+        cost = 175000;
         techRating = RATING_F;
     }
 }

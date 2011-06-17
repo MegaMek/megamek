@@ -551,11 +551,11 @@ public class MiscType extends EquipmentType {
             return criticals;
         }
         // check for known formulas
-        if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_SWORD) || hasSubType(S_MACE_THB) || hasSubType(S_CHAIN_WHIP))) {
+        if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_SWORD) || hasSubType(S_MACE_THB))) {
             return (int) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             return (int) Math.ceil(entity.getWeight() / 20.0);
-        } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
+        } else if (hasFlag(F_CLUB) && (hasSubType(S_MACE) || hasSubType(S_CHAIN_WHIP))) {
             return (int) Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             return 1 + (int) Math.ceil(entity.getWeight() / 20.0);

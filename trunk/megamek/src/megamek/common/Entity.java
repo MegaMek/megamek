@@ -3751,7 +3751,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         // check for Manei Domini implants
-        if ((this instanceof Infantry) && crew.getOptions().booleanOption("mm_eye_im") && crew.getOptions().booleanOption("boost_comm_implant")) {
+        if ((this instanceof Infantry) && null != crew && crew.getOptions().booleanOption("mm_eye_im") && crew.getOptions().booleanOption("boost_comm_implant")) {
             return true;
         }
         return false;

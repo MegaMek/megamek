@@ -44,7 +44,8 @@ v0.35.24-dev (SVN)
 + Added Mining Drill
 + aero critical damage displayed in MechView
 + better tracking of heat sinks on Aeros
-+ ModCannyon maps updated to make them more accessible
++ ModCannyon maps updated to make them more accessible 
++ Changed Crit Calculation for Chain Whip.
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

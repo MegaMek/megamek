@@ -38,9 +38,8 @@ public class CLSmallChemicalLaser extends CLChemicalLaserWeapon {
         setInternalName("CLSmallChemicalLaser");
         setInternalName("CLSmallChemLaser");
         heat = 1;
-        damage = DAMAGE_VARIABLE;
         rackSize = 3;
-        ammoType = AmmoType.T_CHEMICAL_LASER;
+        damage = 3;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
@@ -48,12 +47,12 @@ public class CLSmallChemicalLaser extends CLChemicalLaserWeapon {
         extremeRange = 4;
         waterShortRange = 1;
         waterMediumRange = 2;
-        waterLongRange = 3;
-        waterExtremeRange = 3;
+        waterLongRange = 2;
+        waterExtremeRange = 2;
         tonnage = 0.5f;
         criticals = 1;
         bv = 7;
-        cost = 100000;
+        cost = 10000;
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_LASER;

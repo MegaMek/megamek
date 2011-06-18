@@ -3836,7 +3836,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        weight *= aesMultiplier;
+        double weight = this.weight * aesMultiplier;
 
         if (aesMultiplier > 1) {
             bvText.append(startRow);
@@ -3846,7 +3846,7 @@ public abstract class Mech extends Entity {
             bvText.append(endColumn);
             bvText.append(startColumn);
 
-            bvText.append(weight);
+            bvText.append(this.weight);
             bvText.append(" x ");
             bvText.append(aesMultiplier);
             bvText.append(endColumn);
@@ -4077,7 +4077,7 @@ public abstract class Mech extends Entity {
         } else {
             cockpitCost = 200000;
         }
-        if (hasEiCockpit() && null != getCrew() & getCrew().getOptions().booleanOption("ei_implant")) {
+        if (hasEiCockpit() && (null != getCrew()) & getCrew().getOptions().booleanOption("ei_implant")) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;

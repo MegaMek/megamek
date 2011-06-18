@@ -49,6 +49,8 @@ v0.35.24-dev (SVN)
 + check for null pilot in Entity#hasc3i
 + Clan RAC costs (and RAC/2 range) brought in line with TacOps
 + Bug: AES messing with Mech weight
++ Bug 3321794: Medium chemical laser range too short
++ Chemical laser cost and underwater range fixes
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

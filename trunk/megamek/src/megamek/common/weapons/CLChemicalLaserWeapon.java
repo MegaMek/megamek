@@ -36,7 +36,6 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
 
     public CLChemicalLaserWeapon() {
         techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        damage = DAMAGE_VARIABLE;
         ammoType = AmmoType.T_CHEMICAL_LASER;
         minimumRange = WEAPON_NA;
         flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);

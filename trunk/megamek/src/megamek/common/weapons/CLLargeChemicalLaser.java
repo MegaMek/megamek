@@ -33,21 +33,22 @@ public class CLLargeChemicalLaser extends CLChemicalLaserWeapon {
         setInternalName("CLLargeChemicalLaser");
         setInternalName("CLLargeChemLaser");
         heat = 6;
+        damage = 8;
         rackSize = 1;
         shortRange = 5;
         mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
-        waterShortRange = 4;
-        waterMediumRange = 9;
-        waterLongRange = 14;
-        waterExtremeRange = 16;
+        waterShortRange = 3;
+        waterMediumRange = 6;
+        waterLongRange = 9;
+        waterExtremeRange = 12;
         tonnage = 5.0f;
         criticals = 2;
         bv = 99;
-        cost = 750000;
-        shortAV = 16;
-        medAV = 16;
+        cost = 75000;
+        shortAV = 8;
+        medAV = 8;
         maxRange = RANGE_MED;
     }
 }

@@ -116,6 +116,7 @@ v0.35.23 (2010-05-04, 17:50 UTC+2)
 + New volcano map theme. Text is a bit difficult to read, though
 + Mixed tech tech legality
 + Bug: defensive equipment counted twice for aero BV
++ Bug: torso mounted cockpit armor BV not accounting for armor type modifier
 
 v0.35.22 (2011-03-02, 00:55 UTC+1)
 + Bug 3057659: unit type confusion

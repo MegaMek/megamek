@@ -1024,7 +1024,7 @@ public abstract class Mech extends Entity {
         }
         return Math.max(jump, 0);
     }
-    
+
     /**
      * Gives the bonus to Jump MP conferred by a mech partial wing.
      *
@@ -1348,7 +1348,7 @@ public abstract class Mech extends Entity {
         }
         return sinks;
     }
-    
+
     /**
      * Returns the number of destroyed heat sinks.
      */
@@ -2495,14 +2495,14 @@ public abstract class Mech extends Entity {
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 double cockpitArmor = this.getArmor(Mech.LOC_CT) + this.getArmor(Mech.LOC_CT, true);
+                cockpitArmor *= armorMultiplier;
                 bvText.append("extra BV for torso mounted cockpit");
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append(cockpitArmor);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-                dbv += this.getArmor(Mech.LOC_CT);
-                dbv += this.getArmor(Mech.LOC_CT, true);
+                dbv += cockpitArmor;
             }
             int modularArmor = 0;
             for (Mounted mounted : getMisc()) {
@@ -6485,11 +6485,11 @@ public abstract class Mech extends Entity {
     	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
 		return engineHits;
     }
-    
+
     public int getGyroHits() {
     	return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
     }
-    
+
     @Override
 	public String getLocationDamage(int loc) {
     	String toReturn = "";
@@ -6497,80 +6497,80 @@ public abstract class Mech extends Entity {
     	if(isLocationBad(loc)) {
     		return toReturn;
     	}
-    	if(hasSystem(SYSTEM_LIFE_SUPPORT, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0) {
+    	if(hasSystem(SYSTEM_LIFE_SUPPORT, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Life Spt.";
     		first = false;
     	}
-    	if(hasSystem(SYSTEM_SENSORS, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0) {
+    	if(hasSystem(SYSTEM_SENSORS, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Sensors";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_SHOULDER, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0) {
+    	if(hasSystem(ACTUATOR_SHOULDER, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Shoulder";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_UPPER_ARM, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0) {
+    	if(hasSystem(ACTUATOR_UPPER_ARM, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Upper Arm";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_LOWER_ARM, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0) {
+    	if(hasSystem(ACTUATOR_LOWER_ARM, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Lower Arm";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_HAND, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0) {
+    	if(hasSystem(ACTUATOR_HAND, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Hand";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_HIP, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0) {
+    	if(hasSystem(ACTUATOR_HIP, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Hip";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_UPPER_LEG, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0) {
+    	if(hasSystem(ACTUATOR_UPPER_LEG, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Upper Leg";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_LOWER_LEG, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0) {
+    	if(hasSystem(ACTUATOR_LOWER_LEG, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}
     		toReturn += "Lower Leg";
     		first = false;
     	}
-    	if(hasSystem(ACTUATOR_FOOT, loc) 
-    			&& getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0) {
+    	if(hasSystem(ACTUATOR_FOOT, loc)
+    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0)) {
     		if(!first) {
     			toReturn +=", ";
     		}

@@ -339,7 +339,7 @@ public class XMLStreamParser implements XMLResponder {
         // Do nothing.
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public void recordElementStart(String name, Hashtable attr)
             throws ParseException {
 
@@ -1188,7 +1188,7 @@ public class XMLStreamParser implements XMLResponder {
                     t.setSensorHits(Integer.parseInt( sensors ));
                 }
 
-                if ( engine != null && engine.equalsIgnoreCase("hit")) {
+                if ( (engine != null) && engine.equalsIgnoreCase("hit")) {
                     t.engineHit();
                     t.applyDamage();
                 }

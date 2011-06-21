@@ -47,6 +47,7 @@ public class SharedUtility {
         return (String) doPSRCheck(md, true);
     }
 
+    @SuppressWarnings("unchecked")
     public static List<TargetRoll> getPSRList(MovePath md) {
         return (List<TargetRoll>) doPSRCheck(md, false);
     }

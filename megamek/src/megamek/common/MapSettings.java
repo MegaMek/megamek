@@ -1464,7 +1464,7 @@ public class MapSettings implements Serializable {
         output.write(CommonConstants.NL);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public void load(InputStream is) {
         ParsedXML root = null;
         try {
@@ -1495,7 +1495,7 @@ public class MapSettings implements Serializable {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     private void parseEnvironmentNode(ParsedXML node) {
         Enumeration values = node.elements();
         if (!(values.hasMoreElements())) {

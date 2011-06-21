@@ -40,10 +40,12 @@ public class TinyXMLTest implements XMLResponder {
         prefix = "  ";
         try {
             XMLParser xp = new XMLParser();
-            if (type.equals("xml"))
+            if (type.equals("xml")) {
                 xp.parseXML(this);
-            if (type.equals("dtd"))
+            }
+            if (type.equals("dtd")) {
                 xp.parseDTD(this);
+            }
         } catch (ParseException e) {
             System.out.println(e.toString());
         }
@@ -59,24 +61,30 @@ public class TinyXMLTest implements XMLResponder {
     public void recordNotationDeclaration(String name, String pubID,
             String sysID) throws ParseException {
         System.out.print(prefix + "!NOTATION: " + name);
-        if (pubID != null)
+        if (pubID != null) {
             System.out.print("  pubID = " + pubID);
-        if (sysID != null)
+        }
+        if (sysID != null) {
             System.out.print("  sysID = " + sysID);
+        }
         System.out.println("");
     }
 
     public void recordEntityDeclaration(String name, String value,
             String pubID, String sysID, String notation) throws ParseException {
         System.out.print(prefix + "!ENTITY: " + name);
-        if (value != null)
+        if (value != null) {
             System.out.print("  value = " + value);
-        if (pubID != null)
+        }
+        if (pubID != null) {
             System.out.print("  pubID = " + pubID);
-        if (sysID != null)
+        }
+        if (sysID != null) {
             System.out.print("  sysID = " + sysID);
-        if (notation != null)
+        }
+        if (notation != null) {
             System.out.print("  notation = " + notation);
+        }
         System.out.println("");
     }
 
@@ -99,10 +107,12 @@ public class TinyXMLTest implements XMLResponder {
     public void recordDoctypeDeclaration(String name, String pubID, String sysID)
             throws ParseException {
         System.out.print(prefix + "!DOCTYPE: " + name);
-        if (pubID != null)
+        if (pubID != null) {
             System.out.print("  pubID = " + pubID);
-        if (sysID != null)
+        }
+        if (sysID != null) {
             System.out.print("  sysID = " + sysID);
+        }
         System.out.println("");
         prefix = "";
     }
@@ -117,7 +127,7 @@ public class TinyXMLTest implements XMLResponder {
         System.out.println("Parsing finished without error");
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public void recordElementStart(String name, Hashtable attr)
             throws ParseException {
         System.out.println(prefix + "Element: " + name);

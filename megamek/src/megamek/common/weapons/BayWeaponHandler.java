@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -35,9 +35,9 @@ import megamek.server.Server;
 public class BayWeaponHandler extends WeaponHandler {
 
     /**
-     * 
+     *
      */
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -49,17 +49,17 @@ public class BayWeaponHandler extends WeaponHandler {
     public BayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
- 
+
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
     protected int calcAttackValue() {
         double av = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
-        
+
         for(int wId: weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
             if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
@@ -78,7 +78,7 @@ public class BayWeaponHandler extends WeaponHandler {
         }
         return (int)Math.ceil(av);
     }
-    
+
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
@@ -87,7 +87,7 @@ public class BayWeaponHandler extends WeaponHandler {
                     Mounted m = ae.getEquipment(wId);
                     ae.heatBuildup += m.getCurrentHeat();
                 }
-            } else {           
+            } else {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if(!ae.hasArcFired(loc, rearMount)) {
@@ -97,10 +97,10 @@ public class BayWeaponHandler extends WeaponHandler {
             }
         }
     }
-    
+
     /**
      * Sigh, according to the ruling linked below, when weapon bays are fired at ground
-     * targets, they should make one to-hit roll, but the AV of each weapon should be 
+     * targets, they should make one to-hit roll, but the AV of each weapon should be
      * applied separately as damage - that needs a special handler
      *
      * @return a <code>boolean</code> value indicating whether this should be
@@ -108,41 +108,36 @@ public class BayWeaponHandler extends WeaponHandler {
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        
+
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
-        
-        if(null == entityTarget || entityTarget.isAirborne() || game.getBoard().inSpace()) {
+
+        if((null == entityTarget) || entityTarget.isAirborne() || game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
         }
-        
+
         //then we have a ground target, so we need to handle it in a special way
 
         insertAttacks(phase, vPhaseReport);
-        
+
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
 
-        if (entityTarget != null) {
-            ae.setLastTarget(entityTarget.getId());
-        }
-        
+        ae.setLastTarget(entityTarget.getId());
+
+
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
-        
+
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
         r.add(wtype.getName() + number);
-        if (entityTarget != null) {
-            r.addDesc(entityTarget);
-        } else {
-            r.messageId = 3120;
-            r.add(target.getDisplayName(), true);
-        }
+        r.addDesc(entityTarget);
+
         vPhaseReport.addElement(r);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
@@ -198,7 +193,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -235,7 +230,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 return false;
             }
         }
-        
+
         if (bMissed) {
             return false;
 
@@ -267,7 +262,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 continue;
             }
             bSalvo = true;
-        
+
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
@@ -282,5 +277,5 @@ public class BayWeaponHandler extends WeaponHandler {
         Report.addNewline(vPhaseReport);
         return false;
     }
-    
+
 }

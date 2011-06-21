@@ -1119,7 +1119,7 @@ public class Compute {
                     }
                     //check for dive-bombing of this hex
                     Coords apos = attacker.getPosition();
-                    if ((null != attackPos) && prevAttack.isDiveBomb(game)
+                    if (prevAttack.isDiveBomb(game)
                             && (prevTarget instanceof HexTarget)
                             && ((HexTarget)prevTarget).getPosition().equals(apos)) {
                         distance = 0;

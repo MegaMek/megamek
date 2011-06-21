@@ -188,7 +188,7 @@ public class MegaMek {
      * @return An that can start a GUI such as
      *         {@link megamek.client.ui.AWT.MegaMekGUI}.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     private static IMegaMekGUI getGui(String guiName) {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         String guiClassName = MegaMek.getGUIClassName(guiName);

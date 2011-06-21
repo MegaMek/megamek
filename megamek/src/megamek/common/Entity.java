@@ -3751,7 +3751,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         // check for Manei Domini implants
-        if ((this instanceof Infantry) && null != crew && crew.getOptions().booleanOption("mm_eye_im") && crew.getOptions().booleanOption("boost_comm_implant")) {
+        if ((this instanceof Infantry) && (null != crew) && crew.getOptions().booleanOption("mm_eye_im") && crew.getOptions().booleanOption("boost_comm_implant")) {
             return true;
         }
         return false;
@@ -8461,9 +8461,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public boolean hasModularArmor(int loc) {
         for (Mounted mount : this.getEquipment()) {
-            if (loc == -1 || (mount.getLocation() == loc))
-            if ( !mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                return true;
+            if ((loc == -1) || (mount.getLocation() == loc)) {
+                if ( !mount.isDestroyed() && (mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                    return true;
+                }
             }
         }
 
@@ -9263,7 +9264,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 break;
             }
             armorPoints += Math.ceil(getTotalArmor() * armorMod);
-            
+
         }
         if (this.hasModularArmor()) {
             //Modular armor is always "regular" armor
@@ -9273,7 +9274,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
-        
+
         return (int) Math.round(armorPoints / 30);
     }
     /**
@@ -9370,7 +9371,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if ((weapon.getAmmoType() == AmmoType.T_INARC) || (weapon.getAmmoType() == AmmoType.T_NARC)) {
                 continue;
             }
-            
+
             if (weapon.hasFlag(WeaponType.F_ARTILLERY)) {
                 //Each Artillery weapon is separately accounted for
                 continue;
@@ -9532,7 +9533,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             damageModifier *= battleForceToHitModifier[toHitMod];
 
-            //For those entities that has a capital weapon but 
+            //For those entities that has a capital weapon but
             if (weapon.isCapital() ) {
                 damageModifier *= 10;
             }
@@ -9608,7 +9609,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 frontArcWeaponsTotalDamage += baseDamage * damageModifier;
             }
         }
-        
+
 
         totalDamage = Math.max(frontArcWeaponsTotalDamage, rearArcWeaponsTotalDamage);
 
@@ -9697,7 +9698,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getWeight() < 80) {
             return 3;
         }
-       
+
         return 4;
     }
 
@@ -9757,7 +9758,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
    */
   public double getPowerAmplifierWeight() {
     // If we're fusion- or fission-powered, we need no amplifiers to begin with.
-    if (engine.isFusion() || engine.getEngineType() == Engine.FISSION) {
+    if (engine.isFusion() || (engine.getEngineType() == Engine.FISSION)) {
       return 0.0;
     }
     // Otherwise we need to iterate over our weapons, find out which of them
@@ -9774,7 +9775,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
       }
     }
     // Finally use that total to compute and return the actual power amplifier weight.
-    return (double) Math.ceil(total / 5) / 2;
+    return Math.ceil(total / 5) / 2;
   }
 
     public class EntityFluff implements Serializable {
@@ -10134,7 +10135,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return null;
     }
-    
+
     public abstract int getEngineHits();
 
     /**
@@ -10153,7 +10154,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return jumpJets;
     }
-    
+
     public abstract String getLocationDamage(int loc);
-    
+
 }

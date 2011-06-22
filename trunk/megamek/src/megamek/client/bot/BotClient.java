@@ -358,7 +358,6 @@ public abstract class BotClient extends Client {
         int weapon_count;
 
         double av_range, best_fitness, ideal_elev;
-        // double[] fitness;
         double adjusted_damage, max_damage, total_damage;
 
         Coords highest_hex = new Coords();
@@ -383,25 +382,19 @@ public abstract class BotClient extends Client {
         case 7:
             valid_array = new Coords[(3 * game.getBoard().getWidth())
                     + (3 * game.getBoard().getHeight()) - 9];
-            // fitness = new
-            // double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
             break;
         case 2:
         case 6:
             valid_array = new Coords[game.getBoard().getWidth() * 3];
-            // fitness = new double[game.getBoard().getWidth()*3];
             break;
         case 4:
         case 8:
             valid_array = new Coords[game.getBoard().getHeight() * 3];
-            // fitness = new double[game.getBoard().getHeight()*3];
             break;
         case 0:
         default:
             valid_array = new Coords[game.getBoard().getWidth()
                     * game.getBoard().getHeight()];
-            // fitness = new
-            // double[game.getBoard().getWidth()*game.getBoard().getHeight()];
             break;
         }
 
@@ -434,8 +427,10 @@ public abstract class BotClient extends Client {
             valid_array[valid_arr_index] = valid_array[arr_x_index];
             valid_array[arr_x_index] = test_hex;
         }
+        
         // copy valid hexes into a new array of the correct size,
         // so we don't return an array that contains null Coords
+        
         Coords[] valid_new = new Coords[counter];
         for (int i = 0; i < counter; i++) {
             valid_new[i] = valid_array[i];
@@ -469,7 +464,8 @@ public abstract class BotClient extends Client {
         weapon_count = 0;
         for (Mounted mounted : deployed_ent.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getName() != "ATM 3") && (wtype.getName() != "ATM 6")
+            if ((wtype.getName() != "ATM 3") 
+            		&& (wtype.getName() != "ATM 6")
                     && (wtype.getName() != "ATM 9")
                     && (wtype.getName() != "ATM 12")) {
                 if (deployed_ent.getC3Master() != null) {
@@ -504,10 +500,22 @@ public abstract class BotClient extends Client {
         av_range = av_range / weapon_count;
 
         // Calculate ideal elevation as a factor of average range of 18 being
-        // highest elevation
+        // highest elevation.  Fast, non-jumping units should deploy towards
+        // the middle elevations to avoid getting stuck up a cliff.
 
-        ideal_elev = lowest_elev
+        
+        if (deployed_ent.getJumpMP() == 0 &&
+        		deployed_ent.getWalkMP() > 5){
+        	
+        	ideal_elev = lowest_elev + (highest_elev - lowest_elev)/3.0;
+        	
+        	
+        } else {
+        	
+        	ideal_elev = lowest_elev
                 + ((av_range / 18) * (highest_elev - lowest_elev));
+        
+        }
         if (ideal_elev > highest_elev) {
             ideal_elev = highest_elev;
         }
@@ -604,7 +612,7 @@ public abstract class BotClient extends Client {
             if (deployed_ent instanceof Infantry) {
                 // -> Trees and buildings make good cover, esp for conventional
                 // infantry
-                // rough is nice, to
+                // rough is nice, too
                 // -> Massed infantry is more effective, so try to cluster them
 
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x,

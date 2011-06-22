@@ -50,9 +50,11 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
@@ -587,7 +589,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // kick off a RNG check
-        d6();
+        Compute.d6();
+      
         // start server
         try {
             server = new Server(hd.serverPass, hd.port);
@@ -638,6 +641,17 @@ public class MegaMekGUI implements IMegaMekGUI {
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_BOT) {
                 BotClient c = new TestBot(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
+                c.game.addGameListener(new BotGUI(c));
+                if (!c.connect()) {
+                    // bots should never fail on connect
+                }
+                c.retrieveServerInfo();
+            }
+        }
+        
+        for (int x = 0; x < pa.length; x++) {
+            if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
+                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 if (!c.connect()) {
                     // bots should never fail on connect

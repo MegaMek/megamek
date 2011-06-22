@@ -18644,9 +18644,9 @@ public class Server implements Runnable {
                 break;
             case Aero.CRIT_WEAPON_BROAD:
                 if (a instanceof Warship) {
-                    if ((loc == Warship.LOC_ALS) || (loc == Warship.LOC_FLS)) {
+                    if ((loc == Jumpship.LOC_ALS) || (loc == Jumpship.LOC_FLS)) {
                         loc = Warship.LOC_LBS;
-                    } else if ((loc == Warship.LOC_ARS) || (loc == Warship.LOC_FRS)) {
+                    } else if ((loc == Jumpship.LOC_ARS) || (loc == Jumpship.LOC_FRS)) {
                         loc = Warship.LOC_RBS;
                     }
                 }
@@ -25048,6 +25048,7 @@ public class Server implements Runnable {
             if (game.getBoard().contains(targetCoords)) {
                 pilot.setPosition(targetCoords);
             }
+            pilot.setCommander(entity.isCommander());
             // Update the entity
             entityUpdate(pilot.getId());
             // check if the pilot lands in a minefield
@@ -25509,7 +25510,7 @@ public class Server implements Runnable {
         case VTOL:
             // VTOL don't roll, auto -1 MP
         	te.setMotiveDamage(te.getMotiveDamage()+1);
-            if (te.getOriginalWalkMP() > te.getMotiveDamage()) {        	
+            if (te.getOriginalWalkMP() > te.getMotiveDamage()) {
                 r = new Report(6660);
                 r.subject = te.getId();
                 vDesc.add(r);

@@ -253,8 +253,8 @@ public class ScenarioLoader {
                                     .getCritical(sa.loc, sa.slot).getIndex());
                             if (ammo.getType() instanceof AmmoType) {
                                 // Also make sure we dont exceed the max aloud
-                                ammo.setShotsLeft(Math.min(sa.setAmmoTo, ammo
-                                        .getShotsLeft()));
+                                ammo.setShotsLeft(Math.min(sa.setAmmoTo,
+                                        ammo.getShotsLeft()));
                             }
                         }
                     }
@@ -425,9 +425,7 @@ public class ScenarioLoader {
             }
 
             // Check for deployment
-            s = p
-                    .getProperty("Unit_" + sFaction + "_" + i
-                            + "_DeploymentRound");
+            s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
             if (null != s) {
                 int round = 0;
 
@@ -472,9 +470,9 @@ public class ScenarioLoader {
             System.out.println("Loading " + ms.getName());
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName())
                     .getEntity();
-            e
-                    .setCrew(new Pilot(st.nextToken(), Integer.parseInt(st
-                            .nextToken()), Integer.parseInt(st.nextToken())));
+            e.setCrew(new Pilot(st.nextToken(),
+                    Integer.parseInt(st.nextToken()), Integer.parseInt(st
+                            .nextToken())));
             try {
                 String direction = st.nextToken();
                 if (direction.equalsIgnoreCase("N")) {
@@ -516,6 +514,20 @@ public class ScenarioLoader {
 
         while (st.hasMoreTokens()) {
             String curAdv = st.nextToken();
+            int curParameter = 0;
+            boolean bParameterDetected = false;
+
+            StringTokenizer advantageParameterTokenizer = new StringTokenizer(
+                    curAdv, ":");
+            if (advantageParameterTokenizer.countTokens() > 1) {
+                // This advantage term has a parameter associated with it.
+                // Reduce curAdv to be just the Advantage Name, then store
+                // the parameter in curParameter. Also, set bParameterDetected.
+                curAdv = advantageParameterTokenizer.nextToken();
+                String curParam = advantageParameterTokenizer.nextToken();
+                curParameter = Integer.parseInt(curParam);
+                bParameterDetected = true;
+            }
 
             IOption option = entity.getCrew().getOptions().getOption(curAdv);
 
@@ -525,7 +537,12 @@ public class ScenarioLoader {
             } else {
                 System.out.println("Adding pilot advantage '" + curAdv
                         + "' to " + entity.getDisplayName());
-                option.setValue(true);
+                // Now we need to check if this was a parameterized advantage.
+                if (bParameterDetected) {
+                    option.setValue(curParameter);
+                } else {
+                    option.setValue(true);
+                }
             }
         }
     }
@@ -665,8 +682,8 @@ public class ScenarioLoader {
         String[] fileList = boardDir.list();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].endsWith(".board")) {
-                vBoards.addElement(fileList[i].substring(0, fileList[i]
-                        .lastIndexOf(".board")));
+                vBoards.addElement(fileList[i].substring(0,
+                        fileList[i].lastIndexOf(".board")));
             }
         }
 
@@ -691,8 +708,7 @@ public class ScenarioLoader {
                 String sBoardFile;
                 if (sBoard.equals("RANDOM")) {
                     sBoardFile = (vBoards.elementAt(Compute.randomInt(vBoards
-                            .size())))
-                            + ".board";
+                            .size()))) + ".board";
                 } else {
                     sBoardFile = sBoard + ".board";
                 }
@@ -715,7 +731,8 @@ public class ScenarioLoader {
             return ba[0];
         }
         // construct the big board
-        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, MapSettings.MEDIUM_GROUND);
+        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba,
+                MapSettings.MEDIUM_GROUND);
     }
 
     private Properties loadProperties() throws Exception {
@@ -834,7 +851,7 @@ public class ScenarioLoader {
             slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
             setTo = Integer.parseInt(s.substring(amSpot + 1));
 
-            ammoSetTo.addElement(new SetAmmoTo(loc, slot-1, setTo));
+            ammoSetTo.addElement(new SetAmmoTo(loc, slot - 1, setTo));
 
         }
     }

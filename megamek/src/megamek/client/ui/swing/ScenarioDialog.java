@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -27,6 +40,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -5682593522064612790L;
     private static final int T_ME = 0;
     public static final int T_BOT = 2;
+    public static final int T_OBOT = 3;
     private Player[] m_players;
     private JLabel[] m_labels;
     private JComboBox[] m_typeChoices;
@@ -56,6 +70,8 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                     .getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
             m_typeChoices[x].addItem(Messages
                     .getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
+            m_typeChoices[x].addItem(Messages
+                    .getString("MegaMek.ScenarioDialog.otherbot")); //$NON-NLS-1$
             m_camoButtons[x] = new JButton();
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn")); //$NON-NLS-1$

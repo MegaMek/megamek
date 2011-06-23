@@ -650,6 +650,18 @@ public class EntityListFile {
             critVal = critVal.concat("hit");
             critVal = critVal.concat("\"");
         }
+        
+        if(t.isDriverHit()) {
+            critVal = critVal.concat(" driver=\"");
+            critVal = critVal.concat("hit");
+            critVal = critVal.concat("\"");
+        }
+        
+        if(t.isCommanderHit()) {
+            critVal = critVal.concat(" commander=\"");
+            critVal = critVal.concat("hit");
+            critVal = critVal.concat("\"");
+        }
 
         if(!critVal.equals("")) {
             //then add beginning and end

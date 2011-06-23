@@ -171,6 +171,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String EDGE = "edge";
     public static final String IMPLANTS = "implants";
     public static final String QUIRKS = "quirks";
+    public static final String DRIVER = "commander";
     public static final String COMMANDER = "commander";
     public static final String DEPLOYMENT = "deployment";
     public static final String AUTOEJECT = "autoeject";
@@ -1181,7 +1182,10 @@ public class XMLStreamParser implements XMLResponder {
             {
                 String sensors = (String) attr.get( SENSORS );
                 String engine = (String) attr.get( ENGINE );
+                String driver = (String) attr.get( DRIVER );
+                String commander = (String) attr.get( COMMANDER );
 
+                
                 Tank t = (Tank)entity;
 
                 if ( sensors != null ) {
@@ -1192,6 +1196,15 @@ public class XMLStreamParser implements XMLResponder {
                     t.engineHit();
                     t.applyDamage();
                 }
+                
+                if ( driver != null  && driver.equalsIgnoreCase("hit")) {
+                    t.setDriverHit(true);
+                }
+                
+                if ( commander != null  && commander.equalsIgnoreCase("hit")) {
+                    t.setCommanderHit(true);
+                }
+                
             }
         } else if (name.equals(SLOT)) {
 

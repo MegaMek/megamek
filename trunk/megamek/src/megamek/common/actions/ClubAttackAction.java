@@ -260,7 +260,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // check elevation (target must be within one level, except for VTOL)
-        if (target.isAirborneVTOL()) {
+        if (target.isAirborneVTOLorWIGE()) {
             if ((targetElevation - attackerElevation > 3) || (targetElevation - attackerElevation < 0)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
             }

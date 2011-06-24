@@ -4945,7 +4945,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         addPilotingModifierForTerrain(roll, lastPos);
 
-        if (isAirborne() || isAirborneVTOL()) {
+        if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: flyinge entities don't skid");
             return roll;
         }
@@ -7889,10 +7889,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return roll;
     }
 
-    public boolean isAirborneVTOL() {
+    public boolean isAirborneVTOLorWIGE() {
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
-        if (getMovementMode() == EntityMovementMode.VTOL) {
+        if (getMovementMode() == EntityMovementMode.VTOL
+                || getMovementMode() == EntityMovementMode.WIGE) {
             if ((game != null) && (game.getBoard() != null) && (getPosition() != null) && (game.getBoard().getHex(getPosition()) != null) && ((game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation()))) {
                 return false;
             }

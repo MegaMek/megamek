@@ -204,7 +204,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         final int range = ae.getPosition().distance(target.getPosition());
 
         // check elevation
-        if (target.isAirborneVTOL()) {
+        if (target.isAirborneVTOLorWIGE()) {
             if (targetElevation - attackerElevation != 0) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
             }

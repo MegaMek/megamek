@@ -1148,7 +1148,7 @@ public class Compute {
         if (Compute.isAirToAir(attacker, target)) {
             int aAlt = attacker.getAltitude();
             int tAlt = target.getAltitude();
-            if(target.isAirborneVTOL()) {
+            if(target.isAirborneVTOLorWIGE()) {
                 tAlt++;
             }
             distance += Math.abs(aAlt - tAlt);
@@ -5040,15 +5040,15 @@ public class Compute {
             return false;
         }
 
-        return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOL();
+        return attacker.isAirborne() && !target.isAirborne() && !target.isAirborneVTOLorWIGE();
     }
 
     public static boolean isAirToAir(Entity attacker, Targetable target) {
         if ((attacker == null) || (target == null)) {
             return false;
         }
-        return (attacker.isAirborne() && target.isAirborne()) || (attacker.isAirborne() && target.isAirborneVTOL())
-        || (attacker.isAirborneVTOL() && target.isAirborne());
+        return (attacker.isAirborne() && target.isAirborne()) || (attacker.isAirborne() && target.isAirborneVTOLorWIGE())
+        || (attacker.isAirborneVTOLorWIGE() && target.isAirborne());
     }
 
     public static boolean isGroundToAir(Entity attacker, Targetable target) {
@@ -5104,10 +5104,10 @@ public class Compute {
         }
         // Account for "dead zones" between Aeros at different altitudes
         if (Compute.isAirToAir(ae, target)) {
-            int distance = Compute.effectiveDistance(game, ae, target, target.isAirborneVTOL());
+            int distance = Compute.effectiveDistance(game, ae, target, target.isAirborneVTOLorWIGE());
             int aAlt = ae.getAltitude();
             int tAlt = target.getAltitude();
-            if(target.isAirborneVTOL()) {
+            if(target.isAirborneVTOLorWIGE()) {
                 tAlt++;
             }
             int altDiff = Math.abs(aAlt - tAlt);

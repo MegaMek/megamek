@@ -79,7 +79,7 @@ public interface Targetable extends Serializable {
     
     /**
      * @return Is the entity airborne in the fashion of an aerospace unit?
-     * Does not include VTOL movement (see {@link Targetable#isAirborneVTOL()}
+     * Does not include VTOL movement (see {@link Targetable#isAirborneVTOLorWIGE()}
      */
     public boolean isAirborne();
     
@@ -87,5 +87,5 @@ public interface Targetable extends Serializable {
      * @return is the entity airborne in the fashion of a VTOL
      * Not used for aerospace units, see {@link Targetable#isAirborne()}
      */
-    public boolean isAirborneVTOL();
+    public boolean isAirborneVTOLorWIGE();
 }

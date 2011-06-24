@@ -2564,7 +2564,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     getFontMetrics(font).getAscent());
 
             int altAdjust = 0;
-            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
+            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
             }
             Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
@@ -2597,7 +2597,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     p = getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
                 }
                 Graphics2D g2 = (Graphics2D) g;
-                if (entity.isAirborne() || entity.isAirborneVTOL()) {
+                if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
                     Image shadow = createShadowMask(tileManager.imageFor(entity,  entity.getFacing(), secondaryPos));
 
                     if (zoomIndex == BASE_ZOOM_INDEX) {
@@ -2811,7 +2811,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     getFontMetrics(font).getAscent());
 
             int AltAdjust = 0;
-            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
+            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 AltAdjust = (int) (DROPSHDW_DIST * scale);
             }
             Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
@@ -2827,7 +2827,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             // If this is an airborne unit, render the shadow.
             if (useIsometric()
-                    && (entity.isAirborne() || entity.isAirborneVTOL())) {
+                    && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 Image shadow = createShadowMask(tileManager.imageFor(entity,  facing, -1));
 
                 if (zoomIndex == BASE_ZOOM_INDEX) {
@@ -3026,7 +3026,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     getFontMetrics(font).getAscent());
 
             int altAdjust = 0;
-            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
+            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
             }
 
@@ -3049,7 +3049,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         public Rectangle getBounds() {
 
             int altAdjust = 0;
-            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOL())) {
+            if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                 altAdjust = (int) (DROPSHDW_DIST * scale);
             }
 

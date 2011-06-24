@@ -671,7 +671,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // check for NOE
             if (Compute.isAirToAir(ae, target)) {
-                if (target.isAirborneVTOL()) {
+                if (target.isAirborneVTOLorWIGE()) {
                     toHit.addModifier(+5, "targeting non-aerospace airborne unit");
                 }
                 if (ae.isNOE()) {
@@ -1173,7 +1173,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
 
         if (ae.getQuirks().booleanOption("anti_air") && (target instanceof Entity)) {
-            if (target.isAirborneVTOL() || target.isAirborne()) {
+            if (target.isAirborneVTOLorWIGE() || target.isAirborne()) {
                 toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
             }
         }
@@ -1412,7 +1412,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // ammo to-hit modifier
         // TODO: shouldn't this use the Entity#isFlying() method?
         if ((te != null) && !game.getBoard().inSpace()
-                && (te.isAirborne() || te.isAirborneVTOL())
+                && (te.isAirborne() || te.isAirborneVTOLorWIGE())
                 && (atype != null)
                 && ((((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) || (atype
                         .getAmmoType() == AmmoType.T_SBGAUSS)) && (atype.getMunitionType() == AmmoType.M_CLUSTER))
@@ -1729,7 +1729,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // tasers only at non-flying units
         if (wtype.hasFlag(WeaponType.F_TASER)) {
             if (te != null) {
-                if (te.isAirborne() || te.isAirborneVTOL()) {
+                if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
                     return "Tasers can't be fired at flying units.";
                 }
             } else {
@@ -1858,7 +1858,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && !isArtilleryFLAK) {
                 return "Weapon must make artillery attacks.";
             }
-            if (ae.isAirborne() || ae.isAirborneVTOL()) {
+            if (ae.isAirborne() || ae.isAirborneVTOLorWIGE()) {
                 if (isArtilleryDirect) {
                     return "Flying units can't make direct-fire artillery attacks";
                 } else if (isArtilleryIndirect && (atype.getAmmoType() != AmmoType.T_ARROW_IV)) {
@@ -2360,7 +2360,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // BA Micro bombs only when flying
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
-            if (!ae.isAirborneVTOL()) {
+            if (!ae.isAirborneVTOLorWIGE()) {
                 return "attacker must be at least at elevation 1";
             } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
                 return "must target hex with bombs";

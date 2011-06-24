@@ -975,7 +975,7 @@ public class MoveStep implements Serializable {
         mpUsed = entity.mpUsed;
         distance = entity.delta_distance;
         isProne = entity.isProne();
-        isFlying = entity.isAirborne() || entity.isAirborneVTOL();
+        isFlying = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
         thisStepBackwards = entity.inReverse;

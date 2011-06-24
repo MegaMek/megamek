@@ -8251,8 +8251,8 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISC3RemoteSensorAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "C³ Remote Sensors";
-        ammo.shortName = "C³ Remote Sensor";
+        ammo.name = "C3 Remote Sensors";
+        ammo.shortName = "C3 Remote Sensor";
         ammo.setInternalName("ISC3Sensors");
         ammo.explosive = false;
         ammo.damagePerShot = 0; // only used for ammo crits

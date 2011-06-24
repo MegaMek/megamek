@@ -51,7 +51,7 @@ public class ACFlakHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
 
-        if ( !(target.isAirborneVTOL()) && !((target instanceof Aero) && target.isAirborne()) && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+        if ( !(target.isAirborneVTOLorWIGE()) && !((target instanceof Aero) && target.isAirborne()) && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
             toReturn /= 2;
         }
 

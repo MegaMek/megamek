@@ -1,6 +1,9 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.25 (SVN)
++ Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with attendant functionality change
++ Flak now works correctly vs. both grounded and airborne WiGEs
++ Non-UTF-8 superscripted 3s replaced by plain ones in C3 remote sensor ammo names
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

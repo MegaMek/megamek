@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.35.25 (SVN)
+
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically
 + Bug 3297649: tech level legality bugfix

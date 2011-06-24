@@ -232,7 +232,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         final int attackerHeight = attackerElevation + ae.getHeight();
 
         // check elevation of target flying VTOL
-        if (target.isAirborneVTOL()) {
+        if (target.isAirborneVTOLorWIGE()) {
             if (targetElevation - attackerHeight > ae.getJumpMP()) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Elevation difference to high");

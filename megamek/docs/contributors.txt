@@ -166,6 +166,7 @@
      walter@nebulastation.net
      Julio Prina <jjj.ladob@gmail.com>
      N.|.B.
+     Alex "Deadborder" Fauth
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

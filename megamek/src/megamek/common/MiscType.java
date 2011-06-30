@@ -164,6 +164,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_JET_BOOSTER = BigInteger.valueOf(1).shiftLeft(118);
     public static final BigInteger F_SENSOR_DISPENSER = BigInteger.valueOf(1).shiftLeft(119);
     public static final BigInteger F_DRONE_OPERATING_SYSTEM = BigInteger.valueOf(1).shiftLeft(120);
+    public static final BigInteger F_RECON_CAMERA = BigInteger.valueOf(1).shiftLeft(121);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1013,6 +1014,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISVehicularMineDispenser());
         EquipmentType.addType(MiscType.createCLVehicularMineDispenser());
         EquipmentType.addType(MiscType.createMiningDrill());
+        EquipmentType.addType(MiscType.createCLReconCamera());
+        EquipmentType.addType(MiscType.createISReconCamera());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -5162,6 +5165,32 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
         misc.subType |= S_JETBOOSTER;
+        return misc;
+    }
+
+    public static MiscType createCLReconCamera() {
+        // TODO: implement game rules
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Recon Camera";
+        misc.setInternalName("CLReconCamera");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_RECON_CAMERA);
+        return misc;
+    }
+
+    public static MiscType createISReconCamera() {
+        //TODO: implement game rules
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Recon Camera";
+        misc.setInternalName("ISReconCamera");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_RECON_CAMERA);
         return misc;
     }
 

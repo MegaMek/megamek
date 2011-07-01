@@ -167,6 +167,7 @@
      Julio Prina <jjj.ladob@gmail.com>
      N.|.B.
      Alex "Deadborder" Fauth
+     Sebastian "Demos" Seiml
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

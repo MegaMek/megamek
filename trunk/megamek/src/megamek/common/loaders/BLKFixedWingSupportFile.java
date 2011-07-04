@@ -125,7 +125,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             }
             a.setBARRating(dataFile.getDataAsInt("barrating")[0]);
         } else {
-            for (int i = 1; i < a.locations(); i++) {
+            for (int i = 0; i < a.locations()-1; i++) {
                 a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
                 a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
                 a.setBARRating(dataFile.getDataAsInt(a.getLocationName(i)+"_barrating")[0], i);

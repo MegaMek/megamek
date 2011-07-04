@@ -165,6 +165,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SENSOR_DISPENSER = BigInteger.valueOf(1).shiftLeft(119);
     public static final BigInteger F_DRONE_OPERATING_SYSTEM = BigInteger.valueOf(1).shiftLeft(120);
     public static final BigInteger F_RECON_CAMERA = BigInteger.valueOf(1).shiftLeft(121);
+    public static final BigInteger F_COMBAT_VEHICLE_ESCAPE_POD = BigInteger.valueOf(1).shiftLeft(122);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1016,6 +1017,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMiningDrill());
         EquipmentType.addType(MiscType.createCLReconCamera());
         EquipmentType.addType(MiscType.createISReconCamera());
+        EquipmentType.addType(MiscType.createISCombatVehicleEscapePod());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -5191,6 +5193,21 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 10000;
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_RECON_CAMERA);
+        return misc;
+    }
+
+    public static MiscType createISCombatVehicleEscapePod() {
+        //TODO: implement game rules
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Combat Vehicle Escape Pod";
+        misc.setInternalName("ISCombatVehicleEscapePod");
+        misc.tonnage = 4f;
+        misc.criticals = 0;
+        misc.cost = 10000;
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_COMBAT_VEHICLE_ESCAPE_POD);
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        misc.techRating = RATING_D;
         return misc;
     }
 

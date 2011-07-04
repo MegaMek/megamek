@@ -251,6 +251,21 @@ public class TestTank extends TestEntity {
             buff.append("Not enough itemslots available! Using "+Math.abs(tank.getFreeSlots())+" slots too much\n\n");
             correct = false;
         }
+        for (Mounted m : tank.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
+                if (tank instanceof VTOL) {
+                    if (m.getLocation() != Tank.LOC_REAR) {
+                        buff.append("combat vehicle escape pod must be placed in rear");
+                        correct = false;
+                    }
+                } else {
+                    if (m.getLocation() != Tank.LOC_REAR) {
+                        buff.append("combat vehicle escape pod must be placed in rear");
+                        correct = false;
+                    }
+                }
+            }
+        }
         if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
         }

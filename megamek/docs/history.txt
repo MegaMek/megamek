@@ -7,6 +7,7 @@ v0.35.25 (SVN)
 + Bug: fully amphibious chassis modification weight was wrong
 + Added construction data for recon camera
 + Patch 3355333: improved princess bot
++ Patch 3353066: Bot - characterization
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

@@ -31,6 +31,8 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 
 public class Princess extends BotClient {
+	
+	public boolean verbose_errorlog;
 
     public String properties_file_name;
 
@@ -40,6 +42,7 @@ public class Princess extends BotClient {
         properties_file_name = new String("mmconf/princess_bot.properties"); // default
                                                                              // properties
                                                                              // file
+        verbose_errorlog=true;
     }
 
     @Override
@@ -92,12 +95,14 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateFiringTurn() {
+    	if(verbose_errorlog) System.err.println("calculateFiringTurn called");
 
         Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
                                                            // entity that can
                                                            // act this turn
         FireControl.FiringPlan plan = fire_control.getBestFiringPlan(shooter,
                 game);
+        System.err.println(plan.getDebugDescription(false));
         sendAttackData(shooter.getId(), plan.getEntityActionVector(game)); // tell
                                                                            // the
                                                                            // game
@@ -105,6 +110,7 @@ public class Princess extends BotClient {
                                                                            // want
                                                                            // to
                                                                            // fire
+        if(verbose_errorlog) System.err.println("calculateFiringTurn returning");
     }
 
     @Override
@@ -120,13 +126,17 @@ public class Princess extends BotClient {
 
     @Override
     protected MovePath calculateMoveTurn() {
+    	if(verbose_errorlog) System.err.println("calculateMoveTurn called");
         Entity e = game.getFirstEntity(getMyTurn()); // get the first entity
                                                      // that can act this turn
-        return continueMovementFor(e); // move it
+        MovePath ret=continueMovementFor(e); // move it
+        if(verbose_errorlog) System.err.println("calculateMoveTurn returning");
+        return ret;
     }
 
     @Override
     protected PhysicalOption calculatePhysicalTurn() {
+    	if(verbose_errorlog) System.err.println("calculatePhysicalTurn called");
         Entity first_entity = game.getFirstEntity(getMyTurn()); // get the first
                                                                 // entity that
                                                                 // can act this
@@ -141,28 +151,30 @@ public class Princess extends BotClient {
             for (Entity e : enemies) { // cycle through potential enemies
                 FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
                         hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
-                if (right_punch.getExpectedDamage() > 0) {
+                fire_control.calculateUtility(right_punch);
+                if (right_punch.utility > 0) {
                     if ((best_attack == null)
-                            || (right_punch.getExpectedDamage() > best_attack
-                                    .getExpectedDamage())) {
+                            || (right_punch.utility > best_attack
+                                    .utility)) {
                         best_attack = right_punch;
                     }
                 }
                 FireControl.PhysicalInfo left_punch = new FireControl.PhysicalInfo(
                         hitter, e, PhysicalAttackType.LEFT_PUNCH, game);
-                if (left_punch.getExpectedDamage() > 0) {
+                fire_control.calculateUtility(left_punch);
+                if (left_punch.utility > 0) {
                     if ((best_attack == null)
-                            || (left_punch.getExpectedDamage() > best_attack
-                                    .getExpectedDamage())) {
+                            || (left_punch.utility > best_attack
+                                    .utility)) {
                         best_attack = left_punch;
                     }
                 }
                 FireControl.PhysicalInfo right_kick = new FireControl.PhysicalInfo(
                         hitter, e, PhysicalAttackType.RIGHT_KICK, game);
-                if (right_kick.getExpectedDamage() > 0) {
+                if (right_kick.utility > 0) {
                     if ((best_attack == null)
-                            || (right_kick.getExpectedDamage() > best_attack
-                                    .getExpectedDamage())) {
+                            || (right_kick.utility > best_attack
+                                    .utility)) {
                         best_attack = right_kick;
                     }
                 }
@@ -170,31 +182,12 @@ public class Princess extends BotClient {
                         hitter, e, PhysicalAttackType.LEFT_KICK, game);
                 if (left_kick.getExpectedDamage() > 0) {
                     if ((best_attack == null)
-                            || (left_kick.getExpectedDamage() > best_attack
-                                    .getExpectedDamage())) {
+                            || (left_kick.utility > best_attack
+                                    .utility)) {
                         best_attack = left_kick;
                     }
                 }
 
-                /*
-                 * for(int i=1;i<5;i++) //cycle through possible attacks (kicks,
-                 * punches, etc) { //PhysicalOption physical_attack=new
-                 * PhysicalOption(hitter); //this describes what I want to do
-                 * PhysicalOption physical_attack=new
-                 * PhysicalOption(hitter,e,0,i,null); //this describes what I
-                 * want to do AbstractAttackAction
-                 * form_of_action=physical_attack.toAction(); //change the class
-                 * to an action int targetroll=TargetRoll.IMPOSSIBLE;
-                 * if(form_of_action instanceof PunchAttackAction) //if it's a
-                 * punch,
-                 * targetroll=((PunchAttackAction)form_of_action).toHit(game
-                 * ).getValue(); //check if it will hit if(form_of_action
-                 * instanceof KickAttackAction) //if it's a kick
-                 * targetroll=((KickAttackAction
-                 * )form_of_action).toHit(game).getValue(); //check if it will
-                 * hit if(targetroll!=TargetRoll.IMPOSSIBLE) //if it's doable,
-                 * do it return physical_attack; }
-                 */
             }
             if (best_attack != null) {
                 System.err.println("Attack is a "
@@ -203,6 +196,7 @@ public class Princess extends BotClient {
                 System.err.println("No useful attack to be made");
             }
             if (best_attack != null) {
+            	if(verbose_errorlog) System.err.println("calculatePhysicalTurn returning (with an attack)");
                 return best_attack.getAsPhysicalOption();
             }
             hitter = game.getNextEntity(hitter.getId() + 1); // otherwise, check
@@ -214,6 +208,7 @@ public class Princess extends BotClient {
                                // null at the end, it returns the first entity
             }
         } while (hitter != null);
+        if(verbose_errorlog) System.err.println("calculatePhysicalTurn returning (no attacks)");
         return null; // no one can hit anything anymore, so give up
     }
 

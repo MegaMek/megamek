@@ -21,6 +21,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
+import megamek.common.MovePath.MoveStepType;
 
 public class PathSearcher {
 
@@ -141,29 +142,47 @@ public class PathSearcher {
         return start_paths;
     }
 
-    MovePath getBestPath(Entity entity, IGame game) {
-        System.err.println("Unit: " + entity.getDisplayName() + " is pathing.");
-        long start_time = System.currentTimeMillis();
-
+    ArrayList<WeightedPath> getAllWeightedPaths(Entity entity,IGame game) {
         ranker.initUnitTurn(entity, game);
+        TreeMap<PathState, WeightedPath> pathmap = new TreeMap<PathState, WeightedPath>();
+        ArrayList<WeightedPath> start_path = new ArrayList<WeightedPath>();
 
         MovePath empty_path = new MovePath(game, entity);
         double empty_rank = ranker.rankPath(empty_path, game);
         WeightedPath start = new WeightedPath(empty_path, empty_rank);
-
-        TreeMap<PathState, WeightedPath> pathmap = new TreeMap<PathState, WeightedPath>();
         pathmap.put(new PathState(start.path), start);
-
-        ArrayList<WeightedPath> start_path = new ArrayList<WeightedPath>();
         start_path.add(start);
+        
+        if(entity.getJumpMP()>0) { //allow jumping
+            MovePath jump_path=new MovePath(game,entity);
+            jump_path.addStep(MoveStepType.START_JUMP);
+            WeightedPath startjump=new WeightedPath(jump_path,empty_rank-0.1);
+            pathmap.put(new PathState(startjump.path),startjump);
+            start_path.add(startjump);            
+        }
+        
         ArrayList<WeightedPath> allpaths = seeAllPaths(start_path, true, true,
                 game, pathmap);
+        return allpaths;      
+    }
+    
+    ArrayList<WeightedPath> getTopPaths(Entity entity,IGame game,int npaths) {
+        ArrayList<WeightedPath> allpaths=getAllWeightedPaths(entity,game);
+        //TODO sort allpaths, return top npaths
+        return allpaths;
+    }
+    
+    MovePath getBestPath(Entity entity, IGame game) {
+        System.err.println("Unit: " + entity.getDisplayName() + " is pathing.");
+        long start_time = System.currentTimeMillis();
+        ArrayList<WeightedPath> allpaths=getAllWeightedPaths(entity,game);
+      
         System.err.println("choosing between "
                 + Integer.toString(allpaths.size()) + " paths");
-        double min_value = empty_rank;
-        MovePath min_path = empty_path;
-        double max_value = empty_rank;
-        MovePath max_path = empty_path;
+        double min_value = allpaths.get(0).weight;
+        MovePath min_path = allpaths.get(0).path;
+        double max_value = allpaths.get(0).weight;
+        MovePath max_path = allpaths.get(0).path;
         for (WeightedPath wp : allpaths) {
             if (max_value < wp.weight) {
                 max_value = wp.weight;

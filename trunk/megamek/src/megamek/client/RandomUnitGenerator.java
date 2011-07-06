@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -57,6 +58,28 @@ public class RandomUnitGenerator implements Serializable {
     //the frequency
     Map<String, Vector<String>> rats;
 
+    /** 
+    * Plain old data class used to represent nodes in a Random Assignment Table tree.
+    * RATs are grouped into categories based on directory structure, and will be 
+    * displayed hierarchically to the user.
+    */
+    public static class RatTreeNode implements Comparable<RatTreeNode> {
+        public RatTreeNode(String name) {
+            this.name = name;
+            this.children = new Vector<RatTreeNode>();
+        }
+
+        public int compareTo(RatTreeNode rtn) {
+            return this.name.compareTo(rtn.name);
+        }
+
+        public String name;
+        public Vector<RatTreeNode> children;
+    }
+
+    private RatTreeNode ratTree;
+    private RatTreeNode currentNode;
+
     private String chosenRAT;
 
     public RandomUnitGenerator() {
@@ -65,12 +88,14 @@ public class RandomUnitGenerator implements Serializable {
 
     public void populateUnits() {
         rats = new HashMap<String, Vector<String>>();
+        ratTree = new RatTreeNode("Random Assignment Tables");
+
         File dir = new File("./data/rat/");
         loadRatsFromDirectory(dir);
     }
 
     private void loadRatsFromDirectory(File dir) {
-        if(null == dir) {
+        if (null == dir) {
             return;
         }
 
@@ -79,18 +104,41 @@ public class RandomUnitGenerator implements Serializable {
             return;
         }
 
+        RatTreeNode oldParentNode = null;
+        if (null == currentNode) {
+            currentNode = ratTree;
+            oldParentNode = currentNode;
+        }
+
         Scanner input = null;
 
-        for(int i = 0; i < files.length; i++) {
-            //READ IN RATS
+        for (int i = 0; i < files.length; i++) {
+            // READ IN RATS
             File file = files[i];
             if (file.isDirectory()) {
                 if (file.getName().toLowerCase().equals("_svn") || file.getName().toLowerCase().equals(".svn")) {
                     // This is a Subversion work directory. Lets ignore it.
                     continue;
                 }
+
+                RatTreeNode newNode = new RatTreeNode(file.getName());
+                oldParentNode = currentNode;
+                currentNode = newNode;
+
+                // Add non-root nodes to the tree.
+                if (ratTree != currentNode) {
+                    oldParentNode.children.add(currentNode);
+                }
+
                 // recursion is fun
                 loadRatsFromDirectory(file);
+
+                // Prune empty nodes (this removes the "Unofficial" place holder)
+                if (currentNode.children.size() == 0) {
+                    oldParentNode.children.remove(currentNode);
+                }
+
+                currentNode = oldParentNode;
                 continue;
             }
             if (!file.getName().toLowerCase().endsWith(".txt")) {
@@ -104,16 +152,15 @@ public class RandomUnitGenerator implements Serializable {
                 Vector<String> v = new Vector<String>();
                 while (input.hasNextLine()) {
                     String line = input.nextLine();
-                    if(line.startsWith("#")) {
+                    if (line.startsWith("#")) {
                         continue;
                     }
                     linen++;
-                    if(linen==1) {
+                    if (linen == 1) {
                         key = line;
-                    }
-                    else {
+                    } else {
                         String[] values = line.split(",");
-                        if(values.length < 2) {
+                        if (values.length < 2) {
                             System.err.println("Not enough fields in " + file.getName() + " on " + linen);
                             continue;
                         }
@@ -130,20 +177,25 @@ public class RandomUnitGenerator implements Serializable {
                             System.err.println("The unit " + name + " could not be found in the " + key + " RAT");
                         } else {
                             int j = 0;
-                            while(j < weight) {
+                            while (j < weight) {
                                 v.add(name);
                                 j++;
                             }
                         }
                     }
                 }
-                if(v.size() > 0) {
+                if (v.size() > 0) {
                     rats.put(key, v);
+                    if (null != currentNode) {
+                        currentNode.children.add(new RatTreeNode(key));
+                    }
                 }
             } catch (FileNotFoundException fne) {
                 System.err.println("Unable to find " + file.getName());
             }
         }
+
+        Collections.sort(currentNode.children);
     }
 
     /**
@@ -153,13 +205,13 @@ public class RandomUnitGenerator implements Serializable {
     public ArrayList<MechSummary> generate(int n) {
         ArrayList<MechSummary> units = new ArrayList<MechSummary>();
 
-        if(null != rats) {
+        if (null != rats) {
             Vector<String> rat = rats.get(chosenRAT);
-            if((null != rat) && (rat.size() > 0)) {
-                for(int i = 0; i < n; i++) {
-                    String name =  rat.get(Compute.randomInt(rat.size()));
+            if ((null != rat) && (rat.size() > 0)) {
+                for (int i = 0; i < n; i++) {
+                    String name = rat.get(Compute.randomInt(rat.size()));
                     MechSummary unit = MechSummaryCache.getInstance().getMech(name);
-                    if(null != unit) {
+                    if (null != unit) {
                         units.add(unit);
                     }
                 }
@@ -177,14 +229,19 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public Iterator<String> getRatList() {
-        if(null == rats) {
+        if (null == rats) {
             return null;
         }
         return rats.keySet().iterator();
     }
 
+    public RatTreeNode getRatTree() {
+        return ratTree;
+    }
+
     public void clear() {
         rats = null;
+        ratTree = null;
     }
 
 }

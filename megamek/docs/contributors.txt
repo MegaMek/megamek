@@ -74,6 +74,7 @@
      impatience <impatience-four@users.sourceforge.net>
      JC Brewer <bronzite@users.sourceforge.net>
      shijima <shijima@users.sourceforge.net>
+     vult <vult@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

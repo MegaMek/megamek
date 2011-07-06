@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -39,7 +39,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
 import megamek.client.RandomUnitGenerator;
@@ -55,7 +61,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
 public class RandomArmyDialog extends JDialog implements ActionListener,
-        WindowListener {
+WindowListener, TreeSelectionListener {
 
     /**
      *
@@ -74,33 +80,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
     private JComboBox m_chPlayer = new JComboBox();
     private JComboBox m_chType = new JComboBox();
-    private JComboBox m_chRAT = new JComboBox() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -494654855050298510L;
 
-        @Override
-        public void addItem(Object anObject) {
-            int size = ((DefaultComboBoxModel) dataModel).getSize();
-            Object obj;
-            boolean added = false;
-            for (int i=0; i<size; i++) {
-                obj = dataModel.getElementAt(i);
-                int compare = anObject.toString().compareToIgnoreCase(obj.toString());
-                if (compare <= 0) { // if anObject less than or equal obj
-                    super.insertItemAt(anObject, i);
-                    added = true;
-                    break;
-                }
-            }
-
-            if (!added) {
-                super.addItem(anObject);
-            }
-        }
-    };
-
+    private JTree m_treeRAT = new JTree();
+    private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pParameters = new JPanel();
@@ -129,8 +111,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             .getString("RandomArmyDialog.Infantry"));
     private JLabel m_labTech = new JLabel(Messages
             .getString("RandomArmyDialog.Tech"));
-    private JLabel m_labRAT = new JLabel(Messages
-            .getString("RandomArmyDialog.RAT"));
     private JLabel m_labUnits = new JLabel(Messages
             .getString("RandomArmyDialog.Unit"));
 
@@ -169,7 +149,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         m_tMaxYear.setText("3100");
         m_tInfantry.setText("0");
         m_chkCanon.setSelected(m_client.game.getOptions().booleanOption(
-                "canon_only"));
+        "canon_only"));
         updateTechChoice(true);
 
         // construct the buttons panel
@@ -256,36 +236,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         m_pParameters.add(m_pAdvSearch);
 
         //construct the RAT panel
+        m_pRAT.setLayout(new GridBagLayout());
         m_tUnits.setText("4");
         updateRATs();
-        m_chRAT.addActionListener(this);
 
-        m_pRAT.setLayout(new GridBagLayout());
-
-        GridBagConstraints c;
-        c = new GridBagConstraints();
+        GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRAT.add(m_labRAT, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        m_pRAT.add(m_chRAT, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTHWEST;
@@ -295,7 +252,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
 
         c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = 1;
+        c.gridy = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTHWEST;
@@ -303,15 +260,36 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         c.weighty = 0.0;
         m_pRAT.add(m_tUnits, c);
 
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.insets = new java.awt.Insets(5, 5, 5, 5);
+
+
+        m_treeRAT.setRootVisible(false);
+        m_treeRAT.getSelectionModel().setSelectionMode
+        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+        m_treeRAT.addTreeSelectionListener(this);
+        //m_treeRAT.setPreferredSize(new Dimension(200, 100));
+
+        JScrollPane treeViewRAT = new JScrollPane(m_treeRAT);
+        treeViewRAT.setPreferredSize(new Dimension(300, 200));
+        m_pRAT.add(treeViewRAT, c);
+
         // construct the preview panel
         m_pPreview.setLayout(new GridLayout(1, 1));
-        JScrollPane scoll = new JScrollPane(m_lMechs);
-        m_pPreview.add(scoll);
+        JScrollPane scroll = new JScrollPane(m_lMechs);
+        m_pPreview.add(scroll);
 
         m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
 
-        // contruct the main dialog
+        // construct the main dialog
         setLayout(new BorderLayout());
         add(m_pButtons, BorderLayout.SOUTH);
         add(m_pMain, BorderLayout.WEST);
@@ -319,6 +297,21 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         validate();
         pack();
         setLocationRelativeTo(cl.frame);
+    }
+
+    public void valueChanged(TreeSelectionEvent ev) {
+        if (ev.getSource().equals(m_treeRAT)) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode)m_treeRAT.getLastSelectedPathComponent();
+            if (node == null) {
+                return;
+            }
+
+            Object nodeInfo = node.getUserObject();
+            if (node.isLeaf()) {
+                String ratName = (String)nodeInfo;
+                rug.setChosenRAT(ratName);
+            }
+        }
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -340,7 +333,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
                     c.sendAddEntity(e);
                 } catch (EntityLoadingException ex) {
                     System.out
-                            .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     ex.printStackTrace();
                     return;
                 }
@@ -348,9 +341,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
             setVisible(false);
         } else if (ev.getSource().equals(m_bCancel)) {
             setVisible(false);
-        } else if (ev.getSource().equals(m_chRAT)) {
-            updateRATChoice();
-        }else if (ev.getSource().equals(m_bAdvSearch)){
+        } else if (ev.getSource().equals(m_bAdvSearch)){
             searchFilter=asd.showDialog();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
         } else if (ev.getSource().equals(m_bAdvSearchClear)){
@@ -431,7 +422,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
         for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
-                .hasNext();) {
+        .hasNext();) {
             m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
@@ -443,13 +434,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         }
     }
 
-    private void updateRATChoice() {
-        rug.setChosenRAT((String)m_chRAT.getSelectedItem());
-    }
-
     private void updateTechChoice(boolean force) {
         boolean maxTechOption = m_client.game.getOptions().booleanOption(
-                "allow_advanced_units");
+        "allow_advanced_units");
         int maxTech = (maxTechOption ? TechConstants.SIZE
                 : TechConstants.SIZE_LEVEL_2);
         if ((includeMaxTech == maxTechOption) && !force) {
@@ -472,11 +459,21 @@ public class RandomArmyDialog extends JDialog implements ActionListener,
         if(null == rats) {
             return;
         }
-        while(rats.hasNext()) {
-            String rat = rats.next();
-            m_chRAT.addItem(rat);
+
+        RandomUnitGenerator.RatTreeNode ratTree = rug.getRatTree();
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(ratTree.name);
+        createRatTreeNodes(root, ratTree);
+        m_treeRAT.setModel(new DefaultTreeModel(root));
+    }
+
+    private void createRatTreeNodes(DefaultMutableTreeNode parentNode, RandomUnitGenerator.RatTreeNode ratTreeNode) {
+        for (RandomUnitGenerator.RatTreeNode child : ratTreeNode.children) {
+            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(child.name);
+            if (child.children.size() > 0) {
+                createRatTreeNodes(newNode, child);
+            }
+            parentNode.add(newNode);
         }
-        m_chRAT.setSelectedItem(rug.getChosenRAT());
     }
 
     @Override

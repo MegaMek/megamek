@@ -103,7 +103,7 @@ public class BasicPathRanker extends PathRanker {
                     .guessBestFiringPlanUnderHeatWithTwists(e, null,
                             p.getEntity(), new EntityState(p),
                             e.getHeatCapacity() - e.heat + 5, game)
-                    .getExpectedDamage();
+                    .utility;
             // if they can kick me, and probably hit, they probably will.
             FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
                     e, null, p.getEntity(), new EntityState(p),
@@ -114,12 +114,13 @@ public class BasicPathRanker extends PathRanker {
             }
 
             // How much damage can I do to them?
-            FiringPlan my_firing_plan = firecontrol
-                    .guessBestFiringPlanUnderHeatWithTwists(p.getEntity(),
-                            new EntityState(p), e, null,
-                            p.getEntity().getHeatCapacity()
-                                    - p.getEntity().heat + 5, game);
-            double my_damage_potential = my_firing_plan.getExpectedDamage();
+            //FiringPlan my_firing_plan = firecontrol
+            //        .guessBestFiringPlanUnderHeatWithTwists(p.getEntity(),
+            //                new EntityState(p), e, null,
+            //                p.getEntity().getHeatCapacity()
+            //                        - p.getEntity().heat + 5, game);
+            FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+            double my_damage_potential = my_firing_plan.utility;
             // If I can kick them and probably hit, I probably will
             FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
                     p.getEntity(), new EntityState(p), e, null,

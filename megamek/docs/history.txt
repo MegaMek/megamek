@@ -6,6 +6,7 @@ v0.35.25 (SVN)
 + Non-UTF-8 superscripted 3s replaced by plain ones in C3 remote sensor ammo names
 + Bug: fully amphibious chassis modification weight was wrong
 + Added construction data for recon camera
++ Patch 3355333: improved princess bot
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

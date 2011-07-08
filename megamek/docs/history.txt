@@ -10,6 +10,7 @@ v0.35.25 (SVN)
 + Patch 3353066: Bot - characterization
 + Patch 3350169: replace RAT combo-box with RAT tree
 + unofficial option to reduce the velocity mod for StratOps Advanced Anti-Aircraft fire
++ Bug 3279878: Grounded dropships and double-blind
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

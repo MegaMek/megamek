@@ -1,0 +1,12 @@
+CCAF Medium Mechs F 3067
+Hunchback HBK-4P,1
+Blackjack BJ-3,2
+Clint CLNT-2-3T,3
+Cicada CDA-2A,4
+Cicada CDA-2A,5
+Vindicator VND-1R,6
+Blackjack BJ-1,5
+Phoenix Hawk PXH-1,4
+Vindicator VND-3L,3
+Hunchback HBK-4G,2
+Vindicator VND-1AA "Avenging Angel",1

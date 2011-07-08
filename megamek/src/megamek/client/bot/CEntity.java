@@ -1211,7 +1211,7 @@ public class CEntity {
      */
     public double getModifiedDamage(int arc, int a_range, int modifier)
     {
-        if (a_range > MAX_RANGE) {
+        if (a_range >= MAX_RANGE) {
             return 0.0;
         }
         double damage = damages[arc][a_range];

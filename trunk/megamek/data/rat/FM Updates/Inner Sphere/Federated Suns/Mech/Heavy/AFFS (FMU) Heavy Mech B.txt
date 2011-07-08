@@ -1,0 +1,12 @@
+AFFS Heavy Mechs B 3067 (FMU)
+Argus AGS-4D,1
+Rakshasa MDG-2A,2
+Warhammer WHM-8D,3
+Thunderbolt TDR-10SE,4
+Cestus CTS-6Y,5
+Falconer FLC-8R,6
+Penetrator PTR-4D,5
+Rifleman RFL-8D,4
+JagerMech JM7-F,3
+Cataphract CTF-3D,2
+Gallowglas GAL-1GLS,1

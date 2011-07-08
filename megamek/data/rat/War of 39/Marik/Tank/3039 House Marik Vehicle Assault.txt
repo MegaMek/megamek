@@ -1,0 +1,15 @@
+3039 House Marik Vehicle Assault
+Partisan Heavy Tank, 1
+Behemoth Heavy Tank, 2
+Schrek PPC Carrier, 3
+Partisan Heavy Tank, 4
+Demolisher Heavy Tank, 5
+Ontos Heavy Tank, 6
+Schrek PPC Carrier, 5
+Ontos Heavy Tank, 4
+Partisan Heavy Tank, 3
+Behemoth Heavy Tank, 2
+Partisan Heavy Tank, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

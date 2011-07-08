@@ -14630,11 +14630,15 @@ public class Server implements Runnable {
 
 
         // mechs shouldn't be here, but just in case
-        // TODO: what to do with Aeros?
         if (entity instanceof Mech) {
             return;
         }
-
+        
+        //fire has no effect on dropships
+        if (entity instanceof Dropship) {
+            return;
+        }
+        
         // Must roll 8+ to survive...
         r = new Report(5100);
         r.subject = entity.getId();

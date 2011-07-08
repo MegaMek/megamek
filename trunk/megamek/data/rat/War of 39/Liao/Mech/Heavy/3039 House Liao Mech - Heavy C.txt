@@ -1,0 +1,15 @@
+3039 House Liao Mech - Heavy C
+Orion ON1-K, 1
+Ostroc OSR-2C, 2
+Crusader CRD-3R, 3
+Thunderbolt TDR-5S, 4
+Archer ARC-2R, 5
+Catapult CPLT-C1, 6
+Marauder MAD-3R, 5
+Rifleman RFL-3N, 4
+Warhammer WHM-6R, 3
+JagerMech JM6-S, 2
+Grasshopper GHR-5H, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

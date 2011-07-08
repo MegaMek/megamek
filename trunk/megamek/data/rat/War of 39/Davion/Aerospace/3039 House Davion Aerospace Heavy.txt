@@ -1,0 +1,15 @@
+3039 House Davion Aerospace Heavy
+Chippewa CHP-W10, 1
+Chippewa CHP-W10, 2
+Stuka STU-K15, 3
+Thunderbird TRB-D36, 4
+Eagle EGL-R6, 5
+Stuka STU-K5, 6
+Stuka STU-K10, 5
+Eagle EGL-R6, 4
+Eagle EGL-R6, 3
+Thunderbird TRB-D36, 2
+Eagle EGL-R6, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

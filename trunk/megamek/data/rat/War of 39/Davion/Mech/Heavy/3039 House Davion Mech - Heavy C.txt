@@ -1,0 +1,15 @@
+3039 House Davion Mech - Heavy C
+Orion ON1-K, 1
+Ostsol OTL-4D, 2
+JagerMech JM6-S, 3
+Crusader CRD-3R, 4
+Rifleman RFL-3N, 5
+Marauder MAD-3R, 6
+Warhammer WHM-6R, 5
+Archer ARC-2R, 4
+Grasshopper GHR-5H, 3
+Thunderbolt TDR-5S, 2
+Champion CHP-2N, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

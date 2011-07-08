@@ -1,0 +1,12 @@
+SL Medium Mechs 3067 (FMU)
+Griffin IIC,1
+Wolverine WVR-8C,2
+Tessen TSN-C3,3
+Strider SR1-O,4
+Blackjack BJ2-OF,5
+Firestarter FS9-O,6
+Strider SR1-OD,5
+Beowulf BEO-12,4
+Bishamon BSN-3K,3
+Clint CLNT-5U,2
+Arctic Wolf,1

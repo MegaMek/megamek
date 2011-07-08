@@ -13,6 +13,7 @@ v0.35.25 (SVN)
 + Bug 3279878: Grounded dropships and double-blind
 + Bug 3358252: Rollever text is for incorrect game option
 + Bug 3358460: Dropship destroyed by fire
++ re-organized RAT folder structure  (Source > Faction > Type > Weight Class)
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

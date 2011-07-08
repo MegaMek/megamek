@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Light Mechs (Hell's Horses)
+Thorn THE-N,1
+Baboon (Howler),2
+Piranha,3
+Piranha,4
+Mercury MCY-97,5
+Locust IIC,6
+Jenner IIC,5
+Jenner IIC,4
+Vixen (Incubus),3
+Jenner IIC,2
+Thorn THE-N,1

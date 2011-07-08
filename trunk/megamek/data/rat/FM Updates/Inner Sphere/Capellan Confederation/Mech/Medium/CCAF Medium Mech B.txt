@@ -1,0 +1,12 @@
+CCAF Medium Mechs B 3067
+Snake SNK-1V,1
+Wraith TR1,2
+Huron Warrior HUR-WO-R4L,3
+Clint CLNT-2-3U,4
+Cicada CDA-3C,5
+Vindicator VND-3L,6
+Blackjack BJ-2,5
+Men Shen MS1-O,4
+Snake SNK-1V,3
+Vindicator VND-4L,2
+Blackjack BJ2-O,1

@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Heavy Mechs (Blood Spirit)
+Thresher,1
+Vulture (Mad Dog) B,2
+Crossbow B,3
+Mad Cat (Timber Wolf) D,4
+Thor (Summoner) A,5
+Crossbow Prime,6
+Crossbow Prime,5
+Grizzly,4
+Crossbow B,3
+Rifleman IIC,2
+Grizzly,1

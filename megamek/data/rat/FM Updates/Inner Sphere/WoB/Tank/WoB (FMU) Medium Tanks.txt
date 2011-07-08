@@ -1,0 +1,12 @@
+WoB Medium Vehicles 3067 (FMU)
+Chaparral Missile Artillery Tank,1
+Thor Artillery Vehicle,2
+Vedette Medium Tank (Ultra),3
+Hetzer Wheeled Assault Gun,4
+Zephyr Hovertank,5
+Maxim Heavy Hover Transport (3052 Upgrade),6
+Condor Heavy Hover Tank,5
+Regulator Hovertank,4
+Myrmidon Medium Tank,3
+Stygian Strike Tank,2
+Chaparral Missile Artillery Tank,1

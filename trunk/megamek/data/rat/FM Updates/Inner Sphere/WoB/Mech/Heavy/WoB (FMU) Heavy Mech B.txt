@@ -1,0 +1,12 @@
+WoB Heavy Mechs B 3067 (FMU)
+Shootist ST-8A,1
+Archer ARC-8M,2
+Black Knight BL-6-KNT,3
+Tempest TMP-3M,4
+Orion ON1-M,5
+Crusader CRD-5M,6
+Champion CHP-1N,5
+Marauder MAD-5M,4
+Guillotine GLT-3N,3
+Warhammer WHM-7M,2
+War Dog WR-DG-02FC,1

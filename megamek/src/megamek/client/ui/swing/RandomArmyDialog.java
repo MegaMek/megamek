@@ -20,9 +20,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -35,16 +37,19 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -93,7 +98,6 @@ WindowListener, TreeSelectionListener {
     private JPanel m_pAdvSearch = new JPanel();
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
-    private JButton m_bRoll = new JButton(Messages.getString("RandomArmyDialog.Roll"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
 
@@ -101,9 +105,14 @@ WindowListener, TreeSelectionListener {
     
     private JButton m_bAddAll = new JButton(Messages.getString("RandomArmyDialog.AddAll"));
     private JButton m_bAdd = new JButton(Messages.getString("RandomArmyDialog.AddSelected"));
-
-    private JList m_lArmy = new JList();
-    private JList m_lUnits = new JList();
+    private JButton m_bRoll = new JButton(Messages.getString("RandomArmyDialog.Roll"));
+    private JButton m_bClear = new JButton(Messages.getString("RandomArmyDialog.Clear"));
+    
+    private JTable m_lArmy;
+    private JTable m_lUnits;
+    
+    private UnitTableModel armyModel;
+    private UnitTableModel unitsModel;
 
     
     private JLabel m_labBV = new JLabel(Messages
@@ -136,8 +145,6 @@ WindowListener, TreeSelectionListener {
             .getString("RandomArmyDialog.Pad"));
     private JCheckBox m_chkCanon = new JCheckBox(Messages
             .getString("RandomArmyDialog.Canon"));
-    private ArrayList<MechSummary> army = new ArrayList<MechSummary>(0);
-    private ArrayList<MechSummary> rolledUnits = new ArrayList<MechSummary>(0);
 
 
     private RandomUnitGenerator rug;
@@ -167,8 +174,6 @@ WindowListener, TreeSelectionListener {
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bOK);
         m_bOK.addActionListener(this);
-        m_pButtons.add(m_bRoll);
-        m_bRoll.addActionListener(this);
         m_pButtons.add(m_bCancel);
         m_bCancel.addActionListener(this);
         m_pButtons.add(m_labelPlayer);
@@ -309,18 +314,22 @@ WindowListener, TreeSelectionListener {
 
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
-        m_pPreview.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.SelectedUnits")));
+        unitsModel = new UnitTableModel();
+        m_lUnits = new JTable();
+        m_lUnits.setModel(unitsModel);
+        m_lUnits.setIntercellSpacing(new Dimension(0, 0));
+        m_lUnits.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(m_lUnits);
+        scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.SelectedUnits")));
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.gridwidth = 2;
+        c.gridwidth = 4;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 1.0;
         c.weighty = 1.0;
         m_pPreview.add(scroll, c);
-        m_bAddAll.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -329,22 +338,28 @@ WindowListener, TreeSelectionListener {
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pPreview.add(m_bAddAll,c);
-        m_bAdd.addActionListener(this);
-        c = new GridBagConstraints();
+        m_bRoll.addActionListener(this);
+        m_pPreview.add(m_bRoll,c);
         c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
+        m_bAddAll.addActionListener(this);
+        m_pPreview.add(m_bAddAll,c);
+        c.gridx = 2;
+        m_bAdd.addActionListener(this);
         m_pPreview.add(m_bAdd,c);
+        c.gridx = 3;
+        m_bClear.addActionListener(this);
+        m_pPreview.add(m_bClear,c);
+        armyModel = new UnitTableModel();
+        m_lArmy = new JTable();
+        m_lArmy.setModel(armyModel);
+        m_lArmy.setIntercellSpacing(new Dimension(0, 0));
+        m_lArmy.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         scroll = new JScrollPane(m_lArmy);
+        scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
-        c.gridwidth = 2;
+        c.gridwidth = 4;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 1.0;
@@ -384,7 +399,7 @@ WindowListener, TreeSelectionListener {
 
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(m_bOK)) {
-            for (MechSummary ms : army) {
+            for (MechSummary ms : armyModel.getAllUnits()) {
                 try {
                     Entity e = new MechFileParser(ms.getSourceFile(), ms
                             .getEntryName()).getEntity();
@@ -406,32 +421,25 @@ WindowListener, TreeSelectionListener {
                     return;
                 }
             }
-            army = new ArrayList<MechSummary>(0);
-            rolledUnits = new ArrayList<MechSummary>(0);
+            armyModel.clearData();
+            unitsModel.clearData();
             setVisible(false);
+        } else if (ev.getSource().equals(m_bClear)) {
+        	armyModel.clearData();
+        	unitsModel.clearData();
         } else if (ev.getSource().equals(m_bCancel)) {
+        	 armyModel.clearData();
+             unitsModel.clearData();
             setVisible(false);
-            army = new ArrayList<MechSummary>(0);
-            rolledUnits = new ArrayList<MechSummary>(0);
         } else if (ev.getSource().equals(m_bAddAll)) {
-        	for (MechSummary m : rolledUnits) {
-                army.add(m);
+        	for (MechSummary m : unitsModel.getAllUnits()) {
+                armyModel.addUnit(m);
             }
-        	Vector<String> mechs = new Vector<String>();
-            for (MechSummary m : army) {
-                mechs.add(m.getName());
-            }
-            m_lArmy.setListData(mechs);
         } else if (ev.getSource().equals(m_bAdd)) {
-        	for(int sel : m_lUnits.getSelectedIndices()) {
-        		MechSummary m = rolledUnits.get(sel);
-        		army.add(m);
+        	for(int sel : m_lUnits.getSelectedRows()) {
+        		MechSummary m = unitsModel.getUnitAt(sel);
+        		armyModel.addUnit(m);
         	}
-        	Vector<String> mechs = new Vector<String>();
-            for (MechSummary m : army) {
-                mechs.add(m.getName());
-            }
-            m_lArmy.setListData(mechs);
         } else if (ev.getSource().equals(m_bAdvSearch)){
             searchFilter=asd.showDialog();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
@@ -444,7 +452,7 @@ WindowListener, TreeSelectionListener {
                 if(m_pMain.getSelectedIndex() == 1) {
                     int units = Integer.parseInt(m_tUnits.getText());
                     if(units > 0) {
-                        rolledUnits = m_client.getRandomUnitGenerator().generate(units);
+                        unitsModel.setData(m_client.getRandomUnitGenerator().generate(units));
                     }
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
@@ -460,14 +468,8 @@ WindowListener, TreeSelectionListener {
                     p.tech = m_chType.getSelectedIndex();
                     p.minYear = Integer.parseInt(m_tMinYear.getText());
                     p.maxYear = Integer.parseInt(m_tMaxYear.getText());
-                    rolledUnits = RandomArmyCreator.generateArmy(p);
+                    unitsModel.setData(RandomArmyCreator.generateArmy(p));
                 }
-
-                Vector<String> mechs = new Vector<String>();
-                for (MechSummary m : rolledUnits) {
-                    mechs.add(m.getName());
-                }
-                m_lUnits.setListData(mechs);
             } catch (NumberFormatException ex) {
                 //ignored
             }finally{
@@ -591,4 +593,89 @@ WindowListener, TreeSelectionListener {
         }
     }
 
+    /**
+     * A table model for displaying units
+     */
+    public class UnitTableModel extends AbstractTableModel {
+
+        private static final long serialVersionUID = 4819661751806908535L;
+
+        private static final int COL_UNIT = 0;
+        private static final int COL_BV = 1;
+        private static final int COL_MOVE = 2;
+        private static final int N_COL = 3;
+
+        private ArrayList<MechSummary> data;
+
+        public UnitTableModel() {
+            data = new ArrayList<MechSummary>();
+        }
+
+        public int getRowCount() {
+            return data.size();
+        }
+
+        public void clearData() {
+            data = new ArrayList<MechSummary>();
+            fireTableDataChanged();
+        }
+
+        public int getColumnCount() {
+            return N_COL;
+        }
+
+        public void addUnit(MechSummary m) {
+            data.add(m);
+            fireTableDataChanged();
+        }
+        
+        public void setData(ArrayList<MechSummary> mechs) {
+        	data = mechs;
+        	fireTableDataChanged();
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case (COL_UNIT):
+                    return Messages.getString("RandomArmyDialog.colUnit");
+                case (COL_MOVE):
+                    return Messages.getString("RandomArmyDialog.colMove");
+                case (COL_BV):
+                    return Messages.getString("RandomArmyDialog.colBV");
+            }
+            return "??";
+        }
+
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
+
+        public Object getValueAt(int row, int col) {
+            MechSummary m = getUnitAt(row);
+            String value = "";
+            if (col == COL_BV) {
+                value += m.getBV();
+            } else if (col == COL_MOVE) {
+                value += m.getWalkMp() + "/" + m.getRunMp() + "/" + m.getJumpMp();
+            } else {
+                return m.getName();
+            }
+            return value;
+        }
+
+        public MechSummary getUnitAt(int row) {
+            return data.get(row);
+        }
+        
+        public ArrayList<MechSummary> getAllUnits() {
+        	return data;
+        }
+    }
 }

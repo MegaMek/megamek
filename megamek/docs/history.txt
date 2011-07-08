@@ -22,6 +22,7 @@ v0.35.25 (SVN)
 + Data 3303093: War 0f 3039 RATs, thanks hammer-gs!
 + allow player to build army in random army dialog by selectively choosing rolled units
 + Fixed off-by-one error causing occasional bot lockup during movement calculations
++ put units in random army dialog into tables
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

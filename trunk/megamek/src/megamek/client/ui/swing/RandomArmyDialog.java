@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -37,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -95,6 +97,8 @@ WindowListener, TreeSelectionListener {
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
 
+    private JSplitPane m_pSplit;
+    
     private JList m_lMechs = new JList();
 
     private JLabel m_labBV = new JLabel(Messages
@@ -175,15 +179,17 @@ WindowListener, TreeSelectionListener {
         GridBagLayout layout = new GridBagLayout();
         m_pParameters.setLayout(layout);
         GridBagConstraints constraints = new GridBagConstraints();
-        constraints.weightx = 1.0;
-        constraints.weighty = 1.0;
-        constraints.anchor = GridBagConstraints.LINE_START;
+        constraints.weightx = 0.0;
+        constraints.weighty = 0.0;
+        constraints.anchor = GridBagConstraints.WEST;
         layout.setConstraints(m_labTech, constraints);
         m_pParameters.add(m_labTech);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_chType, constraints);
         m_pParameters.add(m_chType);
         constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
         layout.setConstraints(m_labBV, constraints);
         m_pParameters.add(m_labBV);
         m_pParameters.add(m_tBVmin);
@@ -191,33 +197,43 @@ WindowListener, TreeSelectionListener {
         layout.setConstraints(dash, constraints);
         m_pParameters.add(dash);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_tBVmax, constraints);
         m_pParameters.add(m_tBVmax);
         constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
         layout.setConstraints(m_labMechs, constraints);
         m_pParameters.add(m_labMechs);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_tMechs, constraints);
         m_pParameters.add(m_tMechs);
         constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
         layout.setConstraints(m_labVees, constraints);
         m_pParameters.add(m_labVees);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_tVees, constraints);
         m_pParameters.add(m_tVees);
         constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
         layout.setConstraints(m_labBA, constraints);
         m_pParameters.add(m_labBA);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_tBA, constraints);
         m_pParameters.add(m_tBA);
         constraints.gridwidth = 1;
+        constraints.weightx = 0.0;
         layout.setConstraints(m_labInfantry, constraints);
         m_pParameters.add(m_labInfantry);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_tInfantry, constraints);
         m_pParameters.add(m_tInfantry);
-        constraints.gridwidth = 1;
+        constraints.gridwidth = 1;        
+        constraints.weightx = 0.0;
         layout.setConstraints(m_labYear, constraints);
         m_pParameters.add(m_labYear);
         layout.setConstraints(m_tMinYear, constraints);
@@ -226,12 +242,15 @@ WindowListener, TreeSelectionListener {
         layout.setConstraints(dash, constraints);
         m_pParameters.add(dash);
         constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
         layout.setConstraints(m_tMaxYear, constraints);
         m_pParameters.add(m_tMaxYear);
         layout.setConstraints(m_chkPad, constraints);
         m_pParameters.add(m_chkPad);
         layout.setConstraints(m_chkCanon, constraints);
         m_pParameters.add(m_chkCanon);
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.weighty = 1.0;
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
 
@@ -245,7 +264,7 @@ WindowListener, TreeSelectionListener {
         c.gridy = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.NORTHWEST;
+        c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_labUnits, c);
@@ -255,7 +274,7 @@ WindowListener, TreeSelectionListener {
         c.gridy = 0;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.NORTHWEST;
+        c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_tUnits, c);
@@ -266,8 +285,8 @@ WindowListener, TreeSelectionListener {
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.insets = new java.awt.Insets(5, 5, 5, 5);
 
 
@@ -283,17 +302,21 @@ WindowListener, TreeSelectionListener {
 
         // construct the preview panel
         m_pPreview.setLayout(new GridLayout(1, 1));
+        m_pPreview.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.SelectedUnits")));
         JScrollPane scroll = new JScrollPane(m_lMechs);
         m_pPreview.add(scroll);
 
         m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
 
+        m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pPreview);
+        m_pSplit.setOneTouchExpandable(false);
+        m_pSplit.setResizeWeight(0.5);
+        
         // construct the main dialog
         setLayout(new BorderLayout());
         add(m_pButtons, BorderLayout.SOUTH);
-        add(m_pMain, BorderLayout.WEST);
-        add(m_pPreview, BorderLayout.EAST);
+        add(m_pSplit, BorderLayout.CENTER);
         validate();
         pack();
         setLocationRelativeTo(cl.frame);
@@ -377,8 +400,6 @@ WindowListener, TreeSelectionListener {
                     mechs.add(m.getName());
                 }
                 m_lMechs.setListData(mechs);
-                m_lMechs.validate();
-                pack();
             } catch (NumberFormatException ex) {
                 //ignored
             }finally{

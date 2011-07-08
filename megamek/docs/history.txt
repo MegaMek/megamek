@@ -19,6 +19,7 @@ v0.35.25 (SVN)
 + Data 3348898: WoB FM Updates RATs, thanks Demos75
 + Data 3356078: RAT SL FMU, thanks Demos75
 + Data 3346243: ProtoMech RATs FM Updates, thanks Demos75
++ Data 3303093: War 0f 3039 RATs, thanks hammer-gs!
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

@@ -1,0 +1,12 @@
+WoB Light Aerospace 3067 (FMU)
+Rogue RGU-133F,1
+Zero ZRO-114,2
+Zero ZRO-114,3
+Spad SPD-502,4
+Swift SW-606,5
+Trident TRN-3T,6
+Tomahawk THK-63,5
+Cheetah F-12-S,4
+Rogue RGU-133E,3
+Rogue RGU-133E,2
+Tomahawk THK-63,1

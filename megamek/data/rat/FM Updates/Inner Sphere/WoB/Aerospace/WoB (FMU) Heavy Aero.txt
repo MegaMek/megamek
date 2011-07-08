@@ -1,0 +1,12 @@
+WoB Heavy Aerospace 3067 (FMU)
+Shiva SHV-O,1
+Shiva SHV-O,2
+Riever F-100b,3
+Rapier RPR-100,4
+Rapier RPR-100,5
+Hammerhead HMR-HD,6
+Ahab AHB-443,5
+Ahab AHB-443,4
+Riever F-700,3
+Riever F-700,2
+Riever F-700a,1

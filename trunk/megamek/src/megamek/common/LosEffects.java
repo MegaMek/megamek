@@ -266,14 +266,14 @@ public class LosEffects {
         Vector<Coords> targetPos = new Vector<Coords>();
         targetPos.add(target.getPosition());
         //if a grounded dropship is the attacker, then it gets to choose the best secondary position for LoS
-        if(ae instanceof Dropship && !ae.isAirborne() && !ae.isSpaceborne()) {
+        if(ae instanceof Dropship && !ae.getSecondaryPositions().isEmpty()) {
             attackPos = new Vector<Coords>();
             for(int key : ae.getSecondaryPositions().keySet()) {
                 attackPos.add(ae.getSecondaryPositions().get(key));
             }
         }
-        if(target instanceof Entity && target instanceof Dropship && 
-                !((Entity)target).isAirborne() && !((Entity)target).isSpaceborne()) {
+        //if a grounded dropship is the target, then the attacker chooses the best secondary position
+        if(target instanceof Dropship && !((Entity)target).getSecondaryPositions().isEmpty()) {
             targetPos = new Vector<Coords>();
             for(int key : ((Entity)target).getSecondaryPositions().keySet()) {
                 targetPos.add(((Entity)target).getSecondaryPositions().get(key));

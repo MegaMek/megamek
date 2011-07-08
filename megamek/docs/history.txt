@@ -15,6 +15,7 @@ v0.35.25 (SVN)
 + Bug 3358460: Dropship destroyed by fire
 + re-organized RAT folder structure  (Source > Faction > Type > Weight Class)
 + improvements to RandomArmyDialog gui
++ Data 3344270: AFFS FM Updates RATs, thanks Demos75
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

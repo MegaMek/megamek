@@ -25,14 +25,15 @@ import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.MechWarrior;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 
 public class Princess extends BotClient {
-	
-	public boolean verbose_errorlog;
+
+    public boolean verbose_errorlog;
 
     public String properties_file_name;
 
@@ -95,7 +96,9 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateFiringTurn() {
-    	if(verbose_errorlog) System.err.println("calculateFiringTurn called");
+    	if(verbose_errorlog) {
+            System.err.println("calculateFiringTurn called");
+        }
 
         Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
                                                            // entity that can
@@ -110,7 +113,9 @@ public class Princess extends BotClient {
                                                                            // want
                                                                            // to
                                                                            // fire
-        if(verbose_errorlog) System.err.println("calculateFiringTurn returning");
+        if(verbose_errorlog) {
+            System.err.println("calculateFiringTurn returning");
+        }
     }
 
     @Override
@@ -126,17 +131,41 @@ public class Princess extends BotClient {
 
     @Override
     protected MovePath calculateMoveTurn() {
-    	if(verbose_errorlog) System.err.println("calculateMoveTurn called");
-        Entity e = game.getFirstEntity(getMyTurn()); // get the first entity
-                                                     // that can act this turn
-        MovePath ret=continueMovementFor(e); // move it
-        if(verbose_errorlog) System.err.println("calculateMoveTurn returning");
+        if(verbose_errorlog) {
+            System.err.println("calculateMoveTurn called");
+        }
+        //first move useless units: immobile units, ejected mechwarrior, etc
+        Entity moving_entity=null;
+        Entity e=game.getFirstEntity();
+        do {
+            if(e.isImmobile()) {moving_entity=e; break;}
+            if(e instanceof MechWarrior) {moving_entity=e; break;}
+        } while((e=game.getNextEntity(e.getId()+1))!=game.getFirstEntity());
+        //after that, moving furthest units first
+        if(moving_entity==null) {
+            double furthest_dist=0;
+            e=game.getFirstEntity();
+            do {
+                double dist=BasicPathRanker.distanceToClosestEnemy(e,e.getPosition(),game);
+                if((moving_entity==null)||(dist>furthest_dist)) {
+                    moving_entity=e;
+                    furthest_dist=dist;
+                }
+            } while((e=game.getNextEntity(e.getId()+1))!=game.getFirstEntity());
+        }
+
+        MovePath ret=continueMovementFor(moving_entity); // move it
+        if(verbose_errorlog) {
+            System.err.println("calculateMoveTurn returning");
+        }
         return ret;
     }
 
     @Override
     protected PhysicalOption calculatePhysicalTurn() {
-    	if(verbose_errorlog) System.err.println("calculatePhysicalTurn called");
+        if(verbose_errorlog) {
+            System.err.println("calculatePhysicalTurn called");
+        }
         Entity first_entity = game.getFirstEntity(getMyTurn()); // get the first
                                                                 // entity that
                                                                 // can act this
@@ -196,19 +225,21 @@ public class Princess extends BotClient {
                 System.err.println("No useful attack to be made");
             }
             if (best_attack != null) {
-            	if(verbose_errorlog) System.err.println("calculatePhysicalTurn returning (with an attack)");
+                if(verbose_errorlog) {
+                    System.err.println("calculatePhysicalTurn returning (with an attack)");
+                }
                 return best_attack.getAsPhysicalOption();
             }
-            hitter = game.getNextEntity(hitter.getId() + 1); // otherwise, check
-                                                             // if the next
-                                                             // entity can hit
-                                                             // something
+            hitter = game.getNextEntity(hitter.getId() + 1);
+            // otherwise, check if the next entity can hit something
             if (hitter == first_entity) {
                 hitter = null; // getNextEntity is incorrect, it does not return
                                // null at the end, it returns the first entity
             }
         } while (hitter != null);
-        if(verbose_errorlog) System.err.println("calculatePhysicalTurn returning (no attacks)");
+        if(verbose_errorlog) {
+            System.err.println("calculatePhysicalTurn returning (no attacks)");
+        }
         return null; // no one can hit anything anymore, so give up
     }
 
@@ -216,11 +247,6 @@ public class Princess extends BotClient {
     protected MovePath continueMovementFor(Entity entity) { // moves this entity
                                                             // during movement
                                                             // phase
-        // MovePath ret = new MovePath(game,entity); //generate a path
-        // consisting of doing nothing
-        // ret.addStep(MovePath.MoveStepType.FORWARDS); //add one step forwards
-        // to that
-        // return ret; //and go
         return path_searcher.getBestPath(entity, game);
     }
 

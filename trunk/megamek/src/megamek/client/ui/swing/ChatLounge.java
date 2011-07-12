@@ -75,7 +75,6 @@ import javax.swing.table.TableColumn;
 
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
-import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -1185,7 +1184,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             if (!clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
-            
+
             if (!clientgui.getClient().game.getOptions().booleanOption("edge")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
             }
@@ -2033,16 +2032,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             // list of entities to a file.
             clientgui.saveListFile(clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer(), false));
         } else if (ev.getSource().equals(butAddBot)) {
-            String name = "Bot" + tablePlayers.getModel().getRowCount(); //$NON-NLS-1$
-            name = (String) JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"), Messages.getString("ChatLounge.ChooseBotName"), JOptionPane.QUESTION_MESSAGE, null, null, name);
-            if (name == null) {
-                return;
+            BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
+            bcd.setVisible(true);
+            if (bcd.dialog_aborted) {
+                return; //user didn't click 'ok', add no bot
             }
-            if ("".equals(name.trim())) {
-                name = "Bot" + tablePlayers.getModel().getRowCount(); //$NON-NLS-1$
-            }
-
-            BotClient c = new TestBot(name, clientgui.getClient().getHost(), clientgui.getClient().getPort());
+            BotClient c = bcd.getSelectedBot(clientgui.getClient().getHost(), clientgui.getClient().getPort());
             c.game.addGameListener(new BotGUI(c));
             try {
                 c.connect();
@@ -2050,7 +2045,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
             }
             c.retrieveServerInfo();
-            clientgui.getBots().put(name, c);
+            clientgui.getBots().put(bcd.getBotName(), c);
         } else if (ev.getSource().equals(butRemoveBot)) {
             Client c = getPlayerSelected();
             if ((c == null) || c.equals(clientgui.getClient())) {

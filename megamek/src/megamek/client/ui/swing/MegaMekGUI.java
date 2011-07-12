@@ -590,7 +590,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         // kick off a RNG check
         Compute.d6();
-      
+
         // start server
         try {
             server = new Server(hd.serverPass, hd.port);
@@ -648,7 +648,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 c.retrieveServerInfo();
             }
         }
-        
+
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
                 BotClient c = new Princess(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
@@ -752,7 +752,12 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // initialize game
-        client = new TestBot(cd.playerName, cd.serverAddr, cd.port);
+        BotConfigDialog bcd = new BotConfigDialog(frame);
+        bcd.setVisible(true);
+        if (bcd.dialog_aborted) {
+            return; //user didn't click 'ok', add no bot
+        }
+        client = bcd.getSelectedBot(cd.serverAddr, cd.port);
         client.game.addGameListener(new BotGUI((BotClient) client));
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();

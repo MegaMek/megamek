@@ -146,7 +146,7 @@ public class FireControl {
             to_hit = action.toHit(game);
             int fromdir = target.getPosition().direction(shooter.getPosition());
             damage_direction=(fromdir-target.getFacing()+6)%6;
-            initDamage();
+            initDamage(game);
         }
 
         /**
@@ -165,36 +165,44 @@ public class FireControl {
             shooter = sshooter;
             weapon = wep;
             target = ttarget;
-            action = null;
+            //action = null;
+            //warning, this action has the wrong to-hit, since shooter is likely somewhere else
+            action = new WeaponAttackAction(shooter.getId(),target.getId(),
+            		shooter.getEquipmentNum(weapon));
             to_hit = guessToHitModifier(shooter, shooter_state, target,
                     target_state, wep, game);
             int fromdir=target_state.position.direction(shooter_state.position);
             damage_direction=(fromdir-target_state.facing+6)%6;
-            initDamage();
+            initDamage(game);
         }
 
         /*
          * Helper function that calculates expected damage
          */
-        private void initDamage() {
-            //I would like to use Compute.getExpectedDamage here, but it's private
-            //I assume it has been made private for good reason, so I won't mess with it
+        private void initDamage(IGame game) {
             prob_to_hit=Compute.oddsAbove(to_hit.getValue())/100.0;
             heat=((WeaponType)weapon.getType()).getHeat();
-            if((weapon.getType() instanceof InfantryWeapon)&&(shooter instanceof Infantry)) {
-                max_damage=((InfantryWeapon)(weapon.getType())).getInfantryDamage()*((Infantry)shooter).getShootingStrength();
-                expected_damage_on_hit=max_damage/2.0; //ignoring cluster hits
-            } else if(((WeaponType)weapon.getType()).getDamage()==WeaponType.DAMAGE_MISSILE) {
-                max_damage=((WeaponType)weapon.getType()).getRackSize(); //I think this is the right amount
-                expected_damage_on_hit=max_damage/2; //not true.  too lazy to calculate real value
-            }  else {
-                max_damage=((WeaponType)weapon.getType()).getDamage();
-                expected_damage_on_hit=max_damage;
+            //if(action!=null) {
+            expected_damage_on_hit=Compute.getExpectedDamage(game,action,true);
+            max_damage=expected_damage_on_hit;
+            /*
+            } else {
+                if((weapon.getType() instanceof InfantryWeapon)&&(shooter instanceof Infantry)) {
+                    max_damage=((InfantryWeapon)(weapon.getType())).getInfantryDamage()*((Infantry)shooter).getShootingStrength();
+                    expected_damage_on_hit=max_damage/2.0; //ignoring cluster hits
+                } else if(((WeaponType)weapon.getType()).getDamage()==WeaponType.DAMAGE_MISSILE) {
+                    max_damage=((WeaponType)weapon.getType()).getRackSize(); //I think this is the right amount
+                    expected_damage_on_hit=max_damage/2; //not true.  too lazy to calculate real value
+                }  else {
+                    max_damage=((WeaponType)weapon.getType()).getDamage();
+                    expected_damage_on_hit=max_damage;
+                }
+                if(shooter instanceof Infantry) { //each member of infantry squads get to shoot
+                    max_damage*=((Infantry)shooter).getShootingStrength();
+                    expected_damage_on_hit=max_damage/2;
+                }
             }
-            if(shooter instanceof Infantry) { //each member of infantry squads get to shoot
-                max_damage*=((Infantry)shooter).getShootingStrength();
-                expected_damage_on_hit=max_damage/2;
-            }
+            */
             //now guess how many critical hits will be done
             expected_criticals=0;
             kill_probability=0;
@@ -436,7 +444,7 @@ public class FireControl {
             initDamage();
         }
 
-        /*+
+        /**
          * Helper function to determine damage and criticals
          */
         public void initDamage() {

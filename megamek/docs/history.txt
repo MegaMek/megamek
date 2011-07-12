@@ -23,6 +23,7 @@ v0.35.25 (SVN)
 + allow player to build army in random army dialog by selectively choosing rolled units
 + Fixed off-by-one error causing occasional bot lockup during movement calculations
 + put units in random army dialog into tables
++ Patch 3363837: bot configuration dialog
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

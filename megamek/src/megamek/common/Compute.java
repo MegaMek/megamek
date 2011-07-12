@@ -1968,7 +1968,7 @@ public class Compute {
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc.
      */
-    private static float getExpectedDamage(IGame g, WeaponAttackAction waa, boolean assumeHit) {
+    public static float getExpectedDamage(IGame g, WeaponAttackAction waa, boolean assumeHit) {
         boolean use_table = false;
 
         AmmoType loaded_ammo = new AmmoType();

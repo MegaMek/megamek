@@ -23,6 +23,7 @@ import megamek.client.bot.princess.FireControl.FiringPlan;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
@@ -164,7 +165,7 @@ public class BasicPathRanker extends PathRanker {
                 * (maximum_damage_done * foolish_bravery - expected_damage_taken)
                 - expected_fall_damage;
 
-        double dist_to_enemy = distanceToClosestEnemy(p, game);
+        double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
         utility -= dist_to_enemy * hyper_aggression;
 
         double dist_to_friend = distanceToClosestFriend(p, game);
@@ -212,13 +213,17 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * Gives the distance to the closest enemy unit, or zero if none exist
+     * 
+     * @param me Entity who has enemies
+     * @param position Coords from which the closest enemy is found
+     * @param game IGame that we're playing
      */
-    public double distanceToClosestEnemy(MovePath p, IGame game) {
-        Entity closest = findClosestEnemy(p, game);
+    static public double distanceToClosestEnemy(Entity me,Coords position, IGame game) {
+        Entity closest = findClosestEnemy(me,position, game);
         if (closest == null) {
             return 0;
         }
-        return closest.getPosition().distance(p.getFinalCoords());
+        return closest.getPosition().distance(position);
     }
 
 }

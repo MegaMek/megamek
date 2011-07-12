@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
@@ -44,13 +45,13 @@ public class PathRanker {
     /**
      * Find the closest enemy to a unit with a path
      */
-    Entity findClosestEnemy(MovePath p, IGame game) {
+    static Entity findClosestEnemy(Entity me,Coords position, IGame game) {
         int range = 9999;
         Entity closest = null;
-        ArrayList<Entity> enemies = getEnemies(p.getEntity(), game);
+        ArrayList<Entity> enemies = getEnemies(me, game);
         for (Entity e : enemies) {
-            if (p.getFinalCoords().distance(e.getPosition()) < range) {
-                range = p.getFinalCoords().distance(e.getPosition());
+            if (position.distance(e.getPosition()) < range) {
+                range = position.distance(e.getPosition());
                 closest = e;
             }
         }
@@ -76,7 +77,7 @@ public class PathRanker {
     /**
      * Get all the enemies of a unit
      */
-    ArrayList<Entity> getEnemies(Entity myunit, IGame game) {
+    static ArrayList<Entity> getEnemies(Entity myunit, IGame game) {
         ArrayList<Entity> enemies = new ArrayList<Entity>();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();

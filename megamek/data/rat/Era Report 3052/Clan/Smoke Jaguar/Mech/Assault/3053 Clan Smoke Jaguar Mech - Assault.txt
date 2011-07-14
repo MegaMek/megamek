@@ -1,0 +1,12 @@
+3053 Clan Smoke Jaguar Mech - Assault
+Behemoth (Stone Rhino),1
+Gladiator (Executioner) C,2
+Masakari (Warhawk) B,3
+Man O' War (Gargoyle) Prime,4
+Masakari (Warhawk) Prime,5
+Daishi (Dire Wolf) Prime,6
+Masakari (Warhawk) A,5
+Daishi (Dire Wolf) B,4
+Masakari (Warhawk) C,3
+Warhammer IIC 2,2
+Kingfisher Prime,1

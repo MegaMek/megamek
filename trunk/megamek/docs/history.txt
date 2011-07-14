@@ -24,6 +24,7 @@ v0.35.25 (SVN)
 + Fixed off-by-one error causing occasional bot lockup during movement calculations
 + put units in random army dialog into tables
 + Patch 3363837: bot configuration dialog
++ Era Report 3052 RAT (thanks Hammer!)
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

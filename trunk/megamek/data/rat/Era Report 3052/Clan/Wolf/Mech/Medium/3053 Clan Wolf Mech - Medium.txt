@@ -1,0 +1,12 @@
+3053 Clan Wolf Mech - Medium
+Pouncer D,1
+Phantom C,2
+Ryoken (Stormcrow) B,3
+Black Hawk (Nova) A,4
+Fenris (Ice Ferret) Prime,5
+Fenris (Ice Ferret) Prime,6
+Fenris (Ice Ferret) Prime,5
+Black Hawk (Nova) A,4
+Dragonfly (Viper) B,3
+Phantom D,2
+Hunchback IIC,1

@@ -171,7 +171,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String EDGE = "edge";
     public static final String IMPLANTS = "implants";
     public static final String QUIRKS = "quirks";
-    public static final String DRIVER = "commander";
+    public static final String DRIVER = "driver";
     public static final String COMMANDER = "commander";
     public static final String DEPLOYMENT = "deployment";
     public static final String AUTOEJECT = "autoeject";

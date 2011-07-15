@@ -25,6 +25,8 @@ v0.35.25 (SVN)
 + put units in random army dialog into tables
 + Patch 3363837: bot configuration dialog
 + Era Report 3052 RAT (thanks Hammer!)
++ Bug: typo for driver hit in XMLStreamParser
++ check null crew in Infantry#getWalkMP and Infantry#getRunMP
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

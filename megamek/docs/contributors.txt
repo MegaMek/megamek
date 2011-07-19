@@ -169,6 +169,7 @@
      N.|.B.
      Alex "Deadborder" Fauth
      Sebastian "Demos" Seiml
+     Swiftsure
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

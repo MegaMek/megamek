@@ -117,15 +117,15 @@ public class BattleArmor extends Infantry {
 
     /**
      * Flag that is <code>true</code> when this unit is equipped with mimetic
-     * Camo.
+     * armor.
      */
     private boolean isMimetic = false;
 
     /**
-     * Flag that is <code>true</code> when this unit is equipped with simple
-     * Camo.
+     * Flag that is <code>true</code> when this unit is equipped with a camo
+     * system.
      */
-    private boolean isSimpleCamo = false;
+    private boolean hasCamoSystem = false;
 
     /**
      * Modifiers to <code>ToHitData</code> for stealth.
@@ -134,6 +134,7 @@ public class BattleArmor extends Infantry {
     private int mediumStealthMod = 0;
     private int longStealthMod = 0;
     private String stealthName = null;
+    private String camoName = null;
 
     // Public and Protected constants, constructors, and methods.
 
@@ -153,29 +154,29 @@ public class BattleArmor extends Infantry {
     public static final String MINE_LAUNCHER = "BAMineLauncher";
 
     /**
-     * The internal name for Stealth equipment.
+     * The internal name for basic Stealth armor.
      */
-    public static final String STEALTH = "Basic Stealth";
+    public static final String BASIC_STEALTH_ARMOR = "Basic Stealth";
 
     /**
-     * The internal name for Advanced Stealth equipment.
+     * The internal name for standard Stealth armor.
      */
-    public static final String ADVANCED_STEALTH = "Standard Stealth";
+    public static final String STANDARD_STEALTH_ARMOR = "Standard Stealth";
 
     /**
-     * The internal name for Expert Stealth equipment.
+     * The internal name for improved Stealth armor.
      */
-    public static final String EXPERT_STEALTH = "Improved Stealth";
+    public static final String IMPROVED_STEALTH_ARMOR = "Improved Stealth";
 
     /**
-     * The internal name for Mimetic Camo equipment.
+     * The internal name for Mimetic armor.
      */
-    public static final String MIMETIC_CAMO = "Mimetic Armor";
+    public static final String MIMETIC_ARMOR = "Mimetic Armor";
 
     /**
      * The internal name for Simple Camo equipment.
      */
-    public static final String SIMPLE_CAMO = "Camo System";
+    public static final String CAMO_SYSTEM = "Camo System";
 
     /**
      * The internal name for Single-Hex ECM equipment.
@@ -654,36 +655,30 @@ public class BattleArmor extends Infantry {
         // Is the item a stealth equipment?
         // TODO: what's the *real* extreme range modifier?
         String name = mounted.getType().getInternalName();
-        if (BattleArmor.STEALTH.equals(name)) {
+        if (BattleArmor.BASIC_STEALTH_ARMOR.equals(name)) {
             isStealthy = true;
             shortStealthMod = 0;
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = name;
-        } else if (BattleArmor.ADVANCED_STEALTH.equals(name)) {
+        } else if (BattleArmor.STANDARD_STEALTH_ARMOR.equals(name)) {
             isStealthy = true;
             shortStealthMod = 1;
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = name;
-        } else if (BattleArmor.EXPERT_STEALTH.equals(name)) {
+        } else if (BattleArmor.IMPROVED_STEALTH_ARMOR.equals(name)) {
             isStealthy = true;
             shortStealthMod = 1;
             mediumStealthMod = 2;
             longStealthMod = 3;
             stealthName = name;
-        } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
+        } else if (BattleArmor.MIMETIC_ARMOR.equals(name)) {
             isMimetic = true;
-            shortStealthMod = 3;
-            mediumStealthMod = 2;
-            longStealthMod = 1;
             stealthName = name;
-        } else if (BattleArmor.SIMPLE_CAMO.equals(name)) {
-            isSimpleCamo = true;
-            shortStealthMod = 2;
-            mediumStealthMod = 1;
-            longStealthMod = 0;
-            stealthName = name;
+        } else if (BattleArmor.CAMO_SYSTEM.equals(name)) {
+            hasCamoSystem = true;
+            camoName = name;
         }
 
         // If the BA can swarm, they're anti-mek.
@@ -769,14 +764,14 @@ public class BattleArmor extends Infantry {
             int tmmJumped = Compute.getTargetMovementModifier(rawJump, true, false).getValue();
             double targetMovementModifier = Math.max(tmmRan, tmmJumped);
             double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
-            if (isSimpleCamo) {
+            if (hasCamoSystem) {
                 tmmFactor += 0.2;
             }
             if (isStealthy) {
                 tmmFactor += 0.2;
             }
             // improved stealth get's an extra 0.1, for 0.3 total
-            if ((stealthName != null) && stealthName.equals(BattleArmor.EXPERT_STEALTH)) {
+            if ((stealthName != null) && stealthName.equals(BattleArmor.IMPROVED_STEALTH_ARMOR)) {
                 tmmFactor += 0.1;
             }
             if (isMimetic) {
@@ -993,6 +988,10 @@ public class BattleArmor extends Infantry {
         return stealthName;
     }
 
+    public String getCamoName() {
+        return camoName;
+    }
+
     /**
      * Public interface to the BattleArmors short range stealth modifier
      *
@@ -1031,7 +1030,19 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public boolean isStealthActive() {
-        return (isStealthy || isMimetic || isSimpleCamo);
+        return (isStealthy || isMimetic || hasCamoSystem);
+    }
+
+    public boolean isMimetic() {
+        return isMimetic;
+    }
+
+    public boolean hasCamoSystem() {
+        return hasCamoSystem;
+    }
+
+    public boolean isStealthy() {
+        return isStealthy;
     }
 
     /**
@@ -1097,7 +1108,7 @@ public class BattleArmor extends Infantry {
         // 1 hexes moved +1 movement modifier
         // 2+ hexes moved no modifier
         // This can also be in addition to any armor except Mimetic!
-        if (isSimpleCamo && (delta_distance < 2)) {
+        if (hasCamoSystem && (delta_distance < 2)) {
             int mod = Math.max(2 - delta_distance, 0);
             if (result == null) {
                 result = new TargetRoll(mod, "camoflage");
@@ -1642,7 +1653,7 @@ public class BattleArmor extends Infantry {
     public boolean hasPatchworkArmor() {
         return false;
     }
-    
+
     @Override
     /*
      * Each BA squad has 2 structure points

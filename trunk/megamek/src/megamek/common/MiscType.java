@@ -2072,8 +2072,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createBasicStealth() {
         MiscType misc = new MiscType();
 
-        misc.name = BattleArmor.STEALTH;
-        misc.setInternalName(BattleArmor.STEALTH);
+        misc.name = BattleArmor.BASIC_STEALTH_ARMOR;
+        misc.setInternalName(BattleArmor.BASIC_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2086,8 +2086,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createStandardStealth() {
         MiscType misc = new MiscType();
 
-        misc.name = BattleArmor.ADVANCED_STEALTH;
-        misc.setInternalName(BattleArmor.ADVANCED_STEALTH);
+        misc.name = BattleArmor.STANDARD_STEALTH_ARMOR;
+        misc.setInternalName(BattleArmor.STANDARD_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2100,8 +2100,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedStealth() {
         MiscType misc = new MiscType();
 
-        misc.name = BattleArmor.EXPERT_STEALTH;
-        misc.setInternalName(BattleArmor.EXPERT_STEALTH);
+        misc.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
+        misc.setInternalName(BattleArmor.IMPROVED_STEALTH_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2240,8 +2240,8 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = BattleArmor.MIMETIC_CAMO;
-        misc.setInternalName(BattleArmor.MIMETIC_CAMO);
+        misc.name = BattleArmor.MIMETIC_ARMOR;
+        misc.setInternalName(BattleArmor.MIMETIC_ARMOR);
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
@@ -2255,8 +2255,8 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = BattleArmor.SIMPLE_CAMO;
-        misc.setInternalName(BattleArmor.SIMPLE_CAMO);
+        misc.name = BattleArmor.CAMO_SYSTEM;
+        misc.setInternalName(BattleArmor.CAMO_SYSTEM);
         misc.addLookupName("Simple Camo");
         misc.tonnage = 0;
         misc.criticals = 0;

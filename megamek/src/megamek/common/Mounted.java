@@ -128,6 +128,9 @@ public class Mounted implements Serializable, RoundUpdated {
     // for BA weapons, is this on the body of a trooper?
     private boolean bodyMounted = false;
 
+    // for BA weapons, is this in a detachable weapon pack?
+    private boolean isDWPMounted = false;
+
     // for Armored components
     private boolean armoredComponent = false;
 
@@ -357,6 +360,8 @@ public class Mounted implements Serializable, RoundUpdated {
             desc.insert(0, "j ");
         } else if (fired) {
             desc.insert(0, "x ");
+        } else if (isDWPMounted && (getLinkedBy() == null)) {
+            desc.insert(0, "x ");
         }
         if (rearMounted) {
             desc.append(" (R)");
@@ -373,6 +378,12 @@ public class Mounted implements Serializable, RoundUpdated {
             desc.append(shotsLeft);
             desc.append(")");
         }
+        if (isBodyMounted()) {
+            desc.append(" (Body)");
+        }
+        if (isDWPMounted()) {
+            desc.append(" (DWP)");
+        }
         if (isDumping()) {
             desc.append(" (dumping)");
         }
@@ -380,7 +391,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isReady() {
-        return !usedThisRound && !destroyed && !jammed && !useless;
+        return !usedThisRound && !destroyed && !jammed && !useless && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
 
     public boolean isUsedThisRound() {
@@ -670,10 +681,10 @@ public class Mounted implements Serializable, RoundUpdated {
         linked.setLinkedBy(this);
     }
 
-    // should only be called by setLinked()
+    // should only be called by setLinked(), or when dumping a DWP
     // in the case of a many-to-one relationship (like ammo) this is meaningless
-    protected void setLinkedBy(Mounted linker) {
-        if (linker.getLinked() != this) {
+    public void setLinkedBy(Mounted linker) {
+        if ((linker != null) && (linker.getLinked() != this)) {
             // liar
             return;
         }
@@ -1060,6 +1071,14 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setBodyMounted(boolean bodyMounted) {
         this.bodyMounted = bodyMounted;
+    }
+
+    public boolean isDWPMounted() {
+        return isDWPMounted;
+    }
+
+    public void setDWPMounted(boolean dwpMounted) {
+        isDWPMounted = dwpMounted;
     }
 
     public boolean isWeaponGroup() {

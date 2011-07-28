@@ -28,6 +28,7 @@ v0.35.25 (SVN)
 + Bug: typo for driver hit in XMLStreamParser
 + check null crew in Infantry#getWalkMP and Infantry#getRunMP
 + BA camo fix
++ Implemented DWPs
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

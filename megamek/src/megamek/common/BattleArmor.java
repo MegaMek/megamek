@@ -275,7 +275,28 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false, false);
+    }
+
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor, boolean ignoreDWP, boolean ignoreMyomerBooster) {
         int j = getOriginalWalkMP();
+        if (hasMyomerBooster() && !ignoreMyomerBooster) {
+            if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
+                j++;
+            } else {
+                j += 2;
+            }
+        }
+        if (hasDWP() && !ignoreDWP) {
+            if (getWeightClass() == EntityWeightClass.WEIGHT_BA_MEDIUM) {
+                j -= 3;
+            } else if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
+                j -= 2;
+            }
+            if (j == 0) {
+                j++;
+            }
+        }
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
@@ -288,31 +309,9 @@ public class BattleArmor extends Infantry {
         return j;
     }
 
-    /**
-     * get this ProtoMech's run MP without factoring in a possible myomer
-     * booster
-     *
-     * @param gravity
-     * @param ignoreheat
-     * @return
-     */
-    public int getRunMPwithoutMyomerBooster(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-
-        int runMP = getWalkMP(gravity, ignoreheat, ignoremodulararmor);
-        if (hasMyomerBooster()) {
-
-            if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
-                runMP++;
-            } else {
-                runMP += 2;
-            }
-        }
-        return runMP;
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false, false);
     }
 
     /**
@@ -336,7 +335,7 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int getJumpMP(boolean gravity) {
-        return getJumpMP(gravity, false);
+        return getJumpMP(gravity, false, false);
     }
 
     /**
@@ -346,8 +345,11 @@ public class BattleArmor extends Infantry {
      * @param ignoreBurden
      * @return
      */
-    public int getJumpMP(boolean gravity, boolean ignoreBurden) {
+    public int getJumpMP(boolean gravity, boolean ignoreBurden, boolean ignoreDWP) {
         if (isBurdened() && !ignoreBurden) {
+            return 0;
+        }
+        if (hasDWP() && !ignoreDWP) {
             return 0;
         }
         if (null != game) {
@@ -757,10 +759,10 @@ public class BattleArmor extends Infantry {
                     break;
                 }
             }
-            int runMP = getRunMP(false, false, true);
+            int runMP = getWalkMP(false, false, true, false, true);
             int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
             // get jump MP, ignoring burden
-            int rawJump = getJumpMP(false, true);
+            int rawJump = getJumpMP(false, true, true);
             int tmmJumped = Compute.getTargetMovementModifier(rawJump, true, false).getValue();
             double targetMovementModifier = Math.max(tmmRan, tmmJumped);
             double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
@@ -839,7 +841,7 @@ public class BattleArmor extends Infantry {
                     }
                 }
             }
-            int movement = Math.max(getRunMP(false, false, true), getJumpMP(false, true));
+            int movement = Math.max(getWalkMP(false, false, true, false, true), getJumpMP(false, true, true));
             double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;
@@ -975,6 +977,19 @@ public class BattleArmor extends Infantry {
         } // End is-inner-sphere-squad
 
         // Unit isn't burdened.
+        return false;
+    }
+
+    /**
+     * does this BA have an unjettisoned DWP?
+     * @return
+     */
+    public boolean hasDWP() {
+        for (Mounted mounted : getWeaponList()) {
+            if (mounted.isDWPMounted() && (mounted.getLinkedBy() != null)) {
+                return true;
+            }
+        }
         return false;
     }
 

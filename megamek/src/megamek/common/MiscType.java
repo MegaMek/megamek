@@ -166,6 +166,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_DRONE_OPERATING_SYSTEM = BigInteger.valueOf(1).shiftLeft(120);
     public static final BigInteger F_RECON_CAMERA = BigInteger.valueOf(1).shiftLeft(121);
     public static final BigInteger F_COMBAT_VEHICLE_ESCAPE_POD = BigInteger.valueOf(1).shiftLeft(122);
+    public static final BigInteger F_DETACHABLE_WEAPON_PACK = BigInteger.valueOf(1).shiftLeft(123);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1052,6 +1053,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBARemoteSensorDispenser());
         EquipmentType.addType(MiscType.createBACuttingTorch());
         EquipmentType.addType(MiscType.createBASpaceOperationsAdaptation());
+        EquipmentType.addType(MiscType.createISDetachableWeaponPack());
+        EquipmentType.addType(MiscType.createCLDetachableWeaponPack());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
@@ -5208,6 +5211,38 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_COMBAT_VEHICLE_ESCAPE_POD);
         misc.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         misc.techRating = RATING_D;
+        return misc;
+    }
+
+    public static MiscType createISDetachableWeaponPack() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Detachable Weapon Pack";
+        misc.setInternalName("ISDetachableWeaponPack");
+        // FIXME: should be 0.75 x weapon/ammo
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 18000;
+        misc.techRating = RATING_E;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        misc.flags = misc.flags.or(F_DETACHABLE_WEAPON_PACK).or(F_BA_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createCLDetachableWeaponPack() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Detachable Weapon Pack";
+        misc.setInternalName("CLDetachableWeaponPack");
+        // FIXME: should be 0.75 x weapon/ammo
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 18000;
+        misc.techRating = RATING_E;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        misc.flags = misc.flags.or(F_DETACHABLE_WEAPON_PACK).or(F_BA_EQUIPMENT);
         return misc;
     }
 

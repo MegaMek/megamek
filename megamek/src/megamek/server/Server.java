@@ -14633,12 +14633,12 @@ public class Server implements Runnable {
         if (entity instanceof Mech) {
             return;
         }
-        
+
         //fire has no effect on dropships
         if (entity instanceof Dropship) {
             return;
         }
-        
+
         // Must roll 8+ to survive...
         r = new Report(5100);
         r.subject = entity.getId();
@@ -21077,6 +21077,20 @@ public class Server implements Runnable {
                     m.setShotsLeft(0);
                 }
             }
+            // also do DWP dumping
+            if (entity instanceof BattleArmor) {
+                for (Mounted m : entity.getWeaponList()) {
+                    if (m.isDWPMounted() && m.isPendingDump()) {
+                        m.setLinkedBy(null);
+                        r = new Report(5116);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(m.getName());
+                        addReport(r);
+                        m.setDumping(false);
+                    }
+                }
+            }
             entity.reloadEmptyWeapons();
         }
     }
@@ -22017,6 +22031,8 @@ public class Server implements Runnable {
         try {
             // a mode change for ammo means dumping or hotloading
             if ((m.getType() instanceof AmmoType) && !m.getType().hasInstantModeSwitch() && (mode <= 0)) {
+                m.setPendingDump(mode == -1);
+            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (m.getLinkedBy() != null) && (mode <= 0)) {
                 m.setPendingDump(mode == -1);
             } else {
                 if (!m.setMode(mode)) {

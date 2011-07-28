@@ -216,11 +216,11 @@ public class Aero extends Entity {
         int j = getOriginalWalkMP();
         //adjust for engine hits
         if(engineHits >= getMaxEngineHits()) {
-        	return 0;
+            return 0;
         }
         int engineLoss = 2;
-        if(this instanceof SmallCraft || this instanceof Jumpship) {
-        	engineLoss = 1;
+        if((this instanceof SmallCraft) || (this instanceof Jumpship)) {
+            engineLoss = 1;
         }
         j = Math.max(0, j - (engineHits * engineLoss));
         j = Math.max(0, j - getCargoMpReduction());
@@ -549,7 +549,7 @@ public class Aero extends Entity {
     public int getOHeatSinks() {
         return heatSinksOriginal;
     }
-    
+
     public void setHeatSinks(int hs) {
         heatSinks = hs;
     }
@@ -557,7 +557,7 @@ public class Aero extends Entity {
     public int getHeatSinks() {
         return heatSinks;
     }
-    
+
     public int getHeatSinkHits() {
     	return heatSinksOriginal - heatSinks;
     }
@@ -3608,7 +3608,7 @@ public class Aero extends Entity {
 	public String getLocationDamage(int loc) {
 		return "";
 	}
-	
+
 	public String getCritDamageString() {
     	String toReturn = "";
     	boolean first = true;

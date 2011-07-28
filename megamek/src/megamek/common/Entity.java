@@ -2301,9 +2301,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * indicate whether this is bodymounted for BAs
      */
-    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted) throws LocationFullException {
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, boolean bodyMounted, boolean dwpMounted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setBodyMounted(bodyMounted);
+        mounted.setDWPMounted(dwpMounted);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
@@ -7892,8 +7893,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isAirborneVTOLorWIGE() {
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
-        if (getMovementMode() == EntityMovementMode.VTOL
-                || getMovementMode() == EntityMovementMode.WIGE) {
+        if ((getMovementMode() == EntityMovementMode.VTOL)
+                || (getMovementMode() == EntityMovementMode.WIGE)) {
             if ((game != null) && (game.getBoard() != null) && (getPosition() != null) && (game.getBoard().getHex(getPosition()) != null) && ((game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation()) || (game.getBoard().getHex(getPosition()).terrainLevel(Terrains.BRIDGE_ELEV) >= getElevation()))) {
                 return false;
             }

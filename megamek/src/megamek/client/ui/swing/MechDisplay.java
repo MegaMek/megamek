@@ -2597,8 +2597,10 @@ public class MechDisplay extends JPanel {
                 Mounted m = getSelectedEquipment();
                 boolean bOwner = clientgui.getClient().getLocalPlayer().equals(
                         en.getOwner());
-                if ((m == null) || !bOwner || !(m.getType() instanceof AmmoType)
-                        || (m.getShotsLeft() <= 0)) {
+                if ((m == null) || !bOwner
+                        || ((!(m.getType() instanceof AmmoType)
+                                || (m.getShotsLeft() <= 0)) && !m.isDWPMounted())
+                        || (m.isDWPMounted() && (m.getLinkedBy() == null))) {
                     return;
                 }
 
@@ -2607,19 +2609,33 @@ public class MechDisplay extends JPanel {
 
                 if (m.isPendingDump()) {
                     bDumping = false;
-                    String title = Messages
-                            .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
-                    String body = Messages
-                            .getString(
-                                    "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
-                    bConfirmed = clientgui.doYesNoDialog(title, body);
+                    if (m.getType() instanceof AmmoType) {
+                        String title = Messages.getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
+                        String body = Messages.getString(
+                                "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
+                    } else {
+                        String title = Messages.getString("MechDisplay.CancelJettison.title"); //$NON-NLS-1$
+                        String body = Messages.getString(
+                                "MechDisplay.CancelJettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
+                    }
                 } else {
                     bDumping = true;
-                    String title = Messages.getString("MechDisplay.Dump.title"); //$NON-NLS-1$
-                    String body = Messages
-                            .getString(
-                                    "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
-                    bConfirmed = clientgui.doYesNoDialog(title, body);
+                    if (m.getType() instanceof AmmoType) {
+                        String title = Messages.getString("MechDisplay.Dump.title"); //$NON-NLS-1$
+                        String body = Messages
+                                .getString(
+                                        "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
+                    } else {
+                        String title = Messages.getString("MechDisplay.Jettison.title"); //$NON-NLS-1$
+                        String body = Messages
+                                .getString(
+                                        "MechDisplay.Jettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
+                    }
+
                 }
 
                 if (bConfirmed) {
@@ -2714,6 +2730,12 @@ public class MechDisplay extends JPanel {
                         && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
                         && (m.getShotsLeft() > 0) && !m.isDumping()
                         && en.isActive()) {
+                    m_bDumpAmmo.setEnabled(true);
+                } else if ((m != null)
+                        && bOwner
+                        && (m.getType() instanceof WeaponType)
+                        && (m.getLinkedBy() != null)
+                        && m.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner && m.getType().hasModes()) {
                     if (!m.isDestroyed() && en.isActive()) {

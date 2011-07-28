@@ -167,6 +167,8 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             for (int x = 0; x < saEquip.length; x++) {
                 boolean bodyMounted = saEquip[x].endsWith(":Body");
                 saEquip[x] = saEquip[x].replace(":Body", "");
+                boolean dwpMounted = saEquip[x].endsWith(":DWP");
+                saEquip[x] = saEquip[x].replace(":DWP", "");
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -177,7 +179,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false, bodyMounted);
+                        t.addEquipment(etype, nLoc, false, bodyMounted, dwpMounted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

@@ -246,6 +246,29 @@ public class MechFileParser {
                 }
             }
 
+            // link DWPs to their weapons
+            if ((m.getType().hasFlag(MiscType.F_DETACHABLE_WEAPON_PACK))) {
+                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                    if (!mWeapon.isDWPMounted()) {
+                        continue;
+                    }
+                    // already linked?
+                    if (mWeapon.getLinkedBy() != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                }
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException("Unable to match DWP to weapon");
+                }
+            }
+
             // Link Artemis IV fire-control systems to their missle racks.
             if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))) && (m.getLinked() == null)) {
 
@@ -457,9 +480,9 @@ public class MechFileParser {
                     case EntityWeightClass.WEIGHT_BA_LIGHT:
                         if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
-                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
-                                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
-                                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false, false);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
@@ -468,9 +491,9 @@ public class MechFileParser {
                     case EntityWeightClass.WEIGHT_BA_MEDIUM:
                         if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
-                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false);
-                                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false);
-                                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false, false);
                             } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
@@ -484,7 +507,7 @@ public class MechFileParser {
                 // if it has AP mount, also add an infantry rifle
                 if (ent.countWorkingMisc(MiscType.F_AP_MOUNT) > 0) {
                     try {
-                        ent.addEquipment(EquipmentType.get("InfantryAssaultRifle"), BattleArmor.LOC_SQUAD, false, false);
+                        ent.addEquipment(EquipmentType.get("InfantryAssaultRifle"), BattleArmor.LOC_SQUAD, false, false, false);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
@@ -494,9 +517,9 @@ public class MechFileParser {
         // physical attacks for conventional infantry
         else if ((ent instanceof Infantry) && ((Infantry) ent).canAttackMeks()) {
             try {
-                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY, false, false);
-                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY, false, false);
-                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY, false, false);
+                ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY, false, false, false);
+                ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY, false, false, false);
+                ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY, false, false, false);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }

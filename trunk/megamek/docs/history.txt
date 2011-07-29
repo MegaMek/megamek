@@ -29,6 +29,8 @@ v0.35.25 (SVN)
 + check null crew in Infantry#getWalkMP and Infantry#getRunMP
 + BA camo fix
 + Implemented DWPs
++ Entity#canEscape function (for determining potential salvage)
++ Entity#getKillerId function
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

@@ -32,6 +32,7 @@ v0.35.25 (SVN)
 + Entity#canEscape function (for determining potential salvage)
 + Entity#getKillerId function
 + set squad size and number to 1 by default so we never divide by zero
++ Added BA heat sensor
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

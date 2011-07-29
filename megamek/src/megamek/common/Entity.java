@@ -6627,9 +6627,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean getGaveKillCredit() {
         return killerId != Entity.NONE;
     }
-    
+
     public int getKillerId() {
-    	return killerId;
+        return killerId;
     }
 
     /**
@@ -10162,7 +10162,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public abstract String getLocationDamage(int loc);
-    
+
     /**
      * This method returns a true if the unit can reasonably escape from the board. It can be used
      * to determine whether some non-destroyed units should be considered possible salvage. The default
@@ -10170,7 +10170,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public boolean canEscape() {
-    	return null != getCrew() && !getCrew().isUnconscious() && !getCrew().isDead();
+    	return (null != getCrew()) && !getCrew().isUnconscious() && !getCrew().isDead();
     }
 
 }

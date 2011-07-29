@@ -218,6 +218,11 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent instanceof BattleArmor) {
+            if (ent.hasWorkingMisc(MiscType.F_HEAT_SENSOR)) {
+                ent.getSensors().add(new Sensor(Sensor.TYPE_BA_HEAT));
+                ent.setNextSensor(ent.getSensors().lastElement());
+            }
         }
 
         // Walk through the list of equipment.

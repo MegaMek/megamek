@@ -43,8 +43,8 @@ public class Infantry extends Entity {
     /**
      * squad size and number
      */
-    protected int squadn = 0;
-    private int squadsize = 0;
+    protected int squadn = 1;
+    private int squadsize = 1;
 
     /**
      * The number of men originally in this platoon.

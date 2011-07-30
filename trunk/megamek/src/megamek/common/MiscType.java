@@ -5271,7 +5271,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BAExtendedLifeSupport");
         misc.cost = 10000;
         misc.availRating = new int[]{RATING_E, RATING_F, RATING_E};
-        misc.techRating = RATING_D;
+        misc.techRating = RATING_E;
         misc.tonnage = 0.025f;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT);
         return misc;

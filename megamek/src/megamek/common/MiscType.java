@@ -168,6 +168,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_COMBAT_VEHICLE_ESCAPE_POD = BigInteger.valueOf(1).shiftLeft(122);
     public static final BigInteger F_DETACHABLE_WEAPON_PACK = BigInteger.valueOf(1).shiftLeft(123);
     public static final BigInteger F_HEAT_SENSOR = BigInteger.valueOf(1).shiftLeft(124);
+    public static final BigInteger F_EXTENDED_LIFESUPPORT = BigInteger.valueOf(1).shiftLeft(125);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1057,6 +1058,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISDetachableWeaponPack());
         EquipmentType.addType(MiscType.createCLDetachableWeaponPack());
         EquipmentType.addType(MiscType.createBAHeatSensor());
+        EquipmentType.addType(MiscType.createBAExtendedLifeSupport());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
@@ -5260,6 +5262,21 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_HEAT_SENSOR);
         return misc;
     }
+
+    public static MiscType createBAExtendedLifeSupport() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Extended Life Support";
+        misc.setInternalName("BAExtendedLifeSupport");
+        misc.cost = 10000;
+        misc.availRating = new int[]{RATING_E, RATING_F, RATING_E};
+        misc.techRating = RATING_D;
+        misc.tonnage = 0.025f;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT);
+        return misc;
+    }
+
 
     @Override
     public String toString() {

@@ -1429,15 +1429,15 @@ public class Aero extends Entity {
         double weaponBV = 0;
         boolean hasTargComp = hasTargComp();
 
-        double targetingSystemBVMode = 1.0;
+        double targetingSystemBVMod = 1.0;
 
         if (this instanceof FixedWingSupport) {
             if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                targetingSystemBVMode = 1.0;
+                targetingSystemBVMod = 1.0;
             } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
-                targetingSystemBVMode = .9;
+                targetingSystemBVMod = .9;
             } else {
-                targetingSystemBVMode = .8;
+                targetingSystemBVMod = .8;
             }
         }
 
@@ -1589,6 +1589,11 @@ public class Aero extends Entity {
             bvText.append(endRow);
 
             double dBV = wtype.getBV(this);
+
+            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                dBV *= 0.8;
+            }
+
             String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
 
             // don't count destroyed equipment
@@ -1623,7 +1628,7 @@ public class Aero extends Entity {
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
             } else if ((this instanceof FixedWingSupport) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
-                dBV *= targetingSystemBVMode;
+                dBV *= targetingSystemBVMod;
             }
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
@@ -2052,6 +2057,8 @@ public class Aero extends Entity {
         if (getCockpitType() == Aero.COCKPIT_SMALL) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
+        } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+            finalBV *= 0.95;
         }
         finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");

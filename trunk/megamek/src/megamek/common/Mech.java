@@ -3367,6 +3367,9 @@ public abstract class Mech extends Entity {
             bvText.append(endRow);
 
             double dBV = wtype.getBV(this);
+            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                dBV *= 0.8;
+            }
             String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
 
             // don't count AMS, it's defensive
@@ -3983,6 +3986,8 @@ public abstract class Mech extends Entity {
         if ((getCockpitType() == Mech.COCKPIT_SMALL) || (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
             cockpitMod = 0.95;
             finalBV *= cockpitMod;
+        } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+            finalBV *= 0.95;
         }
         finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");
@@ -4077,7 +4082,7 @@ public abstract class Mech extends Entity {
         } else {
             cockpitCost = 200000;
         }
-        if (hasEiCockpit() && (null != getCrew() && getCrew().getOptions().booleanOption("ei_implant"))) {
+        if (hasEiCockpit() && ((null != getCrew()) && getCrew().getOptions().booleanOption("ei_implant"))) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;

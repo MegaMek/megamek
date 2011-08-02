@@ -34,6 +34,7 @@ v0.35.25 (SVN)
 + set squad size and number to 1 by default so we never divide by zero
 + Added BA heat sensor
 + Added BA Extended Life Support construction data
++ Added BV errata for drone remote operating system
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

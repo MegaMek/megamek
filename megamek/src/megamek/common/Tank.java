@@ -135,19 +135,19 @@ public class Tank extends Entity {
     public int getMotiveDamage() {
     	return motiveDamage;
     }
-    
+
     public void setMotiveDamage(int d) {
     	motiveDamage = d;
     }
-    
+
     public int getMotivePenalty() {
     	return motivePenalty;
     }
-    
+
     public void setMotivePenalty(int p) {
     	motivePenalty = p;
     }
-    
+
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
@@ -265,7 +265,7 @@ public class Tank extends Entity {
     public void setStabiliserHit(int loc) {
         stabiliserHits |= (1 << loc);
     }
-    
+
     public void clearStabiliserHit(int loc) {
         stabiliserHits &= ~(1 << loc);
     }
@@ -1053,6 +1053,10 @@ public class Tank extends Entity {
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
+
+            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                dBV *= 0.8;
+            }
 
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
@@ -2167,7 +2171,7 @@ public class Tank extends Entity {
             }
         }
     }
-    
+
     public void engineFix() {
     	engineHit = false;
     	unlockTurret();
@@ -2179,7 +2183,7 @@ public class Tank extends Entity {
             }
         }
     }
-    
+
     public boolean isEngineHit() {
     	return engineHit;
     }
@@ -2569,7 +2573,7 @@ public class Tank extends Entity {
     		return 0;
     	}
     }
-    
+
     @Override
 	public String getLocationDamage(int loc) {
     	String toReturn = "";
@@ -2587,5 +2591,5 @@ public class Tank extends Entity {
     	}
 		return toReturn;
 	}
-    
+
 }

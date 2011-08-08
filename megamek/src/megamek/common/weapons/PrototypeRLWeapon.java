@@ -36,13 +36,13 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.T_ROCKET_LAUNCHER;
         flags = flags.or(F_ONESHOT);
-        toHitModifier = -1;
+        toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

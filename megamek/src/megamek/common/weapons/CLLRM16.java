@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -21,27 +21,23 @@ import megamek.common.TechConstants;
 public class CLLRM16 extends LRMWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1418706670725364973L;
 
     /**
-     * 
+     *
      */
     public CLLRM16() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
-        this.name = "LRM 16";
-        this.setInternalName("CLLRM16");
-        this.heat = 0;
-        this.rackSize = 16;
-        this.minimumRange = WEAPON_NA;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 3.2f;
-        this.criticals = 0;
-        this.bv = 214;
+        techLevel = TechConstants.T_CLAN_TW;
+        name = "LRM 16";
+        setInternalName("CLLRM16");
+        heat = 0;
+        rackSize = 16;
+        minimumRange = WEAPON_NA;
+        tonnage = 3.2f;
+        criticals = 0;
+        bv = 214;
     }
 }

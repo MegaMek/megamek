@@ -38,6 +38,7 @@ v0.35.25 (SVN)
 + Only multiply individual weapon BV by 0.9 for industrials without advanced
     firing control
 + Bug 3387115: prototype RL launcher to hit
++ Bug 3355775: extended LRM 20 range
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

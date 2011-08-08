@@ -36,10 +36,6 @@ public class ISLRM4OS extends LRMWeapon {
         addLookupName("ISLRM4OS");
         rackSize = 4;
         minimumRange = 6;
-        shortRange = 7;
-        mediumRange = 14;
-        longRange = 21;
-        extremeRange = 28;
         bv = 8;
         flags = flags.or(F_ONESHOT);
     }

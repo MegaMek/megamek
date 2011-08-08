@@ -38,10 +38,6 @@ public class CLLRM20IOS extends LRMWeapon {
         heat = 6;
         rackSize = 20;
         minimumRange = WEAPON_NA;
-        shortRange = 7;
-        mediumRange = 14;
-        longRange = 21;
-        extremeRange = 28;
         tonnage = 4.5f;
         criticals = 4;
         bv = 44;

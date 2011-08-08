@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -25,21 +25,24 @@ import megamek.server.Server;
 public abstract class LRMWeapon extends MissileWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8755275511561446251L;
 
     public LRMWeapon() {
         super();
-        this.ammoType = AmmoType.T_LRM;
-        this.setModes(new String[] { "", "Indirect" });
-        
-        this.atClass = CLASS_LRM;
+        ammoType = AmmoType.T_LRM;
+        setModes(new String[] { "", "Indirect" });
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        atClass = CLASS_LRM;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      *      megamek.server.Server)
@@ -55,11 +58,11 @@ public abstract class LRMWeapon extends MissileWeapon {
         if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
             return new LRMAntiTSMHandler(toHit, waa, game, server);
         }
-        if (atype.getMunitionType() == AmmoType.M_THUNDER
-                || atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE
-                || atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED
-                || atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO
-                || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
+        if ((atype.getMunitionType() == AmmoType.M_THUNDER)
+                || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+                || (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)
+                || (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+                || (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)) {
             return new LRMScatterableHandler(toHit, waa, game, server);
         }
         if (atype.getMunitionType() == AmmoType.M_SWARM) {

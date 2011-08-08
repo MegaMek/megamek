@@ -3387,6 +3387,11 @@ public abstract class Mech extends Entity {
                 dBV = mgaBV * 0.67;
             }
 
+            // industrial without advanced firing control get's 0.9 mod to weapon bv
+            if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
+                dBV *= 0.9;
+            }
+
             // artemis bumps up the value
             // PPC caps do, too
             if (mounted.getLinkedBy() != null) {
@@ -3942,23 +3947,6 @@ public abstract class Mech extends Entity {
         bvText.append(obv);
         bvText.append(endColumn);
         bvText.append(endRow);
-
-        // industrial without advanced firing control get's 0.9 mod to obv
-        if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Offensive BV * 0.9 for Industrial 'Mech without advanced targeting system");
-            bvText.append(endColumn);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(obv);
-            bvText.append(" * 0.9 = ");
-            obv *= 0.9;
-            bvText.append(obv);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
 
         bvText.append(startRow);
         bvText.append(startColumn);

@@ -35,6 +35,8 @@ v0.35.25 (SVN)
 + Added BA heat sensor
 + Added BA Extended Life Support construction data
 + Added BV errata for drone remote operating system
++ Only multiply individual weapon BV by 0.9 for industrials without advanced
+    firing control
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

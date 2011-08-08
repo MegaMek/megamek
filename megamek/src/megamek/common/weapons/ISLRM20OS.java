@@ -39,10 +39,6 @@ public class ISLRM20OS extends LRMWeapon {
         heat = 6;
         rackSize = 20;
         minimumRange = 6;
-        shortRange = 7;
-        mediumRange = 14;
-        longRange = 21;
-        extremeRange = 28;
         tonnage = 10.5f;
         criticals = 5;
         bv = 36;

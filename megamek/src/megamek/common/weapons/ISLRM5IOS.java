@@ -39,10 +39,6 @@ public class ISLRM5IOS extends LRMWeapon {
         heat = 2;
         rackSize = 5;
         minimumRange = 6;
-        shortRange = 7;
-        mediumRange = 14;
-        longRange = 21;
-        extremeRange = 28;
         tonnage = 1.5f;
         criticals = 1;
         bv = 9;

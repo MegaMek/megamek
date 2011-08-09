@@ -71,10 +71,9 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             te = (Entity)target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-        }
-
-        if (!(te instanceof BattleArmor) && !(te instanceof Infantry) && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
-            toReturn = Math.max(0, toReturn - 3);
+            if (!(te instanceof BattleArmor) && !(te instanceof Infantry) && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
+                toReturn = Math.max(0, toReturn - 3);
+            }
         }
 
         if (bGlancing) {

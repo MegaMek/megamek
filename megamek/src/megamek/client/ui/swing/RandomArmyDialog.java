@@ -22,14 +22,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -49,7 +45,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -102,19 +97,19 @@ WindowListener, TreeSelectionListener {
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
 
     private JSplitPane m_pSplit;
-    
+
     private JButton m_bAddAll = new JButton(Messages.getString("RandomArmyDialog.AddAll"));
     private JButton m_bAdd = new JButton(Messages.getString("RandomArmyDialog.AddSelected"));
     private JButton m_bRoll = new JButton(Messages.getString("RandomArmyDialog.Roll"));
     private JButton m_bClear = new JButton(Messages.getString("RandomArmyDialog.Clear"));
-    
+
     private JTable m_lArmy;
     private JTable m_lUnits;
-    
+
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
 
-    
+
     private JLabel m_labBV = new JLabel(Messages
             .getString("RandomArmyDialog.BV"));
     private JLabel m_labYear = new JLabel(Messages
@@ -244,7 +239,7 @@ WindowListener, TreeSelectionListener {
         constraints.weightx = 1.0;
         layout.setConstraints(m_tInfantry, constraints);
         m_pParameters.add(m_tInfantry);
-        constraints.gridwidth = 1;        
+        constraints.gridwidth = 1;
         constraints.weightx = 0.0;
         layout.setConstraints(m_labYear, constraints);
         m_pParameters.add(m_labYear);
@@ -372,7 +367,7 @@ WindowListener, TreeSelectionListener {
         m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pPreview);
         m_pSplit.setOneTouchExpandable(false);
         m_pSplit.setResizeWeight(0.5);
-        
+
         // construct the main dialog
         setLayout(new BorderLayout());
         add(m_pButtons, BorderLayout.SOUTH);
@@ -628,7 +623,7 @@ WindowListener, TreeSelectionListener {
             data.add(m);
             fireTableDataChanged();
         }
-        
+
         public void setData(ArrayList<MechSummary> mechs) {
         	data = mechs;
         	fireTableDataChanged();
@@ -673,7 +668,7 @@ WindowListener, TreeSelectionListener {
         public MechSummary getUnitAt(int row) {
             return data.get(row);
         }
-        
+
         public ArrayList<MechSummary> getAllUnits() {
         	return data;
         }

@@ -50,7 +50,7 @@ public class CLLightRecoillessRifle extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 12;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON);
         cost = 1000;
     }
 

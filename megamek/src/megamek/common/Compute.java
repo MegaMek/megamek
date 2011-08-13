@@ -4925,6 +4925,30 @@ public class Compute {
                 damage /= 5;
                 damage += Compute.d6(3);
                 break;
+            case WeaponType.WEAPON_BURST_HALFD6:
+                damage = Compute.d6()/2;
+                break;
+            case WeaponType.WEAPON_BURST_1D6:
+                damage = Compute.d6();
+                break;
+            case WeaponType.WEAPON_BURST_2D6:
+                damage = Compute.d6(2);
+                break;
+            case WeaponType.WEAPON_BURST_3D6:
+                damage = Compute.d6(3);
+                break;
+            case WeaponType.WEAPON_BURST_4D6:
+                damage = Compute.d6(4);
+                break;
+            case WeaponType.WEAPON_BURST_5D6:
+                damage = Compute.d6(5);
+                break;
+            case WeaponType.WEAPON_BURST_6D6:
+                damage = Compute.d6(6);
+                break;
+            case WeaponType.WEAPON_BURST_7D6:
+                damage = Compute.d6(7);
+                break;
         }
         damage = Math.ceil(damage);
         if (isNonInfantryAgainstMechanized) {

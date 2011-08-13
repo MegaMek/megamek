@@ -52,7 +52,7 @@ public class CLMediumRecoillessRifle extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 19;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON);
         cost = 3000;
     }
 

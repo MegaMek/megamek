@@ -164,6 +164,15 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_CLUSTER_MISSILE_1D6 = 4;
     public static final int WEAPON_CLUSTER_MISSILE_2D6 = 5;
     public static final int WEAPON_CLUSTER_MISSILE_3D6 = 6;
+    public static final int WEAPON_BURST_HALFD6 = 7;
+    public static final int WEAPON_BURST_1D6 = 8;
+    public static final int WEAPON_BURST_2D6 = 9;
+    public static final int WEAPON_BURST_3D6 = 10;
+    public static final int WEAPON_BURST_4D6 = 11;
+    public static final int WEAPON_BURST_5D6 = 12;
+    public static final int WEAPON_BURST_6D6 = 13;
+    public static final int WEAPON_BURST_7D6 = 14;
+
 
     public static String[] classNames =
         { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };

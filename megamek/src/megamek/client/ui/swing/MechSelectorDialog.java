@@ -743,7 +743,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             actionPerformed(event);
         }
         long curTime = System.currentTimeMillis();
-        if (curTime - lastSearch > KEY_TIMEOUT) {
+        if ((curTime - lastSearch) > KEY_TIMEOUT) {
             searchBuffer = new StringBuffer();
         }
         lastSearch = curTime;
@@ -805,10 +805,6 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                 }
             }
         }
-    }
-
-    public int getType() {
-        return comboType.getSelectedIndex();
     }
 
     public void enableResetButton(boolean b) {

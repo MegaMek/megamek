@@ -2518,13 +2518,13 @@ public class Server implements Runnable {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
-        for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
+        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
                 // only rotate boards with an even width
-                if (mapSettings.getBoardWidth() % 2 == 0) {
+                if ((mapSettings.getBoardWidth() % 2) == 0) {
                     isRotated = true;
                 }
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
@@ -2833,7 +2833,7 @@ public class Server implements Runnable {
                 // "leftovers" the number of "leftovers" we started with,
                 // the number of times we've added a turn for a "leftover",
                 // and the total number of times we're going to check.
-                numEven += Math.ceil(evenTracker[0] * (teamEvenTurns % min) / min - 0.5) - evenTracker[1];
+                numEven += Math.ceil(((evenTracker[0] * (teamEvenTurns % min)) / min) - 0.5) - evenTracker[1];
 
                 // Update the number of turns actually added for "leftovers".
                 evenTracker[1] += numEven;
@@ -4015,7 +4015,7 @@ public class Server implements Runnable {
 
                 if ((entity.getMovementMode() == EntityMovementMode.WIGE)
                         || (entity.getMovementMode() == EntityMovementMode.VTOL)) {
-                    int hitSide = step.getFacing() - direction + 6;
+                    int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
                     switch (hitSide) {// quite hackish...I think it ought to
@@ -4079,9 +4079,9 @@ public class Server implements Runnable {
             }
 
             // Have skidding units suffer falls (off a cliff).
-            else if (curAltitude > nextAltitude + entity.getMaxElevationChange()) {
+            else if (curAltitude > (nextAltitude + entity.getMaxElevationChange())) {
                 // WIGE can avoid this too, if they have 2MP to spend
-                if ((entity.getMovementMode() == EntityMovementMode.WIGE) && (entity.getRunMP() - 2 >= entity.mpUsed)) {
+                if ((entity.getMovementMode() == EntityMovementMode.WIGE) && ((entity.getRunMP() - 2) >= entity.mpUsed)) {
                     entity.mpUsed += 2;
                     nextAltitude = curAltitude;
                 } else {
@@ -4110,7 +4110,7 @@ public class Server implements Runnable {
                 while (targets.hasMoreElements()) {
                     Entity target = targets.nextElement();
 
-                    if ((target.getElevation() > nextElevation + entity.getHeight())
+                    if ((target.getElevation() > (nextElevation + entity.getHeight()))
                             || (target.absHeight() < nextElevation)) {
                         // target is not in the way
                         continue;
@@ -5240,7 +5240,7 @@ public class Server implements Runnable {
                     int health = 6 - hits;
 
                     if ((thrustUsed > (2 * health)) && !game.useVectorMove() && !(entity instanceof TeleMissile)) {
-                        int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
+                        int targetroll = 2 + (thrustUsed - (2 * health)) + (2 * hits);
                         resistGForce(entity, targetroll);
                     }
 
@@ -5975,7 +5975,7 @@ public class Server implements Runnable {
                         // the difference will always be 0 on the "first step"
                         // of a jump,
                         // and >0 on a step in the midst of a jump
-                        || (0 == step.getMpUsed() - step.getMp()))) {
+                        || (0 == (step.getMpUsed() - step.getMp())))) {
                     int heat = 0;
                     if (lastHex.containsTerrain(Terrains.FIRE)) {
                         heat += 2;
@@ -6147,7 +6147,7 @@ public class Server implements Runnable {
                     }
                 }
                 // or intersecting it
-                else if (step.getElevation() + entity.height() == 0) {
+                else if ((step.getElevation() + entity.height()) == 0) {
                     r = new Report(2410);
                     r.addDesc(entity);
                     addReport(r);
@@ -6316,10 +6316,10 @@ public class Server implements Runnable {
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && (lastHex.getElevation() + entity.calcElevation(curHex, lastHex) != curHex.getElevation() + entity.getElevation())
-                    && (lastHex.getElevation() - lastHex.depth() != curHex.getElevation() - curHex.depth())
+                    && ((lastHex.getElevation() + entity.calcElevation(curHex, lastHex)) != (curHex.getElevation() + entity.getElevation()))
+                    && ((lastHex.getElevation() - lastHex.depth()) != (curHex.getElevation() - curHex.depth()))
                     && !(entity instanceof VTOL)
-                    && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
+                    && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation()) == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
 
                 PilotingRollData psr = entity.getBasePilotingRoll(overallMoveType);
                 int roll = Compute.d6(2);
@@ -7115,7 +7115,7 @@ public class Server implements Runnable {
     public void deliverThunderAugMinefield(Coords coords, int playerId, int damage, int entityId) {
         Coords mfCoord = null;
         // divide damage in half
-        damage = damage / 2 + damage % 2;
+        damage = (damage / 2) + (damage % 2);
         for (int dir = 0; dir < 7; dir++) {
             switch (dir) {
             case 6:
@@ -7152,7 +7152,7 @@ public class Server implements Runnable {
                 } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
                     // Yup. Replace the old one.
                     removeMinefield(minefield);
-                    int newDamage = damage / 2 + damage % 2;
+                    int newDamage = (damage / 2) + (damage % 2);
                     newDamage += minefield.getDensity();
 
                     // Damage from Thunder minefields are capped.
@@ -7675,9 +7675,9 @@ public class Server implements Runnable {
                 }
             } else if (te instanceof Infantry) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
-                if (te.getInternal(hit) > 3 * missiles) {
+                if (te.getInternal(hit) > (3 * missiles)) {
                     // internal structure absorbs all damage
-                    te.setInternal(te.getInternal(hit) - 3 * missiles, hit);
+                    te.setInternal(te.getInternal(hit) - (3 * missiles), hit);
                     r = new Report(6065);
                     r.addDesc(te);
                     r.add(3 * missiles);
@@ -8028,7 +8028,7 @@ public class Server implements Runnable {
             }
 
             // Mech weighing 10 tons or less can't set off the bomb
-            if (mass <= mf.getSetting() - 10) {
+            if (mass <= (mf.getSetting() - 10)) {
                 continue;
             }
 
@@ -8697,9 +8697,9 @@ public class Server implements Runnable {
             addReport(r);
             if ((entity instanceof Mech) && game.getOptions().booleanOption("tacops_falling_expanded")
                     && (entity.getCrew().getPiloting() < 6) && !entity.isHullDown() && entity.canGoHullDown()) {
-                if ((entity.getCrew().getPiloting() > 1) && (roll.getValue() - diceRoll < 2)) {
+                if ((entity.getCrew().getPiloting() > 1) && ((roll.getValue() - diceRoll) < 2)) {
                     entity.setHullDown(true);
-                } else if ((entity.getCrew().getPiloting() <= 1) && (roll.getValue() - diceRoll < 3)) {
+                } else if ((entity.getCrew().getPiloting() <= 1) && ((roll.getValue() - diceRoll) < 3)) {
                     entity.setHullDown(true);
                 }
             }
@@ -8887,7 +8887,7 @@ public class Server implements Runnable {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final int srcHeightAboveFloor = entity.getElevation() + srcHex.depth();
-        final int fallElevation = Math.max(0, srcHex.floor() + srcHeightAboveFloor
+        final int fallElevation = Math.max(0, (srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface() : destHex.floor()));
         int direction;
         if (src.equals(dest)) {
@@ -9274,7 +9274,7 @@ public class Server implements Runnable {
         entity.setSecondaryFacing(nFacing);
         IHex hex = game.getBoard().getHex(coords);
         if (assaultDrop) {
-            entity.setElevation(hex.ceiling() - hex.surface() + 100); // falling
+            entity.setElevation((hex.ceiling() - hex.surface()) + 100); // falling
             // from
             // the
             // sky!
@@ -9283,7 +9283,7 @@ public class Server implements Runnable {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the
             // ground.
-            entity.setElevation(hex.ceiling() - hex.surface() + 1);
+            entity.setElevation((hex.ceiling() - hex.surface()) + 1);
             while ((Compute.stackingViolation(game, entity, coords, null) != null) && (entity.getElevation() <= 50)) {
                 entity.setElevation(entity.getElevation() + 1);
             }
@@ -12621,7 +12621,7 @@ public class Server implements Runnable {
             if (hex.containsTerrain(Terrains.WATER)) {
                 scores[i] += hex.terrainLevel(Terrains.WATER);
             }
-            if (curHex.surface() - hex.surface() >= 2) {
+            if ((curHex.surface() - hex.surface()) >= 2) {
                 scores[i] += 2 * (curHex.surface() - hex.surface());
             }
         }
@@ -13171,7 +13171,7 @@ public class Server implements Runnable {
         }
         boolean bDirect = false;
         int directBlowCritMod = toHit.getMoS() / 3;
-        if (game.getOptions().booleanOption("tacops_direct_blow") && (toHit.getMoS() / 3 >= 1)) {
+        if (game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS() / 3) >= 1)) {
             damage += toHit.getMoS() / 3;
             bDirect = false;
         }
@@ -13823,7 +13823,7 @@ public class Server implements Runnable {
                             addReport(r);
                         } else {
                             // roll for startup
-                            int startup = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
+                            int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                             if (mtHeat) {
                                 startup -= 5;
                                 switch (entity.getCrew().getPiloting()) {
@@ -13880,7 +13880,7 @@ public class Server implements Runnable {
                         // okay, now mark shut down
                         entity.setShutDown(true);
                     } else if (entity.heat >= 14) {
-                        int shutdown = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
+                        int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                         if (mtHeat) {
                             shutdown -= 5;
                             switch (entity.getCrew().getPiloting()) {
@@ -13921,8 +13921,8 @@ public class Server implements Runnable {
                 // heat effects: control effects (must make it unless already
                 // random moving)
                 if ((entity.heat >= 5) && !a.isRandomMove()) {
-                    int controlavoid = 5 + (entity.heat >= 10 ? 1 : 0) + (entity.heat >= 15 ? 1 : 0)
-                            + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2 : 0) - hotDogMod;
+                    int controlavoid = (5 + (entity.heat >= 10 ? 1 : 0) + (entity.heat >= 15 ? 1 : 0)
+                            + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2 : 0)) - hotDogMod;
                     int controlroll = Compute.d6(2);
                     r = new Report(9210);
                     r.subject = entity.getId();
@@ -13961,7 +13961,7 @@ public class Server implements Runnable {
 
                 // heat effects: ammo explosion!
                 if (entity.heat >= 19) {
-                    int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0) - hotDogMod;
+                    int boom = (4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0)) - hotDogMod;
                     if (mtHeat) {
                         boom += (entity.heat >= 35 ? 2 : 0) + (entity.heat >= 40 ? 2 : 0) + (entity.heat >= 45 ? 2 : 0);
                         // Last line is a crutch; 45 heat should be no roll
@@ -13987,7 +13987,7 @@ public class Server implements Runnable {
 
                 // heat effects: pilot damage
                 if (entity.heat >= 21) {
-                    int ouch = 6 + (entity.heat >= 27 ? 3 : 0) - hotDogMod;
+                    int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
                     int ouchroll = Compute.d6(2);
                     r = new Report(5075);
                     r.subject = entity.getId();
@@ -14215,7 +14215,7 @@ public class Server implements Runnable {
                             tosink += possibleSinkage;
                             break;
                         }
-                        if (mode.equals("safe") && (entity.heat - tosink > safeHeat)) {
+                        if (mode.equals("safe") && ((entity.heat - tosink) > safeHeat)) {
                             r = new Report(5265);
                             r.subject = entity.getId();
                             addReport(r);
@@ -14223,7 +14223,7 @@ public class Server implements Runnable {
                             tosink += possibleSinkage;
                             break;
                         }
-                        if (mode.equals("efficient") && (entity.heat - tosink >= possibleSinkage)) {
+                        if (mode.equals("efficient") && ((entity.heat - tosink) >= possibleSinkage)) {
                             r = new Report(5270);
                             r.subject = entity.getId();
                             addReport(r);
@@ -14251,8 +14251,8 @@ public class Server implements Runnable {
 
                 // Roll for possible inferno ammo explosion.
                 if (entity.heat >= 10) {
-                    int boom = 4 + (entity.heat >= 14 ? 2 : 0) + (entity.heat >= 19 ? 2 : 0)
-                            + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0) - hotDogMod;
+                    int boom = (4 + (entity.heat >= 14 ? 2 : 0) + (entity.heat >= 19 ? 2 : 0)
+                            + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0)) - hotDogMod;
                     int boomroll = Compute.d6(2);
                     r = new Report(5040);
                     r.subject = entity.getId();
@@ -14293,7 +14293,7 @@ public class Server implements Runnable {
                         addReport(r);
                     } else {
                         // roll for startup
-                        int startup = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
+                        int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                         if (mtHeat) {
                             startup -= 5;
                             switch (entity.getCrew().getPiloting()) {
@@ -14356,7 +14356,7 @@ public class Server implements Runnable {
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
-                    int shutdown = 4 + (entity.heat - 14) / 4 * 2 - hotDogMod;
+                    int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                     if (mtHeat) {
                         shutdown -= 5;
                         switch (entity.getCrew().getPiloting()) {
@@ -14401,7 +14401,7 @@ public class Server implements Runnable {
 
             // heat effects: ammo explosion!
             if (entity.heat >= 19) {
-                int boom = 4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0) - hotDogMod;
+                int boom = (4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0)) - hotDogMod;
                 if (mtHeat) {
                     boom += (entity.heat >= 35 ? 2 : 0) + (entity.heat >= 40 ? 2 : 0) + (entity.heat >= 45 ? 2 : 0);
                     // Last line is a crutch; 45 heat should be no roll
@@ -14714,7 +14714,7 @@ public class Server implements Runnable {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {
                         PilotingRollData damPRD = new PilotingRollData(entity.getId());
                         int damMod = entity.damageThisPhase / 20;
-                        damPRD.addModifier(damMod, damMod * 20 + "+ damage");
+                        damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
                         int weightMod = 0;
                         if (game.getOptions().booleanOption("tacops_physical_psr")) {
                             switch (entity.getWeightClass()) {
@@ -14831,7 +14831,7 @@ public class Server implements Runnable {
             final Entity entity = i.nextElement();
             if (!(entity instanceof Aero) && entity.hasActiveBlueShield() && (entity.getBlueShieldRounds() >= 6)) {
                 int roll = Compute.d6(2);
-                int target = 3 + entity.getBlueShieldRounds() - 6;
+                int target = (3 + entity.getBlueShieldRounds()) - 6;
                 r = new Report(1240);
                 r.addDesc(entity);
                 r.add(target);
@@ -15094,7 +15094,7 @@ public class Server implements Runnable {
                         if (!entity.gotPavementBonus) {
                             int j = entity.mpUsed;
                             int damage = 0;
-                            while (j > entity.getRunMP(false, false, false) + k) {
+                            while (j > (entity.getRunMP(false, false, false) + k)) {
                                 j--;
                                 damage++;
                             }
@@ -15273,9 +15273,9 @@ public class Server implements Runnable {
                 } else {
                     if ((entity instanceof Mech) && game.getOptions().booleanOption("tacops_falling_expanded")
                             && (entity.getCrew().getPiloting() < 6) && !entity.isHullDown() && entity.canGoHullDown()) {
-                        if ((entity.getCrew().getPiloting() > 1) && (roll.getValue() - diceRoll < 2)) {
+                        if ((entity.getCrew().getPiloting() > 1) && ((roll.getValue() - diceRoll) < 2)) {
                             entity.setHullDown(true);
-                        } else if ((entity.getCrew().getPiloting() <= 1) && (roll.getValue() - diceRoll < 3)) {
+                        } else if ((entity.getCrew().getPiloting() <= 1) && ((roll.getValue() - diceRoll) < 3)) {
                             entity.setHullDown(true);
                         }
                         if (entity.isHullDown() && entity.canGoHullDown()) {
@@ -15540,7 +15540,7 @@ public class Server implements Runnable {
             return vDesc;
         }
 
-        for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
+        for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
             if(game.getOptions().booleanOption("toughness")) {
                 rollTarget -= e.getCrew().getToughness();
@@ -16456,7 +16456,7 @@ public class Server implements Runnable {
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     tmpDamageHold = damage;
                     double hardenedDamage = ((double) damage)/2;
-                    if (hardenedDamage%1 > 0) {
+                    if ((hardenedDamage%1) > 0) {
                         if (te.isHardenedArmorDamaged(hit.getLocation())) {
                             damage = (int) Math.ceil(hardenedDamage);
                             te.setHardenedArmorDamaged(hit.getLocation(), false);
@@ -16470,7 +16470,7 @@ public class Server implements Runnable {
                     r = new Report(6069);
                     r.subject = te_n;
                     r.newlines = 0;
-                    if (hardenedDamage%1>0) {
+                    if ((hardenedDamage%1)>0) {
                         r.add(Double.toString(hardenedDamage));
                     } else {
                         r.add((int)hardenedDamage);
@@ -17205,7 +17205,7 @@ public class Server implements Runnable {
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjcent hexes
         if (ammoExplosion && game.getOptions().booleanOption("tacops_ammunition") && (damage > 0)
-                && (damage_orig / 10 > 0)) {
+                && ((damage_orig / 10) > 0)) {
 
             Report.addNewline(vDesc);
             r = new Report(5068, Report.PUBLIC);
@@ -17733,7 +17733,7 @@ public class Server implements Runnable {
 
         int curDepth = game.getBoard().getHex(position).floor() - craterDepth;
         int range = 0;
-        while (range < 2 * craterDepth) {
+        while (range < (2 * craterDepth)) {
             // Get the set of hexes at this range.
             Enumeration<Coords> hexSet = game.getBoard().getHexesAtDistance(position, range);
 
@@ -17742,7 +17742,7 @@ public class Server implements Runnable {
                 Coords myHexCoords = hexSet.nextElement();
                 IHex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
-                myHex.setElevation(myHex.getElevation() - craterDepth + (range / 2));
+                myHex.setElevation((myHex.getElevation() - craterDepth) + (range / 2));
 
                 // Then, remove ANY terrains here.
                 // I mean ALL of them; they're all just gone.
@@ -17761,7 +17761,7 @@ public class Server implements Runnable {
 
             // Lastly, if the next distance is a multiple of 2...
             // The crater depth goes down one.
-            if ((range > 0) && (range % 2 == 0)) {
+            if ((range > 0) && ((range % 2) == 0)) {
                 curDepth++;
             }
         }
@@ -17897,7 +17897,7 @@ public class Server implements Runnable {
                 }
 
                 // Initialize for the next iteration.
-                damageAtRange = baseDamage - (degredation * x + 1);
+                damageAtRange = baseDamage - ((degredation * x) + 1);
 
                 // If the damage is less than 20, it has no terrain effect.
                 if (damageAtRange < 20) {
@@ -20140,9 +20140,9 @@ public class Server implements Runnable {
         entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
 
         // Did the hull breach destroy the engine?
-        if (entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT)
+        if ((entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT)
                 + entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT)
-                + entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT) >= 3) {
+                + entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT)) >= 3) {
             vDesc.addAll(destroyEntity(entity, "engine destruction"));
             if (game.getOptions().booleanOption("auto_abandon_unit")) {
                 vDesc.addAll(abandonEntity(entity));
@@ -20216,7 +20216,7 @@ public class Server implements Runnable {
         // ground are destroyed
         if (entity.isAirborne()) {
             survivable = false;
-        } else if(entity instanceof Aero) {
+        } else if (entity instanceof Aero) {
             survivable = true;
         }
 
@@ -20805,14 +20805,14 @@ public class Server implements Runnable {
         int waterDamage = 0;
         if (waterDepth > 0) {
             damage /= 2;
-            waterDamage = (int) Math.round(entity.getWeight() / 10.0) * (waterDepth + 1) / 2;
+            waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (waterDepth + 1)) / 2;
         }
 
         // If the waterDepth is larger than the fall height,
         // we fell underwater
         if (waterDepth > height) {
             damage = 0;
-            waterDamage = (int) Math.round(entity.getWeight() / 10.0) * (height + 1) / 2;
+            waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (height + 1)) / 2;
         }
         // adjust damage for gravity
         damage = Math.round(damage * game.getPlanetaryConditions().getGravity());
@@ -23766,7 +23766,7 @@ public class Server implements Runnable {
 
                 // Calculate collapse damage for this entity.
                 int damage = (int) Math.floor(bldg.getDamageFromScale()
-                        * Math.ceil(phaseCF * (numFloors - floor) / 10.0));
+                        * Math.ceil((phaseCF * (numFloors - floor)) / 10.0));
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
@@ -23835,7 +23835,7 @@ public class Server implements Runnable {
             game.getBoard().collapseBuilding(coords);
         }
         // if more than half of the hexes are gone, collapse all
-        if (bldg.getCollapsedHexCount() > bldg.getOriginalHexCount() / 2) {
+        if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {
             for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements();) {
                 coords = coordsEnum.nextElement();
                 collapseBuilding(bldg, game.getPositionMap(), coords, false);
@@ -24528,7 +24528,7 @@ public class Server implements Runnable {
                 double oddsLeft = Compute.oddsAbove(toHit.getValue());
                 double oddsRight = Compute.oddsAbove(toHitRight.getValue());
                 // Use the best attack.
-                if (oddsLeft * damage > oddsRight * damageRight) {
+                if ((oddsLeft * damage) > (oddsRight * damageRight)) {
                     paa.setArm(PunchAttackAction.LEFT);
                 } else {
                     paa.setArm(PunchAttackAction.RIGHT);
@@ -24732,7 +24732,7 @@ public class Server implements Runnable {
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure) && !step.isOnlyPavement()) {
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
-                    } else if (step.getMpUsed() > cachedMaxMPExpenditure + 1) {
+                    } else if (step.getMpUsed() > (cachedMaxMPExpenditure + 1)) {
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         // tank on a road can move 5/7, **not** 5/8.
@@ -25428,7 +25428,7 @@ public class Server implements Runnable {
         r.addDesc(tank);
         r.add(8 - penalty);
         r.add(boomroll);
-        if (boomroll + penalty < 8) {
+        if ((boomroll + penalty) < 8) {
             // phew!
             r.choose(true);
             vPhaseReport.add(r);
@@ -25438,11 +25438,11 @@ public class Server implements Runnable {
                 r.choose(false);
                 vPhaseReport.add(r);
             }
-            if (boomroll + penalty < 10) {
+            if ((boomroll + penalty) < 10) {
                 addReport(vehicleMotiveDamage(tank, penalty - 1));
             } else {
                 vPhaseReport.addAll(resolveVehicleFire(tank, false));
-                if (boomroll + penalty >= 12) {
+                if ((boomroll + penalty) >= 12) {
                     r = new Report(5255);
                     r.subject = tank.getId();
                     r.indent(3);

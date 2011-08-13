@@ -118,6 +118,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             nDamage = 3;
         } else if (mType.hasSubType(MiscType.S_ROCK_CUTTER)) {
             nDamage = 5;
+        } else if (mType.hasSubType(MiscType.S_SPOT_WELDER)) {
+            nDamage = 5;
         }
 
         // TSM doesn't apply to some weapons, including Saws.
@@ -261,7 +263,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // check elevation (target must be within one level, except for VTOL)
         if (target.isAirborneVTOLorWIGE()) {
-            if ((targetElevation - attackerElevation > 3) || (targetElevation - attackerElevation < 0)) {
+            if (((targetElevation - attackerElevation) > 3) || ((targetElevation - attackerElevation) < 0)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
             }
         } else if ((targetHeight < attackerElevation) || (targetElevation > attackerHeight)) {

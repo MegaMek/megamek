@@ -170,6 +170,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_HEAT_SENSOR = BigInteger.valueOf(1).shiftLeft(124);
     public static final BigInteger F_EXTENDED_LIFESUPPORT = BigInteger.valueOf(1).shiftLeft(125);
     public static final BigInteger F_SPRAYER = BigInteger.valueOf(1).shiftLeft(126);
+    public static final BigInteger F_ELECTRIC_DISCHARGE_ARMOR = BigInteger.valueOf(1).shiftLeft(127);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1071,6 +1072,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLMobileFieldBase());
         EquipmentType.addType(MiscType.createSTOLChassisMod());
         EquipmentType.addType(MiscType.createVSTOLChassisMod());
+        EquipmentType.addType(MiscType.createElectricDischargeArmor());
 
     }
 
@@ -5275,6 +5277,23 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.tonnage = 0.025f;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT);
+        return misc;
+    }
+
+    public static MiscType createElectricDischargeArmor() {
+        //TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name ="Electric Discharge ProtoMech Armor";
+        misc.setInternalName("CLEDPArmor");
+        misc.techRating = RATING_F;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
+        misc.bv = 32;
+        String[] modes = {"not charging", "charging"};
+        misc.setModes(modes);
         return misc;
     }
 

@@ -67,6 +67,6 @@ public class ISMekTaser extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        return new BATaserHandler(toHit, waa, game, server);
+        return new MechTaserHandler(toHit, waa, game, server);
     }
 }

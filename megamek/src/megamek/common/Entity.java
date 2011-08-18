@@ -441,6 +441,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int taserInterference = 0;
     protected int taserInterferenceRounds = 0;
+    protected boolean taserInterferenceHeat = false;
 
     // contains a HTML string describing BV calculation
     protected StringBuffer bvText = null;
@@ -1107,7 +1108,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 if (((assumedElevation == bldcur) && climb && (this instanceof Mech)) || (retVal > bldnex)) {
                     retVal = bldnex;
-                } else if (bldnex + next.surface() > bldcur + current.surface()) {
+                } else if ((bldnex + next.surface()) > (bldcur + current.surface())) {
                     retVal += current.surface();
                     retVal -= next.surface();
                 }
@@ -4237,6 +4238,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             taserInterferenceRounds--;
             if (taserInterferenceRounds == 0) {
                 taserInterference = 0;
+                taserInterferenceHeat = false;
             }
         }
         if (taserFeedBackRounds > 0) {
@@ -4637,7 +4639,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         } else if (this instanceof QuadMech) {
             if (((QuadMech) this).countBadLegs() >= 3) {
-                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + ((Mech) this).countBadLegs() * 5, ((Mech) this).countBadLegs() + " legs destroyed");
+                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, getCrew().getPiloting() + (((Mech) this).countBadLegs() * 5), ((Mech) this).countBadLegs() + " legs destroyed");
             }
         }
         // entity shut down?
@@ -6545,7 +6547,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean canFlee() {
         Coords pos = getPosition();
-        return (pos != null) && (getWalkMP() > 0) && !isProne() && !isStuck() && !isShutDown() && !getCrew().isUnconscious() && ((pos.x == 0) || (pos.x == game.getBoard().getWidth() - 1) || (pos.y == 0) || (pos.y == game.getBoard().getHeight() - 1));
+        return (pos != null) && (getWalkMP() > 0) && !isProne() && !isStuck() && !isShutDown() && !getCrew().isUnconscious() && ((pos.x == 0) || (pos.x == (game.getBoard().getWidth() - 1)) || (pos.y == 0) || (pos.y == (game.getBoard().getHeight() - 1)));
     }
 
     public void setSeenByEnemy(boolean b) {
@@ -7003,22 +7005,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case NONE:
                 break;
             case NORTH:
-                setPosition(new Coords(game.getBoard().getWidth() / 2 + game.getBoard().getWidth() % 2, -getOffBoardDistance()));
+                setPosition(new Coords((game.getBoard().getWidth() / 2) + (game.getBoard().getWidth() % 2), -getOffBoardDistance()));
                 setFacing(3);
                 setDeployed(true);
                 break;
             case SOUTH:
-                setPosition(new Coords(game.getBoard().getWidth() / 2 + game.getBoard().getWidth() % 2, game.getBoard().getHeight() + getOffBoardDistance()));
+                setPosition(new Coords((game.getBoard().getWidth() / 2) + (game.getBoard().getWidth() % 2), game.getBoard().getHeight() + getOffBoardDistance()));
                 setFacing(0);
                 setDeployed(true);
                 break;
             case EAST:
-                setPosition(new Coords(game.getBoard().getWidth() + getOffBoardDistance(), game.getBoard().getHeight() / 2 + game.getBoard().getHeight() % 2));
+                setPosition(new Coords(game.getBoard().getWidth() + getOffBoardDistance(), (game.getBoard().getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
                 setDeployed(true);
                 break;
             case WEST:
-                setPosition(new Coords(-getOffBoardDistance(), game.getBoard().getHeight() / 2 + game.getBoard().getHeight() % 2));
+                setPosition(new Coords(-getOffBoardDistance(), (game.getBoard().getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
                 setDeployed(true);
                 break;
@@ -7417,7 +7419,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         // using FASA map sheets
-        if ((tc.x / 16 == getPosition().x / 16) && (tc.y / 17 == getPosition().y / 17)) {
+        if (((tc.x / 16) == (getPosition().x / 16)) && ((tc.y / 17) == (getPosition().y / 17))) {
             return true;
         }
         return false;
@@ -7549,13 +7551,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // calculate firing angle
-        int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
+        int fa = (effectivePos.degree(src) + ((6 - face) * 60)) % 360;
 
         int leftBetter = 2;
         // if we're right on the line, we need to special case this
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
-        if (fa % 30 == 0) {
+        if ((fa % 30) == 0) {
             IHex srcHex = game.getBoard().getHex(src);
             IHex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
@@ -8745,16 +8747,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * shut this unit down due to a BA Taser attack
+     * shut this unit down due to a  Taser attack
      *
      * @param turns
      *            - the amount of rounds for which this Entity should be
      *            shutdown
+     * @param baTaser
+     *            - was this due to a BA taser?
      */
-    public void baTaserShutdown(int turns) {
+    public void taserShutdown(int turns, boolean baTaser) {
         setShutDown(true);
         taserShutdownRounds = turns;
-        shutdownByBATaser = true;
+        shutdownByBATaser = baTaser;
     }
 
     /**
@@ -8778,6 +8782,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         shutdownByBATaser = value;
     }
 
+    public boolean getTaserInterefenceHeat() {
+        return !taserInterferenceHeat;
+    }
+
     /**
      * set this entity to suffer from taser feedback
      *
@@ -8797,9 +8805,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return taserFeedBackRounds;
     }
 
-    public void setTaserInterference(int value, int rounds) {
+    public void setTaserInterference(int value, int rounds, boolean heat) {
         taserInterference = value;
         taserInterferenceRounds = rounds;
+        taserInterferenceHeat = heat;
     }
 
     public int getTaserInterference() {
@@ -9416,7 +9425,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     }
                 }
 
-                if (ammoCount / weaponCount < 10) {
+                if ((ammoCount / weaponCount) < 10) {
                     damageModifier *= .75;
                 }
             }

@@ -14,6 +14,7 @@
 
 package megamek.common.actions;
 
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -21,6 +22,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
+import megamek.common.Infantry;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
@@ -50,12 +52,16 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
     /**
      * Damage a Protomech does with its Combo-physicalattack.
      */
-    public static int getDamageFor(Entity entity) {
+    public static int getDamageFor(Entity entity, Targetable target) {
         int toReturn;
         if ((entity.getWeight() >= 2) && (entity.getWeight() < 6)) {
             toReturn = 1;
         } else {
             toReturn = 2;
+        }
+        if (((Protomech)entity).isEDPCharged() && (target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            toReturn++;
+            //TODO: add another +1 to damage if target is cybernetically enhanced
         }
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(Protomech.LOC_TORSO) == ILocationExposureStatus.WET) {

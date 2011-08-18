@@ -101,6 +101,10 @@ public class Protomech extends Entity {
 
     private boolean isGrappleAttacker = false;
 
+    private boolean edpCharged = true;
+
+    private int edpChargeTurns = 0;
+
     /**
      * Construct a new, blank, pmech.
      */
@@ -298,7 +302,19 @@ public class Protomech extends Entity {
      */
     @Override
     public void newRound(int roundNumber) {
-
+        if (hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && !edpCharged) {
+            for (Mounted misc : getMisc()) {
+                if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && misc.curMode().equals("charging")) {
+                    if (edpChargeTurns == 6) {
+                        setEDPCharged(true);
+                        misc.setMode("not charging");
+                        edpChargeTurns = 0;
+                    } else {
+                        edpChargeTurns++;
+                    }
+                }
+            }
+        }
         setSecondaryFacing(getFacing());
         super.newRound(roundNumber);
 
@@ -986,8 +1002,8 @@ public class Protomech extends Entity {
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP(false, true, true)
-                + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + ((((double) getRunMP(false, true, true)
+                + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
@@ -1283,7 +1299,7 @@ public class Protomech extends Entity {
     public void setEngine(Engine engine) {
         this.engine = engine;
     }
-    
+
     @Override
     /*
      * Each ProtoMech has 1 Structure point
@@ -1291,15 +1307,32 @@ public class Protomech extends Entity {
     public int getBattleForceStructurePoints() {
         return 1;
     }
-    
+
     @Override
     public int getEngineHits() {
     	return 0;
     }
-    
+
     @Override
-	public String getLocationDamage(int loc) {
-		return "";
-	}
+    public String getLocationDamage(int loc) {
+        return "";
+    }
+
+    public boolean isEDPCharged() {
+        return hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && edpCharged;
+    }
+
+    public void setEDPCharged(boolean charged) {
+        edpCharged = charged;
+    }
+
+    public boolean isEDPCharging() {
+        for (Mounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_ELECTRIC_DISCHARGE_ARMOR) && misc.curMode().equals("charging")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

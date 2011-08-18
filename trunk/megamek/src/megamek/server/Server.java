@@ -11448,6 +11448,73 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
             addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false, throughFront));
+            if (((Protomech)ae).isEDPCharged()) {
+                r = new Report(3700);
+                int taserRoll = Compute.d6(2) - 2;
+                r.add(taserRoll);
+                r.newlines = 0;
+                vPhaseReport.add(r);
+                if (!(ae.getWeight() > 100)) {
+                    if (te instanceof BattleArmor) {
+                        r = new Report(3706);
+                        r.addDesc(te);
+                        // shut down for rest of scenario, so we actually kill it
+                        // TODO: fix for salvage purposes
+                        HitData targetTrooper = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                        r.add(te.getLocationAbbr(targetTrooper));
+                        vPhaseReport.add(r);
+                        vPhaseReport.addAll(criticalEntity(ae, targetTrooper.getLocation(), 0, false, false));
+                    } else if (te instanceof Mech) {
+                        if (((Mech)te).isIndustrial()) {
+                            if (taserRoll >= 8) {
+                                r = new Report(3705);
+                                r.addDesc(te);
+                                r.add(4);
+                                te.taserShutdown(4, false);
+                            } else {
+                                // suffer +2 to piloting and gunnery for 4 rounds
+                                r = new Report(3710);
+                                r.addDesc(te);
+                                r.add(2);
+                                r.add(4);
+                                te.setTaserInterference(2, 4, true);
+                            }
+                        } else {
+                            if (taserRoll >= 11) {
+                                r = new Report(3705);
+                                r.addDesc(te);
+                                r.add(3);
+                                vPhaseReport.add(r);
+                                te.taserShutdown(3, false);
+                            } else {
+                                r = new Report(3710);
+                                r.addDesc(te);
+                                r.add(2);
+                                r.add(3);
+                                vPhaseReport.add(r);
+                                te.setTaserInterference(2, 3, true);
+                            }
+                        }
+                    } else if ((te instanceof Protomech)
+                            || (te instanceof Tank)
+                            || (te instanceof Aero)) {
+                        if (taserRoll >= 8) {
+                            r = new Report(3705);
+                            r.addDesc(te);
+                            r.add(4);
+                            vPhaseReport.add(r);
+                            te.taserShutdown(4, false);
+                        } else {
+                            r = new Report(3710);
+                            r.addDesc(te);
+                            r.add(2);
+                            r.add(4);
+                            vPhaseReport.add(r);
+                            te.setTaserInterference(2, 4, false);
+                        }
+                    }
+                }
+            }
         }
 
         addNewLines();
@@ -13748,6 +13815,9 @@ public class Server implements Runnable {
             int hotDogMod = 0;
             if(entity.getCrew().getOptions().booleanOption("hot_dog")) {
                 hotDogMod = 1;
+            }
+            if (entity.getTaserInterefenceHeat()) {
+                entity.heatBuildup += 5;
             }
 
             // put in ASF heat build-up first because there are few differences
@@ -24508,7 +24578,7 @@ public class Server implements Runnable {
         } else if (aaa instanceof ProtomechPhysicalAttackAction) {
             ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction) aaa;
             toHit = paa.toHit(game);
-            damage = ProtomechPhysicalAttackAction.getDamageFor(ae);
+            damage = ProtomechPhysicalAttackAction.getDamageFor(ae, paa.getTarget(game));
         } else if (aaa instanceof PunchAttackAction) {
             PunchAttackAction paa = (PunchAttackAction) aaa;
             int arm = paa.getArm();

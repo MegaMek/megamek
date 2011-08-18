@@ -13816,7 +13816,7 @@ public class Server implements Runnable {
             if(entity.getCrew().getOptions().booleanOption("hot_dog")) {
                 hotDogMod = 1;
             }
-            if (entity.getTaserInterefenceHeat()) {
+            if (entity.getTaserInterferenceHeat()) {
                 entity.heatBuildup += 5;
             }
 

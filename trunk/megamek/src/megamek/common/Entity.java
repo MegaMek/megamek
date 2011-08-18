@@ -8782,8 +8782,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         shutdownByBATaser = value;
     }
 
-    public boolean getTaserInterefenceHeat() {
-        return !taserInterferenceHeat;
+    public boolean getTaserInterferenceHeat() {
+        return taserInterferenceHeat;
     }
 
     /**

@@ -462,7 +462,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             att = 1;
                         }
                     }
-                    def = def + 2 - att;
+                    def = (def + 2) - att;
                     if (def > 0) {
                         toHit.addModifier(def, "Defending mechanized BA");
                     }
@@ -1729,6 +1729,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
+
+        if ((ae instanceof Protomech) && ((Protomech)ae).isEDPCharging() && wtype.hasFlag(WeaponType.F_ENERGY)) {
+            return "ProtoMech is charging EDP";
+        }
 
         // tasers only at non-flying units
         if (wtype.hasFlag(WeaponType.F_TASER)) {

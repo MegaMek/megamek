@@ -841,8 +841,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     JumpJetAttackAction.LEFT);
             int d_right = JumpJetAttackAction.getDamageFor(ce(),
                     JumpJetAttackAction.RIGHT);
-            if (d_left * Compute.oddsAbove(left.getValue()) > d_right
-                    * Compute.oddsAbove(right.getValue())) {
+            if ((d_left * Compute.oddsAbove(left.getValue())) > (d_right
+                    * Compute.oddsAbove(right.getValue()))) {
                 toHit = left;
                 leg = JumpJetAttackAction.LEFT;
                 damage = d_left;
@@ -1004,7 +1004,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         proto.getValueAsString(),
                         new Double(Compute.oddsAbove(proto.getValue())),
                         proto.getDesc(),
-                        ProtomechPhysicalAttackAction.getDamageFor(ce())
+                        ProtomechPhysicalAttackAction.getDamageFor(ce(), target)
                                 + proto.getTableDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();

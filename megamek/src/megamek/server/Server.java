@@ -16021,9 +16021,8 @@ public class Server implements Runnable {
         }
 
 
-        // TACs
-        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL)
-                && (!hardenedArmor && !ferroLamellorArmor) ? 1 : 0;
+        // TACs from the hit location table
+        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1 : 0;
 
         // this is for special crits, like AP and tandem-charge
         int specCrits = 0;
@@ -16032,10 +16031,6 @@ public class Server implements Runnable {
         int critBonus = 0;
         if(game.getOptions().booleanOption("tacops_crit_roll") && (damage_orig > 0) && ((te instanceof Mech) || (te instanceof Protomech))) {
             critBonus = Math.min((damage_orig - 1)/5, 4);
-        }
-        // hardened armor get's a -2 modifier on the critroll
-        if (hardenedArmor) {
-            critBonus -= 2;
         }
 
         HitData nextHit = null;
@@ -16626,6 +16621,12 @@ public class Server implements Runnable {
 
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
+ 
+                    // if the armor is hardened, any penetrating crits are rolled at -2
+                    if (hardenedArmor) {
+                        critBonus -= 2;
+                    }
+
                     if (tmpDamageHold >= 0) {
                         te.damageThisPhase += tmpDamageHold;
                     } else {

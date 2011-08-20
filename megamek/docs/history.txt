@@ -42,6 +42,7 @@ v0.35.25 (SVN)
 + Bug 3371975: fixed wing support craft don't work
 + Bug 3388908: AoW Rifles crash MM when targeting non-units
 + Lots of new or updated unit images
++ Hardened/ferro-lamellor armor TAC handling fixes
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

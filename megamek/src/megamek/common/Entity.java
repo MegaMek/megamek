@@ -9866,17 +9866,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         movedBackwards = back;
     }
 
-    public void setHardenedArmorDamaged(int location, boolean damaged) {
-        hardenedArmorDamaged[location] = damaged;
+    public void setHardenedArmorDamaged(HitData hit, boolean damaged) {
+        hardenedArmorDamaged[hit.getLocation()] = damaged;
     }
 
     /**
-     * do we have a half-hit hardened armor point in the location?
+     * do we have a half-hit hardened armor point in the location struck by this?
      * @param location
      * @return
      */
-    public boolean isHardenedArmorDamaged(int location) {
-        return hardenedArmorDamaged[location];
+    public boolean isHardenedArmorDamaged(HitData hit) {
+        return hardenedArmorDamaged[hit.getLocation()];
     }
 
     /**

@@ -1660,7 +1660,7 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public boolean isHardenedArmorDamaged(int loc) {
+    public boolean isHardenedArmorDamaged(HitData hit) {
         return false;
     }
 

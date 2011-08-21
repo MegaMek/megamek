@@ -16516,33 +16516,7 @@ public class Server implements Runnable {
                 int tmpDamageHold = -1;
                 int origDamage = damage;
 
-                // If the target has hardened armor, we need to adjust damage.
-                if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
-                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                    tmpDamageHold = damage;
-                    double hardenedDamage = ((double) damage)/2;
-                    if ((hardenedDamage%1) > 0) {
-                        if (te.isHardenedArmorDamaged(hit.getLocation())) {
-                            damage = (int) Math.ceil(hardenedDamage);
-                            te.setHardenedArmorDamaged(hit.getLocation(), false);
-                        } else {
-                            damage = (int) Math.floor(hardenedDamage);
-                            te.setHardenedArmorDamaged(hit.getLocation(), true);
-                        }
-                    } else {
-                        damage = (int) hardenedDamage;
-                    }
-                    r = new Report(6069);
-                    r.subject = te_n;
-                    r.newlines = 0;
-                    if ((hardenedDamage%1)>0) {
-                        r.add(Double.toString(hardenedDamage));
-                    } else {
-                        r.add((int)hardenedDamage);
-                    }
-
-                    vDesc.addElement(r);
-                } else if (isPlatoon) {
+                if (isPlatoon) {
                     // infantry armour works differently
                     int armor = te.getArmor(hit);
                     int men = te.getInternal(hit);
@@ -16616,11 +16590,37 @@ public class Server implements Runnable {
                         }
                     }
                 }
+                // Need to account for the possibility of hardened armor here
+                int armorThreshold = te.getArmor(hit);
+                if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                    armorThreshold *= 2;
+                    armorThreshold -= (te.isHardenedArmorDamaged(hit)) ? 1 : 0;
+                    r = new Report(6069);
+                    r.subject = te_n;
+                    r.newlines = 0;
+                    int reportedDamage = damage / 2;
+                    if (damage % 2 > 0) {
+                        r.add(String.valueOf(reportedDamage) + ".5");
+                    }
+                    else {
+                        r.add(reportedDamage);
+                    }
 
-                if (te.getArmor(hit) >= damage) {
+                    vDesc.addElement(r);
+                }
+                if (armorThreshold >= damage) {
 
                     // armor absorbs all damage
-                    te.setArmor(te.getArmor(hit) - damage, hit);
+                    // Hardened armor deals with damage in its own fashion...
+                    if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                        armorThreshold -= damage;
+                        te.setHardenedArmorDamaged(hit, armorThreshold % 2 > 0);
+                        te.setArmor(armorThreshold / 2 + armorThreshold % 2, hit);
+                    }
+                    // ...non-hardened armor simply subtracts
+                    else te.setArmor(te.getArmor(hit) - damage, hit);
  
                     // if the armor is hardened, any penetrating crits are rolled at -2
                     if (hardenedArmor) {
@@ -16633,7 +16633,7 @@ public class Server implements Runnable {
                         te.damageThisPhase += damage;
                     }
                     damage = 0;
-                    if (!te.isHardenedArmorDamaged(hit.getLocation())) {
+                    if (!te.isHardenedArmorDamaged(hit)) {
                         r = new Report(6085);
                     } else {
                         r = new Report(6086);
@@ -16654,6 +16654,10 @@ public class Server implements Runnable {
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
+                    if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                        && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
+                        absorbed = absorbed * 2 - ((te.isHardenedArmorDamaged(hit)) ? 1: 0);
+                    }
                     if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
                         absorbed = (int) Math.round(Math.ceil(absorbed / 2));
                         damage = tmpDamageHold;
@@ -16702,15 +16706,8 @@ public class Server implements Runnable {
                     }
                 }
 
-                // If it has hardened armor, now we need to "correct" any
-                // remaining damage.
-                if (tmpDamageHold > 0) {
-                    if (hardenedArmor) {
-                        damage *= 2;
-                        damage -= tmpDamageHold % 2;
-                    } else if (isPlatoon) {
+                if (tmpDamageHold > 0 && isPlatoon) {
                         damage = tmpDamageHold;
-                    }
                 }
             }
 

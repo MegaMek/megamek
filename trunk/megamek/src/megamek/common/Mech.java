@@ -167,6 +167,8 @@ public abstract class Mech extends Entity {
     private int[] rearArmor;
 
     private int[] orig_rearArmor;
+    
+    private boolean[] rearHardenedArmorDamaged;
 
     private int sinksOn = -1;
 
@@ -224,6 +226,7 @@ public abstract class Mech extends Entity {
 
         rearArmor = new int[locations()];
         orig_rearArmor = new int[locations()];
+        rearHardenedArmorDamaged = new boolean[locations()];
 
         for (int i = 0; i < locations(); i++) {
             if (!hasRearArmor(i)) {
@@ -1609,6 +1612,22 @@ public abstract class Mech extends Entity {
     public void initializeRearArmor(int val, int loc) {
         orig_rearArmor[loc] = val;
         setArmor(val, loc, true);
+    }
+    
+    @Override
+    public void setHardenedArmorDamaged(HitData hit, boolean damaged) {
+        if (hit.isRear() && hasRearArmor(hit.getLocation()))
+            rearHardenedArmorDamaged[hit.getLocation()] = damaged;
+        else
+            hardenedArmorDamaged[hit.getLocation()] = damaged;
+    }
+
+    @Override
+    public boolean isHardenedArmorDamaged(HitData hit) {
+        if (hit.isRear() && hasRearArmor(hit.getLocation()))
+            return rearHardenedArmorDamaged[hit.getLocation()];
+        else 
+            return hardenedArmorDamaged[hit.getLocation()];
     }
 
     /**

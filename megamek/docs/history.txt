@@ -44,6 +44,7 @@ v0.35.25 (SVN)
 + Lots of new or updated unit images
 + Hardened/ferro-lamellor armor TAC handling fixes
 + Tweaks to hardened armor damage handling and report message
++ Added railroad images for maps, fluff only
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

@@ -45,6 +45,9 @@ v0.35.25 (SVN)
 + Hardened/ferro-lamellor armor TAC handling fixes
 + Tweaks to hardened armor damage handling and report message
 + Added railroad images for maps, fluff only
++ Bug 3309075: Implemented Mech Taser rules
++ Added Electrical Discharge ProtoMech armor
++ Set working directory in startup.sh
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

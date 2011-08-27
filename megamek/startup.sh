@@ -22,6 +22,9 @@ MEGAMEK_DEFAULT_CONFROOT="$HOME"
 MEGAMEK_DEFAULT_CONFPATH="$MEGAMEK_DEFAULT_CONFROOT/.megamek"
 MEGAMEK_DEFAULT_DATAPATH="/usr/share/MegaMek"
 
+MEGAMEK_ACTUAL_PATH=$(dirname $0)
+cd $MEGAMEK_ACTUAL_PATH
+
 
 # Try to find the executable for Java.
 JAVA=/usr/bin/java

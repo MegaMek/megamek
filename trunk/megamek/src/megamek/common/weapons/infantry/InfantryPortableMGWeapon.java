@@ -36,7 +36,7 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMGPortable");
         addLookupName("InfantryMG");
-        ammoType = AmmoType.T_MG;
+        ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 1.6;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);

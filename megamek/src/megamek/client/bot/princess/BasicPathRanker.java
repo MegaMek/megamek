@@ -97,7 +97,7 @@ public class BasicPathRanker extends PathRanker {
         double maximum_damage_done = 0;
         double maximum_physical_damage = 0;
         double expected_damage_taken = 0;
-        FiringPlan my_best_firing_plan = null;
+        FireControl.FiringPlan my_best_firing_plan = firecontrol.new FiringPlan();
         for (Entity e : enemies) {
             // How much damage can they do to me?
             double their_damage_potential = firecontrol

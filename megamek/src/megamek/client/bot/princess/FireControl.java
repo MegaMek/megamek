@@ -1306,7 +1306,7 @@ public class FireControl {
      * Overload this function if you think you can do better.
      */
     FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
-        FiringPlan bestplan = null;
+        FiringPlan bestplan = new FiringPlan();
         ArrayList<Entity> enemies = getTargetableEnemyEntities(shooter, game);
         for (Entity e : enemies) {
             FiringPlan plan = getBestFiringPlanWithTwists(shooter, e,

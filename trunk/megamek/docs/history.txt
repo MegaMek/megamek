@@ -51,6 +51,8 @@ v0.35.25 (SVN)
 + Fixed NPE in Princess bot firing calculations
 + Added Xotl's 'Mech and Vehicle RATs.  Thanks Netzilla and Xotl!
 + Updated contributors.txt
++ Added combat/support vehicle distinction to inferno resolution
++ Hardened armor TAC penalty now applied to inferno hits on vehicles
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

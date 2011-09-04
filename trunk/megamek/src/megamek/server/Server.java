@@ -7619,10 +7619,19 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 te.heatFromExternal += 2 * missiles;
             } else if (te instanceof Tank) {
+                boolean targetIsSupportVee = te instanceof SupportTank ||
+                    te instanceof LargeSupportTank || te instanceof SupportVTOL;
                 int direction = Compute.targetSideTable(ae, te, called);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
-                    vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), -2));
+                    int critRollMod = 0;
+                    if (!targetIsSupportVee || (te.hasArmoredChassis() &&
+                        te.getBARRating(hit.getLocation()) > 9))
+                        critRollMod -= 2;
+                    if (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED
+                        && te.getArmor(hit.getLocation()) > 0)
+                        critRollMod -= 2;
+                    vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), critRollMod));
                 }
             } else if (te instanceof Protomech) {
                 te.heatFromExternal += missiles;

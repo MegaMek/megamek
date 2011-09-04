@@ -84,7 +84,7 @@ public class EquipmentType {
 
     // Assume for now that prototype is not more expensive
     public static final double[] armorCosts =
-        { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork*/0, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 0};
+        { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork*/0, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000};
 
     public static final double[] armorPointMultipliers =
         { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1 };

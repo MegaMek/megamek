@@ -39,6 +39,7 @@ public class ISMekTaser extends AmmoWeapon {
         name = "Mech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");
+        addLookupName("ISBattleMechTaser");
         heat = 6;
         rackSize = 1;
         damage = 1;

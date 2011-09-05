@@ -53,6 +53,9 @@ v0.35.25 (SVN)
 + Updated contributors.txt
 + Added combat/support vehicle distinction to inferno resolution
 + Hardened armor TAC penalty now applied to inferno hits on vehicles
++ Set default aimed-shot location for vehicles to side facing attacker
++ Targeting computer aimed-shot target selection ported from AWT to Swing
++ Brought mask for aimed shots against large support vehicles more in line with TW hit location table
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

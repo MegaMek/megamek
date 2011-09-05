@@ -1686,11 +1686,33 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         aimingAt = Mech.LOC_CT;
                     }
                 } else if (target instanceof Tank) {
-                    if (target instanceof LargeSupportTank) {
-                        aimingAt = LargeSupportTank.LOC_FRONT;
-                    } else {
-                        aimingAt = Tank.LOC_FRONT;
-                    }
+                      int side = Compute.targetSideTable(ce(), target);
+                      if (target instanceof LargeSupportTank) {
+                          if (side == ToHitData.SIDE_FRONTLEFT) {
+                              aimingAt = LargeSupportTank.LOC_FRONTLEFT;
+                          }
+                          else if (side == ToHitData.SIDE_FRONTRIGHT) {
+                              aimingAt = LargeSupportTank.LOC_FRONTRIGHT;
+                          }
+                          else if (side == ToHitData.SIDE_REARRIGHT) {
+                              aimingAt = LargeSupportTank.LOC_REARRIGHT;
+                          }
+                          else if (side == ToHitData.SIDE_REARLEFT) {
+                              aimingAt = LargeSupportTank.LOC_REARLEFT;
+                          }
+                      }
+                      if (side == ToHitData.SIDE_LEFT) {
+                          aimingAt = Tank.LOC_LEFT;
+                      }
+                      if (side == ToHitData.SIDE_RIGHT) {
+                          aimingAt = Tank.LOC_RIGHT;
+                      }
+                      if (side == ToHitData.SIDE_REAR) {
+                          aimingAt = (target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
+                      }
+                      if (side == ToHitData.SIDE_FRONT) {
+                          aimingAt = Tank.LOC_FRONT;
+                      }
                 } else if (target instanceof Protomech) {
                     aimingAt = Protomech.LOC_TORSO;
                 } else if (target instanceof BattleArmor) {
@@ -1732,25 +1754,41 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 }
                 // remove non-visible sides
                 if (target instanceof LargeSupportTank) {
+                    if (side == ToHitData.SIDE_FRONT) {
+                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
+                        mask[LargeSupportTank.LOC_REARLEFT] = false;
+                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REAR] = false;
+                    }
                     if (side == ToHitData.SIDE_FRONTLEFT) {
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REARLEFT] = false;
                         mask[LargeSupportTank.LOC_REARRIGHT] = false;
                         mask[LargeSupportTank.LOC_REAR] = false;
                     }
                     if (side == ToHitData.SIDE_FRONTRIGHT) {
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_REARLEFT] = false;
+                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
                         mask[LargeSupportTank.LOC_REAR] = false;
                     }
                     if (side == ToHitData.SIDE_REARRIGHT) {
-                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                        mask[LargeSupportTank.LOC_REARLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
+                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REARLEFT] = false;
                     }
                     if (side == ToHitData.SIDE_REARLEFT) {
-                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
-                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
+                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                    }
+                    if (side == ToHitData.SIDE_REAR) {
+                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
+                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
                     }
                 } else {
                     if (side == ToHitData.SIDE_LEFT) {

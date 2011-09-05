@@ -1800,7 +1800,7 @@ KeyListener, ItemListener, ListSelectionListener {
                 mask[Tank.LOC_BODY] = false;
                 Tank tank = (Tank) target;
                 if (tank.hasNoTurret()) {
-                    mask[Tank.LOC_TURRET] = false;
+                    mask[(target instanceof LargeSupportTank) ? LargeSupportTank.LOC_TURRET : Tank.LOC_TURRET] = false;
                 }
                 // remove non-visible sides
                 if (target instanceof LargeSupportTank) {

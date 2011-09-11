@@ -171,6 +171,7 @@
      Sebastian "Demos" Seiml
      Swiftsure
      Stingr4y
+     RJM
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

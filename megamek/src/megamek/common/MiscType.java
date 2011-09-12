@@ -518,40 +518,40 @@ public class MiscType extends EquipmentType {
 
     @Override
     public double getCost(Entity entity, boolean isArmored) {
-        double cost = this.cost;
-        if (cost == EquipmentType.COST_VARIABLE) {
+        double costValue = this.cost;
+        if (costValue == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
-                cost = getTonnage(entity) * 10000;
+                costValue = getTonnage(entity) * 10000;
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
-                cost = 0;
+                costValue = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
-                cost = getTonnage(entity) * 10000;
+                costValue = getTonnage(entity) * 10000;
             } else if (hasFlag(F_DUNE_BUGGY)) {
                 float totalTons = getTonnage(entity);
-                cost = 10 * totalTons * totalTons;
+                costValue = 10 * totalTons * totalTons;
             } else if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
-                cost = entity.getRunMP() * 75000;
+                costValue = entity.getRunMP() * 75000;
             } else if (hasFlag(F_HEAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_QUAD_TURRET)) {
-                cost = getTonnage(entity) * 10000;
+                costValue = getTonnage(entity) * 10000;
             } else if (hasFlag(F_SPONSON_TURRET)) {
-                cost = getTonnage(entity) * 4000;
+                costValue = getTonnage(entity) * 4000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
-                cost = getTonnage(entity) * 100000;
+                costValue = getTonnage(entity) * 100000;
             } else if (hasFlag(F_JET_BOOSTER)) {
-                cost = entity.getEngine().getRating() * 10000;
+                costValue = entity.getEngine().getRating() * 10000;
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
-                cost = (getTonnage(entity) * 10000) + 5000;
+                costValue = (getTonnage(entity) * 10000) + 5000;
             }
         }
 
         if (isArmored) {
-            double armoredCost = cost;
+            double armoredCost = costValue;
 
             armoredCost += 150000 * getCriticals(entity);
 
             return armoredCost;
         }
-        return cost;
+        return costValue;
     }
 
     @Override

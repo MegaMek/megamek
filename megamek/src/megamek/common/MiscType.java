@@ -518,8 +518,8 @@ public class MiscType extends EquipmentType {
 
     @Override
     public double getCost(Entity entity, boolean isArmored) {
-        double cost = 0;
-        if (this.cost == EquipmentType.COST_VARIABLE) {
+        double cost = this.cost;
+        if (cost == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
                 cost = getTonnage(entity) * 10000;
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {

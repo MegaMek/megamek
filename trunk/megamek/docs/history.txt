@@ -57,6 +57,7 @@ v0.35.25 (SVN)
 + Targeting computer aimed-shot target selection ported from AWT to Swing
 + Brought mask for aimed shots against large support vehicles more in line with TW hit location table
 + Cost calculation fix (some misc. equipment was accidentally treated as having cost 0)
++ Armor cost rounding fixes
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

@@ -4127,8 +4127,15 @@ public abstract class Mech extends Entity {
         // cost of sinks
         costs[i++] = sinkCost * (heatSinks() - freeSinks);
         costs[i++] = hasFullHeadEject() ? 1725000 : 0;
-        for (int loc = 0; loc < locations(); loc++) {
-            costs[i++] = getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+        
+        // armor
+        if (hasPatchworkArmor()) {
+            for (int loc = 0; loc < locations(); loc++) {
+                costs[i++] += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+            }
+        }
+        else {
+            costs[i++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
 
         costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);

@@ -1729,8 +1729,14 @@ public class Tank extends Entity {
         cost += 2000 * Math.max(0, sinks - freeHeatSinks);
         cost += turretWeight * 5000;
         // armor
-        for (int loc = 0; loc < locations(); loc++) {
-            cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+        if (hasPatchworkArmor()) {
+            for (int loc = 0; loc < locations(); loc++) {
+                cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+            }
+
+        }
+        else {
+            cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
         double diveTonnage;
         switch (movementMode) {

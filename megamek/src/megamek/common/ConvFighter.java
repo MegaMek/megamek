@@ -87,13 +87,15 @@ public class ConvFighter extends Aero {
         cost += 200 * getFuel() / 160.0;
 
         // armor
-        if (!hasPatchworkArmor()) {
+        if (hasPatchworkArmor()) {
+            for (int loc = 0; loc < locations(); loc++) {
+                cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+            }
+
+        }
+        else {
             cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
-        else for (int loc = 0; loc < locations(); loc++) {
-            cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
-        }
-
         // heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
         // 2000;

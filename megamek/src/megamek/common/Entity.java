@@ -7433,6 +7433,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public abstract boolean doomedInSpace();
 
+    /** The weight of the armor in a specific location, rounded up to the nearest
+     * half-ton for patchwork armor as per TacOps page 377. Note: Unless overridden,
+     * this should <em>only</em> be called on units with patchwork armor, as rounding
+     * behavior is not guaranteed to be correct or even the same for others and units
+     * with a single overall armor type have no real reason to specifically care
+     * about weight per location anyway.
+     * 
+     * @param loc The code value for the location in question (unit type-specific).
+     * @return The weight of the armor in the location in tons.
+     * @see getArmorWeight()
+     */
     public double getArmorWeight(int loc) {
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(armorType[loc], armorTechLevel[loc]);
         if (armorType[loc] == EquipmentType.T_ARMOR_HARDENED) {
@@ -7444,6 +7455,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     }
 
+    /** The total weight of the armor on this unit. This is guaranteed to be rounded
+     * properly for both single-type and patchwork armor.
+     * 
+     * @return The armor weight in tons.
+     */
     public double getArmorWeight() {
         if (!hasPatchworkArmor()) {
             // this roundabout method is actually necessary to avoid rounding

@@ -1917,7 +1917,7 @@ KeyListener, ItemListener, ListSelectionListener {
             if (asd != null) {
                 aimingAt = Entity.LOC_NONE;
                 aimingMode = IAimingModes.AIM_MODE_NONE;
-                asd.setVisible(false);
+                asd.dispose();
                 asd = null;
                 updateTarget();
             }

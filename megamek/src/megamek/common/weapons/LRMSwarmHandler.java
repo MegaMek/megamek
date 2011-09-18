@@ -239,7 +239,9 @@ public class LRMSwarmHandler extends LRMHandler {
         if (swarmMissilesNowLeft > 0) {
             Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                     entityTarget, waa.getWeaponId());
-            if (swarmTarget != null) {
+            boolean stoppedByECM = Compute.isAffectedByECM(ae, target.getPosition(), target.getPosition())
+                    && !(this instanceof LRMSwarmIHandler);
+            if (swarmTarget != null && !stoppedByECM) {
                 r = new Report(3420);
                 r.subject = subjectId;
                 r.indent(2);
@@ -263,11 +265,20 @@ public class LRMSwarmHandler extends LRMHandler {
                 wh.handledHeat = true;
                 wh.handle(phase, vPhaseReport);
             } else {
-                r = new Report(3425);
-                r.add(swarmMissilesNowLeft);
-                r.subject = subjectId;
-                r.indent(2);
-                vPhaseReport.addElement(r);
+                if (swarmTarget == null) {
+                    r = new Report(3425);
+                    r.add(swarmMissilesNowLeft);
+                    r.subject = subjectId;
+                    r.indent(2);
+                    vPhaseReport.addElement(r);
+                }
+                else {
+                    r = new Report(3426);
+                    r.add(swarmMissilesNowLeft);
+                    r.subject = subjectId;
+                    r.indent(2);
+                    vPhaseReport.addElement(r);
+                }
             }
         }
         return false;
@@ -292,7 +303,9 @@ public class LRMSwarmHandler extends LRMHandler {
 
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                 entityTarget, waa.getWeaponId());
-        if (swarmTarget != null) {
+        boolean stoppedByECM = Compute.isAffectedByECM(ae, target.getPosition(), target.getPosition())
+                && !(this instanceof LRMSwarmIHandler);
+        if (swarmTarget != null && !stoppedByECM) {
             Report r = new Report(3420);
             r.subject = subjectId;
             r.indent(2);
@@ -316,11 +329,20 @@ public class LRMSwarmHandler extends LRMHandler {
             wh.handledHeat = true;
             wh.handle(phase, vPhaseReport);
         } else {
-            Report r = new Report(3425);
-            r.subject = subjectId;
-            r.indent(2);
-            r.add(swarmMissilesNowLeft);
-            vPhaseReport.addElement(r);
+            if (swarmTarget == null) {
+                Report r = new Report(3425);
+                r.add(swarmMissilesNowLeft);
+                r.subject = subjectId;
+                r.indent(2);
+                vPhaseReport.addElement(r);
+            }
+            else {
+                Report r = new Report(3426);
+                r.add(swarmMissilesNowLeft);
+                r.subject = subjectId;
+                r.indent(2);
+                vPhaseReport.addElement(r);
+            }
         }
         return false;
     }

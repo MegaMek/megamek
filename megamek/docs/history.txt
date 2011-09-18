@@ -60,6 +60,9 @@ v0.35.25 (SVN)
 + Armor cost rounding fixes
 + Quick fix to stop extraneous 'Aimed Shot' dialog copies from popping up (and rendering older ones unclosable, at least on my machine)
 + Bug 3411025: Swarm missiles continue to function in hostile ECM
++ Implement BA Partial Wing and BA Jet Booster as equipment, not directly as jump MP in the datafile
++ Start of Glider, Quad and Ultra Heavy ProtoMechs
++ ProtoMech EDP Armor
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

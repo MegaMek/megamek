@@ -359,6 +359,14 @@ public class BattleArmor extends Infantry {
             }
         }
         int mp = getOriginalJumpMP();
+        //partial wing gives extra MP in atmosphere
+        if (hasWorkingMisc(MiscType.F_PARTIAL_WING) && !game.getPlanetaryConditions().isVacuum()) {
+            mp++;
+        }
+        //jump booster gives an extra MP
+        if (hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+            mp++;
+        }
         if (getMovementMode() == EntityMovementMode.INF_UMU) {
             mp = 0;
         }
@@ -743,7 +751,7 @@ public class BattleArmor extends Infantry {
             if (isFireResistant()) {
                 armorBV = 3.5;
             }
-            dBV += getArmor(i) * armorBV + 1;
+            dBV += (getArmor(i) * armorBV) + 1;
             // improved sensors add 1
             if (hasImprovedSensors()) {
                 dBV += 1;

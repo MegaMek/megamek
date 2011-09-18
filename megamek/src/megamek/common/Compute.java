@@ -1718,7 +1718,11 @@ public class Compute {
             toHit.addModifier(2, "target skidded");
         }
         if ((entity.getElevation() > 0) && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
-            toHit.addModifier(1, "target is a flying WiGE");
+            if (entity instanceof Protomech) {
+                toHit.addModifier(3, "target is a gliding protomech");
+            } else {
+                toHit.addModifier(1, "target is a flying WiGE");
+            }
         }
 
         // did the target sprint?
@@ -2578,7 +2582,7 @@ public class Compute {
         test = Compute.d6(2);
 
         // If random roll is >= to-hit + 1, then set double-spin
-        if (test >= threshold + 1) {
+        if (test >= (threshold + 1)) {
             final_spin = 1;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 weapon.setMode("Ultra");
@@ -2592,13 +2596,13 @@ public class Compute {
         if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
 
             // If random roll is >= to-hit + 2 then set to quad-spin
-            if (test >= threshold + 2) {
+            if (test >= (threshold + 2)) {
                 final_spin = 2;
                 weapon.setMode("4-shot");
             }
 
             // If random roll is >= to-hit + 3 then set to six-spin
-            if (test >= threshold + 3) {
+            if (test >= (threshold + 3)) {
                 final_spin = 3;
                 weapon.setMode("6-shot");
             }
@@ -2620,10 +2624,10 @@ public class Compute {
             facing = ((Tank)ae).getDualTurretFacing();
         }
         if (ae.getEquipment(weaponId).isMechTurretMounted()) {
-            facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
+            facing = ae.getSecondaryFacing()+(ae.getEquipment(weaponId).getFacing()%6);
         }
         if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_VGL) && (ae instanceof Mech)) {
-            facing = ae.getSecondaryFacing()+ae.getEquipment(weaponId).getFacing()%6;
+            facing = ae.getSecondaryFacing()+(ae.getEquipment(weaponId).getFacing()%6);
         }
         Coords aPos = ae.getPosition();
         Vector<Coords> tPosV = new Vector<Coords>();
@@ -2662,7 +2666,7 @@ public class Compute {
      */
     public static boolean isThroughFrontHex(IGame game, Coords src, Entity t) {
         Coords dest = t.getPosition();
-        int fa = dest.degree(src) - t.getFacing() * 60;
+        int fa = dest.degree(src) - (t.getFacing() * 60);
         if (fa < 0) {
             fa += 360;
         }
@@ -2715,7 +2719,7 @@ public class Compute {
         //if any of the destination coords are in the right place, then return true
         for(Coords dest : destV) {
             // calculate firing angle
-            int fa = src.degree(dest) - facing * 60;
+            int fa = src.degree(dest) - (facing * 60);
             if (fa < 0) {
                 fa += 360;
             }
@@ -3777,7 +3781,7 @@ public class Compute {
         // affected
         int totalECM = 0;
         // check for split hexes
-        boolean bDivided = (a.degree(b) % 60 == 30);
+        boolean bDivided = ((a.degree(b) % 60) == 30);
         int x = 0;
         int prevEcmStatus = 0;
         boolean prevEccmPresent = false;
@@ -3822,11 +3826,11 @@ public class Compute {
                 }
             }
             // if any coords in the line are affected, the whole line is
-            if (!bDivided || (x % 3 == 0)) {
+            if (!bDivided || ((x % 3) == 0)) {
                 if ((ecmStatus > 0) && !eccmPresent) {
                     totalECM++;
                 }
-            } else if ((x % 3 == 2)) {
+            } else if (((x % 3) == 2)) {
                 // if we are looking at the second split hex then both this one
                 // and the prior need to have ECM
                 // becaue the advantage should go to the defender
@@ -3895,7 +3899,7 @@ public class Compute {
         // loop through all intervening coords, check each if they are ECM
         // affected
         int totalECM = 0;
-        boolean bDivided = (a.degree(b) % 60 == 30);
+        boolean bDivided = ((a.degree(b) % 60) == 30);
         int x = 0;
         int prevEcmStatus = 0;
         for (Coords c : coords) {
@@ -3937,11 +3941,11 @@ public class Compute {
                 }
             }
             // if any coords in the line are affected, the whole line is
-            if (!bDivided || (x % 3 == 0)) {
+            if (!bDivided || ((x % 3) == 0)) {
                 if (ecmStatus > 0) {
                     totalECM++;
                 }
-            } else if (x % 3 == 2) {
+            } else if ((x % 3) == 2) {
                 // if we are looking at the second split hex then both this one
                 // and the prior need to have ECM
                 // becaue the advantage should go to the defender

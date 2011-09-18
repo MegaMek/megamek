@@ -19039,25 +19039,65 @@ public class Server implements Runnable {
                     else if (secondaryEffects) {
                         int tweapRoll = Compute.d6(1);
                         CriticalSlot newSlot = null;
+
                         switch (tweapRoll) {
-                        case 1:
-                        case 2:
-                            newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_A);
-                            vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
-                            break;
-                        case 3:
-                        case 4:
-                            newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_B);
-                            vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
-                            break;
-                        case 5:
-                        case 6:
-                            // no effect
+                            case 1:
+                                if (((Protomech) en).isQuad()) {
+                                    newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_A);
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    break;
+                                }
+                            case 2:
+                                if (((Protomech) en).isQuad()) {
+                                    newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_B);
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    break;
+                                }
+                                newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_A);
+                                vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                break;
+                            case 3:
+                                if (((Protomech) en).isQuad()) {
+                                    newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_C);
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    break;
+                                }
+                            case 4:
+                                if (((Protomech) en).isQuad()) {
+                                    newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_D);
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    break;
+                                }
+                                newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_B);
+                                vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                break;
+                            case 5:
+                                if (en.getWeight() > 9) {
+                                    if (((Protomech) en).isQuad()) {
+                                        newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_E);
+                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                        break;
+                                    }
+                                    newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_C);
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    break;
+                                }
+                            case 6:
+                                if (en.getWeight() > 9) {
+                                    if (((Protomech) en).isQuad()) {
+                                        newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_F);
+                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                        break;
+                                    }
+                                    newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_C);
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    break;
+                                }
                         }
                     }
                     break;
                 case Protomech.SYSTEM_TORSO_WEAPON_A:
-                    Mounted weaponA = ((Protomech) en).getTorsoWeapon(true);
+                    Mounted weaponA = ((Protomech) en).getTorsoWeapon(cs.getIndex());
                     if (null != weaponA) {
                         weaponA.setHit(true);
                         r = new Report(6245);
@@ -19067,7 +19107,7 @@ public class Server implements Runnable {
                     }
                     break;
                 case Protomech.SYSTEM_TORSO_WEAPON_B:
-                    Mounted weaponB = ((Protomech) en).getTorsoWeapon(false);
+                    Mounted weaponB = ((Protomech) en).getTorsoWeapon(cs.getIndex());
                     if (null != weaponB) {
                         weaponB.setHit(true);
                         r = new Report(6250);
@@ -19076,7 +19116,46 @@ public class Server implements Runnable {
                         vDesc.addElement(r);
                     }
                     break;
-
+                case Protomech.SYSTEM_TORSO_WEAPON_C:
+                    Mounted weaponC = ((Protomech) en).getTorsoWeapon(cs.getIndex());
+                    if (null != weaponC) {
+                        weaponC.setHit(true);
+                        r = new Report(6245);
+                        r.subject = en.getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    }
+                    break;
+                case Protomech.SYSTEM_TORSO_WEAPON_D:
+                    Mounted weaponD = ((Protomech) en).getTorsoWeapon(cs.getIndex());
+                    if (null != weaponD) {
+                        weaponD.setHit(true);
+                        r = new Report(6250);
+                        r.subject = en.getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    }
+                    break;
+                case Protomech.SYSTEM_TORSO_WEAPON_E:
+                    Mounted weaponE = ((Protomech) en).getTorsoWeapon(cs.getIndex());
+                    if (null != weaponE) {
+                        weaponE.setHit(true);
+                        r = new Report(6245);
+                        r.subject = en.getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    }
+                    break;
+                case Protomech.SYSTEM_TORSO_WEAPON_F:
+                    Mounted weaponF = ((Protomech) en).getTorsoWeapon(cs.getIndex());
+                    if (null != weaponF) {
+                        weaponF.setHit(true);
+                        r = new Report(6250);
+                        r.subject = en.getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    }
+                    break;
                 } // End switch( cs.getType() )
 
                 // Shaded hits cause pilot damage.

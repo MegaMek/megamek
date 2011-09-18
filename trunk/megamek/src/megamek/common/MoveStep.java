@@ -459,8 +459,8 @@ public class MoveStep implements Serializable {
             setElevation(getElevation() + 1);
         } else if (parent.isJumping()) {
             IHex hex = game.getBoard().getHex(getPosition());
-            int maxElevation = entity.getJumpMP() + entity.getElevation()
-                + game.getBoard().getHex(entity.getPosition()).surface()
+            int maxElevation = (entity.getJumpMP() + entity.getElevation()
+                + game.getBoard().getHex(entity.getPosition()).surface())
                 - hex.surface();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth();
@@ -500,9 +500,9 @@ public class MoveStep implements Serializable {
 
             if (bld != null) {
                 IHex hex = game.getBoard().getHex(getPosition());
-                int maxElevation = entity.getElevation()
+                int maxElevation = (entity.getElevation()
                 + game.getBoard().getHex(entity.getPosition())
-                .surface() - hex.surface();
+                .surface()) - hex.surface();
 
                 // Meks can climb up level 2 walls or less while everything
                 // can only climb up one level
@@ -733,7 +733,11 @@ public class MoveStep implements Serializable {
             } else {
                 setElevation(elevation + 1);
                 if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    setMp(5);
+                    if (entity instanceof Protomech) {
+                        setMp(4);
+                    } else {
+                        setMp(5);
+                    }
                 } else {
                     setMp(parent.isJumping()?0:1);
                 }
@@ -1008,7 +1012,7 @@ public class MoveStep implements Serializable {
             velocityN = a.getNextVelocity();
             velocityLeft = a.getCurrentVelocity() - a.delta_distance;
             if(game.getBoard().onGround()) {
-                velocityLeft = a.getCurrentVelocity() - a.delta_distance / 16;
+                velocityLeft = a.getCurrentVelocity() - (a.delta_distance / 16);
             }
             isRolled = false;//a.isRolled();
             nStraight = a.getStraightMoves();
@@ -1836,7 +1840,7 @@ public class MoveStep implements Serializable {
                     // tank on a road can move 5/7, **not** 5/8.
                 }
             } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
-                    && isOnlyPavement() && (getMpUsed() == tmpWalkMP + 1)) {
+                    && isOnlyPavement() && (getMpUsed() == (tmpWalkMP + 1))) {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 movementType = EntityMovementType.MOVE_WALK;
@@ -2385,8 +2389,8 @@ public class MoveStep implements Serializable {
                 return false;
             }
             IHex hex = game.getBoard().getHex(getPosition());
-            int maxElevation = 2 + entity.getElevation()
-            + game.getBoard().getHex(entity.getPosition()).surface()
+            int maxElevation = (2 + entity.getElevation()
+            + game.getBoard().getHex(entity.getPosition()).surface())
             - hex.surface();
 
             if ((bld.getType() == Building.WALL)
@@ -2501,8 +2505,8 @@ public class MoveStep implements Serializable {
 
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (nMove != EntityMovementMode.VTOL)) {
-            if (((srcAlt - destAlt > 0) && (srcAlt - destAlt > entity.getMaxElevationDown())) ||
-                    ((destAlt - srcAlt > 0) && (destAlt - srcAlt > entity.getMaxElevationChange()))) {
+            if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > entity.getMaxElevationDown())) ||
+                    (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity.getMaxElevationChange()))) {
                 return false;
             }
         }
@@ -2790,7 +2794,7 @@ public class MoveStep implements Serializable {
         } else if (velocity == 11) {
             return 6 + thrustCost;
         }
-        return (6 + velocity - 11 + thrustCost);
+        return (((6 + velocity) - 11) + thrustCost);
     }
 
     public void setNTurns(int turns) {
@@ -2943,9 +2947,9 @@ public class MoveStep implements Serializable {
             if(en instanceof Dropship) {
                 thresh = vel * 8;
             } else if (en instanceof SmallCraft) {
-                thresh = 8 + (vel - 1) * 6;
+                thresh = 8 + ((vel - 1) * 6);
             } else {
-                thresh = 8 + (vel - 1) * 4;
+                thresh = 8 + ((vel - 1) * 4);
             }
         }
 

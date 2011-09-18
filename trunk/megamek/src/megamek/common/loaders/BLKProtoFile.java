@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,13 +14,13 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
  * This class loads 'Proto BLK files.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour)
  * @version $revision:$
  */
@@ -57,6 +57,10 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             t.setModel("");
         }
 
+        if (dataFile.exists("quad") && dataFile.getDataAsString("quad")[0].equalsIgnoreCase("true")) {
+            t.setIsQuad(true);
+        }
+
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -74,18 +78,14 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         }
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
-        /***********************************************************************
-         * 'Protos have only one motion type. if
-         * (!dataFile.exists("motion_type")) throw new
-         * EntityLoadingException("Could not find movement block."); String
-         * sMotion = dataFile.getDataAsString("motion_type")[0]; int nMotion =
-         * -1; for (int x = 0; x < MOVES.length; x++) { if
-         * (sMotion.equals(MOVES[x])) { nMotion = x; break; } } if (nMotion ==
-         * -1) throw new EntityLoadingException("Invalid movment type: " +
-         * sMotion); t.setMovementType(nMotion); 'Protos have only one motion
-         * type. *
-         **********************************************************************/
-        t.setMovementMode(EntityMovementMode.INF_JUMP);
+
+
+        String sMotion = dataFile.getDataAsString("motion_type")[0];
+        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        if (nMotion == EntityMovementMode.NONE) {
+            throw new EntityLoadingException("Invalid movement type: " + sMotion);
+        }
+        t.setMovementMode(nMotion);
 
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
@@ -112,7 +112,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         boolean hasMainGun = false;
         if (Protomech.NUM_PMECH_LOCATIONS == armor.length) {
             hasMainGun = true;
-        } else if (Protomech.NUM_PMECH_LOCATIONS - 1 == armor.length) {
+        } else if ((Protomech.NUM_PMECH_LOCATIONS - 1) == armor.length) {
             hasMainGun = false;
         } else {
             throw new EntityLoadingException("Incorrect armor array length");

@@ -734,7 +734,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
         while (!ok && (buttonLayout != 0)) {
-            for (int i = buttonLayout * 8; (i < (buttonLayout + 1) * 8)
+            for (int i = buttonLayout * 8; (i < ((buttonLayout + 1) * 8))
                     && (i < buttonList.size()); i++) {
                 if (buttonList.get(i).isEnabled()) {
                     ok = true;
@@ -744,7 +744,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (!ok) {
                 // skip as nothing was enabled
                 buttonLayout++;
-                if (buttonLayout * 8 >= buttonList.size()) {
+                if ((buttonLayout * 8) >= buttonList.size()) {
                     buttonLayout = 0;
                 }
             }
@@ -754,7 +754,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         panButtons.add(butNext, GBC.std().gridx(x).gridy(y).fill());
         x++;
 
-        for (int i = buttonLayout * 8; (i < (buttonLayout + 1) * 8)
+        for (int i = buttonLayout * 8; (i < ((buttonLayout + 1) * 8))
                 && (i < buttonList.size()); i++) {
             if (x == 5) {
                 y++;
@@ -1992,7 +1992,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         //for spheroids in atmosphere we just need to check being on the edge
         if(a.isSpheroid() && !clientgui.getClient().game.getBoard().inSpace()) {
-            setFlyOffEnabled((position != null) && (a.getWalkMP() > 0) && ((position.x == 0) || (position.x == clientgui.getClient().game.getBoard().getWidth() - 1) || (position.y == 0) || (position.y == clientgui.getClient().game.getBoard().getHeight() - 1)));
+            setFlyOffEnabled((position != null) && (a.getWalkMP() > 0) && ((position.x == 0) || (position.x == (clientgui.getClient().game.getBoard().getWidth() - 1)) || (position.y == 0) || (position.y == (clientgui.getClient().game.getBoard().getHeight() - 1))));
             return;
         }
 
@@ -2002,15 +2002,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         boolean evenx = (position.x % 2) == 0;
         if ((velocityLeft > 0)
                 && (((position.x == 0) && ((facing == 5) || (facing == 4)))
-                        || ((position.x == clientgui.getClient().game
-                                .getBoard().getWidth() - 1) && ((facing == 1) || (facing == 2)))
+                        || ((position.x == (clientgui.getClient().game
+                                .getBoard().getWidth() - 1)) && ((facing == 1) || (facing == 2)))
                         || ((position.y == 0)
                                 && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx)
                         || ((position.y == 0) && (facing == 0))
-                        || ((position.y == clientgui.getClient().game
-                                .getBoard().getHeight() - 1)
-                                && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == clientgui
-                        .getClient().game.getBoard().getHeight() - 1) && (facing == 3)))) {
+                        || ((position.y == (clientgui.getClient().game
+                                .getBoard().getHeight() - 1))
+                                && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == (clientgui
+                        .getClient().game.getBoard().getHeight() - 1)) && (facing == 3)))) {
             setFlyOffEnabled(true);
         } else {
             setFlyOffEnabled(false);
@@ -2984,7 +2984,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     }
 
-    /*
+    /**
      * based on maneuver type add the appropriate steps return true if we should
      * redraw the movement data
      */

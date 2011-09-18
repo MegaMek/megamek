@@ -21,7 +21,7 @@ public enum EntityMovementMode {
 
     NONE ("none", "building"), // Future expansion. Turrets?
     BIPED ("biped"),
-    QUAD,
+    QUAD ("quad"),
     TRACKED ("tracked"),
     WHEELED ("wheeled"),
     HOVER ("hover"),
@@ -34,7 +34,7 @@ public enum EntityMovementMode {
     INF_JUMP ("inf_jump", "jump"),
     BIPED_SWIM,
     QUAD_SWIM,
-    WIGE ("wige"),
+    WIGE ("wige", "glider"),
     AERODYNE,
     SPHEROID,
     INF_UMU,
@@ -42,11 +42,11 @@ public enum EntityMovementMode {
     AEROSPACE; // this might be a synonym for AERODYNE.
 
     private String[] aliases;
-    
+
     EntityMovementMode(String... aliases) {
         this.aliases = aliases;
     }
-    
+
     private boolean isAlias(String str) {
         for (String alias : aliases) {
             if (alias.trim().equalsIgnoreCase(str)) {

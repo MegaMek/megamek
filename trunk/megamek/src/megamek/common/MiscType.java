@@ -1061,6 +1061,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLDetachableWeaponPack());
         EquipmentType.addType(MiscType.createBAHeatSensor());
         EquipmentType.addType(MiscType.createBAExtendedLifeSupport());
+        EquipmentType.addType(MiscType.createBAPartialWing());
+        EquipmentType.addType(MiscType.createISBAJumpBooster());
+        EquipmentType.addType(MiscType.createCLBAJumpBooster());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
@@ -5294,6 +5297,45 @@ public class MiscType extends EquipmentType {
         misc.bv = 32;
         String[] modes = {"not charging", "charging"};
         misc.setModes(modes);
+        return misc;
+    }
+
+    public static MiscType createBAPartialWing() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name ="Partial Wing";
+        misc.setInternalName("BAPartialWing");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        misc.tonnage = 0.2f;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_PARTIAL_WING);
+        return misc;
+    }
+
+    public static MiscType createISBAJumpBooster() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "Jump Booster";
+        misc.setInternalName("ISBAJumpBooster");
+        misc.tonnage = 0.125f;
+        misc.cost = 75000;
+        misc.techRating = RATING_E;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_BA_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createCLBAJumpBooster() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_TW;
+        misc.name = "Jump Booster";
+        misc.setInternalName("ISClanJumpBooster");
+        misc.tonnage = 0.125f;
+        misc.cost = 75000;
+        misc.techRating = RATING_E;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_BA_EQUIPMENT);
         return misc;
     }
 

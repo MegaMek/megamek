@@ -56,8 +56,10 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         int toReturn;
         if ((entity.getWeight() >= 2) && (entity.getWeight() < 6)) {
             toReturn = 1;
-        } else {
+        } else if (entity.getWeight() <= 9) {
             toReturn = 2;
+        } else {
+            toReturn = 3;
         }
         if (((Protomech)entity).isEDPCharged() && (target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn++;

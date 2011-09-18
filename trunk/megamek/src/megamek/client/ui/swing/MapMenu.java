@@ -265,8 +265,7 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem SelectJMenuItem(Entity en) {
-
+    private JMenuItem selectJMenuItem(Entity en) {
         JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.selectMenuItem") + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
@@ -291,7 +290,7 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
-    private JMenuItem ViewJMenuItem(Entity en) {
+    private JMenuItem viewJMenuItem(Entity en) {
         JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.viewMenuItem") + en.getDisplayName());
 
         item.setActionCommand(Integer.toString(en.getId()));
@@ -317,7 +316,7 @@ public class MapMenu extends JPopupMenu {
             for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (client.getMyTurn().isValidEntity(entity, client.game)) {
-                    menu.add(SelectJMenuItem(entity));
+                    menu.add(selectJMenuItem(entity));
                 }
             }
         }
@@ -329,7 +328,7 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("View");
         for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
-            menu.add(ViewJMenuItem(entity));
+            menu.add(viewJMenuItem(entity));
         }
 
         return menu;
@@ -1068,7 +1067,6 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-
                     StringTokenizer result = new StringTokenizer(e.getActionCommand(), "|");
                     Coords coord = new Coords(Integer.parseInt(result.nextToken()), Integer.parseInt(result.nextToken()));
                     ((FiringDisplay) currentPanel).torsoTwist(coord);

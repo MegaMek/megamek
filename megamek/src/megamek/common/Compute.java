@@ -4077,6 +4077,19 @@ public class Compute {
                 data.addModifier(TargetRoll.IMPOSSIBLE, "Launcher not jettisoned.");
                 return data;
             }
+            // BA units that jumped using mechanical jump boosters can't attack
+            if (attacker.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)
+                    // we used a mechanical jump booster for jumping only if we
+                    // don't have normal JJs, or if we are underwater-capable
+                    // because we underwatercapable BAs can only jump via
+                    // mechanical jump boosters
+                    // otherwise, normal JJs give the same MP and do not have
+                    // this restriction
+                    && ((attacker.getOriginalJumpMP() == 0) || (attacker.getMovementMode() == EntityMovementMode.INF_UMU))
+                    && (attacker.moved == EntityMovementType.MOVE_JUMP)) {
+                data.addModifier(TargetRoll.IMPOSSIBLE, "can't jump using mechanical jump booster and anti-mech attack in the same turn");
+                return data;
+            }
         } else {
             // Infantry can't have encumbering armor
             if (attacker.isArmorEncumbering()) {

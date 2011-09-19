@@ -280,12 +280,17 @@ public class BattleArmor extends Infantry {
 
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor, boolean ignoreDWP, boolean ignoreMyomerBooster) {
         int j = getOriginalWalkMP();
-        if (hasMyomerBooster() && !ignoreMyomerBooster) {
-            if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
-                j++;
-            } else {
-                j += 2;
+        if (hasMyomerBooster()) {
+            if (!ignoreMyomerBooster) {
+                if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
+                    j++;
+                } else {
+                    j += 2;
+                }
             }
+        } else if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+            // mechanical jump booster gives an extra MP
+            j++;
         }
         if (hasDWP() && !ignoreDWP) {
             if (getWeightClass() == EntityWeightClass.WEIGHT_BA_MEDIUM) {
@@ -359,16 +364,26 @@ public class BattleArmor extends Infantry {
             }
         }
         int mp = getOriginalJumpMP();
-        //partial wing gives extra MP in atmosphere
-        if (hasWorkingMisc(MiscType.F_PARTIAL_WING) && !game.getPlanetaryConditions().isVacuum()) {
+
+        // partial wing gives extra MP in atmosphere
+        if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING) && !game.getPlanetaryConditions().isVacuum()) {
             mp++;
-        }
-        //jump booster gives an extra MP
-        if (hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+        } else if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+         // jump booster gives an extra MP
             mp++;
         }
         if (getMovementMode() == EntityMovementMode.INF_UMU) {
             mp = 0;
+        }
+        // if we have no normal jump jets, we get 1 jump MP from mechanical jump
+        // boosters, if we have them.
+        // we do this after the UMU check, because jump boosters work underwater
+        if ((mp == 0) && hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+            mp++;
+            // partial wing gives extra MP in atmosphere
+            if (hasWorkingMisc(MiscType.F_PARTIAL_WING) && !game.getPlanetaryConditions().isVacuum()) {
+                mp++;
+            }
         }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);

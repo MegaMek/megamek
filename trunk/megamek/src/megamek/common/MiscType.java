@@ -171,6 +171,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_EXTENDED_LIFESUPPORT = BigInteger.valueOf(1).shiftLeft(125);
     public static final BigInteger F_SPRAYER = BigInteger.valueOf(1).shiftLeft(126);
     public static final BigInteger F_ELECTRIC_DISCHARGE_ARMOR = BigInteger.valueOf(1).shiftLeft(127);
+    public static final BigInteger F_MECHANICAL_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(128);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -479,7 +480,7 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
-            return (float) (Math.ceil(entity.getWeight() / 40) * 2.0);
+            return (float) (Math.ceil(cargoTonnage / 40) * 2.0);
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             float weaponWeight = 0;
@@ -518,7 +519,7 @@ public class MiscType extends EquipmentType {
 
     @Override
     public double getCost(Entity entity, boolean isArmored) {
-        double costValue = this.cost;
+        double costValue = cost;
         if (costValue == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
                 costValue = getTonnage(entity) * 10000;
@@ -1064,6 +1065,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAPartialWing());
         EquipmentType.addType(MiscType.createISBAJumpBooster());
         EquipmentType.addType(MiscType.createCLBAJumpBooster());
+        EquipmentType.addType(MiscType.createISBAMechanicalJumpBooster());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
@@ -5330,12 +5332,23 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Jump Booster";
-        misc.setInternalName("ISClanJumpBooster");
+        misc.setInternalName("CLBAJumpBooster");
         misc.tonnage = 0.125f;
         misc.cost = 75000;
         misc.techRating = RATING_E;
         misc.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_BA_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISBAMechanicalJumpBooster() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Mechanical Jump Booster";
+        misc.setInternalName("ISMechanicalJumpBooster");
+        misc.techRating = RATING_E;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER).or(F_BA_EQUIPMENT);
         return misc;
     }
 

@@ -63,6 +63,7 @@ v0.35.25 (SVN)
 + Implement BA Partial Wing and BA Jet Booster as equipment, not directly as jump MP in the datafile
 + Start of Glider, Quad and Ultra Heavy ProtoMechs
 + ProtoMech EDP Armor
++ BA mechanical jump booster
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

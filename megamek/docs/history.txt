@@ -64,6 +64,7 @@ v0.35.25 (SVN)
 + Start of Glider, Quad and Ultra Heavy ProtoMechs
 + ProtoMech EDP Armor
 + BA mechanical jump booster
++ Tank supercharger handling fix (no more permanent speed boost from one successful check)
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

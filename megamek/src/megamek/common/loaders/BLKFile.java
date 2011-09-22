@@ -69,6 +69,7 @@ public class BLKFile {
     public static final int COMPACT = 5; // don't ask
     public static final int FUELCELL = 6;
     public static final int FISSION = 7;
+    public static final int NONE = 8;
 
     protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
@@ -139,7 +140,9 @@ public class BLKFile {
             return Engine.FUEL_CELL;
         } else if (code == BLKFile.FISSION) {
             return Engine.FISSION;
-        } else {
+        } else if (code == BLKFile.NONE) {
+            return Engine.NONE;
+        }else {
             return -1;
         }
     }
@@ -330,6 +333,9 @@ public class BLKFile {
                 break;
             case Engine.FISSION:
                 engineCode = BLKFile.FISSION;
+                break;
+            case Engine.NONE:
+                engineCode = BLKFile.NONE;
                 break;
         }
         blk.writeBlockData("engine_type", engineCode);

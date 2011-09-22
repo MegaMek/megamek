@@ -62,6 +62,7 @@ public class Engine implements Serializable {
     public final static int LIGHT_ENGINE = 5;
     public final static int COMPACT_ENGINE = 6;
     public final static int FISSION = 7;
+    public final static int NONE = 8;
 
     public boolean engineValid;
     private int engineRating;
@@ -134,6 +135,7 @@ public class Engine implements Serializable {
             case XL_ENGINE:
             case XXL_ENGINE:
             case FUEL_CELL:
+            case NONE:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -183,6 +185,8 @@ public class Engine implements Serializable {
             return FUEL_CELL;
         } else if (type.toLowerCase().indexOf("fuel-cell") != -1) {
             return FUEL_CELL;
+        } else if (type.toLowerCase().indexOf("NONE") != -1) {
+            return NONE;
         } else {
             return NORMAL_ENGINE;
         }
@@ -194,7 +198,7 @@ public class Engine implements Serializable {
      * @return true if it is not an internal combustion engine.
      */
     public boolean isFusion() {
-        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL)) {
+        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL) || (engineType == NONE)) {
             return false;
         }
         return true;
@@ -244,6 +248,8 @@ public class Engine implements Serializable {
             case FUEL_CELL:
                 weight *= 1.2;
                 break;
+            case NONE:
+                return 0;
         }
         weight = TestEntity.ceilMaxHalf(weight, roundWeight);
 
@@ -316,6 +322,9 @@ public class Engine implements Serializable {
             case FUEL_CELL:
                 return Integer.toString(engineRating)
                         + Messages.getString("Engine.FuelCell");
+            case NONE:
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.None");
             default:
                 return Messages.getString("Engine.invalid");
         }
@@ -357,6 +366,9 @@ public class Engine implements Serializable {
                 break;
             case FISSION:
                 sb.append(" FISSION"); //$NON-NLS-1$
+                break;
+            case NONE:
+                sb.append(" NONE"); //$NON-NLS-1$
                 break;
             default:
                 return problem.toString();
@@ -536,6 +548,9 @@ public class Engine implements Serializable {
                 break;
             case FISSION:
                 cost = 7500;
+                break;
+            case NONE:
+                cost = 0;
                 break;
             }
         if (hasFlag(LARGE_ENGINE)) {

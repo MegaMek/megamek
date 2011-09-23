@@ -466,6 +466,7 @@ public class AmmoType extends EquipmentType {
         acAmmos.add(base);
         EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISHeavyFlamerAmmo());
+        EquipmentType.addType(AmmoType.createCLHeavyFlamerAmmo());
         EquipmentType.addType(AmmoType.createISCoolantPod());
         EquipmentType.addType(AmmoType.createCLCoolantPod());
         EquipmentType.addType(AmmoType.createISRailGunAmmo());
@@ -6335,6 +6336,27 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Heavy Flamer Ammo");
         ammo.addLookupName("IS Ammo Heavy Flamer");
         ammo.addLookupName("ISHeavyFlamer Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
+        ammo.shots = 10;
+        ammo.bv = 3;
+        ammo.cost = 2000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLHeavyFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
+        ammo.name = "Heavy Flamer Ammo";
+        ammo.shortName = "Heavy Flamer";
+        ammo.setInternalName("CL Heavy Flamer Ammo");
+        ammo.addLookupName("CL Ammo Heavy Flamer");
+        ammo.addLookupName("Clan Ammo Heavy Flamer");
+        ammo.addLookupName("Clan Heavy Flamer Ammo");
+        ammo.addLookupName("CLHeavyFlamer Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_HEAVY_FLAMER;

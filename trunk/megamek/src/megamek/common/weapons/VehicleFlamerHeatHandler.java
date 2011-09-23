@@ -83,16 +83,16 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
                 return;
             }
 
-            // heat
-            int heat = wtype.getHeat();
+            // heatDamage
+            int heatDamage = wtype.getDamage();
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(heat);
+            r.add(heatDamage);
             r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
-            entityTarget.heatBuildup += heat;
+            entityTarget.heatFromExternal += heatDamage;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
@@ -110,6 +110,8 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 toReturn = Compute.d6(3);
+            } else if (wtype instanceof ISHeavyFlamer || wtype instanceof CLHeavyFlamer) {
+                toReturn = Compute.d6(6);
             } else {
                 toReturn = Compute.d6(4);
             }

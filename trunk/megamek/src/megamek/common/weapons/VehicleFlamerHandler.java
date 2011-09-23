@@ -61,6 +61,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor)
                 toReturn = Compute.d6(3);
+            else if (wtype instanceof ISHeavyFlamer || wtype instanceof CLHeavyFlamer)
+                toReturn = Compute.d6(6);
             else
                 toReturn = Compute.d6(4);
             if ( bDirect )

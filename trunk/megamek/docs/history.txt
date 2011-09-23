@@ -72,6 +72,8 @@ v0.35.25 (SVN)
     successful check)
 + Karnov UR should have an infantry bay
 + allow "None" Engine type for trailers
++ Bug 3412585: (Vehicle) Flamers doing more heat than should be allowed
++ Heavy flamer stats updated to TacOps; Clan heavy flamer added
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

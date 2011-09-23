@@ -556,6 +556,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISFlamer());
         EquipmentType.addType(new CLVehicleFlamer());
         EquipmentType.addType(new ISVehicleFlamer());
+        EquipmentType.addType(new CLHeavyFlamer());
         EquipmentType.addType(new ISHeavyFlamer());
         EquipmentType.addType(new ISERFlamer());
         EquipmentType.addType(new CLERFlamer());

@@ -1886,7 +1886,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             if (!game.getOptions().booleanOption("friendly_fire")) {
                 // a friendly unit can never be the target of a direct attack.
-                if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                // but we do allow vehicle flamers to cool
+                if (!(wtype.hasFlag(WeaponType.F_FLAMER) && weapon.curMode().equals("Cool"))
+                        && (target.getTargetType() == Targetable.TYPE_ENTITY)
                         && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target).getOwner()
                                 .getTeam() != Player.TEAM_NONE)
                                 && (ae.getOwner().getTeam() != Player.TEAM_NONE) && (ae.getOwner().getTeam() == ((Entity) target)
@@ -2681,7 +2683,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te)) {
+            if (!WeaponAttackAction.isOnlyAttack(game, ae, Infantry.LEG_ATTACK, te)) {
                 return "Leg attack must be an unit's only attack, and there must not be multiple Leg Attacks.";
             }
         } else if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
@@ -2691,7 +2693,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (TargetRoll.IMPOSSIBLE == toHit.getValue()) {
                 return toHit.getDesc();
             }
-            if (!isOnlyAttack(game, ae, Infantry.SWARM_MEK, te)) {
+            if (!WeaponAttackAction.isOnlyAttack(game, ae, Infantry.SWARM_MEK, te)) {
                 return "Swarm attack must be an unit's only attack, and there must not be multiple Swarm Attacks.";
             }
         } else if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {

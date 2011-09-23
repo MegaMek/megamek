@@ -12,7 +12,7 @@
  * details.
  */
 /*
- * Created on Sep 24, 2004
+ * Created on Sep 23, 2011
  */
 package megamek.common.weapons;
 
@@ -21,9 +21,9 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 
 /**
- * @author Andrew Hunter
+ * @author Klaus Mittag (based on ISHeavyFlamer by Andrew Hunter)
  */
-public class ISHeavyFlamer extends VehicleFlamerWeapon {
+public class CLHeavyFlamer extends VehicleFlamerWeapon {
     /**
      *
      */
@@ -32,13 +32,14 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
     /**
      *
      */
-    public ISHeavyFlamer() {
+    public CLHeavyFlamer() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel = TechConstants.T_CLAN_ADVANCED;
         name = "Heavy Flamer";
-        setInternalName(name);
-        addLookupName("IS Heavy Flamer");
-        addLookupName("ISHeavyFlamer");
+        setInternalName("CLHeavyFlamer");
+        addLookupName("Clan Heavy Flamer");
+        addLookupName("CL Heavy Flamer");
+        addLookupName("CLHeavyFlamer");
         heat = 5;
         damage = 4;
         rackSize = 2;

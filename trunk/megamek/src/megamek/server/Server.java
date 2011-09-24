@@ -16564,6 +16564,14 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
+                } else if (reflectiveArmor && areaSatArty) {
+                    tmpDamageHold = damage;
+                    damage *= 2;
+                    r = new Report(6087);
+                    r.subject = te_n;
+                    r.newlines = 0;
+                    r.add(damage);
+                    vDesc.addElement(r);
                 } else if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY)) {
                     tmpDamageHold = damage;
                     damage = (int) Math.floor(((double) damage) / 2);
@@ -16576,9 +16584,11 @@ public class Server implements Runnable {
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reactiveArmor
-                        && ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE))) {
+                        && ((hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                            || areaSatArty )) {
                     tmpDamageHold = damage;
-                    damage = (int) Math.ceil(((double) damage) / 2);
+                    damage = (int) Math.floor(((double) damage) / 2);
+                    if (tmpDamageHold == 1) damage = 1;
                     r = new Report(6068);
                     r.subject = te_n;
                     r.newlines = 0;

@@ -42,6 +42,6 @@ public class CLAdvancedSRM4 extends AdvancedSRMWeapon {
         extremeRange = 16;
         bv = 60;
         flags = flags.or(F_NO_FIRES);
-        cost = 80000;
+        cost = 60000;
     }
 }

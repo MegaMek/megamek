@@ -75,6 +75,7 @@ v0.35.25 (SVN)
 + Bug 3412585: (Vehicle) Flamers doing more heat than should be allowed
 + Heavy flamer stats updated to TacOps; Clan heavy flamer added
 + TacOps area attack damage vs. reflective/reactive armor
++ Advanced SRM cost fixes
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

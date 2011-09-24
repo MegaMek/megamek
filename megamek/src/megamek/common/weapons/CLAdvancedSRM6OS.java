@@ -40,5 +40,6 @@ public class CLAdvancedSRM6OS extends AdvancedSRMWeapon {
         extremeRange = 16;
         bv = 18;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        cost = 45000;
     }
 }

@@ -41,5 +41,6 @@ public class CLAdvancedSRM2IOS extends AdvancedSRMWeapon {
         bv = 6;
         tonnage -= .5f;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        cost = 24000;
     }
 }

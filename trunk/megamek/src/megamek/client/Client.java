@@ -1333,6 +1333,10 @@ public class Client implements IClientCommandHandler {
      */
     private void checkDuplicateNamesDuringDelete(int id) {
         Entity entity = game.getEntity(id);
+        if(entity == null)
+        {
+        	return;
+        }
         Object o = duplicateNameHash.get(entity.getShortNameRaw());
         if (o != null) {
             int count = ((Integer) o).intValue();

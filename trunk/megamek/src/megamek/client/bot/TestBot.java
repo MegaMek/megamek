@@ -32,6 +32,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentType;
 import megamek.common.IAimingModes;
+import megamek.common.IEntityRemovalConditions;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -1710,8 +1711,19 @@ public class TestBot extends BotClient {
         Enumeration<Entity> valid_attackers;
 
         int entNum = game.getFirstDeployableEntityNum();
+        assert(entNum != Entity.NONE) :  "The bot is trying to deploy without units being left.";
+        
         Coords[] cStart = getStartingCoordsArray();
         Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
+        
+        if(cDeploy == null) {
+        	//bad event handeling, this unit is not deployable, remove it instead.
+        	//This should not happen but does (eg ships on a deployment zone without water.
+        	System.out.println("The bot does not know how or is unable to deploy " + getEntity(entNum) + ". Removing it instead.");
+        	sendChat("Oh dear I don't know how to deploy this " + getEntity(entNum) + ". Skipping to the next one.");
+        	sendDeleteEntity(entNum);
+        	return;
+        }
 
         // Now that we have a location to deploy to, get a direction
         // Using average long range of deploying unit, point towards the largest

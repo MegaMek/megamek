@@ -259,6 +259,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.setDisplayVisible(true);
         selectEntity(clientgui.getClient().getFirstDeployableEntityNum());
         setNextEnabled(true);
+        setRemoveEnabled(true);
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(ce());
     }
@@ -291,6 +292,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void disableButtons() {
         setTurnEnabled(false);
         setNextEnabled(false);
+        setRemoveEnabled(false);
         butDone.setEnabled(false);
         setLoadEnabled(false);
         setUnloadEnabled(false);

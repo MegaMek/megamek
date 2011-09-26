@@ -1615,13 +1615,15 @@ public class Game implements Serializable, IGame {
     }
 
     public int getNextDeployableEntityNum(GameTurn turn, int start) {
-        for(int i = start; i < entities.size(); i++) {
-            final Entity entity = entities.get(i);
-            if(turn.isValidEntity(entity, this)
-                    && entity.shouldDeploy(getRoundCount())) {
-                return entity.getId();
-            }
-        }
+    	if(start >= 0) {
+	        for(int i = start; i < entities.size(); i++) {
+	            final Entity entity = entities.get(i);
+	            if(turn.isValidEntity(entity, this)
+	                    && entity.shouldDeploy(getRoundCount())) {
+	                return entity.getId();
+	            }
+	        }
+    	}
         return getFirstDeployableEntityNum(turn);
     }
 

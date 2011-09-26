@@ -310,9 +310,6 @@ public abstract class BotClient extends Client {
             if ((conv_fcount + mech_count) > 2) {
                 continue;
             }
-            if ((conv_fcount + mech_count) > 2) {
-                continue;
-            }
             if ((conv_fcount + conv_ecount) > 4) {
                 continue;
             }

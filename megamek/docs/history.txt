@@ -76,6 +76,8 @@ v0.35.25 (SVN)
 + Heavy flamer stats updated to TacOps; Clan heavy flamer added
 + TacOps area attack damage vs. reflective/reactive armor
 + Advanced SRM cost fixes
++ Update to Java 1.7 broke TestBot; MoveOption.WeightedComparator found to be
+    inconsistent with equals and fixed
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

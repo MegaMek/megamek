@@ -22,12 +22,14 @@ import megamek.client.bot.princess.FireControl.EntityState;
 import megamek.client.bot.princess.FireControl.FiringPlan;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.ui.SharedUtility;
+import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.TargetRoll;
+import megamek.common.MovePath.MoveStepType;
 
 /**
  * A very basic pathranker
@@ -80,8 +82,10 @@ public class BasicPathRanker extends PathRanker {
      */
     @Override
     public double rankPath(MovePath p, IGame game) {
+        boolean isaero=(p.getEntity() instanceof Aero);
         // How likely is it that I will succeed in reaching this path
-        List<TargetRoll> targets = SharedUtility.getPSRList(p);
+        MovePath pcopy=p.clone(); //get psr calls cliptopossible, I may not want to change p
+        List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
         double success_probability = 1.0;
         for (TargetRoll t : targets) {
             success_probability *= Compute.oddsAbove(t.getValue()) / 100.0;
@@ -91,6 +95,16 @@ public class BasicPathRanker extends PathRanker {
         int fall_damage = (int) (p.getEntity().getWeight() / 10);
         double expected_fall_damage = (fall_damage + fall_shame)
                 * (1.0 - success_probability);
+        
+        if(isaero) {
+            //stalling is bad
+            if(p.getFinalVelocity()==0) return -1000;
+            //you know what else is bad?  this
+            if(p.getFinalAltitude()<1) return -10000;
+            //flying off board should only be done if necessary, but is better than taking much damage
+            if((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.RETURN)) return -5;
+        }
+        
 
         // look at all of my enemies
         ArrayList<Entity> enemies = getEnemies(p.getEntity(), game);
@@ -120,7 +134,11 @@ public class BasicPathRanker extends PathRanker {
             //                new EntityState(p), e, null,
             //                p.getEntity().getHeatCapacity()
             //                        - p.getEntity().heat + 5, game);
-            FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+            FiringPlan my_firing_plan=null;
+            if(p.getEntity() instanceof Aero) {
+                my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
+            } else
+                my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
             double my_damage_potential = my_firing_plan.utility;
             // If I can kick them and probably hit, I probably will
             FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
@@ -165,15 +183,21 @@ public class BasicPathRanker extends PathRanker {
                 * (maximum_damage_done * foolish_bravery - expected_damage_taken)
                 - expected_fall_damage;
 
-        double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
-        utility -= dist_to_enemy * hyper_aggression;
-
-        double dist_to_friend = distanceToClosestFriend(p, game);
-        utility -= dist_to_friend * herd_mentality;
+        if(p.getEntity() instanceof Aero) {
+            
+        } else {
+            //ground unit specific things
+            double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
+            utility -= dist_to_enemy * hyper_aggression;
+            
+            double dist_to_friend = distanceToClosestFriend(p, game);
+            utility -= dist_to_friend * herd_mentality;
+        }
 
         return utility;
 
     };
+       
 
     /**
      * Calculate who all other units would shoot at if I weren't around

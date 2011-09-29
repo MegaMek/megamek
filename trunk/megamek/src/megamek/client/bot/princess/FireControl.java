@@ -14,9 +14,11 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.bot.PhysicalOption;
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
@@ -32,6 +34,7 @@ import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MoveStep;
 import megamek.common.RangeType;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
@@ -168,10 +171,38 @@ public class FireControl {
             //action = null;
             //warning, this action has the wrong to-hit, since shooter is likely somewhere else
             action = new WeaponAttackAction(shooter.getId(),target.getId(),
-            		shooter.getEquipmentNum(weapon));
+            		shooter.getEquipmentNum(weapon));            
             to_hit = guessToHitModifier(shooter, shooter_state, target,
                     target_state, wep, game);
             int fromdir=target_state.position.direction(shooter_state.position);
+            damage_direction=(fromdir-target_state.facing+6)%6;
+            initDamage(game);
+        }
+        
+        /**
+         * This constructs a WeaponFireInfo using the best guess of how likely
+         * an aerospace unit using a strike attack will hit, without actually constructing the weaponattackaction
+         * @param sshooter
+         * @param shooter_path
+         * @param ttarget
+         * @param target_state
+         * @param wep
+         * @param game
+         */
+        WeaponFireInfo(Entity sshooter, MovePath shooter_path,
+                Entity ttarget, EntityState target_state, Mounted wep,
+                IGame game,boolean assume_under_flight_path) {
+            if(target_state==null)
+                target_state=new EntityState(ttarget);
+            shooter = sshooter;
+            weapon = wep;
+            target = ttarget;
+            //warning, this action has the wrong to-hit, since shooter is likely somewhere else
+            action = new WeaponAttackAction(shooter.getId(),target.getId(),
+                        shooter.getEquipmentNum(weapon));
+            to_hit = guessAirToGroundStrikeToHitModifier(shooter,target,
+                    target_state,shooter_path, wep,game,assume_under_flight_path);
+            int fromdir=target_state.position.direction(shooter.getPosition());
             damage_direction=(fromdir-target_state.facing+6)%6;
             initDamage(game);
         }
@@ -571,7 +602,7 @@ public class FireControl {
 
         return tohit;
     }
-
+    
     public enum PhysicalAttackType {
         LEFT_KICK, RIGHT_KICK, LEFT_PUNCH, RIGHT_PUNCH
     };
@@ -698,7 +729,7 @@ public class FireControl {
         }
         return tohit;
     }
-
+   
     /**
      * Makes an educated guess as to the to hit modifier with a weapon attack.
      * Does not actually place unit into desired position, because that is
@@ -795,6 +826,10 @@ public class FireControl {
         // Now deal with range effects
         int range = RangeType.rangeBracket(distance,
                 ((WeaponType) mw.getType()).getRanges(mw), false);
+        // Aeros are 2x further for each altitude
+        if(target instanceof Aero) { 
+        	range+=2*target.getAltitude();
+        }
         if (!isWeaponInfantry) {
             if (range == RangeType.RANGE_SHORT) {
                 tohit.addModifier(0, "Short Range");
@@ -838,19 +873,92 @@ public class FireControl {
     }
 
     /**
+     * Makes an educated guess as to the to hit modifier by an aerospace unit flying on a ground map
+     * doing a strike attack on a unit
+     * 
+     */
+    public static ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,Entity target,
+    		EntityState target_state,MovePath shooter_path, Mounted mw,IGame game,boolean assume_under_flight_plan) {    
+        if (target_state == null) {
+            target_state = new EntityState(target);
+        }
+        EntityState shooter_state=new EntityState(shooter);
+        // first check if the shot is impossible
+        if (!mw.canFire()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "weapon cannot fire");
+        }
+        if (((WeaponType) mw.getType()).ammoType != AmmoType.T_NA) {
+            if (mw.getLinked() == null) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "ammo is gone");
+            }
+            if (mw.getLinked().getShotsLeft() == 0) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                "weapon out of ammo");
+            }
+        }
+        // check if target is even under our path
+        if(!assume_under_flight_plan)
+        if(!isTargetUnderMovePath(shooter_path,target_state))
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+            "target not under flight path");
+        // Base to hit is gunnery skill
+        ToHitData tohit = new ToHitData(shooter.getCrew().getGunnery(),
+             "gunnery skill");
+        tohit.append(guessToHitModifierHelper_AnyAttack(shooter, shooter_state,
+             target, target_state, game));
+        // Additional penalty due to strike attack
+        tohit.addModifier(+2, "strike attack");
+        
+        return tohit;
+    }
+    
+    /**
+     * Checks if a target lies under a move path, to see if an aero unit can attack it
+     * @param p move path to check
+     * @param target_state used for targets position
+     * @return
+     */
+    public static boolean isTargetUnderMovePath(MovePath p,EntityState target_state) {
+        for(Enumeration<MoveStep> e=p.getSteps();e.hasMoreElements();) {
+            Coords cord=((MoveStep)e.nextElement()).getPosition();
+            if(cord.equals(target_state.position)) return true;
+        }
+        return false;   
+    }
+    
+    /**
+     * Returns a list of enemies that lie under this flight path
+     * @param p
+     * @param shooter
+     * @param game
+     * @return
+     */
+    ArrayList<Entity> getEnemiesUnderFlightPath(MovePath p,Entity shooter,IGame game) {
+        ArrayList<Entity> ret=new ArrayList<Entity>();
+        for(Enumeration<MoveStep> e=p.getSteps();e.hasMoreElements();) {                          
+            Coords cord=((MoveStep)e.nextElement()).getPosition();
+            Entity enemy=game.getFirstEnemyEntity(cord,shooter);
+            if(enemy!=null) ret.add(enemy);
+        }
+        return ret;
+    }
+    
+    /**
      * Mostly for debugging, this returns a non-null string that describes how
      * the guess has failed to be perfectly accurate. or null if perfectly
      * accurate
      */
     String checkGuess(Entity shooter, Entity target, Mounted mw, IGame game) {
+        
+        if(shooter instanceof Aero) return null;
         String ret = null;
-        WeaponFireInfo guess_info = new WeaponFireInfo(shooter, null, target,
+        WeaponFireInfo guess_info= new WeaponFireInfo(shooter, new EntityState(shooter), target,
                 null, mw, game);
         WeaponFireInfo accurate_info = new WeaponFireInfo(shooter, target, mw,
                 game);
         if (guess_info.to_hit.getValue() != accurate_info.to_hit.getValue()) {
             ret = new String();
-            ret += "Incorrect To Hit prediction, weapon " + mw.getName()
+            ret += "Incorrect To Hit prediction, weapon " + mw.getName() + " (" +shooter.getChassis() +" vs "+target.getChassis()+")"
             + ":\n";
             ret += " Guess: " + Integer.toString(guess_info.to_hit.getValue())
             + " " + guess_info.to_hit.getDesc() + "\n";
@@ -981,6 +1089,34 @@ public class FireControl {
         }
         calculateUtility(myplan,(shooter instanceof Mech)?(shooter.getHeatCapacity()-shooter_state.heat+5):999);
         return myplan;
+    }
+    
+    /**
+     * Creates a firing plan that fires all weapons with nonzero to hit value
+     * in a air to ground strike
+     * @param shooter
+     * @param target
+     * @param target_state
+     * @param shooter_path
+     * @param game
+     * @param assume_under_flight_path
+     * @return
+     */
+    FiringPlan guessFullAirToGroundPlan(Entity shooter,Entity target,EntityState target_state,MovePath shooter_path,IGame game,boolean assume_under_flight_path) {
+        if(target_state==null) target_state=new EntityState(target);
+        if(!assume_under_flight_path) {
+            if(!isTargetUnderMovePath(shooter_path,target_state)) return new FiringPlan(); 
+        }
+        FiringPlan myplan=new FiringPlan();
+        for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
+             
+            WeaponFireInfo shoot=new WeaponFireInfo(shooter,shooter_path,target,target_state,mw,game,true);
+            if (shoot.prob_to_hit > 0) {
+                myplan.add(shoot);
+            }
+        }
+        calculateUtility(myplan,999); //Aeros don't have heat capacity, (I think?)        
+        return myplan;        
     }
 
     /**
@@ -1286,6 +1422,19 @@ public class FireControl {
         }
         return righttwist_plan;
     }
+ 
+    /* Skeleton for guessing the best air to ground firing plan.  Currently this code is working in basicpathranker
+    FiringPlan guessBestAirToGroundFiringPlan(Entity shooter,MovePath shooter_path,IGame game) {
+        ArrayList<Entity> targets=getEnemiesUnderFlightPath(shooter_path,shooter,game);
+        for(Entity target:targets) {
+            FiringPlan theplan=guessFullAirToGroundPlan(shooter, target,new EntityState(target),shooter_path,game,true);
+
+        }
+
+        
+    }
+    */
+    
     /**
      * Gets all the entities that are potential targets (even if you can't
      * technically hit them)

@@ -78,6 +78,7 @@ v0.35.25 (SVN)
 + Advanced SRM cost fixes
 + Update to Java 1.7 broke TestBot; MoveOption.WeightedComparator found to be
     inconsistent with equals and fixed
++ Artillery fire now adjusted on a per-unit basis
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

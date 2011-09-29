@@ -19,7 +19,7 @@ v0.35.25 (SVN)
 + Data 3348898: WoB FM Updates RATs, thanks Demos75
 + Data 3356078: RAT SL FMU, thanks Demos75
 + Data 3346243: ProtoMech RATs FM Updates, thanks Demos75
-+ Data 3303093: War 0f 3039 RATs, thanks hammer-gs!
++ Data 3303093: War of 3039 RATs, thanks hammer-gs!
 + allow player to build army in random army dialog by selectively choosing rolled units
 + Fixed off-by-one error causing occasional bot lockup during movement calculations
 + put units in random army dialog into tables
@@ -79,6 +79,7 @@ v0.35.25 (SVN)
 + Update to Java 1.7 broke TestBot; MoveOption.WeightedComparator found to be
     inconsistent with equals and fixed
 + Artillery fire now adjusted on a per-unit basis
++ Patch 3413797: Princess bot uses aero units on ground map sheets
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

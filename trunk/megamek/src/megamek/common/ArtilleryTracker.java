@@ -50,20 +50,23 @@ public class ArtilleryTracker implements Serializable {
     }
 
     /**
-     * Sets the modifier for the given weapon
+     * Sets the modifier for artillery weapons on this unit. All weapons use the
+     * same modifier due to artillery fire adjustment being handled on a per-unit
+     * basis.
      *
-     * @param weapon weapon to set modifier for
      * @param modifier
      * @param coords
      */
-    public void setModifier(Mounted weapon, int modifier, Coords coords) {
-        Vector<ArtilleryModifier> weaponMods = getWeaponModifiers(weapon);
-        ArtilleryModifier am = getModifierByCoords(weaponMods, coords);
-        if (am != null) {
-            am.setModifier(modifier);
-        } else {
-            am = new ArtilleryModifier(coords, modifier);
-            weaponMods.addElement(am);
+    public void setModifier(int modifier, Coords coords) {
+        for (Mounted weapon : weapons.keySet()) {
+            Vector<ArtilleryModifier> weaponMods = getWeaponModifiers(weapon);
+            ArtilleryModifier am = getModifierByCoords(weaponMods, coords);
+            if (am != null) {
+                am.setModifier(modifier);
+            } else {
+                am = new ArtilleryModifier(coords, modifier);
+                weaponMods.addElement(am);
+            }
         }
     }
 

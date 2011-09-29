@@ -190,8 +190,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
             if (roll >= toHit.getValue()) {
-                ae.aTracker.setModifier(weapon,
-                        TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+                ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
 
                 game.getBoard().addSpecialHexDisplay(targetPos,
                         new SpecialHexDisplay(
@@ -205,9 +204,15 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
+            
+            // Note: Because artillery fire is adjusted on a per-unit basis, this
+            // can result in a unit firing multiple artillery weapons at the same
+            // hex getting this bonus more than once per turn. Since the Artillery
+            // Modifiers Table on TacOps p. 180 lists a -1 per shot (not salvo!)
+            // previously fired at the target hex, this would in fact appear to be
+            // correct.
             else if (null != bestSpotter) {
-                ae.aTracker.setModifier(weapon, ae.aTracker
-                        .getModifier(weapon, targetPos) - 1, targetPos);
+                ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
 
                 game.getBoard().addSpecialHexDisplay(targetPos,
                         new SpecialHexDisplay(

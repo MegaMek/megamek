@@ -80,6 +80,8 @@ v0.35.25 (SVN)
     inconsistent with equals and fixed
 + Artillery fire now adjusted on a per-unit basis
 + Patch 3413797: Princess bot uses aero units on ground map sheets
++ Hovercraft/WiGE sinking/crashing fixes (includes Bug 3331318: Immobilized
+    flying WiGEs stay airborne)
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

@@ -326,6 +326,14 @@ public class Tank extends Entity {
         return m_bImmobileHit;
     }
 
+    /**
+     * Marks this tank for immobilization, most likely from a related motive system
+     * hit. To <em>actually</em> immobilize it, {@link #applyDamage()} must also
+     * be invoked; until then, {@link #isMovementHitPending()} will return true
+     * after this but neither {@link #isMovementHit()} nor {@link #isImmobile()}
+     * will have been updated yet (because the tank is technically not immobile
+     * just <em>yet</em> until damage is actually resolved).
+     */
     public void immobilize() {
         m_bImmobileHit = true;
     }

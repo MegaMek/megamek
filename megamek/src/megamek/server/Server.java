@@ -18380,11 +18380,14 @@ public class Server implements Runnable {
                 if (engineExploded) {
                     vDesc.addAll(destroyEntity(en, "engine destruction", true, true));
                 }
-
-                if (t instanceof VTOL) {
+                if (t.isAirborneVTOLorWIGE()) {
                     PilotingRollData psr = t.getBasePilotingRoll();
                     IHex hex = game.getBoard().getHex(t.getPosition());
-                    psr.addModifier(4, "forced landing");
+                    if (t instanceof VTOL) {
+                        psr.addModifier(4, "VTOL making forced landing");
+                    } else {
+                        psr.addModifier(0, "WiGE making forced landing");
+                    }
                     int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex
                             .terrainLevel(Terrains.BRIDGE_ELEV));
                     elevation = Math.max(elevation, 0);
@@ -25773,18 +25776,24 @@ public class Server implements Runnable {
             vDesc.add(r);
             te.addMovementDamage(4);
         }
-        if ((te.getOriginalWalkMP() == 0) || te.isImmobile()) {
-            // Hovercraft reduced to 0MP over water sink
-            if (((te.getMovementMode() == EntityMovementMode.HOVER) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te
-                    .getElevation() == 0)))
-                    && (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0)
-                    && !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
-                vDesc.addAll(destroyEntity(te, "a watery grave", false));
-            }
-            if ((te instanceof VTOL) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te.getElevation() > 0))) {
-                // report problem: add tab
-                vDesc.addAll(crashVTOLorWiGE(te));
-            }
+        // These checks should perhaps be moved to Tank.applyDamage(), but I'm
+        // unsure how to *report* any outcomes from there. Note that these treat
+        // being reduced to 0 MP and being actually immobilized as the same thing,
+        // which for these particular purposes may or may not be the intent of
+        // the rules in all cases.
+        // Immobile hovercraft on water sink...
+        if (((te.getMovementMode() == EntityMovementMode.HOVER) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te
+                .getElevation() == 0)))
+                && (te.isMovementHitPending() || te.getWalkMP() <= 0) // HACK: Have to check for *pending* hit here and below.
+                && (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0)
+                && !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
+            vDesc.addAll(destroyEntity(te, "a watery grave", false));
+        }
+        // ...while immobile VTOLs or WiGEs crash.
+        if (((te instanceof VTOL) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te.getElevation() > 0)))
+                && (te.isMovementHitPending() || te.getWalkMP() <= 0)){
+            // report problem: add tab
+            vDesc.addAll(crashVTOLorWiGE(te));
         }
         return vDesc;
     }

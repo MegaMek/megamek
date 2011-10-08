@@ -141,6 +141,7 @@ v0.35.24 (2011-06-24)
 + Patch 3312807: commander property passes to ejected pilot
 + Tank driver and commander hits saved to MUL file
 + Bug 2792542: OOC ASF colliding with itself
++ Bug 3415689: use assault class default image for >100 ton custom mechs
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

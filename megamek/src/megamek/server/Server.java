@@ -4579,6 +4579,7 @@ public class Server implements Runnable {
             r = new Report(9045);
             r.subject = target.getId();
             r.add(target.getDisplayName());
+            r.add(psr.getValue());
             r.add(ctrlroll);
             r.newlines = 0;
             r.indent(2);

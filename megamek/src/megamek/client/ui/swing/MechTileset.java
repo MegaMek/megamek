@@ -227,7 +227,7 @@ public class MechTileset {
                 return default_medium;
             } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                 return default_heavy;
-            } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
+            } else {
                 return default_assault;
             }
         }

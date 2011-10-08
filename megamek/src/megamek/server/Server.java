@@ -15682,10 +15682,10 @@ public class Server implements Runnable {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity e = i.nextElement();
 
-            // only unconscious pilots of mechs and protos and MechWarrirs
-            // can roll to wake up
+            // only unconscious pilots of mechs and protos, ASF and smallscraft
+            // and MechWarriors can roll to wake up
             if (!e.isTargetable() || !e.getCrew().isUnconscious() || e.getCrew().isKoThisRound()
-                    || !((e instanceof Mech) || (e instanceof Protomech) || (e instanceof MechWarrior))) {
+                    || !((e instanceof Mech) || (e instanceof Protomech) || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
                 continue;
             }
             int roll = Compute.d6(2);
@@ -16594,7 +16594,9 @@ public class Server implements Runnable {
                             || areaSatArty )) {
                     tmpDamageHold = damage;
                     damage = (int) Math.floor(((double) damage) / 2);
-                    if (tmpDamageHold == 1) damage = 1;
+                    if (tmpDamageHold == 1) {
+                        damage = 1;
+                    }
                     r = new Report(6068);
                     r.subject = te_n;
                     r.newlines = 0;
@@ -22441,7 +22443,7 @@ public class Server implements Runnable {
                 } // End update-unit-numbetr
 
             } // End added-Protomech
-            
+
             if(game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
             	endCurrentTurn(entity); //do this to prevent deployment hanging. Only do this during deployment.
             } else {
@@ -25790,14 +25792,14 @@ public class Server implements Runnable {
         // Immobile hovercraft on water sink...
         if (((te.getMovementMode() == EntityMovementMode.HOVER) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te
                 .getElevation() == 0)))
-                && (te.isMovementHitPending() || te.getWalkMP() <= 0) // HACK: Have to check for *pending* hit here and below.
+                && (te.isMovementHitPending() || (te.getWalkMP() <= 0)) // HACK: Have to check for *pending* hit here and below.
                 && (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0)
                 && !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
             vDesc.addAll(destroyEntity(te, "a watery grave", false));
         }
         // ...while immobile VTOLs or WiGEs crash.
         if (((te instanceof VTOL) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te.getElevation() > 0)))
-                && (te.isMovementHitPending() || te.getWalkMP() <= 0)){
+                && (te.isMovementHitPending() || (te.getWalkMP() <= 0))){
             // report problem: add tab
             vDesc.addAll(crashVTOLorWiGE(te));
         }

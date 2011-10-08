@@ -143,6 +143,7 @@ v0.35.24 (2011-06-24)
 + Bug 2792542: OOC ASF colliding with itself
 + Bug 3415689: use assault class default image for >100 ton custom mechs
 + Bug 3049241: eternal KO aero pilots
++ Bug: report issue when avoiding aero OOC collissions
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

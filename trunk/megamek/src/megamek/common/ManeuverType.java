@@ -18,7 +18,7 @@ package megamek.common;
  * Maneuver types for Aeros
  */
 public class ManeuverType {
-    
+
     public static final int MAN_NONE = 0;
     public static final int MAN_LOOP = 1;
     public static final int MAN_IMMELMAN = 2;
@@ -29,76 +29,82 @@ public class ManeuverType {
     public static final int MAN_SIDE_SLIP_LEFT = 7;
     public static final int MAN_SIDE_SLIP_RIGHT = 8;
     public static final int MAN_VIFF = 9;
-    
+
     private static String[] names = { "None", "Loop", "Immelman", "Split S",
                                       "Hammerhead", "Half Roll", "Barrel Roll", "Side Slip (Left)",
                                       "Side Slip (Right)", "VIFF"};
-  
+
     public static final int MAN_SIZE = names.length;
-    
+
     public static String getTypeName(int type) {
-        if (type >= MAN_NONE && type < MAN_SIZE) {
+        if ((type >= MAN_NONE) && (type < MAN_SIZE)) {
             return names[type];
         }
         throw new IllegalArgumentException("Unknown maneuver type");
     }
-    
-    /*
+
+    /**
      * determines whether the maneuver can be performed
      */
-    public static boolean canPerform(int type, int velocity, int altitude, int ceiling, 
+    public static boolean canPerform(int type, int velocity, int altitude, int ceiling,
                                      boolean isVTOL, int distance) {
-        
-        //if the Aero has moved to any hexes, then it can no longer perform 
+
+        //if the Aero has moved to any hexes, then it can no longer perform
         //any maneuver except side slip
-        if(distance > 0 && type != MAN_SIDE_SLIP_LEFT && type != MAN_SIDE_SLIP_RIGHT) {
+        if((distance > 0) && (type != MAN_SIDE_SLIP_LEFT) && (type != MAN_SIDE_SLIP_RIGHT)) {
             return false;
         }
-        
+
         switch(type) {
         case (MAN_NONE):
             return true;
         case (MAN_LOOP):
-            if(velocity >= 4)
+            if(velocity >= 4) {
                 return true;
-            else 
+            } else {
                 return false;
+            }
         case (MAN_IMMELMAN):
-            if(velocity >= 3 && altitude < 9) 
+            if((velocity >= 3) && (altitude < 9)) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         case (MAN_SPLIT_S):
-            if((altitude + 2) > ceiling) 
+            if((altitude + 2) > ceiling) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         case (MAN_HAMMERHEAD):
             return true;
         case (MAN_HALF_ROLL):
             return true;
         case (MAN_BARREL_ROLL):
-            if(velocity >= 2)
+            if(velocity >= 2) {
                 return true;
-            else 
+            } else {
                 return false;
+            }
         case (MAN_SIDE_SLIP_LEFT):
         case (MAN_SIDE_SLIP_RIGHT):
-            if(velocity > 0)
+            if(velocity > 0) {
                 return true;
-            else 
+            } else {
                 return false;
+            }
         case (MAN_VIFF):
-            if(isVTOL)
+            if(isVTOL) {
                 return true;
-            else
+            } else {
                 return false;
+            }
         default:
             return false;
         }
     }
-    
-    /*
+
+    /**
      * thrust cost of maneuver
      */
     public static int getCost(int type, int velocity) {
@@ -124,8 +130,8 @@ public class ManeuverType {
             return 0;
         }
     }
-    
-    /*
+
+    /**
      * Control roll modifier
      */
     public static int getMod(int type, boolean isVTOL) {
@@ -144,15 +150,16 @@ public class ManeuverType {
             return 0;
         case (MAN_SIDE_SLIP_LEFT):
         case (MAN_SIDE_SLIP_RIGHT):
-            if(isVTOL)
+            if(isVTOL) {
                 return -1;
-            else
+            } else {
                 return 0;
+            }
         case (MAN_VIFF):
             return 2;
         default:
             return 0;
         }
     }
-    
+
 }

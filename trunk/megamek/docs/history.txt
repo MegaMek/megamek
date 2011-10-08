@@ -82,6 +82,7 @@ v0.35.25 (SVN)
 + Patch 3413797: Princess bot uses aero units on ground map sheets
 + Hovercraft/WiGE sinking/crashing fixes (includes Bug 3331318: Immobilized
     flying WiGEs stay airborne)
++ OfficialUnitList.txt spacing fix, "Canon Units Only" should now work again
 
 v0.35.24 (2011-06-24)
 + Sort RATs alphabetically

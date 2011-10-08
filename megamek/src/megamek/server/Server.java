@@ -5329,6 +5329,10 @@ public class Server implements Runnable {
                             while (targets.hasMoreElements()) {
                                 int id = targets.nextElement().getId();
                                 Entity ce = game.getEntity(id);
+                                // you can't collide with yourself
+                                if (ce.equals(a)) {
+                                    continue;
+                                }
                                 if (ce instanceof SpaceStation) {
                                     potentialSpaceStation.addElement(id);
                                 } else if (ce instanceof Warship) {
@@ -7619,18 +7623,20 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
                 te.heatFromExternal += 2 * missiles;
             } else if (te instanceof Tank) {
-                boolean targetIsSupportVee = te instanceof SupportTank ||
-                    te instanceof LargeSupportTank || te instanceof SupportVTOL;
+                boolean targetIsSupportVee = (te instanceof SupportTank) ||
+                    (te instanceof LargeSupportTank) || (te instanceof SupportVTOL);
                 int direction = Compute.targetSideTable(ae, te, called);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
                     int critRollMod = 0;
                     if (!targetIsSupportVee || (te.hasArmoredChassis() &&
-                        te.getBARRating(hit.getLocation()) > 9))
+                        (te.getBARRating(hit.getLocation()) > 9))) {
                         critRollMod -= 2;
-                    if (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED
-                        && te.getArmor(hit.getLocation()) > 0)
+                    }
+                    if ((te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)
+                        && (te.getArmor(hit.getLocation()) > 0)) {
                         critRollMod -= 2;
+                    }
                     vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), critRollMod));
                 }
             } else if (te instanceof Protomech) {
@@ -16619,7 +16625,7 @@ public class Server implements Runnable {
                     r.subject = te_n;
                     r.newlines = 0;
                     int reportedDamage = damage / 2;
-                    if (damage % 2 > 0) {
+                    if ((damage % 2) > 0) {
                         r.add(String.valueOf(reportedDamage) + ".5");
                     }
                     else {
@@ -16635,12 +16641,12 @@ public class Server implements Runnable {
                     if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                         armorThreshold -= damage;
-                        te.setHardenedArmorDamaged(hit, armorThreshold % 2 > 0);
-                        te.setArmor(armorThreshold / 2 + armorThreshold % 2, hit);
+                        te.setHardenedArmorDamaged(hit, (armorThreshold % 2) > 0);
+                        te.setArmor((armorThreshold / 2) + (armorThreshold % 2), hit);
+                    } else {
+                        te.setArmor(te.getArmor(hit) - damage, hit);
                     }
-                    // ...non-hardened armor simply subtracts
-                    else te.setArmor(te.getArmor(hit) - damage, hit);
- 
+
                     // if the armor is hardened, any penetrating crits are rolled at -2
                     if (hardenedArmor) {
                         critBonus -= 2;
@@ -16675,7 +16681,7 @@ public class Server implements Runnable {
                     int absorbed = Math.max(te.getArmor(hit), 0);
                     if (hardenedArmor && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
-                        absorbed = absorbed * 2 - ((te.isHardenedArmorDamaged(hit)) ? 1: 0);
+                        absorbed = (absorbed * 2) - ((te.isHardenedArmorDamaged(hit)) ? 1: 0);
                     }
                     if (reflectiveArmor && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
                         absorbed = (int) Math.round(Math.ceil(absorbed / 2));
@@ -16725,7 +16731,7 @@ public class Server implements Runnable {
                     }
                 }
 
-                if (tmpDamageHold > 0 && isPlatoon) {
+                if ((tmpDamageHold > 0) && isPlatoon) {
                         damage = tmpDamageHold;
                 }
             }

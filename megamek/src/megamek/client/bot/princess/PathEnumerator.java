@@ -14,6 +14,8 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -25,6 +27,7 @@ import megamek.common.IGame;
 import megamek.common.ManeuverType;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
 
 public class PathEnumerator extends Thread {
 
@@ -51,8 +54,8 @@ public class PathEnumerator extends Thread {
      * @return
      */
     public static int hashPath(MovePath p) {
-        return ((p.getFinalCoords().hashCode()*7+p.getFinalFacing())*2
-                +(p.getFinalHullDown()?0:1))*2
+        return (((((p.getFinalCoords().hashCode()*7)+p.getFinalFacing())*2)
+                +(p.getFinalHullDown()?0:1))*2)
                 +(p.getFinalProne()?0:1);
     }
 
@@ -63,11 +66,14 @@ public class PathEnumerator extends Thread {
         LinkedList<MovePath> open_bymp;
         TreeMap<Integer,Integer> closed; //movepath, mp used
         ArrayList<MovePath> potential_moves;
+        //to limit aero paths, keep track of which units get passed over
+        TreeMap<Integer,HashSet<Integer> > passed_over;
 
         MovePathCalculation() {
             open_bymp=new LinkedList<MovePath>();
             closed=new TreeMap<Integer,Integer>();
             potential_moves=new ArrayList<MovePath>();
+            passed_over=new TreeMap<Integer,HashSet<Integer> >();
         }
         /**
          * @return 0 if they a different state, -1 if they are they are different and a is equal or better, +1 if they are different and b is better
@@ -101,6 +107,32 @@ public class PathEnumerator extends Thread {
                 return true;
             }
             return false;
+        }
+
+        /**
+         * This functions answers the question "Have I already considered a move that ended on the same
+         * hex, and passed over at least the same units this move does"
+         * The notion being that those are the only things that matter in an aero move, and redundant
+         * moves can lead to things taking far too long
+         */
+        boolean hasAlreadyAeroConsidered(MovePath p,IGame game) {
+            Integer pathhash=PathEnumerator.hashPath(p);
+            //build the list of units this path goes over
+            HashSet<Integer> flown_over=new HashSet<Integer>();
+            for(Enumeration<MoveStep> e=p.getSteps();e.hasMoreElements();) {
+                Coords cord=e.nextElement().getPosition();
+                Entity enemy=game.getFirstEnemyEntity(cord,p.getEntity());
+                if(enemy!=null) {
+                    flown_over.add(enemy.getId());
+                }
+            }
+            HashSet<Integer> already=passed_over.get(pathhash);
+            if((already==null)||(!already.containsAll(flown_over)))
+            {
+                passed_over.put(pathhash,flown_over);
+                return false;
+            }
+            return true;
         }
 
     }
@@ -140,7 +172,6 @@ public class PathEnumerator extends Thread {
         }
 
         boolean aero_has_flyoff_option=false;
-        int counter=0;
         while(!paths.open_bymp.isEmpty()) {
             MovePath onpath=paths.open_bymp.pop();
             //
@@ -159,20 +190,16 @@ public class PathEnumerator extends Thread {
                                 aero_has_flyoff_option=true;
                             }
                         }
-
-                        /*
-                        if(nextpath.getLastStep()!=null) {
-                        System.err.println("adding potential move with velocity left "+Integer.toString(nextpath.getLastStep().getVelocityLeft()));
-                        System.err.println("with move type "+nextpath.getLastStep().getType().name());
+                        if(paths.hasAlreadyAeroConsidered(nextpath,g)) {
+                            continue;
                         }
-                         */
+
                         paths.potential_moves.add(nextpath);
                     } else if(nextpath.isMoveLegal()) {
                         paths.potential_moves.add(nextpath);
                     }
                 }
             }
-            counter++;
         }
         System.err.println("calculated potential move count of "+paths.potential_moves.size()+" for entity "+e.getChassis());
         System.err.println("#of partial moves: "+paths.closed.size());
@@ -200,15 +227,14 @@ public class PathEnumerator extends Thread {
     ArrayList<MovePath> getNextMoves(IGame game,MovePath start) {
         ArrayList<MovePath> ret=new ArrayList<MovePath>();
         if(start.getEntity() instanceof Aero) {
-            Aero thisunit=(Aero)start.getEntity();
             //if I've already done something illegal, or flown off, ignore
-            if(start.getSecondLastStep()!=null&&start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL) {
+            if((start.getSecondLastStep()!=null)&&(start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL)) {
                 return ret;
             }
-            if(start.getLastStep()!=null&&start.getLastStep().getType()==MoveStepType.OFF) {
+            if((start.getLastStep()!=null)&&(start.getLastStep().getType()==MoveStepType.OFF)) {
                 return ret;
             }
-            if(start.getLastStep()!=null&&start.getLastStep().getType()==MoveStepType.RETURN) {
+            if((start.getLastStep()!=null)&&(start.getLastStep().getType()==MoveStepType.RETURN)) {
                 return ret;
             }
             //move forward
@@ -218,20 +244,16 @@ public class PathEnumerator extends Thread {
             }
             //accelerate
             //FIXME max final velocity hardcoded in, is there a place I can look this up?
-            if((((start.getLastStep()==null)||start.getLastStep().getType()==MoveStepType.ACC))&&(start.getFinalVelocity()<4)) {
+            if((((start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.ACC)))&&(start.getFinalVelocity()<4)) {
                 ret.add(start.clone().addStep(MoveStepType.ACC));
             }
-            if((((start.getLastStep()==null)||start.getLastStep().getType()==MoveStepType.DEC))&&(start.getFinalVelocity()>0)) {
+            if((((start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.DEC)))&&(start.getFinalVelocity()>0)) {
                 ret.add(start.clone().addStep(MoveStepType.DEC));
             }
             //turn left and right
-            if((start.getLastStep()!=null)&&(start.getLastStep().dueFreeTurn())) {
-                if(start.getLastStep().getType()!=MoveStepType.TURN_RIGHT) {
-                    ret.add(start.clone().addStep(MoveStepType.TURN_LEFT));
-                }
-                if(start.getLastStep().getType()!=MoveStepType.TURN_LEFT) {
-                    ret.add(start.clone().addStep(MoveStepType.TURN_RIGHT));
-                }
+            if((start.getLastStep()!=null)&&((start.getLastStep().dueFreeTurn()))&&(start.getLastStep().getType()!=MoveStepType.TURN_RIGHT)&&(start.getLastStep().getType()!=MoveStepType.TURN_LEFT)) {
+                ret.add(start.clone().addStep(MoveStepType.TURN_LEFT));
+                ret.add(start.clone().addStep(MoveStepType.TURN_RIGHT));
             }
             //fly off of edge of board
             Coords c=start.getFinalCoords();
@@ -248,22 +270,23 @@ public class PathEnumerator extends Thread {
                 ret.add(start.clone().addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT).
                         addStep(MoveStepType.LATERAL_RIGHT, true, true));
                 if((start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.ACC)) { //moves other than side slips must be declared as first move
-                    //hammerhead
-                    ret.add(start.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
-                            addStep(MoveStepType.YAW, true, true));
+                    //hammerhead TODO figure out how these work
+                    //ret.add(start.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
+                    //        addStep(MoveStepType.YAW, true, true));
                     //immelmen
                     if(start.getFinalVelocity()>2) {
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
+                        //there is no reason to do an immelman and not turn
+                        //ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_LEFT).addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
                     }
                     //split s
                     if(start.getFinalAltitude()>2) {
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
+                        //there is no reason to do a split-s and not turn
+                        //ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_LEFT).addStep(MoveStepType.TURN_LEFT));
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT));
@@ -271,13 +294,15 @@ public class PathEnumerator extends Thread {
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
                     }
                     //loop
-                    ret.add(start.clone().addManeuver(ManeuverType.MAN_LOOP).
-                            addStep(MoveStepType.LOOP, true, true));
+                    if(start.getFinalVelocity()>4) {
+                        ret.add(start.clone().addManeuver(ManeuverType.MAN_LOOP).
+                                addStep(MoveStepType.LOOP, true, true));
+                    }
                 }
             }
         } else { //meks and tanks and infantry oh my
             //if I've already done something illegal, ignore
-            if(start.getSecondLastStep()!=null&&start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL) {
+            if((start.getSecondLastStep()!=null)&&(start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL)) {
                 return ret;
             }
             //if I'm out of movement points, ignore
@@ -298,11 +323,11 @@ public class PathEnumerator extends Thread {
             }
             //turn left and right
             int last_consec_turns=countLastConsecutiveTurns(start);
-            if((laststeptype!=MoveStepType.TURN_RIGHT)&&last_consec_turns<2) {
+            if((laststeptype!=MoveStepType.TURN_RIGHT)&&(last_consec_turns<2)) {
                 ret.add(start.clone().addStep(MoveStepType.TURN_LEFT));
             }
             //trick here, only do 180 degree turns by turning right, never left
-            if((laststeptype!=MoveStepType.TURN_LEFT)&&last_consec_turns<3) {
+            if((laststeptype!=MoveStepType.TURN_LEFT)&&(last_consec_turns<3)) {
                 ret.add(start.clone().addStep(MoveStepType.TURN_RIGHT));
             }
             //get up if laying down
@@ -329,7 +354,7 @@ public class PathEnumerator extends Thread {
     int countLastConsecutiveTurns(MovePath p) {
         int ret=0;
         for(int i=p.length()-1;i>=0;i--) {
-            if(p.getStep(i).getType()==MoveStepType.TURN_RIGHT||p.getStep(i).getType()==MoveStepType.TURN_LEFT) {
+            if((p.getStep(i).getType()==MoveStepType.TURN_RIGHT)||(p.getStep(i).getType()==MoveStepType.TURN_LEFT)) {
                 ret++;
             } else {
                 return ret;
@@ -361,7 +386,7 @@ public class PathEnumerator extends Thread {
         return null;
     }
 
-    /***
+    /**
      * Returns whether a movepath is legit for an aero unit
      * isMoveLegal() seems to disagree with me on some aero moves, but
      * I can't exactly figure out why, and who is right, so I'm just going to put a

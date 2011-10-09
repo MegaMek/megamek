@@ -146,6 +146,7 @@ v0.35.24 (2011-06-24)
 + Bug: report issue when avoiding aero OOC collissions
 + Don't allow the zero-distance hex to be the closest hex for ground-to-air fire
     using advanced AA rules from SO
++ Patch 3417356: Princess bot uses aero units on ground - Faster
 
 v0.35.23 (2010-05-04, 17:50 UTC+2)
 + Bug: RAT selector not actually changing chosen RAT

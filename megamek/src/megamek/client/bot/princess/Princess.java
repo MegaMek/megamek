@@ -35,8 +35,11 @@ import megamek.common.event.GamePlayerChatEvent;
 public class Princess extends BotClient {
 
     public boolean verbose_errorlog;
+    public int verbosity; //controls how many messages are sent to chat
 
     public String properties_file_name;
+
+    double move_evaluation_time_estimate;
 
     public Princess(String name, String host, int port) {
         super(name, host, port);
@@ -45,39 +48,39 @@ public class Princess extends BotClient {
         // properties
         // file
         verbose_errorlog=true;
+        verbosity=1;
     }
 
     @Override
-    protected Vector<Coords> calculateArtyAutoHitHexes() { // currently returns
-        // no artillery hit
-        // spots
-        PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>(); // make
-        // an
-        // empty
-        // list
-        artyAutoHitHexes.setPlayerID(getLocalPlayer().getId()); // attach my
-        // player id to
-        // it
+    protected Vector<Coords> calculateArtyAutoHitHexes() {
+        // currently returns no artillery hit spots
+        // make an empty list
+        PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
+        // attach my player id to it
+        artyAutoHitHexes.setPlayerID(getLocalPlayer().getId());
         return artyAutoHitHexes;
     }
 
     @Override
     protected void calculateDeployment() {
-        int entNum = game.getFirstDeployableEntityNum(); // get the first unit
-        // on the list to be
-        // deployed
-        Coords[] cStart = getStartingCoordsArray(); // get a set of all the
-        // coordinates I can deploy
-        // on
-        Coords cDeploy = getCoordsAround(getEntity(entNum), cStart); // get the
-        // first
-        // coordinate
-        // that is
-        // legal to
-        // put this
-        // unit on
-        // now find some sort of reasonable facing. If there are deployed
-        // enemies, face them
+        // get the first unit
+        int entNum = game.getFirstDeployableEntityNum();
+        if(verbosity>0) {
+            sendChat("deploying unit "+getEntity(entNum).getChassis());
+        }
+        // on the list to be deployed
+        // get a set of all the
+        Coords[] cStart = getStartingCoordsArray();
+        if(cStart.length==0) {
+            System.err.println("Error, no valid locations to deploy "+getEntity(entNum).getChassis());
+        }
+        // get the coordinates I can deploy on
+        Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
+        if(cDeploy==null) {
+            System.err.println("Error, getCoordsAround gave no location for "+getEntity(entNum).getChassis());
+        }
+        // first coordinate that is legal to put this unit on now find some sort
+        // of reasonable facing. If there are deployed enemies, face them
         int decent_facing = -1;
         for (Entity e : getEnemyEntities()) {
             if (e.isDeployed() && (!e.isOffBoard())) {
@@ -108,13 +111,9 @@ public class Princess extends BotClient {
                 game);
         if(plan!=null) {
             System.err.println(plan.getDebugDescription(false));
-            sendAttackData(shooter.getId(), plan.getEntityActionVector(game)); // tell
-            // the
-            // game
-            // I
-            // want
-            // to
-            // fire
+            // tell the game I want to fire
+            sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
+
         } else {
             sendAttackData(shooter.getId(),null);
         }
@@ -124,13 +123,10 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected Vector<Minefield> calculateMinefieldDeployment() { // currently
-        // returns no
-        // minefields
-        Vector<Minefield> deployedMinefields = new Vector<Minefield>(); // make
-        // an
-        // empty
-        // vector
+    protected Vector<Minefield> calculateMinefieldDeployment() {
+        // currently returns no minefields
+        // make an empty vector
+        Vector<Minefield> deployedMinefields = new Vector<Minefield>();
         return deployedMinefields;
     }
 
@@ -171,18 +167,17 @@ public class Princess extends BotClient {
         if(verbose_errorlog) {
             System.err.println("calculatePhysicalTurn called");
         }
-        Entity first_entity = game.getFirstEntity(getMyTurn()); // get the first
-        // entity that
-        // can act this
-        // turn
+        // get the first entity that can act this turn
+        Entity first_entity = game.getFirstEntity(getMyTurn());
         Entity hitter = first_entity;
         FireControl.PhysicalInfo best_attack = null;
         do {
             System.err.println("Calculating physical attacks for "
                     + hitter.getChassis());
-            ArrayList<Entity> enemies = getEnemyEntities(); // this is an array
-            // of all my enemies
-            for (Entity e : enemies) { // cycle through potential enemies
+            // this is an array of all my enemies
+            ArrayList<Entity> enemies = getEnemyEntities();
+            // cycle through potential enemies
+            for (Entity e : enemies) {
                 FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
                         hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
                 fire_control.calculateUtility(right_punch);
@@ -245,13 +240,13 @@ public class Princess extends BotClient {
         if(verbose_errorlog) {
             System.err.println("calculatePhysicalTurn returning (no attacks)");
         }
-        return null; // no one can hit anything anymore, so give up
+        // no one can hit anything anymore, so give up
+        return null;
     }
 
     @Override
-    protected MovePath continueMovementFor(Entity entity) { // moves this entity
-        // during movement
-        // phase
+    protected MovePath continueMovementFor(Entity entity) {
+        // moves this entity during movement phase
         System.err.println("Moving "+entity.getChassis());
         PathEnumerator rator=new PathEnumerator();
         long start_time = System.currentTimeMillis();
@@ -264,24 +259,39 @@ public class Princess extends BotClient {
             System.err.println("Warning: no valid paths found");
             return new MovePath(game,entity);
         }
+        double this_time_estimate=(paths.size()*move_evaluation_time_estimate)/1e3;
+        if(verbosity>0) {
+            String timeestimate="unknown.";
+            if(this_time_estimate!=0) {
+                timeestimate=Integer.toString((int)this_time_estimate)+" seconds";
+            }
+            String message="Moving "+entity.getChassis()+". "+Long.toString(paths.size())+" paths to consider.  Estimated time to completion: "+timeestimate;
+            sendChat(message);
+        }
         start_time = System.currentTimeMillis();
         path_ranker.initUnitTurn(entity,game);
         ArrayList<RankedPath> rankedpaths=path_ranker.rankPaths(paths,game);
         stop_time = System.currentTimeMillis();
+        //update path evaluation time estimate
+        double updated_estimate=((double)(stop_time-start_time))/((double)paths.size());
+        if(move_evaluation_time_estimate==0) {
+            move_evaluation_time_estimate=updated_estimate;
+        }
+        move_evaluation_time_estimate=0.5*(updated_estimate+move_evaluation_time_estimate);
         if(rankedpaths.size()==0) {
             return new MovePath(game,entity);
         }
         System.err.println("Path ranking took " + Long.toString(stop_time - start_time)
                 + " milliseconds");
         /*
-    		if(entity instanceof Aero) {
-    		    System.err.println("printing paths:");
-    		    int n=0;
-    		    for(MovePath p:paths) {
-    		        System.err.print("path "+(n++));
-    		        p.printAllSteps();
-    		    }
-    		}
+            if(entity instanceof Aero) {
+                System.err.println("printing paths:");
+                int n=0;
+                for(MovePath p:paths) {
+                    System.err.print("path "+(n++));
+                    p.printAllSteps();
+                }
+            }
          */
         RankedPath bestpath=PathRanker.getBestPath(rankedpaths);
         //bestpath.path.printAllSteps();
@@ -313,15 +323,15 @@ public class Princess extends BotClient {
             configfile.load(new FileInputStream(properties_file_name));
             System.err.println("loading behavior from " + properties_file_name);
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             System.err.println("Error!  Princess config file not found!");
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            System.err.println("IO Error in Princess config file!");
             e.printStackTrace();
         }
         path_searcher = new PathSearcher();
         path_ranker = new BasicPathRanker(configfile);
+        path_ranker.botbase=this;
         path_searcher.ranker = path_ranker;
         fire_control = new FireControl();
         path_ranker.firecontrol = fire_control;

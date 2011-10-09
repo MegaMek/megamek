@@ -28,8 +28,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
-import megamek.common.TargetRoll;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.TargetRoll;
 
 /**
  * A very basic pathranker
@@ -38,23 +38,23 @@ public class BasicPathRanker extends PathRanker {
 
     FireControl firecontrol;
     double fall_shame; // how many extra damage points will a fall effectively
-                       // make me lose
+    // make me lose
     double blind_optimism; // unmoved units that can do damage to me -might-
-                           // move away (<1) or might move to a better position
-                           // (>1)
+    // move away (<1) or might move to a better position
+    // (>1)
     double enemy_underestimation; // unmoved units will likely move out of my
-                                  // way (<1)
+    // way (<1)
     double foolish_bravery; // how many of my armor points am I willing to
-                            // sacrifice to do one armor point worth of damage
+    // sacrifice to do one armor point worth of damage
     double hyper_aggression; // how much is it worth to me to get all up in the
-                             // face of an enemy
+    // face of an enemy
     double herd_mentality; // how much is it worth to me to stay near my buddies
 
     TreeMap<Integer, Double> best_damage_by_enemies; // the best damage enemies
-                                                     // could expect were I not
-                                                     // here. Used to determine
-                                                     // whether they will target
-                                                     // me.
+    // could expect were I not
+    // here. Used to determine
+    // whether they will target
+    // me.
 
     public BasicPathRanker(Properties props) {
         // give some default values for tunable parameters
@@ -83,6 +83,21 @@ public class BasicPathRanker extends PathRanker {
     @Override
     public double rankPath(MovePath p, IGame game) {
         boolean isaero=(p.getEntity() instanceof Aero);
+        if(isaero) {
+            //stalling is bad
+            if(p.getFinalVelocity()==0) {
+                return -1000;
+            }
+            //you know what else is bad?  this
+            if(p.getFinalAltitude()<1) {
+                return -10000;
+            }
+            //flying off board should only be done if necessary, but is better than taking much damage
+            if((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.RETURN)) {
+                return -5;
+            }
+        }
+
         // How likely is it that I will succeed in reaching this path
         MovePath pcopy=p.clone(); //get psr calls cliptopossible, I may not want to change p
         List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
@@ -95,30 +110,19 @@ public class BasicPathRanker extends PathRanker {
         int fall_damage = (int) (p.getEntity().getWeight() / 10);
         double expected_fall_damage = (fall_damage + fall_shame)
                 * (1.0 - success_probability);
-        
-        if(isaero) {
-            //stalling is bad
-            if(p.getFinalVelocity()==0) return -1000;
-            //you know what else is bad?  this
-            if(p.getFinalAltitude()<1) return -10000;
-            //flying off board should only be done if necessary, but is better than taking much damage
-            if((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.RETURN)) return -5;
-        }
-        
 
         // look at all of my enemies
         ArrayList<Entity> enemies = getEnemies(p.getEntity(), game);
         double maximum_damage_done = 0;
         double maximum_physical_damage = 0;
         double expected_damage_taken = 0;
-        FireControl.FiringPlan my_best_firing_plan = firecontrol.new FiringPlan();
         for (Entity e : enemies) {
             // How much damage can they do to me?
             double their_damage_potential = firecontrol
                     .guessBestFiringPlanUnderHeatWithTwists(e, null,
                             p.getEntity(), new EntityState(p),
-                            e.getHeatCapacity() - e.heat + 5, game)
-                    .utility;
+                            (e.getHeatCapacity() - e.heat) + 5, game)
+                            .utility;
             // if they can kick me, and probably hit, they probably will.
             FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
                     e, null, p.getEntity(), new EntityState(p),
@@ -129,16 +133,12 @@ public class BasicPathRanker extends PathRanker {
             }
 
             // How much damage can I do to them?
-            //FiringPlan my_firing_plan = firecontrol
-            //        .guessBestFiringPlanUnderHeatWithTwists(p.getEntity(),
-            //                new EntityState(p), e, null,
-            //                p.getEntity().getHeatCapacity()
-            //                        - p.getEntity().heat + 5, game);
             FiringPlan my_firing_plan=null;
             if(p.getEntity() instanceof Aero) {
                 my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
-            } else
+            } else {
                 my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+            }
             double my_damage_potential = my_firing_plan.utility;
             // If I can kick them and probably hit, I probably will
             FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
@@ -172,24 +172,23 @@ public class BasicPathRanker extends PathRanker {
             // maximum damage I can do
             if (my_damage_potential >= maximum_damage_done) {
                 maximum_damage_done = my_damage_potential;
-                my_best_firing_plan = my_firing_plan;
             }
         }
         // I can kick a different target than I shoot, so add physical to total
         // damage after I've looked at all enemies
         maximum_damage_done += maximum_physical_damage;
 
-        double utility = success_probability
-                * (maximum_damage_done * foolish_bravery - expected_damage_taken)
+        double utility = (success_probability
+                * ((maximum_damage_done * foolish_bravery) - expected_damage_taken))
                 - expected_fall_damage;
 
         if(p.getEntity() instanceof Aero) {
-            
+
         } else {
             //ground unit specific things
             double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
             utility -= dist_to_enemy * hyper_aggression;
-            
+
             double dist_to_friend = distanceToClosestFriend(p, game);
             utility -= dist_to_friend * herd_mentality;
         }
@@ -197,7 +196,7 @@ public class BasicPathRanker extends PathRanker {
         return utility;
 
     };
-       
+
 
     /**
      * Calculate who all other units would shoot at if I weren't around
@@ -212,8 +211,8 @@ public class BasicPathRanker extends PathRanker {
             for (Entity f : friends) {
                 double damage = firecontrol
                         .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
-                                null, e.getHeatCapacity() - e.heat + 5, game)
-                        .getExpectedDamage();
+                                null, (e.getHeatCapacity() - e.heat) + 5, game)
+                                .getExpectedDamage();
                 if (damage > max_damage) {
                     max_damage = damage;
                 }
@@ -237,7 +236,7 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * Gives the distance to the closest enemy unit, or zero if none exist
-     * 
+     *
      * @param me Entity who has enemies
      * @param position Coords from which the closest enemy is found
      * @param game IGame that we're playing

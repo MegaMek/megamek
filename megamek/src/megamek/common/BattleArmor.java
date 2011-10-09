@@ -366,7 +366,7 @@ public class BattleArmor extends Infantry {
         int mp = getOriginalJumpMP();
 
         // partial wing gives extra MP in atmosphere
-        if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING) && !game.getPlanetaryConditions().isVacuum()) {
+        if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING) && ((game == null) || !game.getPlanetaryConditions().isVacuum())) {
             mp++;
         } else if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
          // jump booster gives an extra MP
@@ -381,7 +381,7 @@ public class BattleArmor extends Infantry {
         if ((mp == 0) && hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
             mp++;
             // partial wing gives extra MP in atmosphere
-            if (hasWorkingMisc(MiscType.F_PARTIAL_WING) && !game.getPlanetaryConditions().isVacuum()) {
+            if (hasWorkingMisc(MiscType.F_PARTIAL_WING) && ((game == null) || (!game.getPlanetaryConditions().isVacuum()))) {
                 mp++;
             }
         }

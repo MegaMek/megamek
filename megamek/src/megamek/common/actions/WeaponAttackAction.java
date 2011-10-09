@@ -612,10 +612,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if(Compute.isGroundToAir(ae, target) && game.getOptions().booleanOption("stratops_aa_fire")
                 && (null != te) && (te instanceof Aero)) {
-        	int vMod = ((Aero)te).getCurrentVelocity();
-        	if(game.getOptions().booleanOption("aa_move_mod")) {
-        		vMod = Math.min(vMod/2, 4);
-        	}
+            int vMod = ((Aero)te).getCurrentVelocity();
+            if(game.getOptions().booleanOption("aa_move_mod")) {
+                vMod = Math.min(vMod/2, 4);
+            }
             toHit.addModifier(vMod, "velocity");
         }
 

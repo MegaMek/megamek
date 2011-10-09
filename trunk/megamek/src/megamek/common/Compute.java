@@ -1172,7 +1172,7 @@ public class Compute {
         //don't return zero distance Coords, but rather the Coords immediately before this
         //This is necessary to determine angle of attack and arc information for direct fly-overs
         for(Coords c : te.getPassedThrough()) {
-            if(!aPos.equals(c) && (aPos.distance(c) < distance)) {
+            if(!aPos.equals(c) && ((aPos.distance(c) < distance) || (distance == 0))) {
                 finalPos = c;
                 distance = aPos.distance(c);
             }

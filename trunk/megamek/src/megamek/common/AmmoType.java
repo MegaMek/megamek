@@ -2775,8 +2775,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "RL 10 Ammo";
-        ammo.setInternalName("IS Ammo RL-10");
+        ammo.name = "RL Prototype 10 Ammo";
+        ammo.setInternalName("IS Ammo RL-Prototype-10");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
@@ -2791,8 +2791,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "RL 15 Ammo";
-        ammo.setInternalName("CL Ammo RL-15");
+        ammo.name = "RL Prototype 15 Ammo";
+        ammo.setInternalName("CL Ammo RL-Prototype-15");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
@@ -2807,8 +2807,8 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "RL 20 Ammo";
-        ammo.setInternalName("CL Ammo RL-20");
+        ammo.name = "RL Prototype 20 Ammo";
+        ammo.setInternalName("CL Ammo RL-Prototype-20");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
@@ -8680,9 +8680,9 @@ public class AmmoType extends EquipmentType {
      */
     public double getProtoBV(int shots) {
         if ((getAmmoType() == AmmoType.T_SRM) || (getAmmoType() == AmmoType.T_SRM_STREAK) || (getAmmoType() == AmmoType.T_LRM) || (getAmmoType() == AmmoType.T_SRM_TORPEDO) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
-            return kgPerShot * rackSize * shots / 1000 * bv;
+            return ((kgPerShot * rackSize * shots) / 1000) * bv;
         }
-        return kgPerShot * shots / 1000 * bv;
+        return ((kgPerShot * shots) / 1000) * bv;
     }
 
     /**
@@ -8691,7 +8691,7 @@ public class AmmoType extends EquipmentType {
      * @return
      */
     public double getBABV() {
-        return kgPerShot * shots / 1000 * bv;
+        return ((kgPerShot * shots) / 1000) * bv;
     }
 
     public String getShortName() {

@@ -1706,7 +1706,7 @@ public class BattleArmor extends Infantry {
         this.exoskeleton = exoskeleton;
     }
 
-    public boolean isExoskeletion() {
+    public boolean isExoskeleton() {
         return exoskeleton;
     }
 

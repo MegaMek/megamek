@@ -1756,12 +1756,14 @@ public class MoveStep implements Serializable {
         }
         //check for evasion
         if (type == MoveStepType.EVADE) {
-            if ((parent.contains(MoveStepType.BACKWARDS)) || entity.hasHipCrit()) {
+            if ((parent.contains(MoveStepType.BACKWARDS)) || entity.hasHipCrit() ||
+                    ((type == MoveStepType.BACKWARDS) && parent.contains(MoveStepType.EVADE))) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
             movementType = prev.movementType;
         }
+
 
         // check for valid jump mp
         if (parent.isJumping()

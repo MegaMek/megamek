@@ -206,6 +206,8 @@ public class BattleArmor extends Infantry {
      */
     private boolean attacksDuringSwarmResolved = false;
 
+    private boolean exoskeleton = false;
+
     @Override
     public String[] getLocationAbbrs() {
         if (!isInitialized || isClan()) {
@@ -1693,11 +1695,19 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    /*
+    /**
      * Each BA squad has 2 structure points
      */
     public int getBattleForceStructurePoints() {
         return 2;
+    }
+
+    public void setIsExoskeleton(boolean exoskeleton) {
+        this.exoskeleton = exoskeleton;
+    }
+
+    public boolean isExoskeletion() {
+        return exoskeleton;
     }
 
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import megamek.client.bot.princess.Princess;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Player;
@@ -26,12 +27,8 @@ import megamek.common.event.GamePlayerChatEvent;
 
 public class ChatProcessor {
 
-    protected void processChat(GamePlayerChatEvent ge, TestBot tb) {
-        if (ge.getType() != GameEvent.GAME_PLAYER_CHAT)
-            return;
-        if (tb.getLocalPlayer() == null)
-            return;
-        String message = ge.getMessage();
+    private boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
+        boolean result = false;
         if (message.contains("declares individual victory at the end of the turn.")
                 || message.contains("declares team victory at the end of the turn.")) {
             String[] splitMessage = message.split(" ");
@@ -41,16 +38,22 @@ public class ChatProcessor {
                 name += " " + splitMessage[i+1];
                 i++;
             }
-            for(Player p:tb.game.getPlayersVector()) {
+            for(Player p : bot.game.getPlayersVector()) {
                 if(p.getName().equals(name)) {
-                    if(p.isEnemyOf(tb.getLocalPlayer())) {
-                        tb.sendChat("/defeat");
-                    } 
+                    if(p.isEnemyOf(bot.getLocalPlayer())) {
+                        bot.sendChat("/defeat");
+                        result = true;
+                    }
                     break;
                 }
             }
-            return;
         }
+        return result;
+    }
+
+    private boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
+        boolean result = false;
+
         if (message.contains("type /victory to accept the surrender")) {
             String[] splitMessage = message.split(" ");
             int i = 1;
@@ -59,23 +62,42 @@ public class ChatProcessor {
                 name += " " + splitMessage[i+1];
                 i++;
             }
-            for(Player p:tb.game.getPlayersVector()) {
+            for(Player p:bot.game.getPlayersVector()) {
                 if(p.getName().equals(name)) {
-                    if(p.isEnemyOf(tb.getLocalPlayer())) {
-                        tb.sendChat("/victory");
+                    if(p.isEnemyOf(bot.getLocalPlayer())) {
+                        bot.sendChat("/victory");
+                        result = true;
                     }
                     break;
                 }
             }
+        }
+
+        return result;
+    }
+
+    public void processChat(GamePlayerChatEvent ge, BotClient bot) {
+        if (ge.getType() != GameEvent.GAME_PLAYER_CHAT)
+            return;
+        if (bot.getLocalPlayer() == null)
+            return;
+
+        String message = ge.getMessage();
+        if (shouldBotAcknowledgeDefeat(message, bot)) {
             return;
         }
+        if (shouldBotAcknowledgeVictory(message, bot)) {
+            return;
+        }
+
+        //Check for end of message.
         StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
         if (!st.hasMoreTokens()) {
             return;
         }
         String name = st.nextToken().trim();
         // who is the message from?
-        Enumeration<Player> e = tb.game.getPlayers();
+        Enumeration<Player> e = bot.game.getPlayers();
         Player p = null;
         while (e.hasMoreElements()) {
             p = e.nextElement();
@@ -86,6 +108,12 @@ public class ChatProcessor {
         if (p == null) {
             return;
         }
+        if (bot instanceof TestBot) {
+            additionalTestBotCommands(st, (TestBot)bot, p);
+        }
+    }
+
+    private void additionalTestBotCommands(StringTokenizer st, TestBot tb, Player p) {
         try {
             if (st.hasMoreTokens()
                     && st.nextToken().trim().equalsIgnoreCase(

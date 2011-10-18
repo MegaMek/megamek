@@ -26,6 +26,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
 import megamek.common.MovePath;
+import megamek.common.MoveStep;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 
@@ -54,9 +55,10 @@ public class PathEnumerator extends Thread {
      * @return
      */
     public static int hashPath(MovePath p) {
-        return (((((p.getFinalCoords().hashCode()*7)+p.getFinalFacing())*2)
+        int off=((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.OFF))?1:0;
+        return (((((((p.getFinalCoords().hashCode()*7)+p.getFinalFacing())*2)
                 +(p.getFinalHullDown()?0:1))*2)
-                +(p.getFinalProne()?0:1);
+                +(p.getFinalProne()?0:1)*2+(p.contains(MoveStepType.MANEUVER)?0:1)))*2+off;
     }
 
     /**
@@ -107,7 +109,7 @@ public class PathEnumerator extends Thread {
                 return true;
             }
             return false;
-        }
+        }       
 
         /**
          * This functions answers the question "Have I already considered a move that ended on the same
@@ -172,15 +174,26 @@ public class PathEnumerator extends Thread {
         }
 
         boolean aero_has_flyoff_option=false;
+        //int toolong_counter=0;
         while(!paths.open_bymp.isEmpty()) {
+            /*
+            toolong_counter++;
+            if(toolong_counter%1000==0) {
+                System.err.println("PathEnumerator Update:");
+                System.err.println("open size "+Integer.toString(paths.open_bymp.size()));
+                System.err.println("potential moves size "+Integer.toString(paths.potential_moves.size()));
+            }
+            */
             MovePath onpath=paths.open_bymp.pop();
             //
             ArrayList<MovePath> nextpaths=getNextMoves(g,onpath);
             for(MovePath nextpath: nextpaths) {
                 //add to open as potential path
                 if((e instanceof Aero)||(!paths.hasAlreadyConsidered(nextpath))) {
-                    paths.open_bymp.add(nextpath);
-                    paths.closed.put(PathEnumerator.hashPath(nextpath),nextpath.getMpUsed());
+                    //paths.open_bymp.add(nextpath); breadth-first
+                    paths.open_bymp.push(nextpath); //depth first, saves memory
+                    if(!(e instanceof Aero))
+                        paths.closed.put(PathEnumerator.hashPath(nextpath),nextpath.getMpUsed());
                     //if legal to finish, add as potential location
                     if((e instanceof Aero)&&isLegalAeroMove(nextpath)) {
                         if((nextpath.getLastStep()!=null)&&((nextpath.getLastStep().getType()==MoveStepType.OFF)||(nextpath.getLastStep().getType()==MoveStepType.RETURN))) {
@@ -193,7 +206,6 @@ public class PathEnumerator extends Thread {
                         if(paths.hasAlreadyAeroConsidered(nextpath,g)) {
                             continue;
                         }
-
                         paths.potential_moves.add(nextpath);
                     } else if(nextpath.isMoveLegal()) {
                         paths.potential_moves.add(nextpath);
@@ -214,7 +226,12 @@ public class PathEnumerator extends Thread {
     ArrayList<MovePath> getValidStartingMoves(IGame g,Entity e) {
         ArrayList<MovePath> ret=new ArrayList<MovePath>();
         ret.add(new MovePath(g,e));
-        //TODO meks may want to start with a jump
+        // meks may want to start with a jump
+        if(e.getJumpMP()!=0) {
+        	MovePath jumpmove=new MovePath(g,e);
+        	jumpmove.addStep(MoveStepType.START_JUMP);
+        	ret.add(jumpmove);
+        }
         System.err.println("number of starting moves for "+e.getChassis()+" is "+ret.size());
         return ret;
     }
@@ -226,7 +243,7 @@ public class PathEnumerator extends Thread {
      */
     ArrayList<MovePath> getNextMoves(IGame game,MovePath start) {
         ArrayList<MovePath> ret=new ArrayList<MovePath>();
-        if(start.getEntity() instanceof Aero) {
+        if(start.getEntity() instanceof Aero) {            
             //if I've already done something illegal, or flown off, ignore
             if((start.getSecondLastStep()!=null)&&(start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL)) {
                 return ret;
@@ -237,6 +254,9 @@ public class PathEnumerator extends Thread {
             if((start.getLastStep()!=null)&&(start.getLastStep().getType()==MoveStepType.RETURN)) {
                 return ret;
             }
+            boolean can_accel=(start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.ACC);
+            boolean can_deccel=(start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.DEC);
+            boolean has_moved=!(can_accel||can_deccel);
             //move forward
             //FIXME is velocity*16 -always- the number of hexes moved?
             if((start.getFinalVelocity()*16)>start.getHexesMoved()) {
@@ -244,10 +264,10 @@ public class PathEnumerator extends Thread {
             }
             //accelerate
             //FIXME max final velocity hardcoded in, is there a place I can look this up?
-            if((((start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.ACC)))&&(start.getFinalVelocity()<4)) {
+            if(can_accel&&start.getFinalVelocity()<4) {            
                 ret.add(start.clone().addStep(MoveStepType.ACC));
             }
-            if((((start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.DEC)))&&(start.getFinalVelocity()>0)) {
+            if(can_deccel&&start.getFinalVelocity()>0) {            
                 ret.add(start.clone().addStep(MoveStepType.DEC));
             }
             //turn left and right
@@ -263,13 +283,18 @@ public class PathEnumerator extends Thread {
             }
             //maneuvers
             //1 maneuver per turn
+            ///*
             if(!start.contains(MoveStepType.MANEUVER)) {
                 //side slips
                 ret.add(start.clone().addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT).
                         addStep(MoveStepType.LATERAL_LEFT, true, true));
                 ret.add(start.clone().addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT).
                         addStep(MoveStepType.LATERAL_RIGHT, true, true));
-                if((start.getLastStep()==null)||(start.getLastStep().getType()==MoveStepType.ACC)) { //moves other than side slips must be declared as first move
+            }
+            //*/
+            
+            if((!start.contains(MoveStepType.MANEUVER))&&(!has_moved)) {
+                System.err.println("adding start maneuvers");
                     //hammerhead TODO figure out how these work
                     //ret.add(start.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
                     //        addStep(MoveStepType.YAW, true, true));
@@ -298,8 +323,7 @@ public class PathEnumerator extends Thread {
                         ret.add(start.clone().addManeuver(ManeuverType.MAN_LOOP).
                                 addStep(MoveStepType.LOOP, true, true));
                     }
-                }
-            }
+                }            
         } else { //meks and tanks and infantry oh my
             //if I've already done something illegal, ignore
             if((start.getSecondLastStep()!=null)&&(start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL)) {

@@ -407,6 +407,9 @@ public class BLKFile {
             } else if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
                 blk.writeBlockData("chassis", "quad");
             }
+            if (ba.isExoskeleton()) {
+                blk.writeBlockData("exoskeleton", "true");
+            }
         }
         blk.writeBlockFile(fileName);
     }

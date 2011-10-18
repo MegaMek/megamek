@@ -75,6 +75,8 @@
      JC Brewer <bronzite@users.sourceforge.net>
      shijima <shijima@users.sourceforge.net>
      vult <vult@users.sourceforge.net>
+     Deric Page <dericpage@users.sourceforge.net>
+     Dylan Myers <ralgith-erian@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -15,6 +15,8 @@ package megamek.client.ui.swing;
 
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,19 +24,24 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.ui.Messages;
+import megamek.common.Coords;
 
 /**
  * BotConfigDialog is a dialog box that configures bot properties
@@ -50,8 +57,12 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JRadioButton princess_radiobutton;
     private ButtonGroup selectbot_group=new ButtonGroup();
     
+    //Items for princess config here
     JComboBox princess_verbosity;
-    
+    JTextField princess_target_hex_num_x;    
+    JButton princess_addtarget_button;
+    JList princess_targets_list;
+    DefaultListModel princess_targets_list_model=new DefaultListModel();   
 
     private JTextField namefield;
     private boolean custom_name=false; //did user not use default name?
@@ -87,12 +98,32 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         
         JPanel testbotconfigcard=new JPanel();
         
-        JPanel princessconfigcard=new JPanel(new FlowLayout());
-        princessconfigcard.add(new JLabel("Verbosity"));
+        //JPanel princessconfigcard=new JPanel(new FlowLayout());
+        JPanel princessconfigcard=new JPanel(new GridBagLayout());
+        GridBagConstraints c=new GridBagConstraints();
+        c.gridy=0;
+        princessconfigcard.add(new JLabel("Verbosity"),c);
         String[] verbosity_options={"0","1"};
         princess_verbosity=new JComboBox(verbosity_options);
         princess_verbosity.setSelectedIndex(1);
-        princessconfigcard.add(princess_verbosity);
+        princessconfigcard.add(princess_verbosity,c);
+        c.gridy=1;
+        princessconfigcard.add(new JLabel("Strategic Targets"),c);
+        princess_target_hex_num_x=new JTextField();        
+        princess_target_hex_num_x.setColumns(4);
+        c.gridy=2;
+        princessconfigcard.add(princess_target_hex_num_x,c);        
+        princess_addtarget_button=new JButton("Add Strategic Target");
+        princess_addtarget_button.addActionListener(this);
+        princessconfigcard.add(princess_addtarget_button,c);
+        princess_targets_list=new JList(princess_targets_list_model);
+        princess_targets_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        princess_targets_list.setLayoutOrientation(JList.VERTICAL);
+        c.gridy=3;        
+        JScrollPane ptlscroller=new JScrollPane(princess_targets_list);
+        ptlscroller.setAlignmentX(LEFT_ALIGNMENT);
+        princessconfigcard.add(ptlscroller,c);
+        
         
         botspecificcards=new JPanel(new CardLayout());
         botspecificcards.add(testbotconfigcard,"testbot_config");
@@ -129,6 +160,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         } else if(e.getSource()==butOK) {
             dialog_aborted=false;
             setVisible(false);
+        } else if(e.getSource()==princess_addtarget_button) {
+        	princess_targets_list_model.addElement(princess_target_hex_num_x.getText());
         }
     }
 
@@ -152,6 +185,13 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         } else if(princess_radiobutton.isSelected()) {
             Princess toreturn=new Princess(getBotName(),host,port);        	
             toreturn.verbosity=princess_verbosity.getSelectedIndex();
+            //Add targets, adjusting hexes appropriately
+            for(int i=0;i<princess_targets_list_model.getSize();i++) {
+                int xpos=Integer.parseInt(((String)princess_targets_list_model.get(i)).substring(0, 2))-1;
+                int ypos=Integer.parseInt(((String)princess_targets_list_model.get(i)).substring(2, 4))-1;
+                System.err.println("adding "+Integer.toString(xpos)+" , "+Integer.toString(ypos)+" to strategic targets list");
+                toreturn.strategic_targets.add(new Coords(xpos,ypos));
+            }
             return toreturn;
         }
         return null;  //shouldn't happen

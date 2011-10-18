@@ -30,6 +30,7 @@ import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 
 /**
  * A very basic pathranker
@@ -174,6 +175,23 @@ public class BasicPathRanker extends PathRanker {
                 maximum_damage_done = my_damage_potential;
             }
         }
+        // Include damage I can do to strategic targets
+        for(int i=0;i<botbase.fire_control.additional_targets.size();i++) {
+            Targetable t=botbase.fire_control.additional_targets.get(i);
+            FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
+            double my_damage_potential = my_firing_plan.utility;
+            if(my_damage_potential>maximum_damage_done)
+                maximum_damage_done = my_damage_potential;
+            FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
+                    p.getEntity(), new EntityState(p), t, null,
+                    PhysicalAttackType.RIGHT_KICK, game);
+            double expected_kick_damage = mykick.expected_damage_on_hit
+            * mykick.prob_to_hit;
+            if (expected_kick_damage > maximum_physical_damage) {
+                maximum_physical_damage = expected_kick_damage;
+            }
+        }
+        
         // I can kick a different target than I shoot, so add physical to total
         // damage after I've looked at all enemies
         maximum_damage_done += maximum_physical_damage;

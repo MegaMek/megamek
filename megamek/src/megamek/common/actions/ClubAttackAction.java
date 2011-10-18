@@ -347,7 +347,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 }
             }
             // Rules state +2 bth if your using a club with claws.
-            if (hasClaws) {
+            if (hasClaws && (((MiscType)club.getType()).hasSubType(MiscType.S_CLUB))) {
                 toHit.addModifier(2, "Mek has claws");
             }
             if ((((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)) && (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation()) || !ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation()))) {

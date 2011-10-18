@@ -21,14 +21,17 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.bot.BotClient;
+import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.bot.princess.PathRanker.RankedPath;
+import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
+import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 
@@ -38,8 +41,17 @@ public class Princess extends BotClient {
     public int verbosity; //controls how many messages are sent to chat
 
     public String properties_file_name;
-
+    
     double move_evaluation_time_estimate;
+    
+    //----These have to do with the goals or victiory conditions for the bot----
+    /*
+     * A list of hexes in which the bot wants to destroy buildings
+     */
+    public ArrayList<Coords> strategic_targets=new ArrayList<Coords>(); 
+    //---------------------------------------------------------------------------
+
+    protected ChatProcessor chatp = new ChatProcessor();
 
     public Princess(String name, String host, int port) {
         super(name, host, port);
@@ -62,7 +74,9 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected void calculateDeployment() {
+    protected void calculateDeployment() {        
+
+
         // get the first unit
         int entNum = game.getFirstDeployableEntityNum();
         if(verbosity>0) {
@@ -107,6 +121,8 @@ public class Princess extends BotClient {
         Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
         // entity that can
         // act this turn
+        //make sure weapons are loaded
+        fire_control.loadAmmo(shooter, game);
         FireControl.FiringPlan plan = fire_control.getBestFiringPlan(shooter,
                 game);
         if(plan!=null) {
@@ -300,6 +316,7 @@ public class Princess extends BotClient {
 
     @Override
     protected void initFiring() {
+
         // ----Debugging: print out any errors made in guessing to hit
         // values-----
         Vector<Entity> ents = game.getEntitiesVector();
@@ -314,6 +331,16 @@ public class Princess extends BotClient {
 
     @Override
     protected void initMovement() {
+        //reset strategic targets
+        fire_control.additional_targets=new ArrayList<Targetable>();
+        for(int i=0;i<strategic_targets.size();i++) {            
+            if(game.getBoard().getBuildingAt(strategic_targets.get(i))==null) {
+                sendChat("No building to target in Hex "+strategic_targets.get(i).toFriendlyString()+", ignoring.");   
+            } else {
+            fire_control.additional_targets.add(new BuildingTarget(strategic_targets.get(i),game.getBoard(),false));
+                sendChat("Building in Hex "+strategic_targets.get(i).toFriendlyString()+" designated strategic target.");
+            }
+        }
     }
 
     @Override
@@ -335,12 +362,14 @@ public class Princess extends BotClient {
         path_searcher.ranker = path_ranker;
         fire_control = new FireControl();
         path_ranker.firecontrol = fire_control;
+        
+
+                
     }
 
     @Override
     protected void processChat(GamePlayerChatEvent ge) {
-        // TODO Auto-generated method stub
-
+        chatp.processChat(ge, this);
     }
 
     PathSearcher path_searcher;

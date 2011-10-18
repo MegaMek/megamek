@@ -838,8 +838,10 @@ public class WeaponType extends EquipmentType {
         // NARCs
         EquipmentType.addType(new ISNarc());
         EquipmentType.addType(new ISNarcOS());
+        EquipmentType.addType(new ISNarcIOS());
         EquipmentType.addType(new CLNarc());
         EquipmentType.addType(new CLNarcOS());
+        EquipmentType.addType(new CLNarcIOS());
         EquipmentType.addType(new ISImprovedNarc());
         EquipmentType.addType(new ISImprovedNarcOS());
         // AMSs

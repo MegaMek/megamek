@@ -42,7 +42,7 @@ public class CLSRM2IOS extends SRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 0.5f;
+        tonnage = 0.25f;
         criticals = 1;
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);

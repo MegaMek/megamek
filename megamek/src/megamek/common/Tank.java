@@ -2589,7 +2589,7 @@ public class Tank extends Entity {
     } // End public TargetRoll getStealthModifier( char )
 
     @Override
-    /*
+    /**
      * returns the battle force structure points for a vehicle.
      * Composite and Reinforced structures are Mech only, so we don't need to worry
      */
@@ -2603,29 +2603,29 @@ public class Tank extends Entity {
 
     @Override
     public int getEngineHits() {
-    	if(isEngineHit()) {
-    		return 1;
-    	} else {
-    		return 0;
-    	}
+        if(isEngineHit()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
-	public String getLocationDamage(int loc) {
-    	String toReturn = "";
-    	boolean first = true;
-    	if(isTurretLocked(loc)) {
-    		toReturn += "Locked";
-    		first = false;
-    	}
-    	if(isStabiliserHit(loc)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Stabilizer hit";
-    		first = false;
-    	}
-		return toReturn;
-	}
+    public String getLocationDamage(int loc) {
+        String toReturn = "";
+        boolean first = true;
+        if(isTurretLocked(loc)) {
+            toReturn += "Locked";
+            first = false;
+        }
+        if(isStabiliserHit(loc)) {
+            if(!first) {
+                toReturn +=", ";
+            }
+            toReturn += "Stabilizer hit";
+            first = false;
+        }
+        return toReturn;
+    }
 
 }

@@ -1756,7 +1756,7 @@ public class MoveStep implements Serializable {
         }
         //check for evasion
         if (type == MoveStepType.EVADE) {
-            if(entity.hasHipCrit()) {
+            if ((parent.contains(MoveStepType.BACKWARDS)) || entity.hasHipCrit()) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }

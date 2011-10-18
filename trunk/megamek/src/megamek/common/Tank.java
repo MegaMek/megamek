@@ -1401,7 +1401,13 @@ public class Tank extends Entity {
         weaponBV += getWeight() / 2;
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP(false, true, true) + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
+        double runMP = getRunMP(false, true, true);
+        // trailers have original run MP of 0, but should count at 1 for speed
+        // factor calculation
+        if (getOriginalRunMP() == 0) {
+            runMP = 1;
+        }
+        double speedFactor = Math.pow(1 + (((runMP + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
@@ -1720,7 +1726,7 @@ public class Tank extends Entity {
     @Override
     public double getCost(boolean ignoreAmmo) {
         double cost = 0;
-        cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
+        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
         double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
         // should
         // be
@@ -1729,7 +1735,7 @@ public class Tank extends Entity {
         // nearest
         // half-ton
         cost += 10000 * controlWeight;
-        cost += weight / 10.0 * 10000; // IS has no variations, no Endo etc.
+        cost += (weight / 10.0) * 10000; // IS has no variations, no Endo etc.
         double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
         int sinks = 0;
         double turretWeight = 0;

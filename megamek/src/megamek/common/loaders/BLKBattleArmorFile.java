@@ -64,6 +64,10 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
 
+        if (dataFile.exists("exoskeletion") && dataFile.getDataAsString("exoskeleton")[0].equalsIgnoreCase("true")) {
+            t.setIsExoskeleton(true);
+        }
+
         if (!dataFile.exists("trooper count")) {
             throw new EntityLoadingException("Could not find trooper count block.");
         }

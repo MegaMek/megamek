@@ -46,9 +46,9 @@ public final class SteerageQuartersCargoBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      */
     public SteerageQuartersCargoBay(double space, int doors) {
-        totalSpace = (int)space/5;
+        totalSpace = ((int)space)/5;
         weight = (float) space;
-        currentSpace = (int)space/5;
+        currentSpace = ((int)space)/5;
         this.doors = doors;
     }
 
@@ -72,7 +72,7 @@ public final class SteerageQuartersCargoBay extends Bay {
     @Override
     public String getUnusedString() {
         StringBuffer returnString = new StringBuffer("Steerage Quarters - ");
-        returnString.append(currentSpace);
+        returnString.append((int)currentSpace);
         return returnString.toString();
     }
 

@@ -172,6 +172,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SPRAYER = BigInteger.valueOf(1).shiftLeft(126);
     public static final BigInteger F_ELECTRIC_DISCHARGE_ARMOR = BigInteger.valueOf(1).shiftLeft(127);
     public static final BigInteger F_MECHANICAL_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(128);
+    public static final BigInteger F_TRAILER_MODIFICATION = BigInteger.valueOf(1).shiftLeft(129);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1068,6 +1069,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAMechanicalJumpBooster());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
+        EquipmentType.addType(MiscType.createTrailerModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
@@ -1151,12 +1153,26 @@ public class MiscType extends EquipmentType {
     public static MiscType createTractorModification() {
         MiscType misc = new MiscType();
 
-        misc.name = "Tractor Modification";
+        misc.name = "Tractor";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createTrailerModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Trailern";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_TRAILER_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
 
         return misc;

@@ -72,7 +72,7 @@ public final class StandardSeatCargoBay extends Bay {
     @Override
     public String getUnusedString() {
         StringBuffer returnString = new StringBuffer("Passenger Seats - ");
-        returnString.append(currentSpace);
+        returnString.append((int)currentSpace);
         return returnString.toString();
     }
 

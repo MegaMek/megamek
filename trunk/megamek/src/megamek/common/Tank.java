@@ -1094,31 +1094,17 @@ public class Tank extends Entity {
             if (wtype.hasFlag(WeaponType.F_B_POD)) {
                 continue;
             }
-
-            bvText.append(wtype.getName());
-            bvText.append(" ");
-            bvText.append(dBV);
-
-            // artemis bumps up the value
+            String weaponName = wtype.getName();
             if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
-                    bvText.append(" x 1.2 Artemis");
-                }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                    bvText.append(" x 1.3 Artemis V");
+                // check to see if the weapon is a PPC and has a Capacitor
+                // attached to it
+                if (wtype.hasFlag(WeaponType.F_PPC)) {
+                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
+                    weaponName = weaponName.concat(" with Capacitor");
                 }
             }
 
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                    bvText.append(" x 1.15 Apollo");
-                }
-            }
+
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
@@ -1128,6 +1114,34 @@ public class Tank extends Entity {
                     }
                 }
                 dBV = mgaBV * 0.67;
+            }
+
+            bvText.append(weaponName);
+            bvText.append(" ");
+            bvText.append(dBV);
+
+            // artemis bumps up the value
+            // as do PPC capacitors
+            if (mounted.getLinkedBy() != null) {
+                // check to see if the weapon is a PPC and has a Capacitor
+                // attached to it
+                if (wtype.hasFlag(WeaponType.F_PPC)) {
+                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
+                    weaponName = weaponName.concat(" with Capacitor");
+                }
+                Mounted mLinker = mounted.getLinkedBy();
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                    bvText.append(" x 1.2 Artemis");
+                }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    dBV *= 1.3;
+                    bvText.append(" x 1.3 Artemis V");
+                }
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
+                    bvText.append(" x 1.15 Apollo");
+                }
             }
 
             // and we'll add the tcomp here too

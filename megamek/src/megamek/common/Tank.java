@@ -1119,6 +1119,16 @@ public class Tank extends Entity {
                     bvText.append(" x 1.15 Apollo");
                 }
             }
+            // calc MG Array here:
+            if (wtype.hasFlag(WeaponType.F_MGA)) {
+                double mgaBV = 0;
+                for (Mounted possibleMG : getWeaponList()) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == mounted.getLocation())) {
+                        mgaBV += possibleMG.getType().getBV(this);
+                    }
+                }
+                dBV = mgaBV * 0.67;
+            }
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {

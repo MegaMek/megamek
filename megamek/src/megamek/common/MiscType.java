@@ -1167,7 +1167,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createTrailerModification() {
         MiscType misc = new MiscType();
 
-        misc.name = "Trailern";
+        misc.name = "Trailer";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;

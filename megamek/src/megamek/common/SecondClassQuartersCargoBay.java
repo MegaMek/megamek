@@ -72,7 +72,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
     @Override
     public String getUnusedString() {
         StringBuffer returnString = new StringBuffer("2nd Class Quarters - ");
-        returnString.append(currentSpace);
+        returnString.append((int)currentSpace);
         return returnString.toString();
     }
 

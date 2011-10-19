@@ -50,5 +50,10 @@ public class CLRAC5 extends RACWeapon {
         bv = 345;
         cost = 275000;
         techRating = RATING_F;
+        shortAV = 20;
+        medAV = 20;
+        longAV = 20;
+        maxRange = RANGE_LONG;
+
     }
 }

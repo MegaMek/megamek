@@ -23,10 +23,12 @@ import megamek.common.BattleArmorBay;
 import megamek.common.Bay;
 import megamek.common.CargoBay;
 import megamek.common.ConvFighter;
+import megamek.common.CrewQuartersCargoBay;
 import megamek.common.Dropship;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.FirstClassQuartersCargoBay;
 import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.HeavyVehicleBay;
@@ -42,11 +44,15 @@ import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MechBay;
 import megamek.common.Mounted;
+import megamek.common.PillionSeatCargoBay;
 import megamek.common.Protomech;
+import megamek.common.ProtomechBay;
 import megamek.common.RefrigeratedCargoBay;
 import megamek.common.SmallCraft;
 import megamek.common.SmallCraftBay;
 import megamek.common.SpaceStation;
+import megamek.common.StandardSeatCargoBay;
+import megamek.common.SteerageQuartersCargoBay;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
@@ -508,19 +514,19 @@ public class BLKFile {
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new ProtomechBay(size, doors));
                 } else if (transporter.startsWith("crewquarters:", 0)) {
                     String numbers = transporter.substring(13);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new CrewQuartersCargoBay(size, doors));
                 } else if (transporter.startsWith("steeragequarters:", 0)) {
                     String numbers = transporter.substring(17);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new SteerageQuartersCargoBay(size, doors));
                 } else if (transporter.startsWith("2ndclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
                     String temp[] = numbers.split(":");
@@ -532,19 +538,19 @@ public class BLKFile {
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new FirstClassQuartersCargoBay(size, doors));
                 } else if (transporter.startsWith("pillionseats:", 0)) {
                     String numbers = transporter.substring(12);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new PillionSeatCargoBay(size, doors));
                 } else if (transporter.startsWith("standardseats:", 0)) {
                     String numbers = transporter.substring(14);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new StandardSeatCargoBay(size, doors));
                 }
 
 

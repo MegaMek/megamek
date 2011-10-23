@@ -11946,7 +11946,8 @@ public class Server implements Runnable {
         final boolean glancing = game.getOptions().booleanOption("tacops_glancing_blows") && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        // Make sure the MoS is zero for *automatic* hits in case direct blows are in force.
+        toHit.setMoS((roll == Integer.MAX_VALUE) ? 0 : roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -11987,7 +11988,8 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             addReport(r);
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "hit with own flail/wrecking ball");
-            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false)/2;
+            pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false);
+            pr.damage = pr.damage / 2 + pr.damage % 2;
             newToHit.setHitTable(ToHitData.HIT_NORMAL);
             newToHit.setSideTable(ToHitData.SIDE_FRONT);
             pr.toHit = newToHit;

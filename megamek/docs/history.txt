@@ -17,6 +17,7 @@ v0.35.26-dev (SVN)
 + Don't allow backwards walking and evading
 + Aero attack values and ranges for clan RACs
 + added construction data for Centurion Weapon System
++ Bug 3427029: Incorrect damage when hitting self with flail/wrecking ball with TacOps direct blows enabled
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with attendant functionality change

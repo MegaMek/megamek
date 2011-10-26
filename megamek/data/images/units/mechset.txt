@@ -2079,8 +2079,10 @@ exact "Zeus ZEU-9T" "mechs/ZeusT.gif"
 
 # Protomechs
 chassis "Basilisk" "protomechs/basilisk.gif"
+chassis "Cecerops" "protomechs/cecerops.gif"
 chassis "Centaur" "protomechs/centaur.gif"
 chassis "Chrysaor" "protomechs/chrysaor.gif"
+chassis "Delphyne" "protomechs/delphyne.gif"
 chassis "Gorgon" "protomechs/gorgon.gif"
 chassis "Harpy" "protomechs/harpy.gif"
 chassis "Hydra" "protomechs/hydra.gif"

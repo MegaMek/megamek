@@ -37,8 +37,8 @@ Darter Scout Car,450
 Galleon Light Tank GAL-100,290
 Karnov UR Transport (Gunship),150
 Packrat LRPV PKR-T5 (SRM2),10
-Warrior H-7A,150
-Warrior H-7,290
+Warrior Attack Helicopter H-7A,150
+Warrior Attack Helicopter H-7,290
 Scorpion Light Tank,1430
 Skulker Wheeled Scout Tank,300
 Scorpion Light Tank (ML),150
@@ -50,7 +50,7 @@ Harasser Missile Platform,290
 Scorpion Light Tank (LRM),150
 J. Edgar Light Hover Tank (ICE),60
 J. Edgar Light Hover Tank (Flamer),30
-Warrior H-7C,60
+Warrior Attack Helicopter H-7C,60
 J. Edgar Light Hover Tank (MG),30
 Peregrine Attack VTOL,300
 Scimitar Medium Hover Tank,520

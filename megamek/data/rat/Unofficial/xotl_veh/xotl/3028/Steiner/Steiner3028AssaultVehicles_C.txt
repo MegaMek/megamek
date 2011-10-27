@@ -42,7 +42,7 @@ Demolisher Heavy Tank,1980
 Partisan Heavy Tank (LRM),110
 Devastator Heavy Tank,590
 Ontos Heavy Tank (LRM),10
-Behemoth,1420
+Behemoth Heavy Tank,1420
 Rhino Fire Support Tank (Flamer),590
 Rhino Fire Support Tank (MG),590
 Rhino Fire Support Tank,1590

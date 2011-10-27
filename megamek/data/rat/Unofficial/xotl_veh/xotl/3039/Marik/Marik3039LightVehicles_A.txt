@@ -33,8 +33,8 @@
 Marik3039LightVehicles_A
 Galleon Light Tank GAL-100,130
 Karnov UR Transport (Gunship),10
-Warrior H-7A,10
-Warrior H-7,20
+Warrior Attack Helicopter H-7A,10
+Warrior Attack Helicopter H-7,20
 Scorpion Light Tank,97
 Skulker Wheeled Scout Tank,34
 Scorpion Light Tank (ML),10
@@ -47,7 +47,7 @@ Plainsman Medium Hovertank,20
 Scorpion Light Tank (LRM),10
 J. Edgar Light Hover Tank (ICE),4
 J. Edgar Light Hover Tank (Flamer),2
-Warrior H-7C,5
+Warrior Attack Helicopter H-7C,5
 J. Edgar Light Hover Tank (MG),2
 Packrat LRPV PKR-T5 (ML),7
 Peregrine Attack VTOL,20

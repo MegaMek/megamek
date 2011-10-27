@@ -19,6 +19,7 @@ import java.util.Enumeration;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.common.Player;
 
@@ -33,7 +34,7 @@ public class AddBotCommand extends ClientCommand {
         super(
                 client,
                 "replacePlayer",
-                "Replaces a player who is a ghost with a bot. Usage #replacePlayer name, to replace the player named name. they must be a ghost.");
+                "Replaces a player who is a ghost with a bot. Usage /replacePlayer <-b:TestBot/Princess> name, to replace the player named name. They must be a ghost.  If the -b argument is left out, the TestBot will be used by default.");
     }
 
     /*
@@ -46,11 +47,24 @@ public class AddBotCommand extends ClientCommand {
         if (args.length < 2) {
             return "You must specify a player name.";
         }
+
+        String botName = "TestBot";
+        int playerListStart = 1;
+        if (args[1].toLowerCase().startsWith("-b:")) {
+            botName = args[1].replaceFirst("-b:", "");
+            playerListStart = 2;
+        }
+
+        String playerName = args[playerListStart];
+        for(int i = (playerListStart + 1); i < args.length; i++) {
+            playerName = playerName + " " + args[i];
+        }
+
         Player target = null;
         for (Enumeration<Player> i = client.game.getPlayers(); i
                 .hasMoreElements();) {
             Player player = i.nextElement();
-            if (player.getName().equals(args[1])) {
+            if (player.getName().equals(playerName)) {
                 target = player;
             }
         }
@@ -60,16 +74,24 @@ public class AddBotCommand extends ClientCommand {
         }
 
         if (target.isGhost()) {
-            BotClient c = new TestBot(target.getName(), client.getHost(),
-                    client.getPort());
+            BotClient c = null;
+            if ("Princess".equalsIgnoreCase(botName)) {
+                c = new Princess(target.getName(), client.getHost(), client.getPort());
+            } else if ("TestBot".equalsIgnoreCase(botName)) {
+                c = new TestBot(target.getName(), client.getHost(), client.getPort());
+            } else {
+                client.sendChat("Unrecognized bot: '" + botName + "'.  Defaulting to TestBot.");
+                botName = "TestBot";
+                c = new TestBot(target.getName(), client.getHost(), client.getPort());
+            }
             c.game.addGameListener(new BotGUI(c));
             try {
                 c.connect();
             } catch (Exception e) {
-                return "Bot failed to connect.";
+                return botName + " failed to connect.";
             }
             c.retrieveServerInfo();
-            return "Bot has replaced " + target.getName() + ".";
+            return botName + " has replaced " + target.getName() + ".";
         }
 
         return "Player " + target.getName() + " is not a ghost.";

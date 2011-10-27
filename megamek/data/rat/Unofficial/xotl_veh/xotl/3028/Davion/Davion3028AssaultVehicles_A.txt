@@ -37,7 +37,7 @@ Schrek PPC Carrier,57
 Demolisher Heavy Tank,166
 Partisan Heavy Tank (LRM),7
 Devastator Heavy Tank,50
-Behemoth,250
+Behemoth Heavy Tank,250
 Rhino Fire Support Tank (Flamer),50
 Rhino Fire Support Tank (MG),50
 Rhino Fire Support Tank,133

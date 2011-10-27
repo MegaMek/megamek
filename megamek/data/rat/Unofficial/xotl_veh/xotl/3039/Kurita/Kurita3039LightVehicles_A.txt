@@ -35,8 +35,8 @@ Galleon Light Tank GAL-100,10
 Galleon Light Tank GAL-200,3
 Karnov UR Transport (Gunship),11
 Skulker Wheeled Scout Tank (MG),5
-Warrior H-7A,11
-Warrior H-7,21
+Warrior Attack Helicopter H-7A,11
+Warrior Attack Helicopter H-7,21
 Scorpion Light Tank,107
 Skulker Wheeled Scout Tank,43
 Skulker Wheeled Scout Tank (SRM),5
@@ -50,7 +50,7 @@ Plainsman Medium Hovertank,21
 Scorpion Light Tank (LRM),11
 J. Edgar Light Hover Tank (ICE),11
 J. Edgar Light Hover Tank (Flamer),5
-Warrior H-7C,5
+Warrior Attack Helicopter H-7C,5
 J. Edgar Light Hover Tank (MG),5
 Peregrine Attack VTOL,21
 Scimitar Medium Hover Tank,107

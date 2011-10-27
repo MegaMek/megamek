@@ -37,8 +37,8 @@ Darter Scout Car,40
 Galleon Light Tank GAL-100,23
 Savannah Master Hovercraft,40
 Karnov UR Transport (Gunship),11
-Warrior H-7A,11
-Warrior H-7,23
+Warrior Attack Helicopter H-7A,11
+Warrior Attack Helicopter H-7,23
 Scorpion Light Tank,114
 Skulker Wheeled Scout Tank,23
 Scorpion Light Tank (ML),11
@@ -51,7 +51,7 @@ Plainsman Medium Hovertank,23
 Scorpion Light Tank (LRM),11
 J. Edgar Light Hover Tank (ICE),5
 J. Edgar Light Hover Tank (Flamer),2
-Warrior H-7C,6
+Warrior Attack Helicopter H-7C,6
 J. Edgar Light Hover Tank (MG),2
 Peregrine Attack VTOL,23
 Scimitar Medium Hover Tank,40

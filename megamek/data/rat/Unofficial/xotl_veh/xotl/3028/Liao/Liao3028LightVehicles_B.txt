@@ -33,8 +33,8 @@
 Liao3028LightVehicles_B
 Packrat LRPV PKR-T5 (SRM2),19
 Karnov UR Transport (Gunship),16
-Warrior H-7A,16
-Warrior H-7,32
+Warrior Attack Helicopter H-7A,16
+Warrior Attack Helicopter H-7,32
 Scorpion Light Tank,158
 Skulker Wheeled Scout Tank,32
 Scorpion Light Tank (ML),16
@@ -46,7 +46,7 @@ Harasser Missile Platform,32
 Scorpion Light Tank (LRM),16
 J. Edgar Light Hover Tank (ICE),6
 J. Edgar Light Hover Tank (Flamer),3
-Warrior H-7C,8
+Warrior Attack Helicopter H-7C,8
 J. Edgar Light Hover Tank (MG),3
 Peregrine Attack VTOL,55
 Scimitar Medium Hover Tank,55

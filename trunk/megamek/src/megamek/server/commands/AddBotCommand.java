@@ -24,7 +24,7 @@ public class AddBotCommand extends ServerCommand {
         super(
                 server,
                 "replacePlayer",
-                "Replaces a player who is a ghost with a bot. Usage /replacePlayer <-b TestBot/Princess> name, to replace the player named name. They must be a ghost.  If the -b argument is left out, the TestBot will be used by default.");
+                "Replaces a player who is a ghost with a bot. Usage /replacePlayer <-b:TestBot/Princess> name, to replace the player named name. They must be a ghost.  If the -b argument is left out, the TestBot will be used by default.");
     }
 
     /*
@@ -38,10 +38,11 @@ public class AddBotCommand extends ServerCommand {
             server.sendServerChat(connId, "You must specify a player name.");
             return;
         }
+
         String botName = "TestBot";
         int playerListStart = 1;
-        if (args[1].toLowerCase().startsWith("-b ")) {
-            botName = args[1].replaceFirst("-b ", "");
+        if (args[1].toLowerCase().startsWith("-b:")) {
+            botName = args[1].replaceFirst("-b:", "");
             playerListStart = 2;
         }
 

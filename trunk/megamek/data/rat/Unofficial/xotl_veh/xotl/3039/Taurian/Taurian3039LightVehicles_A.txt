@@ -34,8 +34,8 @@ Taurian3039LightVehicles_A
 Galleon Light Tank GAL-100,27
 Maultier Hover APC,50
 Karnov UR Transport (Gunship),14
-Warrior H-7A,14
-Warrior H-7,28
+Warrior Attack Helicopter H-7A,14
+Warrior Attack Helicopter H-7,28
 Scorpion Light Tank,139
 Skulker Wheeled Scout Tank,14
 Scorpion Light Tank (ML),14
@@ -48,7 +48,7 @@ Plainsman Medium Hovertank,69
 Scorpion Light Tank (LRM),14
 J. Edgar Light Hover Tank (ICE),6
 J. Edgar Light Hover Tank (Flamer),3
-Warrior H-7C,7
+Warrior Attack Helicopter H-7C,7
 J. Edgar Light Hover Tank (MG),3
 Peregrine Attack VTOL,28
 Scimitar Medium Hover Tank,49

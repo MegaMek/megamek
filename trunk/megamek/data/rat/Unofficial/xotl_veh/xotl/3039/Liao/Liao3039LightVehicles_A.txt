@@ -31,8 +31,8 @@
 #   less than 1.                                                            #
 #############################################################################
 Liao3039LightVehicles_A
-Warrior H-7A,9
-Warrior H-7,31
+Warrior Attack Helicopter H-7A,9
+Warrior Attack Helicopter H-7,31
 Scorpion Light Tank,154
 Skulker Wheeled Scout Tank,54
 Scorpion Light Tank (ML),15
@@ -44,7 +44,7 @@ Harasser Missile Platform,31
 Scorpion Light Tank (LRM),15
 J. Edgar Light Hover Tank (ICE),6
 J. Edgar Light Hover Tank (Flamer),3
-Warrior H-7C,8
+Warrior Attack Helicopter H-7C,8
 J. Edgar Light Hover Tank (MG),3
 Peregrine Attack VTOL,54
 Scimitar Medium Hover Tank,54

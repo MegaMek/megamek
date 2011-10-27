@@ -34,8 +34,8 @@ Outworlds3039LightVehicles_A
 Ferret Light Scout VTOL (Armor) "Wild Weasel",6
 Galleon Light Tank GAL-100,32
 Karnov UR Transport (Gunship),16
-Warrior H-7A,16
-Warrior H-7,32
+Warrior Attack Helicopter H-7A,16
+Warrior Attack Helicopter H-7,32
 Scorpion Light Tank,159
 Skulker Wheeled Scout Tank,16
 Scorpion Light Tank (ML),16
@@ -47,7 +47,7 @@ Harasser Missile Platform,32
 Scorpion Light Tank (LRM),16
 J. Edgar Light Hover Tank (ICE),6
 J. Edgar Light Hover Tank (Flamer),3
-Warrior H-7C,8
+Warrior Attack Helicopter H-7C,8
 J. Edgar Light Hover Tank (MG),3
 Peregrine Attack VTOL,32
 Scimitar Medium Hover Tank,56

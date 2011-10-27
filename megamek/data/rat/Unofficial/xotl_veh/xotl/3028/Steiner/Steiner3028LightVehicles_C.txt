@@ -36,8 +36,8 @@ Ferret Light Scout VTOL,350
 Ferret Light Scout VTOL (Armor) "Wild Weasel",90
 Galleon Light Tank GAL-100,290
 Karnov UR Transport (Gunship),120
-Warrior H-7A,120
-Warrior H-7,750
+Warrior Attack Helicopter H-7A,120
+Warrior Attack Helicopter H-7,750
 Scorpion Light Tank,1280
 Skulker Wheeled Scout Tank,260
 Scorpion Light Tank (ML),120
@@ -49,7 +49,7 @@ Harasser Missile Platform,270
 Scorpion Light Tank (LRM),120
 J. Edgar Light Hover Tank (ICE),60
 J. Edgar Light Hover Tank (Flamer),40
-Warrior H-7C,60
+Warrior Attack Helicopter H-7C,60
 J. Edgar Light Hover Tank (MG),20
 Peregrine Attack VTOL,140
 Scimitar Medium Hover Tank,460

@@ -37,8 +37,8 @@ Skulker Wheeled Scout Tank (SRM),6
 Saladin Assault Hover Tank (Armor),10
 Galleon Light Tank GAL-100,56
 Karnov UR Transport (Gunship),12
-Warrior H-7A,12
-Warrior H-7,24
+Warrior Attack Helicopter H-7A,12
+Warrior Attack Helicopter H-7,24
 Scorpion Light Tank,120
 Skulker Wheeled Scout Tank,48
 Scorpion Light Tank (ML),12
@@ -50,7 +50,7 @@ Harasser Missile Platform,24
 Scorpion Light Tank (LRM),12
 J. Edgar Light Hover Tank (ICE),12
 J. Edgar Light Hover Tank (Flamer),6
-Warrior H-7C,6
+Warrior Attack Helicopter H-7C,6
 J. Edgar Light Hover Tank (MG),6
 Peregrine Attack VTOL,24
 Scimitar Medium Hover Tank,90

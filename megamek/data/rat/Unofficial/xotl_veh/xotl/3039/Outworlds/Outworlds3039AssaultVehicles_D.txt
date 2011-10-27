@@ -36,7 +36,7 @@ Schrek AC Carrier,210
 Schrek PPC Carrier,1200
 Demolisher Heavy Tank,2460
 Devastator Heavy Tank,1060
-Behemoth,2460
+Behemoth Heavy Tank,2460
 Rhino Fire Support Tank (Flamer),140
 Rhino Fire Support Tank (MG),140
 Rhino Fire Support Tank,630

@@ -39,7 +39,7 @@ Ontos Heavy Tank,580
 Demolisher Heavy Tank,1450
 Partisan Heavy Tank (LRM),60
 Devastator Heavy Tank,440
-Behemoth,2180
+Behemoth Heavy Tank,2180
 Sturmfeur Heavy Tank (SRM),90
 Sturmfeur Heavy Tank,350
 Rhino Fire Support Tank (Flamer),440

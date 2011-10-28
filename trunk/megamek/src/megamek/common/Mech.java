@@ -986,12 +986,17 @@ public abstract class Mech extends Entity {
         return getJumpMP(true);
     }
 
+
     /**
      * This mech's jumping MP modified for missing jump jets and possibly
      * gravity
      */
     @Override
     public int getJumpMP(boolean gravity) {
+        return getJumpMP(gravity, false);
+    }
+
+    public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {
         int jump = 0;
 
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
@@ -1017,7 +1022,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        if (hasModularArmor()) {
+        if (hasModularArmor() && !ignoremodulararmor) {
             jump--;
         }
 
@@ -2535,7 +2540,7 @@ public abstract class Mech extends Entity {
 
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+") x ");
+            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+(modularArmor>0?" +"+modularArmor+" modular":"")+") x ");
             bvText.append(armorMultiplier);
             bvText.append(endColumn);
             bvText.append(startColumn);
@@ -2898,7 +2903,7 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
         // use UMU for JJ, unless we have more jump MP than UMU (then we have
         // mechanical jumpboosters)
-        int jumpCheck = Math.max(getActiveUMUCount(), getJumpMP(false));
+        int jumpCheck = Math.max(getActiveUMUCount(), getJumpMP(false, true));
         int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true, false).getValue();
         bvText.append(startRow);
         bvText.append(startColumn);

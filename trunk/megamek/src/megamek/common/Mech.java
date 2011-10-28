@@ -167,7 +167,7 @@ public abstract class Mech extends Entity {
     private int[] rearArmor;
 
     private int[] orig_rearArmor;
-    
+
     private boolean[] rearHardenedArmorDamaged;
 
     private int sinksOn = -1;
@@ -1613,21 +1613,23 @@ public abstract class Mech extends Entity {
         orig_rearArmor[loc] = val;
         setArmor(val, loc, true);
     }
-    
+
     @Override
     public void setHardenedArmorDamaged(HitData hit, boolean damaged) {
-        if (hit.isRear() && hasRearArmor(hit.getLocation()))
+        if (hit.isRear() && hasRearArmor(hit.getLocation())) {
             rearHardenedArmorDamaged[hit.getLocation()] = damaged;
-        else
+        } else {
             hardenedArmorDamaged[hit.getLocation()] = damaged;
+        }
     }
 
     @Override
     public boolean isHardenedArmorDamaged(HitData hit) {
-        if (hit.isRear() && hasRearArmor(hit.getLocation()))
+        if (hit.isRear() && hasRearArmor(hit.getLocation())) {
             return rearHardenedArmorDamaged[hit.getLocation()];
-        else 
+        } else {
             return hardenedArmorDamaged[hit.getLocation()];
+        }
     }
 
     /**
@@ -2759,7 +2761,7 @@ public abstract class Mech extends Entity {
             // just
             // fired incendiary ammo, therefore they don't count for explosive
             // BV
-            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
+            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)  || (((WeaponType) etype).getAmmoType() == AmmoType.T_HYPER_VELOCITY))) {
                 toSubtract = 0;
             }
 
@@ -4127,7 +4129,7 @@ public abstract class Mech extends Entity {
         // cost of sinks
         costs[i++] = sinkCost * (heatSinks() - freeSinks);
         costs[i++] = hasFullHeadEject() ? 1725000 : 0;
-        
+
         // armor
         if (hasPatchworkArmor()) {
             for (int loc = 0; loc < locations(); loc++) {

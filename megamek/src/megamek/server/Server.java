@@ -11989,7 +11989,7 @@ public class Server implements Runnable {
             addReport(r);
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "hit with own flail/wrecking ball");
             pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false);
-            pr.damage = pr.damage / 2 + pr.damage % 2;
+            pr.damage = (pr.damage / 2) + (pr.damage % 2);
             newToHit.setHitTable(ToHitData.HIT_NORMAL);
             newToHit.setSideTable(ToHitData.SIDE_FRONT);
             pr.toHit = newToHit;
@@ -17829,7 +17829,7 @@ public class Server implements Runnable {
         r.add(position.getBoardNum(), true);
         vDesc.add(r);
 
-        int curDepth = game.getBoard().getHex(position).floor() - craterDepth;
+        int curDepth = craterDepth;
         int range = 0;
         while (range < (2 * craterDepth)) {
             // Get the set of hexes at this range.
@@ -17840,7 +17840,7 @@ public class Server implements Runnable {
                 Coords myHexCoords = hexSet.nextElement();
                 IHex myHex = game.getBoard().getHex(myHexCoords);
                 // In each hex, first, sink the terrain if necessary.
-                myHex.setElevation((myHex.getElevation() - craterDepth) + (range / 2));
+                myHex.setElevation((myHex.getElevation() - curDepth));
 
                 // Then, remove ANY terrains here.
                 // I mean ALL of them; they're all just gone.
@@ -17854,14 +17854,15 @@ public class Server implements Runnable {
                 sendChangedHex(myHexCoords);
             }
 
-            // Now that the hexes are dealt with, increment the distance.
-            range++;
-
             // Lastly, if the next distance is a multiple of 2...
             // The crater depth goes down one.
             if ((range > 0) && ((range % 2) == 0)) {
-                curDepth++;
+                curDepth--;
             }
+
+
+            // Now that the hexes are dealt with, increment the distance.
+            range++;
         }
 
         // This is technically part of cratering, but...
@@ -17970,7 +17971,10 @@ public class Server implements Runnable {
                         int oldLevel = myHex.terrainLevel(Terrains.WATER);
                         myHex.removeTerrain(Terrains.WATER);
                         if (oldLevel > numCleared) {
+                            myHex.setElevation(myHex.getElevation() - numCleared);
                             myHex.addTerrain(new Terrain(Terrains.WATER, oldLevel - numCleared));
+                        } else {
+                            myHex.setElevation(myHex.getElevation() - oldLevel);
                         }
                     }
 

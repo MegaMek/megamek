@@ -23,6 +23,8 @@ v0.35.26-dev (SVN)
 + Patch 3427458: Fix for /replacePlayer -b parameter
 + Bug: don't count HVACs as explosive for BV
 + Nuke terrain mods bug fixing
++ Indirect fire using Narc-compatible ammo can now target units tagged with
+    either Narc or iNarc homing pods (was Narc-only before)
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

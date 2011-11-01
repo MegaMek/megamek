@@ -1781,7 +1781,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
                 && (!game.getOptions().booleanOption("double_blind") || Compute.canSee(game, ae, target))
                 && !(wtype instanceof ArtilleryCannonWeapon)) {
-            return new String("Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
+            return "Indirect-fire LRM cannot be fired with direct LOS from attacker to target.";
         }
 
         // If we're lying mines, we can't shoot.
@@ -2388,7 +2388,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         if (wtype.hasFlag(WeaponType.F_DIVE_BOMB) || wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-            if (ae.getBombs(AmmoType.F_GROUND_BOMB).size() == 0) {
+            if (ae.getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
                 return "no bombs left to drop";
             }
             if ((ae instanceof Aero) && ((Aero) ae).isSpheroid()) {
@@ -2418,7 +2418,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         Entity spotter = null;
         if (isIndirect) {
             if ((target instanceof Entity) && !isTargetECMAffected && usesAmmo
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) && (te.isNarcedBy(ae.getOwner().getTeam()))) {
+                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) && 
+                    ((te.isNarcedBy(ae.getOwner().getTeam())) ||
+                     (te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;
             } else {
                 spotter = Compute.findSpotter(game, ae, target);

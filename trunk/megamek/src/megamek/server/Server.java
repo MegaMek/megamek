@@ -185,6 +185,8 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.BPodWeapon;
+import megamek.common.weapons.MPodWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
@@ -20641,6 +20643,13 @@ public class Server implements Runnable {
         if (mounted.isDestroyed()) {
             System.err.println("server: explodeEquipment called on destroyed" + " equipment (" + mounted.getName()
                     + ')');
+            return vDesc;
+        }
+        
+        // Special case: discharged M- and B-pods shouldn't explode.
+        if ((mounted.getType() instanceof MPodWeapon
+                || mounted.getType() instanceof BPodWeapon)
+                && mounted.getLinked().getShotsLeft() == 0) {
             return vDesc;
         }
 

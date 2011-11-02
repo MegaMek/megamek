@@ -25,6 +25,7 @@ v0.35.26-dev (SVN)
 + Nuke terrain mods bug fixing
 + Indirect fire using Narc-compatible ammo can now target units tagged with
     either Narc or iNarc homing pods (was Narc-only before)
++ Expended B- and M-pods no longer explode when hit
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

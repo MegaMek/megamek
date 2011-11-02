@@ -64,7 +64,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setSource(dataFile.getDataAsString("source")[0]);
         }
 
-        if (dataFile.exists("exoskeletion") && dataFile.getDataAsString("exoskeleton")[0].equalsIgnoreCase("true")) {
+        if (dataFile.exists("exoskeleton") && dataFile.getDataAsString("exoskeleton")[0].equalsIgnoreCase("true")) {
             t.setIsExoskeleton(true);
         }
 

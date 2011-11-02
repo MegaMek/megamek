@@ -186,6 +186,7 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BPodWeapon;
+import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.MPodWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TAGHandler;
@@ -20645,11 +20646,11 @@ public class Server implements Runnable {
                     + ')');
             return vDesc;
         }
-        
+
         // Special case: discharged M- and B-pods shouldn't explode.
-        if ((mounted.getType() instanceof MPodWeapon
-                || mounted.getType() instanceof BPodWeapon)
-                && mounted.getLinked().getShotsLeft() == 0) {
+        if (((mounted.getType() instanceof MPodWeapon)
+                || (mounted.getType() instanceof BPodWeapon))
+                && (mounted.getLinked().getShotsLeft() == 0)) {
             return vDesc;
         }
 
@@ -20678,6 +20679,12 @@ public class Server implements Runnable {
             if ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
+                return vDesc;
+            }
+        }
+        //special case. HVACs only explode when there's ammo left
+        if (mounted.getType() instanceof HVACWeapon) {
+            if (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0) {
                 return vDesc;
             }
         }

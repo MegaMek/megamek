@@ -29,6 +29,7 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.PPCWeapon;
 
@@ -789,8 +790,8 @@ public abstract class Mech extends Entity {
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;
-            if (rating % 5 != 0) {
-                return (int) (rating - rating % 5 + 5) / (int) weight;
+            if ((rating % 5) != 0) {
+                return (int) ((rating - (rating % 5)) + 5) / (int) weight;
             }
             return (int) (rating / (int) weight);
 
@@ -1186,7 +1187,7 @@ public abstract class Mech extends Entity {
 
         switch (getJumpType()) {
             case JUMP_IMPROVED:
-                return engine.getJumpHeat(movedMP / 2 + movedMP % 2);
+                return engine.getJumpHeat((movedMP / 2) + (movedMP % 2));
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
             case JUMP_NONE:
@@ -2705,6 +2706,10 @@ public abstract class Mech extends Entity {
                     continue;
                 }
             }
+            // PPC caps count as 1 for each crit
+            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR) && (mounted.getLinked() != null)) {
+                toSubtract = 1;
+            }
 
             // don't count oneshot ammo
             if (loc == LOC_NONE) {
@@ -2738,8 +2743,8 @@ public abstract class Mech extends Entity {
                 }
             }
 
-            // gauss rifles only subtract 1 point per slot
-            if (etype instanceof GaussWeapon) {
+            // gauss rifles only subtract 1 point per slot, same for HVACs
+            if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)) {
                 toSubtract = 1;
             }
             // tasers also get only 1 point per slot
@@ -2753,21 +2758,14 @@ public abstract class Mech extends Entity {
                 toSubtract = 0;
             }
 
-            // RACs don't really count
-            if ((etype instanceof WeaponType) && (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)) {
+            // RACs, LACs and ACs don't really count
+            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY) || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
                 toSubtract = 0;
             }
 
             // empty ammo shouldn't count
             if ((etype instanceof AmmoType) && (mounted.getShotsLeft() == 0)) {
                 continue;
-            }
-            // normal ACs only marked as explosive because they are when they
-            // just
-            // fired incendiary ammo, therefore they don't count for explosive
-            // BV
-            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC)  || (((WeaponType) etype).getAmmoType() == AmmoType.T_HYPER_VELOCITY))) {
-                toSubtract = 0;
             }
 
             // B- and M-Pods shouldn't subtract
@@ -2780,10 +2778,6 @@ public abstract class Mech extends Entity {
                 toSubtract = 1;
             }
 
-            // PPC with caps count as 1 for each crit
-            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR) && (mounted.getLinked() != null)) {
-                toSubtract = 1;
-            }
             // we subtract per critical slot
             toSubtract *= etype.getCriticals(this);
             ammoPenalty += toSubtract;
@@ -3062,7 +3056,7 @@ public abstract class Mech extends Entity {
 
         // account for coolant pods
         if (coolantPods > 0) {
-            mechHeatEfficiency += Math.ceil(getNumberOfSinks() * coolantPods / 5);
+            mechHeatEfficiency += Math.ceil((getNumberOfSinks() * coolantPods) / 5);
             bvText.append(" + Coolant Pods ");
         }
 
@@ -3940,7 +3934,7 @@ public abstract class Mech extends Entity {
             bvText.append(endRow);
         }
 
-        double speedFactor = Math.pow(1 + (((double) runMP + (Math.round((double) jumpCheck / 2)) - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + ((((double) runMP + (Math.round((double) jumpCheck / 2))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         bvText.append(startRow);
@@ -4106,15 +4100,15 @@ public abstract class Mech extends Entity {
         costs[i++] = muscCost * weight;// musculature
         costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = getActuatorCost();// arm and/or leg actuators
-        costs[i++] = engine.getBaseCost() * engine.getRating() * weight / 75.0;
+        costs[i++] = (engine.getBaseCost() * engine.getRating() * weight) / 75.0;
         if (getGyroType() == Mech.GYRO_XL) {
-            costs[i++] = 750000 * (int) Math.ceil(getOriginalWalkMP() * weight / 100f) * 0.5;
+            costs[i++] = 750000 * (int) Math.ceil((getOriginalWalkMP() * weight) / 100f) * 0.5;
         } else if (getGyroType() == Mech.GYRO_COMPACT) {
-            costs[i++] = 400000 * (int) Math.ceil(getOriginalWalkMP() * weight / 100f) * 1.5;
+            costs[i++] = 400000 * (int) Math.ceil((getOriginalWalkMP() * weight) / 100f) * 1.5;
         } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-            costs[i++] = 500000 * (int) Math.ceil(getOriginalWalkMP() * weight / 100f) * 2;
+            costs[i++] = 500000 * (int) Math.ceil((getOriginalWalkMP() * weight) / 100f) * 2;
         } else {
-            costs[i++] = 300000 * (int) Math.ceil(getOriginalWalkMP() * weight / 100f);
+            costs[i++] = 300000 * (int) Math.ceil((getOriginalWalkMP() * weight) / 100f);
         }
         double jumpBaseCost = 200;
         // You cannot have JJ's and UMU's on the same unit.

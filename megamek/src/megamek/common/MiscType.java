@@ -174,6 +174,9 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_MECHANICAL_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(128);
     public static final BigInteger F_TRAILER_MODIFICATION = BigInteger.valueOf(1).shiftLeft(129);
 
+    public static final BigInteger F_LARGE_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(130);
+    public static final BigInteger F_SMALL_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(131);
+
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
     public static final long S_TREE_CLUB = 1L << 1;// BMR
@@ -1025,6 +1028,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLReconCamera());
         EquipmentType.addType(MiscType.createISReconCamera());
         EquipmentType.addType(MiscType.createISCombatVehicleEscapePod());
+        EquipmentType.addType(MiscType.createISSmallNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createCLSmallNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createISLargeNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createCLLargeNavalCommScannerSuite());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -5365,6 +5372,58 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER).or(F_BA_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISSmallNavalCommScannerSuite() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 100;
+        misc.cost = 50000000;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Small Naval Comm-Scanner Suite";
+        misc.setInternalName("ISSmallNavalCommScannerSuite");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
+        misc.flags = misc.flags.or(F_SMALL_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createCLSmallNavalCommScannerSuite() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 100;
+        misc.cost = 50000000;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Small Naval Comm-Scanner Suite";
+        misc.setInternalName("CLSmallNavalCommScannerSuite");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
+        misc.flags = misc.flags.or(F_SMALL_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISLargeNavalCommScannerSuite() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 500;
+        misc.cost = 250000000;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Large Naval Comm-Scanner Suite";
+        misc.setInternalName("ISLargeNavalCommScannerSuite");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
+        misc.flags = misc.flags.or(F_LARGE_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createCLLargeNavalCommScannerSuite() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 500;
+        misc.cost = 250000000;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Large Naval Comm-Scanner Suite";
+        misc.setInternalName("CLLargeNavalCommScannerSuite");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
+        misc.flags = misc.flags.or(F_LARGE_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
         return misc;
     }
 

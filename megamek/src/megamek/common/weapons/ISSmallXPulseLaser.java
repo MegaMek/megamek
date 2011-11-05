@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -24,34 +24,36 @@ import megamek.common.TechConstants;
  */
 public class ISSmallXPulseLaser extends PulseLaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5322977585378755226L;
 
     /**
-     * 
+     *
      */
     public ISSmallXPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        this.name = "Small X-Pulse Laser";
-        this.setInternalName("ISSmallXPulseLaser");
-        this.addLookupName("IS X-Pulse Small Laser");
-        this.addLookupName("IS Small X-Pulse Laser");
-        this.heat = 3;
-        this.damage = 3;
-        this.toHitModifier = -2;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 5;
-        this.extremeRange = 8;
-        this.waterShortRange = 1;
-        this.waterMediumRange = 2;
-        this.waterLongRange = 2;
-        this.waterExtremeRange = 4;
-        this.tonnage = 1.0f;
-        this.criticals = 1;
-        this.bv = 21;
-        this.cost = 31000;
+        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        name = "Small X-Pulse Laser";
+        setInternalName("ISSmallXPulseLaser");
+        addLookupName("IS X-Pulse Small Laser");
+        addLookupName("IS Small X-Pulse Laser");
+        heat = 3;
+        damage = 3;
+        toHitModifier = -2;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 5;
+        extremeRange = 8;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 2;
+        waterExtremeRange = 4;
+        tonnage = 1.0f;
+        criticals = 1;
+        bv = 21;
+        maxRange = RANGE_SHORT;
+        shortAV = 3;
+        cost = 31000;
     }
 }

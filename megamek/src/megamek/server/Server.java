@@ -23830,8 +23830,8 @@ public class Server implements Runnable {
                     continue; // under the bridge even at same level
                 }
 
-                // Add the weight of a Mek or tank to the correct floor.
-                if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                // Add the weight of a Mek or tank or infantry to the correct floor.
+                if ((entity instanceof Mech) || (entity instanceof Tank) || (entity instanceof Infantry)) {
                     int load = (int) entity.getWeight();
                     int floor = entityElev;
                     if (floor == bridgeEl) {

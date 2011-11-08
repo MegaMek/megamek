@@ -29,6 +29,7 @@ v0.35.26-dev (SVN)
 + HVAC explosiveness and BV fix
 + Added naval comm-scanner suits construction data
 + Bug: Infantry weight should count for building collapse
++ Bug 3434278: Clan LRM 1 has wrong racksize, making it unable to load ammo
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

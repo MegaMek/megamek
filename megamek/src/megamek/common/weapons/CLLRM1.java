@@ -34,7 +34,7 @@ public class CLLRM1 extends LRMWeapon {
         name = "LRM 1";
         setInternalName("CLLRM1");
         heat = 0;
-        rackSize = 2;
+        rackSize = 1;
         minimumRange = WEAPON_NA;
         tonnage = 0.4f;
         criticals = 0;

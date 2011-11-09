@@ -30,6 +30,8 @@ v0.35.26-dev (SVN)
 + Added naval comm-scanner suits construction data
 + Bug: Infantry weight should count for building collapse
 + Bug 3434278: Clan LRM 1 has wrong racksize, making it unable to load ammo
++ Vibroblades with AES should have 1.5 times BV
++ don't account modular armor jump MP reducing for BV Heat Efficiency
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

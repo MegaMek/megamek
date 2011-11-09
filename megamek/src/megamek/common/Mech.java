@@ -1365,8 +1365,8 @@ public abstract class Mech extends Entity {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
-            if(!mounted.isDestroyed()) {
-            	continue;
+            if (!mounted.isDestroyed()) {
+                continue;
             }
             if (etype.hasFlag(MiscType.F_HEAT_SINK) || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 sinks++;
@@ -3060,8 +3060,8 @@ public abstract class Mech extends Entity {
             bvText.append(" + Coolant Pods ");
         }
 
-        if ((getJumpMP() > 0) && (getJumpHeat(getJumpMP()) > getRunHeat())) {
-            mechHeatEfficiency -= getJumpHeat(getJumpMP());
+        if ((getJumpMP(false, true) > 0) && (getJumpHeat(getJumpMP(false, true)) > getRunHeat())) {
+            mechHeatEfficiency -= getJumpHeat(getJumpMP(false, true));
             bvText.append(" - Jump Heat ");
         } else {
             mechHeatEfficiency -= getRunHeat();
@@ -3078,8 +3078,8 @@ public abstract class Mech extends Entity {
         }
 
         bvText.append(" - ");
-        if (getJumpMP() > 0) {
-            bvText.append(getJumpHeat(getJumpMP()));
+        if (getJumpMP(false, true) > 0) {
+            bvText.append(getJumpHeat(getJumpMP(false, true)));
         } else {
             bvText.append(getRunHeat());
         }
@@ -3492,7 +3492,11 @@ public abstract class Mech extends Entity {
                         if ((mount.getType() instanceof MiscType) && ((MiscType) mount.getType()).hasFlag(MiscType.F_CLUB) && ((MiscType) mount.getType()).isVibroblade()) {
 
                             ArrayList<Object> weaponValues = new ArrayList<Object>();
-                            weaponValues.add(((MiscType) mount.getType()).getBV(this));
+                            double dBV = ((MiscType) mount.getType()).getBV(this);
+                            if (hasFunctionalArmAES(mount.getLocation())) {
+                                dBV *= 1.5;
+                            }
+                            weaponValues.add(dBV);
                             weaponValues.add((double)getActiveVibrobladeHeat(location, true));
                             weaponValues.add(mount.getName());
                             heatBVs.add(weaponValues);

@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.26-dev (SVN)
++ BV tag added for manual BV for RS creation.
 + Prototype RL launcher ammo names wrong
 + claws +2 to hit should only apply to improvised clubs
 + Added Narc I-OS

@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -133,19 +133,19 @@ public class Tank extends Entity {
     }
 
     public int getMotiveDamage() {
-    	return motiveDamage;
+        return motiveDamage;
     }
 
     public void setMotiveDamage(int d) {
-    	motiveDamage = d;
+        motiveDamage = d;
     }
 
     public int getMotivePenalty() {
-    	return motivePenalty;
+        return motivePenalty;
     }
 
     public void setMotivePenalty(int p) {
-    	motivePenalty = p;
+        motivePenalty = p;
     }
 
     /**
@@ -160,8 +160,8 @@ public class Tank extends Entity {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
-        if(engineHit) {
-        	return 0;
+        if (engineHit) {
+            return 0;
         }
         j = Math.max(0, j - motiveDamage);
         j = Math.max(0, j - getCargoMpReduction());
@@ -327,12 +327,13 @@ public class Tank extends Entity {
     }
 
     /**
-     * Marks this tank for immobilization, most likely from a related motive system
-     * hit. To <em>actually</em> immobilize it, {@link #applyDamage()} must also
-     * be invoked; until then, {@link #isMovementHitPending()} will return true
-     * after this but neither {@link #isMovementHit()} nor {@link #isImmobile()}
-     * will have been updated yet (because the tank is technically not immobile
-     * just <em>yet</em> until damage is actually resolved).
+     * Marks this tank for immobilization, most likely from a related motive
+     * system hit. To <em>actually</em> immobilize it, {@link #applyDamage()}
+     * must also be invoked; until then, {@link #isMovementHitPending()} will
+     * return true after this but neither {@link #isMovementHit()} nor
+     * {@link #isImmobile()} will have been updated yet (because the tank is
+     * technically not immobile just <em>yet</em> until damage is actually
+     * resolved).
      */
     public void immobilize() {
         m_bImmobileHit = true;
@@ -774,6 +775,10 @@ public class Tank extends Entity {
      */
     @Override
     public int calculateBattleValue() {
+        if (useManualBV) {
+            return manualBV;
+        }
+
         return calculateBattleValue(false, false);
     }
 
@@ -782,6 +787,9 @@ public class Tank extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        if (useManualBV) {
+            return manualBV;
+        }
         bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
         bvText.append(getChassis());
@@ -795,7 +803,6 @@ public class Tank extends Entity {
 
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
-
 
         boolean blueShield = false;
         // a blueshield system means a +0.2 on the armor and internal modifier,
@@ -843,7 +850,7 @@ public class Tank extends Entity {
             bvText.append(startColumn);
 
             int armor = getArmor(loc) + modularArmor;
-            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+") x ");
+            bvText.append("Total Armor " + this.getLocationAbbr(loc) + " (" + armor + ") x ");
             bvText.append(armorMultiplier);
             bvText.append(" x ");
             bvText.append(getBARRating(loc));
@@ -925,9 +932,7 @@ public class Tank extends Entity {
             } else if (((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || etype.hasFlag(MiscType.F_CHAFF_POD)
-                    || etype.hasFlag(MiscType.F_BAP)))
-                    || etype.hasFlag(MiscType.F_MINESWEEPER)) {
+                    || etype.hasFlag(MiscType.F_CHAFF_POD) || etype.hasFlag(MiscType.F_BAP))) || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
                 bvText.append(bv);
@@ -1103,7 +1108,6 @@ public class Tank extends Entity {
                     weaponName = weaponName.concat(" with Capacitor");
                 }
             }
-
 
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
@@ -1362,7 +1366,7 @@ public class Tank extends Entity {
 
             if ((mtype.hasFlag(MiscType.F_ECM) && !mtype.hasFlag(MiscType.F_WATCHDOG)) || mtype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: || mtype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_CHAFF_POD)|| mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
+                    || mtype.hasFlag(MiscType.F_CHAFF_POD) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
                 continue;
             }
             double bv = mtype.getBV(this, mounted.getLocation());
@@ -1588,7 +1592,6 @@ public class Tank extends Entity {
         return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
-
     @Override
     public int getHeatCapacity() {
         return 999;
@@ -1634,7 +1637,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1788,8 +1791,7 @@ public class Tank extends Entity {
                 cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
             }
 
-        }
-        else {
+        } else {
             cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
         double diveTonnage;
@@ -1909,7 +1911,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     *
+     * 
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
@@ -1936,12 +1938,12 @@ public class Tank extends Entity {
                 }
                 int nMP = getOriginalWalkMP() - motiveDamage;
                 if (nMP > 0) {
-                    motiveDamage = getOriginalWalkMP() - (int)Math.ceil(nMP / 2.0);
+                    motiveDamage = getOriginalWalkMP() - (int) Math.ceil(nMP / 2.0);
                 }
                 break;
             case 4:
-            	motiveDamage = getOriginalWalkMP();
-            	immobilize();
+                motiveDamage = getOriginalWalkMP();
+                immobilize();
         }
     }
 
@@ -1974,14 +1976,14 @@ public class Tank extends Entity {
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
         if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
-            setOriginalJumpMP(getOriginalJumpMP()+1);
+            setOriginalJumpMP(getOriginalJumpMP() + 1);
         }
     }
 
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     *
+     * 
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2233,9 +2235,9 @@ public class Tank extends Entity {
     }
 
     public void engineFix() {
-    	engineHit = false;
-    	unlockTurret();
-    	for (Mounted m : getWeaponList()) {
+        engineHit = false;
+        unlockTurret();
+        for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
             if (wtype.hasFlag(WeaponType.F_ENERGY)) {
                 m.setBreached(false); // not destroyed, just
@@ -2245,7 +2247,7 @@ public class Tank extends Entity {
     }
 
     public boolean isEngineHit() {
-    	return engineHit;
+        return engineHit;
     }
 
     /*
@@ -2326,7 +2328,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2354,7 +2356,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2377,7 +2379,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     *
+     * 
      * @return
      */
     public int getTotalSlots() {
@@ -2386,7 +2388,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     *
+     * 
      * @return
      */
     public int getFreeSlots() {
@@ -2511,7 +2513,7 @@ public class Tank extends Entity {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH)), LOC_BODY);
             } catch (LocationFullException e) {
-                //this should never happen
+                // this should never happen
             }
         }
     }
@@ -2547,7 +2549,7 @@ public class Tank extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -2622,12 +2624,12 @@ public class Tank extends Entity {
         for (int i = 0; i < getLocationNames().length; i++) {
             struct += this.getInternal(i);
         }
-        return (int)Math.ceil(struct/10.0);
+        return (int) Math.ceil(struct / 10.0);
     }
 
     @Override
     public int getEngineHits() {
-        if(isEngineHit()) {
+        if (isEngineHit()) {
             return 1;
         } else {
             return 0;
@@ -2638,13 +2640,13 @@ public class Tank extends Entity {
     public String getLocationDamage(int loc) {
         String toReturn = "";
         boolean first = true;
-        if(isTurretLocked(loc)) {
+        if (isTurretLocked(loc)) {
             toReturn += "Locked";
             first = false;
         }
-        if(isStabiliserHit(loc)) {
-            if(!first) {
-                toReturn +=", ";
+        if (isStabiliserHit(loc)) {
+            if (!first) {
+                toReturn += ", ";
             }
             toReturn += "Stabilizer hit";
             first = false;

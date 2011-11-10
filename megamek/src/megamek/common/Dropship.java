@@ -3,7 +3,7 @@
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -139,7 +139,7 @@ public class Dropship extends SmallCraft {
 
         // heat sinks
         int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
-                                                   // 2000;
+        // 2000;
         cost += sinkCost * getHeatSinks();
 
         // weapons
@@ -181,6 +181,9 @@ public class Dropship extends SmallCraft {
 
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        if (useManualBV) {
+            return manualBV;
+        }
 
         bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
@@ -604,7 +607,7 @@ public class Dropship extends SmallCraft {
                 arcBV += dBV;
                 arcHeat += weaponHeat;
             }
-            //now ammo
+            // now ammo
             Map<String, Double> ammo = new HashMap<String, Double>();
             ArrayList<String> keys = new ArrayList<String>();
             for (Mounted mounted : getAmmo()) {
@@ -617,11 +620,13 @@ public class Dropship extends SmallCraft {
                 AmmoType atype = (AmmoType) mounted.getType();
                 // we need to deal with cases where ammo is loaded in multi-ton
                 // increments
-                // (on dropships and jumpships) - lets take the ratio of shots to
+                // (on dropships and jumpships) - lets take the ratio of shots
+                // to
                 // shots left
                 double ratio = mounted.getShotsLeft() / atype.getShots();
 
-                // if the ratio is less than one, we will treat as a full ton since
+                // if the ratio is less than one, we will treat as a full ton
+                // since
                 // we don't make that adjustment elsewhere
                 if (ratio < 1.0) {
                     ratio = 1.0;
@@ -641,9 +646,11 @@ public class Dropship extends SmallCraft {
                     continue;
                 }
 
-                // don't count oneshot ammo, it's considered part of the launcher.
+                // don't count oneshot ammo, it's considered part of the
+                // launcher.
                 if (mounted.getLocation() == Entity.LOC_NONE) {
-                    // assumption: ammo without a location is for a oneshot weapon
+                    // assumption: ammo without a location is for a oneshot
+                    // weapon
                     continue;
                 }
                 double abv = ratio * atype.getBV(this);
@@ -658,7 +665,7 @@ public class Dropship extends SmallCraft {
                     ammo.put(key, abv + ammo.get(key));
                 }
             }
-            //now cycle through ammo hash and deal with excessive ammo issues
+            // now cycle through ammo hash and deal with excessive ammo issues
             for (String fullkey : keys) {
                 String[] k = fullkey.split(";");
                 String key = k[1];
@@ -779,9 +786,9 @@ public class Dropship extends SmallCraft {
             }
         }
 
-        //ok now add in ammo to arc bvs
-        for(int i=0; i<arcBVs.length; i++) {
-            arcBVs[i] = arcBVs[i]+ammoBVs[i];
+        // ok now add in ammo to arc bvs
+        for (int i = 0; i < arcBVs.length; i++) {
+            arcBVs[i] = arcBVs[i] + ammoBVs[i];
         }
 
         // ok now lets go in and add the arcs
@@ -1012,7 +1019,7 @@ public class Dropship extends SmallCraft {
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
         if (!ignoreC3 && (game != null)) {
-            xbv += getExtraC3BV((int)Math.round(finalBV));
+            xbv += getExtraC3BV((int) Math.round(finalBV));
         }
         finalBV += xbv;
 
@@ -1216,7 +1223,7 @@ public class Dropship extends SmallCraft {
 
     /**
      * What's the range of the ECM equipment?
-     *
+     * 
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */
@@ -1258,11 +1265,11 @@ public class Dropship extends SmallCraft {
         if ((getAltitude() == 0) && !game.getBoard().inSpace() && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));
-            secondaryPositions.put(2, position.translated((getFacing()+1)%6));
-            secondaryPositions.put(3, position.translated((getFacing()+2)%6));
-            secondaryPositions.put(4, position.translated((getFacing()+3)%6));
-            secondaryPositions.put(5, position.translated((getFacing()+4)%6));
-            secondaryPositions.put(6, position.translated((getFacing()+5)%6));
+            secondaryPositions.put(2, position.translated((getFacing() + 1) % 6));
+            secondaryPositions.put(3, position.translated((getFacing() + 2) % 6));
+            secondaryPositions.put(4, position.translated((getFacing() + 3) % 6));
+            secondaryPositions.put(5, position.translated((getFacing() + 4) % 6));
+            secondaryPositions.put(6, position.translated((getFacing() + 5) % 6));
         }
     }
 
@@ -1283,13 +1290,14 @@ public class Dropship extends SmallCraft {
 
     @Override
     public String hasRoomForVerticalLanding() {
-        //dropships can land just about anywhere they want, unless it is off the map
-        Vector<Coords> positions =  new Vector<Coords>();
+        // dropships can land just about anywhere they want, unless it is off
+        // the map
+        Vector<Coords> positions = new Vector<Coords>();
         positions.add(getPosition());
-        for(int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) {
             positions.add(getPosition().translated(i));
         }
-        for(Coords pos : positions) {
+        for (Coords pos : positions) {
             IHex hex = game.getBoard().getHex(getPosition());
             hex = game.getBoard().getHex(pos);
             // if the hex is null, then we are offboard. Don't let units
@@ -1297,17 +1305,17 @@ public class Dropship extends SmallCraft {
             if (null == hex) {
                 return "landing area not on the map";
             }
-            if(hex.containsTerrain(Terrains.WATER)) {
+            if (hex.containsTerrain(Terrains.WATER)) {
                 return "cannot land on water";
             }
         }
-        //TODO: what about other terrain (like jungles)?
+        // TODO: what about other terrain (like jungles)?
         return null;
     }
-    
+
     @Override
-    public boolean usesWeaponBays() {      
-        if(null == game) {
+    public boolean usesWeaponBays() {
+        if (null == game) {
             return true;
         }
         return !game.getOptions().booleanOption("ind_weapons_grounded_dropper") || (isAirborne() || isSpaceborne());

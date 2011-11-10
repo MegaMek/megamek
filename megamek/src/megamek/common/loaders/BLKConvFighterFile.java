@@ -63,6 +63,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
 
         setTechLevel(a);
         setFluff(a);
+        checkManualBV(a);
 
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);

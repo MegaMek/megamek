@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 package megamek.common;
@@ -34,11 +34,11 @@ public class Protomech extends Entity {
 
     public static final int NUM_PMECH_LOCATIONS = 6;
 
-    private static final String[] LOCATION_NAMES = { "Head", "Torso",
-            "Right Arm", "Left Arm", "Legs", "Main Gun" };
+    private static final String[] LOCATION_NAMES =
+        { "Head", "Torso", "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
-    private static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA", "L",
-            "MG" };
+    private static final String[] LOCATION_ABBRS =
+        { "HD", "T", "RA", "LA", "L", "MG" };
 
     // weapon bools
     private boolean bHasMainGun;
@@ -64,14 +64,14 @@ public class Protomech extends Entity {
 
     // Pilot damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
-    private int pilotDamageTaken[] = { 0, 0, 0, 0, 0, 0 };
+    private int pilotDamageTaken[] =
+        { 0, 0, 0, 0, 0, 0 };
 
     /**
-     * Not every Protomech has a main gun.
-     * N.B. Regardless of the value set here, the variable is initialized to
-     * <code>false</code> until after the <code>Entity</code> is initialized,
-     * which is too late to allow main gun armor, hence the convoluted reverse
-     * logic.
+     * Not every Protomech has a main gun. N.B. Regardless of the value set
+     * here, the variable is initialized to <code>false</code> until after the
+     * <code>Entity</code> is initialized, which is too late to allow main gun
+     * armor, hence the convoluted reverse logic.
      */
     private boolean m_bHasNoMainGun = false;
 
@@ -103,11 +103,14 @@ public class Protomech extends Entity {
     public static final int SYSTEM_TORSO_WEAPON_E = 8;
     public static final int SYSTEM_TORSO_WEAPON_F = 9;
 
-    private static final int[] NUM_OF_SLOTS = { 2, 3, 2, 2, 3, 0 };
+    private static final int[] NUM_OF_SLOTS =
+        { 2, 3, 2, 2, 3, 0 };
 
-    public static final int[] POSSIBLE_PILOT_DAMAGE = { 1, 3, 1, 1, 1, 0 };
+    public static final int[] POSSIBLE_PILOT_DAMAGE =
+        { 1, 3, 1, 1, 1, 0 };
 
-    public static final String systemNames[] = { "Arm", "Leg", "Head", "Torso" };
+    public static final String systemNames[] =
+        { "Arm", "Leg", "Head", "Torso" };
 
     // For grapple attacks
     private int grappled_id = Entity.NONE;
@@ -125,30 +128,18 @@ public class Protomech extends Entity {
      */
     public Protomech() {
         super();
-        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_HEADCRIT));
-        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_HEADCRIT));
-        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_ARMCRIT));
-        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_ARMCRIT));
-        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_ARMCRIT));
-        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_ARMCRIT));
-        setCritical(LOC_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_TORSOCRIT));
-        setCritical(LOC_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_TORSOCRIT));
-        setCritical(LOC_TORSO, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_TORSOCRIT));
-        setCritical(LOC_LEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LEGCRIT));
-        setCritical(LOC_LEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LEGCRIT));
-        setCritical(LOC_LEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                SYSTEM_LEGCRIT));
+        setCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_HEADCRIT));
+        setCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_HEADCRIT));
+        setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
+        setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
+        setCritical(LOC_LARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
+        setCritical(LOC_LARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ARMCRIT));
+        setCritical(LOC_TORSO, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSOCRIT));
+        setCritical(LOC_TORSO, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSOCRIT));
+        setCritical(LOC_TORSO, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TORSOCRIT));
+        setCritical(LOC_LEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEGCRIT));
+        setCritical(LOC_LEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEGCRIT));
+        setCritical(LOC_LEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LEGCRIT));
         bHasMainGun = false;
         bHas2ndMainGun = false;
         bHasRArmGun = false;
@@ -177,12 +168,13 @@ public class Protomech extends Entity {
 
     /**
      * Get the weapon in the given torso location (if any).
-     *
-     * @param torsoNum - a <code>int</code> that corresponds to
-     * SYSTEM_TORSO_WEAPON_A through SYSTEM_TORSO_WEAPON_F
+     * 
+     * @param torsoNum
+     *            - a <code>int</code> that corresponds to SYSTEM_TORSO_WEAPON_A
+     *            through SYSTEM_TORSO_WEAPON_F
      * @return the <code>Mounted</code> weapon at the needed location. This
-     *         value will be <code>null</code> if no weapon is in the
-     *         indicated location.
+     *         value will be <code>null</code> if no weapon is in the indicated
+     *         location.
      */
     public Mounted getTorsoWeapon(int torsoNum) {
         switch (torsoNum) {
@@ -214,11 +206,11 @@ public class Protomech extends Entity {
     /**
      * Protos don't take piloting skill rolls.
      */
-    //TODO: this is no longer true in TacOps. Protos sometimes make PSRs using their gunnery skill
+    // TODO: this is no longer true in TacOps. Protos sometimes make PSRs using
+    // their gunnery skill
     @Override
     public PilotingRollData getBasePilotingRoll() {
-        return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
-                "Protomeks never take PSRs.");
+        return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE, "Protomeks never take PSRs.");
     }
 
     /**
@@ -247,9 +239,9 @@ public class Protomech extends Entity {
         int wmp = getOriginalWalkMP();
         int legCrits = getCritsHit(LOC_LEG);
         int j;
-        if(null != game) {
+        if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if(weatherMod != 0) {
+            if (weatherMod != 0) {
                 wmp = Math.max(wmp + weatherMod, 0);
             }
         }
@@ -382,8 +374,7 @@ public class Protomech extends Entity {
             return getJumpMP();
         }
 
-        int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(
-                Terrains.WATER);
+        int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
         if ((waterLevel <= 0) || (getElevation() >= 0)) {
             return getJumpMP();
         }
@@ -493,7 +484,9 @@ public class Protomech extends Entity {
     }
 
     /**
-     * get this ProtoMech's run MP without factoring in a possible myomer booster
+     * get this ProtoMech's run MP without factoring in a possible myomer
+     * booster
+     * 
      * @param gravity
      * @param ignoreheat
      * @return
@@ -512,7 +505,7 @@ public class Protomech extends Entity {
 
     /**
      * does this protomech mount a myomer booster?
-     *
+     * 
      * @return
      */
     public boolean hasMyomerBooster() {
@@ -568,30 +561,25 @@ public class Protomech extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE);
+        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+        if ((aimedLocation != LOC_NONE) && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
 
         }
 
         roll = Compute.d6(2);
         try {
-            PrintWriter pw = PreferenceManager.getClientPreferences()
-                    .getMekHitLocLog();
+            PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
 
             if (pw != null) {
                 pw.print(table);
@@ -658,10 +646,7 @@ public class Protomech extends Entity {
             case LOC_RARM:
             case LOC_HEAD:
             case LOC_MAINGUN:
-                return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(),
-                        hit.hitAimedLocation(), hit.getSpecCritMod(), hit
-                                .isFromFront(), hit.getGeneralDamageType(), hit
-                                .glancingMod());
+                return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(), hit.hitAimedLocation(), hit.getSpecCritMod(), hit.isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_TORSO:
             default:
                 return new HitData(LOC_DESTROYED);
@@ -679,12 +664,17 @@ public class Protomech extends Entity {
 
     /**
      * Sets the internal structure for the pmech.
-     *
-     * @param head head
-     * @param torso center torso
-     * @param arm right/left arm
-     * @param legs right/left leg
-     * @param mainGun main gun
+     * 
+     * @param head
+     *            head
+     * @param torso
+     *            center torso
+     * @param arm
+     *            right/left arm
+     * @param legs
+     *            right/left leg
+     * @param mainGun
+     *            main gun
      */
     public void setInternal(int head, int torso, int arm, int legs, int mainGun) {
         initializeInternal(head, LOC_HEAD);
@@ -701,50 +691,50 @@ public class Protomech extends Entity {
      */
     @Override
     public void autoSetInternal() {
-        int mainGunIS = hasMainGun() ? (getWeight()>9?2:1) : IArmorState.ARMOR_NA;
+        int mainGunIS = hasMainGun() ? (getWeight() > 9 ? 2 : 1) : IArmorState.ARMOR_NA;
         switch ((int) weight) {
             // H, TSO,ARM,LEGS,MainGun
             case 2:
-                setInternal(1, 2, isQuad()?IArmorState.ARMOR_NA:1, isQuad()?4:2, mainGunIS);
+                setInternal(1, 2, isQuad() ? IArmorState.ARMOR_NA : 1, isQuad() ? 4 : 2, mainGunIS);
                 break;
             case 3:
-                setInternal(1, 3, isQuad()?IArmorState.ARMOR_NA:1, isQuad()?4:2, mainGunIS);
+                setInternal(1, 3, isQuad() ? IArmorState.ARMOR_NA : 1, isQuad() ? 4 : 2, mainGunIS);
                 break;
             case 4:
-                setInternal(1, 4, isQuad()?IArmorState.ARMOR_NA:1, isQuad()?5:3, mainGunIS);
+                setInternal(1, 4, isQuad() ? IArmorState.ARMOR_NA : 1, isQuad() ? 5 : 3, mainGunIS);
                 break;
             case 5:
-                setInternal(1, 5, isQuad()?IArmorState.ARMOR_NA:1, isQuad()?5:3, mainGunIS);
+                setInternal(1, 5, isQuad() ? IArmorState.ARMOR_NA : 1, isQuad() ? 5 : 3, mainGunIS);
                 break;
             case 6:
-                setInternal(2, 6, isQuad()?IArmorState.ARMOR_NA:2, isQuad()?8:4, mainGunIS);
+                setInternal(2, 6, isQuad() ? IArmorState.ARMOR_NA : 2, isQuad() ? 8 : 4, mainGunIS);
                 break;
             case 7:
-                setInternal(2, 7, isQuad()?IArmorState.ARMOR_NA:2, isQuad()?8:4, mainGunIS);
+                setInternal(2, 7, isQuad() ? IArmorState.ARMOR_NA : 2, isQuad() ? 8 : 4, mainGunIS);
                 break;
             case 8:
-                setInternal(2, 8, isQuad()?IArmorState.ARMOR_NA:2, isQuad()?9:5, mainGunIS);
+                setInternal(2, 8, isQuad() ? IArmorState.ARMOR_NA : 2, isQuad() ? 9 : 5, mainGunIS);
                 break;
             case 9:
-                setInternal(2, 9, isQuad()?IArmorState.ARMOR_NA:2, isQuad()?9:5, mainGunIS);
+                setInternal(2, 9, isQuad() ? IArmorState.ARMOR_NA : 2, isQuad() ? 9 : 5, mainGunIS);
                 break;
             case 10:
-                setInternal(3, 10, isQuad()?IArmorState.ARMOR_NA:3, isQuad()?12:6, mainGunIS);
+                setInternal(3, 10, isQuad() ? IArmorState.ARMOR_NA : 3, isQuad() ? 12 : 6, mainGunIS);
                 break;
             case 11:
-                setInternal(3, 11, isQuad()?IArmorState.ARMOR_NA:3, isQuad()?12:6, mainGunIS);
+                setInternal(3, 11, isQuad() ? IArmorState.ARMOR_NA : 3, isQuad() ? 12 : 6, mainGunIS);
                 break;
             case 12:
-                setInternal(3, 12, isQuad()?IArmorState.ARMOR_NA:3, isQuad()?13:7, mainGunIS);
+                setInternal(3, 12, isQuad() ? IArmorState.ARMOR_NA : 3, isQuad() ? 13 : 7, mainGunIS);
                 break;
             case 13:
-                setInternal(3, 13, isQuad()?IArmorState.ARMOR_NA:3, isQuad()?13:6, mainGunIS);
+                setInternal(3, 13, isQuad() ? IArmorState.ARMOR_NA : 3, isQuad() ? 13 : 6, mainGunIS);
                 break;
             case 14:
-                setInternal(4, 14, isQuad()?IArmorState.ARMOR_NA:4, isQuad()?16:8, mainGunIS);
+                setInternal(4, 14, isQuad() ? IArmorState.ARMOR_NA : 4, isQuad() ? 16 : 8, mainGunIS);
                 break;
             case 15:
-                setInternal(4, 15, isQuad()?IArmorState.ARMOR_NA:4, isQuad()?16:8, mainGunIS);
+                setInternal(4, 15, isQuad() ? IArmorState.ARMOR_NA : 4, isQuad() ? 16 : 8, mainGunIS);
                 break;
         }
     }
@@ -753,22 +743,19 @@ public class Protomech extends Entity {
      * Creates a new mount for this equipment and adds it in.
      */
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc)
-            throws LocationFullException {
+    public Mounted addEquipment(EquipmentType etype, int loc) throws LocationFullException {
         return addEquipment(etype, loc, false, -1);
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc,
-            boolean rearMounted) throws LocationFullException {
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted, -1);
         return mounted;
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc,
-            boolean rearMounted, int shots) throws LocationFullException {
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted, int shots) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted, shots);
         return mounted;
@@ -779,8 +766,7 @@ public class Protomech extends Entity {
      * Mounts the specified weapon in the specified location.
      */
     @Override
-    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
-            int shots) throws LocationFullException {
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted, int shots) throws LocationFullException {
         if (mounted.getType() instanceof AmmoType) {
             // Damn protomech ammo; nasty hack, should be cleaner
             if (-1 != shots) {
@@ -795,9 +781,7 @@ public class Protomech extends Entity {
                 case LOC_HEAD:
                 case LOC_LEG:
                 case LOC_NMISS:
-                    throw new LocationFullException("Weapon "
-                            + mounted.getName() + " can't be mounted in "
-                            + getLocationAbbr(loc));
+                    throw new LocationFullException("Weapon " + mounted.getName() + " can't be mounted in " + getLocationAbbr(loc));
                 case LOC_MAINGUN:
                     if (bHasMainGun) {
                         if (!isQuad() || bHas2ndMainGun) {
@@ -841,8 +825,7 @@ public class Protomech extends Entity {
                     if ((getWeight() < 10) && !isQuad()) {
                         if (bHasTorsoAGun) {
                             if (bHasTorsoBGun) {
-                                throw new LocationFullException(
-                                        "Already has both torso guns");
+                                throw new LocationFullException("Already has both torso guns");
                             }
                             bHasTorsoBGun = true;
                             mounted.setLocation(loc, rearMounted);
@@ -866,8 +849,7 @@ public class Protomech extends Entity {
                                 if (bHasTorsoBGun) {
                                     if (bHasTorsoCGun) {
                                         if (bHasTorsoDGun) {
-                                            throw new LocationFullException(
-                                                    "Already has all four torso guns");
+                                            throw new LocationFullException("Already has all four torso guns");
                                         }
                                         bHasTorsoDGun = true;
                                         mounted.setLocation(loc, rearMounted);
@@ -905,8 +887,7 @@ public class Protomech extends Entity {
                                         if (bHasTorsoDGun) {
                                             if (bHasTorsoEGun) {
                                                 if (bHasTorsoFGun) {
-                                                    throw new LocationFullException(
-                                                            "Already has all six torso guns");
+                                                    throw new LocationFullException("Already has all six torso guns");
                                                 }
                                                 bHasTorsoFGun = true;
                                                 mounted.setLocation(loc, rearMounted);
@@ -952,12 +933,11 @@ public class Protomech extends Entity {
                             }
                         }
                     } else {
-                        //A, B and C
+                        // A, B and C
                         if (bHasTorsoAGun) {
                             if (bHasTorsoBGun) {
                                 if (bHasTorsoCGun) {
-                                    throw new LocationFullException(
-                                            "Already has all three torso guns");
+                                    throw new LocationFullException("Already has all three torso guns");
                                 }
                                 bHasTorsoCGun = true;
                                 mounted.setLocation(loc, rearMounted);
@@ -994,6 +974,9 @@ public class Protomech extends Entity {
      */
     @Override
     public int calculateBattleValue() {
+        if (useManualBV) {
+            return manualBV;
+        }
         return calculateBattleValue(false, false);
     }
 
@@ -1002,6 +985,9 @@ public class Protomech extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        if (useManualBV) {
+            return manualBV;
+        }
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -1021,20 +1007,14 @@ public class Protomech extends Entity {
                 continue;
             }
 
-            if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
-                    || ((etype instanceof AmmoType) && (((AmmoType) etype)
-                            .getAmmoType() == AmmoType.T_AMS))
-                    || ((etype instanceof MiscType) && (etype
-                            .hasFlag(MiscType.F_ECM) || etype
-                            .hasFlag(MiscType.F_BAP)))) {
+            if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS)) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP)))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
         dbv += dEquipmentBV;
 
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true),
-                false, false).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false).getValue();
         double tmmFactor = 1 + (tmmRan / 10) + 0.1;
         dbv *= tmmFactor;
 
@@ -1061,12 +1041,10 @@ public class Protomech extends Entity {
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                 }
             }
@@ -1085,16 +1063,12 @@ public class Protomech extends Entity {
             weaponBV += dBV;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!(wtype.hasFlag(WeaponType.F_ENERGY)
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                    .getAmmoType() == AmmoType.T_NA))) {
+            if (!(wtype.hasFlag(WeaponType.F_ENERGY) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
                 } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
-                            + weaponsForExcessiveAmmo.get(key));
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
@@ -1125,15 +1099,13 @@ public class Protomech extends Entity {
                 continue;
             }
             // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
+            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED) || (atype.getMunitionType() == AmmoType.M_HOMING)) {
                 Player tmpP = getOwner();
                 // Okay, actually check for friendly TAG.
                 if (tmpP.hasTAG()) {
                     tagBV += atype.getBV(this);
                 } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (game != null)) {
-                    for (Enumeration<Team> e = game.getTeams(); e
-                            .hasMoreElements();) {
+                    for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
                         Team m = e.nextElement();
                         if (m.getId() == tmpP.getTeam()) {
                             if (m.hasTAG(game)) {
@@ -1162,8 +1134,7 @@ public class Protomech extends Entity {
         // of that
         // type on the mech is reached
         for (String key : keys) {
-            if (weaponsForExcessiveAmmo.containsKey(key)
-                    && (ammo.get(key) > weaponsForExcessiveAmmo.get(key))) {
+            if (weaponsForExcessiveAmmo.containsKey(key) && (ammo.get(key) > weaponsForExcessiveAmmo.get(key))) {
                 ammoBV += weaponsForExcessiveAmmo.get(key);
             } else {
                 ammoBV += ammo.get(key);
@@ -1182,10 +1153,7 @@ public class Protomech extends Entity {
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_ECM)
-                    || mtype.hasFlag(MiscType.F_AP_POD)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) {
+            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_AP_POD) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 // weapons
                 continue;
             }
@@ -1195,8 +1163,7 @@ public class Protomech extends Entity {
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + ((((double) getRunMP(false, true, true)
-                + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + ((((double) getRunMP(false, true, true) + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
@@ -1377,11 +1344,11 @@ public class Protomech extends Entity {
         int sinks = 0;
         for (Mounted mount : getWeaponList()) {
             if (mount.getType().hasFlag(WeaponType.F_ENERGY)) {
-                WeaponType wtype = (WeaponType)mount.getType();
+                WeaponType wtype = (WeaponType) mount.getType();
                 sinks += wtype.getHeat();
             }
         }
-        retVal += 2000*sinks;
+        retVal += 2000 * sinks;
 
         // Armor is linear on the armor value of the Protomech
         retVal += getTotalArmor() * 625;
@@ -1442,6 +1409,7 @@ public class Protomech extends Entity {
     public boolean isNuclearHardened() {
         return true;
     }
+
     @Override
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
@@ -1503,7 +1471,7 @@ public class Protomech extends Entity {
 
     @Override
     public int getEngineHits() {
-    	return 0;
+        return 0;
     }
 
     @Override

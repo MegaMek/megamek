@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,23 +14,25 @@
 
 /*
  * BLkFile.java
- *
+ * 
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- *
+ * 
  * @author taharqa
  * @version
  */
 package megamek.common.loaders;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
@@ -79,6 +81,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
 
         setTechLevel(a);
         setFluff(a);
+        checkManualBV(a);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -189,12 +192,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKWarshipFile.NOSE], Warship.LOC_NOSE);
-        a.initializeArmor(armor[BLKWarshipFile.FLS], Warship.LOC_FLS);
-        a.initializeArmor(armor[BLKWarshipFile.FRS], Warship.LOC_FRS);
-        a.initializeArmor(armor[BLKWarshipFile.ALS], Warship.LOC_ALS);
-        a.initializeArmor(armor[BLKWarshipFile.ARS], Warship.LOC_ARS);
-        a.initializeArmor(armor[BLKWarshipFile.AFT], Warship.LOC_AFT);
+        a.initializeArmor(armor[BLKWarshipFile.NOSE], Aero.LOC_NOSE);
+        a.initializeArmor(armor[BLKWarshipFile.FLS], Jumpship.LOC_FLS);
+        a.initializeArmor(armor[BLKWarshipFile.FRS], Jumpship.LOC_FRS);
+        a.initializeArmor(armor[BLKWarshipFile.ALS], Jumpship.LOC_ALS);
+        a.initializeArmor(armor[BLKWarshipFile.ARS], Jumpship.LOC_ARS);
+        a.initializeArmor(armor[BLKWarshipFile.AFT], Aero.LOC_AFT);
         a.initializeArmor(0, Warship.LOC_LBS);
         a.initializeArmor(0, Warship.LOC_RBS);
 
@@ -203,12 +206,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         a.initializeKFIntegrity();
         a.initializeSailIntegrity();
 
-        loadEquipment(a, "Nose", Warship.LOC_NOSE);
-        loadEquipment(a, "Front Right Side", Warship.LOC_FRS);
-        loadEquipment(a, "Front Left Side", Warship.LOC_FLS);
-        loadEquipment(a, "Aft Left Side", Warship.LOC_ALS);
-        loadEquipment(a, "Aft Right Side", Warship.LOC_ARS);
-        loadEquipment(a, "Aft", Warship.LOC_AFT);
+        loadEquipment(a, "Nose", Aero.LOC_NOSE);
+        loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
+        loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
+        loadEquipment(a, "Aft Left Side", Jumpship.LOC_ALS);
+        loadEquipment(a, "Aft Right Side", Jumpship.LOC_ARS);
+        loadEquipment(a, "Aft", Aero.LOC_AFT);
         // for now put all broadside mounted weapons in the front location
         // TODO: turn broadsides into a real unhittable location
         loadEquipment(a, "Left Broadside", Warship.LOC_LBS);

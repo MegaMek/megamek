@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,17 +14,18 @@
 
 /*
  * BLkFile.java
- *
+ * 
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- *
+ * 
  * @author taharqa
  * @version
  */
 package megamek.common.loaders;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.DockingCollar;
 import megamek.common.Engine;
@@ -68,6 +69,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
 
         setTechLevel(a);
         setFluff(a);
+        checkManualBV(a);
 
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
@@ -171,24 +173,24 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKJumpshipFile.NOSE], Jumpship.LOC_NOSE);
+        a.initializeArmor(armor[BLKJumpshipFile.NOSE], Aero.LOC_NOSE);
         a.initializeArmor(armor[BLKJumpshipFile.FLS], Jumpship.LOC_FLS);
         a.initializeArmor(armor[BLKJumpshipFile.FRS], Jumpship.LOC_FRS);
         a.initializeArmor(armor[BLKJumpshipFile.ALS], Jumpship.LOC_ALS);
         a.initializeArmor(armor[BLKJumpshipFile.ARS], Jumpship.LOC_ARS);
-        a.initializeArmor(armor[BLKJumpshipFile.AFT], Jumpship.LOC_AFT);
+        a.initializeArmor(armor[BLKJumpshipFile.AFT], Aero.LOC_AFT);
 
         a.autoSetInternal();
         a.autoSetThresh();
         a.initializeKFIntegrity();
         a.initializeSailIntegrity();
 
-        loadEquipment(a, "Nose", Jumpship.LOC_NOSE);
+        loadEquipment(a, "Nose", Aero.LOC_NOSE);
         loadEquipment(a, "Front Right Side", Jumpship.LOC_FRS);
         loadEquipment(a, "Front Left Side", Jumpship.LOC_FLS);
         loadEquipment(a, "Aft Left Side", Jumpship.LOC_ALS);
         loadEquipment(a, "Aft Right Side", Jumpship.LOC_ARS);
-        loadEquipment(a, "Aft", Jumpship.LOC_AFT);
+        loadEquipment(a, "Aft", Aero.LOC_AFT);
 
         addTransports(a);
 

@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- *
+ * 
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- *
+ * 
  * @author taharqa
  * @version
  */
@@ -63,6 +63,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
 
         setTechLevel(a);
         setFluff(a);
+        checkManualBV(a);
 
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
@@ -101,8 +102,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0] - 2) * (int) a.getWeight();
-        if (engineRating%5 > 0 ) {
-            engineRating += (5-engineRating%5);
+        if (engineRating % 5 > 0) {
+            engineRating += (5 - engineRating % 5);
         }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
@@ -125,10 +126,10 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             }
             a.setBARRating(dataFile.getDataAsInt("barrating")[0]);
         } else {
-            for (int i = 0; i < a.locations()-1; i++) {
-                a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
-                a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
-                a.setBARRating(dataFile.getDataAsInt(a.getLocationName(i)+"_barrating")[0], i);
+            for (int i = 0; i < a.locations() - 1; i++) {
+                a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i) + "_armor_type")[0], i);
+                a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i) + "_armor_type")[0], i);
+                a.setBARRating(dataFile.getDataAsInt(a.getLocationName(i) + "_barrating")[0], i);
             }
         }
 

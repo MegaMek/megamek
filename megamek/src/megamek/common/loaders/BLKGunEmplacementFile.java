@@ -53,6 +53,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
         setTechLevel(e);
         setFluff(e);
+        checkManualBV(e);
 
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);

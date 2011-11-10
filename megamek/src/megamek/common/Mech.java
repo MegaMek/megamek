@@ -1,12 +1,12 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -135,12 +135,11 @@ public abstract class Mech extends Entity {
 
     public static final int COCKPIT_PRIMITIVE_INDUSTRIAL = 7;
 
-
     public static final String[] COCKPIT_STRING =
         { "Standard Cockpit", "Small Cockpit", "Command Console", "Torso-Mounted Cockpit", "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit", "Primitive Industrial Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING =
-        { "Standard", "Small", "Command Console", "Torso Mounted", "Dual" , "Industrial", "Primitive", "Primitive Industrial" };
+        { "Standard", "Small", "Command Console", "Torso Mounted", "Dual", "Industrial", "Primitive", "Primitive Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -269,7 +268,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Damage the cowl. Returns amount of excess damage
-     *
+     * 
      * @param amount
      * @return
      */
@@ -321,7 +320,7 @@ public abstract class Mech extends Entity {
 
     /**
      * find the least restrictive location of the two locations passed in
-     *
+     * 
      * @param location1
      * @param location2
      * @return
@@ -495,7 +494,7 @@ public abstract class Mech extends Entity {
 
     /**
      * This function returns true iff the system is in perfect condition.
-     *
+     * 
      * @param system
      *            the system to check
      * @return false if the system is damaged.
@@ -544,7 +543,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have composite internal structure?
-     *
+     * 
      * @return
      */
     public boolean hasCompositeStructure() {
@@ -553,7 +552,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have reinforced internal structure?
-     *
+     * 
      * @return
      */
     public boolean hasReinforcedStructure() {
@@ -562,7 +561,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech mount MASC?
-     *
+     * 
      * @return
      */
     public boolean hasMASC() {
@@ -595,7 +594,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have working jump boosters?
-     *
+     * 
      * @return
      */
     public boolean hasJumpBoosters() {
@@ -614,7 +613,6 @@ public abstract class Mech extends Entity {
         }
         return jumpBoosters;
     }
-
 
     /**
      * Checks if a mech has an armed MASC system. Note that the mech will have
@@ -681,7 +679,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have industrial TSM=
-     *
+     * 
      * @return
      */
     public boolean hasIndustrialTSM() {
@@ -695,7 +693,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have a null-sig-system?
-     *
+     * 
      * @return
      */
     public boolean hasNullSig() {
@@ -711,7 +709,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have a void-sig-system?
-     *
+     * 
      * @return
      */
     public boolean hasVoidSig() {
@@ -727,7 +725,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have tracks?
-     *
+     * 
      * @return
      */
     public boolean hasTracks() {
@@ -743,7 +741,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have a chameleon light polarization shield?
-     *
+     * 
      * @return
      */
     public boolean hasChameleonShield() {
@@ -769,7 +767,7 @@ public abstract class Mech extends Entity {
 
     /**
      * set this mech's <code>Engine</code>
-     *
+     * 
      * @param e
      *            the <code>Engine</code> to set
      */
@@ -782,7 +780,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Used to set this Mech's original walk mp
-     *
+     * 
      * @return this units calculated walking speed, dependent on engine rating
      *         and weight
      */
@@ -987,7 +985,6 @@ public abstract class Mech extends Entity {
         return getJumpMP(true);
     }
 
-
     /**
      * This mech's jumping MP modified for missing jump jets and possibly
      * gravity
@@ -1027,7 +1024,6 @@ public abstract class Mech extends Entity {
             jump--;
         }
 
-
         if (gravity) {
             return Math.max(applyGravityEffectsOnMP(jump), 0);
         }
@@ -1036,7 +1032,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Gives the bonus to Jump MP conferred by a mech partial wing.
-     *
+     * 
      * @param mount
      *            The mounted location of the Wing
      * @return The Jump MP bonus conferred by the wing
@@ -1110,7 +1106,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Gives the heat capacity bonus conferred by a mech partial wing.
-     *
+     * 
      * @return the heat capacity bonus provided by the wing
      */
     private int getPartialWingHeatBonus() {
@@ -1292,7 +1288,7 @@ public abstract class Mech extends Entity {
     /**
      * base for adding engine sinks. Newer method allows externals to say how
      * much are engine HS.
-     *
+     * 
      * @param totalSinks
      *            the amount of heatsinks to add to the engine
      * @param sinkName
@@ -1306,7 +1302,7 @@ public abstract class Mech extends Entity {
 
     /**
      * add heat sinks into the engine
-     *
+     * 
      * @param sinkName
      *            the <code>String</code> determining the type of heatsink to
      *            add. must be a lookupname of a heatsinktype
@@ -2255,7 +2251,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Sets the internal structure for the mech.
-     *
+     * 
      * @param head
      *            head
      * @param ct
@@ -2463,6 +2459,9 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int calculateBattleValue() {
+        if (useManualBV) {
+            return manualBV;
+        }
         return calculateBattleValue(false, false);
     }
 
@@ -2473,6 +2472,9 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        if (useManualBV) {
+            return manualBV;
+        }
 
         bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
@@ -2541,7 +2543,7 @@ public abstract class Mech extends Entity {
 
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append("Total Armor "+this.getLocationAbbr(loc)+" ("+armor+(modularArmor>0?" +"+modularArmor+" modular":"")+") x ");
+            bvText.append("Total Armor " + this.getLocationAbbr(loc) + " (" + armor + (modularArmor > 0 ? " +" + modularArmor + " modular" : "") + ") x ");
             bvText.append(armorMultiplier);
             bvText.append(endColumn);
             bvText.append(startColumn);
@@ -2635,9 +2637,9 @@ public abstract class Mech extends Entity {
             }
 
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
-                    // not yet coded:
+            // not yet coded:
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || etype.hasFlag(MiscType.F_CHAFF_POD)|| etype.hasFlag(MiscType.F_MASS) || etype.hasFlag(MiscType.F_BAP) || etype.hasFlag(MiscType.F_SPIKES) || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE) || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
+                    || etype.hasFlag(MiscType.F_CHAFF_POD) || etype.hasFlag(MiscType.F_MASS) || etype.hasFlag(MiscType.F_BAP) || etype.hasFlag(MiscType.F_SPIKES) || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE) || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(this);
                 dEquipmentBV += bv;
                 bvText.append(startRow);
@@ -3407,7 +3409,8 @@ public abstract class Mech extends Entity {
                 dBV = mgaBV * 0.67;
             }
 
-            // industrial without advanced firing control get's 0.9 mod to weapon bv
+            // industrial without advanced firing control get's 0.9 mod to
+            // weapon bv
             if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
                 dBV *= 0.9;
             }
@@ -3497,7 +3500,7 @@ public abstract class Mech extends Entity {
                                 dBV *= 1.5;
                             }
                             weaponValues.add(dBV);
-                            weaponValues.add((double)getActiveVibrobladeHeat(location, true));
+                            weaponValues.add((double) getActiveVibrobladeHeat(location, true));
                             weaponValues.add(mount.getName());
                             heatBVs.add(weaponValues);
 
@@ -3717,7 +3720,7 @@ public abstract class Mech extends Entity {
 
             if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD) || mtype.hasFlag(MiscType.F_MASS)
             // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_CHAFF_POD)|| mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_SPIKES) || (mtype.hasFlag(MiscType.F_CLUB) && (mtype.hasSubType(MiscType.S_SHIELD_LARGE) || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype.hasSubType(MiscType.S_SHIELD_SMALL)))) {
+                    || mtype.hasFlag(MiscType.F_CHAFF_POD) || mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_SPIKES) || (mtype.hasFlag(MiscType.F_CLUB) && (mtype.hasSubType(MiscType.S_SHIELD_LARGE) || mtype.hasSubType(MiscType.S_SHIELD_MEDIUM) || mtype.hasSubType(MiscType.S_SHIELD_SMALL)))) {
                 continue;
             }
             double bv = mtype.getBV(this);
@@ -4064,14 +4067,14 @@ public abstract class Mech extends Entity {
     /**
      * Calculate the C-bill cost of the mech. Passing null as the argument will
      * skip the detailed report processing.
-     *
+     * 
      * @param detail
      *            buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[14+locations()];
+        double[] costs = new double[14 + locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -4138,8 +4141,7 @@ public abstract class Mech extends Entity {
             for (int loc = 0; loc < locations(); loc++) {
                 costs[i++] += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
             }
-        }
-        else {
+        } else {
             costs[i++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
 
@@ -4364,7 +4366,7 @@ public abstract class Mech extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4392,7 +4394,7 @@ public abstract class Mech extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4451,7 +4453,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isVoidSigActive() {
-        // per the rules questions forum, externally mounted BA invalidates Void Sig
+        // per the rules questions forum, externally mounted BA invalidates Void
+        // Sig
         if (getExternalUnits().size() > 0) {
             return false;
         }
@@ -4487,7 +4490,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isChameleonShieldActive() {
-     // per the rules questions forum, externally mounted BA invalidates Void Sig
+        // per the rules questions forum, externally mounted BA invalidates Void
+        // Sig
         if (getExternalUnits().size() > 0) {
             return false;
         }
@@ -4525,7 +4529,7 @@ public abstract class Mech extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -4634,7 +4638,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -5158,11 +5162,19 @@ public abstract class Mech extends Entity {
         if (getFluff().getHistory().trim().length() > 0) {
             sb.append("history:");
             sb.append(getFluff().getHistory());
+            sb.append(newLine);
         }
 
         if (getFluff().getMMLImagePath().trim().length() > 0) {
             sb.append("imagefile:");
             sb.append(getFluff().getMMLImagePath());
+            sb.append(newLine);
+        }
+
+        if (getUseManualBV()) {
+            sb.append("bv:");
+            sb.append(getManualBV());
+            sb.append(newLine);
         }
 
         return sb.toString();
@@ -5201,8 +5213,8 @@ public abstract class Mech extends Entity {
                         return m.getType().getInternalName() + " (FR)" + armoredText;
                     case 2:
                         return m.getType().getInternalName() + " (RR)" + armoredText;
-                    // case 3:
-                        //already handled by isRearMounted() above
+                        // case 3:
+                        // already handled by isRearMounted() above
                     case 4:
                         return m.getType().getInternalName() + " (RL)" + armoredText;
                     case 5:
@@ -5221,7 +5233,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a standard cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
@@ -5241,7 +5253,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addIndustrialCockpit() {
@@ -5261,7 +5273,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addPrimitiveCockpit() {
@@ -5281,7 +5293,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an industrial primitive cockpit.
      * Note: This is part of the mek creation public API, and might not be
      * referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addIndustrialPrimitiveCockpit() {
@@ -5301,7 +5313,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a small cockpit. Note: This is part
      * of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
@@ -5348,7 +5360,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -5384,7 +5396,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a standard gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
@@ -5402,7 +5414,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a compact gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
@@ -5419,7 +5431,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an extra-light gyro. Also set the
      * gyro type variable. Note: This is part of the mek creation public API,
      * and might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
@@ -5440,7 +5452,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -5456,7 +5468,7 @@ public abstract class Mech extends Entity {
      * method before setting a mek's engine object will result in a NPE. Note:
      * This is part of the mek creation public API, and might not be referenced
      * by any MegaMek code.
-     *
+     * 
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -5623,7 +5635,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Does this mech have an undamaged HarJel system in this location?
-     *
+     * 
      * @param loc
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
@@ -5782,8 +5794,7 @@ public abstract class Mech extends Entity {
         if (armorType[loc] == EquipmentType.T_ARMOR_COMMERCIAL) {
             return 5;
         }
-        if ((armorType[loc] == EquipmentType.T_ARMOR_INDUSTRIAL)
-                || (armorType[loc] == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
+        if ((armorType[loc] == EquipmentType.T_ARMOR_INDUSTRIAL) || (armorType[loc] == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
             return 10;
         }
         return 10;
@@ -5791,7 +5802,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Is this an Industrial Mech?
-     *
+     * 
      * @return if this mech has an industrial inner structure
      */
     public boolean isIndustrial() {
@@ -5801,7 +5812,7 @@ public abstract class Mech extends Entity {
     /**
      * set if this mech just moved into water that would kill it because of the
      * lack of environmental sealing
-     *
+     * 
      * @param moved
      */
     public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
@@ -5811,7 +5822,7 @@ public abstract class Mech extends Entity {
     /**
      * did this mech just moved into water that would kill it because we lack
      * environmental sealing?
-     *
+     * 
      * @return
      */
     public boolean isJustMovedIntoIndustrialKillingWater() {
@@ -5822,7 +5833,7 @@ public abstract class Mech extends Entity {
      * should this mech die at the end of turn because it's an IndustrialMech
      * without environmental sealing that moved into water last round and stayed
      * there?
-     *
+     * 
      * @return
      */
     public boolean shouldDieAtEndOfTurnBecauseOfWater() {
@@ -5832,7 +5843,7 @@ public abstract class Mech extends Entity {
     /**
      * Set if this Mech's ICE Engine is stalled or not should only be used for
      * industrial mechs carrying an ICE engine
-     *
+     * 
      * @param stalled
      */
     public void setStalled(boolean stalled) {
@@ -5957,7 +5968,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Is this a primitive Mech?
-     *
+     * 
      * @return
      */
     public boolean isPrimitive() {
@@ -6020,7 +6031,7 @@ public abstract class Mech extends Entity {
 
     /**
      * how many levels did this mech fall this turn?
-     *
+     * 
      * @return
      */
     public int getLevelsFallen() {
@@ -6037,7 +6048,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Is the passed in location an arm?
-     *
+     * 
      * @param loc
      * @return
      */
@@ -6141,7 +6152,6 @@ public abstract class Mech extends Entity {
 
         return finalBFJump;
     }
-
 
     @Override
     /*
@@ -6503,104 +6513,94 @@ public abstract class Mech extends Entity {
 
     @Override
     public int getEngineHits() {
-    	int engineHits = 0;
-    	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-    	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-    	engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-		return engineHits;
+        int engineHits = 0;
+        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+        engineHits += getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+        return engineHits;
     }
 
     public int getGyroHits() {
-    	return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
     }
 
     @Override
-	public String getLocationDamage(int loc) {
-    	String toReturn = "";
-    	boolean first = true;
-    	if(isLocationBad(loc)) {
-    		return toReturn;
-    	}
-    	if(hasSystem(SYSTEM_LIFE_SUPPORT, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Life Spt.";
-    		first = false;
-    	}
-    	if(hasSystem(SYSTEM_SENSORS, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Sensors";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_SHOULDER, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Shoulder";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_UPPER_ARM, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Upper Arm";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_LOWER_ARM, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Lower Arm";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_HAND, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Hand";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_HIP, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Hip";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_UPPER_LEG, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Upper Leg";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_LOWER_LEG, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Lower Leg";
-    		first = false;
-    	}
-    	if(hasSystem(ACTUATOR_FOOT, loc)
-    			&& (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0)) {
-    		if(!first) {
-    			toReturn +=", ";
-    		}
-    		toReturn += "Foot";
-    		first = false;
-    	}
-		return toReturn;
-	}
+    public String getLocationDamage(int loc) {
+        String toReturn = "";
+        boolean first = true;
+        if (isLocationBad(loc)) {
+            return toReturn;
+        }
+        if (hasSystem(SYSTEM_LIFE_SUPPORT, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Life Spt.";
+            first = false;
+        }
+        if (hasSystem(SYSTEM_SENSORS, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Sensors";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_SHOULDER, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Shoulder";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_UPPER_ARM, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Upper Arm";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_LOWER_ARM, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Lower Arm";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_HAND, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Hand";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_HIP, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Hip";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_UPPER_LEG, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Upper Leg";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_LOWER_LEG, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Lower Leg";
+            first = false;
+        }
+        if (hasSystem(ACTUATOR_FOOT, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Foot";
+            first = false;
+        }
+        return toReturn;
+    }
 }

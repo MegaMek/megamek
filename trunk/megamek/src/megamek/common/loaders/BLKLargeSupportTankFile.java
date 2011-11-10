@@ -30,6 +30,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LargeSupportTank;
+import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
 
 public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
@@ -57,6 +58,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
 
         setTechLevel(t);
         setFluff(t);
+        checkManualBV(t);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -146,7 +148,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
 
-        loadEquipment(t, "Front", LargeSupportTank.LOC_FRONT);
+        loadEquipment(t, "Front", Tank.LOC_FRONT);
         loadEquipment(t, "Front Right", LargeSupportTank.LOC_FRONTRIGHT);
         loadEquipment(t, "Front Left", LargeSupportTank.LOC_FRONTLEFT);
         loadEquipment(t, "Rear Right", LargeSupportTank.LOC_REARRIGHT);
@@ -155,7 +157,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         if (!t.hasNoTurret()) {
             loadEquipment(t, "Turret", LargeSupportTank.LOC_TURRET);
         }
-        loadEquipment(t, "Body", LargeSupportTank.LOC_BODY);
+        loadEquipment(t, "Body", Tank.LOC_BODY);
 
         if (dataFile.exists("omni")) {
             t.setOmni(true);

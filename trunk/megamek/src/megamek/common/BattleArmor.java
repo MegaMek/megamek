@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -21,7 +21,7 @@ import java.util.Vector;
  * sometimes referred to as "Elementals". Much of the behaviour of a battle
  * armor unit is identical to that of an infantry platoon, and is rather
  * different than that of a Mek or Tank.
- *
+ * 
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $revision:$
  */
@@ -323,7 +323,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * does this ba mount a myomer booster?
-     *
+     * 
      * @return
      */
     public boolean hasMyomerBooster() {
@@ -347,7 +347,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * get this BA's jump MP, possibly ignoring gravity and burden
-     *
+     * 
      * @param gravity
      * @param ignoreBurden
      * @return
@@ -371,7 +371,7 @@ public class BattleArmor extends Infantry {
         if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING) && ((game == null) || !game.getPlanetaryConditions().isVacuum())) {
             mp++;
         } else if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
-         // jump booster gives an extra MP
+            // jump booster gives an extra MP
             mp++;
         }
         if (getMovementMode() == EntityMovementMode.INF_UMU) {
@@ -580,7 +580,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Battle Armor units use default behavior for armor and internals.
-     *
+     * 
      * @see megamek.common.Infantry#isPlatoon()
      */
     @Override
@@ -590,7 +590,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Battle Armor units have no armor on their squad location.
-     *
+     * 
      * @see megamek.common.Infantry#getArmor(int, boolean )
      */
     @Override
@@ -603,7 +603,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Battle Armor units have no armor on their squad location.
-     *
+     * 
      * @see megamek.common.Infantry#getOArmor(int, boolean )
      */
     @Override
@@ -616,7 +616,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Battle Armor units have no internals on their squad location.
-     *
+     * 
      * @see megamek.common.Infantry#getInternal(int )
      */
     @Override
@@ -629,7 +629,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Battle Armor units have no internals on their squad location.
-     *
+     * 
      * @see megamek.common.Infantry#getOInternal(int )
      */
     @Override
@@ -742,12 +742,15 @@ public class BattleArmor extends Infantry {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        if (useManualBV) {
+            return manualBV;
+        }
         return calculateBattleValue(ignoreC3, ignorePilot, false);
     }
 
     /**
      * Calculates the battle value of this platoon.
-     *
+     * 
      * @param ignoreC3
      *            ignore C3 linkage
      * @param ignorePilot
@@ -757,6 +760,9 @@ public class BattleArmor extends Infantry {
      * @return the battlevalue
      */
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot, boolean singleTrooper) {
+        if (useManualBV) {
+            return manualBV;
+        }
         // we do this per trooper, then add up
         double squadBV = 0;
         for (int i = 1; i < locations(); i++) {
@@ -957,7 +963,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Get the number of men in the unit (before damage is applied).
-     *
+     * 
      * @see megamek.common.Infantry#getShootingStrength
      */
     @Override
@@ -973,7 +979,7 @@ public class BattleArmor extends Infantry {
      * Determines if the battle armor unit is burdened with un-jettisoned
      * equipment. This can prevent the unit from jumping or using their special
      * Anti-Mek attacks.
-     *
+     * 
      * @return <code>true</code> if the unit hasn't jettisoned its equipment
      *         yet, <code>false</code> if it has.
      */
@@ -1007,6 +1013,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * does this BA have an unjettisoned DWP?
+     * 
      * @return
      */
     public boolean hasDWP() {
@@ -1021,7 +1028,7 @@ public class BattleArmor extends Infantry {
     /**
      * Returns the name of the stealth Armor used by the BA. Mostly for
      * MegaMekLab Usage.
-     *
+     * 
      * @return name of the stealth armor.
      */
     public String getStealthName() {
@@ -1034,7 +1041,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Public interface to the BattleArmors short range stealth modifier
-     *
+     * 
      * @return shortStealthMod
      */
     public int getShortStealthMod() {
@@ -1043,7 +1050,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Public interface to the BattleArmors medium range stealth modifier
-     *
+     * 
      * @return mediumStealthMod
      */
     public int getMediumStealthMod() {
@@ -1052,7 +1059,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * Public interface to the BattleArmors long range stealth modifier
-     *
+     * 
      * @return longStealthMod
      */
     public int getLongStealthMod() {
@@ -1063,7 +1070,7 @@ public class BattleArmor extends Infantry {
      * Determine if this unit has an active stealth system.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -1092,7 +1099,7 @@ public class BattleArmor extends Infantry {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -1107,7 +1114,6 @@ public class BattleArmor extends Infantry {
 
         // Note: infantry are immune to stealth, but not camoflage
         // or mimetic armor
-
 
         // Mimetic armor modifier is based upon the number of hexes moved,
         // and adds to existing movement modifier (Total Warfare p228):
@@ -1564,7 +1570,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has fire resistant armor
-     *
+     * 
      * @return
      */
     public boolean isFireResistant() {
@@ -1578,7 +1584,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has improved sensors
-     *
+     * 
      * @return
      */
     public boolean hasImprovedSensors() {
@@ -1594,7 +1600,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if the BA has any kind of active probe
-     *
+     * 
      * @return
      */
     public boolean hasActiveProbe() {
@@ -1619,7 +1625,7 @@ public class BattleArmor extends Infantry {
     /**
      * have all attacks this BA made while swarming a unit already been resolved
      * this turn?
-     *
+     * 
      * @return
      */
     public boolean isAttacksDuringSwarmResolved() {
@@ -1629,7 +1635,7 @@ public class BattleArmor extends Infantry {
     /**
      * set wether or not all attacks this BA made while swarming a unit have
      * already been resolved
-     *
+     * 
      * @param resolved
      *            - a <code>boolean</code>
      */
@@ -1639,7 +1645,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * can this BattleArmor ride as Mechanized BA?
-     *
+     * 
      * @return
      */
     public boolean canDoMechanizedBA() {

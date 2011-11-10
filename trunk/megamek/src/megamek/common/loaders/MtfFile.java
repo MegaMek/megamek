@@ -1,20 +1,20 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  */
 
 /*
  * MtfFile.java
- *
+ * 
  * Created on April 7, 2002, 8:47 PM
  */
 
@@ -79,6 +79,8 @@ public class MtfFile implements IMechLoader {
 
     String history = "";
     String imagePath = "";
+
+    int bv = 0;
 
     Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
     Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
@@ -367,7 +369,7 @@ public class MtfFile implements IMechLoader {
             for (int x = 0; x < locationOrder.length; x++) {
                 mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
-                    mech.setArmorType(EquipmentType.getArmorType(armorValues[x].substring(armorValues[x].indexOf(':')+1, armorValues[x].indexOf('('))), locationOrder[x]);
+                    mech.setArmorType(EquipmentType.getArmorType(armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('('))), locationOrder[x]);
                     if (armorValues[x].toLowerCase().indexOf("clan") != -1) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                             case 2:
@@ -441,6 +443,11 @@ public class MtfFile implements IMechLoader {
 
             mech.getFluff().setHistory(history);
             mech.getFluff().setMMLImagePath(imagePath);
+
+            if (bv > 0) {
+                mech.setUseManualBV(true);
+                mech.setManualBV(bv);
+            }
 
             return mech;
         } catch (NumberFormatException ex) {
@@ -605,7 +612,8 @@ public class MtfFile implements IMechLoader {
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
                         Mounted mount = mech.addEquipment(etype, loc, rearMounted, false, isArmored, isTurreted);
-                        // vehicular grenade launchers need to have their facing set
+                        // vehicular grenade launchers need to have their facing
+                        // set
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 // if facing has not been set earlier, we are
@@ -869,6 +877,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("imagefile:")) {
             imagePath = line.substring("imagefile:".length());
+            return true;
+        }
+
+        if (line.trim().toLowerCase().startsWith("bv:")) {
+            bv = Integer.parseInt(line.substring("imagefile:".length()));
             return true;
         }
 

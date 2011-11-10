@@ -56,6 +56,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         setTechLevel(t);
         setFluff(t);
+        checkManualBV(t);
 
         if (dataFile.exists("source")) {
             t.setSource(dataFile.getDataAsString("source")[0]);

@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- *
+ * 
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- *
+ * 
  * @author taharqa
  * @version
  */
@@ -116,7 +116,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (a.isPrimitive()) {
             engineRating *= 1.2;
             if (engineRating % 5 != 0) {
-                engineRating  = engineRating + engineRating % 5;
+                engineRating = engineRating + engineRating % 5;
             }
         }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
@@ -135,9 +135,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             a.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         }
         if (patchworkArmor) {
-            for (int i = 0; i < a.locations()-1; i++) {
-                a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
-                a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i)+"_armor_type")[0], i);
+            for (int i = 0; i < a.locations() - 1; i++) {
+                a.setArmorType(dataFile.getDataAsInt(a.getLocationName(i) + "_armor_type")[0], i);
+                a.setArmorTechLevel(dataFile.getDataAsInt(a.getLocationName(i) + "_armor_type")[0], i);
             }
         }
 
@@ -160,6 +160,8 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
+
+        checkManualBV(a);
 
         a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
         a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);

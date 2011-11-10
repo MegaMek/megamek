@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- *
+ * 
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -148,7 +148,7 @@ public class BLKFile {
             return Engine.FISSION;
         } else if (code == BLKFile.NONE) {
             return Engine.NONE;
-        }else {
+        } else {
             return -1;
         }
     }
@@ -165,6 +165,18 @@ public class BLKFile {
 
         if (dataFile.exists("source")) {
             e.setSource(dataFile.getDataAsString("source")[0]);
+        }
+
+    }
+
+    public void checkManualBV(Entity e) throws EntityLoadingException {
+        if (dataFile.exists("bv")) {
+            int bv = dataFile.getDataAsInt("bv")[0];
+
+            if (bv > 0) {
+                e.setUseManualBV(true);
+                e.setManualBV(bv);
+            }
         }
 
     }
@@ -417,6 +429,10 @@ public class BLKFile {
                 blk.writeBlockData("exoskeleton", "true");
             }
         }
+
+        if (t.getUseManualBV()) {
+            blk.writeBlockData("bv", t.getManualBV());
+        }
         blk.writeBlockFile(fileName);
     }
 
@@ -552,7 +568,6 @@ public class BLKFile {
                     int doors = Integer.parseInt(temp[1]);
                     e.addTransporter(new StandardSeatCargoBay(size, doors));
                 }
-
 
             } // Handle the next transportation component.
 

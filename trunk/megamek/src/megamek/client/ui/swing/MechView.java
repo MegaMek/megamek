@@ -21,6 +21,7 @@
 package megamek.client.ui.swing;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
@@ -117,7 +118,11 @@ public class MechView {
                     Messages.getString("MechView.tons")); //$NON-NLS-1$
         }
         sHead.append("<br>"); //$NON-NLS-1$
-        DecimalFormat dFormatter = new DecimalFormat("#,###.##");
+        DecimalFormatSymbols unusualSymbols =
+                new DecimalFormatSymbols();
+            unusualSymbols.setDecimalSeparator('.');
+            unusualSymbols.setGroupingSeparator(',');
+        DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols);
         sHead.append("BV: ");
         sHead.append(dFormatter.format(entity.calculateBattleValue(false, null == entity.getCrew())));
         sHead.append("<br>"); //$NON-NLS-1$
@@ -145,7 +150,7 @@ public class MechView {
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
             .append(Messages.getString("MovementType."+entity.getMovementModeAsString())).append(")"); //$NON-NLS-1$
-            if(((Tank)entity).getMotiveDamage() > 0 || ((Tank)entity).getMotivePenalty() > 0) {
+            if((((Tank)entity).getMotiveDamage() > 0) || (((Tank)entity).getMotivePenalty() > 0)) {
             	sBasic.append("<font color='red'> (motive damage: -" + ((Tank)entity).getMotiveDamage() + "MP/-" + ((Tank)entity).getMotivePenalty() + " piloting)</font>");
             }
         }
@@ -207,11 +212,11 @@ public class MechView {
             }
             sBasic.append("<br>");
         }
-        
+
         if(isAero && !((Aero)entity).getCritDamageString().equals("")) {
         	sBasic.append("<br><br>System Damage: <font color='red'>" + ((Aero)entity).getCritDamageString() + "</font>");
         }
-        
+
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {
             if( isSquadron ) {
@@ -231,7 +236,7 @@ public class MechView {
     public String getMechReadoutHead() {
         return sHead.toString();
     }
-    
+
     public String getMechReadoutBasic() {
         return sBasic.toString();
     }
@@ -253,7 +258,7 @@ public class MechView {
     private String getInternalAndArmor() {
         StringBuffer sIntArm = new StringBuffer();
 
-        int maxArmor = entity.getTotalInternal() * 2 + 3;
+        int maxArmor = (entity.getTotalInternal() * 2) + 3;
         if(isInf && !isBA) {
             Infantry inf = (Infantry)entity;
             sIntArm.append(Messages.getString("MechView.Men")).append(entity.getTotalInternal()).append( " (" + inf.getSquadSize() + "/" + inf.getSquadN() + ")");
@@ -296,7 +301,7 @@ public class MechView {
                 // Skip empty sections.
                 if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
                         || (isVehicle && !isLargeSupportVehicle && ((((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY))
-                                || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == LargeSupportTank.LOC_BODY)))))) {
+                                || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY)))))) {
                     continue;
                 }
 

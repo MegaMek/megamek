@@ -21,6 +21,7 @@
 package megamek.client.ui.AWT;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
@@ -98,7 +99,11 @@ public class MechView {
         .append("\r\n") //$NON-NLS-1$
         .append(getFailed()).append("\r\n");
 
-        DecimalFormat dFormatter = new DecimalFormat("#,###.##");
+        DecimalFormatSymbols unusualSymbols =
+                new DecimalFormatSymbols();
+            unusualSymbols.setDecimalSeparator('.');
+            unusualSymbols.setGroupingSeparator(',');
+        DecimalFormat dFormatter = new DecimalFormat("#,###.##", unusualSymbols);
         sLoadout.append("BV: ");
         sLoadout.append(dFormatter.format(entity.calculateBattleValue()));
 
@@ -226,7 +231,7 @@ public class MechView {
     private String getInternalAndArmor() {
         StringBuffer sIntArm = new StringBuffer();
 
-        int maxArmor = entity.getTotalInternal() * 2 + 3;
+        int maxArmor = (entity.getTotalInternal() * 2) + 3;
         sIntArm.append(Messages.getString("MechView.Internal")) //$NON-NLS-1$
                 .append(entity.getTotalInternal());
         if (isMech) {
@@ -253,7 +258,7 @@ public class MechView {
             // Skip empty sections.
             if ((IArmorState.ARMOR_NA == entity.getInternal(loc))
                     || (isVehicle && !isLargeSupportVehicle && ((((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY))
-                    || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == LargeSupportTank.LOC_BODY)))))) {
+                    || (isLargeSupportVehicle && (((loc == LargeSupportTank.LOC_TURRET) && ((LargeSupportTank) entity).hasNoTurret()) || (loc == Tank.LOC_BODY)))))) {
                 continue;
             }
 

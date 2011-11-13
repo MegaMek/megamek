@@ -46,7 +46,7 @@ public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
             if (damageRoll >= 8) {
                 Report r = new Report();
                 r.subject = subjectId;
-                r.messageId = 3170;
+                r.messageId = 3172;
                 vPhaseReport.addElement(r);
                 weapon.setHit(true);
                 return false;

@@ -46,8 +46,8 @@ public class ISC3M extends TAGWeapon {
         heat = 0;
         damage = 0;
         shortRange = 5;
-        mediumRange = 10;
+        mediumRange = 9;
         longRange = 15;
-        extremeRange = 20;
+        extremeRange = 18;
     }
 }

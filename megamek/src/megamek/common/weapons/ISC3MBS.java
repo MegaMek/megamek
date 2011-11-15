@@ -25,7 +25,7 @@ import megamek.common.TechConstants;
 public class ISC3MBS extends TAGWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6402667441307181946L;
 
@@ -47,8 +47,8 @@ public class ISC3MBS extends TAGWeapon {
         heat = 0;
         damage = 0;
         shortRange = 5;
-        mediumRange = 10;
+        mediumRange = 9;
         longRange = 15;
-        extremeRange = 20;
+        extremeRange = 18;
     }
 }

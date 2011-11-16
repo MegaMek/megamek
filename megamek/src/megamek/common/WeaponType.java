@@ -500,8 +500,11 @@ public class WeaponType extends EquipmentType {
     public static void initializeTypes() {
         // Laser types
         EquipmentType.addType(new ISMediumLaser());
+        EquipmentType.addType(new ISMediumLaserPrimitive());
         EquipmentType.addType(new ISLargeLaser());
+        EquipmentType.addType(new ISLargeLaserPrimitive());
         EquipmentType.addType(new ISSmallLaser());
+        EquipmentType.addType(new ISSmallLaserPrimitive());
         EquipmentType.addType(new ISLargePulseLaser());
         EquipmentType.addType(new ISLargeXPulseLaser());
         EquipmentType.addType(new ISERLargeLaser());
@@ -542,6 +545,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLSmallChemicalLaser());
         // PPC types
         EquipmentType.addType(new ISPPC());
+        EquipmentType.addType(new ISPPCPrimitive());
         EquipmentType.addType(new ISERPPC());
         EquipmentType.addType(new ISEHERPPC());
         EquipmentType.addType(new CLERPPC());
@@ -568,6 +572,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLProtoMechAC2());
         EquipmentType.addType(new CLProtoMechAC4());
         EquipmentType.addType(new CLProtoMechAC8());
+        EquipmentType.addType(new ISAC2Primitive());
+        EquipmentType.addType(new ISAC5Primitive());
+        EquipmentType.addType(new ISAC10Primitive());
+        EquipmentType.addType(new ISAC20Primitive());
         // Ultras
         EquipmentType.addType(new ISUAC2());
         EquipmentType.addType(new ISUAC5());

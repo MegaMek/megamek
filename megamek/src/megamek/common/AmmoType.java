@@ -120,6 +120,7 @@ public class AmmoType extends EquipmentType {
     public static final int T_RIFLE = 92;
     public static final int T_VGL = 93;
     public static final int T_C3_REMOTE_SENSOR = 94;
+    public static final int T_AC_PRIMITIVE = 95;
     public static final int T_LRM_PRIMITIVE = 96;
     public static final int T_SRM_PRIMITIVE = 97;
     public static final int NUM_TYPES = 98;
@@ -457,6 +458,10 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISSRM6pAmmo();
         srmAmmos.add(base);
         EquipmentType.addType(base);
+        EquipmentType.addType(AmmoType.createISAC2pAmmo());
+        EquipmentType.addType(AmmoType.createISAC5pAmmo());
+        EquipmentType.addType(AmmoType.createISAC10pAmmo());
+        EquipmentType.addType(AmmoType.createISAC20pAmmo());
 
         // Level 3 Ammo
         // Note, some level 3 stuff is mixed into level 2.
@@ -1324,6 +1329,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISAC2pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "AC/2p Ammo";
+        ammo.shortName = "AC/2p";
+        ammo.setInternalName("IS Ammo AC/2 Primitive");
+        ammo.addLookupName("ISAC2p Ammo");
+        ammo.addLookupName("IS Autocannon/2 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
+        ammo.shots = 34;
+        ammo.bv = 5;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+
     private static AmmoType createISAC5Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -1337,6 +1361,25 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 20;
+        ammo.bv = 9;
+        ammo.cost = 4500;
+
+        return ammo;
+    }
+
+    private static AmmoType createISAC5pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "AC/5p Ammo";
+        ammo.shortName = "AC/5p";
+        ammo.setInternalName("IS Ammo AC/5 Primitive");
+        ammo.addLookupName("ISAC5p Ammo");
+        ammo.addLookupName("IS Autocannon/5 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
+        ammo.shots = 15;
         ammo.bv = 9;
         ammo.cost = 4500;
 
@@ -1394,6 +1437,25 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 5;
+        ammo.bv = 22;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISAC20pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "AC/20p Ammo";
+        ammo.shortName = "AC/20p";
+        ammo.setInternalName("IS Ammo AC/20 Primitive");
+        ammo.addLookupName("ISAC20p Ammo");
+        ammo.addLookupName("IS Autocannon/20 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
+        ammo.shots = 4;
         ammo.bv = 22;
         ammo.cost = 10000;
 
@@ -8184,6 +8246,25 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_ACi;
         ammo.shots = 10;
+        ammo.bv = 21;
+        ammo.cost = 12000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISAC10pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        ammo.name = "AC/10p Ammo";
+        ammo.shortName = "AC/10p";
+        ammo.setInternalName("IS Ammo AC/10 Primitive");
+        ammo.addLookupName("ISAC10p Ammo");
+        ammo.addLookupName("IS Autocannon/10 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_AC_PRIMITIVE;
+        ammo.shots = 8;
         ammo.bv = 21;
         ammo.cost = 12000;
 

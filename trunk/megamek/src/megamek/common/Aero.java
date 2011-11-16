@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -250,7 +250,7 @@ public class Aero extends Entity {
 
     /**
      * Thi is the same as getWalkMP, but does not divide by 2 when grounded
-     * 
+     *
      * @return
      */
     public int getCurrentThrust() {
@@ -1059,7 +1059,7 @@ public class Aero extends Entity {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        for (int loc = 0; loc < locations() - 1; loc++) {
+        for (int loc = 0; loc < (locations() - 1); loc++) {
 
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
@@ -2321,7 +2321,7 @@ public class Aero extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -2378,19 +2378,19 @@ public class Aero extends Entity {
         double cost = 0;
 
         // add in cockpit
-        cost += 200000 + 50000 + 2000 * weight;
+        cost += 200000 + 50000 + (2000 * weight);
 
         // Structural integrity
         cost += 50000 * getSI();
 
         // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + 10 * getWeight();
+        cost += 25000 + (10 * getWeight());
 
         // engine
-        cost += getEngine().getBaseCost() * getEngine().getRating() * weight / 75.0;
+        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
 
         // fuel tanks
-        cost += 200 * getFuel() / 80.0;
+        cost += (200 * getFuel()) / 80.0;
 
         // armor
         if (hasPatchworkArmor()) {
@@ -2403,7 +2403,7 @@ public class Aero extends Entity {
         }
 
         // heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
+        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
         cost += sinkCost * getHeatSinks();
 
@@ -2472,8 +2472,8 @@ public class Aero extends Entity {
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;
-            if (rating % 5 != 0) {
-                return (int) ((rating - rating % 5 + 5) / (int) weight) + 2;
+            if ((rating % 5) != 0) {
+                return (int) (((rating - (rating % 5)) + 5) / (int) weight) + 2;
             }
             return (int) (rating / (int) weight) + 2;
         }
@@ -2495,10 +2495,10 @@ public class Aero extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
-     * @param loc
+     * @param target
      *            the hit location
      * @return a critical type
      */
@@ -2814,7 +2814,7 @@ public class Aero extends Entity {
 
     /**
      * check to see if case is available anywhere
-     * 
+     *
      * @return
      */
     public boolean hasCase() {
@@ -2831,7 +2831,7 @@ public class Aero extends Entity {
 
     /**
      * Used to determine net velocity of ramming attack
-     * 
+     *
      */
     public int sideTableRam(Coords src) {
 
@@ -2851,7 +2851,7 @@ public class Aero extends Entity {
 
     public int sideTableRam(Coords src, int face) {
 
-        int fa = (getPosition().degree(src) + (6 - face) * 60) % 360;
+        int fa = (getPosition().degree(src) + ((6 - face) * 60)) % 360;
         if (((fa > 30) && (fa <= 90)) || ((fa < 330) && (fa >= 270))) {
             return Aero.RAM_TOWARD_OBL;
         } else if ((fa > 150) && (fa < 210)) {
@@ -3033,7 +3033,7 @@ public class Aero extends Entity {
     public int getFuelUsed(int thrust) {
         int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
-        int used = safeThrust + 2 * overThrust;
+        int used = safeThrust + (2 * overThrust);
         return used;
     }
 
@@ -3169,7 +3169,7 @@ public class Aero extends Entity {
 
     /**
      * What's the range of the ECM equipment?
-     * 
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */
@@ -3240,7 +3240,7 @@ public class Aero extends Entity {
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -3327,8 +3327,8 @@ public class Aero extends Entity {
     /**
      * In cases where another unit occupies the same hex, determine if this Aero
      * should be moved back a hex for targeting purposes
-     * 
-     * @param otherPos
+     *
+     * @param other
      * @return
      */
     public boolean shouldMoveBackHex(Aero other) {
@@ -3610,7 +3610,7 @@ public class Aero extends Entity {
 
     /**
      * Is this a primitive ASF?
-     * 
+     *
      * @return
      */
     public boolean isPrimitive() {
@@ -3659,5 +3659,103 @@ public class Aero extends Entity {
             first = false;
         }
         return toReturn;
+    }
+
+    @Override
+    public boolean isCrippled() {
+        if (getInternalRemainingPercent() < 0.5) {
+            return true;
+        }
+        if (getEngineHits() > 0) {
+            return true;
+        }
+        if (getPotCrit() == CRIT_FUEL_TANK) {
+            return true;
+        }
+        if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
+            return true;
+        }
+
+        boolean noWeapons = true;
+        int totalDamage = 0;
+        for (Mounted weap : getWeaponList()) {
+            if (weap.canFire() && (((WeaponType)weap.getType()).getLongRange() > 5)) {
+                noWeapons = false;
+            }
+            totalDamage += ((WeaponType)weap.getType()).getDamage();
+        }
+
+        return noWeapons && (totalDamage <= 5);
+    }
+
+    @Override
+    public boolean isDmgHeavy() {
+        if (getArmorRemainingPercent() <= 0.33) {
+            return true;
+        }
+
+        if (getInternalRemainingPercent() < 0.67) {
+            return true;
+        }
+        if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.75;
+    }
+
+    @Override
+    public boolean isDmgModerate() {
+        if (getArmorRemainingPercent() <= 0.5) {
+            return true;
+        }
+
+        if (getInternalRemainingPercent() < 0.75) {
+            return true;
+        }
+
+        if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.5;
+    }
+
+    @Override
+    public boolean isDmgLight() {
+        if (getArmorRemainingPercent() <= 0.75) {
+            return true;
+        }
+
+        if (getInternalRemainingPercent() < 0.9) {
+            return true;
+        }
+
+        if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.25;
     }
 }

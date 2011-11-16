@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -22,36 +22,36 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class CLERSmallPulseLaser extends LaserWeapon {
+public class CLERSmallPulseLaser extends PulseLaserWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -273231806790327505L;
 
     /**
-     * 
+     *
      */
     public CLERSmallPulseLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        this.name = "ER Small Pulse Laser";
-        this.setInternalName("CLERSmallPulseLaser");
-        this.addLookupName("Clan ER Pulse Small Laser");
-        this.addLookupName("Clan ER Small Pulse Laser");
-        this.heat = 3;
-        this.damage = 5;
-        this.toHitModifier = -1;
-        this.shortRange = 2;
-        this.mediumRange = 4;
-        this.longRange = 6;
-        this.extremeRange = 8;
-        this.waterShortRange = 1;
-        this.waterMediumRange = 2;
-        this.waterLongRange = 4;
-        this.waterExtremeRange = 4;
-        this.tonnage = 1.5f;
-        this.criticals = 1;
-        this.bv = 36;
-        this.cost = 30000;
+        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        name = "ER Small Pulse Laser";
+        setInternalName("CLERSmallPulseLaser");
+        addLookupName("Clan ER Pulse Small Laser");
+        addLookupName("Clan ER Small Pulse Laser");
+        heat = 3;
+        damage = 5;
+        toHitModifier = -1;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        waterShortRange = 1;
+        waterMediumRange = 2;
+        waterLongRange = 4;
+        waterExtremeRange = 4;
+        tonnage = 1.5f;
+        criticals = 1;
+        bv = 36;
+        cost = 30000;
     }
 }

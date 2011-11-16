@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -168,7 +168,7 @@ public class Protomech extends Entity {
 
     /**
      * Get the weapon in the given torso location (if any).
-     * 
+     *
      * @param torsoNum
      *            - a <code>int</code> that corresponds to SYSTEM_TORSO_WEAPON_A
      *            through SYSTEM_TORSO_WEAPON_F
@@ -486,7 +486,7 @@ public class Protomech extends Entity {
     /**
      * get this ProtoMech's run MP without factoring in a possible myomer
      * booster
-     * 
+     *
      * @param gravity
      * @param ignoreheat
      * @return
@@ -505,7 +505,7 @@ public class Protomech extends Entity {
 
     /**
      * does this protomech mount a myomer booster?
-     * 
+     *
      * @return
      */
     public boolean hasMyomerBooster() {
@@ -664,7 +664,7 @@ public class Protomech extends Entity {
 
     /**
      * Sets the internal structure for the pmech.
-     * 
+     *
      * @param head
      *            head
      * @param torso
@@ -1504,4 +1504,77 @@ public class Protomech extends Entity {
         this.isQuad = isQuad;
     }
 
+    @Override
+    public boolean isCrippled() {
+        if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
+            return true;
+        }
+
+        for (Mounted weap : getWeaponList()) {
+            if (weap.canFire()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isDmgHeavy() {
+        if (getArmorRemainingPercent() <= 0.25) {
+            return true;
+        }
+
+        if ((getCrew() != null) && (getCrew().getHits() == 3)) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.75;
+    }
+
+    @Override
+    public boolean isDmgModerate() {
+        if (getArmorRemainingPercent() <= 0.5) {
+            return true;
+        }
+
+        if ((getCrew() != null) && (getCrew().getHits() == 2)) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.5;
+    }
+
+    @Override
+    public boolean isDmgLight() {
+        if (getArmorRemainingPercent() <= 0.75) {
+            return true;
+        }
+
+        if ((getCrew() != null) && (getCrew().getHits() == 1)) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.25;
+    }
 }

@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -1637,7 +1637,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -1911,7 +1911,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     * 
+     *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
@@ -1983,7 +1983,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2328,7 +2328,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2356,7 +2356,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2379,7 +2379,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     * 
+     *
      * @return
      */
     public int getTotalSlots() {
@@ -2388,7 +2388,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     * 
+     *
      * @return
      */
     public int getFreeSlots() {
@@ -2549,7 +2549,7 @@ public class Tank extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -2654,4 +2654,87 @@ public class Tank extends Entity {
         return toReturn;
     }
 
+    @Override
+    public boolean isCrippled() {
+        if (getArmor(LOC_FRONT) < 1) {
+            return true;
+        }
+        if (getArmor(LOC_RIGHT) < 1) {
+            return true;
+        }
+        if (getArmor(LOC_LEFT) < 1) {
+            return true;
+        }
+        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
+            return true;
+        }
+        if (getArmor(LOC_REAR) < 1) {
+            return true;
+        }
+
+        for (Mounted weap : getWeaponList()) {
+            if (weap.canFire()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isDmgHeavy() {
+        if (((double)getWalkMP() / getOriginalJumpMP()) <= 0.5) {
+            return true;
+        }
+
+        if (getArmorRemainingPercent() <= 0.33) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.75;
+    }
+
+    @Override
+    public boolean isDmgModerate() {
+        if (getArmorRemainingPercent() <= 0.67) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+
+        return ((double)totalInoperable / totalWeapons) >= 0.5;
+    }
+
+    @Override
+    public boolean isDmgLight() {
+        if (getWalkMP() < getOriginalWalkMP()) {
+            return true;
+        }
+
+        if (getArmorRemainingPercent() <= 0.8) {
+            return true;
+        }
+
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+
+        return ((double)totalInoperable / totalWeapons) >= 0.25;
+    }
 }

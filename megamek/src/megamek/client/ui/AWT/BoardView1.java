@@ -3394,16 +3394,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entity.isDone()) {
                 text = Color.lightGray;
                 bkgd = Color.darkGray;
-                bord = Color.black;
             } else if (entity.isImmobile()) {
                 text = Color.darkGray;
                 bkgd = Color.black;
-                bord = Color.lightGray;
             } else {
                 text = Color.black;
                 bkgd = Color.lightGray;
-                bord = Color.darkGray;
             }
+            bord = getDamageColor();
             graph.setFont(font);
             graph.setColor(bord);
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
@@ -3708,6 +3706,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.fillRect(55, 10, barLength, 3);
             }
 
+            if (game.getOptions().booleanOption("show_dmg_level")) {
+                graph.setColor(getDamageColor());
+                graph.fillOval(20,15,12,12);
+            }
+
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -3718,6 +3721,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             graph.dispose();
             tempImage.flush();
+        }
+
+        private Color getDamageColor() {
+            switch (entity.getDamageLevel()) {
+                case Entity.DMG_CRIPPLED:
+                    return Color.black;
+                case Entity.DMG_HEAVY:
+                    return Color.red;
+                case Entity.DMG_MODERATE:
+                    return Color.yellow;
+                case Entity.DMG_LIGHT:
+                    return Color.green;
+            }
+            return new Color(TRANSPARENT);
         }
 
         /**

@@ -3403,6 +3403,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 }
             }
 
+            if (game.getOptions().booleanOption("show_dmg_level")) {
+                graph.setColor(getDamageColor());
+                graph.fillOval(20,15,12,12);
+            }
+
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
                 image = createImage(new FilteredImageSource(tempImage
@@ -3413,6 +3418,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
             graph.dispose();
             tempImage.flush();
+        }
+
+        private Color getDamageColor() {
+            switch (entity.getDamageLevel()) {
+                case Entity.DMG_CRIPPLED:
+                    return Color.black;
+                case Entity.DMG_HEAVY:
+                    return Color.red;
+                case Entity.DMG_MODERATE:
+                    return Color.yellow;
+                case Entity.DMG_LIGHT:
+                    return Color.green;
+            }
+            return new Color(TRANSPARENT);
         }
 
         /**

@@ -177,8 +177,24 @@ public class MechDisplay extends BufferedPanel {
      */
     public void displayEntity(Entity en) {
 
-        clientgui.mechW.setTitle(en.getShortName());
-
+        String enName = en.getShortName();
+        switch (en.getDamageLevel()) {
+            case Entity.DMG_CRIPPLED:
+                enName += " [CRIPPLED]";
+                break;
+            case Entity.DMG_HEAVY:
+                enName += " [HEAVY DMG]";
+                break;
+            case Entity.DMG_MODERATE:
+                enName += " [MODERATE DMG]";
+                break;
+            case Entity.DMG_LIGHT:
+                enName += " [LIGHT DMG]";
+                break;
+            default:
+                enName += " [UNDAMAGED]";
+        }
+        clientgui.mechW.setTitle(enName);
         currentlyDisplaying = en;
 
         mPan.displayMech(en);
@@ -1474,7 +1490,7 @@ public class MechDisplay extends BufferedPanel {
         /**
          * Update the range display for the selected ammo.
          *
-         * @param atype
+         * @param mAmmo
          *            - the <code>AmmoType</code> of the weapon's loaded ammo.
          */
         private void updateRangeDisplayForAmmo(Mounted mAmmo) {

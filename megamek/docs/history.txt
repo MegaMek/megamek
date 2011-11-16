@@ -38,6 +38,7 @@ v0.35.26-dev (SVN)
 + Patch 3437807: Damage Level flag
 + Patch 3437506: Princess update
 + Patch 3430252: primitive missiles
++ Patch 3430251: primitive ACs and Lasers
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

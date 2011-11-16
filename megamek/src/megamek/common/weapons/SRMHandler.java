@@ -38,7 +38,12 @@ public class SRMHandler extends MissileWeaponHandler {
      * @param s
      */
     public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+        this(t, w, g, s, 0);
+    }
+
+    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s, int salvoMod) {
         super(t, w, g, s);
+        nSalvoBonus = salvoMod;
     }
 
     /*

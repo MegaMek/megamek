@@ -37,6 +37,7 @@ v0.35.26-dev (SVN)
 + Bug: TAG should have 5/9/15 range, not 5/10/15
 + Patch 3437807: Damage Level flag
 + Patch 3437506: Princess update
++ Patch 3430252: primitive missiles
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

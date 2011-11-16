@@ -698,6 +698,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISEnhancedLRM10());
         EquipmentType.addType(new ISEnhancedLRM15());
         EquipmentType.addType(new ISEnhancedLRM20());
+        EquipmentType.addType(new ISLRM5Primitive());
+        EquipmentType.addType(new ISLRM10Primitive());
+        EquipmentType.addType(new ISLRM15Primitive());
+        EquipmentType.addType(new ISLRM20Primitive());
         // LRTs
         EquipmentType.addType(new ISLRT5());
         EquipmentType.addType(new ISLRT10());
@@ -786,6 +790,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLStreakSRM2OS());
         EquipmentType.addType(new CLStreakSRM4OS());
         EquipmentType.addType(new CLStreakSRM6OS());
+        EquipmentType.addType(new ISSRM2Primitive());
+        EquipmentType.addType(new ISSRM4Primitive());
+        EquipmentType.addType(new ISSRM6Primitive());
         // SRTs
         EquipmentType.addType(new ISSRT2());
         EquipmentType.addType(new ISSRT4());

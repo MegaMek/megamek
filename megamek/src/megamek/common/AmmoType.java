@@ -120,7 +120,9 @@ public class AmmoType extends EquipmentType {
     public static final int T_RIFLE = 92;
     public static final int T_VGL = 93;
     public static final int T_C3_REMOTE_SENSOR = 94;
-    public static final int NUM_TYPES = 95;
+    public static final int T_LRM_PRIMITIVE = 96;
+    public static final int T_SRM_PRIMITIVE = 97;
+    public static final int NUM_TYPES = 98;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -428,6 +430,14 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         base = AmmoType.createISLRM20Ammo();
         lrmAmmos.add(base);
+        base = AmmoType.createISLRM5pAmmo();
+        lrmAmmos.add(base);
+        base = AmmoType.createISLRM10pAmmo();
+        lrmAmmos.add(base);
+        base = AmmoType.createISLRM15pAmmo();
+        lrmAmmos.add(base);
+        base = AmmoType.createISLRM20pAmmo();
+        lrmAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISSRM2Ammo();
         srmAmmos.add(base);
@@ -436,6 +446,15 @@ public class AmmoType extends EquipmentType {
         srmAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createISSRM6Ammo();
+        srmAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISSRM2pAmmo();
+        srmAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISSRM4pAmmo();
+        srmAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createISSRM6pAmmo();
         srmAmmos.add(base);
         EquipmentType.addType(base);
 
@@ -1546,6 +1565,29 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISLRM5pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "LRM 5p Ammo";
+        ammo.shortName = "LRM 5p";
+        ammo.setInternalName("IS Ammo LRM-5 Primitive");
+        ammo.addLookupName("ISLRM5p Ammo");
+        ammo.addLookupName("IS LRM 5 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
+        ammo.shots = 18;
+        ammo.bv = 6;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
+
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
     private static AmmoType createISLRM10Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -1559,6 +1601,29 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
+        ammo.bv = 11;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
+
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISLRM10pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "LRM 10p Ammo";
+        ammo.shortName = "LRM 10p";
+        ammo.setInternalName("IS Ammo LRM-10 Primitive");
+        ammo.addLookupName("ISLRM10p Ammo");
+        ammo.addLookupName("IS LRM 10 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
+        ammo.shots = 9;
         ammo.bv = 11;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
@@ -1591,6 +1656,29 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISLRM15pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "LRM 15p Ammo";
+        ammo.shortName = "LRM 15p";
+        ammo.setInternalName("IS Ammo LRM-15 Primitive");
+        ammo.addLookupName("ISLRM15p Ammo");
+        ammo.addLookupName("IS LRM 15 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
+        ammo.shots = 6;
+        ammo.bv = 17;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
+
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
     private static AmmoType createISLRM20Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -1613,6 +1701,29 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISLRM20pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "LRM 20p Ammo";
+        ammo.shortName = "LRM 20p";
+        ammo.setInternalName("IS Ammo LRM-20 Primitive");
+        ammo.addLookupName("ISLRM20p Ammo");
+        ammo.addLookupName("IS LRM 20 Primitive Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
+        ammo.shots = 5;
+        ammo.bv = 23;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]
+            { "", "HotLoad" });
+
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
     private static AmmoType createISSRM2Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -1626,6 +1737,25 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 50;
+        ammo.bv = 3;
+        ammo.cost = 27000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISSRM2pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "SRM 2p Ammo";
+        ammo.shortName = "SRM 2p";
+        ammo.setInternalName("IS Ammo SRM-2 Primitive");
+        ammo.addLookupName("ISSRM2p Ammo");
+        ammo.addLookupName("IS SRM 2 Primitive Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_PRIMITIVE;
+        ammo.shots = 38;
         ammo.bv = 3;
         ammo.cost = 27000;
 
@@ -1651,6 +1781,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISSRM4pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "SRM 4p Ammo";
+        ammo.shortName = "SRM 4p";
+        ammo.setInternalName("IS Ammo SRM-4 Primitive");
+        ammo.addLookupName("ISSRM4p Ammo");
+        ammo.addLookupName("IS SRM 4 Primitive Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM_PRIMITIVE;
+        ammo.shots = 19;
+        ammo.bv = 5;
+        ammo.cost = 27000;
+
+        return ammo;
+    }
+
     private static AmmoType createISSRM6Ammo() {
         AmmoType ammo = new AmmoType();
 
@@ -1664,6 +1813,25 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 15;
+        ammo.bv = 7;
+        ammo.cost = 27000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISSRM6pAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        ammo.name = "SRM 6p Ammo";
+        ammo.shortName = "SRM 6p";
+        ammo.setInternalName("IS Ammo SRM-6 Primitive");
+        ammo.addLookupName("ISSRM6p Ammo");
+        ammo.addLookupName("IS SRM 6 Primitive Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM_PRIMITIVE;
+        ammo.shots = 11;
         ammo.bv = 7;
         ammo.cost = 27000;
 

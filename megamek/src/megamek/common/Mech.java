@@ -27,11 +27,14 @@ import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.SRMWeapon;
+import megamek.common.weapons.SRTWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -6636,13 +6639,24 @@ public abstract class Mech extends Entity {
             return true;
         }
 
+        //no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
+        //or has no weapons with range greater than 5 hexes
         boolean noWeapons = true;
         int totalDamage = 0;
         for (Mounted weap : getWeaponList()) {
-            if (weap.canFire() && (((WeaponType)weap.getType()).getLongRange() > 5)) {
+            WeaponType wtype = (WeaponType)weap.getType();
+            if (weap.canFire() && (wtype.getLongRange() > 5)) {
                 noWeapons = false;
             }
-            totalDamage += ((WeaponType)weap.getType()).getDamage();
+            if (wtype.getDamage() > 0) {
+                totalDamage += wtype.getDamage();
+            } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) ||
+                        (wtype instanceof SRTWeapon))?2:((wtype instanceof ATMWeapon)?3:1)));
+            } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
+                totalDamage += wtype.getDamage(WeaponType.RANGE_SHORT);
+            }
+
         }
 
         return noWeapons &&(totalDamage <= 5);

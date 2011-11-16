@@ -24,47 +24,50 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 
 public class PathSelector {
-	
-	int min(int a,int b) {return a<b?a:b;}
-	
-	public MovePath selectPath(IGame game,ArrayList<MovePath> paths) {
-		if(paths.size()==0) return null;
-		Entity entity=paths.get(0).getEntity();
-		if(entity instanceof Aero) {
-			for(MovePath p: paths) {
-				//chooses the first path that overflies an enemy
-				for(Enumeration e=p.getSteps();e.hasMoreElements();) {				
-					Coords cord=((MoveStep)e.nextElement()).getPosition();
-					Entity enemy=game.getFirstEnemyEntity(cord,entity);
-					if(enemy!=null) return p;
-				}
-			}
-				
-				//dislikes:
-				/*
-				//ending in a square that I can't turn around from
-				Coords finalcoords=p.getFinalCoords();
-				int remaining_hexes;
-				switch(p.getFinalFacing()) {
-				case 0:
-					remaining_hexes=finalcoords.y;
-				case 1:
-					remaining_hexes=min(finalcoords.y,game.getBoard().getWidth()-finalcoords.x);
-				case 2:
-					remaining_hexes=min(game.getBoard().getHeight()-finalcoords.y,game.getBoard().getWidth()-finalcoords.x);
-				case 3:
-					remaining_hexes=game.getBoard().getHeight()-finalcoords.y;
-				case 4:
-					remaining_hexes=min(game.getBoard().getHeight()-finalcoords.y,finalcoords.x);
-				case 5:
-					remaining_hexes=min(finalcoords.y,finalcoords.x);					
-				}
-				*/
-							
-			
-			return paths.get(0);
-		} else
-			return paths.get(0);
-	}
+
+    int min(int a, int b) {
+        return a < b ? a : b;
+    }
+
+    public MovePath selectPath(IGame game, ArrayList<MovePath> paths) {
+        if (paths.size() == 0) {
+            return null;
+        }
+        Entity entity = paths.get(0).getEntity();
+        if (entity instanceof Aero) {
+            for (MovePath p : paths) {
+                // chooses the first path that overflies an enemy
+                for (Enumeration<MoveStep> e = p.getSteps(); e
+                        .hasMoreElements();) {
+                    Coords cord = (e.nextElement()).getPosition();
+                    Entity enemy = game.getFirstEnemyEntity(cord, entity);
+                    if (enemy != null) {
+                        return p;
+                    }
+                }
+            }
+
+            // dislikes:
+            /*
+             * //ending in a square that I can't turn around from Coords
+             * finalcoords=p.getFinalCoords(); int remaining_hexes;
+             * switch(p.getFinalFacing()) { case 0:
+             * remaining_hexes=finalcoords.y; case 1:
+             * remaining_hexes=min(finalcoords
+             * .y,game.getBoard().getWidth()-finalcoords.x); case 2:
+             * remaining_hexes
+             * =min(game.getBoard().getHeight()-finalcoords.y,game
+             * .getBoard().getWidth()-finalcoords.x); case 3:
+             * remaining_hexes=game.getBoard().getHeight()-finalcoords.y; case
+             * 4: remaining_hexes=min(game.getBoard().getHeight()-finalcoords.y,
+             * finalcoords.x); case 5:
+             * remaining_hexes=min(finalcoords.y,finalcoords.x); }
+             */
+
+            return paths.get(0);
+        } else {
+            return paths.get(0);
+        }
+    }
 
 }

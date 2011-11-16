@@ -39,7 +39,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         name = "Plasma Rifle";
         setInternalName("ISPlasmaRifle");
         heat = 10;
-        damage = DAMAGE_VARIABLE;
+        damage = 10;
         rackSize = 1;
         ammoType = AmmoType.T_PLASMA;
         minimumRange = WEAPON_NA;

@@ -104,14 +104,14 @@ public class PathSearcher {
             List<MovePath> nextmoves = sp.path.getNextMoves(backward, forward);
             for (MovePath p : nextmoves) {
                 if (!p.getLastStep().isLegal())
-                 {
+                {
                     continue; // don't make illegal moves
                 }
                 if (p.getLastStep().getType() == MovePath.MoveStepType.GET_UP)
-                 {
+                {
                     if (p.getLastStep().getMpUsed() > sp.path.getEntity()
                             .getRunMP())
-                     {
+                    {
                         continue; // ignore if I'm out of MP
                     }
                 }
@@ -152,33 +152,33 @@ public class PathSearcher {
         WeightedPath start = new WeightedPath(empty_path, empty_rank);
         pathmap.put(new PathState(start.path), start);
         start_path.add(start);
-        
+
         if(entity.getJumpMP()>0) { //allow jumping
             MovePath jump_path=new MovePath(game,entity);
             jump_path.addStep(MoveStepType.START_JUMP);
             WeightedPath startjump=new WeightedPath(jump_path,empty_rank-0.1);
             pathmap.put(new PathState(startjump.path),startjump);
-            start_path.add(startjump);            
+            start_path.add(startjump);
         }
-        
+
         ArrayList<WeightedPath> allpaths = seeAllPaths(start_path, true, true,
                 game, pathmap);
-        return allpaths;      
+        return allpaths;
     }
-    
+
     ArrayList<WeightedPath> getTopPaths(Entity entity,IGame game,int npaths) {
         ArrayList<WeightedPath> allpaths=getAllWeightedPaths(entity,game);
         //TODO sort allpaths, return top npaths
         return allpaths;
     }
-    
+
     MovePath getBestPath(Entity entity, IGame game) {
-        System.err.println("Unit: " + entity.getDisplayName() + " is pathing.");
+        //System.err.println("Unit: " + entity.getDisplayName() + " is pathing.");
         long start_time = System.currentTimeMillis();
         ArrayList<WeightedPath> allpaths=getAllWeightedPaths(entity,game);
-      
-        System.err.println("choosing between "
-                + Integer.toString(allpaths.size()) + " paths");
+
+        //System.err.println("choosing between "
+        //        + Integer.toString(allpaths.size()) + " paths");
         double min_value = allpaths.get(0).weight;
         MovePath min_path = allpaths.get(0).path;
         double max_value = allpaths.get(0).weight;
@@ -193,14 +193,14 @@ public class PathSearcher {
                 min_path = wp.path;
             }
         }
-        long stop_time = System.currentTimeMillis();
+        //long stop_time = System.currentTimeMillis();
 
-        System.err.println("took " + Long.toString(stop_time - start_time)
-                + " milliseconds");
-        System.err.println("best path value: " + Double.toString(max_value));
-        System.err.println("worst path value: " + Double.toString(min_value));
-        System.err.println("choosing path "
-                + Integer.toString(max_path.length()) + " steps long");
+        //System.err.println("took " + Long.toString(stop_time - start_time)
+        //        + " milliseconds");
+        //System.err.println("best path value: " + Double.toString(max_value));
+        //System.err.println("worst path value: " + Double.toString(min_value));
+        //System.err.println("choosing path "
+        //        + Integer.toString(max_path.length()) + " steps long");
 
         return max_path;
     };

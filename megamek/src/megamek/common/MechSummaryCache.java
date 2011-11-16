@@ -151,7 +151,7 @@ public class MechSummaryCache {
         return hFailedFiles;
     }
 
-    void loadMechData() {
+    public void loadMechData() {
         Vector<MechSummary> vMechs = new Vector<MechSummary>();
         Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;

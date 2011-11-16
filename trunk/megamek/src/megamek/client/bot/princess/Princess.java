@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 import megamek.client.bot.BotClient;
@@ -33,34 +34,46 @@ import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
+import megamek.common.event.GameEvent;
 import megamek.common.event.GamePlayerChatEvent;
 
 public class Princess extends BotClient {
 
+    private boolean initialized = false;
     public boolean verbose_errorlog;
-    public int verbosity; //controls how many messages are sent to chat
+    public int verbosity; // controls how many messages are sent to chat
 
     public String properties_file_name;
-    
+
     double move_evaluation_time_estimate;
-    
-    //----These have to do with the goals or victiory conditions for the bot----
+    Precognition precognition;
+    Thread precognition_thread;
+    // PathEnumerator path_enumerator;
+
+    // ----These have to do with the goals or victiory conditions for the
+    // bot----
     /*
      * A list of hexes in which the bot wants to destroy buildings
      */
-    public ArrayList<Coords> strategic_targets=new ArrayList<Coords>(); 
-    //---------------------------------------------------------------------------
+    public ArrayList<Coords> strategic_targets = new ArrayList<Coords>();
+    /*
+     * Should the rules for forced withdrawal be implemented
+     */
+    public boolean forced_withdrawal = true;
+    /*
+     * Should the bot be running away
+     */
+    public boolean should_flee = false;
+    // ---------------------------------------------------------------------------
 
     protected ChatProcessor chatp = new ChatProcessor();
 
     public Princess(String name, String host, int port) {
         super(name, host, port);
-
-        properties_file_name = new String("mmconf/princess_bot.properties"); // default
-        // properties
-        // file
-        verbose_errorlog=true;
-        verbosity=1;
+        // default properties file
+        properties_file_name = new String("mmconf/princess_bot.properties");
+        verbose_errorlog = true;
+        verbosity = 1;
     }
 
     @Override
@@ -74,24 +87,25 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected void calculateDeployment() {        
-
+    protected void calculateDeployment() {
 
         // get the first unit
         int entNum = game.getFirstDeployableEntityNum();
-        if(verbosity>0) {
-            sendChat("deploying unit "+getEntity(entNum).getChassis());
+        if (verbosity > 0) {
+            sendChat("deploying unit " + getEntity(entNum).getChassis());
         }
         // on the list to be deployed
         // get a set of all the
         Coords[] cStart = getStartingCoordsArray();
-        if(cStart.length==0) {
-            System.err.println("Error, no valid locations to deploy "+getEntity(entNum).getChassis());
+        if (cStart.length == 0) {
+            System.err.println("Error, no valid locations to deploy "
+                    + getEntity(entNum).getChassis());
         }
         // get the coordinates I can deploy on
         Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
-        if(cDeploy==null) {
-            System.err.println("Error, getCoordsAround gave no location for "+getEntity(entNum).getChassis());
+        if (cDeploy == null) {
+            System.err.println("Error, getCoordsAround gave no location for "
+                    + getEntity(entNum).getChassis());
         }
         // first coordinate that is legal to put this unit on now find some sort
         // of reasonable facing. If there are deployed enemies, face them
@@ -114,26 +128,26 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateFiringTurn() {
-        if(verbose_errorlog) {
+        if (verbose_errorlog) {
             System.err.println("calculateFiringTurn called");
         }
 
         Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
         // entity that can
         // act this turn
-        //make sure weapons are loaded
+        // make sure weapons are loaded
         fire_control.loadAmmo(shooter, game);
         FireControl.FiringPlan plan = fire_control.getBestFiringPlan(shooter,
                 game);
-        if(plan!=null) {
+        if (plan != null) {
             System.err.println(plan.getDebugDescription(false));
             // tell the game I want to fire
             sendAttackData(shooter.getId(), plan.getEntityActionVector(game));
 
         } else {
-            sendAttackData(shooter.getId(),null);
+            sendAttackData(shooter.getId(), null);
         }
-        if(verbose_errorlog) {
+        if (verbose_errorlog) {
             System.err.println("calculateFiringTurn returning");
         }
     }
@@ -148,31 +162,40 @@ public class Princess extends BotClient {
 
     @Override
     protected MovePath calculateMoveTurn() {
-        if(verbose_errorlog) {
+        if (verbose_errorlog) {
             System.err.println("calculateMoveTurn called");
         }
-        //first move useless units: immobile units, ejected mechwarrior, etc
-        Entity moving_entity=null;
-        Entity e=game.getFirstEntity();
+        // first move useless units: immobile units, ejected mechwarrior, etc
+        Entity moving_entity = null;
+        Entity e = game.getFirstEntity();
         do {
-            if(e.isImmobile()) {moving_entity=e; break;}
-            if(e instanceof MechWarrior) {moving_entity=e; break;}
-        } while((e=game.getNextEntity(e.getId()+1))!=game.getFirstEntity());
-        //after that, moving furthest units first
-        if(moving_entity==null) {
-            double furthest_dist=0;
-            e=game.getFirstEntity();
+            if (e.isImmobile()) {
+                moving_entity = e;
+                break;
+            }
+            if (e instanceof MechWarrior) {
+                moving_entity = e;
+                break;
+            }
+        } while ((e = game.getNextEntity(e.getId() + 1)) != game
+                .getFirstEntity());
+        // after that, moving farthest units first
+        if (moving_entity == null) {
+            double furthest_dist = 0;
+            e = game.getFirstEntity();
             do {
-                double dist=BasicPathRanker.distanceToClosestEnemy(e,e.getPosition(),game);
-                if((moving_entity==null)||(dist>furthest_dist)) {
-                    moving_entity=e;
-                    furthest_dist=dist;
+                double dist = BasicPathRanker.distanceToClosestEnemy(e,
+                        e.getPosition(), game);
+                if ((moving_entity == null) || (dist > furthest_dist)) {
+                    moving_entity = e;
+                    furthest_dist = dist;
                 }
-            } while((e=game.getNextEntity(e.getId()+1))!=game.getFirstEntity());
+            } while ((e = game.getNextEntity(e.getId() + 1)) != game
+                    .getFirstEntity());
         }
 
-        MovePath ret=continueMovementFor(moving_entity); // move it
-        if(verbose_errorlog) {
+        MovePath ret = continueMovementFor(moving_entity); // move it
+        if (verbose_errorlog) {
             System.err.println("calculateMoveTurn returning");
         }
         return ret;
@@ -180,7 +203,7 @@ public class Princess extends BotClient {
 
     @Override
     protected PhysicalOption calculatePhysicalTurn() {
-        if(verbose_errorlog) {
+        if (verbose_errorlog) {
             System.err.println("calculatePhysicalTurn called");
         }
         // get the first entity that can act this turn
@@ -199,8 +222,7 @@ public class Princess extends BotClient {
                 fire_control.calculateUtility(right_punch);
                 if (right_punch.utility > 0) {
                     if ((best_attack == null)
-                            || (right_punch.utility > best_attack
-                                    .utility)) {
+                            || (right_punch.utility > best_attack.utility)) {
                         best_attack = right_punch;
                     }
                 }
@@ -209,8 +231,7 @@ public class Princess extends BotClient {
                 fire_control.calculateUtility(left_punch);
                 if (left_punch.utility > 0) {
                     if ((best_attack == null)
-                            || (left_punch.utility > best_attack
-                                    .utility)) {
+                            || (left_punch.utility > best_attack.utility)) {
                         best_attack = left_punch;
                     }
                 }
@@ -218,8 +239,7 @@ public class Princess extends BotClient {
                         hitter, e, PhysicalAttackType.RIGHT_KICK, game);
                 if (right_kick.utility > 0) {
                     if ((best_attack == null)
-                            || (right_kick.utility > best_attack
-                                    .utility)) {
+                            || (right_kick.utility > best_attack.utility)) {
                         best_attack = right_kick;
                     }
                 }
@@ -227,8 +247,7 @@ public class Princess extends BotClient {
                         hitter, e, PhysicalAttackType.LEFT_KICK, game);
                 if (left_kick.getExpectedDamage() > 0) {
                     if ((best_attack == null)
-                            || (left_kick.utility > best_attack
-                                    .utility)) {
+                            || (left_kick.utility > best_attack.utility)) {
                         best_attack = left_kick;
                     }
                 }
@@ -241,8 +260,9 @@ public class Princess extends BotClient {
                 System.err.println("No useful attack to be made");
             }
             if (best_attack != null) {
-                if(verbose_errorlog) {
-                    System.err.println("calculatePhysicalTurn returning (with an attack)");
+                if (verbose_errorlog) {
+                    System.err
+                            .println("calculatePhysicalTurn returning (with an attack)");
                 }
                 return best_attack.getAsPhysicalOption();
             }
@@ -253,7 +273,7 @@ public class Princess extends BotClient {
                 // null at the end, it returns the first entity
             }
         } while (hitter != null);
-        if(verbose_errorlog) {
+        if (verbose_errorlog) {
             System.err.println("calculatePhysicalTurn returning (no attacks)");
         }
         // no one can hit anything anymore, so give up
@@ -262,55 +282,60 @@ public class Princess extends BotClient {
 
     @Override
     protected MovePath continueMovementFor(Entity entity) {
+        // figure out who moved last, and who's move lists need to be updated
+
         // moves this entity during movement phase
-        System.err.println("Moving "+entity.getChassis());
-        PathEnumerator rator=new PathEnumerator();
-        long start_time = System.currentTimeMillis();
-        rator.recalculateMovesFor(game,entity);
-        ArrayList<MovePath> paths=rator.getEntityPaths(entity);
-        long stop_time = System.currentTimeMillis();
-        System.err.println("Path enumeration took " + Long.toString(stop_time - start_time)
-                + " milliseconds");
-        if(paths==null) {
-            System.err.println("Warning: no valid paths found");
-            return new MovePath(game,entity);
+        System.err.println("Moving " + entity.getDisplayName() + " (ID "
+                + entity.getId() + ")");
+        precognition.insureUpToDate();
+
+        if (entity.isCrippled()) {
+            System.err.println(entity.getDisplayName()
+                    + " is crippled and withdrawing");
+            sendChat(entity.getDisplayName()
+                    + " is crippled and withdrawing.");
         }
-        double this_time_estimate=(paths.size()*move_evaluation_time_estimate)/1e3;
-        if(verbosity>0) {
-            String timeestimate="unknown.";
-            if(this_time_estimate!=0) {
-                timeestimate=Integer.toString((int)this_time_estimate)+" seconds";
+        // precognition.path_enumerator.debugPrintContents();
+
+        ArrayList<MovePath> paths = precognition.path_enumerator.unit_paths
+                .get(entity.getId());
+
+        if (paths == null) {
+            System.err.println("Warning: no valid paths found");
+            return new MovePath(game, entity);
+        }
+        double this_time_estimate = (paths.size() * move_evaluation_time_estimate) / 1e3;
+        if (verbosity > 0) {
+            String timeestimate = "unknown.";
+            if (this_time_estimate != 0) {
+                timeestimate = Integer.toString((int) this_time_estimate)
+                        + " seconds";
             }
-            String message="Moving "+entity.getChassis()+". "+Long.toString(paths.size())+" paths to consider.  Estimated time to completion: "+timeestimate;
+            String message = "Moving " + entity.getChassis() + ". "
+                    + Long.toString(paths.size())
+                    + " paths to consider.  Estimated time to completion: "
+                    + timeestimate;
             sendChat(message);
         }
-        start_time = System.currentTimeMillis();
-        path_ranker.initUnitTurn(entity,game);
-        ArrayList<RankedPath> rankedpaths=path_ranker.rankPaths(paths,game);
-        stop_time = System.currentTimeMillis();
-        //update path evaluation time estimate
-        double updated_estimate=((double)(stop_time-start_time))/((double)paths.size());
-        if(move_evaluation_time_estimate==0) {
-            move_evaluation_time_estimate=updated_estimate;
+        long start_time = System.currentTimeMillis();
+        path_ranker.initUnitTurn(entity, game);
+        ArrayList<RankedPath> rankedpaths = path_ranker.rankPaths(paths, game);
+        long stop_time = System.currentTimeMillis();
+        // update path evaluation time estimate
+        double updated_estimate = ((double) (stop_time - start_time))
+                / ((double) paths.size());
+        if (move_evaluation_time_estimate == 0) {
+            move_evaluation_time_estimate = updated_estimate;
         }
-        move_evaluation_time_estimate=0.5*(updated_estimate+move_evaluation_time_estimate);
-        if(rankedpaths.size()==0) {
-            return new MovePath(game,entity);
+        move_evaluation_time_estimate = 0.5 * (updated_estimate + move_evaluation_time_estimate);
+        if (rankedpaths.size() == 0) {
+            return new MovePath(game, entity);
         }
-        System.err.println("Path ranking took " + Long.toString(stop_time - start_time)
-                + " milliseconds");
-        /*
-            if(entity instanceof Aero) {
-                System.err.println("printing paths:");
-                int n=0;
-                for(MovePath p:paths) {
-                    System.err.print("path "+(n++));
-                    p.printAllSteps();
-                }
-            }
-         */
-        RankedPath bestpath=PathRanker.getBestPath(rankedpaths);
-        //bestpath.path.printAllSteps();
+        System.err.println("Path ranking took "
+                + Long.toString(stop_time - start_time) + " milliseconds");
+        precognition.unpause();
+        RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
+        // bestpath.path.printAllSteps();
         return bestpath.path;
     }
 
@@ -331,20 +356,29 @@ public class Princess extends BotClient {
 
     @Override
     protected void initMovement() {
-        //reset strategic targets
-        fire_control.additional_targets=new ArrayList<Targetable>();
-        for(int i=0;i<strategic_targets.size();i++) {            
-            if(game.getBoard().getBuildingAt(strategic_targets.get(i))==null) {
-                sendChat("No building to target in Hex "+strategic_targets.get(i).toFriendlyString()+", ignoring.");   
+        // reset strategic targets
+        fire_control.additional_targets = new ArrayList<Targetable>();
+        for (int i = 0; i < strategic_targets.size(); i++) {
+            if (game.getBoard().getBuildingAt(strategic_targets.get(i)) == null) {
+                sendChat("No building to target in Hex "
+                        + strategic_targets.get(i).toFriendlyString()
+                        + ", ignoring.");
             } else {
-            fire_control.additional_targets.add(new BuildingTarget(strategic_targets.get(i),game.getBoard(),false));
-                sendChat("Building in Hex "+strategic_targets.get(i).toFriendlyString()+" designated strategic target.");
+                fire_control.additional_targets.add(new BuildingTarget(
+                        strategic_targets.get(i), game.getBoard(), false));
+                sendChat("Building in Hex "
+                        + strategic_targets.get(i).toFriendlyString()
+                        + " designated strategic target.");
             }
         }
     }
 
     @Override
     public void initialize() {
+        if (initialized)
+         {
+            return; // no need to initialize twice
+        }
         Properties configfile = new Properties();
         try {
             configfile.load(new FileInputStream(properties_file_name));
@@ -358,18 +392,42 @@ public class Princess extends BotClient {
         }
         path_searcher = new PathSearcher();
         path_ranker = new BasicPathRanker(configfile);
-        path_ranker.botbase=this;
+        path_ranker.botbase = this;
         path_searcher.ranker = path_ranker;
         fire_control = new FireControl();
         path_ranker.firecontrol = fire_control;
-        
+        precognition = new Precognition();
+        precognition.setGame(game);
+        path_ranker.path_enumerator = precognition.path_enumerator;
 
-                
+        System.err.println("princess initialize called");
+        precognition_thread = new Thread(precognition, "Princess-precognition");
+        precognition_thread.start();
+        // precognition.pause();
+        initialized = true;
+        BotGeometry.debugSelfTest();
     }
 
     @Override
     protected void processChat(GamePlayerChatEvent ge) {
+        System.err.println("received message: \"" + ge.getMessage() + "\"");
+        System.err.println("message type: " + ge.getType());
+        if (ge.getType() == GameEvent.GAME_PLAYER_CHAT) {
+            StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
+            String name = st.nextToken();
+            String message = st.nextToken();
+            if (message == null) {
+                return;
+            }
+            if (message.contains("flee")) {
+                System.err.println("received flee order");
+                sendChat("Run Away!");
+                should_flee = true;
+            }
+        }
+
         chatp.processChat(ge, this);
+
     }
 
     PathSearcher path_searcher;

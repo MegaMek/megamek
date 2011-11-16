@@ -49,7 +49,7 @@ public class Infantry extends Entity {
     /**
      * The number of men originally in this platoon.
      */
-    private int menStarting = 0;
+    protected int menStarting = 0;
 
     /**
      * The number of men alive in this platoon at the beginning of the phase,
@@ -212,8 +212,8 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && (null == getCrew() || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && (null == getCrew() || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
@@ -267,8 +267,8 @@ public class Infantry extends Entity {
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
         if((getSecondaryN() > 1)
-                && (null == getCrew() || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && (null == getCrew() || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
         }
@@ -633,8 +633,8 @@ public class Infantry extends Entity {
         double speedFactorTableLookup = getRunMP(false, true, true)
         + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25) {
-            speedFactor = Math.pow(1 + (((double) walkMP
-                    + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
+            speedFactor = Math.pow(1 + ((((double) walkMP
+                    + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
         } else {
             speedFactor = Math
             .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
@@ -1302,9 +1302,9 @@ public class Infantry extends Entity {
         // Infantry armor points is # of men / 15
         return (int) Math.ceil(getArmor(0)/15.0);
     }
-    
+
     @Override
-    /*
+    /**
      * Each squad has 1 structure point
      */
     public int getBattleForceStructurePoints() {
@@ -1315,10 +1315,29 @@ public class Infantry extends Entity {
     public int getEngineHits() {
     	return 0;
     }
-    
+
     @Override
-	public String getLocationDamage(int loc) {
-		return "";
-	}
-    
+    public String getLocationDamage(int loc) {
+        return "";
+    }
+
+    @Override
+    public boolean isCrippled() {
+        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.25);
+    }
+
+    @Override
+    public boolean isDmgHeavy() {
+        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.5);
+    }
+
+    @Override
+    public boolean isDmgModerate() {
+        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.75);
+    }
+
+    @Override
+    public boolean isDmgLight() {
+        return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
+    }
 } // End class Infantry

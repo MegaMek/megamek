@@ -8671,6 +8671,7 @@ public class AmmoType extends EquipmentType {
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
                 case AmmoType.T_AC:
+                case AmmoType.T_AC_PRIMITIVE:
                 case AmmoType.T_LAC:
                     // Add the munition name to the beginning of the display
                     // name.
@@ -8726,8 +8727,10 @@ public class AmmoType extends EquipmentType {
 
                     break;
                 case AmmoType.T_SRM:
+                case AmmoType.T_SRM_PRIMITIVE:
                 case AmmoType.T_MRM:
                 case AmmoType.T_LRM:
+                case AmmoType.T_LRM_PRIMITIVE:
                 case AmmoType.T_MML:
                 case AmmoType.T_NLRM:
                 case AmmoType.T_SRM_TORPEDO:

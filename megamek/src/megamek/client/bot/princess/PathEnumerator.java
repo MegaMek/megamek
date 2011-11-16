@@ -15,10 +15,15 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
+import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
+import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -26,20 +31,16 @@ import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
 import megamek.common.MovePath;
-import megamek.common.MoveStep;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 
-public class PathEnumerator extends Thread {
+public class PathEnumerator {
 
-    public PathEnumerator() {
-        unit_paths=new ArrayList<PathEnumeratorEntityPaths>();
-
-    }
 
     /**
      * an entity and the paths it might take
      */
+    /*
     public class PathEnumeratorEntityPaths {
         public PathEnumeratorEntityPaths(Entity e,ArrayList<MovePath> p) {
             entity=e;
@@ -48,6 +49,7 @@ public class PathEnumerator extends Thread {
         Entity entity;
         ArrayList<MovePath> paths;
     };
+     */
 
     /**
      * returns an integer that represents the ending position and facing
@@ -56,9 +58,9 @@ public class PathEnumerator extends Thread {
      */
     public static int hashPath(MovePath p) {
         int off=((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.OFF))?1:0;
-        return (((((((p.getFinalCoords().hashCode()*7)+p.getFinalFacing())*2)
+        return ((((((((p.getFinalCoords().hashCode()*7)+p.getFinalFacing())*2)
                 +(p.getFinalHullDown()?0:1))*2)
-                +(p.getFinalProne()?0:1)*2+(p.contains(MoveStepType.MANEUVER)?0:1)))*2+off;
+                +((p.getFinalProne()?0:1)*2)+(p.contains(MoveStepType.MANEUVER)?0:1)))*2)+off;
     }
 
     /**
@@ -109,7 +111,7 @@ public class PathEnumerator extends Thread {
                 return true;
             }
             return false;
-        }       
+        }
 
         /**
          * This functions answers the question "Have I already considered a move that ended on the same
@@ -138,30 +140,100 @@ public class PathEnumerator extends Thread {
         }
 
     }
+    /*//moved to BotGeometry
+    //This is a list of all possible places on the map an entity could end up
+    //the structure is <EntityId, HasSet< places they can move > >
+    public class CoordFacingCombo {
+        CoordFacingCombo() {};
+        CoordFacingCombo(MovePath p) {
+            coords=p.getFinalCoords();
+            facing=p.getFinalFacing();
+        }
+        CoordFacingCombo(Coords c,int f) {
+            coords=c;
+            facing=f;
+        }
+        CoordFacingCombo(Entity e) {
+            coords=e.getPosition();
+            facing=e.getFacing();
+        }
+        Coords coords;
+        int facing;
 
-    ArrayList<PathEnumeratorEntityPaths> unit_paths;
-
-    /**
-     * for each entity that can move this turn
-     * if I haven't already calculated its paths, or it has moved since I last calculated, recalculate
+        @Override
+        public boolean equals(Object o) {
+            CoordFacingCombo c=(CoordFacingCombo)o;
+            if(!coords.equals(c.coords)) return false;
+            if(!(facing==c.facing)) return false;
+            return true;
+        }
+        @Override
+        public int hashCode() {
+            return coords.hashCode()*6+facing;
+        }
+    }
      */
-    @Override
-    public void run() {
 
+    HashMap<Integer,ArrayList<MovePath> > unit_paths=new HashMap<Integer,ArrayList<MovePath> >();
+    HashMap<Integer,ConvexBoardArea> unit_movable_areas=new HashMap<Integer,ConvexBoardArea>();
+    HashMap<Integer,HashSet<CoordFacingCombo> > unit_potential_locations=
+            new HashMap<Integer,HashSet<CoordFacingCombo> >();
+    HashMap<Integer,CoordFacingCombo> last_known_location=new HashMap<Integer,CoordFacingCombo>();
+    IGame game;
+
+    void clear() {
+        unit_paths.clear();
+        unit_potential_locations.clear();
+        last_known_location.clear();
+    }
+
+    Coords getLastKnownCoords(Integer entityid) {
+        CoordFacingCombo ccr=last_known_location.get(entityid);
+        if(ccr==null) {
+            return null;
+        }
+        return ccr.coords;
+    }
+
+    public TreeSet<Integer> getEntitiesWithLocation(Coords c,boolean groundnotair) {
+        TreeSet<Integer> ret=new TreeSet<Integer>();
+        if(c==null) {
+            return ret;
+        }
+        for(Iterator<Integer> uplit=unit_potential_locations.keySet().iterator();uplit.hasNext();) {
+            Integer onentity=uplit.next();
+            if((!(game.getEntity(onentity) instanceof Aero))||(!groundnotair)) {
+                for(int i=0;i<5;i++) {
+                    if(unit_potential_locations.get(onentity).contains(new CoordFacingCombo(c,i))) {
+                        ret.add(onentity);
+                        break;
+                    }
+                }
+            }
+        }
+        return ret;
     }
 
     /**
-     * Waits for the calculations to finish
+     * From a list of potential moves, make a potential ending location chart
      */
-    public void waitForFinish() {
-
+    void updateUnitLocations(Entity e,ArrayList<MovePath> paths) {
+        //clear previous locations for this entity
+        unit_potential_locations.remove(e.getId());
+        //
+        HashSet<CoordFacingCombo> toadd=new HashSet<CoordFacingCombo>();
+        for(MovePath p: paths) {
+            toadd.add(new CoordFacingCombo(p));
+        }
+        unit_potential_locations.put(e.getId(), toadd);
     }
 
     /**
      * calculates all moves for a given unit, keeping the shortest path to each hex/facing pair
      */
     public void recalculateMovesFor(IGame g,Entity e) {
-
+        last_known_location.put(e.getId(), new CoordFacingCombo(e.getPosition(),e.getFacing()));
+        unit_paths.remove(e.getId());
         MovePathCalculation paths=new MovePathCalculation();
         ArrayList<MovePath> starting_moves=getValidStartingMoves(g,e);
         //add any starting moves that are valid moves
@@ -183,7 +255,7 @@ public class PathEnumerator extends Thread {
                 System.err.println("open size "+Integer.toString(paths.open_bymp.size()));
                 System.err.println("potential moves size "+Integer.toString(paths.potential_moves.size()));
             }
-            */
+             */
             MovePath onpath=paths.open_bymp.pop();
             //
             ArrayList<MovePath> nextpaths=getNextMoves(g,onpath);
@@ -192,8 +264,9 @@ public class PathEnumerator extends Thread {
                 if((e instanceof Aero)||(!paths.hasAlreadyConsidered(nextpath))) {
                     //paths.open_bymp.add(nextpath); breadth-first
                     paths.open_bymp.push(nextpath); //depth first, saves memory
-                    if(!(e instanceof Aero))
+                    if(!(e instanceof Aero)) {
                         paths.closed.put(PathEnumerator.hashPath(nextpath),nextpath.getMpUsed());
+                    }
                     //if legal to finish, add as potential location
                     if((e instanceof Aero)&&isLegalAeroMove(nextpath)) {
                         if((nextpath.getLastStep()!=null)&&((nextpath.getLastStep().getType()==MoveStepType.OFF)||(nextpath.getLastStep().getType()==MoveStepType.RETURN))) {
@@ -213,9 +286,14 @@ public class PathEnumerator extends Thread {
                 }
             }
         }
-        System.err.println("calculated potential move count of "+paths.potential_moves.size()+" for entity "+e.getChassis());
-        System.err.println("#of partial moves: "+paths.closed.size());
-        setEntityPaths(e,paths.potential_moves);
+        updateUnitLocations(e,paths.potential_moves);
+        //System.err.println("calculated potential move count of "+paths.potential_moves.size()+" for entity "+e.getChassis());
+        //System.err.println("#of partial moves: "+paths.closed.size());
+        unit_paths.put(e.getId(), paths.potential_moves);
+        //calculate bounding area for move
+        ConvexBoardArea myarea=new ConvexBoardArea();
+        myarea.addCoordFacingCombos(unit_potential_locations.get(e.getId()).iterator());
+        unit_movable_areas.put(e.getId(),myarea);
     }
 
     /**
@@ -228,11 +306,11 @@ public class PathEnumerator extends Thread {
         ret.add(new MovePath(g,e));
         // meks may want to start with a jump
         if(e.getJumpMP()!=0) {
-        	MovePath jumpmove=new MovePath(g,e);
-        	jumpmove.addStep(MoveStepType.START_JUMP);
-        	ret.add(jumpmove);
+            MovePath jumpmove=new MovePath(g,e);
+            jumpmove.addStep(MoveStepType.START_JUMP);
+            ret.add(jumpmove);
         }
-        System.err.println("number of starting moves for "+e.getChassis()+" is "+ret.size());
+        //System.err.println("number of starting moves for "+e.getChassis()+" is "+ret.size());
         return ret;
     }
 
@@ -243,7 +321,7 @@ public class PathEnumerator extends Thread {
      */
     ArrayList<MovePath> getNextMoves(IGame game,MovePath start) {
         ArrayList<MovePath> ret=new ArrayList<MovePath>();
-        if(start.getEntity() instanceof Aero) {            
+        if(start.getEntity() instanceof Aero) {
             //if I've already done something illegal, or flown off, ignore
             if((start.getSecondLastStep()!=null)&&(start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL)) {
                 return ret;
@@ -264,10 +342,10 @@ public class PathEnumerator extends Thread {
             }
             //accelerate
             //FIXME max final velocity hardcoded in, is there a place I can look this up?
-            if(can_accel&&start.getFinalVelocity()<4) {            
+            if(can_accel&&(start.getFinalVelocity()<4)) {
                 ret.add(start.clone().addStep(MoveStepType.ACC));
             }
-            if(can_deccel&&start.getFinalVelocity()>0) {            
+            if(can_deccel&&(start.getFinalVelocity()>0)) {
                 ret.add(start.clone().addStep(MoveStepType.DEC));
             }
             //turn left and right
@@ -292,38 +370,38 @@ public class PathEnumerator extends Thread {
                         addStep(MoveStepType.LATERAL_RIGHT, true, true));
             }
             //*/
-            
+
             if((!start.contains(MoveStepType.MANEUVER))&&(!has_moved)) {
-                System.err.println("adding start maneuvers");
-                    //hammerhead TODO figure out how these work
-                    //ret.add(start.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
-                    //        addStep(MoveStepType.YAW, true, true));
-                    //immelmen
-                    if(start.getFinalVelocity()>2) {
-                        //there is no reason to do an immelman and not turn
-                        //ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_LEFT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_LEFT).addStep(MoveStepType.TURN_LEFT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
-                    }
-                    //split s
-                    if(start.getFinalAltitude()>2) {
-                        //there is no reason to do a split-s and not turn
-                        //ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_LEFT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_LEFT).addStep(MoveStepType.TURN_LEFT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
-                    }
-                    //loop
-                    if(start.getFinalVelocity()>4) {
-                        ret.add(start.clone().addManeuver(ManeuverType.MAN_LOOP).
-                                addStep(MoveStepType.LOOP, true, true));
-                    }
-                }            
+                //    System.err.println("adding start maneuvers");
+                //hammerhead TODO figure out how these work
+                //ret.add(start.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
+                //        addStep(MoveStepType.YAW, true, true));
+                //immelmen
+                if(start.getFinalVelocity()>2) {
+                    //there is no reason to do an immelman and not turn
+                    //ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_LEFT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_LEFT).addStep(MoveStepType.TURN_LEFT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_IMMELMAN).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
+                }
+                //split s
+                if(start.getFinalAltitude()>2) {
+                    //there is no reason to do a split-s and not turn
+                    //ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_LEFT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_LEFT).addStep(MoveStepType.TURN_LEFT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_SPLIT_S).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT).addStep(MoveStepType.TURN_RIGHT));
+                }
+                //loop
+                if(start.getFinalVelocity()>4) {
+                    ret.add(start.clone().addManeuver(ManeuverType.MAN_LOOP).
+                            addStep(MoveStepType.LOOP, true, true));
+                }
+            }
         } else { //meks and tanks and infantry oh my
             //if I've already done something illegal, ignore
             if((start.getSecondLastStep()!=null)&&(start.getSecondLastStep().getMovementType()==EntityMovementType.MOVE_ILLEGAL)) {
@@ -387,27 +465,15 @@ public class PathEnumerator extends Thread {
         return ret;
     }
 
-    void setEntityPaths(Entity e,ArrayList<MovePath> paths) {
-        removeEntityPaths(e);
-        unit_paths.add(new PathEnumeratorEntityPaths(e,paths));
-    }
-
-    void removeEntityPaths(Entity e) {
-        for(PathEnumeratorEntityPaths p : unit_paths) {
-            if(p.entity==e) {
-                unit_paths.remove(p);
-                return;
-            }
+    public void debugPrintContents() {
+        for(Iterator<Integer> it=unit_paths.keySet().iterator();it.hasNext();) {
+            Integer id=it.next();
+            Entity mye=game.getEntity(id);
+            ArrayList<MovePath> paths=unit_paths.get(id);
+            int paths_size=paths.size();
+            System.err.println("unit "+mye.getDisplayName()+" has "+paths_size+ "paths ");
+            System.err.println("  and "+unit_potential_locations.get(id).size()+ " ending locations");
         }
-    }
-
-    ArrayList<MovePath> getEntityPaths(Entity e) {
-        for(PathEnumeratorEntityPaths p : unit_paths) {
-            if(p.entity==e) {
-                return p.paths;
-            }
-        }
-        return null;
     }
 
     /**

@@ -75,7 +75,7 @@ public class ISHGaussRifle extends GaussWeapon {
             return damageMedium;
         }
 
-            return damageLong;
+        return damageLong;
     }
 
 

@@ -26,6 +26,7 @@ import java.awt.event.KeyListener;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -62,7 +63,8 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     JTextField princess_target_hex_num_x;    
     JButton princess_addtarget_button;
     JList princess_targets_list;
-    DefaultListModel princess_targets_list_model=new DefaultListModel();   
+    DefaultListModel princess_targets_list_model=new DefaultListModel();
+    JCheckBox princess_forcedwithdrawal;
 
     private JTextField namefield;
     private boolean custom_name=false; //did user not use default name?
@@ -123,6 +125,9 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         JScrollPane ptlscroller=new JScrollPane(princess_targets_list);
         ptlscroller.setAlignmentX(LEFT_ALIGNMENT);
         princessconfigcard.add(ptlscroller,c);
+        princess_forcedwithdrawal=new JCheckBox("Forced Withdrawal");
+        princess_forcedwithdrawal.setSelected(true);
+        princessconfigcard.add(princess_forcedwithdrawal);
         
         
         botspecificcards=new JPanel(new CardLayout());
@@ -190,8 +195,10 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
                 int xpos=Integer.parseInt(((String)princess_targets_list_model.get(i)).substring(0, 2))-1;
                 int ypos=Integer.parseInt(((String)princess_targets_list_model.get(i)).substring(2, 4))-1;
                 System.err.println("adding "+Integer.toString(xpos)+" , "+Integer.toString(ypos)+" to strategic targets list");
-                toreturn.strategic_targets.add(new Coords(xpos,ypos));
+                toreturn.strategic_targets.add(new Coords(xpos,ypos));                
             }
+            //do forced withdrawal?
+            toreturn.forced_withdrawal=princess_forcedwithdrawal.isSelected();
             return toreturn;
         }
         return null;  //shouldn't happen

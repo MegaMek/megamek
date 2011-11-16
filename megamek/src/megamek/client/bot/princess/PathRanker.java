@@ -21,7 +21,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 
-public class PathRanker {
+public class PathRanker {       
 
     Princess botbase;
 

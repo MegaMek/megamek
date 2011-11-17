@@ -1,8 +1,8 @@
 AFFS Assault Mechs F 3067 (FMU)
 Goliath GOL-3M,1
 Cyclops CP-11-G,2
-Ueus ZEU-9S,3
-Battlemaster BMR-3M,4
+Zeus ZEU-9S,3
+BattleMaster BLR-3M,4
 Atlas AS7-D,5
 Victor VTR-9K,6
 Awesome AWS-9Q,5

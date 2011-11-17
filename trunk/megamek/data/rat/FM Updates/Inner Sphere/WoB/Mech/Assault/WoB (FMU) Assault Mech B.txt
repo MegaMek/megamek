@@ -1,6 +1,6 @@
 WoB Assault Mechs B 3067 (FMU)
 Albatross ALB-3U,1
-Grand Crusader GND-D-01,2
+Grand Crusader GRN-D-01,2
 King Crab KGC-000,3
 Awesome AWS-9M,4
 Thug THG-11E,5

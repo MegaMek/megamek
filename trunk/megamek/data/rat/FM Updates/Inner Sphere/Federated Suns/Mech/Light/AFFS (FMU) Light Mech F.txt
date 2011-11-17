@@ -4,7 +4,7 @@ Dart DRT-3S,2
 Wolfhound WLF-2,3
 Firestarter FS9-H,4
 Javelin JVN-10N,5
-Javelin JVN-10F,6
+Javelin JVN-10F "Fire Javelin",6
 Firestarter FS9-S,5
 Valkyrie VLK-QD3,4
 Commando COM-2D,3

@@ -1,6 +1,6 @@
 SL Light Vehicles 3067 (FMU)
 Hawk Moth Gunship,1
-Karnoc UR Transport (3055 Upgrade),2
+Karnov UR Transport (3055 Upgrade),2
 Plainsman Medium Hovertank,3
 Saracen Medium Hover Tank,4
 Pegasus Scout Hover Tank (C3),5

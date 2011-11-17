@@ -6,7 +6,7 @@ Hunchback HBK-5P,4
 Blackjack BJ2-OD,5
 Enforcer III ENF-6T,6
 Firestarter FS9-OB,5
-Shadow Hawk SDH-5D,4
+Shadow Hawk SHD-5D,4
 Blackjack BJ2-OF,3
 Enforcer III ENF-6M,2
 Nightsky NGS-5T,1

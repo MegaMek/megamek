@@ -1,6 +1,6 @@
 3039 House Davion Vehicle Light
-Warrior H-7, 1
-Warrior H-7, 2
+Warrior Attack Helicopter H-7, 1
+Warrior Attack Helicopter H-7, 2
 Saladin Assault Hover Tank, 3
 Packrat LRPV PKR-T5, 4
 Hunter Light Support Tank, 5

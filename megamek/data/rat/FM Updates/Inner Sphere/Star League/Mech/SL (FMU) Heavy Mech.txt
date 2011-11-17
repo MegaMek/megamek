@@ -5,8 +5,8 @@ Helios HEL-C,3
 Crusader CRD-5K,4
 Black Hawk-KU BHKU-OE,5
 Grand Dragon DRG-7K,6
-Thanatos TNS-4S,5
+Thanatos THS-4S,5
 Thunderbolt TDR-10SE,4
-Shugenja SJA-7C,3
+Shugenja SJA-7D,3
 Warhammer WHM-8D,2
 Nova Cat Prime,1

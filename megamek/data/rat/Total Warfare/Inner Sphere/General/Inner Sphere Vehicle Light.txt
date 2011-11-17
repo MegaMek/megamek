@@ -1,5 +1,5 @@
 Inner Sphere Vehicle Light
-Hunter Light Support Tank (3055 Upgrade), 1
+Hunter Light Support Tank (3054 Upgrade), 1
 J. Edgar Light Hover Tank, 2
 Scorpion Light Tank, 3
 Savannah Master Hovercraft, 4

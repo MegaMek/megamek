@@ -5,7 +5,7 @@ Stalker STK-7D,3
 Awesome AWS-9Q,4
 Atlas AS7-S,5
 Victor VTR-9K,6
-Battlemaster BLR-3M,5
+BattleMaster BLR-3M,5
 Zeus ZEU-9S,4
 Longbow LGB-12C,3
 Banshee BNC-3S,2

@@ -3,7 +3,7 @@ Goliath GOL-5D,1
 Gunslinger GUN-1ERD,2
 Awesome AWS-9M,3
 Zeus ZEU-9S,4
-Battlemaster BLR-3S,5
+BattleMaster BLR-3S,5
 Atlas AS7-S,6
 Victor VTR-9K,5
 Banshee BNC-3S,4

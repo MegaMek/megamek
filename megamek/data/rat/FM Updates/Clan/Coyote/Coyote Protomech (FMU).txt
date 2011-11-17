@@ -1,7 +1,6 @@
 Clan Coyote ProtoMech 3067 (FMU)
-
 Satyr,1
-Saytr,2
+Satyr,2
 Roc,3
 Roc,4
 Roc,5

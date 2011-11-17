@@ -7,6 +7,6 @@ Grim Reaper GRM-R-PR29,5
 Crab CRB-27,6
 Cicada CDA-3M,5
 Raijin RJN101-A,4
-Wraith TR-1,3
+Wraith TR1,3
 Griffin GRF-3M,2
 Wyvern WVE-9N,1

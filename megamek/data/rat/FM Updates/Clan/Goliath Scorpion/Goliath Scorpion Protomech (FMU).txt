@@ -1,8 +1,7 @@
 Clan Goliath Scorpion ProtoMech 3067 (FMU)
-
 Roc,1
 Roc,2
-Saytr,3
+Satyr,3
 Satyr,4
 Satyr,5
 Roc,6

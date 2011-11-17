@@ -13,4 +13,3 @@ Fortress (2613), 1
 ##Version 1 - May 2011
 ##From RUS Files
 ##Editted by Dave "Hammer" Nawton
-

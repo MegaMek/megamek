@@ -8,5 +8,5 @@ Hellcat II HCT-213B,6
 Gotha GTHA-500,5
 Stingray F-94,4
 Stingray F-94,3
-Lightning LTG-15,2
+Lightning LTN-G15,2
 Lancer LX-2,1

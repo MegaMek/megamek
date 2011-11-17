@@ -7,6 +7,6 @@ Manticore Heavy Tank,5
 Demon Tank,6
 Burke Defense Tank,5
 Brutus Assault Tank,4
-Bulldog medium Tank,3
+Bulldog Medium Tank,3
 Pike Support Vehicle,2
 Padilla Heavy Artillery Tank,1

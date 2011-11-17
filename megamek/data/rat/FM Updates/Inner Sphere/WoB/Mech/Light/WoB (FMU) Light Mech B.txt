@@ -1,6 +1,6 @@
 WoB Light Mechs B 3067 (FMU)
 Jackal JA-KL-1532,1
-Nexus NXS-1A,2
+Nexus NXS1-A,2
 Stinger STG-5R,3
 Mercury MCY-99,4
 Mongoose MON-66,5

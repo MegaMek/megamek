@@ -1,5 +1,4 @@
 Clan Fire Mandrill ProtoMech 3067 (FMU)
-
 Harpy,1
 Harpy 3,2
 Minotaur,3

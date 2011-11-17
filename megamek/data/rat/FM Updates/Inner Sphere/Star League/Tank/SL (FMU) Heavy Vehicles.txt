@@ -1,6 +1,6 @@
 SL Heavy Tanks 3067 (FMU)
 Morningstar City Command Vehicle,1
-AC/2 Carrier (LBX),2
+AC/2 Carrier (LB-X),2
 SRM Carrier (3054 Upgrade),3
 Manteuffel Attack Tank Prime,4
 Rommel Tank (Gauss),5

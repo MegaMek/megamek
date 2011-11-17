@@ -3,7 +3,7 @@ Tyre,1
 Oni ON-1,2
 Tatsu MIK-OA,3
 Hellcat II HCT-213B,4
-Shilone WSL-17R,5
+Shilone SL-17R,5
 Lucifer LCF-R16,6
 Corsair CSR-V12,5
 Lucifer II LCF-R16KR,4

@@ -105,6 +105,7 @@ public class MGAWeaponHandler extends MGHandler {
             r.add(shotsHit);
             r.add(" shot(s) ");
             r.add(toHit.getTableDesc());
+            r.newlines = 0;
             vPhaseReport.addElement(r);
             r = new Report(3345);
             r.subject = subjectId;

@@ -2252,6 +2252,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // MG arrays
+        if (wtype.hasFlag(WeaponType.F_MGA) && (weapon.getCurrentShots() == 0)) {
+            return "no working MGs remaining";
+        }
         if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes() && weapon.curMode().equals("Off")) {
             return "MG Array is disabled";
         } else if (wtype.hasFlag(WeaponType.F_MG)) {
@@ -2418,7 +2421,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         Entity spotter = null;
         if (isIndirect) {
             if ((target instanceof Entity) && !isTargetECMAffected && usesAmmo
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) && 
+                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) &&
                     ((te.isNarcedBy(ae.getOwner().getTeam())) ||
                      (te.isINarcedBy(ae.getOwner().getTeam())))) {
                 spotter = te;

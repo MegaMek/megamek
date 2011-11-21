@@ -204,7 +204,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
-            
+
             // Note: Because artillery fire is adjusted on a per-unit basis, this
             // can result in a unit firing multiple artillery weapons at the same
             // hex getting this bonus more than once per turn. Since the Artillery
@@ -309,7 +309,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             game.getBoard().addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(),
-                            "Artilery Hit. Better text later."));
+                            "Artillery Hit. Better text later."));
 
         } else {
             // direct fire artillery only scatters by one d6
@@ -329,7 +329,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
-                                "Artilery Scatered Here. Better text later."
+                                "Artillery Scattered Here. Better text later."
                         )
                     );
                 } else {

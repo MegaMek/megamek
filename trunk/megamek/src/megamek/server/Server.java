@@ -7357,14 +7357,27 @@ public class Server implements Runnable {
      */
     public void deliverArtillerySmoke(Coords coords, Vector<Report> vPhaseReport) {
         IHex h = game.getBoard().getHex(coords);
-        // Unless there is a heavy smoke in the hex already, add one.
-        if (h.terrainLevel(Terrains.SMOKE) < 2) {
-            Report r = new Report(5185, Report.PUBLIC);
+        Report r = new Report(5185, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r);
+        createSmoke(coords, 2, 3);
+        sendChangedHex(coords);
+        for (int dir = 0; dir <= 5; dir++) {
+            Coords tempcoords = coords.translated(dir);
+            if (!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if (coords.equals(tempcoords)) {
+                continue;
+            }
+            h = game.getBoard().getHex(tempcoords);
+            r = new Report(5185, Report.PUBLIC);
             r.indent(2);
             r.add(coords.getBoardNum());
             vPhaseReport.add(r);
-            createSmoke(coords);
-            sendChangedHex(coords);
+            createSmoke(tempcoords, 2, 3);
+            sendChangedHex(tempcoords);
         }
     }
 

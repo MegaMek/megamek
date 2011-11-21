@@ -4821,6 +4821,7 @@ v0.29.80 (2005-06-12 4:30pm)
 + Bug 1219181: NPE when firing at mech that is DFAing.
 + Bug 3437522: <history> tag not working for warship .blk files
 + Bug: MG Array with no working MGs crashes MM
++ Bug: Artillery smoke should fill adjacent hexes, too
 
 v0.29.79 (2005-06-08 8:00am)
 + i18n of the Equipment

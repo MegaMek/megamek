@@ -44,6 +44,7 @@ v0.35.26-dev (SVN)
 + Bug 3437522: <history> tag not working for warship .blk files
 + Bug: MG Array with no working MGs crashes MM
 + Bug: Artillery smoke should fill adjacent hexes, too
++ Bug: Mounted#canFire returns NPE when crew is null
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

@@ -806,7 +806,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
 
         // Is the entity even active?
-        if (entity.isShutDown() || !entity.getCrew().isActive()) {
+        if (entity.isShutDown() || (null != entity.getCrew() && !entity.getCrew().isActive())) {
             return false;
         }
 

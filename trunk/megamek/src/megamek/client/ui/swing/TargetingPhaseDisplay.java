@@ -932,9 +932,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         .getString("TargetingPhaseDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
                 endMyTurn();
-                setStatusBarText(Messages
-                        .getString(
-                                "TargetingPhaseDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+                if (e.getPlayer() != null) {
+                    setStatusBarText(Messages
+                            .getString(
+                                    "TargetingPhaseDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+                }
+
             }
         }
     }

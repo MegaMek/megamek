@@ -173,7 +173,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_ELECTRIC_DISCHARGE_ARMOR = BigInteger.valueOf(1).shiftLeft(127);
     public static final BigInteger F_MECHANICAL_JUMP_BOOSTER = BigInteger.valueOf(1).shiftLeft(128);
     public static final BigInteger F_TRAILER_MODIFICATION = BigInteger.valueOf(1).shiftLeft(129);
-
     public static final BigInteger F_LARGE_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(130);
     public static final BigInteger F_SMALL_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(131);
 
@@ -5426,7 +5425,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_LARGE_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
         return misc;
     }
-
 
     @Override
     public String toString() {

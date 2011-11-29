@@ -47,6 +47,7 @@ v0.35.26-dev (SVN)
 + Bug: Mounted#canFire returns NPE when crew is null
 + Possible fix for NPE in TargetingPhase
 + report critted cockpit for mechview
++ Bug: warship and jumpship codes reversed in UnitType
 
 v0.35.25 (2011-10-09, 15:00 UTC+2)
 + Targetable.isAirborneVTOL() refactored to isAirborneVTOLorWIGE() with 

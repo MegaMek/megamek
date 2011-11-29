@@ -31,8 +31,8 @@ public class UnitType {
     public static final int AERO = 9;
     public static final int SMALL_CRAFT = 10;
     public static final int DROPSHIP = 11;
-    public static final int WARSHIP = 12;
-    public static final int JUMPSHIP = 13;
+    public static final int JUMPSHIP = 12;
+    public static final int WARSHIP = 13;
     public static final int SPACE_STATION = 14;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",

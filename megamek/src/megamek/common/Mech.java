@@ -6546,6 +6546,13 @@ public abstract class Mech extends Entity {
             toReturn += "Sensors";
             first = false;
         }
+        if (hasSystem(SYSTEM_COCKPIT, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Cockpit";
+            first = false;
+        }
         if (hasSystem(ACTUATOR_SHOULDER, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";

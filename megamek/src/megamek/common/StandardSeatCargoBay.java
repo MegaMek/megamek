@@ -46,9 +46,9 @@ public final class StandardSeatCargoBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      */
     public StandardSeatCargoBay(double space, int doors) {
-        totalSpace = (int)space/0.075;
+        totalSpace = (int)(space/0.075);
         weight = (float) space;
-        currentSpace = (int)space/0.075;
+        currentSpace = (int)(space/0.075);
         this.doors = doors;
     }
 

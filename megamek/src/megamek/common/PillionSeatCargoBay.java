@@ -46,9 +46,9 @@ public final class PillionSeatCargoBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      */
     public PillionSeatCargoBay(double space, int doors) {
-        totalSpace = (int)space/0.025;
+        totalSpace = (int)(space/0.025);
         weight = (float) space;
-        currentSpace = (int)space/0.025;
+        currentSpace = (int)(space/0.025);
         this.doors = doors;
     }
 

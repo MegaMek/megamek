@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -48,6 +48,7 @@ import megamek.common.PillionSeatCargoBay;
 import megamek.common.Protomech;
 import megamek.common.ProtomechBay;
 import megamek.common.RefrigeratedCargoBay;
+import megamek.common.SecondClassQuartersCargoBay;
 import megamek.common.SmallCraft;
 import megamek.common.SmallCraftBay;
 import megamek.common.SpaceStation;
@@ -548,7 +549,7 @@ public class BLKFile {
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    e.addTransporter(new SecondClassQuartersCargoBay(size, doors));
                 } else if (transporter.startsWith("1stclassquarters:", 0)) {
                     String numbers = transporter.substring(17);
                     String temp[] = numbers.split(":");
@@ -556,7 +557,7 @@ public class BLKFile {
                     int doors = Integer.parseInt(temp[1]);
                     e.addTransporter(new FirstClassQuartersCargoBay(size, doors));
                 } else if (transporter.startsWith("pillionseats:", 0)) {
-                    String numbers = transporter.substring(12);
+                    String numbers = transporter.substring(13);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);

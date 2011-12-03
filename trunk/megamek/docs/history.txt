@@ -3,6 +3,7 @@
 v0.35.27-dev (SVN)
 + Use Marauder 9M image for Marauder 9M2
 + Bug 3446718: Rounding errors in crew quarters calculations
++ Bug 3441029: displaced VTOL falling
 
 v0.35.26 (2011-11-30, 15:35 UTC+1)
 + BV tag added for manual BV for RS creation.

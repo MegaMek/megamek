@@ -430,7 +430,7 @@ public class TestMech extends TestEntity {
                     correct = false;
                 }
 
-            } else if ((mech.getOArmor(loc) + (mech.hasRearArmor(loc) ? mech.getOArmor(loc, true) : 0)) > 2 * mech.getOInternal(loc)) {
+            } else if ((mech.getOArmor(loc) + (mech.hasRearArmor(loc) ? mech.getOArmor(loc, true) : 0)) > (2 * mech.getOInternal(loc))) {
                 buff.append(printArmorLocation(loc)).append(printArmorLocProp(loc, 2 * mech.getOInternal(loc))).append("\n");
                 correct = false;
             }
@@ -447,7 +447,7 @@ public class TestMech extends TestEntity {
             return false;
         }
         if ((mech.getJumpMP(false) > mech.getOriginalWalkMP()) && ((mech.getJumpType() != Mech.JUMP_IMPROVED) && !mech.hasWorkingMisc(MiscType.F_PARTIAL_WING) && !mech.hasJumpBoosters())) {
-            buff.append("Jump MP exceeds walk MP without IJJs");
+            buff.append("Jump MP exceeds walk MP without IJJs\n");
             return false;
         }
         return true;

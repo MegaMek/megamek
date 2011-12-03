@@ -47,6 +47,9 @@ public class BotGeometry {
 
         @Override
         public boolean equals(Object o) {
+            if (!(o instanceof CoordFacingCombo)) {
+                return false;
+            }
             CoordFacingCombo c=(CoordFacingCombo)o;
             if(!coords.equals(c.coords)) {
                 return false;

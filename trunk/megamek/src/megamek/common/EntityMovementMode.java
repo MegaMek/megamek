@@ -39,7 +39,9 @@ public enum EntityMovementMode {
     SPHEROID,
     INF_UMU,
     AIRMECH,
-    AEROSPACE; // this might be a synonym for AERODYNE.
+    AEROSPACE, // this might be a synonym for AERODYNE.
+    RAIL ("rail"),
+    MAGLEV ("maglev");
 
     private String[] aliases;
 

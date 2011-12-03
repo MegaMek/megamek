@@ -63,6 +63,7 @@ public class Engine implements Serializable {
     public final static int COMPACT_ENGINE = 6;
     public final static int FISSION = 7;
     public final static int NONE = 8;
+    public final static int MAGLEV = 9;
 
     public boolean engineValid;
     private int engineRating;
@@ -136,6 +137,7 @@ public class Engine implements Serializable {
             case XXL_ENGINE:
             case FUEL_CELL:
             case NONE:
+            case MAGLEV:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -185,8 +187,10 @@ public class Engine implements Serializable {
             return FUEL_CELL;
         } else if (type.toLowerCase().indexOf("fuel-cell") != -1) {
             return FUEL_CELL;
-        } else if (type.toLowerCase().indexOf("NONE") != -1) {
+        } else if (type.toLowerCase().indexOf("none") != -1) {
             return NONE;
+        } else if (type.toLowerCase().indexOf("maglev") != -1) {
+            return MAGLEV;
         } else {
             return NORMAL_ENGINE;
         }

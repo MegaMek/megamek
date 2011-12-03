@@ -4575,6 +4575,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 return "Aerodyne";
             case SPHEROID:
                 return "Spheroid";
+            case RAIL:
+                return "Rail";
+            case MAGLEV:
+                return "MagLev";
             default:
                 return "ERROR";
         }

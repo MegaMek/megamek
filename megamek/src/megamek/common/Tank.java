@@ -983,6 +983,7 @@ public class Tank extends Entity {
                 typeModifier = 0.7;
                 break;
             case NAVAL:
+            case RAIL:
                 typeModifier = 0.6;
                 break;
             default:
@@ -1430,6 +1431,11 @@ public class Tank extends Entity {
 
         // adjust further for speed factor
         double runMP = getRunMP(false, true, true);
+
+        // Trains use cruise instead of flank MP for speed factor
+        if (getMovementMode() == EntityMovementMode.RAIL) {
+            runMP = getWalkMP(false, true, true);
+        }
         // trailers have original run MP of 0, but should count at 1 for speed
         // factor calculation
         if (getOriginalRunMP() == 0) {

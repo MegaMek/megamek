@@ -1149,22 +1149,20 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getJumpType() {
-        if (jumpType == JUMP_UNKNOWN) {
-            jumpType = JUMP_NONE;
-            for (Mounted m : miscList) {
-                if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                    if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
-                        jumpType = JUMP_IMPROVED;
-                    } else {
-                        jumpType = JUMP_STANDARD;
-                    }
-                    break;
-                } else if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
-                    jumpType = JUMP_BOOSTER;
-                    break;
-                }
-            }
-        }
+    	jumpType = JUMP_NONE;
+    	for (Mounted m : miscList) {
+    		if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+    			if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+    				jumpType = JUMP_IMPROVED;
+    			} else {
+    				jumpType = JUMP_STANDARD;
+    			}
+    			break;
+    		} else if (m.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
+    			jumpType = JUMP_BOOSTER;
+    			break;
+    		}
+    	}
         return jumpType;
     }
 

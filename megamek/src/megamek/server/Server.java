@@ -9099,7 +9099,11 @@ public class Server implements Runnable {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
             }
-            vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
+            if (!(entity.isAirborneVTOLorWIGE())) {
+                vPhaseReport.addAll(doEntityFallsInto(entity, src, dest, roll));
+            } else {
+                entity.setPosition(dest);
+            }
             return vPhaseReport;
         }
         // unstick the entity if it was stuck in swamp

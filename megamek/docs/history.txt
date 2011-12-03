@@ -7,6 +7,7 @@ v0.35.27-dev (SVN)
 + MagLev engine and Rail movement modes for construction purposes, no game rules
     yet 
 + Bug: units switching from JJ to IJJ always report as invalid in TestMech
++ Fixed possible NPE in Princess's BotGeometry.CoordFacingCombo.equals()
 
 v0.35.26 (2011-11-30, 15:35 UTC+1)
 + BV tag added for manual BV for RS creation.

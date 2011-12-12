@@ -101,6 +101,9 @@ public class Precognition implements Runnable {
         for (Enumeration<Entity> ents = game.getEntities(); ents
                 .hasMoreElements();) {
             Entity e = ents.nextElement();
+            if (!e.isDeployed() || e.isOffBoard()) {
+                continue;
+            }
             if ((!path_enumerator.last_known_location.containsKey(e.getId()))
                     || (!path_enumerator.last_known_location.get(e.getId())
                             .equals(new CoordFacingCombo(e)))) {

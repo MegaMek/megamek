@@ -431,12 +431,16 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(base);
         base = AmmoType.createISLRM20Ammo();
         lrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRM5pAmmo();
         lrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRM10pAmmo();
         lrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRM15pAmmo();
         lrmAmmos.add(base);
+        EquipmentType.addType(base);
         base = AmmoType.createISLRM20pAmmo();
         lrmAmmos.add(base);
         EquipmentType.addType(base);

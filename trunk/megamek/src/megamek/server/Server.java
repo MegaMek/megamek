@@ -25112,7 +25112,7 @@ public class Server implements Runnable {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(rollTarget.getLastPlainDesc(), true);
-            r.indent(3);
+            r.indent();
             vDesc.addElement(r);
             // roll
             final int diceRoll = Compute.d6(2);
@@ -25121,7 +25121,7 @@ public class Server implements Runnable {
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
-            r.indent(4);
+            r.indent();
             r.newlines = 0;
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);

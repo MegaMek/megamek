@@ -66,6 +66,8 @@ public class RandomNameGenerator implements Serializable {
      */
     private static final long serialVersionUID = 5765118329881301375L;
     
+    private static RandomNameGenerator rng;
+    
     Map<String, Vector<String>> firstm;
     Map<String, Vector<String>> firstf;
     Map<String, Vector<String>> last;
@@ -343,5 +345,20 @@ public class RandomNameGenerator implements Serializable {
         last = null;
         factionFirst = null;
         factionLast = null;
+    }
+    
+    public static void initialize() {
+    	if(rng != null && rng.last != null) {
+    		return;
+    	}
+    	rng = new RandomNameGenerator();
+    	rng.populateNames();
+    }
+    
+    public static RandomNameGenerator getInstance() {
+    	if(null == rng) {
+    		initialize();
+    	}
+    	return rng;
     }
 }

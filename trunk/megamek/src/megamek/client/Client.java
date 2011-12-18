@@ -124,8 +124,6 @@ public class Client implements IClientCommandHandler {
 
     //random generators
     private RandomSkillsGenerator rsg;
-    private RandomNameGenerator rng;
-    private RandomUnitGenerator rug;
     // And close client events!
     private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
 
@@ -186,8 +184,6 @@ public class Client implements IClientCommandHandler {
         registerCommand(new AddBotCommand(this));
 
         rsg = new RandomSkillsGenerator();
-        rng = new RandomNameGenerator();
-        rug = new RandomUnitGenerator();
 
         TimerSingleton ts = TimerSingleton.getInstance();
         /*
@@ -405,8 +401,8 @@ public class Client implements IClientCommandHandler {
             // free some memory thats only needed in lounge
             MechSummaryCache.dispose();
             MechFileParser.dispose();
-            rug.clear();
-            rng.clear();
+            getRandomUnitGenerator().clear();
+            getRandomNameGenerator().clear();
             memDump("entering deployment phase"); //$NON-NLS-1$
             break;
         case PHASE_TARGETING:
@@ -427,13 +423,13 @@ public class Client implements IClientCommandHandler {
         case PHASE_LOUNGE:
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {
-                    rng.populateNames();
-                    rug.populateUnits();
+                    RandomNameGenerator.initialize();
+                    RandomUnitGenerator.initialize();
                 }
             });
             if (MechSummaryCache.getInstance().isInitialized()) {
-                rng.populateNames();
-                rug.populateUnits();
+                RandomNameGenerator.initialize();
+                RandomUnitGenerator.initialize();
             }
             duplicateNameHash.clear(); // reset this
             break;
@@ -1414,11 +1410,11 @@ public class Client implements IClientCommandHandler {
     }
 
     public RandomNameGenerator getRandomNameGenerator() {
-        return rng;
+        return RandomNameGenerator.getInstance();
     }
 
     public RandomUnitGenerator getRandomUnitGenerator() {
-        return rug;
+        return RandomUnitGenerator.getInstance();
     }
 
     public ArrayList<ArrayList<Integer>> getAvailableMapSizes() {

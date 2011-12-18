@@ -57,6 +57,8 @@ public class RandomUnitGenerator implements Serializable {
     //and the vectors just contain the unit names listed a number of times equal to
     //the frequency
     Map<String, Vector<String>> rats;
+	private static RandomUnitGenerator rug;
+
 
     /** 
     * Plain old data class used to represent nodes in a Random Assignment Table tree.
@@ -242,6 +244,21 @@ public class RandomUnitGenerator implements Serializable {
     public void clear() {
         rats = null;
         ratTree = null;
+    }
+    
+    public static void initialize() {
+    	if(rug != null && rug.rats != null) {
+    		return;
+    	}
+    	rug = new RandomUnitGenerator();
+    	rug.populateUnits();
+    }
+    
+    public static RandomUnitGenerator getInstance() {
+    	if(null == rug) {
+    		initialize();
+    	}
+    	return rug;
     }
 
 }

@@ -93,6 +93,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_BACKHOE)) {
             // Backhoes have constant damage, not variable like most.
             nDamage = 6;
+        } else if (mType.hasSubType(MiscType.S_MINING_DRILL)) {
+            // Backhoes have constant damage, not variable like most.
+            nDamage = 3;
         } else if (mType.isShield()) {
             nDamage = club.getDamageAbsorption(entity, club.getLocation());
         } else if (mType.hasSubType(MiscType.S_WRECKING_BALL)) {

@@ -174,7 +174,7 @@ public class BLKFile {
         if (dataFile.exists("bv")) {
             int bv = dataFile.getDataAsInt("bv")[0];
 
-            if (bv > 0) {
+            if (bv != 0) {
                 e.setUseManualBV(true);
                 e.setManualBV(bv);
             }

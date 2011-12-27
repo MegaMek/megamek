@@ -5163,6 +5163,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLDroneOperatingSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.availRating = new int[]
             { RATING_E, RATING_F, RATING_F };
@@ -5177,6 +5178,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISDroneOperatingSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
         misc.availRating = new int[]
             { RATING_E, RATING_F, RATING_F };
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);

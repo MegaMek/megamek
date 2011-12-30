@@ -617,4 +617,8 @@ public class Engine implements Serializable {
     public int getBaseChassisHeatSinks() {
         return Math.min(integralHeatSinkCapacity(), baseChassisHeatSinks);
     }
+    
+    public int getFlags() {
+    	return engineFlags;
+    }
 } // End class Engine

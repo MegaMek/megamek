@@ -347,12 +347,8 @@ public class MechFileParser {
                         }
                     }
                 }
-
-                if (m.getLinked() == null) {
-                    // huh. this shouldn't happen
-                    throw new EntityLoadingException("Unable to match Capacitor to PPC");
-                }
             } // End link-PPC Capacitor
+
             // Link MRM Apollo fire-control systems to their missle racks.
             else if (m.getType().hasFlag(MiscType.F_APOLLO) && (m.getLinked() == null)) {
 
@@ -463,6 +459,47 @@ public class MechFileParser {
 
         } // Check the next piece of equipment.
 
+        // Walk through the list of equipment.
+        for (Mounted m : ent.getMisc()) {
+
+            // Link PPC Capacitor to PPC it its location.
+            if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && (m.getLinked() == null)) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : ent.getWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // Only PPCS are Valid
+                    if (!wtype.hasFlag(WeaponType.F_PPC)) {
+                        continue;
+                    }
+
+                    // already crossLinked?
+                    if (mWeapon.getCrossLinkedBy() != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+
+                        // Only Legal IS PPC's are allowed.
+                        if ((mWeapon.getType() instanceof ISPPC) || (mWeapon.getType() instanceof ISLightPPC) || (mWeapon.getType() instanceof ISHeavyPPC) || (mWeapon.getType() instanceof ISERPPC) || (mWeapon.getType() instanceof ISSnubNosePPC)) {
+
+                            m.setCrossLinked(mWeapon);
+                            break;
+                        }
+                    }
+                }
+
+                if (m.getLinked() == null) {
+                     // huh. this shouldn't happen
+           throw new EntityLoadingException("No available PPC to match Capacitor!");
+            } 
+
+         } // End crossLink-PPC Capacitor
+
+      } // Check the next piece of equipment.
+        
         // need to load all those weapons in the weapon bays
         if (ent.usesWeaponBays()) {
             ent.loadAllWeapons();

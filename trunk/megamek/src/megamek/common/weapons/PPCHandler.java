@@ -42,7 +42,7 @@ public class PPCHandler extends EnergyWeaponHandler {
      *
      */
     private static final long serialVersionUID = 5545991061428671743L;
-    private boolean chargedCapacitor = false;
+    private int chargedCapacitor = 0;
 
     /**
      * @param t
@@ -55,9 +55,15 @@ public class PPCHandler extends EnergyWeaponHandler {
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the
         // rules in TO
-        if (weapon.hasChargedCapacitor()) {
-            chargedCapacitor = true;
-            weapon.getLinkedBy().setMode("Off");
+        if (weapon.hasChargedCapacitor() != 0) {
+            if (weapon.hasChargedCapacitor() == 2) {
+                chargedCapacitor = 2;
+                weapon.getCrossLinkedBy().setMode("Off");
+            }
+            if (weapon.hasChargedCapacitor() == 1) {
+                chargedCapacitor = 1;
+                 weapon.getLinkedBy().setMode("Off");
+            }
         }
     }
 
@@ -73,7 +79,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
         }
 
-        if (chargedCapacitor) {
+        if (chargedCapacitor != 0) {
             toReturn += 5;
         }
         // during a swarm, all damage gets applied as one block to one location
@@ -177,7 +183,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
         // resolve roll for charged capacitor
-        if (chargedCapacitor) {
+        if (chargedCapacitor != 0) {
             if (roll == 2) {
                 Report r = new Report(3178);
                 r.subject = ae.getId();

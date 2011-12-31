@@ -1605,9 +1605,15 @@ public class MechDisplay extends JPanel {
                     && wtype.hasModes()
                     && clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_energy_weapons")) {
-                if (mounted.hasChargedCapacitor()) {
+            if (mounted.hasChargedCapacitor() != 0) {
+                if (mounted.hasChargedCapacitor() == 1) {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(
                             mounted, wtype) + 5));
+                }
+                if (mounted.hasChargedCapacitor() == 2) {
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                            mounted, wtype) + 10));
+                    }
                 } else {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(
                             mounted, wtype)));

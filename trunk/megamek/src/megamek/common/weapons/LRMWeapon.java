@@ -77,6 +77,9 @@ public abstract class LRMWeapon extends MissileWeapon {
         if (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER) {
             return new LRMFollowTheLeaderHandler(toHit, waa, game, server);
         }
+        if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+            return new LRMSmokeWarheadHandler(toHit, waa, game, server);
+        }
         return new LRMHandler(toHit, waa, game, server);
     }
 }

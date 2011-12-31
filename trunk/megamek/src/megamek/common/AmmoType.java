@@ -203,67 +203,68 @@ public class AmmoType extends EquipmentType {
     public static final long M_HEAT_SEEKING = 1l << 15;
     public static final long M_TANDEM_CHARGE = 1l << 16;
     public static final long M_ARTEMIS_V_CAPABLE = 1l << 17;
+    public static final long M_SMOKE_WARHEAD = 1l << 18;
     // LRM Munition Types
     // Incendiary is special, though...
     // FIXME - I'm not implemented!!!
-    public static final long M_INCENDIARY_LRM = 1l << 18;
-    public static final long M_FLARE = 1l << 19;
-    public static final long M_SEMIGUIDED = 1l << 20;
-    public static final long M_SWARM = 1l << 21;
-    public static final long M_SWARM_I = 1l << 22;
-    public static final long M_THUNDER = 1l << 23;
-    public static final long M_THUNDER_AUGMENTED = 1l << 24;
-    public static final long M_THUNDER_INFERNO = 1l << 25;
-    public static final long M_THUNDER_VIBRABOMB = 1l << 26;
-    public static final long M_THUNDER_ACTIVE = 1l << 27;
-    public static final long M_FOLLOW_THE_LEADER = 1l << 28;
-    public static final long M_MULTI_PURPOSE = 1l << 29;
+    public static final long M_INCENDIARY_LRM = 1l << 19;
+    public static final long M_FLARE = 1l << 20;
+    public static final long M_SEMIGUIDED = 1l << 21;
+    public static final long M_SWARM = 1l << 22;
+    public static final long M_SWARM_I = 1l << 23;
+    public static final long M_THUNDER = 1l << 24;
+    public static final long M_THUNDER_AUGMENTED = 1l << 25;
+    public static final long M_THUNDER_INFERNO = 1l << 26;
+    public static final long M_THUNDER_VIBRABOMB = 1l << 27;
+    public static final long M_THUNDER_ACTIVE = 1l << 28;
+    public static final long M_FOLLOW_THE_LEADER = 1l << 29;
+    public static final long M_MULTI_PURPOSE = 1l << 30;
     // SRM Munition Types
     // TODO: Inferno should be available to fluid guns and vehicle flamers
     // TO page 362
-    public static final long M_INFERNO = 1l << 30;
-    public static final long M_AX_HEAD = 1l << 31;
+    public static final long M_INFERNO = 1l << 31;
+    public static final long M_AX_HEAD = 1l << 32;
 
     // SRM, MRM and LRM
-    public static final long M_TORPEDO = 1l << 32;
+    public static final long M_TORPEDO = 1l << 33;
 
     // iNarc Munition Types
-    public static final long M_NARC_EX = 1l << 33;
-    public static final long M_ECM = 1l << 34;
-    public static final long M_HAYWIRE = 1l << 35;
-    public static final long M_NEMESIS = 1l << 36;
+    public static final long M_NARC_EX = 1l << 34;
+    public static final long M_ECM = 1l << 35;
+    public static final long M_HAYWIRE = 1l << 36;
+    public static final long M_NEMESIS = 1l << 37;
 
-    public static final long M_EXPLOSIVE = 1l << 37;
+    public static final long M_EXPLOSIVE = 1l << 38;
 
     // Arrow IV Munition Types
-    public static final long M_HOMING = 1l << 38;
-    public static final long M_FASCAM = 1l << 39;
-    public static final long M_INFERNO_IV = 1l << 40;
-    public static final long M_VIBRABOMB_IV = 1l << 41;
-    public static final long M_SMOKE = 1l << 42;
+    public static final long M_HOMING = 1l << 39;
+    public static final long M_FASCAM = 1l << 40;
+    public static final long M_INFERNO_IV = 1l << 41;
+    public static final long M_VIBRABOMB_IV = 1l << 42;
+    public static final long M_SMOKE = 1l << 43;
 
     // Nuclear Munitions
-    public static final long M_DAVY_CROCKETT_M = 1l << 43;
-    public static final long M_SANTA_ANNA = 1l << 44;
+    public static final long M_DAVY_CROCKETT_M = 1l << 44;
+    public static final long M_SANTA_ANNA = 1l << 45;
 
     // tele-missile
-    public static final long M_TELE = 1l << 45;
+    public static final long M_TELE = 1l << 46;
 
     // fluid gun
     // TODO: implement all of these
     // coolant and water should also be used for vehicle flamers
     // TO page 361-363
-    public static final long M_WATER = 11 << 46;
-    public static final long M_PAINT_OBSCURANT = 11 << 47;
-    public static final long M_OIL_SLICK = 11 << 48;
-    public static final long M_ANTI_FLAME_FOAM = 11 << 49;
-    public static final long M_CORROSIVE = 11 << 50;
-    public static final long M_COOLANT = 11 << 51;
+    public static final long M_WATER = 11 << 47;
+    public static final long M_PAINT_OBSCURANT = 11 << 48;
+    public static final long M_OIL_SLICK = 11 << 49;
+    public static final long M_ANTI_FLAME_FOAM = 11 << 50;
+    public static final long M_CORROSIVE = 11 << 51;
+    public static final long M_COOLANT = 11 << 52;
 
     //vehicular grenade launcher
-    public static final long M_CHAFF = 1l << 52;
-    public static final long M_INCENDIARY = 1l << 53;
-    public static final long M_SMOKEGRENADE = 1l << 54;
+    public static final long M_CHAFF = 1l << 53;
+    public static final long M_INCENDIARY = 1l << 54;
+    public static final long M_SMOKEGRENADE = 1l << 55;
 
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -1055,7 +1056,8 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, TechConstants.T_IS_UNOFFICIAL));
         munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE, TechConstants.T_IS_EXPERIMENTAL));
-
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, TechConstants.T_IS_ADVANCED));
+        
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(srmAmmos, munitions);
@@ -1073,6 +1075,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE, TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2, M_TANDEM_CHARGE, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1122,6 +1125,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, TechConstants.T_IS_UNOFFICIAL));
         munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Follow The Leader", 2, M_FOLLOW_THE_LEADER, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1147,6 +1151,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE, TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Follow The Leader", 2, M_FOLLOW_THE_LEADER, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.

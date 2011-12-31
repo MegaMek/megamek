@@ -37,7 +37,7 @@ public interface AttackHandler {
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReports);
 
     // Frankly, wish I could get rid of this, but I think certain things
-    // occaisonly need to know the firer.
+    // occasionally need to know the firer.
     public int getAttackerId();
 
     public boolean announcedEntityFiring();

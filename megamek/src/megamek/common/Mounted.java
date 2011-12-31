@@ -64,6 +64,8 @@ public class Mounted implements Serializable, RoundUpdated {
 
     private Mounted linked = null; // for ammo, or artemis
     private Mounted linkedBy = null; // reverse link for convenience
+    
+    private Mounted crossLinkedBy = null; // Weapons with crossLinked capacitors
 
     private Entity entity; // what I'm mounted on
 
@@ -625,16 +627,26 @@ public class Mounted implements Serializable, RoundUpdated {
     /**
      * does this <code>Mounted</code> have a linked and charged PPC Capacitor?
      */
-    public boolean hasChargedCapacitor() {
-        if ((getLinkedBy() != null) && (getLinkedBy().getType() instanceof MiscType) && !getLinkedBy().isDestroyed()) {
-            MiscType cap = (MiscType) getLinkedBy().getType();
-            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR) && getLinkedBy().curMode().equals("Charge")) {
-                return true;
+
+    public int hasChargedCapacitor() {
+
+        if ((getCrossLinkedBy() != null) && (getCrossLinkedBy().getType() instanceof MiscType) && !getCrossLinkedBy().isDestroyed()) {
+
+            MiscType cap = (MiscType) getCrossLinkedBy().getType();
+            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR) && getCrossLinkedBy().curMode().equals("Charge")) {
+                return 2;
             }
         }
-        return false;
-    }
 
+        if ((getLinkedBy() != null) && (getLinkedBy().getType() instanceof MiscType) && !getLinkedBy().isDestroyed()) {
+
+            MiscType cap = (MiscType) getLinkedBy().getType();
+            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR) && getLinkedBy().curMode().equals("Charge")) {
+                return 1;
+            }
+        }
+        return 0;
+    }
     public int getLocation() {
         return location;
     }
@@ -676,9 +688,18 @@ public class Mounted implements Serializable, RoundUpdated {
         return linkedBy;
     }
 
+    public Mounted getCrossLinkedBy() {
+        return crossLinkedBy;
+    }  
+    
     public void setLinked(Mounted linked) {
         this.linked = linked;
         linked.setLinkedBy(this);
+    }
+    
+    public void setCrossLinked(Mounted linked) {
+        this.linked = linked;
+        linked.setCrossLinkedBy(this);
     }
 
     // should only be called by setLinked(), or when dumping a DWP
@@ -691,6 +712,15 @@ public class Mounted implements Serializable, RoundUpdated {
         linkedBy = linker;
     }
 
+    // called by setCrossLinked() when using cross-linked capacitors.
+    public void setCrossLinkedBy(Mounted linker) {
+        if ((linker != null) && (linker.getLinked() != this)) {
+            // liar
+            return;
+        }
+        crossLinkedBy = linker;
+    }
+    
     public int getFoundCrits() {
         return nFoundCrits;
     }
@@ -749,10 +779,16 @@ public class Mounted implements Serializable, RoundUpdated {
                 return damage;
             }
 
-            if (wtype.hasFlag(WeaponType.F_PPC) && hasChargedCapacitor()) {
+            if (wtype.hasFlag(WeaponType.F_PPC) && hasChargedCapacitor() != 0) {
                 if (isFired()) {
+                    if (hasChargedCapacitor() == 2) {
+                        return 15;
+                    }
                     return 0;
                 }
+                if (hasChargedCapacitor() == 2) {
+                    return 30;
+                }                
                 return 15;
             }
 
@@ -1043,7 +1079,10 @@ public class Mounted implements Serializable, RoundUpdated {
             if (getQuirks().booleanOption("no_cooling")) {
                 heat += 2;
             }
-            if (hasChargedCapacitor()) {
+            if (hasChargedCapacitor() == 2) {  
+                heat += 10;
+            }
+            if (hasChargedCapacitor() == 1) {
                 heat += 5;
             }
             if ((getLinkedBy() != null) && !getLinkedBy().isInoperable() && (getLinkedBy().getType() instanceof MiscType) && getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {

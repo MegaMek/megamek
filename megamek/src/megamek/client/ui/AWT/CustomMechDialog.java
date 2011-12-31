@@ -708,7 +708,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                 || (muniType == AmmoType.M_THUNDER_ACTIVE)
                                 || (muniType == AmmoType.M_INFERNO_IV)
                                 || (muniType == AmmoType.M_VIBRABOMB_IV)
-                                || (muniType == AmmoType.M_LISTEN_KILL) || (muniType == AmmoType.M_ANTI_TSM))) {
+                                || (muniType == AmmoType.M_LISTEN_KILL) 
+                                || (muniType == AmmoType.M_ANTI_TSM)
+                                || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
                     bTechMatch = false;
                 }
 

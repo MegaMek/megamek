@@ -7349,6 +7349,24 @@ public class Server implements Runnable {
         game.addFlare(flare);
     }
 
+
+    /**
+     * deliver missile smoke
+     *
+     * @param coords
+     *            the <code>Coords</code> where to deliver
+     */
+
+    public void deliverMissileSmoke(Coords coords, Vector<Report> vPhaseReport) {
+        Report r = new Report(5185, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r);
+        createSmoke(coords, 2, 3);
+        sendChangedHex(coords);
+    }
+
+    
     /**
      * deliver artillery smoke
      *
@@ -7356,7 +7374,6 @@ public class Server implements Runnable {
      *            the <code>Coords</code> where to deliver
      */
     public void deliverArtillerySmoke(Coords coords, Vector<Report> vPhaseReport) {
-        IHex h = game.getBoard().getHex(coords);
         Report r = new Report(5185, Report.PUBLIC);
         r.indent(2);
         r.add(coords.getBoardNum());
@@ -7371,10 +7388,9 @@ public class Server implements Runnable {
             if (coords.equals(tempcoords)) {
                 continue;
             }
-            h = game.getBoard().getHex(tempcoords);
             r = new Report(5185, Report.PUBLIC);
             r.indent(2);
-            r.add(coords.getBoardNum());
+            r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, 2, 3);
             sendChangedHex(tempcoords);
@@ -14261,8 +14277,11 @@ public class Server implements Runnable {
 
             int capHeat = 0;
             for (Mounted m : entity.getEquipment()) {
-                if (m.hasChargedCapacitor() && !m.isUsedThisRound()) {
+                if ((m.hasChargedCapacitor() == 1) && !m.isUsedThisRound()) {
                     capHeat += 5;
+                }
+                if ((m.hasChargedCapacitor() == 2) && !m.isUsedThisRound()) {
+                    capHeat += 10;
                 }
             }
             if (capHeat > 0) {
@@ -19345,7 +19364,7 @@ public class Server implements Runnable {
             // Handle equipment explosions.
             // Equipment explosions are secondary effects and
             // do not occur when loading from a scenario.
-            if (((secondaryEffects && eqType.isExplosive()) || mounted.isHotLoaded() || mounted.hasChargedCapacitor())
+            if (((secondaryEffects && eqType.isExplosive()) || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
                     && !hitBefore) {
                 vDesc.addAll(explodeEquipment(en, loc, mounted));
             }
@@ -20715,7 +20734,7 @@ public class Server implements Runnable {
         if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && !mounted.curMode().equals("Charge")) {
             return vDesc;
         }
-        if ((mounted.getType() instanceof PPCWeapon) && !mounted.hasChargedCapacitor()) {
+        if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
             return vDesc;
         }
 

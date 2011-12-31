@@ -1046,9 +1046,15 @@ public class MechDisplay extends BufferedPanel {
 
             for (Mounted m : entity.getEquipment()) {
                 int capHeat = 0;
-                if (m.hasChargedCapacitor()) {
+
+                if (m.hasChargedCapacitor() == 2) {
+                    capHeat += 10;
+                }
+
+                if (m.hasChargedCapacitor() == 1) {
                     capHeat += 5;
                 }
+                
                 if (capHeat > 0) {
                     currentHeatBuildup += capHeat;
                 }
@@ -1295,9 +1301,15 @@ public class MechDisplay extends BufferedPanel {
                     && wtype.hasModes()
                     && clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_energy_weapons")) {
-                if (mounted.hasChargedCapacitor()) {
-                    wDamR.setText(Integer.toString(Compute.dialDownDamage(
-                            mounted, wtype) + 5));
+                if (mounted.hasChargedCapacitor() != 0) {
+                    if (mounted.hasChargedCapacitor() == 2) {
+                        wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                                mounted, wtype) + 10));
+                    }
+                    if (mounted.hasChargedCapacitor() == 1) {
+                        wDamR.setText(Integer.toString(Compute.dialDownDamage(
+                                mounted, wtype) + 5));
+                    }
                 } else {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(
                             mounted, wtype)));

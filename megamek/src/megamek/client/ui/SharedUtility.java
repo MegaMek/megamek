@@ -244,7 +244,7 @@ public class SharedUtility {
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         // tank on a road can move 5/7, **not** 5/8.
-                        else if (step.getMpUsed() > entity.getRunMP(false, false, false) + 1) {
+                        else if (step.getMpUsed() > (entity.getRunMP(false, false, false) + 1)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             checkNag(rollTarget, nagReport, psrList);
                         }
@@ -257,13 +257,17 @@ public class SharedUtility {
             if ((buildingMove > 0) && !(entity instanceof Protomech)) {
 
                 // Get the building being entered.
-                Building bldgEntered = null;
+                Building bldg = null;
+                String reason ="entering";
                 if ((buildingMove & 2) == 2) {
-                    bldgEntered = game.getBoard().getBuildingAt(curPos);
+                    bldg = game.getBoard().getBuildingAt(curPos);
+                }
+                if ((buildingMove & 1) == 1) {
+                    bldg = game.getBoard().getBuildingAt(lastPos);
                 }
 
-                if (bldgEntered != null) {
-                    rollTarget = entity.rollMovementInBuilding(bldgEntered, distance, "entering", overallMoveType);
+                if (bldg != null) {
+                    rollTarget = entity.rollMovementInBuilding(bldg, distance, reason, overallMoveType);
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
@@ -273,7 +277,7 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
-            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && (game.getBoard().getHex(lastPos).getElevation() + entity.calcElevation(curHex, game.getBoard().getHex(lastPos)) != curHex.getElevation() + entity.getElevation()) && (game.getBoard().getHex(lastPos).getElevation() - game.getBoard().getHex(lastPos).depth() != curHex.getElevation() - curHex.depth()) && !(entity instanceof VTOL) && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && (curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation() == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
+            if (((step.getType() == MoveStepType.BACKWARDS) || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) && ((game.getBoard().getHex(lastPos).getElevation() + entity.calcElevation(curHex, game.getBoard().getHex(lastPos))) != (curHex.getElevation() + entity.getElevation())) && ((game.getBoard().getHex(lastPos).getElevation() - game.getBoard().getHex(lastPos).depth()) != (curHex.getElevation() - curHex.depth())) && !(entity instanceof VTOL) && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation()) == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
                 nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
                 SharedUtility.checkNag(entity.getBasePilotingRoll(overallMoveType),nagReport, psrList);
             }
@@ -423,7 +427,7 @@ public class SharedUtility {
                 int health = 6 - hits;
 
                 if (thrustUsed > (2 * health)) {
-                    int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
+                    int targetroll = 2 + (thrustUsed - (2 * health)) + (2 * hits);
                     nagReport.append(Messages.getString("MovementDisplay.addNag", new Object[] { Integer.toString(targetroll), "Thrust exceeded twice pilot's health in single hex" }));
                 }
 
@@ -545,7 +549,7 @@ public class SharedUtility {
         // first check whether we are splitting hexes
         boolean split = false;
         double degree = start.degree(end);
-        if (degree % 60 == 30) {
+        if ((degree % 60) == 30) {
             split = true;
             in = Coords.intervening(start, end, true);
         }

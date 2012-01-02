@@ -50,7 +50,7 @@ public class FixElevationCommand extends ServerCommand {
             if (entity.fixElevation()) {
                 Building bldg = server.getGame().getBoard().getBuildingAt(entity.getPosition());
                 if (bldg != null) {
-                    server.checkForCollapse(bldg, server.getGame().getPositionMap(), entity.getPosition(), true);
+                    server.checkForCollapse(bldg, server.getGame().getPositionMap(), entity.getPosition(), true, server.getvPhaseReport());
                 }
                 server.sendServerChat(entity.getDisplayName()
                         + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");

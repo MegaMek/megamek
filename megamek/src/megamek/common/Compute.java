@@ -4709,13 +4709,13 @@ public class Compute {
 
 
     /**
-     * Gets a new target hex for a flight of smoke missiles fired 
-     * at a hex, if there are remaining missiles. 
+     * Gets a new target hex for a flight of smoke missiles fired
+     * at a hex, if there are remaining missiles.
      */
-    
-    
+
+
     public static Coords getSmokeMissileTarget(IGame game, Coords coords, int fli) {
-        
+
         // loop through adjacent hexes
         for (int dir = fli; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -4727,11 +4727,11 @@ public class Compute {
             if (coords.equals(tempcoords)) {
                 continue;
             }
-            // hex already smoke-filled?    
+            // hex already smoke-filled?
             if (hextor.terrainLevel(Terrains.SMOKE) == 2) {
                 continue;
             }
-            return tempcoords; 
+            return tempcoords;
         }
         return null;
     }

@@ -257,6 +257,10 @@ public class Server implements Runnable {
 
     private Vector<Report> vPhaseReport = new Vector<Report>();
 
+    public Vector<Report> getvPhaseReport() {
+        return vPhaseReport;
+    }
+
     private MapSettings mapSettings = new MapSettings();
 
     // commands
@@ -3147,7 +3151,7 @@ public class Server implements Runnable {
         }
         Building bldg = game.getBoard().getBuildingAt(centralPos);
         if(null != bldg) {
-            collapseBuilding(bldg, positionMap, centralPos);
+            collapseBuilding(bldg, positionMap, centralPos, vPhaseReport);
         }
         for(int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
@@ -3160,7 +3164,7 @@ public class Server implements Runnable {
             }
             bldg = game.getBoard().getBuildingAt(pos);
             if(null != bldg) {
-                collapseBuilding(bldg, positionMap, pos);
+                collapseBuilding(bldg, positionMap, pos, vPhaseReport);
             }
         }
 
@@ -4351,7 +4355,7 @@ public class Server implements Runnable {
                     addAffectedBldg(bldg, false);
                 } else {
                     // otherwise it collapses immediately on our head
-                    checkForCollapse(bldg, game.getPositionMap(), nextPos, true);
+                    checkForCollapse(bldg, game.getPositionMap(), nextPos, true, vPhaseReport);
                 }
 
             } // End handle-building.
@@ -4370,7 +4374,7 @@ public class Server implements Runnable {
             // Check for collapse of any building the entity might be on
             Building roof = game.getBoard().getBuildingAt(nextPos);
             if (roof != null) {
-                if (checkForCollapse(roof, game.getPositionMap(), nextPos, true)) {
+                if (checkForCollapse(roof, game.getPositionMap(), nextPos, true, vPhaseReport)) {
                     break; // stop skidding if the building collapsed
                 }
             }
@@ -6386,7 +6390,12 @@ public class Server implements Runnable {
 
                 boolean collapsed = false;
                 // are we passing through a building wall?
-                if ((bldgEntered != null)) {
+                if ((bldgExited != null) && !bldgExited.equals(bldgEntered)) {
+                    String reason = "exiting";
+                    collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, reason, step
+                            .isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
+                    addAffectedBldg(bldgExited, collapsed);
+                } else if ((bldgEntered != null)) {
                     // If we're not leaving a building, just handle the
                     // "entered".
                     String reason;
@@ -6404,7 +6413,7 @@ public class Server implements Runnable {
                         reason = "entering";
                     }
                     collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, reason, step
-                            .isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                            .isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
                     addAffectedBldg(bldgEntered, collapsed);
                 }
 
@@ -6789,7 +6798,7 @@ public class Server implements Runnable {
             // check for building collapse
             Building bldg = game.getBoard().getBuildingAt(curPos);
             if (bldg != null) {
-                checkForCollapse(bldg, game.getPositionMap(), curPos, true);
+                checkForCollapse(bldg, game.getPositionMap(), curPos, true, vPhaseReport);
             }
 
             // check for breaking magma crust
@@ -7366,7 +7375,7 @@ public class Server implements Runnable {
         sendChangedHex(coords);
     }
 
-    
+
     /**
      * deliver artillery smoke
      *
@@ -8935,8 +8944,11 @@ public class Server implements Runnable {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final int srcHeightAboveFloor = entity.getElevation() + srcHex.depth();
-        final int fallElevation = Math.max(0, (srcHex.floor() + srcHeightAboveFloor)
+        int fallElevation = Math.max(0, (srcHex.floor() + srcHeightAboveFloor)
                 - (destHex.containsTerrain(Terrains.ICE) ? destHex.surface() : destHex.floor()));
+        if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
+        }
         int direction;
         if (src.equals(dest)) {
             direction = Compute.d6() - 1;
@@ -9110,7 +9122,8 @@ public class Server implements Runnable {
             System.err.println("Can not displace " + entity.getShortName() + " from " + src + " to " + dest + '.');
             return vPhaseReport;
         }
-        int fallElevation = entity.elevationOccupied(srcHex) - entity.elevationOccupied(destHex);
+        int bldgElev = destHex.containsTerrain(Terrains.BLDG_ELEV)?destHex.terrainLevel(Terrains.BLDG_ELEV):0;
+        int fallElevation = entity.getElevation() - (entity.elevationOccupied(destHex) + bldgElev);
         if (fallElevation > 1) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
@@ -9125,16 +9138,16 @@ public class Server implements Runnable {
         // unstick the entity if it was stuck in swamp
         boolean wasStuck = entity.isStuck();
         entity.setStuck(false);
-        int oldElev = entity.elevationOccupied(srcHex);
+        int oldElev = entity.getElevation();
         // move the entity into the new location gently
         entity.setPosition(dest);
-        entity.setElevation(entity.elevationOccupied(destHex) - destHex.surface());
+        entity.setElevation(entity.getElevation() - destHex.surface());
         Building bldg = game.getBoard().getBuildingAt(dest);
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
                 // woops, into the building we go
                 passBuildingWall(entity, game.getBoard().getBuildingAt(dest), src, dest, 1, "displaced into", Math
-                        .abs(entity.getFacing() - src.direction(dest)) == 3, entity.moved);
+                        .abs(entity.getFacing() - src.direction(dest)) == 3, entity.moved, true);
             } else {
                 // woops, we step on the roof
                 checkBuildingCollapseWhileMoving(bldg, entity, dest);
@@ -10807,7 +10820,7 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(te.getShortName());
             r.add(te.getOwner().getName());
-            r.newlines = 0;
+            r.indent();
             addReport(r);
         } else {
             if (glancing) {
@@ -12914,18 +12927,15 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getValue());
             r.add(roll);
-            r.newlines = 0;
             addReport(r);
             if (glancing) {
                 r = new Report(4030);
                 r.subject = ae.getId();
-                r.newlines = 0;
                 addReport(r);
             }
             if (directBlow) {
                 r = new Report(4032);
                 r.subject = ae.getId();
-                r.newlines = 0;
                 addReport(r);
             }
 
@@ -13223,7 +13233,6 @@ public class Server implements Runnable {
             r = new Report(9015);
             r.subject = ae.getId();
             r.indent(1);
-            r.newlines = 0;
             addReport(r);
         }
 
@@ -13231,7 +13240,7 @@ public class Server implements Runnable {
         r = new Report(4240);
         r.subject = ae.getId();
         r.add(damageTaken);
-        r.newlines = 0;
+        r.indent();
         addReport(r);
 
         HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(te.getPosition(), true));
@@ -13247,7 +13256,7 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(damage);
         r.add(toHit.getTableDesc());
-        r.newlines = 0;
+        r.indent();
         addReport(r);
 
         hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -13316,7 +13325,7 @@ public class Server implements Runnable {
         r = new Report(4240);
         r.subject = ae.getId();
         r.add(damageTaken);
-        r.newlines = 0;
+        r.indent();
         addReport(r);
 
         // work out which locations have spikes
@@ -13338,7 +13347,6 @@ public class Server implements Runnable {
             if (spikes[hit.getLocation()] == 1) {
                 r = new Report(4335);
                 r.indent(2);
-                r.newlines = 0;
                 r.subject = ae.getId();
                 addReport(r);
                 spikes[hit.getLocation()] = 0;
@@ -13355,7 +13363,7 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(damage);
         r.add(toHit.getTableDesc());
-        r.newlines = 0;
+        r.indent();
         addReport(r);
 
         // work out which locations have spikes
@@ -13393,7 +13401,7 @@ public class Server implements Runnable {
                 r = new Report(4235);
                 r.subject = ae.getId();
                 r.addDesc(te);
-                r.newlines = 0;
+                r.indent();
                 addReport(r);
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
@@ -13404,7 +13412,6 @@ public class Server implements Runnable {
                 if (spikes[hit.getLocation()] == 1) {
                     r = new Report(4330);
                     r.indent(2);
-                    r.newlines = 0;
                     r.subject = ae.getId();
                     addReport(r);
                     spikes[hit.getLocation()] = 0;
@@ -20964,14 +20971,18 @@ public class Server implements Runnable {
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
         int newElevation;
+        // we might have to check if the building/bridge we are falling onto collapses
+        boolean checkCollapse = false;
 
         if ((height >= buildingHeight) && (buildingHeight >= 0)) {
             damageHeight -= buildingHeight;
             newElevation = buildingHeight;
+            checkCollapse = true;
         } else if (fallOntoBridge && (height >= bridgeHeight) && (bridgeHeight >= 0)) {
             damageHeight -= bridgeHeight;
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
+            checkCollapse = true;
         } else if (fallHex.containsTerrain(Terrains.ICE) && (entity.getElevation() == 0)) {
             waterDepth = 0;
             newElevation = 0;
@@ -21019,15 +21030,15 @@ public class Server implements Runnable {
         // calculate damage for hitting the surface
         int damage = (int) Math.round(entity.getWeight() / 10.0) * (damageHeight + 1);
         //different rules (pg. 151 of TW) for battle armor and infantry
-        if(entity instanceof Infantry) {
+        if (entity instanceof Infantry) {
             damage = (int)Math.ceil(damageHeight / 2.0);
             //no damage for fall from less than 2 levels
             if(damageHeight < 2) {
                 damage = 0;
             }
-            if(!(entity instanceof BattleArmor)) {
+            if (!(entity instanceof BattleArmor)) {
                 int dice = 3;
-                if(entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
+                if (entity.getMovementMode() == EntityMovementMode.INF_MOTORIZED) {
                     dice = 2;
                 } else if((entity.getMovementMode() == EntityMovementMode.INF_JUMP) || ((Infantry)entity).isMechanized()) {
                     dice = 1;
@@ -21113,7 +21124,7 @@ public class Server implements Runnable {
         }
 
         // standard damage loop
-        if((entity instanceof Infantry) && (damage > 0)) {
+        if ((entity instanceof Infantry) && (damage > 0)) {
             if(entity instanceof BattleArmor) {
                 for (int i = 1; i < entity.locations(); i++) {
                     HitData h = new HitData(i);
@@ -21221,6 +21232,10 @@ public class Server implements Runnable {
         // if there is a minefield in this hex, then the mech may set it off
         if (game.containsMinefield(fallPos) && enterMinefield(entity, fallPos, newElevation, true, vPhaseReport, 12)) {
             resetMines();
+        }
+        // if we have to, check if the building/bridge we fell on collapses
+        if (checkCollapse) {
+            checkForCollapse(game.getBoard().getBuildingAt(fallPos), game.getPositionMap(), fallPos, false, vPhaseReport);
         }
 
         return vPhaseReport;
@@ -23570,10 +23585,11 @@ public class Server implements Runnable {
      * @param entering
      *            - a <code>boolean</code> if the entity is entering or exiting
      *            a building
+     *
      * @return <code>true</code> if the building collapses due to overloading.
      */
     private boolean passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance,
-            String why, boolean backwards, EntityMovementType overallMoveType) {
+            String why, boolean backwards, EntityMovementType overallMoveType, boolean entering) {
 
         Report r;
 
@@ -23591,7 +23607,7 @@ public class Server implements Runnable {
             if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
 
                 // Divide the building's current CF by 10, round up.
-                int damage = (int) Math.floor(bldg.getDamageFromScale() * Math.ceil(bldg.getCurrentCF(curPos) / 10.0));
+                int damage = (int) Math.floor(bldg.getDamageFromScale() * Math.ceil(bldg.getCurrentCF(entering?curPos:lastPos) / 10.0));
 
                 // Infantry and Battle armor take different amounts of damage
                 // then Meks and vehicles.
@@ -23624,14 +23640,14 @@ public class Server implements Runnable {
             }
             // Damage the building. The CF can never drop below 0.
             int toBldg = (int) Math.floor(bldg.getDamageToScale() * Math.ceil(entity.getWeight() / 10.0));
-            int curCF = bldg.getCurrentCF(curPos);
+            int curCF = bldg.getCurrentCF(entering?curPos:lastPos);
             curCF -= Math.min(curCF, toBldg);
-            bldg.setCurrentCF(curCF, curPos);
+            bldg.setCurrentCF(curCF, entering?curPos:lastPos);
 
             // Apply the correct amount of damage to infantry in the building.
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
-            addReport(damageInfantryIn(bldg, toBldg, curPos));
+            addReport(damageInfantryIn(bldg, toBldg, entering?curPos:lastPos));
         }
         return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
     }
@@ -23657,7 +23673,7 @@ public class Server implements Runnable {
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
         // Check for collapse of this building due to overloading, and return.
-        boolean rv = checkForCollapse(bldg, positionMap, curPos, true);
+        boolean rv = checkForCollapse(bldg, positionMap, curPos, true, vPhaseReport);
 
         // If the entity was not displaced and didnt fall, move it back where it
         // was
@@ -23794,7 +23810,7 @@ public class Server implements Runnable {
      * @return <code>true</code> if the building collapsed.
      */
     public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-            boolean checkBecauseOfDamage) {
+            boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
         // If the input is meaningless, do nothing and throw no exception.
         if ((bldg == null) || (positionMap == null) || positionMap.isEmpty() || (coords == null) || !bldg.isIn(coords)
@@ -23905,8 +23921,8 @@ public class Server implements Runnable {
         if (collapse) {
             Report r = new Report(2375, Report.PUBLIC);
             r.add(bldg.getName());
-            addReport(r);
-            collapseBuilding(bldg, positionMap, coords);
+            vPhaseReport.add(r);
+            collapseBuilding(bldg, positionMap, coords, vPhaseReport);
         }
 
         // Otherwise, did any entities fall into the basement?
@@ -23919,8 +23935,8 @@ public class Server implements Runnable {
 
     } // End private boolean checkForCollapse( Building, Hashtable )
 
-    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
-        collapseBuilding(bldg, positionMap, coords, true);
+    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords, Vector<Report> vPhaseReport) {
+        collapseBuilding(bldg, positionMap, coords, true, vPhaseReport);
     }
 
     /**
@@ -23943,7 +23959,7 @@ public class Server implements Runnable {
      *            building
      */
     public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-            boolean collapseAll) {
+            boolean collapseAll, Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -24026,7 +24042,7 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
                 r.add(damage);
-                addReport(r);
+                vPhaseReport.add(r);
                 int remaining = damage;
                 int cluster = damage;
                 if ((entity instanceof BattleArmor) || (entity instanceof Mech) || (entity instanceof Tank)) {
@@ -24041,10 +24057,10 @@ public class Server implements Runnable {
 
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                    addReport(damageEntity(entity, hit, next));
+                    vPhaseReport.addAll(damageEntity(entity, hit, next));
                     remaining -= next;
                 }
-                addReport(new Report(1210, Report.PUBLIC));
+                vPhaseReport.add(new Report(1210, Report.PUBLIC));
                 // TODO: Why are dead entities showing up on firing phase?
 
                 // all entities should fall
@@ -24059,7 +24075,7 @@ public class Server implements Runnable {
                     if (damage >= 20) {
                         psr.addModifier(1, "20+ damage");
                     }
-                    addReport(doEntityFallsInto(entity, coords, coords, psr));
+                    vPhaseReport.addAll(doEntityFallsInto(entity, coords, coords, psr));
                 }
                 // Update this entity.
                 // ASSUMPTION: this is the correct thing to do.
@@ -24080,7 +24096,7 @@ public class Server implements Runnable {
         if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {
             for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements();) {
                 coords = coordsEnum.nextElement();
-                collapseBuilding(bldg, game.getPositionMap(), coords, false);
+                collapseBuilding(bldg, game.getPositionMap(), coords, false, vPhaseReport);
             }
         }
 
@@ -24170,7 +24186,7 @@ public class Server implements Runnable {
                     Report r = new Report(6460, Report.PUBLIC);
                     r.add(bldg.getName());
                     addReport(r);
-                    collapseBuilding(bldg, positionMap, coords);
+                    collapseBuilding(bldg, positionMap, coords, vPhaseReport);
                 }
             }
         }
@@ -24183,7 +24199,7 @@ public class Server implements Runnable {
                 Vector<Coords> updateCoords = update.get(bldg);
                 Vector<Coords> coordsToRemove = new Vector<Coords>();
                 for (Coords coords : updateCoords) {
-                    if (checkForCollapse(bldg, positionMap, coords, false)) {
+                    if (checkForCollapse(bldg, positionMap, coords, false, vPhaseReport)) {
                         coordsToRemove.add(coords);
                     }
                 }
@@ -26006,7 +26022,8 @@ public class Server implements Runnable {
         }
         // set entity to expected elevation
         IHex hex = game.getBoard().getHex(entity.getPosition());
-        entity.setElevation(entity.elevationOccupied(hex) - hex.floor());
+        int bldgElev = hex.containsTerrain(Terrains.BLDG_ELEV)?hex.terrainLevel(Terrains.BLDG_ELEV):0;
+        entity.setElevation((entity.elevationOccupied(hex) - hex.floor()) + bldgElev);
 
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if (bldg != null) {
@@ -26134,7 +26151,6 @@ public class Server implements Runnable {
         if (hex == null) {
             return; // not on board.
         }
-        DamageType damageType = DamageType.NONE;
 
         int flakElevation = altitude - hex.surface();
 

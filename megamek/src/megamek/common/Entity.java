@@ -1754,8 +1754,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return hex.surface() + elevation;
         } else if (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.NAVAL) || (movementMode == EntityMovementMode.HYDROFOIL) || hex.containsTerrain(Terrains.ICE)) && hex.containsTerrain(Terrains.WATER)) {
             return hex.surface();
-        } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
-            return hex.floor() + hex.terrainLevel(Terrains.BLDG_ELEV);
         } else {
             return hex.floor();
         }
@@ -5099,7 +5097,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Checks to see if an entity is moving through building walls. Note: this
      * method returns true/false, unlike the other checkStuff() methods above.
      *
-     * @return 0, no eligable building; 1, exiting; 2, entering; 3, both; 4,
+     * @return 0, no eligible building; 1, exiting; 2, entering; 3, both; 4,
      *         stepping on roof
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep, Coords curPos, Coords prevPos) {
@@ -5108,7 +5106,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         IHex curHex = game.getBoard().getHex(curPos);
         IHex prevHex = game.getBoard().getHex(prevPos);
-        // ineligable because of movement type or unit type
+        // ineligible because of movement type or unit type
         if (isAirborne()) {
             return 0;
         }

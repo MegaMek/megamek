@@ -113,7 +113,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
 
                     // If it doesn't collapse under its load, mark it for update.
-                    else if (!server.checkForCollapse(bldg, positionMap, coords, false)) {
+                    else if (!server.checkForCollapse(bldg, positionMap, coords, false, vPhaseReport)) {
                         bldg.setPhaseCF(cf, coords);
                     }
                 }
@@ -415,11 +415,11 @@ public class FireProcessor extends DynamicTerrainProcessor {
             hexElevation += board.getHex(src).terrainLevel(Terrains.BLDG_ELEV);
         }
         //If the smoke moves into a hex that has a greater then 4 elevation drop it dissipates.
-        if ( hexElevation - nextElevation > 4 ) {
+        if ( (hexElevation - nextElevation) > 4 ) {
             return null;
         }
 
-        if ( hexElevation - nextElevation < -4 ){
+        if ( (hexElevation - nextElevation) < -4 ){
             //Try Right
             if ( directionChanges == 0 ){
                 return driftAddSmoke(src, (windDir + 1) % 6, windStr, ++directionChanges);
@@ -451,13 +451,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
     public boolean driftSmokeDissipate(SmokeCloud cloud, int roll, int windStr) {
 
         //HVAC Heavy smoke dissipation
-        if ( (cloud.getDuration() > 0) && (cloud.getDuration()-1 == 0) ) {
+        if ( (cloud.getDuration() > 0) && ((cloud.getDuration()-1) == 0) ) {
             cloud.setDuration(0);
             cloud.setSmokeLevel(0);
             return true;
         }
 
-        if ( (cloud.getDuration() > 0) && (cloud.getDuration()-1 > 0) ) {
+        if ( (cloud.getDuration() > 0) && ((cloud.getDuration()-1) > 0) ) {
             cloud.setDuration(cloud.getDuration()-1);
         }
 

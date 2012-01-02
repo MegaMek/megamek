@@ -16,6 +16,8 @@ v0.35.27-dev (SVN)
 + fixed Drone (remote) operating system crits
 + public getFlag method in Engine
 + Patch 3467874: Smoke SRM/LRM
++ Charge and Building displacement bugfixes
++ Bug: Mechs should roll for damage when leaving buildings, too
 
 v0.35.26 (2011-11-30, 15:35 UTC+1)
 + BV tag added for manual BV for RS creation.

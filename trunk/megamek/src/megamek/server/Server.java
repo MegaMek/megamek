@@ -20757,6 +20757,15 @@ public class Server implements Runnable {
         // determine and deal damage
         int damage = mounted.getExplosionDamage();
 
+        // Smoke ammo halves damage
+        if ((mounted.getType() instanceof AmmoType)
+                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || 
+                   (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM))
+                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
+                && (mounted.getShotsLeft() > 0)) {
+            damage = ((mounted.getExplosionDamage())/2);
+        }
+        
         // divide damage by 10 for aeros, per TW rules on pg. 161
         if (en instanceof Aero) {
             int newdamage = (int) Math.floor(damage / 10.0);

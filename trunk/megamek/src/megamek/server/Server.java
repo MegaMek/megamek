@@ -20759,13 +20759,13 @@ public class Server implements Runnable {
 
         // Smoke ammo halves damage
         if ((mounted.getType() instanceof AmmoType)
-                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || 
+                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) ||
                    (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
                 && (mounted.getShotsLeft() > 0)) {
             damage = ((mounted.getExplosionDamage())/2);
         }
-        
+
         // divide damage by 10 for aeros, per TW rules on pg. 161
         if (en instanceof Aero) {
             int newdamage = (int) Math.floor(damage / 10.0);
@@ -26161,8 +26161,6 @@ public class Server implements Runnable {
             return; // not on board.
         }
 
-        int flakElevation = altitude - hex.surface();
-
         Report r;
 
         if (!flak) {
@@ -26170,7 +26168,7 @@ public class Server implements Runnable {
         }
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
-        if ((bldg != null) && !(flak && (flakElevation > hex.terrainLevel(Terrains.BLDG_ELEV)))) {
+        if ((bldg != null) && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV)) || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
             bldgAbsorbs = bldg.getAbsorbtion(coords);
             if (!((ammo != null) && (ammo.getMunitionType() == AmmoType.M_FLECHETTE))) {
                 // damage the building
@@ -26183,7 +26181,7 @@ public class Server implements Runnable {
         }
 
         if (flak
-                && ((flakElevation <= 0) || (flakElevation <= hex.terrainLevel(Terrains.BLDG_ELEV)) || (flakElevation == hex
+                && ((altitude <= 0) || (altitude <= hex.terrainLevel(Terrains.BLDG_ELEV)) || (altitude == hex
                         .terrainLevel(Terrains.BRIDGE_ELEV)))) {
             // Flak in this hex would only hit landed units
             return;
@@ -26236,7 +26234,7 @@ public class Server implements Runnable {
                     continue;
                 }
                 // Check: is entity at correct elevation?
-                if (entity.getElevation() != flakElevation) {
+                if (entity.getElevation() != altitude) {
                     continue;
                 }
             } else {

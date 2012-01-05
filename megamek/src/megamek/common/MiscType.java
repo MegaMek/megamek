@@ -2359,6 +2359,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
         misc.bv = 0;
+        misc.cost = 1400000;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
@@ -2380,6 +2381,7 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.flags = misc.flags.or(F_VOIDSIG).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 2000000;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
@@ -2402,6 +2404,7 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.flags = misc.flags.or(F_CHAMELEON_SHIELD).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
+        misc.cost = 600000;
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
 
         return misc;
@@ -4443,6 +4446,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 3;
         misc.criticals = 7;
         misc.spreadable = true;
+        misc.cost = 1000000;
         misc.flags = misc.flags.or(F_BLUE_SHIELD).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 
         return misc;

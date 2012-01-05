@@ -199,7 +199,7 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     protected static String makeWeightString(float weight) {
-        return (weight < 100 ? " " : "") + (weight < 10 ? " " : "") + Float.toString(weight) + ((Math.ceil(weight * 10) == weight * 10) ? "0" : "");
+        return (weight < 100 ? " " : "") + (weight < 10 ? " " : "") + Float.toString(weight) + ((Math.ceil(weight * 10) == (weight * 10)) ? "0" : "");
     }
 
     private boolean hasMASC() {
@@ -505,12 +505,12 @@ public abstract class TestEntity implements TestEntityOption {
         float weightSum = calculateWeight();
         float weight = getWeight();
 
-        if (showO && (weight + getMaxOverweight() < weightSum)) {
+        if (showO && ((weight + getMaxOverweight()) < weightSum)) {
             buff.append("Weight: ").append(calculateWeight()).append(" is greater than ").append(getWeight()).append("\n");
             // buff.append(printWeightCalculation()).append("\n");
             return false;
         }
-        if (showU && (weight - getMinUnderweight() > weightSum)) {
+        if (showU && ((weight - getMinUnderweight()) > weightSum)) {
             buff.append("Weight: ").append(calculateWeight()).append(" is less than ").append(getWeight()).append("\n");
             // buff.append(printWeightCalculation()).append("\n");
             return false;
@@ -788,8 +788,8 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                 } else {
-                    if (mech.getArmorType(0) != EquipmentType.T_ARMOR_INDUSTRIAL) {
-                        buff.append("primitive battlemechs must mount primitive battlemech (industrial) armor\n");
+                    if (mech.getArmorType(0) != EquipmentType.T_ARMOR_PRIMITIVE) {
+                        buff.append("primitive battlemechs must mount primitive battlemech armor\n");
                         illegal = true;
                     }
                 }
@@ -1004,7 +1004,7 @@ class Structure {
         } else if (structureType == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
             return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
-            return TestEntity.ceilMaxHalf(weight / 10.0f * 0.75f, roundWeight);
+            return TestEntity.ceilMaxHalf((weight / 10.0f) * 0.75f, roundWeight);
         }
         return weight / 10.0f;
     }

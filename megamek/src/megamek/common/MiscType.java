@@ -870,6 +870,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHeavyFerroFibrous());
         EquipmentType.addType(MiscType.createHardenedArmor());
         EquipmentType.addType(MiscType.createIndustrialArmor());
+        EquipmentType.addType(MiscType.createPrimitiveArmor());
         EquipmentType.addType(MiscType.createHeavyIndustrialArmor());
         EquipmentType.addType(MiscType.createCommercialArmor());
         EquipmentType.addType(MiscType.createFerroLamellorArmor());
@@ -2520,6 +2521,18 @@ public class MiscType extends EquipmentType {
 
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL));
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.hittable = false;
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createPrimitiveArmor() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE));
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;

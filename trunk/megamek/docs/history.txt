@@ -20,6 +20,7 @@ v0.35.27-dev (SVN)
 + Bug: Mechs should roll for damage when leaving buildings, too
 + Artillery FLAK elevation error
 + Bug: Excessive AMS ammo shouldn't count for BV
++ missing costs for VoidSig, NullSig, Blue Shield, and Chameleon Polarization
 
 v0.35.26 (2011-11-30, 15:35 UTC+1)
 + BV tag added for manual BV for RS creation.

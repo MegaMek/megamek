@@ -911,6 +911,14 @@ public class Tank extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
         bvText.append(endColumn);
+        double amsAmmoBV = 0;
+        for (Mounted mounted : getAmmo()) {
+            AmmoType atype = (AmmoType)mounted.getType();
+            if (atype.getAmmoType() == AmmoType.T_AMS) {
+                amsAmmoBV += atype.getBV(this);
+            }
+        }
+        double amsBV = 0;
         // add defensive equipment
         double dEquipmentBV = 0;
         for (Mounted mounted : getEquipment()) {
@@ -926,9 +934,13 @@ public class Tank extends Entity {
             bvText.append(endColumn);
             bvText.append(startColumn);
 
-            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))) {
+            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD)))) {
                 bvText.append(etype.getBV(this));
                 dEquipmentBV += etype.getBV(this);
+                WeaponType wtype = (WeaponType)etype;
+                if (wtype.hasFlag(WeaponType.F_AMS) && (wtype.getAmmoType() == AmmoType.T_AMS)) {
+                    amsBV += etype.getBV(this);
+                }
             } else if (((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
@@ -943,6 +955,21 @@ public class Tank extends Entity {
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append(endColumn);
+        }
+        if (amsAmmoBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+
+            bvText.append("AMS Ammo (to a maximum of AMS BV)");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append("+");
+            bvText.append(Math.min(amsBV, amsAmmoBV));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            dEquipmentBV += Math.min(amsBV,  amsAmmoBV);
         }
         bvText.append(endRow);
         bvText.append(startRow);

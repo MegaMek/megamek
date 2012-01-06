@@ -1057,7 +1057,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, TechConstants.T_IS_ADVANCED));
-        
+
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(srmAmmos, munitions);
@@ -6579,7 +6579,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
         ammo.shots = 10;
-        ammo.bv = 3;
+        ammo.bv = 2;
         ammo.cost = 2000;
 
         return ammo;
@@ -6600,7 +6600,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
         ammo.shots = 10;
-        ammo.bv = 3;
+        ammo.bv = 2;
         ammo.cost = 2000;
 
         return ammo;

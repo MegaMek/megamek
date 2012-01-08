@@ -3758,4 +3758,16 @@ public class Aero extends Entity {
         }
         return ((double)totalInoperable / totalWeapons) >= 0.25;
     }
+
+    @Override
+    public boolean canSpot() {
+        // per a recent ruling on the official forums, aero units can't spot
+        // for indirect LRM fire, unless they have a recon cam, an infrared or
+        // hyperspec imager, or a  high-res imager and it's not night
+        if (!isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA) || hasWorkingMisc(MiscType.F_INFRARED_IMAGER) || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) || (hasWorkingMisc(MiscType.F_HIRES_IMAGER) && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY) || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

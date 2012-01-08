@@ -23,7 +23,8 @@ v0.35.27-dev (SVN)
 + missing costs for VoidSig, NullSig, Blue Shield, and Chameleon Polarization
 + Bug: heavy flamer ammo BV should be 2, not 3
 + Bug: RL 15 heat should be 4, not 5
-
++ per a recent rules question, airboren aeros shouldn't be able to spot for
+    artillery or indirect LRM, unless they have recon cameras or satellite imagers
 
 v0.35.26 (2011-11-30, 15:35 UTC+1)
 + BV tag added for manual BV for RS creation.

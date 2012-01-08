@@ -55,20 +55,6 @@ public class SRMInfernoHandler extends SRMHandler {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
-     */
-    //TAHARQA: I don't think this should be in here. Why isn't it in special miss?
-    /*
-    protected void reportMiss(Vector<Report> vPhaseReport) {
-        super.reportMiss(vPhaseReport);
-        server.tryIgniteHex(target.getPosition(), ae.getId(), true, new TargetRoll(wtype.getFireTN(), wtype.getName()),
-                3, vPhaseReport);
-    }
-    */
-
-    /*
-     * (non-Javadoc)
-     *
      * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
      *      boolean, megamek.common.Building)
      */

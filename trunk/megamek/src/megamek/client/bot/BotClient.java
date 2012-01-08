@@ -164,8 +164,8 @@ public abstract class BotClient extends Client {
                 // if the game is not double blind and I can't see anyone
                 // else on the board I should kill myself.
                 if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
-                        && (game.getEntitiesOwnedBy(getLocalPlayer())
-                                - game.getNoOfEntities() == 0)) {
+                        && ((game.getEntitiesOwnedBy(getLocalPlayer())
+                                - game.getNoOfEntities()) == 0)) {
                     die();
                 }
 
@@ -196,6 +196,8 @@ public abstract class BotClient extends Client {
                 sendDone(true);
                 break;
             case PHASE_VICTORY:
+                sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
+                die();
                 break;
             }
         } catch (Throwable t) {
@@ -377,8 +379,8 @@ public abstract class BotClient extends Client {
         case 3:
         case 5:
         case 7:
-            valid_array = new Coords[(3 * game.getBoard().getWidth())
-                    + (3 * game.getBoard().getHeight()) - 9];
+            valid_array = new Coords[((3 * game.getBoard().getWidth())
+                    + (3 * game.getBoard().getHeight())) - 9];
             break;
         case 2:
         case 6:
@@ -424,10 +426,10 @@ public abstract class BotClient extends Client {
             valid_array[valid_arr_index] = valid_array[arr_x_index];
             valid_array[arr_x_index] = test_hex;
         }
-        
+
         // copy valid hexes into a new array of the correct size,
         // so we don't return an array that contains null Coords
-        
+
         Coords[] valid_new = new Coords[counter];
         for (int i = 0; i < counter; i++) {
             valid_new[i] = valid_array[i];
@@ -461,7 +463,7 @@ public abstract class BotClient extends Client {
         weapon_count = 0;
         for (Mounted mounted : deployed_ent.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getName() != "ATM 3") 
+            if ((wtype.getName() != "ATM 3")
             		&& (wtype.getName() != "ATM 6")
                     && (wtype.getName() != "ATM 9")
                     && (wtype.getName() != "ATM 12")) {
@@ -500,18 +502,18 @@ public abstract class BotClient extends Client {
         // highest elevation.  Fast, non-jumping units should deploy towards
         // the middle elevations to avoid getting stuck up a cliff.
 
-        
-        if (deployed_ent.getJumpMP() == 0 &&
-        		deployed_ent.getWalkMP() > 5){
-        	
-        	ideal_elev = lowest_elev + (highest_elev - lowest_elev)/3.0;
-        	
-        	
+
+        if ((deployed_ent.getJumpMP() == 0) &&
+        		(deployed_ent.getWalkMP() > 5)){
+
+        	ideal_elev = lowest_elev + ((highest_elev - lowest_elev)/3.0);
+
+
         } else {
-        	
+
         	ideal_elev = lowest_elev
                 + ((av_range / 18) * (highest_elev - lowest_elev));
-        
+
         }
         if (ideal_elev > highest_elev) {
             ideal_elev = highest_elev;

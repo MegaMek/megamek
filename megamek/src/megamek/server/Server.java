@@ -16956,14 +16956,11 @@ public class Server implements Runnable {
                         tookInternalDamage = true;
                         te.damageThisPhase += damage;
                         damage = 0;
-                        r = new Report(1210);
+                        r = new Report(6100);
                         r.subject = te_n;
-                        r.newlines = 0;
                         // Infantry platoons have men not "Internals".
                         if (isPlatoon) {
                             r.messageId = 6095;
-                        } else {
-                            r.messageId = 6100;
                         }
                         r.add(te.getInternal(hit));
                         vDesc.addElement(r);
@@ -17273,7 +17270,6 @@ public class Server implements Runnable {
             if ((te.getInternal(hit) != IArmorState.ARMOR_DESTROYED)
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
-                    vDesc.elementAt(vDesc.size() - 1).newlines++;
                     vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.glancingMod() + critBonus));
                 }
                 crits = 0;
@@ -18333,7 +18329,6 @@ public class Server implements Runnable {
                     r.subject = t.getId();
                     r.add(m.getName());
                     r.add(tmp);
-                    r.newlines = 0;
                     vDesc.add(r);
                 }
                 hit = new HitData(loc);
@@ -20463,7 +20458,6 @@ public class Server implements Runnable {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(reason);
-            r.newlines = 0;
             vDesc.addElement(r);
 
             entity.setDoomed(true);
@@ -25148,7 +25142,6 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.indent(2);
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
             // okay, print the info

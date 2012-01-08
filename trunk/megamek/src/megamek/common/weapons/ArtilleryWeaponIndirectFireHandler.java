@@ -158,6 +158,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                     && !(LosEffects.calculateLos(game, entity
                                             .getId(), targ, true)).isBlocked()
                                     && entity.isActive()
+                                    // airborne aeros can't spot for arty
+                                    && !((entity instanceof Aero) && entity.isAirborne())
                                     && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                                 return true;
                             }

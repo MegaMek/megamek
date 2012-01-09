@@ -1001,11 +1001,13 @@ public class MechDisplay extends BufferedPanel {
             // update pointer to weapons
             entity = en;
 
-            int currentHeatBuildup = en.heat // heat from last round
+            int currentHeatBuildup = (en.heat // heat from last round
                     + en.getEngineCritHeat() // heat engine crits will add
                     + Math.min(15, en.heatFromExternal) // heat from external
                     // sources
-                    + en.heatBuildup; // heat we're building up this round
+                    + en.heatBuildup // heat we're building up this round
+)
+                    - Math.min(9, en.coolFromExternal); // cooling from external sources
             if (en instanceof Mech) {
                 if (en.infernos.isStillBurning()) { // hit with inferno ammo
                     currentHeatBuildup += en.infernos.getHeat();
@@ -1054,7 +1056,7 @@ public class MechDisplay extends BufferedPanel {
                 if (m.hasChargedCapacitor() == 1) {
                     capHeat += 5;
                 }
-                
+
                 if (capHeat > 0) {
                     currentHeatBuildup += capHeat;
                 }
@@ -1341,17 +1343,17 @@ public class MechDisplay extends BufferedPanel {
             } else {
                 wShortR.setText("" + shortR); //$NON-NLS-1$
             }
-            if (mediumR - shortR > 1) {
+            if ((mediumR - shortR) > 1) {
                 wMedR.setText((shortR + 1) + " - " + mediumR); //$NON-NLS-1$
             } else {
                 wMedR.setText("" + mediumR); //$NON-NLS-1$
             }
-            if (longR - mediumR > 1) {
+            if ((longR - mediumR) > 1) {
                 wLongR.setText((mediumR + 1) + " - " + longR); //$NON-NLS-1$
             } else {
                 wLongR.setText("" + longR); //$NON-NLS-1$
             }
-            if (extremeR - longR > 1) {
+            if ((extremeR - longR) > 1) {
                 wExtR.setText((longR + 1) + " - " + extremeR); //$NON-NLS-1$
             } else {
                 wExtR.setText("" + extremeR); //$NON-NLS-1$

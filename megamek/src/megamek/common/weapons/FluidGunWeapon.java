@@ -48,7 +48,11 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.getMunitionType() == AmmoType.M_COOLANT) {
+            return new FluidGunCoolHandler(toHit, waa, game, server);
+        }
         return super.getCorrectHandler(toHit, waa, game, server);
-        // TODO: implement all the ammos
+
     }
 }

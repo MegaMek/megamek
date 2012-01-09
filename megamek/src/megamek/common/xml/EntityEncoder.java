@@ -190,6 +190,8 @@ public class EntityEncoder {
         out.write(String.valueOf(entity.heatBuildup));
         out.write("\" heatFromExternal=\"");
         out.write(String.valueOf(entity.heatFromExternal));
+        out.write("\" coolFromExternal=\"");
+        out.write(String.valueOf(entity.coolFromExternal));
         out.write("\" delta_distance=\"");
         out.write(String.valueOf(entity.delta_distance));
         out.write("\" mpUsed=\"");

@@ -251,8 +251,8 @@ public class AmmoType extends EquipmentType {
     public static final long M_TELE = 1l << 46;
 
     // fluid gun
-    // TODO: implement all of these
-    // coolant and water should also be used for vehicle flamers
+    // TODO: implement all of these except coolant
+    // water should also be used for vehicle flamers
     // TO page 361-363
     public static final long M_WATER = 11 << 47;
     public static final long M_PAINT_OBSCURANT = 11 << 48;
@@ -400,13 +400,22 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> clanSrtAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> vglAmmos = new ArrayList<AmmoType>();
         ArrayList<AmmoType> clanVGLAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> vehicleFlamerAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> clanVehicleFlamerAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> heavyFlamerAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> clanHeavyFlamerAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> fluidGunAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> clanFluidGunAmmos = new ArrayList<AmmoType>();
+
 
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
 
         AmmoType base = null;
 
         // all level 1 ammo
-        EquipmentType.addType(AmmoType.createISVehicleFlamerAmmo());
+        base = AmmoType.createISVehicleFlamerAmmo();
+        vehicleFlamerAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISMGAmmo());
         EquipmentType.addType(AmmoType.createISMGAmmoHalf());
         base = AmmoType.createISAC2Ammo();
@@ -494,8 +503,12 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISLAC20Ammo();
         acAmmos.add(base);
         EquipmentType.addType(base);
-        EquipmentType.addType(AmmoType.createISHeavyFlamerAmmo());
-        EquipmentType.addType(AmmoType.createCLHeavyFlamerAmmo());
+        base = AmmoType.createISHeavyFlamerAmmo();
+        heavyFlamerAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createCLHeavyFlamerAmmo();
+        clanHeavyFlamerAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISCoolantPod());
         EquipmentType.addType(AmmoType.createCLCoolantPod());
         EquipmentType.addType(AmmoType.createISRailGunAmmo());
@@ -650,7 +663,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLStreakSRM4Ammo());
         EquipmentType.addType(AmmoType.createCLStreakSRM5Ammo());
         EquipmentType.addType(AmmoType.createCLStreakSRM6Ammo());
-        EquipmentType.addType(AmmoType.createCLVehicleFlamerAmmo());
+        base = AmmoType.createCLVehicleFlamerAmmo();
+        clanVehicleFlamerAmmos.add(base);
+        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLMGAmmo());
         EquipmentType.addType(AmmoType.createCLMGAmmoHalf());
         EquipmentType.addType(AmmoType.createCLHeavyMGAmmo());
@@ -1013,8 +1028,12 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISCruiseMissile90Ammo());
         EquipmentType.addType(AmmoType.createISCruiseMissile120Ammo());
 
-        EquipmentType.addType(AmmoType.createISFluidGunAmmo());
-        EquipmentType.addType(AmmoType.createCLFluidGunAmmo());
+        base = AmmoType.createISFluidGunAmmo();
+        fluidGunAmmos.add(base);
+        EquipmentType.addType(base);
+        base = AmmoType.createCLFluidGunAmmo();
+        clanFluidGunAmmos.add(base);
+        EquipmentType.addType(base);
 
         // Rifles
         EquipmentType.addType(AmmoType.createISLightRifleAmmo());
@@ -1293,6 +1312,32 @@ public class AmmoType extends EquipmentType {
         // mutators, and create munition types.
         AmmoType.createMunitions(clanLrtAmmos, munitions);
 
+        // Create the munition types for vehicle flamers
+        munitions.clear();
+        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT, TechConstants.T_IS_ADVANCED));
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(vehicleFlamerAmmos, munitions);
+
+        munitions.clear();
+        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT, TechConstants.T_CLAN_ADVANCED));
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(clanVehicleFlamerAmmos, munitions);
+
+        // Create the munition types for heavy flamers
+        munitions.clear();
+        munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT, TechConstants.T_IS_ADVANCED));
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(heavyFlamerAmmos, munitions);
+
+        munitions.clear();
+        munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT, TechConstants.T_CLAN_ADVANCED));
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
+
         // cache types that share a launcher for loadout purposes
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType et = e.nextElement();
@@ -1311,8 +1356,6 @@ public class AmmoType extends EquipmentType {
 
     private static void createMunitions(List<AmmoType> bases, List<MunitionMutator> munitions) {
         for (AmmoType base : bases) {
-            // WTF?
-            base.ammoRatio = base.ammoRatio;
             for (MunitionMutator mutator : munitions) {
                 EquipmentType.addType(mutator.createMunitionType(base));
             }
@@ -8764,20 +8807,6 @@ public class AmmoType extends EquipmentType {
                     munition.shortName = munition.name;
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
-                /*
-                 * // Add the munition name to the beginning of the display
-                 * name. nameBuf = new StringBuffer( name ); nameBuf.append( " "
-                 * ); nameBuf.append( base.name ); munition.name =
-                 * nameBuf.toString();
-                 *
-                 * // Add the munition name to the end of some of the ammo
-                 * names. nameBuf = new StringBuffer( " " ); nameBuf.append(
-                 * name ); munition.setInternalName(base.internalName +
-                 * nameBuf.toString()); munition.addToEnd(base,
-                 * nameBuf.toString()); nameBuf.insert( 0, " -" );
-                 * munition.shortName = munition.name; munition.addToEnd(base,
-                 * nameBuf.toString()); break;
-                 */
                 case AmmoType.T_VGL:
                 case AmmoType.T_LONG_TOM:
                 case AmmoType.T_SNIPER:
@@ -8785,6 +8814,9 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_LONG_TOM_CANNON:
                 case AmmoType.T_SNIPER_CANNON:
                 case AmmoType.T_THUMPER_CANNON:
+                case AmmoType.T_VEHICLE_FLAMER:
+                case AmmoType.T_HEAVY_FLAMER:
+                case AmmoType.T_FLUID_GUN:
                     // Add the munition name to the beginning of the display
                     // name.
                     nameBuf = new StringBuffer(name);
@@ -8918,7 +8950,9 @@ public class AmmoType extends EquipmentType {
                 cost *= 2;
                 bv *= .5;
             }
-
+            if (((munition.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) || (munition.getAmmoType() == AmmoType.T_HEAVY_FLAMER) || (munition.getAmmoType() == AmmoType.T_FLUID_GUN)) && (munition.getMunitionType() == AmmoType.M_COOLANT)) {
+                cost = 3000;
+            }
             munition.bv = bv;
             munition.cost = cost;
 

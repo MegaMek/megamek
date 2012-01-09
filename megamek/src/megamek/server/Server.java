@@ -14153,6 +14153,7 @@ public class Server implements Runnable {
             if (!(entity instanceof Mech)) {
                 entity.heatBuildup = 0;
                 entity.heatFromExternal = 0;
+                entity.coolFromExternal = 0;
 
                 if (entity.infernos.isStillBurning()) {
                     doFlamingDamage(entity);
@@ -14302,6 +14303,9 @@ public class Server implements Runnable {
             // Add heat from external sources to the heat buildup
             entity.heatBuildup += Math.min(15, entity.heatFromExternal);
             entity.heatFromExternal = 0;
+            // remove heat we cooled down
+            entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
+            entity.coolFromExternal = 0;
 
             // Combat computers help manage heat
             if (entity.getQuirks().booleanOption("combat_computer")) {
@@ -20759,6 +20763,15 @@ public class Server implements Runnable {
                 && (mounted.getShotsLeft() > 0)) {
             damage = ((mounted.getExplosionDamage())/2);
         }
+        // coolant explodes for 2 damage and reduces heat by 3
+        if ((mounted.getType() instanceof AmmoType)
+                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
+                   (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_HEAVY_FLAMER))
+                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_COOLANT)
+                && (mounted.getShotsLeft() > 0)) {
+            damage = 2;
+            en.coolFromExternal += 3;
+        }
 
         // divide damage by 10 for aeros, per TW rules on pg. 161
         if (en instanceof Aero) {
@@ -20884,8 +20897,8 @@ public class Server implements Runnable {
                 if (!atype.isExplosive()) {
                     continue;
                 }
-                // coolant pods don't explode from heat
-                if (atype.getAmmoType() == AmmoType.T_COOLANT_POD) {
+                // coolant pods and flamer coolant ammo don't explode from heat
+                if ((atype.getAmmoType() == AmmoType.T_COOLANT_POD) || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) || (atype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)) && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
                     continue;
                 }
                 // ignore empty bins

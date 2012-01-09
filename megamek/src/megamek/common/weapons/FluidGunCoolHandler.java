@@ -36,7 +36,7 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
+public class FluidGunCoolHandler extends AmmoWeaponHandler {
     /**
      *
      */
@@ -47,7 +47,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa,
+    public FluidGunCoolHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
     }
@@ -98,7 +98,7 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
         }
         // coolant also reduces heat of mechs
         if (target instanceof Mech) {
-            int nDamage = (nDamPerHit * hits) + 1;
+            int nDamage = 3;
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);

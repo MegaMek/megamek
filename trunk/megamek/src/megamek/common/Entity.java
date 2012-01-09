@@ -156,6 +156,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int heat = 0;
     public int heatBuildup = 0;
     public int heatFromExternal = 0;
+    public int coolFromExternal = 0;
     public int delta_distance = 0;
     public int mpUsed = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;

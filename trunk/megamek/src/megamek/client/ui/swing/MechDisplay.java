@@ -1041,11 +1041,13 @@ public class MechDisplay extends JPanel {
             // update pointer to weapons
             entity = en;
 
-            int currentHeatBuildup = en.heat // heat from last round
+            int currentHeatBuildup = (en.heat // heat from last round
                     + en.getEngineCritHeat() // heat engine crits will add
                     + Math.min(15, en.heatFromExternal) // heat from external
                     // sources
-                    + en.heatBuildup; // heat we're building up this round
+                    + en.heatBuildup // heat we're building up this round
+)
+                    - Math.min(9, en.coolFromExternal); // cooling from external sources
             if (en instanceof Mech) {
                 if (en.infernos.isStillBurning()) { // hit with inferno ammo
                     currentHeatBuildup += en.infernos.getHeat();

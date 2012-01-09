@@ -1887,7 +1887,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!game.getOptions().booleanOption("friendly_fire")) {
                 // a friendly unit can never be the target of a direct attack.
                 // but we do allow vehicle flamers to cool
-                if (!(wtype.hasFlag(WeaponType.F_FLAMER) && weapon.curMode().equals("Cool"))
+                if (!(usesAmmo && (((AmmoType)ammo.getType()).getMunitionType() == AmmoType.M_COOLANT))
                         && (target.getTargetType() == Targetable.TYPE_ENTITY)
                         && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target).getOwner()
                                 .getTeam() != Player.TEAM_NONE)
@@ -2049,11 +2049,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // "Cool" mode for vehicle flamer requires coolant system
         boolean vf_cool = false;
-        if ((atype != null) && wtype.hasFlag(WeaponType.F_FLAMER) && weapon.curMode().equals("Cool")) {
+        if ((atype != null) && usesAmmo && (((AmmoType)ammo.getType()).getMunitionType() == AmmoType.M_COOLANT)) {
             vf_cool = true;
-            if (!ae.hasWorkingMisc(MiscType.F_COOLANT_SYSTEM, -1)) {
-                return "Vehicle does not have a working coolant system";
-            }
         }
 
         if (Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()) {

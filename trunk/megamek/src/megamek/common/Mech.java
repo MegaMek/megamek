@@ -3440,12 +3440,6 @@ public abstract class Mech extends Entity {
                 dBV = mgaBV * 0.67;
             }
 
-            // industrial without advanced firing control get's 0.9 mod to
-            // weapon bv
-            if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
-                dBV *= 0.9;
-            }
-
             // artemis bumps up the value
             // PPC caps do, too
             if (mounted.getLinkedBy() != null) {
@@ -4034,6 +4028,10 @@ public abstract class Mech extends Entity {
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
+        } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
+            // industrial without advanced firing control get's 0.9 mod to
+            // total BV
+            finalBV *= 0.9;
         }
         finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");

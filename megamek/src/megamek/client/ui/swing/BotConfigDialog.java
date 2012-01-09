@@ -60,11 +60,11 @@ public class BotConfigDialog extends JDialog implements ActionListener,
     private ButtonGroup selectbot_group = new ButtonGroup();
 
     // Items for princess config here
-    JComboBox<String> princess_verbosity;
+    JComboBox princess_verbosity;
     JTextField princess_target_hex_num_x;
     JButton princess_addtarget_button;
-    JList<String> princess_targets_list;
-    DefaultListModel<String> princess_targets_list_model = new DefaultListModel<String>();
+    JList princess_targets_list;
+    DefaultListModel princess_targets_list_model = new DefaultListModel();
     JCheckBox princess_forcedwithdrawal;
 
     private JTextField namefield;
@@ -107,7 +107,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         c.gridy = 0;
         princessconfigcard.add(new JLabel("Verbosity"), c);
         String[] verbosity_options = { "0", "1" };
-        princess_verbosity = new JComboBox<String>(verbosity_options);
+        princess_verbosity = new JComboBox(verbosity_options);
         princess_verbosity.setSelectedIndex(1);
         princessconfigcard.add(princess_verbosity, c);
         c.gridy = 1;
@@ -119,7 +119,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         princess_addtarget_button = new JButton("Add Strategic Target");
         princess_addtarget_button.addActionListener(this);
         princessconfigcard.add(princess_addtarget_button, c);
-        princess_targets_list = new JList<String>(princess_targets_list_model);
+        princess_targets_list = new JList(princess_targets_list_model);
         princess_targets_list
                 .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         princess_targets_list.setLayoutOrientation(JList.VERTICAL);
@@ -196,9 +196,9 @@ public class BotConfigDialog extends JDialog implements ActionListener,
             toreturn.verbosity = princess_verbosity.getSelectedIndex();
             // Add targets, adjusting hexes appropriately
             for (int i = 0; i < princess_targets_list_model.getSize(); i++) {
-                int xpos = Integer.parseInt(princess_targets_list_model.get(i)
+                int xpos = Integer.parseInt(((String)princess_targets_list_model.get(i))
                         .substring(0, 2)) - 1;
-                int ypos = Integer.parseInt(princess_targets_list_model.get(i)
+                int ypos = Integer.parseInt(((String)princess_targets_list_model.get(i))
                         .substring(2, 4)) - 1;
                 System.err
                         .println("adding " + Integer.toString(xpos) + " , "

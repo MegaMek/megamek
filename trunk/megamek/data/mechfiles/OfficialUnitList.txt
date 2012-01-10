@@ -1,6 +1,3 @@
-Megamek Unit Database
-This file can be regenerated with java -jar MegaMek.jar -export filename
-Type,SubType,Name,Model,BV,Cost (Loaded), Cost (Unloaded),Year,Techlevel,Tonnage,Tech,Canon,Walk,Run,Jump
 Aerie PA(L) (Salvage)|
 Aerie PA(L)|
 Afreet Medium Battle Armor (Hells's Horses)|

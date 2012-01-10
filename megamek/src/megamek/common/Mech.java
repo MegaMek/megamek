@@ -4028,7 +4028,7 @@ public abstract class Mech extends Entity {
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
-        } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
+        } else if ((getCockpitType() == Mech.COCKPIT_INDUSTRIAL) || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
             // industrial without advanced firing control get's 0.9 mod to
             // total BV
             finalBV *= 0.9;

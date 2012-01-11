@@ -175,6 +175,9 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_TRAILER_MODIFICATION = BigInteger.valueOf(1).shiftLeft(129);
     public static final BigInteger F_LARGE_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(130);
     public static final BigInteger F_SMALL_COMM_SCANNER_SUITE = BigInteger.valueOf(1).shiftLeft(131);
+    public static final BigInteger F_LIGHT_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(132);
+    public static final BigInteger F_MEDIUM_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(133);
+    public static final BigInteger F_HEAVY_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(134);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -857,6 +860,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createTracks());
         EquipmentType.addType(MiscType.createISMASS());
         EquipmentType.addType(MiscType.createCLMASS());
+        EquipmentType.addType(MiscType.createLightBridgeLayer());
+        EquipmentType.addType(MiscType.createMediumBridgeLayer());
+        EquipmentType.addType(MiscType.createHeavyBridgeLayer());
         // For industrials and tanks
         EquipmentType.addType(MiscType.createEnvironmentalSealing());
 
@@ -5442,6 +5448,48 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
         misc.flags = misc.flags.or(F_LARGE_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createLightBridgeLayer() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 1;
+        misc.cost = 40000;
+        misc.criticals = 2;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Light Bridge Layer";
+        misc.setInternalName("LightBridgeLayer");
+        misc.techRating = RATING_B;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_D};
+        misc.flags = misc.flags.or(F_LIGHT_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createMediumBridgeLayer() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 2;
+        misc.cost = 75000;
+        misc.criticals = 4;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Medium Bridge Layer";
+        misc.setInternalName("MediumBridgeLayer");
+        misc.techRating = RATING_C;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_D};
+        misc.flags = misc.flags.or(F_MEDIUM_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createHeavyBridgeLayer() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 6;
+        misc.cost = 100000;
+        misc.criticals = 12;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Heavy Bridge Layer";
+        misc.setInternalName("HeavyBridgeLayer");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_E, RATING_E, RATING_E};
+        misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         return misc;
     }
 

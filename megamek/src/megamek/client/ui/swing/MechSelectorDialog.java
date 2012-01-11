@@ -131,7 +131,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         unitModel = new MechTableModel();
         initComponents();
         setLocationRelativeTo(cl.frame);
-        asd = new AdvancedSearchDialog(clientgui);
+        asd = new AdvancedSearchDialog(cl.frame);
     }
 
     private void initComponents() {

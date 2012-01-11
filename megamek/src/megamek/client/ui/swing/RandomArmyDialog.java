@@ -151,7 +151,7 @@ WindowListener, TreeSelectionListener {
         m_client = cl.getClient();
         rug = m_client.getRandomUnitGenerator();
         updatePlayerChoice();
-        asd = new AdvancedSearchDialog(m_clientgui);
+        asd = new AdvancedSearchDialog(m_clientgui.frame);
         // set defaults
         m_tMechs.setText("4");
         m_tBVmin.setText("5800");

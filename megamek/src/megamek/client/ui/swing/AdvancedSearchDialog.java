@@ -20,6 +20,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
@@ -77,8 +78,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     private JTextField tEndYear = new JTextField(4);
 
     /** Creates a new instance of AdvancedSearchDialog */
-    public AdvancedSearchDialog(ClientGUI clientgui) {
-        super(clientgui.frame, Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
+    public AdvancedSearchDialog(Frame frame) {
+        super(frame, Messages.getString("AdvancedSearchDialog.title"), true); //$NON-NLS-1$
 
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -192,7 +193,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - getSize().width / 2, clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2, frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {

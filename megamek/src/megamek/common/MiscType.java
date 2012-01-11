@@ -178,6 +178,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_LIGHT_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(132);
     public static final BigInteger F_MEDIUM_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(133);
     public static final BigInteger F_HEAVY_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(134);
+    public static final BigInteger F_BA_SEARCHLIGHT = BigInteger.valueOf(1).shiftLeft(135);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1065,6 +1066,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createSimpleCamo());
         EquipmentType.addType(MiscType.createParafoil());
         EquipmentType.addType(MiscType.createSearchlight());
+        EquipmentType.addType(MiscType.createBASearchlight());
         EquipmentType.addType(MiscType.createISImprovedSensors());
         EquipmentType.addType(MiscType.createCLImprovedSensors());
         EquipmentType.addType(MiscType.createCLBALightActiveProbe());
@@ -3213,14 +3215,33 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = "Searchlight";
+        misc.name = "Mounted Searchlight";
         misc.setInternalName("Searchlight");
-        misc.addLookupName("BASearchlight");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_BA_EQUIPMENT);
+        misc.availRating = new int[]{RATING_A,RATING_A,RATING_B};
+        misc.techRating = RATING_A;
+        misc.flags = misc.flags.or(F_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 2000;
+
+        return misc;
+    }
+
+    public static MiscType createBASearchlight() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Handheld Searchlight";
+        misc.setInternalName("BASearchlight");
+        misc.tonnage = 0.005f;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        misc.techRating = RATING_A;
+        misc.flags = misc.flags.or(F_BA_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_BA_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = 500;
 
         return misc;
     }

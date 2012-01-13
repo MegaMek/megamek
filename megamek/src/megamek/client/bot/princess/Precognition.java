@@ -196,6 +196,9 @@ public class Precognition implements Runnable {
                 if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
                     continue;
                 }
+                if (onentity.getPosition() == null) {
+                    continue;
+                }
                 if (onentity.getPosition().equals(
                         path_enumerator.getLastKnownCoords(onentity.getId()))) {
                     continue; // no sense in updating a unit if it hasn't moved

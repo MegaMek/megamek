@@ -160,7 +160,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     // the dimensions of megamek's hex images
     private static final int HEX_W = 84;
     private static final int HEX_H = 72;
-    private static final int HEX_WC = HEX_W - HEX_W / 4;
+    private static final int HEX_WC = HEX_W - (HEX_W / 4);
     private static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = {
@@ -353,10 +353,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 } else {
                     int notches = we.getWheelRotation();
                     if (notches < 0) {
-                        vbar.setValue((int) (vbar.getValue() - HEX_H * scale * (-1*notches)));
+                        vbar.setValue((int) (vbar.getValue() - (HEX_H * scale * (-1*notches))));
 
                     } else {
-                        vbar.setValue((int) (vbar.getValue() + HEX_H * scale * (notches)));
+                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale * (notches))));
                     }
                 }
 
@@ -381,6 +381,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         ActionMap actionMap = getActionMap();
         actionMap.put("centerOnSelected", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = -7302042484036200465L;
+
             public void actionPerformed(ActionEvent e) {
                 //FIXME: Doesn't work right because selected entity is not always current.
                 if (selectedEntity != null) {
@@ -389,47 +394,87 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             }
         });
         actionMap.put("scrollNW", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = -6214470514742631913L;
+
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+                hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+                vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
             }
         });
         actionMap.put("scrollN", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1261354793320440332L;
+
             public void actionPerformed(ActionEvent e) {
-                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+                vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
             }
         });
         actionMap.put("scrollNE", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 2864813742650634006L;
+
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+                hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+                vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
             }
         });
         actionMap.put("scrollW", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 3117624598134850245L;
+
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+                hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
             }
         });
         actionMap.put("scrollE", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 6453983031778932319L;
+
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+                hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
             }
         });
         actionMap.put("scrollSW", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 3499825674934961200L;
+
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+                hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+                vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
             }
         });
         actionMap.put("scrollS", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 8148891921567972362L;
+
             public void actionPerformed(ActionEvent e) {
-                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+                vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
             }
         });
         actionMap.put("scrollSE", new AbstractAction() {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 687064821229643708L;
+
             public void actionPerformed(ActionEvent e) {
-                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+                hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+                vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
             }
         });
 
@@ -763,9 +808,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * Updates the boardSize variable with the proper values for this board.
      */
     private void updateBoardSize() {
-        int width = game.getBoard().getWidth() * (int) (HEX_WC * scale) + (int) (HEX_W / 4 * scale);
-        int height = game.getBoard().getHeight() * (int) (HEX_H * scale)
-                + (int) (HEX_H / 2 * scale);
+        int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale)) + (int) ((HEX_W / 4) * scale);
+        int height = (game.getBoard().getHeight() * (int) (HEX_H * scale))
+                + (int) ((HEX_H / 2) * scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -839,11 +884,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private void drawDeployment(Graphics g) {
         Rectangle view = g.getClipBounds();
         // only update visible hexes
-        int drawX = view.x / (int) (HEX_WC * scale) - 1;
-        int drawY = view.y / (int) (HEX_H * scale) - 1;
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
-        int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
-        int drawHeight = view.height / (int) (HEX_H * scale) + 3;
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
@@ -907,11 +952,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             return; // nothing to do
         }
 
-        int drawX = view.x / (int) (HEX_WC * scale) - 1;
-        int drawY = view.y / (int) (HEX_H * scale) - 1;
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
-        int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
-        int drawHeight = view.height / (int) (HEX_H * scale) + 3;
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         IBoard board = game.getBoard();
         Image scaledImage;
@@ -981,11 +1026,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     private void drawMinefields(Graphics g) {
         Rectangle view = g.getClipBounds();
         // only update visible hexes
-        int drawX = view.x / (int) (HEX_WC * scale) - 1;
-        int drawY = view.y / (int) (HEX_H * scale) - 1;
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
-        int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
-        int drawHeight = view.height / (int) (HEX_H * scale) + 3;
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         IBoard board = game.getBoard();
         // loop through the hexes
@@ -1091,12 +1136,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 boardGraph.clearRect(view.x - drawRect.x, view.y - drawRect.y,
                         view.width, (int) (36 * scale) - view.y);
             }
-            if (view.x > boardSize.width - view.width - (21 * scale)) {
-                boardGraph.clearRect(drawRect.width - (int) (21 * scale),
-                        view.y - drawRect.y, (int) (21 * scale), view.height);
+            if (view.x > (boardSize.width - view.width - (21 * scale))) {
+                boardGraph.clearRect(Math.min(drawRect.width, boardSize.width) - (int) (21 * scale),
+                       view.y - drawRect.y, (int) (21 * scale), view.height);
             }
-            if (view.y > boardSize.height - view.height - (int) (36 * scale)) {
-                boardGraph.clearRect(view.x - drawRect.x, drawRect.height
+            if (view.y > (boardSize.height - view.height - (int) (36 * scale))) {
+                boardGraph.clearRect(view.x - drawRect.x, Math.min(drawRect.height, boardSize.height)
                         - (int) (36 * scale), view.width, (int) (36 * scale));
             }
         }
@@ -1302,34 +1347,34 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         if (GUIPreferences.getInstance().getShowMapsheets()) {
             boardGraph.setColor(GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_MAPSHEET_COLOR));
-            if (c.x % 16 == 0) {
+            if ((c.x % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
                 boardGraph.drawLine(drawX + (int) (21 * scale), drawY + (int) (71 * scale), drawX,
                         drawY + (int) (36 * scale));
                 boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX + (int) (21 * scale),
                         drawY);
-            } else if (c.x % 16 == 15) {
+            } else if ((c.x % 16) == 15) {
                 // right edge of sheet (edge 1 & 2)
                 boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX + (int) (83 * scale),
                         drawY + (int) (35 * scale));
                 boardGraph.drawLine(drawX + (int) (83 * scale), drawY + (int) (36 * scale), drawX
                         + (int) (62 * scale), drawY + (int) (71 * scale));
             }
-            if (c.y % 17 == 0) {
+            if ((c.y % 17) == 0) {
                 // top edge of sheet (edge 0 and possible 1 & 5)
                 boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX + (int) (62 * scale),
                         drawY);
-                if (c.x % 2 == 0) {
+                if ((c.x % 2) == 0) {
                     boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
                             + (int) (83 * scale), drawY + (int) (35 * scale));
                     boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
                             + (int) (21 * scale), drawY);
                 }
-            } else if (c.y % 17 == 16) {
+            } else if ((c.y % 17) == 16) {
                 // bottom edge of sheet (edge 3 and possible 2 & 4)
                 boardGraph.drawLine(drawX + (int) (62 * scale), drawY + (int) (71 * scale), drawX
                         + (int) (21 * scale), drawY + (int) (71 * scale));
-                if (c.x % 2 == 1) {
+                if ((c.x % 2) == 1) {
                     boardGraph.drawLine(drawX + (int) (83 * scale), drawY + (int) (36 * scale),
                             drawX + (int) (62 * scale), drawY + (int) (71 * scale));
                     boardGraph.drawLine(drawX + (int) (21 * scale), drawY + (int) (71 * scale),
@@ -1486,7 +1531,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
             }
         }
-        int ypos = y * (int) (HEX_H * scale) + ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0);
+        int ypos = (y * (int) (HEX_H * scale)) + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0);
         return new Point(x * (int) (HEX_WC * scale), ypos + (int) elevationAdjust);
     }
 
@@ -1499,8 +1544,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     private Point getCentreHexLocation(int x, int y) {
         Point p = getHexLocation(x, y);
-        p.x += (HEX_W / 2 * scale);
-        p.y += (HEX_H / 2 * scale);
+        p.x += ((HEX_W / 2) * scale);
+        p.y += ((HEX_H / 2) * scale);
         return p;
     }
 
@@ -1522,7 +1567,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      */
     Coords getCoordsAt(Point p) {
         final int x = (p.x ) / (int) (HEX_WC * scale);
-        final int y = ((p.y ) - ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0))
+        final int y = ((p.y ) - ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0))
             / (int) (HEX_H * scale);
         Coords cOriginal = new Coords(x, y);
         if(useIsometric()) {
@@ -1840,9 +1885,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         // bounds
         Point hexPoint = getCentreHexLocation(c);
         JScrollBar vscroll = scrollpane.getVerticalScrollBar();
-        vscroll.setValue(hexPoint.y - vscroll.getVisibleAmount() / 2);
+        vscroll.setValue(hexPoint.y - (vscroll.getVisibleAmount() / 2));
         JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
-        hscroll.setValue(hexPoint.x - hscroll.getVisibleAmount() / 2);
+        hscroll.setValue(hexPoint.x - (hscroll.getVisibleAmount() / 2));
         repaint();
     }
 
@@ -2810,15 +2855,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
                     getFontMetrics(font).getAscent());
 
-            int AltAdjust = 0;
+            int altAdjust = 0;
             if(useIsometric() && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-                AltAdjust = (int) (DROPSHDW_DIST * scale);
+                altAdjust = (int) (DROPSHDW_DIST * scale);
             }
-            Dimension dim = new Dimension(hex_size.width, hex_size.height + AltAdjust);
+            Dimension dim = new Dimension(hex_size.width, hex_size.height + altAdjust);
             Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
             tempBounds.setLocation(getHexLocation(position));
-            tempBounds.y = tempBounds.y - AltAdjust;
+            tempBounds.y = tempBounds.y - altAdjust;
             bounds = tempBounds;
             image = null;
         }
@@ -2967,7 +3012,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(bkgd);
                 graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
                 graph.setColor(text);
-                graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
+                graph.drawString(shortName, tempRect.x + 1, (tempRect.y + tempRect.height) - 1);
             }
 
             // create final image
@@ -3144,7 +3189,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(bkgd);
                 graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
                 graph.setColor(text);
-                graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
+                graph.drawString(shortName, tempRect.x + 1, (tempRect.y + tempRect.height) - 1);
 
                 // draw facing
                 graph.setColor(Color.white);
@@ -3707,7 +3752,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climbX = stepPos.x + 42
+                int climbX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(climb) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(climb, climbX, stepPos.y + 39);
@@ -3726,7 +3771,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climboffX = stepPos.x + 42
+                int climboffX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(climboff) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(climboff, climboffX, stepPos.y + 39);
@@ -3759,7 +3804,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int loadX = stepPos.x + 42
+                int loadX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(load, loadX, stepPos.y + 39);
@@ -3773,7 +3818,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int launchX = stepPos.x + 42
+                int launchX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
                 int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3788,7 +3833,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     drop = "(" + drop + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int dropX = stepPos.x + 42
+                int dropX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(drop) / 2);
                 int dropY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3803,7 +3848,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int recoverX = stepPos.x + 42
+                int recoverX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
                 int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3818,7 +3863,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     launch = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int joinX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
+                int joinX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
                 int joinY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(join, joinX, joinY + 1);
@@ -3832,7 +3877,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int unloadX = stepPos.x + 42
+                int unloadX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
                 int unloadY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3847,7 +3892,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int hoverX = stepPos.x + 42
+                int hoverX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
                 int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3863,7 +3908,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     land = "(" + land + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int landX = stepPos.x + 42
+                int landX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(land) / 2);
                 int landY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
@@ -3898,7 +3943,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (step.isEvading()) {
                 String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int evadeX = stepPos.x + 42
+                int evadeX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(evade, evadeX, stepPos.y + 64);
@@ -3910,7 +3955,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 // Announce roll
                 String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int rollX = stepPos.x + 42
+                int rollX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(roll, rollX, stepPos.y + 18);
@@ -3938,7 +3983,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 graph.setColor(Color.darkGray);
                 graph.drawString(active, activeXpos[i] + stepPos.x, activeYpos[i] + stepPos.y);
                 graph.setColor(Color.red);
-                graph.drawString(active, activeXpos[i] + stepPos.x - 1, activeYpos[i] + stepPos.y
+                graph.drawString(active, (activeXpos[i] + stepPos.x) - 1, (activeYpos[i] + stepPos.y)
                         - 1);
 
             }
@@ -4150,17 +4195,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
             c3Poly = new Polygon();
             c3Poly.addPoint(
-                    a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
-                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                    a.x + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math.sin(an) * lw)), a.y
+                            + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math.cos(an) * lw)));
             c3Poly.addPoint(
-                    a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
-                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+                    a.x + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math.sin(an) * lw)), a.y
+                            + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math.cos(an) * lw)));
             c3Poly.addPoint(
-                    t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
-                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+                    t.x + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math.sin(an) * lw)), t.y
+                            + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math.cos(an) * lw)));
             c3Poly.addPoint(
-                    t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
-                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                    t.x + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math.sin(an) * lw)), t.y
+                            + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math.cos(an) * lw)));
         }
 
         @Override
@@ -4266,8 +4311,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
 
                 flyOverPoly.addPoint(
-                        a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
-                                + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                        a.x + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math.sin(an) * lw)), a.y
+                                + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math.cos(an) * lw)));
                 //flyOverPoly.addPoint(
                   //      a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
                     //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
@@ -4275,8 +4320,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                   //      t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
                     //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
                 flyOverPoly.addPoint(
-                        t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
-                                + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                        t.x + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math.sin(an) * lw)), t.y
+                                + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math.cos(an) * lw)));
 
             }
 
@@ -4298,11 +4343,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                   //            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
 
               flyOverPoly.addPoint(
-                      a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
-                              + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                      a.x + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math.sin(an) * lw)), a.y
+                              + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math.cos(an) * lw)));
               flyOverPoly.addPoint(
-                      t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
-                              + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+                      t.x + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math.sin(an) * lw)), t.y
+                              + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math.cos(an) * lw)));
 
             }
 
@@ -4456,13 +4501,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             // directly
             // in the centes of hex and hiding mek under.
 
-            a.x = a.x + (int) (HEX_W / 2 * scale)
+            a.x = a.x + (int) ((HEX_W / 2) * scale)
                     + (int) Math.round(Math.cos(an) * (int) (18 * scale));
-            t.x = t.x + (int) (HEX_W / 2 * scale)
+            t.x = (t.x + (int) ((HEX_W / 2) * scale))
                     - (int) Math.round(Math.cos(an) * (int) (18 * scale));
-            a.y = a.y + (int) (HEX_H / 2 * scale)
+            a.y = a.y + (int) ((HEX_H / 2) * scale)
                     + (int) Math.round(Math.sin(an) * (int) (18 * scale));
-            t.y = t.y + (int) (HEX_H / 2 * scale)
+            t.y = (t.y + (int) ((HEX_H / 2) * scale))
                     - (int) Math.round(Math.sin(an) * (int) (18 * scale));
 
             // Checking if given attack is mutual. In this case we building
@@ -4765,13 +4810,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             // 18 - is actually 36/2 - we do not want arrows to start and end directly
             // in the centes of hex and hiding mek under.
 
-            a.x = a.x + (int) (HEX_W / 2 * scale)
+            a.x = a.x + (int) ((HEX_W / 2) * scale)
                     + (int) Math.round(Math.cos(an) * (int) (18 * scale));
-            t.x = t.x + (int) (HEX_W / 2 * scale)
+            t.x = (t.x + (int) ((HEX_W / 2) * scale))
                     - (int) Math.round(Math.cos(an) * (int) (18 * scale));
-            a.y = a.y + (int) (HEX_H / 2 * scale)
+            a.y = a.y + (int) ((HEX_H / 2) * scale)
                     + (int) Math.round(Math.sin(an) * (int) (18 * scale));
-            t.y = t.y + (int) (HEX_H / 2 * scale)
+            t.y = (t.y + (int) ((HEX_H / 2) * scale))
                     - (int) Math.round(Math.sin(an) * (int) (18 * scale));
             movePoly = new StraightArrowPolygon(a, t, (int) (4 * scale), (int) (8 * scale), false);
         }
@@ -5354,9 +5399,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
     public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
         if (arg1 == SwingConstants.VERTICAL) {
-            return (int) (scale * HEX_H / 2.0);
+            return (int) ((scale * HEX_H) / 2.0);
         }
-        return (int) (scale * HEX_W / 2.0);
+        return (int) ((scale * HEX_W) / 2.0);
     }
 
     @Override
@@ -5693,7 +5738,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
         p.x += (int) (HEX_WC * scale) - scrollpane.getX();
-        p.y += (int) (HEX_H * scale / 2) - scrollpane.getY();
+        p.y += (int) ((HEX_H * scale) / 2) - scrollpane.getY();
         if (((JPopupMenu)popup).getParent() == null) {
             add((JPopupMenu)popup);
         }
@@ -5708,7 +5753,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
      * Increases zoomIndex and refreshes the map.
      */
     public void zoomIn() {
-        if (zoomIndex == ZOOM_FACTORS.length - 1) {
+        if (zoomIndex == (ZOOM_FACTORS.length - 1)) {
             return;
         }
         zoomIndex++;
@@ -5731,7 +5776,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
     }
 
     private void checkZoomIndex() {
-        if (zoomIndex > ZOOM_FACTORS.length - 1) {
+        if (zoomIndex > (ZOOM_FACTORS.length - 1)) {
             zoomIndex = ZOOM_FACTORS.length - 1;
         }
         if (zoomIndex < 0) {

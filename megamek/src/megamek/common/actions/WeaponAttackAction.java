@@ -48,7 +48,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Pilot;
 import megamek.common.PlanetaryConditions;
-import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.RangeType;
@@ -1887,13 +1886,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!game.getOptions().booleanOption("friendly_fire")) {
                 // a friendly unit can never be the target of a direct attack.
                 // but we do allow vehicle flamers to cool
-                if (!(usesAmmo && (((AmmoType)ammo.getType()).getMunitionType() == AmmoType.M_COOLANT))
-                        && (target.getTargetType() == Targetable.TYPE_ENTITY)
-                        && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target).getOwner()
-                                .getTeam() != Player.TEAM_NONE)
-                                && (ae.getOwner().getTeam() != Player.TEAM_NONE) && (ae.getOwner().getTeam() == ((Entity) target)
-                                .getOwner().getTeam())))) {
-                    return "A friendly unit can never be the target of a direct attack.";
+                if ((target.getTargetType() == Targetable.TYPE_ENTITY)
+                        && ((te.getOwnerId() == ae.getOwnerId()) || (te.getOwner().getTeam() == ae.getOwner().getTeam()))) {
+                    if (!(usesAmmo && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
+                        return "A friendly unit can never be the target of a direct attack.";
+                    }
                 }
             }
             // can't target yourself,

@@ -34,7 +34,6 @@ public class TeleMissile extends Aero {
     private static String[] LOCATION_NAMES = { "Body" };
 
     private int originalRideId;
-    private int originalRideExternalId;
 
     private int critMod = 0;
 
@@ -91,7 +90,6 @@ public class TeleMissile extends Aero {
         setOwner(originalRide.getOwner());
         initializeInternal(1, LOC_BODY);
         setOriginalRideId(originalRide.getId());
-        setOriginalRideExternalId(originalRide.getExternalId());
     }
 
     @Override
@@ -114,12 +112,6 @@ public class TeleMissile extends Aero {
     }
     public void setOriginalRideId(int originalRideId) {
         this.originalRideId = originalRideId;
-    }
-    public int getOriginalRideExternalId() {
-        return originalRideExternalId;
-    }
-    public void setOriginalRideExternalId(int originalRideExternalId) {
-        this.originalRideExternalId = originalRideExternalId;
     }
 
     @Override

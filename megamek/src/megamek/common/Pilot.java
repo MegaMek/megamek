@@ -34,7 +34,7 @@ public class Pilot implements Serializable {
 
     private String nickname;
 
-    private int externalId = Entity.NONE;
+    private String externalId = "-1";
 
     private boolean unconscious;
     private boolean doomed; // scheduled to die at end of phase
@@ -675,12 +675,20 @@ public class Pilot implements Serializable {
         return s;
     }
 
-    public void setExternalId(int i) {
+    public void setExternalId(String i) {
         externalId = i;
     }
+    
+    public void setExternalId(int i) {
+    	externalId = Integer.toString(i);
+    }
 
-    public int getExternalId() {
+    public String getExternalIdAsString() {
         return externalId;
+    }
+    
+    public int getExternalId() {
+        return Integer.parseInt(externalId);
     }
 
     public void setPortraitCategory(String name) {

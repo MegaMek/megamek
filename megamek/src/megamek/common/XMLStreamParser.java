@@ -453,15 +453,10 @@ public class XMLStreamParser implements XMLResponder {
 
                     //external id
                     String extId = (String) attr.get(EXT_ID);
-                    int id = Entity.NONE;
-                    if ((null != extId) && (extId.length() > 0)) {
-                        try {
-                            id = Integer.parseInt(extId);
-                        } catch (NumberFormatException excep) {
-                            // Handled by the next if test.
-                        }
+                    if ((null == extId) || (extId.length() == 0)) {
+                        extId = "-1";
                     }
-                    entity.setExternalId(id);
+                    entity.setExternalId(extId);
 
                     //quirks
                     String quirks = (String) attr.get(QUIRKS);
@@ -755,15 +750,10 @@ public class XMLStreamParser implements XMLResponder {
                         crew.setEjected(Boolean.parseBoolean(ejected));
                     }
 
-                    int id = Entity.NONE;
-                    if ((null != extId) && (extId.length() > 0)) {
-                        try {
-                            id = Integer.parseInt(extId);
-                        } catch (NumberFormatException excep) {
-                            // Handled by the next if test.
-                        }
+                    if ((null == extId) || (extId.length() == 0)) {
+                    	extId = "-1";
                     }
-                    crew.setExternalId(id);
+                    crew.setExternalId(extId);
 
                     pilots.add(crew);
                     if(null != entity) {

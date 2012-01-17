@@ -22252,7 +22252,7 @@ public class Server implements Runnable {
                 StringBuffer message = new StringBuffer();
                 message.append("Unit ");
                 if (game.getOptions().booleanOption("blind_drop") || game.getOptions().booleanOption("real_blind_drop")) {
-                    if (Entity.NONE != entity.getExternalId()) {
+                    if (!entity.getExternalIdAsString().equals("-1")) {
                         message.append('[').append(entity.getExternalId()).append("] ");
                     }
                     message.append(entity.getId()).append('(').append(entity.getOwner().getName()).append(')');

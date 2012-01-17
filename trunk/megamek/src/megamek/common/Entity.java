@@ -86,7 +86,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int id = Entity.NONE;
 
     /** ID settable by external sources (such as mm.net) */
-    protected int externalId = Entity.NONE;
+    protected String externalId = "-1";
 
     protected float weight;
     protected boolean omni = false;
@@ -552,14 +552,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * this returns the external ID.
+     * 1/16/2012 - Taharqa: I am changing externalId to a string
+     * so I can use UUIDs in MHQ. It should only require a simple parseInt to be 
+     * added to it to return an integer for other programs (i.e. MekWars)
      *
      * @return the ID settable by external sources (such as mm.net)
      * @see megamek.common.Entity#externalId
      */
-    public int getExternalId() {
-        return externalId;
+     public int getExternalId() {
+    	return Integer.parseInt(externalId);
     }
 
+    public String getExternalIdAsString() {
+        return externalId;
+    }
     /**
      * This sets the external ID.
      *
@@ -567,8 +573,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *            the new external ID for this Entity.
      * @see megamek.common.Entity#externalId
      */
-    public void setExternalId(int externalId) {
+    public void setExternalId(String externalId) {
         this.externalId = externalId;
+    }
+    
+    public void setExternalId(int id) {
+    	this.externalId = Integer.toString(id);
     }
 
     /**

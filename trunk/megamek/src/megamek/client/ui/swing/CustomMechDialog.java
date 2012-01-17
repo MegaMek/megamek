@@ -1907,7 +1907,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int velocity = 0;
             int altitude = 0;
             int offBoardDistance;
-            int externalId = entity.getCrew().getExternalId();
+            String externalId = entity.getCrew().getExternalIdAsString();
             boolean autoEject = chAutoEject.isSelected();
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());

@@ -7,6 +7,7 @@ v0.25.28-dev (SVN)
 + Bug: Princess bot NPE with aeros that fly off the map
 + Bug 3474185: Princess bot NPE with ejected MechWarriors
 + Bug 3474591: NPE in deployment
++ changed external ids to strings to allow for UUIDs, but kept integer get and set methods for compatability
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

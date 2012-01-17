@@ -22,9 +22,9 @@ public class MechWarrior extends Infantry {
 
     private static final long serialVersionUID = 6227549671448329770L;
     private int originalRideId;
-    private int originalRideExternalId;
+    private String originalRideExternalId;
     private int pickedUpById = Entity.NONE;
-    private int pickedUpByExternalId = Entity.NONE;
+    private String pickedUpByExternalId = "-1";
     private boolean landed = true;
 
     /**
@@ -49,7 +49,7 @@ public class MechWarrior extends Infantry {
         setOwner(originalRide.getOwner());
         initializeInternal(1, Infantry.LOC_INFANTRY);
         setOriginalRideId(originalRide.getId());
-        setOriginalRideExternalId(originalRide.getExternalId());
+        setOriginalRideExternalId(originalRide.getExternalIdAsString());
         IGame tmpGame = originalRide.getGame();
         if (tmpGame != null
                 && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
@@ -90,14 +90,22 @@ public class MechWarrior extends Infantry {
      * @return the <code>int</code> external id of this MW's original ride
      */
     public int getOriginalRideExternalId() {
+        return Integer.parseInt(originalRideExternalId);
+    }
+    
+    public String getOriginalRideExternalIdAsString() {
         return originalRideExternalId;
     }
 
     /**
      * set the <code>int</code> external id of this MW's original ride
      */
-    public void setOriginalRideExternalId(int originalRideExternalId) {
+    public void setOriginalRideExternalId(String originalRideExternalId) {
         this.originalRideExternalId = originalRideExternalId;
+    }
+    
+    public void setOriginalRideExternalId(int originalRideExternalId) {
+        this.originalRideExternalId = Integer.toString(originalRideExternalId);
     }
 
     /**
@@ -105,14 +113,22 @@ public class MechWarrior extends Infantry {
      *         this MW
      */
     public int getPickedUpByExternalId() {
+        return Integer.parseInt(pickedUpByExternalId);
+    }
+    
+    public String getPickedUpByExternalIdAsString() {
         return pickedUpByExternalId;
     }
 
     /**
      * set the <code>int</code> external id of the unit that picked up this MW
      */
-    public void setPickedUpByExternalId(int pickedUpByExternalId) {
+    public void setPickedUpByExternalId(String pickedUpByExternalId) {
         this.pickedUpByExternalId = pickedUpByExternalId;
+    }
+    
+    public void setPickedUpByExternalId(int pickedUpByExternalId) {
+        this.pickedUpByExternalId = Integer.toString(pickedUpByExternalId);
     }
 
     /**

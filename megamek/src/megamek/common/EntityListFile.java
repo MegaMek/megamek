@@ -391,9 +391,9 @@ public class EntityListFile {
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
-            if(entity.getExternalId() != Entity.NONE) {
+            if(!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
-                output.write(String.valueOf(entity.getExternalId()));
+                output.write(entity.getExternalIdAsString());
             }
             if (entity.countQuirks() > 0) {
                 output.write("\" quirks=\"");
@@ -471,9 +471,9 @@ public class EntityListFile {
                 output.write("\" portraitFile=\"");
                 output.write(crew.getPortraitFileName());
             }
-            if(crew.getExternalId() != Entity.NONE) {
+            if(!crew.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
-                output.write(String.valueOf(crew.getExternalId()));
+                output.write(crew.getExternalIdAsString());
             }
             output.write("\"/>");
             output.write(CommonConstants.NL);

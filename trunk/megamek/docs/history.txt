@@ -6,6 +6,7 @@ v0.25.28-dev (SVN)
 + pass frame rather than clientgui to AdvancedSearchDialog so other programs can use
 + Bug: Princess bot NPE with aeros that fly off the map
 + Bug 3474185: Princess bot NPE with ejected MechWarriors
++ Bug 3474591: NPE in deployment
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

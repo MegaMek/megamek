@@ -4894,9 +4894,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.append(new PilotingRollData(getId(), 0, "landing with damaged leg actuator or gyro"));
             addPilotingModifierForTerrain(roll);
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Entity does not have gyro or leg accutator damage -- checking for purposes of determining PSR after jump.");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Entity does not have gyro or leg actuator damage -- checking for purposes of determining PSR after jump.");
         }
+        return roll;
+    }
 
+    /**
+     * Checks if the entity is landing (from a jump) with a prototype JJ
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkLandingWithPrototypeJJ(EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if (getJumpType() == Mech.JUMP_PROTOTYPE) {
+            // append the reason modifier
+            roll.append(new PilotingRollData(getId(), 3, "landing with prototype jump jets"));
+            addPilotingModifierForTerrain(roll);
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Entity does not have protype jump jets -- checking for purposes of determining PSR after jump.");
+        }
         return roll;
     }
 

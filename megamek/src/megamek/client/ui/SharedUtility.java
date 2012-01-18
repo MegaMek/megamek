@@ -314,6 +314,9 @@ public class SharedUtility {
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
+            // check for landing with prototype JJs
+            rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
+            checkNag(rollTarget, nagReport, psrList);
             // jumped into water?
             IHex hex = game.getBoard().getHex(curPos);
             // check for jumping into heavy woods

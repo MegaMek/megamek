@@ -746,7 +746,7 @@ public abstract class TestEntity implements TestEntityOption {
                             illegal = true;
                         }
                     }
-                    if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE)) {
+                    if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE) &&(mech.getJumpType() != Mech.JUMP_PROTOTYPE)) {
                         buff.append("industrial mechs can only mount standard jump jets\n");
                         illegal = true;
                     }

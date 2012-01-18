@@ -241,6 +241,7 @@ public class MiscType extends EquipmentType {
     // Secondary flags for Jump Jets
     public static final long S_STANDARD = 1L << 0;
     public static final long S_IMPROVED = 1L << 1;
+    public static final long S_PROTOTYPE = 1L << 2;
 
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
@@ -1095,6 +1096,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createSTOLChassisMod());
         EquipmentType.addType(MiscType.createVSTOLChassisMod());
         EquipmentType.addType(MiscType.createElectricDischargeArmor());
+        EquipmentType.addType(MiscType.createISPrototypeJumpJet());
 
     }
 
@@ -1125,6 +1127,22 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.subType |= S_STANDARD;
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISPrototypeJumpJet() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Prototype Jump Jet";
+        misc.setInternalName("ISPrototypeJumpJet");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 0;
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_PROTOTYPE;
         misc.bv = 0;
 
         return misc;

@@ -6738,6 +6738,11 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
+            // check for prototype JJs
+            rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                doSkillCheckInPlace(entity, rollTarget);
+            }
             // check for jumping into heavy woods
             if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType, curHex);

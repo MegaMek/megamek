@@ -159,6 +159,8 @@ public abstract class Mech extends Entity {
 
     public static final int JUMP_DISPOSABLE = 4;
 
+    public static final int JUMP_PROTOTYPE = 5;
+
     // Some "has" items only need be determined once
     public static final int HAS_FALSE = -1;
 
@@ -1154,6 +1156,8 @@ public abstract class Mech extends Entity {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
                 if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
+                } else if (m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                    jumpType = JUMP_PROTOTYPE;
                 } else {
                     jumpType = JUMP_STANDARD;
                 }

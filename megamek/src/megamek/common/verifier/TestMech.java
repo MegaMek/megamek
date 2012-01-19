@@ -28,6 +28,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -95,6 +96,10 @@ public class TestMech extends TestEntity {
 
     @Override
     public float getWeightMisc() {
+        if (mech instanceof LandAirMech) {
+            // 10% of weight is conversion equipment
+            return mech.getWeight()/10f;
+        }
         return 0.0f;
     }
 

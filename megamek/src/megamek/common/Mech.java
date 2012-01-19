@@ -187,9 +187,9 @@ public abstract class Mech extends Entity {
 
     private int jumpType = JUMP_UNKNOWN;
 
-    private int gyroType = GYRO_STANDARD;
+    protected int gyroType = GYRO_STANDARD;
 
-    private int cockpitType = COCKPIT_STANDARD;
+    protected int cockpitType = COCKPIT_STANDARD;
 
     private int cowlArmor = 3;
 
@@ -4961,6 +4961,10 @@ public abstract class Mech extends Entity {
         return systemNames[index];
     }
 
+    public String getRawSystemName(int index) {
+        return systemNames[index];
+    }
+
     public static String getGyroDisplayString(int inType) {
         String inName = "";
         switch (inType) {
@@ -5064,7 +5068,9 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         sb.append("Config:");
-        if (this instanceof BipedMech) {
+        if (this instanceof LandAirMech) {
+            sb.append("LAM");
+        } else if (this instanceof BipedMech) {
             sb.append("Biped");
         } else if (this instanceof QuadMech) {
             sb.append("Quad");
@@ -5223,12 +5229,12 @@ public abstract class Mech extends Entity {
             armoredText = " " + MtfFile.ARMORED;
         }
         if (type == CriticalSlot.TYPE_SYSTEM) {
-            if ((systemNames[index].indexOf("Upper") != -1) || (systemNames[index].indexOf("Lower") != -1) || (systemNames[index].indexOf("Hand") != -1) || (systemNames[index].indexOf("Foot") != -1)) {
-                return systemNames[index] + " Actuator" + armoredText;
-            } else if (systemNames[index].indexOf("Engine") != -1) {
-                return "Fusion " + systemNames[index] + armoredText;
+            if ((getRawSystemName(index).indexOf("Upper") != -1) || (getRawSystemName(index).indexOf("Lower") != -1) || (getRawSystemName(index).indexOf("Hand") != -1) || (getRawSystemName(index).indexOf("Foot") != -1)) {
+                return getRawSystemName(index) + " Actuator" + armoredText;
+            } else if (getRawSystemName(index).indexOf("Engine") != -1) {
+                return "Fusion " + getRawSystemName(index) + armoredText;
             } else {
-                return systemNames[index] + armoredText;
+                return getRawSystemName(index) + armoredText;
             }
         } else if (type == CriticalSlot.TYPE_EQUIPMENT) {
             Mounted m = getEquipment(cs.getIndex());

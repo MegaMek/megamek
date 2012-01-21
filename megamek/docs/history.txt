@@ -10,6 +10,7 @@ v0.25.28-dev (SVN)
 + changed external ids to strings to allow for UUIDs, but kept integer get and set methods for compatability
 + Added prototype JJs
 + support to print LAM sheets in MML
++ Added Booby Trap construction data
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

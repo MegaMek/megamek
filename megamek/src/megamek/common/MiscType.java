@@ -179,6 +179,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_MEDIUM_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(133);
     public static final BigInteger F_HEAVY_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(134);
     public static final BigInteger F_BA_SEARCHLIGHT = BigInteger.valueOf(1).shiftLeft(135);
+    public static final BigInteger F_BOOBY_TRAP = BigInteger.valueOf(1).shiftLeft(136);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -507,6 +508,11 @@ public class MiscType extends EquipmentType {
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
             return (float) (Math.ceil(weaponWeight / 20) * 2.0);
+        } else if (hasFlag(F_BOOBY_TRAP)) {
+                // 10% of unit weight
+                // round to half ton TODO: round to kilograms for small support
+                // vees, but we don't support them yet
+                return (float) (Math.ceil(entity.getWeight() / 20) * 2.0);
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -1097,6 +1103,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createVSTOLChassisMod());
         EquipmentType.addType(MiscType.createElectricDischargeArmor());
         EquipmentType.addType(MiscType.createISPrototypeJumpJet());
+        EquipmentType.addType(MiscType.createBoobyTrap());
 
     }
 
@@ -5529,6 +5536,20 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.availRating = new int[]{RATING_E, RATING_E, RATING_E};
         misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createBoobyTrap() {
+        MiscType misc = new MiscType();
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = 100000;
+        misc.criticals = 1;
+        misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        misc.name = "Booby Trap";
+        misc.setInternalName("ISBoobyTrap");
+        misc.techRating = RATING_B;
+        misc.availRating = new int[]{RATING_D, RATING_F, RATING_D};
+        misc.flags = misc.flags.or(F_BOOBY_TRAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
         return misc;
     }
 

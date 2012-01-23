@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.34.10-dev (SVN)
+v0.34.10 (2012-01-23)
 + Bug: Shields and Spikes count for defensive BV
 + Bug: large shield with all crits destroyed still hindering movement
 + All Clan Mechs have Clan names again

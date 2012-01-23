@@ -103,7 +103,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
-    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
+    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" ,"es"};
 
     /**
      * Standard constructor. There is no default constructor for this class.
@@ -344,6 +344,9 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
         displayLocale.addItem(Messages
                 .getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        panSetting.add(displayLocale);
+        displayLocale.addItem(Messages
+                .getString("CommonSettingsDialog.locale.Spanish")); //$NON-NLS-1$
         panSetting.add(displayLocale);
         tempPanel.add(panSetting);
 

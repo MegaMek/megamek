@@ -11,6 +11,7 @@ v0.34.10-dev (SVN)
 + Bug 2933643: Charge should damage first, displace later
 + Bug with coolant pods BV
 + Bug 3030702: report error with vibroclaws against infantry
++ Added spanish translation
 
 v0.34.9 (2009-11-09, 19:32 UTC+1)
 + Bug 2585799: Pilot damage assigned to vehicle crew

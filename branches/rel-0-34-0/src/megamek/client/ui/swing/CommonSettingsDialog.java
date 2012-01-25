@@ -303,7 +303,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .getString("CommonSettingsDialog.mapScrollText"));
         ta.setEditable(false);
         ta.setOpaque(false);
-        tempPanel.add(ta); 
+        tempPanel.add(ta);
 
         rightDragScroll = new JCheckBox(Messages
                 .getString("CommonSettingsDialog.rightDragScroll")); //$NON-NLS-1$
@@ -421,6 +421,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
         if (cs.getLocaleString().startsWith("ru")) {
             index = 2;
+        }
+        if (cs.getLocaleString().startsWith("es")) {
+            index = 3;
         }
         displayLocale.setSelectedIndex(index);
 

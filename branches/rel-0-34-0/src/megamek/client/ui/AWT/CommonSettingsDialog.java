@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -48,7 +48,7 @@ import megamek.common.preference.PreferenceManager;
 public class CommonSettingsDialog extends ClientDialog implements
         ActionListener, ItemListener, FocusListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5270441082873687662L;
     private ScrollPane scrolledPane = new ScrollPane();
@@ -100,11 +100,11 @@ public class CommonSettingsDialog extends ClientDialog implements
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
-    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
+    private static final String[] LOCALE_CHOICES = { "en", "de", "ru", "es" };
 
     /**
      * Standard constructor. There is no default constructor for this class.
-     * 
+     *
      * @param owner - the <code>Frame</code> that owns this dialog.
      */
     public CommonSettingsDialog(Frame owner) {
@@ -122,6 +122,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 cancel();
             }
@@ -334,6 +335,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         locale.add(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
         locale.add(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
         locale.add(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        locale.add(Messages.getString("CommonSettingsDialog.locale.Spanish")); //$NON-NLS-1$
         panSetting.add(locale);
         tempPanel.add(panSetting);
 
@@ -353,6 +355,7 @@ public class CommonSettingsDialog extends ClientDialog implements
      * Display the current settings in this dialog. <p/> Overrides
      * <code>Dialog#show()</code>.
      */
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             GUIPreferences gs = GUIPreferences.getInstance();
@@ -407,10 +410,15 @@ public class CommonSettingsDialog extends ClientDialog implements
             showUnitId.setState(cs.getShowUnitId());
 
             int index = 0;
-            if (cs.getLocaleString().startsWith("de"))
+            if (cs.getLocaleString().startsWith("de")) {
                 index = 1;
-            if (cs.getLocaleString().startsWith("ru"))
+            }
+            if (cs.getLocaleString().startsWith("ru")) {
                 index = 2;
+            }
+            if (cs.getLocaleString().startsWith("es")) {
+                index = 3;
+            }
             locale.select(index);
 
             chatloungeTabs.setState(gs.getChatLoungeTabs());
@@ -421,8 +429,9 @@ public class CommonSettingsDialog extends ClientDialog implements
                     + File.separator + "hexes" + File.separator);
             tileSets = dir.listFiles(new FilenameFilter() {
                 public boolean accept(File direc, String name) {
-                    if (name.endsWith(".tileset"))
+                    if (name.endsWith(".tileset")) {
                         return true;
+                    }
                     return false;
                 }
             });
@@ -430,8 +439,9 @@ public class CommonSettingsDialog extends ClientDialog implements
             for (int i = 0; i < tileSets.length; i++) {
                 String name = tileSets[i].getName();
                 tileSetChoice.add(name.substring(0, name.length() - 8));
-                if (name.equals(cs.getMapTileset()))
+                if (name.equals(cs.getMapTileset())) {
                     tileSetChoice.select(i);
+                }
             }
 
             getFocus.setState(gs.getFocus());
@@ -443,7 +453,7 @@ public class CommonSettingsDialog extends ClientDialog implements
      * Cancel any updates made in this dialog, and closes it.
      */
     private void cancel() {
-        this.setVisible(false);
+        setVisible(false);
     }
 
     /**
@@ -494,17 +504,18 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setChatloungeTabs(chatloungeTabs.getState());
         gs.setShowMapsheets(showMapsheets.getState());
 
-        if (tileSetChoice.getSelectedIndex() >= 0)
+        if (tileSetChoice.getSelectedIndex() >= 0) {
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
                     .getName());
+        }
 
-        this.setVisible(false);
+        setVisible(false);
     }
 
     /**
      * Handle the player pressing the action buttons. <p/> Implements the
      * <code>ActionListener</code> interface.
-     * 
+     *
      * @param event - the <code>ActionEvent</code> that initiated this call.
      */
     public void actionPerformed(ActionEvent event) {
@@ -519,7 +530,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     /**
      * Handle the player clicking checkboxes. <p/> Implements the
      * <code>ItemListener</code> interface.
-     * 
+     *
      * @param event - the <code>ItemEvent</code> that initiated this call.
      */
     public void itemStateChanged(ItemEvent event) {
@@ -531,8 +542,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.getState());
         }
-        if (event.getSource() == keys
-                && event.getStateChange() == ItemEvent.SELECTED) {
+        if ((event.getSource() == keys)
+                && (event.getStateChange() == ItemEvent.SELECTED)) {
             value.setText(GUIPreferences.getInstance().getString(
                     "Advanced" + keys.getSelectedItem()));
             keysIndex = keys.getSelectedIndex();

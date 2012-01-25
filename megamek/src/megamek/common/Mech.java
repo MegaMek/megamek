@@ -2650,8 +2650,9 @@ public abstract class Mech extends Entity {
             }
 
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
-            // not yet coded:
-                    // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                    || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || etype.hasFlag(MiscType.F_CHAFF_POD) || etype.hasFlag(MiscType.F_MASS) || etype.hasFlag(MiscType.F_BAP) || etype.hasFlag(MiscType.F_SPIKES) || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE) || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(this);
                 if (etype instanceof WeaponType) {

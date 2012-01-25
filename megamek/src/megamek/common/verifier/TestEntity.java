@@ -581,6 +581,34 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
                 hasSponsonTurret = true;
             }
+            if (m.getType().hasFlag(MiscType.F_BULLDOZER)) {
+                for (Mounted m2 : getEntity().getMisc()) {
+                    if (m2.getLocation() == m.getLocation()) {
+                        if (m2.getType().hasFlag(MiscType.F_CLUB)) {
+                            if (m2.getType().hasSubType(MiscType.S_BACKHOE)
+                                    || m2.getType().hasSubType(MiscType.S_CHAINSAW)
+                                    || m2.getType().hasSubType(MiscType.S_COMBINE)
+                                    || m2.getType().hasSubType(MiscType.S_DUAL_SAW)
+                                    || m2.getType().hasSubType(MiscType.S_PILE_DRIVER)
+                                    || m2.getType().hasSubType(MiscType.S_MINING_DRILL)
+                                    || m2.getType().hasSubType(MiscType.S_ROCK_CUTTER)
+                                    || m2.getType().hasSubType(MiscType.S_WRECKING_BALL)) {
+                                illegal = true;
+                                buff.append("bulldozer in same location as prohibited physical weapon");
+                            }
+                        }
+                    }
+                }
+                if (m.getLocation() != Tank.LOC_FRONT) {
+                    illegal = true;
+                    buff.append("bulldozer must be mounted in front");
+                }
+                if ((getEntity().getMovementMode() != EntityMovementMode.TRACKED)
+                        && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)) {
+                    illegal = true;
+                    buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode");
+                }
+            }
         }
         if (getEntity() instanceof Tank) {
             for (Mounted m : getEntity().getMisc()) {

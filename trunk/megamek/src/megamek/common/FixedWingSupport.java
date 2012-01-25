@@ -124,4 +124,16 @@ public class FixedWingSupport extends ConvFighter {
     protected int calculateWalk() {
         return getOriginalWalkMP();
     }
+
+    @Override
+    public void autoSetMaxBombPoints() {
+        // fixed wing support craft need external stores hardpoints to be able to carry bombs
+        int bombpoints = 0;
+        for (Mounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
+                bombpoints++;
+            }
+        }
+        maxBombPoints = bombpoints;
+    }
 }

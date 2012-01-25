@@ -5578,7 +5578,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Bulldozer";
         misc.setInternalName(misc.name);
-        misc.techRating = RATING_C;
+        misc.techRating = RATING_B;
         misc.availRating = new int[]{RATING_C, RATING_C, RATING_C};
         misc.bv = 10;
         misc.flags = misc.flags.or(F_BULLDOZER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);

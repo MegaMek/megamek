@@ -167,6 +167,13 @@ public class TestTank extends TestEntity {
                 heat += 5;
             }
         }
+        for (Mounted m : tank.getMisc()) {
+            MiscType mtype = (MiscType)m.getType();
+            // mobile HPGs count as energy weapons for construction purposes
+            if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
+                heat += 20;
+            }
+        }
         return heat;
     }
 

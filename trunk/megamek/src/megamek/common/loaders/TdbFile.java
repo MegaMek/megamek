@@ -36,6 +36,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -671,8 +672,7 @@ public class TdbFile implements IMechLoader {
                         }
                         m = mech.addEquipment(etype, loc, rearMounted);
                         hSharedEquip.put(etype, m);
-                    } else if ((etype instanceof WeaponType)
-                            && etype.hasFlag(WeaponType.F_SPLITABLE)) {
+                    } else if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_SPLITABLE)) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
                         // location?
                         Mounted m = null;

@@ -64,7 +64,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
     private Mounted linked = null; // for ammo, or artemis
     private Mounted linkedBy = null; // reverse link for convenience
-    
+
     private Mounted crossLinkedBy = null; // Weapons with crossLinked capacitors
 
     private Entity entity; // what I'm mounted on
@@ -690,13 +690,13 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public Mounted getCrossLinkedBy() {
         return crossLinkedBy;
-    }  
-    
+    }
+
     public void setLinked(Mounted linked) {
         this.linked = linked;
         linked.setLinkedBy(this);
     }
-    
+
     public void setCrossLinked(Mounted linked) {
         this.linked = linked;
         linked.setCrossLinkedBy(this);
@@ -720,7 +720,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         crossLinkedBy = linker;
     }
-    
+
     public int getFoundCrits() {
         return nFoundCrits;
     }
@@ -734,7 +734,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isSplitable() {
-        return ((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_SPLITABLE));
+        return (((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_SPLITABLE)) || ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_SPLITABLE)));
     }
 
     public void setSplit(boolean b) {
@@ -779,7 +779,7 @@ public class Mounted implements Serializable, RoundUpdated {
                 return damage;
             }
 
-            if (wtype.hasFlag(WeaponType.F_PPC) && hasChargedCapacitor() != 0) {
+            if (wtype.hasFlag(WeaponType.F_PPC) && (hasChargedCapacitor() != 0)) {
                 if (isFired()) {
                     if (hasChargedCapacitor() == 2) {
                         return 15;
@@ -788,7 +788,7 @@ public class Mounted implements Serializable, RoundUpdated {
                 }
                 if (hasChargedCapacitor() == 2) {
                     return 30;
-                }                
+                }
                 return 15;
             }
 
@@ -842,7 +842,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
 
         // Is the entity even active?
-        if (entity.isShutDown() || (null != entity.getCrew() && !entity.getCrew().isActive())) {
+        if (entity.isShutDown() || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
             return false;
         }
 
@@ -1079,7 +1079,7 @@ public class Mounted implements Serializable, RoundUpdated {
             if (getQuirks().booleanOption("no_cooling")) {
                 heat += 2;
             }
-            if (hasChargedCapacitor() == 2) {  
+            if (hasChargedCapacitor() == 2) {
                 heat += 10;
             }
             if (hasChargedCapacitor() == 1) {

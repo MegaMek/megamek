@@ -15,6 +15,7 @@ v0.35.28-dev (SVN)
     on tanks
 + Fixed-Wing support vehicle MP Fix
 + Added refueling drogue construction data
++ Added Bulldozer
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

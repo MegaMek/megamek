@@ -106,7 +106,7 @@ public class FixedWingSupport extends ConvFighter {
         }
         return false;
     }
-    
+
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps
@@ -118,5 +118,10 @@ public class FixedWingSupport extends ConvFighter {
         }
 
         return 3;
+    }
+
+    @Override
+    protected int calculateWalk() {
+        return getOriginalWalkMP();
     }
 }

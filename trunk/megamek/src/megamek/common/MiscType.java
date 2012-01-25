@@ -181,6 +181,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BA_SEARCHLIGHT = BigInteger.valueOf(1).shiftLeft(135);
     public static final BigInteger F_BOOBY_TRAP = BigInteger.valueOf(1).shiftLeft(136);
     public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(137);
+    public static final BigInteger F_REFUELING_DROGUE = BigInteger.valueOf(1).shiftLeft(138);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1105,6 +1106,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createElectricDischargeArmor());
         EquipmentType.addType(MiscType.createISPrototypeJumpJet());
         EquipmentType.addType(MiscType.createBoobyTrap());
+        EquipmentType.addType(MiscType.createRefuelingDrogue());
 
     }
 
@@ -5551,6 +5553,19 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_B;
         misc.availRating = new int[]{RATING_D, RATING_F, RATING_D};
         misc.flags = misc.flags.or(F_BOOBY_TRAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createRefuelingDrogue() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 1;
+        misc.cost = 25000;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Refueling Drogue";
+        misc.setInternalName("RefuelingDrogue");
+        misc.techRating = RATING_C;
+        misc.availRating = new int[]{RATING_B, RATING_B, RATING_B};
+        misc.flags = misc.flags.or(F_REFUELING_DROGUE).or(F_AERO_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         return misc;
     }
 

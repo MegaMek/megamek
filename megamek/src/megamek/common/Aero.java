@@ -148,7 +148,7 @@ public class Aero extends Entity {
     public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
     public static final String ALT_BOMB_ATTACK = "AltBombAttack";
 
-    private int maxBombPoints = 0;
+    protected int maxBombPoints = 0;
     private int[] bombChoices = new int[BombType.B_NUM];
 
     // fuel

@@ -74,9 +74,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         }
         a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
-        // how many bombs can it carry
-        a.autoSetMaxBombPoints();
-
         // get a movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
         a.setMovementMode(nMotion);
@@ -170,6 +167,11 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         if (a.isClan()) {
             a.addClanCase();
         }
+
+        // how many bombs can it carry
+        // do this here, after equipment has been loaded, because fixed wing
+        // support vees need equipment for this
+        a.autoSetMaxBombPoints();
 
         return a;
     }

@@ -37,6 +37,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -597,7 +598,7 @@ implements IMechLoader
     private String mutateLBXAmmo(String crit) {
         if ((crit.startsWith("CLLBX") || crit.startsWith("ISLBX")) && crit.endsWith("Ammo")) {
             lbxCounter++;
-            if (lbxCounter % 2 == 1) {
+            if ((lbxCounter % 2) == 1) {
                 return crit.substring(0, crit.indexOf("Ammo")) + "CL Ammo";
             }
         }
@@ -607,9 +608,9 @@ implements IMechLoader
     private String mutateATMAmmo(String crit) {
         if (crit.startsWith("CLATM") && crit.endsWith("Ammo")) {
             atmCounter++;
-            if (atmCounter % 3 == 2) {
+            if ((atmCounter % 3) == 2) {
                 return crit.substring(0, crit.indexOf("Ammo")) + "HE Ammo";
-            } else if (atmCounter % 3 == 0) {
+            } else if ((atmCounter % 3) == 0) {
                 return crit.substring(0, crit.indexOf("Ammo")) + "ER Ammo";
             }
         }
@@ -679,7 +680,7 @@ implements IMechLoader
                                     m = mech.addEquipment(equipment, location, rearMounted);
                                     spreadEquipment.put(equipment, m);
                                 }
-                            } else if ((equipment instanceof WeaponType) && equipment.hasFlag(WeaponType.F_SPLITABLE)) {
+                            } else if (((equipment instanceof WeaponType) && equipment.hasFlag(WeaponType.F_SPLITABLE)) || ((equipment instanceof MiscType) && equipment.hasFlag(MiscType.F_SPLITABLE))) {
                                 // do we already have this one in this or an
                                 // outer location?
                                 Mounted m = null;

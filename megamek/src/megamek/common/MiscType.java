@@ -180,6 +180,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_HEAVY_BRIDGE_LAYER = BigInteger.valueOf(1).shiftLeft(134);
     public static final BigInteger F_BA_SEARCHLIGHT = BigInteger.valueOf(1).shiftLeft(135);
     public static final BigInteger F_BOOBY_TRAP = BigInteger.valueOf(1).shiftLeft(136);
+    public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(137);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -4917,7 +4918,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 12f;
         misc.criticals = 12;
         misc.cost = 4000000000f;
-        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_SPLITABLE);
         misc.bv = 0;
         return misc;
     }
@@ -4930,7 +4931,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 12f;
         misc.criticals = 12;
         misc.cost = 4000000000f;
-        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MOBILE_HPG).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_SPLITABLE);
         misc.bv = 0;
         return misc;
     }

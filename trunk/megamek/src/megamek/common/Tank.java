@@ -942,8 +942,10 @@ public class Tank extends Entity {
                     amsBV += etype.getBV(this);
                 }
             } else if (((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
-            // not yet coded: ||
-                    // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                    || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                    || etype.hasFlag(MiscType.F_BULLDOZER)
                     || etype.hasFlag(MiscType.F_CHAFF_POD) || etype.hasFlag(MiscType.F_BAP))) || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());

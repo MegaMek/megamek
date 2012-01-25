@@ -249,6 +249,15 @@ public class TestMech extends TestEntity {
                 return false;
             }
         }
+        if (mt.hasFlag(MiscType.F_MOBILE_HPG)) {
+            if ((countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LARM) > 0)
+                    || (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RARM) > 0)
+                    || (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_HEAD) > 0)
+                    || (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LLEG) > 0)
+                    || (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RLEG) > 0)) {
+                buff.append("ground mobile HPG must be mounted in torso locations\n");
+            }
+        }
         if (mt.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
             // environmental sealing needs to have 1 crit per location
             for (int locations = 0; locations < entity.locations(); locations++) {
@@ -499,6 +508,9 @@ public class TestMech extends TestEntity {
         }
         if (hasIllegalEquipmentCombinations(buff)) {
             correct = false;
+        }
+        for (Mounted misc : mech.getMisc()) {
+            correct = correct && checkMiscSpreadAllocation(mech, misc, buff);
         }
         correct = correct && correctMovement(buff);
         return correct;

@@ -1368,9 +1368,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             nbuf.append(" ID:").append(getId());
         }
-        if (isCrippled()) {
-            nbuf.append(" (***CRIPPLED***)");
-        }
 
         displayName = nbuf.toString();
     }

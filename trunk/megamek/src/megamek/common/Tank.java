@@ -2771,6 +2771,11 @@ public class Tank extends Entity {
             return true;
         }
 
+        //If this is not a military vehicle, we don't need to do a weapon check.
+        if (!isMilitary()) {
+            return false;
+        }
+
         for (Mounted weap : getWeaponList()) {
             if (weap.canFire()) {
                 return false;
@@ -2789,6 +2794,11 @@ public class Tank extends Entity {
             return true;
         }
 
+        //If this is not a military vehicle, we don't need to do a weapon check.
+        if (!isMilitary()) {
+            return false;
+        }
+
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
@@ -2803,6 +2813,11 @@ public class Tank extends Entity {
     public boolean isDmgModerate() {
         if (getArmorRemainingPercent() <= 0.67) {
             return true;
+        }
+
+        //If this is not a military vehicle, we don't need to do a weapon check.
+        if (!isMilitary()) {
+            return false;
         }
 
         int totalWeapons = getTotalWeaponList().size();
@@ -2824,6 +2839,11 @@ public class Tank extends Entity {
 
         if (getArmorRemainingPercent() <= 0.8) {
             return true;
+        }
+
+        //If this is not a military vehicle, we don't need to do a weapon check.
+        if (!isMilitary()) {
+            return false;
         }
 
         int totalWeapons = getTotalWeaponList().size();

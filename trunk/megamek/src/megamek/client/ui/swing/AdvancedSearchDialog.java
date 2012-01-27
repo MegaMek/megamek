@@ -27,8 +27,10 @@ import java.awt.Panel;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedHashSet;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -193,7 +195,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2, frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2)) - (getSize().width / 2), (frame.getLocation().y + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
@@ -228,8 +230,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
     }
 
     private void populateWeaponsAndEquipmentChoices() {
-        LinkedHashSet<String> weapons = new LinkedHashSet<String>();
-        LinkedHashSet<String> equipment = new LinkedHashSet<String>();
+        List<String> weapons = new ArrayList<String>();
+        List<String> equipment = new ArrayList<String>();
         /*
          * I am not going to filter by type and unit type because that may
          * change after the advanced filter is set up
@@ -277,6 +279,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
                 equipment.add(et.getName());
             }
         }
+        Collections.sort(weapons);
+        Collections.sort(equipment);
         for (String weaponName : weapons) {
             cWeapons1.addItem(weaponName);
             cWeapons2.addItem(weaponName);

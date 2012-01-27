@@ -1029,6 +1029,9 @@ KeyListener, ItemListener, ListSelectionListener {
      * Skips to the next weapon
      */
     void nextWeapon() {
+        if (ce() == null) {
+            return;
+        }
         int nextWeapon = ce().getNextWeapon(
                 clientgui.mechD.wPan.getSelectedWeaponNum());
         // if there's no next weapon, forget about it
@@ -1823,19 +1826,19 @@ KeyListener, ItemListener, ListSelectionListener {
                         mask[LargeSupportTank.LOC_REAR] = false;
                     }
                     if (side == ToHitData.SIDE_REARRIGHT) {
-                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[Tank.LOC_FRONT] = false;
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARLEFT] = false;
                     }
                     if (side == ToHitData.SIDE_REARLEFT) {
-                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[Tank.LOC_FRONT] = false;
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARRIGHT] = false;
                     }
                     if (side == ToHitData.SIDE_REAR) {
-                        mask[LargeSupportTank.LOC_FRONT] = false;
+                        mask[Tank.LOC_FRONT] = false;
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARRIGHT] = false;

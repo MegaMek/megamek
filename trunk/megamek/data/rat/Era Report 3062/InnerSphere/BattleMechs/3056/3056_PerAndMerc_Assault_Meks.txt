@@ -1,0 +1,25 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3056 PerAndMerc Assault Meks
+Atlas AS7-D,23
+Atlas AS7-K,5
+Awesome AWS-8Q,46
+Awesome AWS-9M,9
+Banshee BNC-3S,46
+Banshee BNC-5S,9
+BattleMaster BLR-1G,116
+BattleMaster BLR-3M,23
+Black Watch BKW-7R,83
+Cerberus MR-V2,111
+Charger CGR-1A9,93
+Charger CGR-3K,19
+Grand Titan T-IT-N10M,28
+Stalker STK-3F,139
+Stalker STK-5M,28
+Victor VTR-9B,69
+Victor VTR-9K,14
+Zeus ZEU-6S,116
+Zeus ZEU-9S,23

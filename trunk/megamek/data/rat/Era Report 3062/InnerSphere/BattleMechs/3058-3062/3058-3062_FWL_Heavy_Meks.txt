@@ -1,0 +1,17 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3058-3062 FWL Heavy Meks
+Anvil ANV-3M,28
+Catapult CPLT-C3,139
+Guillotine GLT-5M,83
+Hercules HRC-LS-9000,56
+Marauder MAD-5M,111
+Orion ON1-M,167
+Perseus P1,28
+Tempest TMP-3M,139
+Thunderbolt TDR-7M,111
+War Dog WR-DG-02FC,56
+Yeoman YMN-6Y,83

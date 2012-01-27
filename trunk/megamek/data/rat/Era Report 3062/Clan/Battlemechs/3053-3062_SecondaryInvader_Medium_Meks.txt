@@ -1,0 +1,71 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Secondary Invaders Medium Meks
+Battle Cobra Prime,10
+Battle Cobra A,10
+Battle Cobra B,9
+Battle Cobra C,9
+Battle Cobra F,9
+Battle Cobra H,9
+Black Hawk (Nova) Prime,28
+Black Hawk (Nova) A,28
+Black Hawk (Nova) B,28
+Black Hawk (Nova) C,28
+Black Hawk (Nova) D,28
+Black Hawk (Nova) E,28
+Black Hawk (Nova) F,28
+Black Hawk (Nova) H,27
+Black Hawk (Nova) S,27
+Dragonfly (Viper) Prime,34
+Dragonfly (Viper) A,34
+Dragonfly (Viper) B,34
+Dragonfly (Viper) C,34
+Dragonfly (Viper) D,34
+Dragonfly (Viper) E,34
+Dragonfly (Viper) G,34
+Dragonfly (Viper) H,34
+Dragonfly (Viper) I,34
+Fenris (Ice Ferret) Prime,11
+Fenris (Ice Ferret) A,11
+Fenris (Ice Ferret) B,11
+Fenris (Ice Ferret) C,10
+Fenris (Ice Ferret) D,10
+Fenris (Ice Ferret) E,10
+Fenris (Ice Ferret) H,10
+Fenris (Ice Ferret) L,10
+Grendel (Mongrel) Prime,4
+Grendel (Mongrel) A,4
+Grendel (Mongrel) B,4
+Grendel (Mongrel) C,4
+Grendel (Mongrel) D,3
+Grendel (Mongrel) E,3
+Grendel (Mongrel) F,3
+Grendel (Mongrel) H,3
+Nobori-nin (Huntsman) Prime,4
+Nobori-nin (Huntsman) A,4
+Nobori-nin (Huntsman) B,4
+Nobori-nin (Huntsman) C,4
+Nobori-nin (Huntsman) D,4
+Nobori-nin (Huntsman) E,4
+Nobori-nin (Huntsman) H,4
+Ryoken (Stormcrow) Prime,22
+Ryoken (Stormcrow) A,22
+Ryoken (Stormcrow) B,22
+Ryoken (Stormcrow) C,22
+Ryoken (Stormcrow) D,22
+Ryoken (Stormcrow) E,21
+Ryoken (Stormcrow) F,21
+Ryoken (Stormcrow) G,21
+Ryoken (Stormcrow) H,21
+Shadow Cat Prime,10
+Shadow Cat A,10
+Shadow Cat B,9
+Shadow Cat C,9
+Shadow Cat H,9
+Shadow Cat J,9

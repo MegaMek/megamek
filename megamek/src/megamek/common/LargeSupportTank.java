@@ -39,6 +39,10 @@ public class LargeSupportTank extends SupportTank {
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
         "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
+    // tanks have no critical slot limitations
+    private static final int[] NUM_OF_SLOTS =
+        { 25, 25, 25, 25, 25, 25, 25, 25};
+
 
     @Override
     public String[] getLocationAbbrs() {
@@ -239,5 +243,10 @@ public class LargeSupportTank extends SupportTank {
     @Override
     public int height() {
         return 1;
+    }
+
+    @Override
+    public int[] getNoOfSlots() {
+        return NUM_OF_SLOTS;
     }
 }

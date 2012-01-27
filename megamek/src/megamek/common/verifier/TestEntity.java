@@ -774,8 +774,8 @@ public abstract class TestEntity implements TestEntityOption {
                             illegal = true;
                         }
                     }
-                    if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE) &&(mech.getJumpType() != Mech.JUMP_PROTOTYPE)) {
-                        buff.append("industrial mechs can only mount standard jump jets\n");
+                    if ((mech.getJumpType() != Mech.JUMP_STANDARD) && (mech.getJumpType() != Mech.JUMP_NONE) && (mech.getJumpType() != Mech.JUMP_PROTOTYPE) && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
+                        buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
                         illegal = true;
                     }
                     if (mech.getGyroType() != Mech.GYRO_STANDARD) {
@@ -816,7 +816,7 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                 } else {
-                    if (mech.getArmorType(0) != EquipmentType.T_ARMOR_PRIMITIVE) {
+                    if ((mech.getArmorType(0) != EquipmentType.T_ARMOR_PRIMITIVE) && (mech.getArmorType(0) != EquipmentType.T_ARMOR_INDUSTRIAL)) {
                         buff.append("primitive battlemechs must mount primitive battlemech armor\n");
                         illegal = true;
                     }

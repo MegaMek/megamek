@@ -47,11 +47,7 @@ public class TestMech extends TestEntity {
 
     private static Structure getStructure(Mech mech) {
         int type = mech.getStructureType();
-        int flag = 0;
-        if (mech.isClan()) {
-            flag |= Structure.CLAN_STRUCTURE;
-        }
-        return new Structure(type, flag);
+        return new Structure(type, false, mech.getMovementMode());
     }
 
     private static Armor[] getArmor(Mech mech) {

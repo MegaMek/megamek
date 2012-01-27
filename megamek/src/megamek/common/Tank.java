@@ -362,11 +362,49 @@ public class Tank extends Entity {
 
         switch (movementMode) {
             case TRACKED:
-                return (hex.terrainLevel(Terrains.WOODS) > 1) || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.MAGMA) > 1) || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                if (!isSuperHeavy()) {
+                    return (hex.terrainLevel(Terrains.WOODS) > 1)
+                            || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                            || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                } else {
+                    return (hex.terrainLevel(Terrains.WOODS) > 1)
+                            || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                }
             case WHEELED:
-                return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH) || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1) || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                if (!isSuperHeavy()) {
+                    return hex.containsTerrain(Terrains.WOODS)
+                            || hex.containsTerrain(Terrains.ROUGH)
+                            || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                            || hex.containsTerrain(Terrains.RUBBLE)
+                            || hex.containsTerrain(Terrains.MAGMA)
+                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.terrainLevel(Terrains.SNOW) > 1)
+                            || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                } else {
+                    return hex.containsTerrain(Terrains.WOODS)
+                            || hex.containsTerrain(Terrains.ROUGH)
+                            || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                            || hex.containsTerrain(Terrains.RUBBLE)
+                            || hex.containsTerrain(Terrains.MAGMA)
+                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                }
             case HOVER:
-                return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.MAGMA) > 1) || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                if (!isSuperHeavy()) {
+                    return hex.containsTerrain(Terrains.WOODS)
+                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                            || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                } else {
+                    return hex.containsTerrain(Terrains.WOODS)
+                            || hex.containsTerrain(Terrains.JUNGLE)
+                            || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                }
+
             case NAVAL:
             case HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0) || hex.containsTerrain(Terrains.ICE);
@@ -1726,7 +1764,11 @@ public class Tank extends Entity {
                 if (weight <= 40) {
                     return 175;
                 }
-                return 235;
+                if (weight <= 50) {
+                    return 235;
+                } else {
+                    return 235 + (45 * (int)Math.ceil((weight-50)/25f));
+                }
             case HYDROFOIL:
                 if (weight <= 10) {
                     return 60;
@@ -1758,11 +1800,22 @@ public class Tank extends Entity {
                 return 480;
             case NAVAL:
             case SUBMARINE:
-                return 30;
+                if (weight <= 300) {
+                    return 30;
+                } else {
+                    int factor = (int)Math.ceil(weight/10);
+                    factor += factor%5;
+                    return factor;
+                }
+
             case TRACKED:
                 return 0;
             case WHEELED:
-                return 20;
+                if (weight <= 80) {
+                    return 20;
+                } else {
+                    return 40;
+                }
             case VTOL:
                 if (weight <= 10) {
                     return 50;
@@ -1770,7 +1823,12 @@ public class Tank extends Entity {
                 if (weight <= 20) {
                     return 95;
                 }
-                return 140;
+                if (weight <= 30) {
+                    return 140;
+                } else {
+                    return 140 + (45 * (int)Math.ceil((weight-30)/20f));
+                }
+
             case WIGE:
                 if (weight <= 15) {
                     return 45;
@@ -1783,6 +1841,8 @@ public class Tank extends Entity {
                 }
                 if (weight <= 80) {
                     return 140;
+                } else {
+                    return 140 + (35 * (int)Math.ceil((weight-80)/30f));
                 }
             default:
                 return 0;
@@ -2775,5 +2835,9 @@ public class Tank extends Entity {
         }
 
         return ((double)totalInoperable / totalWeapons) >= 0.25;
+    }
+
+    public boolean isSuperHeavy() {
+        return false;
     }
 }

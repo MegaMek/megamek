@@ -1,0 +1,62 @@
+########################################################
+# Taken from Era Report 3062.  With OmniFighters, I've
+# divided the odds for each configuration as evenly as
+# possible.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Homeworld Areospace Fighters
+Kirghiz Prime,6
+Kirghiz A,6
+Kirghiz B,6
+Kirghiz C,5
+Kirghiz D,5
+Avar Prime,12
+Avar A,11
+Avar B,11
+Avar C,11
+Avar D,11
+Vandal Prime,17
+Vandal A,17
+Vandal B,17
+Vandal C,16
+Vandal D,16
+Batu Prime,23
+Batu A,22
+Batu B,22
+Batu C,22
+Batu D,22
+Turk Prime,29
+Turk A,29
+Turk B,29
+Turk C,29
+Turk D,28
+Jagatai Prime,34
+Jagatai A,34
+Jagatai B,33
+Jagatai C,33
+Jagatai D,33
+Visigoth Prime,29
+Visigoth A,29
+Visigoth B,29
+Visigoth C,29
+Visigoth D,28
+Sulla Prime,23
+Sulla A,22
+Sulla B,22
+Sulla C,22
+Sulla D,22
+Bashkir Prime,17
+Bashkir A,17
+Bashkir B,17
+Bashkir C,16
+Bashkir D,16
+Jengiz Prime,12
+Jengiz A,11
+Jengiz B,11
+Jengiz C,11
+Jengiz D,11
+Scytha Prime,6
+Scytha A,6
+Scytha B,6
+Scytha C,5
+Scytha D,5

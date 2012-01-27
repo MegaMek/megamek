@@ -1,0 +1,22 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3056 FWL Assault Meks
+Albatross ALB-3U,28
+BattleMaster BLR-1G,23
+BattleMaster BLR-3M,32
+Grand Titan T-IT-N10M,83
+Goliath GOL-1H,46
+Goliath GOL-3M,65
+Atlas AS7-D,58
+Atlas AS7-K,81
+Awesome AWS-8Q,69
+Awesome AWS-9M,97
+Cerberus MR-V2,139
+Sirocco SRC-5C,111
+Stalker STK-3F,35
+Stalker STK-5M,49
+Longbow LGB-7Q,56
+Grand Crusader GRN-D-01,28

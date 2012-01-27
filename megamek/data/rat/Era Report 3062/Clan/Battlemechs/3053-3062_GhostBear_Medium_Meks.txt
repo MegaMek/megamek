@@ -1,0 +1,54 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Ghost Bear Medium Meks
+Black Hawk (Nova) Prime,10
+Black Hawk (Nova) A,10
+Black Hawk (Nova) B,9
+Black Hawk (Nova) C,9
+Black Hawk (Nova) D,9
+Black Hawk (Nova) E,9
+Black Hawk (Nova) F,9
+Black Hawk (Nova) H,9
+Black Hawk (Nova) S,9
+Dragonfly (Viper) Prime,68
+Dragonfly (Viper) A,68
+Dragonfly (Viper) B,68
+Dragonfly (Viper) C,68
+Dragonfly (Viper) D,68
+Dragonfly (Viper) E,68
+Dragonfly (Viper) G,68
+Dragonfly (Viper) H,67
+Dragonfly (Viper) I,67
+Fenris (Ice Ferret) Prime,7
+Fenris (Ice Ferret) A,7
+Fenris (Ice Ferret) B,7
+Fenris (Ice Ferret) C,7
+Fenris (Ice Ferret) D,7
+Fenris (Ice Ferret) E,7
+Fenris (Ice Ferret) H,7
+Fenris (Ice Ferret) L,7
+Great Wyrm,28
+Ryoken (Stormcrow) Prime,16
+Ryoken (Stormcrow) A,16
+Ryoken (Stormcrow) B,16
+Ryoken (Stormcrow) C,16
+Ryoken (Stormcrow) D,15
+Ryoken (Stormcrow) E,15
+Ryoken (Stormcrow) F,15
+Ryoken (Stormcrow) G,15
+Ryoken (Stormcrow) H,15
+Stooping Hawk Prime,4
+Stooping Hawk A,4
+Stooping Hawk B,4
+Stooping Hawk C,4
+Stooping Hawk D,3
+Stooping Hawk E,3
+Stooping Hawk F,3
+Stooping Hawk G,3
+Ursus,56

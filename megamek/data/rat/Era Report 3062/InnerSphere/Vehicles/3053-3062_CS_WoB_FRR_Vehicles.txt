@@ -1,0 +1,16 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 ComStar, WoB and FRR Vehicles
+Demolisher Heavy Tank,1
+Rhino Fire Support Tank (ML),2
+Marksman Artillery Vehicle,3
+Magi Infantry Support Vehicle,4
+Burke Defense Tank,5
+Lightning Attack Hovercraft,6
+Chaparral Missile Artillery Tank,5
+Demon Tank,4
+Fury Command Tank,3
+Manticore Heavy Tank (3055 Upgrade),2
+Alacorn Heavy Tank Mk VI,1

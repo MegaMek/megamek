@@ -1,0 +1,17 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3054 CapCon Light Meks
+Cossack C-SK1,28
+Duan Gung D9-G9,56
+Jackal JA-KL-1532,28
+Raven RVN-3L,389
+Spider SDR-5V,127
+Spider SDR-7M,12
+Tarantula ZPH-1A,83
+UrbanMech UM-R60,204
+UrbanMech UM-R63,19
+Wasp WSP-1L,51
+Wasp WSP-3M,5

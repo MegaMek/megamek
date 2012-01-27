@@ -1,0 +1,32 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Secondary Invasion Assault Meks
+Canis,28
+Daishi (Dire Wolf) Prime,40
+Daishi (Dire Wolf) A,40
+Daishi (Dire Wolf) B,40
+Daishi (Dire Wolf) C,40
+Daishi (Dire Wolf) D,40
+Daishi (Dire Wolf) H,39
+Daishi (Dire Wolf) S,39
+Gladiator (Executioner) Prime,32
+Gladiator (Executioner) A,32
+Gladiator (Executioner) B,32
+Gladiator (Executioner) C,32
+Gladiator (Executioner) D,32
+Gladiator (Executioner) E,31
+Gladiator (Executioner) H,31
+Masakari (Warhawk) Prime,64
+Masakari (Warhawk) A,64
+Masakari (Warhawk) B,64
+Masakari (Warhawk) C,63
+Masakari (Warhawk) D,63
+Masakari (Warhawk) E,63
+Masakari (Warhawk) H,63
+Thunder Stallion,28

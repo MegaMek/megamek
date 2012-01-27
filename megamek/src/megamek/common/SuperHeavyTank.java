@@ -32,6 +32,10 @@ public class SuperHeavyTank extends Tank {
     /** for dual turret tanks, this is the front turret **/
     public static final int LOC_TURRET_2 = 8;
 
+    // tanks have no critical slot limitations
+    private static final int[] NUM_OF_SLOTS =
+        { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
+
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
         "RRRS", "RRLS", "RR", "TU", "TU2" };
 
@@ -251,6 +255,11 @@ public class SuperHeavyTank extends Tank {
     @Override
     public boolean isSuperHeavy() {
         return true;
+    }
+
+    @Override
+    public int[] getNoOfSlots() {
+        return NUM_OF_SLOTS;
     }
 
 }

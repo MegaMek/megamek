@@ -559,10 +559,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the ID settable by external sources (such as mm.net)
      * @see megamek.common.Entity#externalId
      */
-     public int getExternalId() {
+    public int getExternalId() {
     	return Integer.parseInt(externalId);
     }
-
+     
     public String getExternalIdAsString() {
         return externalId;
     }

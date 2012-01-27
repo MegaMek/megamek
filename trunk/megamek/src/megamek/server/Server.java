@@ -22258,7 +22258,7 @@ public class Server implements Runnable {
                 message.append("Unit ");
                 if (game.getOptions().booleanOption("blind_drop") || game.getOptions().booleanOption("real_blind_drop")) {
                     if (!entity.getExternalIdAsString().equals("-1")) {
-                        message.append('[').append(entity.getExternalId()).append("] ");
+                        message.append('[').append(entity.getExternalIdAsString()).append("] ");
                     }
                     message.append(entity.getId()).append('(').append(entity.getOwner().getName()).append(')');
                 } else {
@@ -25428,7 +25428,7 @@ public class Server implements Runnable {
                     pe.pickUp(e);
                     // The picked unit is being carried by the loader.
                     e.setPickedUpById(pe.getId());
-                    e.setPickedUpByExternalId(pe.getExternalId());
+                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
                     pickedUp = true;
                     r = new Report(6420, Report.PUBLIC);
                     r.add(e.getDisplayName());
@@ -25456,7 +25456,7 @@ public class Server implements Runnable {
                     // The captured unit is being carried by the loader.
                     e.setCaptured(true);
                     e.setPickedUpById(pe.getId());
-                    e.setPickedUpByExternalId(pe.getExternalId());
+                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
                     pickedUp = true;
                     r = new Report(6420, Report.PUBLIC);
                     r.add(e.getDisplayName());

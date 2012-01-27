@@ -26,6 +26,7 @@ import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.SuperHeavyTank;
 import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.VTOL;
@@ -95,7 +96,7 @@ public class TestTank extends TestEntity {
     public float getTankWeightTurret() {
         float weight = 0f;
         for (Mounted m : tank.getEquipment()) {
-            if ((m.getLocation() == Tank.LOC_TURRET) && !(m.getType() instanceof AmmoType)) {
+            if ((tank.isSuperHeavy()?m.getLocation() == SuperHeavyTank.LOC_TURRET:m.getLocation() == Tank.LOC_TURRET) && !(m.getType() instanceof AmmoType)) {
                 weight += m.getType().getTonnage(tank);
             }
         }
@@ -105,7 +106,7 @@ public class TestTank extends TestEntity {
     public float getTankWeightDualTurret() {
         float weight = 0f;
         for (Mounted m : tank.getEquipment()) {
-            if ((m.getLocation() == Tank.LOC_TURRET_2) && !(m.getType() instanceof AmmoType)) {
+            if ((tank.isSuperHeavy()?m.getLocation() == SuperHeavyTank.LOC_TURRET_2:m.getLocation() == Tank.LOC_TURRET_2) && !(m.getType() instanceof AmmoType)) {
                 weight += m.getType().getTonnage(tank);
             }
         }

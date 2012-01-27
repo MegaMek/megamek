@@ -128,7 +128,6 @@ public class VTOL extends Tank {
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
-
         if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
@@ -452,7 +451,7 @@ public class VTOL extends Tank {
 
         return prd;
     }
-    
+
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
@@ -485,4 +484,18 @@ public class VTOL extends Tank {
         return j;
 
     }
+
+    @Override
+    public int height() {
+        if (isSuperHeavy()) {
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean isSuperHeavy() {
+        return getWeight() > 30;
+    }
+
 }

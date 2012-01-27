@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author njrkrynn
  * @version
  */
@@ -29,6 +29,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.util.BuildingBlock;
 
@@ -39,7 +40,44 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
     public Entity getEntity() throws EntityLoadingException {
 
+        if (!dataFile.exists("tonnage")) {
+            throw new EntityLoadingException("Could not find weight block.");
+        }
+        float weight = dataFile.getDataAsFloat("tonnage")[0];
+        String sMotion = dataFile.getDataAsString("motion_type")[0];
+        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
+        if (nMotion == EntityMovementMode.NONE) {
+            throw new EntityLoadingException("Invalid movement type: " + sMotion);
+        }
+
         Tank t = new Tank();
+
+        switch (nMotion) {
+            case HOVER:
+                if (weight > 50) {
+                    t = new SuperHeavyTank();
+                }
+                break;
+            case NAVAL:
+            case SUBMARINE:
+                if (weight > 300) {
+                    t = new SuperHeavyTank();
+                }
+                break;
+            case TRACKED:
+                if (weight > 100) {
+                    t = new SuperHeavyTank();
+                }
+                break;
+            case WHEELED:
+            case WIGE:
+                if (weight > 80) {
+                    t = new SuperHeavyTank();
+                }
+                break;
+        }
+
+        t.setWeight(weight);
 
         if (!dataFile.exists("Name")) {
             throw new EntityLoadingException("Could not find name block.");
@@ -55,19 +93,10 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         setFluff(t);
         checkManualBV(t);
 
-        if (!dataFile.exists("tonnage")) {
-            throw new EntityLoadingException("Could not find weight block.");
-        }
-        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
-
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");
         }
-        String sMotion = dataFile.getDataAsString("motion_type")[0];
-        EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
-        if (nMotion == EntityMovementMode.NONE) {
-            throw new EntityLoadingException("Invalid movement type: " + sMotion);
-        }
+
         t.setMovementMode(nMotion);
 
         addTransports(t);
@@ -105,12 +134,19 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if ((armor.length < 4) || (armor.length > 6)) {
-            throw new EntityLoadingException("Incorrect armor array length");
+        if (!t.isSuperHeavy()) {
+            if ((armor.length < 4) || (armor.length > 6)) {
+                throw new EntityLoadingException("Incorrect armor array length");
+            }
+            t.setHasNoTurret(armor.length == 4);
+            t.setHasNoDualTurret((armor.length == 4) || (armor.length == 5));
+        } else {
+            if ((armor.length < 6) || (armor.length > 8)) {
+                throw new EntityLoadingException("Incorrect armor array length");
+            }
+            t.setHasNoTurret(armor.length == 6);
+            t.setHasNoDualTurret((armor.length == 7) || (armor.length == 8));
         }
-
-        t.setHasNoTurret(armor.length == 4);
-        t.setHasNoDualTurret((armor.length == 4) || (armor.length == 5));
 
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];

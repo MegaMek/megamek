@@ -501,7 +501,7 @@ public class MechDisplay extends JPanel {
                 minTopMargin = minVTOLTopMargin;
                 minBottomMargin = minVTOLTopMargin;
                 minRightMargin = minVTOLLeftMargin;
-            } else if (en instanceof LargeSupportTank) {
+            } else if ((en instanceof LargeSupportTank) || ((en instanceof Tank) && ((Tank)en).isSuperHeavy())) {
                 ams = largeSupportTank;
                 minLeftMargin = minTankLeftMargin;
                 minTopMargin = minTankTopMargin;

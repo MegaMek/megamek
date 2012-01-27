@@ -1007,20 +1007,22 @@ class Armor {
 } // end class Armor
 
 class Structure {
-    public final static int CLAN_STRUCTURE = 0x01;
 
     private int structureType;
+    private boolean isSuperHeavy;
+    private EntityMovementMode movementmode;
 
-    public Structure(int structureType, int structureFlags) {
+    public Structure(int structureType, boolean superHeavy, EntityMovementMode movementMode) {
         this.structureType = structureType;
-        // this.structureFlags = structureFlags;
+        isSuperHeavy = superHeavy;
+        movementmode = movementMode;
     }
 
     public float getWeightStructure(float weight, float roundWeight) {
-        return Structure.getWeightStructure(structureType, weight, roundWeight);
+        return Structure.getWeightStructure(structureType, weight, roundWeight, isSuperHeavy, movementmode);
     }
 
-    public static float getWeightStructure(int structureType, float weight, float roundWeight) {
+    public static float getWeightStructure(int structureType, float weight, float roundWeight, boolean isSuperHeavy, EntityMovementMode movementmode) {
         if (structureType == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
             return TestEntity.ceilMaxHalf(weight / 20.0f, roundWeight);
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE) {
@@ -1034,7 +1036,11 @@ class Structure {
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_COMPOSITE) {
             return TestEntity.ceilMaxHalf((weight / 10.0f) * 0.75f, roundWeight);
         }
-        return weight / 10.0f;
+        if (isSuperHeavy && ((movementmode != EntityMovementMode.NAVAL) && (movementmode != EntityMovementMode.SUBMARINE))) {
+            return TestEntity.ceilMaxHalf(weight / 5.0f, roundWeight);
+        } else {
+            return TestEntity.ceilMaxHalf(weight / 10.0f, roundWeight);
+        }
     }
 
     public String getShortName() {

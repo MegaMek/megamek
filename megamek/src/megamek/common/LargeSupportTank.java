@@ -182,13 +182,13 @@ public class LargeSupportTank extends SupportTank {
             return ToHitData.SIDE_FRONT;
         }
         // calculate firing angle
-        int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
+        int fa = (effectivePos.degree(src) + ((6 - face) * 60)) % 360;
 
         int leftBetter = 2;
         // if we're right on the line, we need to special case this
         // defender would choose along which hex the LOS gets drawn, and that
         // side also determines the side we hit in
-        if (fa % 30 == 0) {
+        if ((fa % 30) == 0) {
             IHex srcHex = game.getBoard().getHex(src);
             IHex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
@@ -234,5 +234,10 @@ public class LargeSupportTank extends SupportTank {
     @Override
     public int locations() {
         return m_bHasNoTurret ? 7 : 8;
+    }
+
+    @Override
+    public int height() {
+        return 1;
     }
 }

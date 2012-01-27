@@ -3,7 +3,7 @@
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -100,7 +100,7 @@ public class Dropship extends SmallCraft {
 
         // add in controls
         // bridge
-        cost += 200000 + 10 * weight;
+        cost += 200000 + (10 * weight);
         // computer
         cost += 200000;
         // life support
@@ -116,7 +116,7 @@ public class Dropship extends SmallCraft {
         cost += 100000 * getSI();
 
         // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + 10 * getWeight();
+        cost += 25000 + (10 * getWeight());
 
         // docking collar
         cost += 10000;
@@ -129,16 +129,16 @@ public class Dropship extends SmallCraft {
         double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
         cost += engineWeight * 1000;
         // drive unit
-        cost += 500 * getOriginalWalkMP() * weight / 100.0;
+        cost += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // fuel tanks
-        cost += 200 * getFuel() / getFuelPerTon();
+        cost += (200 * getFuel()) / getFuelPerTon();
 
         // armor
         cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
+        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
         cost += sinkCost * getHeatSinks();
 
@@ -158,7 +158,7 @@ public class Dropship extends SmallCraft {
             }
         }
 
-        cost += bayCost + baydoors * 1000;
+        cost += bayCost + (baydoors * 1000);
 
         // life boats and escape pods
         cost += 5000 * (getLifeBoats() + getEscapePods());
@@ -816,7 +816,7 @@ public class Dropship extends SmallCraft {
                 bvText.append("Adjacent High BV Arc (" + getArcName(adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
-                bvText.append("+" + arcBVs[adjArcH] * adjArcHMult);
+                bvText.append("+" + (arcBVs[adjArcH] * adjArcHMult));
                 bvText.append(endColumn);
                 bvText.append(endRow);
                 bvText.append(startRow);
@@ -838,7 +838,7 @@ public class Dropship extends SmallCraft {
                 bvText.append("Adjacent Low BV Arc (" + getArcName(adjArcL) + ") " + arcBVs[adjArcL] + "*" + adjArcLMult);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
-                bvText.append("+" + adjArcLMult * arcBVs[adjArcL]);
+                bvText.append("+" + (adjArcLMult * arcBVs[adjArcL]));
                 bvText.append(endColumn);
                 bvText.append(endRow);
                 bvText.append(startRow);
@@ -869,7 +869,7 @@ public class Dropship extends SmallCraft {
                 bvText.append(getArcName(loc) + " " + arcBVs[loc] + "*0.25");
                 bvText.append(endColumn);
                 bvText.append(startColumn);
-                bvText.append("+" + 0.25 * arcBVs[loc]);
+                bvText.append("+" + (0.25 * arcBVs[loc]));
                 bvText.append(endColumn);
                 bvText.append(endRow);
                 weaponBV += (0.25 * arcBVs[loc]);
@@ -1223,7 +1223,7 @@ public class Dropship extends SmallCraft {
 
     /**
      * What's the range of the ECM equipment?
-     * 
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */
@@ -1250,9 +1250,9 @@ public class Dropship extends SmallCraft {
             return 0;
         }
         if (isSpheroid()) {
-            return 10;
+            return 9;
         }
-        return 5;
+        return 4;
     }
 
     /*

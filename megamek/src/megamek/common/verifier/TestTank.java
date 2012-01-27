@@ -49,11 +49,7 @@ public class TestTank extends TestEntity {
         if (tank.getStructureType() == 1) {
             type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
         }
-
-        if (tank.isClan()) {
-            flag |= Structure.CLAN_STRUCTURE;
-        }
-        return new Structure(type, flag);
+        return new Structure(type, tank.isSuperHeavy(), tank.getMovementMode());
     }
 
     private static Armor[] getArmor(Tank tank) {

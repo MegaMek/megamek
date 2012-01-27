@@ -6683,6 +6683,11 @@ public abstract class Mech extends Entity {
             return true;
         }
 
+        //If this is an Industrial mech, we don't need to check weapon status.
+        if (isIndustrial()) {
+            return false;
+        }
+
         //no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
         //or has no weapons with range greater than 5 hexes
         boolean noWeapons = true;
@@ -6767,6 +6772,11 @@ public abstract class Mech extends Entity {
             return true;
         }
 
+        //If this is an Industrial mech, we don't need to check weapon status.
+        if (isIndustrial()) {
+            return false;
+        }
+
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
@@ -6795,6 +6805,11 @@ public abstract class Mech extends Entity {
             return true;
         }
 
+        //If this is an Industrial mech, we don't need to check weapon status.
+        if (isIndustrial()) {
+            return false;
+        }
+
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
@@ -6818,6 +6833,11 @@ public abstract class Mech extends Entity {
 
         if ((getCrew() != null) && (getCrew().getHits() == 1)) {
             return true;
+        }
+
+        //If this is an Industrial mech, we don't need to check weapon status.
+        if (isIndustrial()) {
+            return false;
         }
 
         int totalWeapons = getTotalWeaponList().size();

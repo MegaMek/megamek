@@ -446,4 +446,52 @@ public class GunEmplacement extends Tank {
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
     }
+
+    @Override
+    public boolean isCrippled() {
+        for (Mounted weap : getWeaponList()) {
+            if (weap.canFire()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isDmgHeavy() {
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+        return ((double)totalInoperable / totalWeapons) >= 0.75;
+    }
+
+    @Override
+    public boolean isDmgLight() {
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+
+        return ((double)totalInoperable / totalWeapons) >= 0.25;
+    }
+
+    @Override
+    public boolean isDmgModerate() {
+        int totalWeapons = getTotalWeaponList().size();
+        int totalInoperable = 0;
+        for (Mounted weap : getTotalWeaponList()) {
+            if (!weap.canFire()) {
+                totalInoperable++;
+            }
+        }
+
+        return ((double)totalInoperable / totalWeapons) >= 0.5;
+    }
 }

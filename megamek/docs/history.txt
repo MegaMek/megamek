@@ -20,6 +20,7 @@ v0.35.28-dev (SVN)
 + Super-Heavy Combat vehicles (dual-turret ones won't work in the mechdisplay)
 + externalID not called as string in server methods
 + Bug 3479750: Jump Booster Bug with Face Change Walk/Run
++ Patch 3476808: damage level flag fix
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

@@ -51,6 +51,9 @@ public class BotGeometry {
                 return false;
             }
             CoordFacingCombo c=(CoordFacingCombo)o;
+            if (c == null) {
+                return false;
+            }
             if(!coords.equals(c.coords)) {
                 return false;
             }

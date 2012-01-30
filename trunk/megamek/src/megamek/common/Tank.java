@@ -967,13 +967,15 @@ public class Tank extends Entity {
                 continue;
             }
 
-            bvText.append(startColumn);
-            bvText.append(etype.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD)))) {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
                 bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(endRow);
                 dEquipmentBV += etype.getBV(this);
                 WeaponType wtype = (WeaponType)etype;
                 if (wtype.hasFlag(WeaponType.F_AMS) && (wtype.getAmmoType() == AmmoType.T_AMS)) {
@@ -987,14 +989,19 @@ public class Tank extends Entity {
                     || etype.hasFlag(MiscType.F_CHAFF_POD) || etype.hasFlag(MiscType.F_BAP))) || etype.hasFlag(MiscType.F_MINESWEEPER)) {
                 MiscType mtype = (MiscType) etype;
                 double bv = mtype.getBV(this, mounted.getLocation());
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
                 bvText.append(bv);
                 dEquipmentBV += bv;
+                bvText.append(endColumn);
+                bvText.append(endRow);
             }
-            bvText.append(endColumn);
-            bvText.append(endRow);
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append(endColumn);
+            bvText.append(endRow);
         }
         if (amsAmmoBV > 0) {
             bvText.append(startRow);
@@ -1079,12 +1086,12 @@ public class Tank extends Entity {
         bvText.append(endRow);
         bvText.append(startRow);
         bvText.append(startColumn);
-        bvText.append("x Target Movement modifer");
+        bvText.append("x Target Movement modifier");
         bvText.append(endColumn);
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), this instanceof VTOL, this instanceof VTOL).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), this instanceof VTOL, this instanceof VTOL).getValue();
         // for the future, when we implement jumping tanks
-        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false).getValue();
+        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false).getValue();
         if (hasStealth()) {
             tmmRan += 2;
             tmmJumped += 2;

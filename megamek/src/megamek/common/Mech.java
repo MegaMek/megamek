@@ -6569,77 +6569,81 @@ public abstract class Mech extends Entity {
         if (isLocationBad(loc)) {
             return toReturn;
         }
-        if (hasSystem(SYSTEM_LIFE_SUPPORT, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
+        if(getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
+        	toReturn += "BREACH";
+        	first = false;
+        }
+        if (hasSystem(SYSTEM_LIFE_SUPPORT, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Life Spt.";
             first = false;
         }
-        if (hasSystem(SYSTEM_SENSORS, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0)) {
+        if (hasSystem(SYSTEM_SENSORS, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Sensors";
             first = false;
         }
-        if (hasSystem(SYSTEM_COCKPIT, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT, loc) > 0)) {
+        if (hasSystem(SYSTEM_COCKPIT, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Cockpit";
             first = false;
         }
-        if (hasSystem(ACTUATOR_SHOULDER, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
+        if (hasSystem(ACTUATOR_SHOULDER, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_SHOULDER, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Shoulder";
             first = false;
         }
-        if (hasSystem(ACTUATOR_UPPER_ARM, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0)) {
+        if (hasSystem(ACTUATOR_UPPER_ARM, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_ARM, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Upper Arm";
             first = false;
         }
-        if (hasSystem(ACTUATOR_LOWER_ARM, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0)) {
+        if (hasSystem(ACTUATOR_LOWER_ARM, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_ARM, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Lower Arm";
             first = false;
         }
-        if (hasSystem(ACTUATOR_HAND, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0)) {
+        if (hasSystem(ACTUATOR_HAND, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HAND, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Hand";
             first = false;
         }
-        if (hasSystem(ACTUATOR_HIP, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0)) {
+        if (hasSystem(ACTUATOR_HIP, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Hip";
             first = false;
         }
-        if (hasSystem(ACTUATOR_UPPER_LEG, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0)) {
+        if (hasSystem(ACTUATOR_UPPER_LEG, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Upper Leg";
             first = false;
         }
-        if (hasSystem(ACTUATOR_LOWER_LEG, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0)) {
+        if (hasSystem(ACTUATOR_LOWER_LEG, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Lower Leg";
             first = false;
         }
-        if (hasSystem(ACTUATOR_FOOT, loc) && (getHitCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0)) {
+        if (hasSystem(ACTUATOR_FOOT, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
             }

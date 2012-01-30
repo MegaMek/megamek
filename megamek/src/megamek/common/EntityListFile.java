@@ -173,6 +173,10 @@ public class EntityListFile {
                     thisLoc.append("\" type=\"Rear\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
+                if(entity.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
+                    thisLoc.append("         <breached/>");
+                    thisLoc.append(CommonConstants.NL);
+                }
             }
 
             // Walk through the slots in this location.

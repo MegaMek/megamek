@@ -2169,7 +2169,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *            the status to set
      */
     public void setLocationStatus(int loc, int status) {
-        if (exposure[loc] > ILocationExposureStatus.BREACHED) { // can't change
+        setLocationStatus(loc, status, false);
+    }
+    
+    /**
+     * sets location exposure
+     *
+     * @param loc
+     *            the location who's exposure is to be set
+     * @param status
+     *            the status to set
+     * @param allowChange
+     * 			  allow change of breached locations
+     */
+    public void setLocationStatus(int loc, int status, boolean allowChange) {
+        if (allowChange || exposure[loc] > ILocationExposureStatus.BREACHED) { // can't change
             // BREACHED
             // status
             exposure[loc] = status;
@@ -3045,6 +3059,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return hits;
     }
 
+    /**
+     * Number of slots damaged (but not breached) in a location
+     */
+    public int getDamagedCriticals(int type, int index, int loc) {
+        int hits = 0;
+        int numCrits = getNumberOfCriticals(loc);
+        for (int i = 0; i < numCrits; i++) {
+            CriticalSlot ccs = getCritical(loc, i);
+
+            if ((ccs != null) && (ccs.getType() == type) && (ccs.getIndex() == index)) {
+                if (ccs.isDamaged()) {
+                    hits++;
+                }
+            }
+        }
+        return hits;
+    }
+    
     /**
      * Number of slots doomed, missing or destroyed in a location
      */

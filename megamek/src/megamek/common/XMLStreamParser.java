@@ -119,6 +119,23 @@ public class XMLStreamParser implements XMLResponder {
             destroyLocation(en, en.getDependentLocation(loc));
         }
     }
+    
+    private void breachLocation(Entity en, int loc) {
+    	 // equipment marked breached
+        for (Mounted mounted : entity.getEquipment()) {
+            if (mounted.getLocation() == loc) {
+                mounted.setBreached(true);
+            }
+        }
+        // all critical slots set as breached
+        for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+            final CriticalSlot cs = entity.getCritical(loc, i);
+            if (cs != null) {
+                cs.setBreached(true);
+            }
+        }     
+        entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
+    }
 
     // Public and Protected constants, constructors, and methods.
 
@@ -144,6 +161,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String AEROCRIT = "acriticals";
     public static final String TANKCRIT = "tcriticals";
     public static final String STABILIZER = "stabilizer";
+    public static final String BREACH = "breached";
 
 
     /**
@@ -994,6 +1012,23 @@ public class XMLStreamParser implements XMLResponder {
                     }
                 } // End have-required-fields
             } // End ready-for-armor
+        } else if (name.equals(BREACH)) {
+
+            // Are we in the outside of an Entity?
+            if (entity == null) {
+                warning.append("Found breach outside of an Entity.\n");
+            }
+
+            // Are we in the outside of parsing an Entity's location?
+            else if (loc == Entity.LOC_NONE) {
+                warning
+                        .append("Found breach while outside of a location.\n");
+            }
+
+            // Handle the location.
+            else {
+            	breachLocation(entity, loc);
+            }
         } else if (name.equals(STABILIZER)) {
 
             // Are we in the outside of an Entity?

@@ -2739,7 +2739,14 @@ public class Tank extends Entity {
     public String getLocationDamage(int loc) {
         String toReturn = "";
         boolean first = true;
+        if(getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
+        	toReturn += "BREACH";
+        	first = false;
+        }
         if (isTurretLocked(loc)) {
+        	if (!first) {
+                toReturn += ", ";
+            }
             toReturn += "Locked";
             first = false;
         }

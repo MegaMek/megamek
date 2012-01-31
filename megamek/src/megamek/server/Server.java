@@ -16263,7 +16263,7 @@ public class Server implements Runnable {
             // no damage against armor of BAR rating >=5
             if ((te.getBARRating(hit.getLocation()) >= 5) && (te.getArmor(hit.getLocation()) > 0)) {
                 damage = 0;
-                r = new Report(6065);
+                r = new Report(6063);
                 r.subject = te_n;
                 r.indent(2);
                 vDesc.add(r);
@@ -16375,7 +16375,6 @@ public class Server implements Runnable {
                 r = new Report(6065);
                 r.subject = te_n;
                 r.indent(2);
-                r.newlines = 0;
                 r.addDesc(te);
                 r.add(damage);
                 if (damageIS) {

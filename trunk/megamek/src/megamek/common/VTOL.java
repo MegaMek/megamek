@@ -128,7 +128,7 @@ public class VTOL extends Tank {
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
+        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
 

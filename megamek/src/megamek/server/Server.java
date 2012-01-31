@@ -25489,7 +25489,8 @@ public class Server implements Runnable {
                                 || (entity.getMovementMode() == EntityMovementMode.WHEELED) || ((entity
                                 .getMovementMode() == EntityMovementMode.HOVER) && entity.isImmobile()))
                         && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0)
-                        && (entity.getElevation() < 0)) {
+                        && !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                        && !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL))) {
                     return true;
                 }
                 return false;

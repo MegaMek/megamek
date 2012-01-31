@@ -25,6 +25,7 @@ v0.35.28-dev (SVN)
 + track breach status in XML input/output plus some helper methods for breaches
 + Bug: Tank BV ignoring defensive movement factor
 + Bug: Engine with rating 310 has wrong weight
++ Bug: immobile hovers should sink over water when immobilized
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

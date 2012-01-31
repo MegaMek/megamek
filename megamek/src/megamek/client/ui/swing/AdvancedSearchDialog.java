@@ -105,18 +105,18 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener {
 
         populateWeaponsAndEquipmentChoices();
 
-        cWalk.setSelectedIndex(0);
+        //cWalk.setSelectedIndex(0);
         tWalk.setText("");
-        cJump.setSelectedIndex(0);
+        //cJump.setSelectedIndex(0);
         tJump.setText("");
-        cArmor.setSelectedIndex(0);
+        //cArmor.setSelectedIndex(0);
         tWeapons1.setText("");
-        cWeapons1.setSelectedIndex(0);
-        cOrAnd.setSelectedIndex(0);
+        //cWeapons1.setSelectedIndex(0);
+        //cOrAnd.setSelectedIndex(0);
         tWeapons2.setText("");
-        cWeapons2.setSelectedIndex(0);
+        //cWeapons2.setSelectedIndex(0);
         chkEquipment.setSelected(false);
-        cEquipment.setSelectedIndex(0);
+        //cEquipment.setSelectedIndex(0);
 
         // layout
         setLayout(new GridLayout(10, 1));

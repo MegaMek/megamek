@@ -40,7 +40,7 @@ public class Engine implements Serializable {
 
             8.5f, 9.0f, 9.5f, 10.0f, 10.0f, 10.5f, 11.0f, 11.5f, 12.0f, 12.5f,
             13.0f, 13.5f, 14.0f, 14.5f, 15.5f, 16.0f, 16.5f, 17.5f, 18.0f,
-            19.0f, 19.5f, 10.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
+            19.0f, 19.5f, 20.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
             28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
             46.0f, 49.0f, 52.5f,
 
@@ -617,7 +617,7 @@ public class Engine implements Serializable {
     public int getBaseChassisHeatSinks() {
         return Math.min(integralHeatSinkCapacity(), baseChassisHeatSinks);
     }
-    
+
     public int getFlags() {
     	return engineFlags;
     }

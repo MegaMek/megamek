@@ -219,7 +219,7 @@ public class TestMech extends TestEntity {
     public boolean checkMiscSpreadAllocation(Entity entity, Mounted mounted, StringBuffer buff) {
         MiscType mt = (MiscType) mounted.getType();
         int eNum = entity.getEquipmentNum(mounted);
-        if (mt.hasFlag(MiscType.F_STEALTH)) {
+        if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
             // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LARM) != 2) {
                 buff.append("incorrect number of stealth crits in left arm\n");

@@ -150,7 +150,7 @@ public class ChatterBox implements KeyListener {
     }
 
     /**
-     * Returns the "box" component with all teh stuff
+     * Returns the "box" component with all the stuff
      */
     public JComponent getComponent() {
         return chatPanel;

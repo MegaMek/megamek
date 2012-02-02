@@ -265,10 +265,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX()) || (x + w > virtualBounds.getMaxX())) {
+            if ((x < virtualBounds.getMinX()) || ((x + w) > virtualBounds.getMaxX())) {
                 x = 0;
             }
-            if ((y < virtualBounds.getMinY()) || (y + h > virtualBounds.getMaxY())) {
+            if ((y < virtualBounds.getMinY()) || ((y + h) > virtualBounds.getMaxY())) {
                 y = 0;
             }
             if (w > virtualBounds.getWidth()) {
@@ -361,11 +361,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
         w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if (x + w > screenSize.width) {
+        if ((x + w) > screenSize.width) {
             x = 0;
             w = Math.min(w, screenSize.width);
         }
-        if (y + h > screenSize.height) {
+        if ((y + h) > screenSize.height) {
             y = 0;
             h = Math.min(h, screenSize.height);
         }
@@ -384,11 +384,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         y = GUIPreferences.getInstance().getRulerPosY();
         h = GUIPreferences.getInstance().getRulerSizeHeight();
         w = GUIPreferences.getInstance().getRulerSizeWidth();
-        if (x + w > screenSize.width) {
+        if ((x + w) > screenSize.width) {
             x = 0;
             w = Math.min(w, screenSize.width);
         }
-        if (y + h > screenSize.height) {
+        if ((y + h) > screenSize.height) {
             y = 0;
             h = Math.min(h, screenSize.height);
         }
@@ -781,6 +781,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             case PHASE_MOVEMENT_REPORT:
             case PHASE_OFFBOARD_REPORT:
             case PHASE_FIRING_REPORT:
+            case PHASE_PHYSICAL_REPORT:
             case PHASE_END_REPORT:
             case PHASE_VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
@@ -790,6 +791,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 mechW.setVisible(false);
                 break;
             default:
+                break;
         }
 
         cardsMain.show(panMain, mainNames.get(name));
@@ -1502,9 +1504,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         waitD.setSize(250, 130);
         // move to middle of screen
         waitD.setLocation(
-                frame.getSize().width / 2 - waitD.getSize().width / 2, frame
+                (frame.getSize().width / 2) - (waitD.getSize().width / 2), (frame
                         .getSize().height
-                        / 2 - waitD.getSize().height / 2);
+                        / 2) - (waitD.getSize().height / 2));
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

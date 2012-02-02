@@ -1551,6 +1551,49 @@ public class Tank extends Entity {
 
         double finalBV = dbv + obv;
 
+
+        if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+            finalBV *= 0.95;
+            finalBV = Math.round(finalBV);
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total BV * Drone Operating System Modifier");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(obv + dbv);
+            bvText.append(" * ");
+            bvText.append("0.95");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(" = ");
+            bvText.append(finalBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
+            bvText.append("-------------");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Final BV");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append(finalBV);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra BV for semi-guided lrm when TAG in our team
@@ -1559,7 +1602,7 @@ public class Tank extends Entity {
             xbv += getExtraC3BV((int) Math.round(finalBV));
         }
 
-        finalBV = Math.round(dbv + obv + xbv);
+        finalBV = Math.round(finalBV + xbv);
 
         // and then factor in pilot
         double pilotFactor = 1;

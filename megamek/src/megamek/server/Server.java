@@ -9031,7 +9031,6 @@ public class Server implements Runnable {
                     // roll
                     PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                     pilotRoll.append(roll);
-                    // entity.addPilotingModifierForTerrain(pilotRoll, dest);
                     vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, 3, pilotRoll));
                     vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
 
@@ -9083,11 +9082,14 @@ public class Server implements Runnable {
             Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
             if (violation != null) {
                 // target gets displaced, because of low elevation
-                Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
+                Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                 vPhaseReport.addAll(doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation
                         .getId(), 0, "domino effect")));
-                // Update the violating entity's postion on the client.
-                entityUpdate(violation.getId());
+                // Update the violating entity's position on the client.
+                if (!game.getOutOfGameEntitiesVector().contains(violation)) {
+                    entityUpdate(violation.getId());
+                }
+
             }
         }
         return vPhaseReport;
@@ -9146,7 +9148,6 @@ public class Server implements Runnable {
         int oldElev = entity.getElevation();
         // move the entity into the new location gently
         entity.setPosition(dest);
-        entity.setElevation(entity.getElevation() - destHex.surface());
         Building bldg = game.getBoard().getBuildingAt(dest);
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
@@ -13641,6 +13642,17 @@ public class Server implements Runnable {
                 int height = 2 + (game.getBoard().getHex(dest).containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard()
                         .getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
                 addReport(doEntityFall(ae, dest, height, 3, ae.getBasePilotingRoll()));
+                Entity violation = Compute.stackingViolation(game, ae.getId(), dest);
+                if (violation != null) {
+                    // target gets displaced
+                    targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
+                    vPhaseReport.addAll(doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation
+                            .getId(), 0, "domino effect")));
+                    // Update the violating entity's postion on the client.
+                    if (!game.getOutOfGameEntitiesVector().contains(violation)) {
+                        entityUpdate(violation.getId());
+                    }
+                }
             } else {
                 // attacker destroyed
                 // Tanks suffer an ammo/power plant hit.
@@ -13677,17 +13689,6 @@ public class Server implements Runnable {
 
         } else { // Target isn't building.
 
-            // Target entities are pushed away or destroyed.
-            Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
-            if (targetDest != null) {
-                addReport(doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2,
-                        "hit by death from above")));
-            } else {
-                // ack! automatic death! Tanks
-                // suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
-                addReport(destroyEntity(te, "impossible displacement", te instanceof Mech, te instanceof Mech));
-            }
             if (glancing) {
                 damage = (int) Math.floor(damage / 2.0);
             }
@@ -13699,7 +13700,7 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(damage);
             r.add(toHit.getTableDesc());
-            r.newlines = 0;
+            r.indent(2);
             addReport(r);
 
             // work out which locations have spikes
@@ -13761,6 +13762,17 @@ public class Server implements Runnable {
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                         VTOL.CRIT_ROTOR_DESTROYED), false));
             }
+            // Target entities are pushed away or destroyed.
+            Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
+            if (targetDest != null) {
+                addReport(doEntityDisplacement(te, dest, targetDest, new PilotingRollData(te.getId(), 2,
+                        "hit by death from above")));
+            } else {
+                // ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                addReport(destroyEntity(te, "impossible displacement", te instanceof Mech, te instanceof Mech));
+            }
         }
 
         if (glancing) {
@@ -13778,7 +13790,7 @@ public class Server implements Runnable {
         r = new Report(4240);
         r.subject = ae.getId();
         r.add(damageTaken);
-        r.newlines = 0;
+        r.indent(2);
         addReport(r);
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
@@ -16724,9 +16736,7 @@ public class Server implements Runnable {
                     }
 
                     r.subject = te_n;
-                    if (spotlightHittable) {
-                        r.indent(3);
-                    }
+                    r.indent(3);
                     r.add(te.getArmor(hit));
                     vDesc.addElement(r);
 
@@ -16757,9 +16767,7 @@ public class Server implements Runnable {
                     r = new Report(6090);
                     r.subject = te_n;
                     r.newlines = 0;
-                    if (spotlightHittable) {
-                        r.indent(3);
-                    }
+                    r.indent(3);
                     vDesc.addElement(r);
                     if (te instanceof GunEmplacement) {
                         // gun emplacements have no internal,
@@ -16780,11 +16788,9 @@ public class Server implements Runnable {
                 if (te.hasBARArmor(hit.getLocation())) {
                     if (origDamage > te.getBARRating(hit.getLocation())) {
                         if (te.hasArmoredChassis()) {
-                            Report.addNewline(vDesc);
                             // crit roll with -1 mod
                             vDesc.addAll(criticalEntity(te, hit.getLocation(), -1 + critBonus));
                         } else {
-                            Report.addNewline(vDesc);
                             vDesc.addAll(criticalEntity(te, hit.getLocation(), critBonus));
                         }
                     }
@@ -19708,7 +19714,7 @@ public class Server implements Runnable {
         // roll the critical
         r = new Report(6305);
         r.subject = t.getId();
-        r.indent(2);
+        r.indent(3);
         r.add(t.getLocationAbbr(loc));
         r.newlines = 0;
         vDesc.add(r);
@@ -19899,7 +19905,7 @@ public class Server implements Runnable {
             }
             r = new Report(6305);
             r.subject = en.getId();
-            r.indent(2);
+            r.indent(3);
             r.add(en.getLocationAbbr(loc));
             r.newlines = 0;
             vDesc.addElement(r);
@@ -25775,8 +25781,6 @@ public class Server implements Runnable {
     private Vector<Report> vehicleMotiveDamage(Tank te, int modifier, boolean noroll, int damagetype, boolean jumpDamage) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
-        r = new Report(1210, Report.PUBLIC);
-        vDesc.add(r);
         switch (te.getMovementMode()) {
         case HOVER:
         case HYDROFOIL:

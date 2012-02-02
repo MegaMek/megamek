@@ -41,10 +41,6 @@ public class VTOL extends Tank {
     public static final int CRIT_ROTOR_DESTROYED = 18;
     public static final int CRIT_FLIGHT_STABILIZER = 19;
 
-    // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS =
-        { 25, 25, 25, 25, 25, 25, 25 };
-
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;

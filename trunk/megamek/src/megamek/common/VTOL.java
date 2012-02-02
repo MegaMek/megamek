@@ -27,8 +27,7 @@ public class VTOL extends Tank {
      */
     private static final long serialVersionUID = -7406911547399249173L;
 
-    public static final int LOC_ROTOR = 5; // will this cause problems w/r/t
-                                            // turrets?
+    public static final int LOC_ROTOR = 5;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
             "RO" };
@@ -42,9 +41,9 @@ public class VTOL extends Tank {
     public static final int CRIT_ROTOR_DESTROYED = 18;
     public static final int CRIT_FLIGHT_STABILIZER = 19;
 
-    public VTOL() {
-        super();
-    }
+    // tanks have no critical slot limitations
+    private static final int[] NUM_OF_SLOTS =
+        { 25, 25, 25, 25, 25, 25, 25 };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -453,13 +452,14 @@ public class VTOL extends Tank {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
         int j = getOriginalWalkMP();
-        if(engineHit) {
-        	return 0;
+        if (engineHit) {
+            return 0;
         }
-        if(isLocationBad(LOC_ROTOR)) {
-        	return 0;
+        if (isLocationBad(LOC_ROTOR)) {
+            return 0;
         }
         j = Math.max(0, j - motiveDamage);
         j = Math.max(0, j - getCargoMpReduction());
@@ -496,6 +496,11 @@ public class VTOL extends Tank {
     @Override
     public boolean isSuperHeavy() {
         return getWeight() > 30;
+    }
+
+    @Override
+    public int locations() {
+        return 6;
     }
 
 }

@@ -230,7 +230,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        if ((tank instanceof VTOL) || (tank instanceof SupportTank)) {
+        if ((tank instanceof SupportTank)) {
             return true;
         } // don't bother checking, won't work. Needs fixing (new class
             // needed.)
@@ -257,19 +257,23 @@ public class TestTank extends TestEntity {
         }
         for (Mounted m : tank.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
-                if (tank instanceof VTOL) {
-                    if (m.getLocation() != Tank.LOC_REAR) {
-                        buff.append("combat vehicle escape pod must be placed in rear");
-                        correct = false;
-                    }
-                } else {
-                    if (m.getLocation() != Tank.LOC_REAR) {
-                        buff.append("combat vehicle escape pod must be placed in rear");
+                if (m.getLocation() != Tank.LOC_REAR) {
+                    buff.append("combat vehicle escape pod must be placed in rear");
+                    correct = false;
+                }
+            }
+        }
+        if (tank instanceof VTOL) {
+            for (Mounted m : tank.getEquipment()) {
+                if (m.getLocation() == VTOL.LOC_ROTOR) {
+                    if (!((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MAST_MOUNT))) {
+                        buff.append("only mast mount can be mounted in rotor");
                         correct = false;
                     }
                 }
             }
         }
+
         if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
         }

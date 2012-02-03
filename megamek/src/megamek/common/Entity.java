@@ -553,7 +553,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * this returns the external ID.
      * 1/16/2012 - Taharqa: I am changing externalId to a string
-     * so I can use UUIDs in MHQ. It should only require a simple parseInt to be 
+     * so I can use UUIDs in MHQ. It should only require a simple parseInt to be
      * added to it to return an integer for other programs (i.e. MekWars)
      *
      * @return the ID settable by external sources (such as mm.net)
@@ -562,7 +562,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getExternalId() {
     	return Integer.parseInt(externalId);
     }
-     
+
     public String getExternalIdAsString() {
         return externalId;
     }
@@ -576,9 +576,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setExternalId(String externalId) {
         this.externalId = externalId;
     }
-    
+
     public void setExternalId(int id) {
-    	this.externalId = Integer.toString(id);
+    	externalId = Integer.toString(id);
     }
 
     /**
@@ -2171,7 +2171,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void setLocationStatus(int loc, int status) {
         setLocationStatus(loc, status, false);
     }
-    
+
     /**
      * sets location exposure
      *
@@ -2183,7 +2183,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * 			  allow change of breached locations
      */
     public void setLocationStatus(int loc, int status, boolean allowChange) {
-        if (allowChange || exposure[loc] > ILocationExposureStatus.BREACHED) { // can't change
+        if (allowChange || (exposure[loc] > ILocationExposureStatus.BREACHED)) { // can't change
             // BREACHED
             // status
             exposure[loc] = status;
@@ -3076,7 +3076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return hits;
     }
-    
+
     /**
      * Number of slots doomed, missing or destroyed in a location
      */
@@ -8656,7 +8656,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getExtraCommGearTons() {
         int i = 0;
         for (Mounted mounted : miscList) {
-            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+            if (mounted.getType().hasFlag(MiscType.F_COMMUNICATIONS) && !mounted.isInoperable()) {
                 i += mounted.getType().getTonnage(this);
             }
         }
@@ -8714,7 +8714,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getHQIniBonus() {
         int bonus = 0;
         for (Mounted misc : getMisc()) {
-            if (misc.getType().hasFlag(MiscType.F_COMMUNICATIONS) && misc.curMode().equals("Default")) {
+            if (misc.getType().hasFlag(MiscType.F_COMMUNICATIONS) && misc.curMode().equals("Default") && !misc.isInoperable()) {
                 if (getTotalCommGearTons() >= 3) {
                     bonus += 1;
                 }
@@ -8724,7 +8724,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 break;
             }
         }
-
         return bonus;
     }
 

@@ -472,6 +472,9 @@ public final class Player extends TurnOrdered {
         int bonusHQ = 0;
         int bonusMD = 0;
         int bonusQ = 0;
+        if (game.getEntitiesVector() == null) {
+            return 0;
+        }
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption("tacops_mobile_hqs")

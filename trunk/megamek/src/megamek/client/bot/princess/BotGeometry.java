@@ -29,7 +29,10 @@ public class BotGeometry {
      * The combination of a coordinate and a facing
      */
     public static class CoordFacingCombo {
-        CoordFacingCombo() {};
+
+        Coords coords;
+        int facing;
+
         CoordFacingCombo(MovePath p) {
             coords=p.getFinalCoords();
             facing=p.getFinalFacing();
@@ -39,11 +42,11 @@ public class BotGeometry {
             facing=f;
         }
         CoordFacingCombo(Entity e) {
+            if (e == null)
+                return;
             coords=e.getPosition();
             facing=e.getFacing();
         }
-        Coords coords;
-        int facing;
 
         @Override
         public boolean equals(Object o) {
@@ -51,10 +54,7 @@ public class BotGeometry {
                 return false;
             }
             CoordFacingCombo c=(CoordFacingCombo)o;
-            if (c == null) {
-                return false;
-            }
-            if(!coords.equals(c.coords)) {
+            if(coords == null || !coords.equals(c.coords)) {
                 return false;
             }
             if(!(facing==c.facing)) {

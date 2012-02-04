@@ -54,7 +54,12 @@ public class BasicPathRanker extends PathRanker {
     // sacrifice to do one armor point worth of damage
     double hyper_aggression; // how much is it worth to me to get all up in the
     // face of an enemy
-    double herd_mentality; // how much is it worth to me to stay near my buddies   
+    double herd_mentality; // how much is it worth to me to stay near my buddies
+
+    //Fleeing the board
+    double self_preservation; //how closely will I follow the forced withdrawal rules.
+    
+    static HomeEdge defaultHomeEdge;
     
     TreeMap<Integer, Double> best_damage_by_enemies; // the best damage enemies
     // could expect were I not
@@ -70,6 +75,7 @@ public class BasicPathRanker extends PathRanker {
         foolish_bravery = 3.0;
         hyper_aggression = 0.05;
         herd_mentality = 0.01;
+        self_preservation = 30.0;
 
         fall_shame = Double.valueOf(props.getProperty("fall_shame"));
     //    blind_optimism = Double.valueOf(props.getProperty("blind_optimism"));
@@ -81,7 +87,15 @@ public class BasicPathRanker extends PathRanker {
         herd_mentality = Double.valueOf(props.getProperty("herd_mentality"));
 
         best_damage_by_enemies = new TreeMap<Integer, Double>();
-    }            
+        
+        self_preservation = Double.valueOf(props.getProperty("self_preservation"));
+        
+        defaultHomeEdge = HomeEdge.getHomeEdge(Integer.valueOf(props.getProperty("home_edge")));
+    }
+
+    public static HomeEdge getDefaultHomeEdge() {
+        return defaultHomeEdge;
+    }
     
     class EntityEvaluationResponse {
         public EntityEvaluationResponse() {
@@ -279,11 +293,12 @@ public class BasicPathRanker extends PathRanker {
         }
         
         //Should I be trying to withdraw?
-        if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))||(botbase.should_flee)) {            
-            int distance_to_edge=distanceToClosestEdge(p.getFinalCoords(),game);
+        if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
+                ||(botbase.should_flee)) {
+            int distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
             //TODO this number should not be hard coded, but instead be modifiable, 
             //if it's small enough, the unit should do more of a fighting withdrawal
-            utility-=30*distance_to_edge;
+            utility-=self_preservation*distance_to_edge;
         }
 
         return utility;
@@ -354,5 +369,70 @@ public class BasicPathRanker extends PathRanker {
         if(position.y<minimum) minimum=position.y;
         if(height-position.y<minimum) minimum=height-position.y;
         return minimum;
+    }
+
+    /**
+     * Returns distance to the unit's home edge.
+     * Gives the distance to the closest edge
+     *
+     * @param position Final coordinates of the proposed move.
+     * @param homeEdge Unit's home edge.
+     * @param game
+     * @return The distance to the unit's home edge.
+     */
+    public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+        Coords edgeCoords;
+        int boardHeight = game.getBoard().getHeight();
+        int boardWidth = game.getBoard().getWidth();
+        String msg = "Getting distance to home edge: ";
+        if (HomeEdge.NORTH.equals(homeEdge)) {
+            msg += "North";
+            edgeCoords = new Coords(boardWidth/2, 0);
+        } else if (HomeEdge.SOUTH.equals(homeEdge)) {
+            msg += "South";
+            edgeCoords = new Coords(boardWidth/2, boardHeight);
+        } else if (HomeEdge.WEST.equals(homeEdge)) {
+            msg += "West";
+            edgeCoords = new Coords(0, boardHeight/2);
+        } else if (HomeEdge.EAST.equals(homeEdge)) {
+            msg += "East";
+            edgeCoords = new Coords(boardWidth, boardHeight/2);
+        } else {
+            msg += "Default";
+            System.err.println("Invalid home edge.  Defaulting to NORTH.");
+            edgeCoords = new Coords(boardWidth/2, 0);
+        }
+
+        System.err.println(msg);
+        return edgeCoords.distance(position);
+    }
+
+    /**
+     * Enum denoting the available home edges for a bot.
+     */
+     public enum HomeEdge {
+         NORTH(0),
+         SOUTH(1),
+         WEST(2),
+         EAST(3);
+
+         private int index;
+
+         HomeEdge(int index) {
+            this.index = index;
+         }
+
+         public int getIndex() {
+            return index;
+         }
+
+         public static HomeEdge getHomeEdge(int index) {
+            for (HomeEdge he : values()) {
+                if (he.getIndex() == index) {
+                    return he;
+                }
+            }
+            return null;
+         }
     }
 }

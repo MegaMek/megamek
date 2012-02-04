@@ -173,4 +173,9 @@ public class MechWarrior extends Infantry {
     public boolean hasLanded(){
         return landed;
     }
+
+    @Override
+    public boolean isCrippled() {
+        return true; //Ejected mchwarriors should always attempt to flee according to Forced Withdrawal.
+    }
 }

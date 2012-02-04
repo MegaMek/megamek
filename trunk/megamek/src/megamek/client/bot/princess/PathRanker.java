@@ -14,6 +14,8 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 
 import megamek.common.Coords;
@@ -83,13 +85,15 @@ public class PathRanker {
         if(ps.size()==0) {
             return null;
         }
-        RankedPath best=ps.get(0);
-        for(RankedPath p:ps) {
-            if(p.rank>best.rank) {
-                best=p;
-            }
-        }
-        return best;
+        return Collections.max(ps);
+        
+//        RankedPath best=ps.get(0);
+//        for(RankedPath p:ps) {
+//            if(p.rank>best.rank) {
+//                best=p;
+//            }
+//        }
+//        return best;
     }
 
 

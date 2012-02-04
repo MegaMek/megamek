@@ -13,9 +13,11 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -104,9 +106,9 @@ public class Precognition implements Runnable {
             if (!e.isDeployed() || e.isOffBoard()) {
                 continue;
             }
-            if ((!path_enumerator.last_known_location.containsKey(e.getId()))
+            if ((e != null) && ((!path_enumerator.last_known_location.containsKey(e.getId()))
                     || (!path_enumerator.last_known_location.get(e.getId())
-                            .equals(new CoordFacingCombo(e)))) {
+                            .equals(new CoordFacingCombo(e))))) {
                 // System.err.println("entity "+e.getDisplayName()+" not where I left it");
                 // if(path_enumerator.last_known_location.containsKey(e.getId()))
                 // System.err.println("  I thought it was at "+path_enumerator.last_known_location.get(e.getId()).coords+" but its actually at "+e.getPosition());
@@ -117,12 +119,12 @@ public class Precognition implements Runnable {
         }
         while (!dirty_units.isEmpty()) {
             Integer entity_id = dirty_units.pollFirst();
-            System.err.println("recalculating paths for "
-                    + game.getEntity(entity_id).getDisplayName());
-            path_enumerator
-                    .recalculateMovesFor(game, game.getEntity(entity_id));
-            System.err.println("finished recalculating paths for "
-                    + game.getEntity(entity_id).getDisplayName());
+            Entity e = game.getEntity(entity_id);
+            if (e != null) {
+                System.err.println("recalculating paths for " + e.getDisplayName());
+                path_enumerator.recalculateMovesFor(game, e);
+                System.err.println("finished recalculating paths for " + e.getDisplayName());
+            }
         }
         System.err.println(System.currentTimeMillis()
                 + ": insureUpToDate stopped");
@@ -137,13 +139,12 @@ public class Precognition implements Runnable {
             } else if (wait_when_done) {
                 wait_for_unpause(); // paused for a reason
             } else if (!dirty_units.isEmpty()) {
-                Integer entity_id = dirty_units.pollFirst();
-                System.err.println("recalculating paths for "
-                        + game.getEntity(entity_id).getDisplayName());
-                path_enumerator.recalculateMovesFor(game,
-                        game.getEntity(entity_id));
-                System.err.println("finished recalculating paths for "
-                        + game.getEntity(entity_id).getDisplayName());
+                Entity e = game.getEntity(dirty_units.pollFirst());
+                if (e != null) {
+                    System.err.println("recalculating paths for " + e.getDisplayName());
+                    path_enumerator.recalculateMovesFor(game, e);
+                    System.err.println("finished recalculating paths for " + e.getDisplayName());
+                }
             } else {
                 wait_for_unpause(); // idling because there's nothing to do
             }
@@ -252,38 +253,48 @@ public class Precognition implements Runnable {
                     .getEntitiesWithLocation(game.getEntity(id).getPosition(),
                             true);
             if (path_enumerator.last_known_location.containsKey(id)) {
-                if (game.getEntity(id).isSelectableThisTurn()) {
+                if ((game.getEntity(id) != null) && game.getEntity(id).isSelectableThisTurn()) {
                     to_dirty.addAll(path_enumerator.getEntitiesWithLocation(
                             path_enumerator.last_known_location.get(id).coords,
                             true));
                 }
             }
             // no need to dirty units that aren't selectable this turn
-            for (Iterator<Integer> it = to_dirty.iterator(); it.hasNext();) {
-                if ((!game.getEntity(it.next()).isSelectableThisTurn())
+            List<Integer> toRemove = new ArrayList<Integer>();
+            for (Integer index : to_dirty) {
+                if ((game.getEntity(index) == null) || (!game.getEntity(index).isSelectableThisTurn())
                         && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    it.remove();
+                    toRemove.add(index);
                 }
             }
+            for (Integer i : toRemove) {
+                to_dirty.remove(i);
+            }
+
             if (to_dirty.size() != 0) {
-                System.err
-                        .println("the following units have become dirty as a result of a nearby move of "
-                                + game.getEntity(id).getDisplayName());
-                for (Iterator<Integer> ondent = to_dirty.descendingIterator(); ondent
-                        .hasNext();) {
-                    Integer odid = ondent.next();
-                    System.err.println("  "
-                            + game.getEntity(odid).getDisplayName());
+                String msg = "The following units have become dirty";
+                if (game.getEntity(id) != null) {
+                    msg += " as a result of a nearby move of " + game.getEntity(id).getDisplayName();
+                }
+                System.err.println(msg);
+                
+                Iterator<Integer> dirtyIterator = to_dirty.descendingIterator();
+                while (dirtyIterator.hasNext()) {
+                    Integer i = dirtyIterator.next();
+                    Entity e = game.getEntity(i);
+                    if (e != null)
+                        System.err.println("  " + e.getDisplayName());
                 }
             }
             dirty_units.addAll(to_dirty);
         }
-        if (game.getEntity(id).isSelectableThisTurn()
+        Entity e = game.getEntity(id);
+        if ((e != null) && (e.isSelectableThisTurn())
                 || (game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
             dirty_units.add(id);
-        } else {
+        } else if (e != null) {
             path_enumerator.last_known_location.put(id, new CoordFacingCombo(
-                    game.getEntity(id)));
+                    e));
         }
 
     }

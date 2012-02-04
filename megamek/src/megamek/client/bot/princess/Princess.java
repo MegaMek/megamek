@@ -61,6 +61,10 @@ public class Princess extends BotClient {
      */
     public boolean forced_withdrawal = true;
     /*
+     * Which direction should the bot flee.  Defaults to North.
+     */
+    public BasicPathRanker.HomeEdge homeEdge = BasicPathRanker.getDefaultHomeEdge();
+    /*
      * Should the bot be running away
      */
     public boolean should_flee = false;
@@ -195,9 +199,9 @@ public class Princess extends BotClient {
         }
 
         MovePath ret = continueMovementFor(moving_entity); // move it
-        if (verbose_errorlog) {
+//        if (verbose_errorlog) {
             System.err.println("calculateMoveTurn returning");
-        }
+//        }
         return ret;
     }
 
@@ -295,10 +299,28 @@ public class Princess extends BotClient {
             sendChat(entity.getDisplayName()
                     + " is crippled and withdrawing.");
         }
+
+         //If this entity must withdraw, is on its home edge and is able to flee the board, do so.
+         if (entity.canFlee() && (forced_withdrawal || should_flee) &&
+            (BasicPathRanker.distanceToHomeEdge(entity.getPosition(), homeEdge, game) <= 0)) {
+            MovePath mp = new MovePath(game, entity);
+            mp.addStep(MovePath.MoveStepType.FLEE);
+            return mp;
+        }
+
+        //If this entity is immobile as well as crippled and conscious, eject the pilot.
+        if (entity.isImmobile() && entity.isCrippled() && !entity.getCrew().isUnconscious()) {
+            String msg = entity.getDisplayName() + " is immobile.  Abandoning unit.";
+            System.err.println(msg);
+            sendChat(msg);
+            MovePath mp = new MovePath(game, entity);
+            mp.addStep(MovePath.MoveStepType.EJECT);
+            return mp;
+        }
+
         // precognition.path_enumerator.debugPrintContents();
 
-        ArrayList<MovePath> paths = precognition.path_enumerator.unit_paths
-                .get(entity.getId());
+        ArrayList<MovePath> paths = precognition.path_enumerator.unit_paths.get(entity.getId());
 
         if (paths == null) {
             System.err.println("Warning: no valid paths found");
@@ -335,7 +357,8 @@ public class Princess extends BotClient {
                 + Long.toString(stop_time - start_time) + " milliseconds");
         precognition.unpause();
         RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
-        // bestpath.path.printAllSteps();
+        System.err.println("Best Path: " + bestpath.path.toString() + "  Rank: " + bestpath.rank);
+        bestpath.path.printAllSteps();
         return bestpath.path;
     }
 

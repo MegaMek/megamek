@@ -13,11 +13,12 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,6 +41,7 @@ import javax.swing.ListSelectionModel;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.BasicPathRanker;
 import megamek.client.bot.princess.Princess;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
@@ -50,6 +52,9 @@ import megamek.common.Coords;
  */
 public class BotConfigDialog extends JDialog implements ActionListener,
         KeyListener {
+
+    private static final String PRINCESS_PANEL = "princess_config";
+    private static final String TESTBOT_PANEL = "testbot_config";
 
     /**
      *
@@ -66,6 +71,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
     JList princess_targets_list;
     DefaultListModel princess_targets_list_model = new DefaultListModel();
     JCheckBox princess_forcedwithdrawal;
+    JComboBox princess_homeedge; //The board edge to be used in a forced withdrawal.
 
     private JTextField namefield;
     private boolean custom_name = false; // did user not use default name?
@@ -79,73 +85,160 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         super(parent, "Configure Bot", true);
         super.setResizable(false);
 
-        setLocationRelativeTo(parent);
+//        setLocationRelativeTo(parent);
 
+        setLayout(new BorderLayout());
+        add(switchBotPanel(), BorderLayout.NORTH);
+        botspecificcards = new JPanel(new CardLayout());
+        botspecificcards.add(new JPanel(), TESTBOT_PANEL);
+        botspecificcards.add(princessPanel(), PRINCESS_PANEL);
+        add(botspecificcards, BorderLayout.CENTER);
         butOK.addActionListener(this);
 
+        add(okayPanel(), BorderLayout.SOUTH);
+
+        validate();
+        pack();
+        setLocationRelativeTo(null);
+    }
+
+    private JPanel switchBotPanel() {
+        JPanel panel = new JPanel(new FlowLayout());
+        testbot_radiobutton = new JRadioButton("Test Bot");
         testbot_radiobutton = new JRadioButton("TestBot");
         testbot_radiobutton.addActionListener(this);
+        princess_radiobutton = new JRadioButton("Princess Bot");
+        princess_radiobutton.addActionListener(this);
         testbot_radiobutton.setSelected(true);
         selectbot_group.add(testbot_radiobutton);
         princess_radiobutton = new JRadioButton("Princess");
         princess_radiobutton.addActionListener(this);
         selectbot_group.add(princess_radiobutton);
+        testbot_radiobutton.setSelected(true);
+        panel.add(testbot_radiobutton);
+        panel.add(princess_radiobutton);
+        return panel;
+    }
 
+    private JPanel okayPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
+
+        JLabel nameLabel = new JLabel("Name: ");
+        panel.add(nameLabel);
         JPanel namepanel = new JPanel(new FlowLayout());
         namepanel.add(new JLabel("Name: "));
         namefield = new JTextField();
         namefield.setColumns(12);
         namefield.setText("TestBot");
+        namefield.setToolTipText("The name of the bot player.");
         namefield.addKeyListener(this);
+        panel.add(namefield);
         namepanel.add(namefield);
 
+        butOK.addActionListener(this);
+        panel.add(butOK);
         JPanel testbotconfigcard = new JPanel();
 
-        // JPanel princessconfigcard=new JPanel(new FlowLayout());
-        JPanel princessconfigcard = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridy = 0;
-        princessconfigcard.add(new JLabel("Verbosity"), c);
-        String[] verbosity_options = { "0", "1" };
-        princess_verbosity = new JComboBox(verbosity_options);
-        princess_verbosity.setSelectedIndex(1);
-        princessconfigcard.add(princess_verbosity, c);
-        c.gridy = 1;
-        princessconfigcard.add(new JLabel("Strategic Targets"), c);
-        princess_target_hex_num_x = new JTextField();
-        princess_target_hex_num_x.setColumns(4);
-        c.gridy = 2;
-        princessconfigcard.add(princess_target_hex_num_x, c);
-        princess_addtarget_button = new JButton("Add Strategic Target");
-        princess_addtarget_button.addActionListener(this);
-        princessconfigcard.add(princess_addtarget_button, c);
-        princess_targets_list = new JList(princess_targets_list_model);
-        princess_targets_list
-                .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        princess_targets_list.setLayoutOrientation(JList.VERTICAL);
-        c.gridy = 3;
-        JScrollPane ptlscroller = new JScrollPane(princess_targets_list);
-        ptlscroller.setAlignmentX(LEFT_ALIGNMENT);
-        princessconfigcard.add(ptlscroller, c);
+        return panel;
+    }
+
+    private JPanel princessPanel() {
+
+        //Setup layout.
+        JPanel panel = new JPanel();
+        GridBagConstraints constraints = new GridBagConstraints();
+        GridBagLayout layout = new GridBagLayout();
+        panel.setLayout(layout);
+
+        //Initialize constraints.
+        constraints.gridheight = 1;
+        constraints.gridwidth = 1;
+        constraints.insets = new Insets(2,2,2,2);
+        constraints.anchor = GridBagConstraints.NORTHWEST;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+
+        //Row 1 Column 1
+        constraints.gridy = 0;
+        constraints.gridx = 0;
+        JLabel verbosityLabel = new JLabel("Verbosity:");
+        layout.setConstraints(verbosityLabel, constraints);
+        panel.add(verbosityLabel);
+
+        //Row 1 Column 2;
+        constraints.gridx++;
+        princess_verbosity = new JComboBox(new String[]{"0", "1"});
+        princess_verbosity.setToolTipText("A value of '0' turns verbose logging off.  '1' turns it on.");
+        princess_verbosity.setSelectedIndex(0);
+        layout.setConstraints(princess_verbosity, constraints);
+        panel.add(princess_verbosity);
+
+        //Row 2 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+
+        //Span 2 columns.
+        constraints.gridwidth = 2;
         princess_forcedwithdrawal = new JCheckBox("Forced Withdrawal");
-        princess_forcedwithdrawal.setSelected(true);
-        princessconfigcard.add(princess_forcedwithdrawal);
+        princess_forcedwithdrawal.setToolTipText("Makes Princess follow the Forced Withdrawal rules.");
+        layout.setConstraints(princess_forcedwithdrawal, constraints);
+        panel.add(princess_forcedwithdrawal);
 
-        botspecificcards = new JPanel(new CardLayout());
-        botspecificcards.add(testbotconfigcard, "testbot_config");
-        botspecificcards.add(princessconfigcard, "princess_config");
+        //Row 3 Column 1.
+        constraints.gridy++;
+        constraints.gridx=0;
+        constraints.gridwidth = 1;
+        JLabel homeEdgeLabel = new JLabel("Home Edge:");
+        layout.setConstraints(homeEdgeLabel, constraints);
+        panel.add(homeEdgeLabel);
 
-        JPanel toppanel = new JPanel(new GridLayout(1, 0));
+        //Row 3 Column 2.
+        constraints.gridx++;
+        princess_homeedge = new JComboBox(new String[]{"North", "South", "West", "East"});
+        princess_homeedge.setToolTipText("Sets the board edge Princess will retreat units to when following Forced Withdrawal.");
+        princess_homeedge.setSelectedIndex(0);
+        layout.setConstraints(princess_homeedge, constraints);
+        panel.add(princess_homeedge);
 
-        JPanel selectbotpanel = new JPanel(new GridLayout(0, 1));
-        selectbotpanel.add(testbot_radiobutton);
-        selectbotpanel.add(princess_radiobutton);
-        selectbotpanel.add(namepanel);
-        selectbotpanel.add(butOK);
-        toppanel.add(selectbotpanel);
-        toppanel.add(botspecificcards);
-        add(toppanel);
-        pack();
+        //Row 4 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+        JLabel targetsLabel = new JLabel("Strategic Targets:");
+        layout.setConstraints(targetsLabel, constraints);
+        panel.add(targetsLabel);
+
+        //Row 4 Column 2.
+        constraints.gridx++;
+        princess_target_hex_num_x = new JTextField();
+        princess_target_hex_num_x.setToolTipText("Enter the hex number of the target.");
+        princess_target_hex_num_x.setColumns(4);
+        layout.setConstraints(princess_target_hex_num_x, constraints);
+        panel.add(princess_target_hex_num_x);
+
+        //Row 5 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+
+        //Span 2 columns.
+        constraints.gridwidth = 2;
+        princess_addtarget_button = new JButton("Add Strategic Target");
+        princess_addtarget_button.setToolTipText("Adds the target hex to the list of strategic targets.");
+        princess_addtarget_button.addActionListener(this);
+        layout.setConstraints(princess_addtarget_button, constraints);
+        panel.add(princess_addtarget_button);
+
+        //Row 6 Column 1.
+        constraints.gridy++;
+        princess_targets_list = new JList(princess_targets_list_model);
+        princess_targets_list.setToolTipText("List of target hexes Princess will attempt to attack if a building is present.");
+        princess_targets_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        princess_targets_list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        princess_targets_list.setLayoutOrientation(JList.VERTICAL);
+        JScrollPane targetScroller = new JScrollPane(princess_targets_list);
+        targetScroller.setAlignmentX(LEFT_ALIGNMENT);
+        panel.add(targetScroller);
+        layout.setConstraints(targetScroller, constraints);
+
+        return panel;
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -154,13 +247,13 @@ public class BotConfigDialog extends JDialog implements ActionListener,
             if (!custom_name) {
                 namefield.setText("TestBot");
             }
-            cardlayout.show(botspecificcards, "testbot_config");
+            cardlayout.show(botspecificcards, TESTBOT_PANEL);
 
         } else if (e.getSource() == princess_radiobutton) {
             if (!custom_name) {
                 namefield.setText("Princess");
             }
-            cardlayout.show(botspecificcards, "princess_config");
+            cardlayout.show(botspecificcards, PRINCESS_PANEL);
 
         } else if (e.getSource() == butOK) {
             dialog_aborted = false;
@@ -208,6 +301,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
             }
             // do forced withdrawal?
             toreturn.forced_withdrawal = princess_forcedwithdrawal.isSelected();
+            toreturn.homeEdge = BasicPathRanker.HomeEdge.getHomeEdge(princess_homeedge.getSelectedIndex());
             return toreturn;
         }
         return null; // shouldn't happen

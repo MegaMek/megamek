@@ -48,7 +48,9 @@ public class UnitType {
 
     public static int determineUnitTypeCode(Entity e) {
         EntityMovementMode mm = e.getMovementMode();
-        if (e instanceof Infantry) {
+        if (e instanceof BattleArmor) {
+            return BATTLE_ARMOR;
+        } else if (e instanceof Infantry) {
             return INFANTRY;
         } else if (e instanceof VTOL) {
             return VTOL;

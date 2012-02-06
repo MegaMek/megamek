@@ -301,7 +301,7 @@ public class Princess extends BotClient {
         }
 
          //If this entity must withdraw, is on its home edge and is able to flee the board, do so.
-         if (entity.canFlee() && (forced_withdrawal || should_flee) &&
+         if (entity.canFlee() && entity.isCrippled() && (forced_withdrawal || should_flee) &&
             (BasicPathRanker.distanceToHomeEdge(entity.getPosition(), homeEdge, game) <= 0)) {
             MovePath mp = new MovePath(game, entity);
             mp.addStep(MovePath.MoveStepType.FLEE);

@@ -19980,7 +19980,7 @@ public class Server implements Runnable {
                     r.add(en.getLocationName(loc));
                     vDesc.addElement(r);
                     if (en.getInternal(loc) > 0) {
-                        en.destroyLocation(loc);
+                        en.destroyLocation(loc, true);
                     }
                     if (null != hex) {
                         if (!hex.containsTerrain(Terrains.LEGS)) {
@@ -20009,7 +20009,7 @@ public class Server implements Runnable {
                     r.subject = en.getId();
                     r.add(en.getLocationName(loc));
                     vDesc.addElement(r);
-                    en.destroyLocation(loc);
+                    en.destroyLocation(loc, true);
                     if (null != hex) {
                         if (!hex.containsTerrain(Terrains.ARMS)) {
                             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
@@ -20026,7 +20026,7 @@ public class Server implements Runnable {
                     r.subject = en.getId();
                     r.add(en.getLocationName(loc));
                     vDesc.addElement(r);
-                    en.destroyLocation(loc);
+                    en.destroyLocation(loc, true);
                     if (((Mech) en).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
                         // Don't kill a pilot multiple times.
                         if (Pilot.DEATH > en.getCrew().getHits()) {

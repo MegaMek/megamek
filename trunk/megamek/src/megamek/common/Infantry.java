@@ -1340,4 +1340,13 @@ public class Infantry extends Entity {
     public boolean isDmgLight() {
         return (((double)getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
     }
+
+    public boolean hasFieldGun() {
+        for (Mounted m : getWeaponList()) {
+            if (m.getLocation() == Infantry.LOC_FIELD_GUNS) {
+                return true;
+            }
+        }
+        return false;
+    }
 } // End class Infantry

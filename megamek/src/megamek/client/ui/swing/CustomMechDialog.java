@@ -517,7 +517,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         //Can't set up munitions on infantry.
-        if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
+        if (!((entity instanceof Infantry) && !((Infantry)entity).hasFieldGun()) || (entity instanceof BattleArmor)) {
             setupMunitions();
             panEquip.add(panMunitions, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -872,7 +872,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                 || (muniType == AmmoType.M_THUNDER_ACTIVE)
                                 || (muniType == AmmoType.M_INFERNO_IV)
                                 || (muniType == AmmoType.M_VIBRABOMB_IV)
-                                || (muniType == AmmoType.M_LISTEN_KILL) 
+                                || (muniType == AmmoType.M_LISTEN_KILL)
                                 || (muniType == AmmoType.M_ANTI_TSM)
                                 || (muniType == AmmoType.M_SMOKE_WARHEAD))) {
                     bTechMatch = false;
@@ -1271,7 +1271,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Calculate the number of shots for the new ammo.
             // N.B. Some special ammos are twice as heavy as normal
             // so they have half the number of shots (rounded down).
-            setShotsLeft(Math.round(getShotsLeft() * m_origShotsLeft
+            setShotsLeft(Math.round((getShotsLeft() * m_origShotsLeft)
                     / m_origAmmo.getShots()));
             if (chDump.isSelected()) {
                 setShotsLeft(0);
@@ -2080,7 +2080,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         .size();
                 int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
                         .size();
-                if (entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES) {
+                if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
                     entity.setC3Master(chosen);
                 } else {
                     String message = Messages

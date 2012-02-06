@@ -4301,7 +4301,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public void applyDamage() {
         // mark all damaged equipment destroyed and empty
         for (Mounted mounted : getEquipment()) {
-            if (mounted.isHit() || mounted.isMissing()) {
+            if (mounted.isHit()) {
                 mounted.setShotsLeft(0);
                 mounted.setDestroyed(true);
             }
@@ -4312,7 +4312,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             for (int j = 0; j < getNumberOfCriticals(i); j++) {
                 final CriticalSlot cs = getCritical(i, j);
                 if (cs != null) {
-                    cs.setDestroyed(cs.isDamaged());
+                    cs.setDestroyed(cs.isHit());
                 }
             }
         }
@@ -7910,7 +7910,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param loc
      *            The location that is destroyed.
      */
+    
     public void destroyLocation(int loc) {
+    	destroyLocation(loc, false);
+    }
+    
+    /**
+     * Marks all equipment in a location on this entity as destroyed.
+     *
+     * @param loc
+     *            The location that is destroyed.
+     * @param blownOff
+     * 			  true if the location was blown off
+     */
+    public void destroyLocation(int loc, boolean blownOff) {
         // if it's already marked as destroyed, don't bother
         if (getInternal(loc) < 0) {
             return;
@@ -7924,7 +7937,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // equipment marked missing
         for (Mounted mounted : getEquipment()) {
             if (((mounted.getLocation() == loc) && mounted.getType().isHittable()) || (mounted.isSplit() && (mounted.getSecondLocation() == loc))) {
-                mounted.setMissing(true);
+                if(blownOff) {
+                	mounted.setMissing(true);
+                } else {
+                	mounted.setHit(true);
+                }
             }
         }
         // all critical slots set as missing
@@ -7935,12 +7952,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if ((cs.getType() == CriticalSlot.TYPE_SYSTEM) && (cs.getIndex() == Mech.SYSTEM_ENGINE) && !cs.isDamaged()) {
                     engineHitsThisRound++;
                 }
-                cs.setMissing(true);
+                if(blownOff) {
+                	cs.setMissing(true);
+                } else {
+                	cs.setHit(true);
+                }
             }
         }
         // dependent locations destroyed, unless they are already destroyed
         if ((getDependentLocation(loc) != Entity.LOC_NONE) && !(getInternal(getDependentLocation(loc)) < 0)) {
-            destroyLocation(getDependentLocation(loc));
+            destroyLocation(getDependentLocation(loc), true);
         }
         // remove any narc/inarc pods in this location
         for (Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext();) {

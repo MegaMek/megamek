@@ -393,7 +393,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isReady() {
-        return !usedThisRound && !destroyed && !jammed && !useless && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
+        return !usedThisRound && !destroyed && !missing && !jammed && !useless && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
 
     public boolean isUsedThisRound() {

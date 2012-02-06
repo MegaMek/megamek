@@ -139,7 +139,7 @@ public class CriticalSlot implements Serializable {
      * Can this slot be hit by a critical hit roll?
      */
     public boolean isHittable() {
-        return hittable && !hit && !destroyed;
+        return hittable && !hit && !destroyed && !missing;
     }
 
     /**

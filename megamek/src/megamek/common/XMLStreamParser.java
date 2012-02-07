@@ -115,9 +115,13 @@ public class XMLStreamParser implements XMLResponder {
         }
 
         // Mark dependent locations as destroyed.
+        // Taharqa: I dont think we should do this here, it should be done anyway 
+        //if the xml is coded right and we now have to allow for truly blown off locations
+        /*
         if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
+        */
     }
     
     private void breachLocation(Entity en, int loc) {
@@ -136,6 +140,21 @@ public class XMLStreamParser implements XMLResponder {
         }     
         entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
     }
+    
+    private void blowOffLocation(Entity en, int loc) {
+    	en.setLocationBlownOff(loc, true);
+    	for (Mounted mounted : entity.getEquipment()) {
+    		if (mounted.getLocation() == loc) {
+        	   mounted.setMissing(true);
+    		}
+    	}
+    	for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+    		final CriticalSlot cs = entity.getCritical(loc, i);
+    		if (cs != null) {
+    			cs.setMissing(true);
+    		}
+    	}     
+   }
 
     // Public and Protected constants, constructors, and methods.
 
@@ -162,6 +181,8 @@ public class XMLStreamParser implements XMLResponder {
     public static final String TANKCRIT = "tcriticals";
     public static final String STABILIZER = "stabilizer";
     public static final String BREACH = "breached";
+    public static final String BLOWN_OFF = "blownOff";
+
 
 
     /**
@@ -1028,6 +1049,23 @@ public class XMLStreamParser implements XMLResponder {
             // Handle the location.
             else {
             	breachLocation(entity, loc);
+            }
+        } else if (name.equals(BLOWN_OFF)) {
+
+            // Are we in the outside of an Entity?
+            if (entity == null) {
+                warning.append("Found blown off outside of an Entity.\n");
+            }
+
+            // Are we in the outside of parsing an Entity's location?
+            else if (loc == Entity.LOC_NONE) {
+                warning
+                        .append("Found blown off while outside of a location.\n");
+            }
+
+            // Handle the location.
+            else {
+            	blowOffLocation(entity, loc);
             }
         } else if (name.equals(STABILIZER)) {
 

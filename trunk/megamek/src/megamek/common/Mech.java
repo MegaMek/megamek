@@ -1581,6 +1581,9 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getArmor(int loc, boolean rear) {
+    	if(isLocationBlownOff(loc)) {
+        	return IArmorState.ARMOR_DESTROYED;
+        }
         if (rear && hasRearArmor(loc)) {
             return rearArmor[loc];
         }
@@ -6566,10 +6569,17 @@ public abstract class Mech extends Entity {
     public String getLocationDamage(int loc) {
         String toReturn = "";
         boolean first = true;
+        if(isLocationBlownOff(loc)) {
+        	toReturn += "BLOWN OFF";
+        	first = false;
+        }
         if (isLocationBad(loc)) {
             return toReturn;
         }
         if(getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
+        	if (!first) {
+                toReturn += ", ";
+            }
         	toReturn += "BREACH";
         	first = false;
         }
@@ -6853,5 +6863,16 @@ public abstract class Mech extends Entity {
         }
 
         return ((double)totalInoperable / totalWeapons) >= 0.25;
+    }
+    
+    /**
+     * Report the location as destroyed if blown off
+     */
+    @Override
+    public int getInternal(int loc) {
+        if(isLocationBlownOff(loc)) {
+        	return IArmorState.ARMOR_DESTROYED;
+        }
+        return super.getInternal(loc);
     }
 }

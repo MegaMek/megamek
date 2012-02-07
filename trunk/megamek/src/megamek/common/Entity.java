@@ -148,6 +148,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected boolean layingMines = false;
     protected boolean _isEMId = false;
     protected boolean[] hardenedArmorDamaged;
+    protected boolean[] locationBlownOff;
     protected int[] armorType;
     protected int[] armorTechLevel;
 
@@ -510,6 +511,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             armorTechLevel[i] = TechConstants.T_TECH_UNKNOWN;
         }
         hardenedArmorDamaged = new boolean[locations()];
+        locationBlownOff = new boolean[locations()];
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<Integer, Coords>();
@@ -2143,14 +2145,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Is this location destroyed or breached?
      */
     public boolean isLocationBad(int loc) {
-        return getInternal(loc) == IArmorState.ARMOR_DESTROYED;
+        return getInternal(loc) == IArmorState.ARMOR_DESTROYED || isLocationBlownOff(loc);
     }
 
     /**
      * Is this location destroyed or breached?
      */
     public boolean isLocationDoomed(int loc) {
-        return getInternal(loc) == IArmorState.ARMOR_DOOMED;
+        return getInternal(loc) == IArmorState.ARMOR_DOOMED || isLocationBlownOff(loc);
     }
 
     /**
@@ -3087,7 +3089,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             CriticalSlot ccs = getCritical(loc, i);
 
             if ((ccs != null) && (ccs.getType() == type) && (ccs.getIndex() == index)) {
-                if (ccs.isDamaged() || ccs.isBreached()) {
+                if (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing()) {
                     hits++;
                 }
             }
@@ -7928,11 +7930,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getInternal(loc) < 0) {
             return;
         }
-        // mark armor, internal as doomed
-        setArmor(IArmorState.ARMOR_DOOMED, loc, false);
-        setInternal(IArmorState.ARMOR_DOOMED, loc);
-        if (hasRearArmor(loc)) {
-            setArmor(IArmorState.ARMOR_DOOMED, loc, true);
+        if(blownOff) {
+        	setLocationBlownOff(loc, true);
+        } else {
+	        // mark armor, internal as doomed
+	        setArmor(IArmorState.ARMOR_DOOMED, loc, false);
+	        setInternal(IArmorState.ARMOR_DOOMED, loc);
+	        if (hasRearArmor(loc)) {
+	            setArmor(IArmorState.ARMOR_DOOMED, loc, true);
+	        }
         }
         // equipment marked missing
         for (Mounted mounted : getEquipment()) {
@@ -10001,6 +10007,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public boolean isHardenedArmorDamaged(HitData hit) {
         return hardenedArmorDamaged[hit.getLocation()];
+    }
+    
+    public void setLocationBlownOff(int loc, boolean damaged) {
+        locationBlownOff[loc] = damaged;
+    }
+
+    public boolean isLocationBlownOff(int loc) {
+        return locationBlownOff[loc];
     }
 
     /**

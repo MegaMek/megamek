@@ -2043,6 +2043,7 @@ public class MechDisplay extends JPanel {
             for (int wId : bayWeapons) {
                 Mounted m = entity.getEquipment(wId);
                 if (!m.isBreached()
+                		&& !m.isMissing()
                         && !m.isDestroyed()
                         && !m.isJammed()
                         && ((m.getLinked() == null) || (m.getLinked()
@@ -2473,7 +2474,7 @@ public class MechDisplay extends JPanel {
                 } else {
                     switch (cs.getType()) {
                     case CriticalSlot.TYPE_SYSTEM:
-                        sb.append(cs.isDestroyed() ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
+                        sb.append((cs.isDestroyed() || cs.isMissing()) ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
                                 .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
                         // Protomechs have different systme names.
                         if (en instanceof Protomech) {
@@ -2485,7 +2486,7 @@ public class MechDisplay extends JPanel {
                     case CriticalSlot.TYPE_EQUIPMENT:
                         Mounted m = en.getEquipment(cs.getIndex());
                         sb
-                                .append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                .append((cs.isDestroyed() || cs.isMissing()) ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                         if (m.isHotLoaded()) {
                             sb.append(Messages
                                     .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
@@ -2773,10 +2774,10 @@ public class MechDisplay extends JPanel {
                         && m.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner && m.getType().hasModes()) {
-                    if (!m.isDestroyed() && en.isActive()) {
+                    if (!m.isInoperable() && en.isActive()) {
                         m_chMode.setEnabled(true);
                     }
-                    if (!m.isDestroyed()
+                    if (!m.isInoperable()
                             && m.getType().hasFlag(MiscType.F_STEALTH)) {
                         m_chMode.setEnabled(true);
                     }// if the maxtech eccm option is not set then the ECM

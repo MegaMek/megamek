@@ -1927,7 +1927,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (loc >= armor.length) {
             return IArmorState.ARMOR_NA;
         }
-        return armor[loc];
+        return getArmorForReal(loc, rear);
+    }
+    
+    public int getArmorForReal(int loc, boolean rear) {
+    	return armor[loc];
+    }
+    
+    public int getArmorForReal(int loc) {
+    	return getArmorForReal(loc, false);
     }
 
     /**
@@ -2061,7 +2069,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * ARMOR_NA, or ARMOR_DESTROYED.
      */
     public int getInternal(int loc) {
-        return internal[loc];
+        return getInternalForReal(loc);
+    }
+    
+    public int getInternalForReal(int loc) {
+    	return internal[loc];
     }
 
     /**
@@ -2148,6 +2160,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return getInternal(loc) == IArmorState.ARMOR_DESTROYED || isLocationBlownOff(loc);
     }
 
+    public boolean isLocationTrulyDestroyed(int loc) {
+    	return internal[loc] == IArmorState.ARMOR_DESTROYED;
+    }
+    
     /**
      * Is this location destroyed or breached?
      */

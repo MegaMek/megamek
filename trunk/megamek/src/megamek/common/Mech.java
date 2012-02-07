@@ -1584,10 +1584,15 @@ public abstract class Mech extends Entity {
     	if(isLocationBlownOff(loc)) {
         	return IArmorState.ARMOR_DESTROYED;
         }
-        if (rear && hasRearArmor(loc)) {
+        return getArmorForReal(loc, rear);
+    }
+    
+    @Override
+    public int getArmorForReal(int loc, boolean rear) {
+    	if (rear && hasRearArmor(loc)) {
             return rearArmor[loc];
         }
-        return super.getArmor(loc, rear);
+        return super.getArmorForReal(loc, rear);
     }
 
     /**
@@ -6573,7 +6578,7 @@ public abstract class Mech extends Entity {
         	toReturn += "BLOWN OFF";
         	first = false;
         }
-        if (isLocationBad(loc)) {
+        if (isLocationTrulyDestroyed(loc)) {
             return toReturn;
         }
         if(getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {

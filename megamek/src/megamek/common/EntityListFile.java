@@ -148,35 +148,34 @@ public class EntityListFile {
 
         	//if the location is blown off, remove it so we can get the real values
         	boolean blownOff = entity.isLocationBlownOff(loc);
-        	entity.setLocationBlownOff(loc, false);
         	
             // Record destroyed locations.
             if (!(entity instanceof Aero) && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
                     && (entity.getOInternal(loc) != IArmorState.ARMOR_NA)
-                    && (entity.getInternal(loc) <= 0)) {
+                    && (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
             }
 
             // Record damage to armor and internal structure.
             // Destroyed locations have lost all their armor and IS.
             if (!isDestroyed) {
-                if (entity.getOArmor(loc) != entity.getArmor(loc)) {
+                if (entity.getOArmor(loc) != entity.getArmorForReal(loc)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(EntityListFile.formatArmor(entity.getArmor(loc)));
+                    thisLoc.append(EntityListFile.formatArmor(entity.getArmorForReal(loc)));
                     thisLoc.append("\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
-                if (entity.getOInternal(loc) != entity.getInternal(loc)) {
+                if (entity.getOInternal(loc) != entity.getInternalForReal(loc)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(EntityListFile.formatArmor(entity.getInternal(loc)));
+                    thisLoc.append(EntityListFile.formatArmor(entity.getInternalForReal(loc)));
                     thisLoc.append("\" type=\"Internal\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
                 if (entity.hasRearArmor(loc)
-                        && (entity.getOArmor(loc, true) != entity.getArmor(loc,
+                        && (entity.getOArmor(loc, true) != entity.getArmorForReal(loc,
                                 true))) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(EntityListFile.formatArmor(entity.getArmor(loc, true)));
+                    thisLoc.append(EntityListFile.formatArmor(entity.getArmorForReal(loc, true)));
                     thisLoc.append("\" type=\"Rear\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
@@ -221,7 +220,7 @@ public class EntityListFile {
                     // Destroyed locations on Mechs that contain slots
                     // that are missing but not hit or destroyed must
                     // have been blown off.
-                    if (isDestroyed && isMech && slot.isMissing()
+                    if (!isDestroyed && isMech && slot.isMissing()
                             && !slot.isHit() && !slot.isDestroyed()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                                 mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
@@ -293,9 +292,6 @@ public class EntityListFile {
                 // TODO: handle slotless equipment.
 
             } // End is-tank-or-proto
-
-            //reset the location blown off status on the entity
-            entity.setLocationBlownOff(loc, blownOff);
 
             // Did we record information for this location?
             if (thisLoc.length() > 0) {

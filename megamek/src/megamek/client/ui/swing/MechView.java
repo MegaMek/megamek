@@ -317,7 +317,9 @@ public class MechView {
                                 .hasNoTurret()) || (loc == Tank.LOC_BODY)))))) {
                     continue;
                 }
-
+                //temporarily reset blown off locations to get the real value
+                boolean blownOff = entity.isLocationBlownOff(loc);
+                entity.setLocationBlownOff(loc, false);
                 sIntArm.append("<tr>");
                 sIntArm.append("<td>").append(entity.getLocationName(loc)); //$NON-NLS-1$
                 sIntArm.append("</td>");
@@ -340,6 +342,7 @@ public class MechView {
                         sIntArm.append("</td>");
                     }
                 }
+                entity.setLocationBlownOff(loc, blownOff);
                 sIntArm.append("<td><font color='red'> "
                         + entity.getLocationDamage(loc) + "</font></td>");
                 sIntArm.append("</tr>"); //$NON-NLS-1$

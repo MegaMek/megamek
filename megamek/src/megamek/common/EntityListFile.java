@@ -78,7 +78,7 @@ public class EntityListFile {
      * @return a <code>String</code> describing the slot.
      */
     private static String formatSlot(String index, Mounted mount,
-            boolean isHit, boolean isDestroyed, boolean isRepairable) {
+            boolean isHit, boolean isDestroyed, boolean isRepairable, boolean isMissing) {
         StringBuffer output = new StringBuffer();
 
         output.append("         <slot index=\"");
@@ -116,6 +116,10 @@ public class EntityListFile {
             output.append("\" isRepairable=\"");
             output.append(String.valueOf(isRepairable));
         }
+        if (isMissing) {
+            output.append("\" isMissing=\"");
+            output.append(String.valueOf(isMissing));
+        }
         output.append("\" isDestroyed=\"");
         output.append(String.valueOf(isDestroyed));
         output.append("\"/>");
@@ -137,12 +141,15 @@ public class EntityListFile {
         StringBuffer output = new StringBuffer();
         StringBuffer thisLoc = new StringBuffer();
         boolean isDestroyed = false;
-        boolean blownOff = false;
 
         // Walk through the locations for the entity,
         // and only record damage and ammo.
         for (int loc = 0; loc < entity.locations(); loc++) {
 
+        	//if the location is blown off, remove it so we can get the real values
+        	boolean blownOff = entity.isLocationBlownOff(loc);
+        	entity.setLocationBlownOff(loc, false);
+        	
             // Record destroyed locations.
             if (!(entity instanceof Aero) && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
                     && (entity.getOInternal(loc) != IArmorState.ARMOR_NA)
@@ -175,6 +182,10 @@ public class EntityListFile {
                 }
                 if(entity.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
                     thisLoc.append("         <breached/>");
+                    thisLoc.append(CommonConstants.NL);
+                }
+                if(blownOff) {
+                	thisLoc.append("         <blownOff/>");
                     thisLoc.append(CommonConstants.NL);
                 }
             }
@@ -213,22 +224,24 @@ public class EntityListFile {
                     if (isDestroyed && isMech && slot.isMissing()
                             && !slot.isHit() && !slot.isDestroyed()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                                slot.isMissing()));
                         haveSlot = true;
-                        blownOff = true;
                     }
 
                     // Record damaged slots in undestroyed locations.
                     else if (!isDestroyed && slot.isDamaged()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                                slot.isMissing()));
                         haveSlot = true;
                     }
 
                     //record any quirks
                     else if ((null != mount) && (mount.countQuirks() > 0)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                                slot.isMissing()));
                         haveSlot = true;
                     }
 
@@ -252,7 +265,8 @@ public class EntityListFile {
                             && (mount.getType() instanceof WeaponType)
                             && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable()));
+                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                                slot.isMissing()));
                         haveSlot = true;
                     }
 
@@ -270,7 +284,7 @@ public class EntityListFile {
 
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
-                        thisLoc.append(EntityListFile.formatSlot("N/A", mount, false, false, false));
+                        thisLoc.append(EntityListFile.formatSlot("N/A", mount, false, false, false, false));
                         haveSlot = true;
                     }
 
@@ -279,6 +293,9 @@ public class EntityListFile {
                 // TODO: handle slotless equipment.
 
             } // End is-tank-or-proto
+
+            //reset the location blown off status on the entity
+            entity.setLocationBlownOff(loc, blownOff);
 
             // Did we record information for this location?
             if (thisLoc.length() > 0) {
@@ -319,7 +336,7 @@ public class EntityListFile {
 
             // Reset the "location is destroyed" flag.
             isDestroyed = false;
-
+            
         } // Handle the next location
 
         // If there is no location string, return a null.

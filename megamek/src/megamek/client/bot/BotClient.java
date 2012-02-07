@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.common.AmmoType;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -589,21 +590,19 @@ public abstract class BotClient extends Client {
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
 
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                        valid_array[valid_arr_index].y).containsTerrain(
-                        Terrains.WOODS)) {
+                int x = valid_array[valid_arr_index].x;
+                int y = valid_array[valid_arr_index].y;
+                if (game.getBoard().getHex(x, y).containsTerrain(Terrains.WOODS)) {
                     valid_array[valid_arr_index].fitness += 1;
                 }
-                if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                        valid_array[valid_arr_index].y).containsTerrain(
-                        Terrains.WATER)) {
-                    if (game.getBoard().getHex(valid_array[valid_arr_index].x,
-                            valid_array[valid_arr_index].y).depth() > 1) {
-                        valid_array[valid_arr_index].fitness -= game.getBoard()
-                                .getHex(valid_array[valid_arr_index].x,
-                                        valid_array[valid_arr_index].y).depth();
+                if (game.getBoard().getHex(x, y).containsTerrain(Terrains.WATER)) {
+                    if (game.getBoard().getHex(x, y).depth() > 1) {
+                        valid_array[valid_arr_index].fitness -= game.getBoard().getHex(x, y).depth();
                     }
                 }
+                //If this is a building, make sure it's not too heavy to safely move out of.
+                valid_array[valid_arr_index].fitness -= potentialBuildingDamage(valid_array[valid_arr_index].x,
+                        valid_array[valid_arr_index].y, deployed_ent);
             }
 
             // Infantry
@@ -700,7 +699,9 @@ public abstract class BotClient extends Client {
                         valid_array[valid_arr_index].fitness += 2;
                     }
                 }
-
+                //If this is a building, make sure it's not too heavy to safely move out of.
+                valid_array[valid_arr_index].fitness -= potentialBuildingDamage(valid_array[valid_arr_index].x,
+                        valid_array[valid_arr_index].y, deployed_ent);
             }
             // ProtoMech
             // ->
@@ -726,6 +727,17 @@ public abstract class BotClient extends Client {
         Arrays.sort(valid_array, new FitnessComparator());
 
         return valid_array;
+    }
+    
+    private double potentialBuildingDamage(int x, int y, Entity entity) {
+        Coords coords = new Coords(x, y);
+        Building building = game.getBoard().getBuildingAt(coords);
+        if (building == null) {
+            return 0;
+        }
+        int potentialDmg = (int)Math.ceil((double)building.getCurrentCF(coords) / 10);
+        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting())/100);
+        return potentialDmg * oddsTakeDmg;
     }
 
     class FitnessComparator implements Comparator<Coords> {

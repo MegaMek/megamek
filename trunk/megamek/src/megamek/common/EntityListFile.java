@@ -112,7 +112,7 @@ public class EntityListFile {
             output.append("\" isHit=\"");
             output.append(String.valueOf(isHit));
         }
-        if (isHit) {
+        if (!isRepairable && (isHit || isDestroyed)) {
             output.append("\" isRepairable=\"");
             output.append(String.valueOf(isRepairable));
         }

@@ -41,6 +41,7 @@ v0.35.28-dev (SVN)
 + blown off limbs (and heads) recorded differently than location destruction
 + helper methods to distinguish blown off locations from truly destroyed ones
 + a few changes to damage reporting in MechView
++ check for missing pilot in Tank#calculateBV
 
 v0.35.27 (2012-01-10, 20:41 UTC+1)
 + Use Marauder 9M image for Marauder 9M2

@@ -352,8 +352,14 @@ public class Mounted implements Serializable, RoundUpdated {
         if (isWeaponGroup()) {
             desc.append(" (").append(getNWeapons()).append(")");
         }
-        if (destroyed || missing) {
-            desc.insert(0, "*");
+        if (destroyed) {
+        	if(!repairable) {
+        		desc.insert(0, "**");
+        	} else {
+        		desc.insert(0, "*");
+        	}
+        } else if(missing) {
+        	desc.insert(0, "x ");
         } else if (useless) {
             desc.insert(0, "x ");
         } else if (usedThisRound) {

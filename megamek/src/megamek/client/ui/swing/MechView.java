@@ -529,7 +529,11 @@ public class MechView {
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (mounted.isDestroyed()) {
-                sWeapons.append("<tr bgcolor='red'>");
+            	if(mounted.isRepairable()) {
+            		sWeapons.append("<tr bgcolor='yellow'>");
+            	} else {
+            		sWeapons.append("<tr bgcolor='red'>");
+            	}
             } else {
                 sWeapons.append("<tr>");
             }

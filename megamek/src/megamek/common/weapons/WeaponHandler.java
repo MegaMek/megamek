@@ -177,7 +177,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (!ba.isAttacksDuringSwarmResolved()) {
                 for (AttackHandler ah : server.getGame().getAttacksVector()) {
                     if ((ah.getAttackerId() == subjectId)
-                            && (ah.getWaa().getWeaponId() != waa.getWeaponId())
+                            && !(ah.equals(this))
                             && (ah.getWaa().getTargetId() == target.getTargetId())
                             && (((WeaponHandler)ah).toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)) {
                         WeaponType baWType = (WeaponType)ba.getEquipment(ah.getWaa().getWeaponId()).getType();

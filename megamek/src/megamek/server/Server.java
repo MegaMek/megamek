@@ -5238,7 +5238,7 @@ public class Server implements Runnable {
                             a.setSI(a.getSI() - 1);
                             // check for destruction
                             if (a.getSI() == 0) {
-                                destroyEntity(entity, "Structural Integrity Collapse", false);
+                                addReport(destroyEntity(entity, "Structural Integrity Collapse", false));
                             }
                         }
                     }
@@ -6333,38 +6333,22 @@ public class Server implements Runnable {
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode() && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV) + curHex.getElevation()) == (prevHex.getElevation() + (prevHex.containsTerrain(Terrains.BRIDGE)?prevHex.terrainLevel(Terrains.BRIDGE_ELEV):0))))) {
 
-                PilotingRollData psr = entity.getBasePilotingRoll(overallMoveType);
-                int roll = Compute.d6(2);
-                if (entity instanceof Tank) {
-                    r = new Report(2435);
-                } else {
-                    r = new Report(2430);
-                }
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(psr.getValue());
-                r.add(roll);
-                addReport(r);
-
-                if (roll < psr.getValue()) {
-                    distance -= 1;
-                    if (entity instanceof Mech) {
-                        if (curHex.getElevation() < game.getBoard().getHex(lastPos).getElevation()) {
-                            entity.setElevation(Integer.MIN_VALUE);
-                            addReport(doEntityFallsInto(entity, lastPos, curPos, entity
-                                    .getBasePilotingRoll(overallMoveType), false));
-                        } else {
-                            // Tac Ops p.22
-                            // the change in levels is not taken into
-                            // consideration for determining the levels fallen.
-                            entity.setElevation(Integer.MIN_VALUE);
-                            addReport(doEntityFallsInto(entity, curPos, lastPos, entity
-                                    .getBasePilotingRoll(overallMoveType), false));
-                        }
-                    } else if (entity instanceof Tank) {
+                if ((entity instanceof Mech) && (curHex.getElevation() < game.getBoard().getHex(lastPos).getElevation())) {
+                    PilotingRollData psr = entity.getBasePilotingRoll(overallMoveType);
+                    psr.addModifier(0, "moving backwards over an elevation change");
+                    doSkillCheckWhileMoving(entity, curPos, curPos, psr, true);
+                } else if (entity instanceof Mech){
+                    PilotingRollData psr = entity.getBasePilotingRoll(overallMoveType);
+                    psr.addModifier(0, "moving backwards over an elevation change");
+                    doSkillCheckWhileMoving(entity, lastPos, lastPos, psr, true);
+                } else if (entity instanceof Tank) {
+                    PilotingRollData psr = entity.getBasePilotingRoll(overallMoveType);
+                    psr.addModifier(0, "moving backwards over an elevation change");
+                    if (doSkillCheckWhileMoving(entity, curPos, lastPos, psr, false) < 0) {
                         curPos = lastPos;
                     }
                 }
+
             }
 
             // Handle non-infantry moving into a building.
@@ -24028,7 +24012,7 @@ public class Server implements Runnable {
                 final Entity entity = entities.nextElement();
                 // all gun emplacements are simply destroyed
                 if (entity instanceof GunEmplacement) {
-                    addReport(destroyEntity(entity, "building collapse"));
+                    vPhaseReport.addAll(destroyEntity(entity, "building collapse"));
                     addNewLines();
                     continue;
                 }

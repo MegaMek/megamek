@@ -859,7 +859,7 @@ public class Compute {
         // add any target stealth modifier
         if (target instanceof Entity) {
             TargetRoll tmpTR = ((Entity) target).getStealthModifier(usingRange, ae);
-            if (tmpTR.getValue() != 0) {
+            if (tmpTR != null && tmpTR.getValue() != 0) {
                 mods.append(((Entity) target).getStealthModifier(usingRange, ae));
             }
         }
@@ -4401,8 +4401,8 @@ public class Compute {
      *            - the <code>Coords</code> being left.
      * @param dest
      *            - the <code>Coords</code> being entered.
-     * @param entity
-     *            - the <code>Entity</code> that is moving
+     * @param movePath
+     *
      * @return <code>true</code> if movement between <code>src</code> and
      *         <code>dest</code> can be on pavement; <code>false</code>
      *         otherwise.
@@ -5074,9 +5074,9 @@ public class Compute {
     }
 
     /**
-     * @param ae
+     * @param aPos
      *            - attacking entity
-     * @param te
+     * @param tPos
      *            - targeted entity
      * @return a vector of all the entities that are adjacent to the targeted
      *         entity and would fall along the angle of attack
@@ -5140,7 +5140,6 @@ public class Compute {
      * conditions
      *
      * @param en
-     * @param velocity
      * @return number of rounds until return (-1 if never)
      */
     public static int roundsUntilReturn(IGame game, Entity en) {

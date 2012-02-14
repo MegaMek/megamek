@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1274,17 +1275,24 @@ public abstract class Mech extends Entity {
      * Adds heat sinks to the engine. Uses clan/normal depending on the
      * currently set techLevel
      */
-    public void addEngineSinks(int totalSinks, boolean dblSinks) {
-        addEngineSinks(totalSinks, dblSinks, isClan());
+    public void addEngineSinks(int totalSinks, BigInteger heatSinkFlag) {
+        addEngineSinks(totalSinks, heatSinkFlag, isClan());
     }
 
     /**
      * Adds heat sinks to the engine. Adds either the engine capacity, or the
      * entire number of heat sinks, whichever is less
      */
-    public void addEngineSinks(int totalSinks, boolean dblSinks, boolean clan) {
-        if (dblSinks) {
+    public void addEngineSinks(int totalSinks, BigInteger heatSinkFlag, boolean clan) {
+        if (heatSinkFlag == MiscType.F_DOUBLE_HEAT_SINK) {
             addEngineSinks(totalSinks, clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
+        } else if (heatSinkFlag == MiscType.F_COMPACT_HEAT_SINK) {
+            addEngineSinks(totalSinks, "IS2 Compact Heat Sinks");
+            if ((totalSinks%2) == 1) {
+                addEngineSinks(totalSinks, "IS1 Compact Heat Sink");
+            }
+        } else if (heatSinkFlag == MiscType.F_LASER_HEAT_SINK) {
+            addEngineSinks(totalSinks, "CLLaser Heat Sink");
         } else {
             addEngineSinks(totalSinks, "Heat Sink");
         }
@@ -1352,7 +1360,9 @@ public abstract class Mech extends Entity {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
-            if (etype.hasFlag(MiscType.F_HEAT_SINK) || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK) && etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                sinks += 2;
+            } else if (etype.hasFlag(MiscType.F_HEAT_SINK) || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 sinks++;
             }
         }
@@ -1586,7 +1596,7 @@ public abstract class Mech extends Entity {
         }
         return getArmorForReal(loc, rear);
     }
-    
+
     @Override
     public int getArmorForReal(int loc, boolean rear) {
     	if (rear && hasRearArmor(loc)) {
@@ -5144,7 +5154,9 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         sb.append("Heat Sinks:").append(heatSinks()).append(" ");
-        if (hasLaserHeatSinks()) {
+        if (hasCompactHeatSinks()) {
+            sb.append("Compact");
+        } else if (hasLaserHeatSinks()) {
             sb.append("Laser");
         } else if (hasDoubleHeatSinks()) {
             sb.append("Double");
@@ -6869,7 +6881,17 @@ public abstract class Mech extends Entity {
 
         return ((double)totalInoperable / totalWeapons) >= 0.25;
     }
-    
+
+
+    public boolean hasCompactHeatSinks() {
+        for (Mounted mounted : getMisc()) {
+            if (mounted.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Report the location as destroyed if blown off
      */

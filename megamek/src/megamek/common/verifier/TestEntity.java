@@ -60,7 +60,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public abstract float getWeightMisc();
 
-    public abstract int getWeightHeatSinks();
+    public abstract float getWeightHeatSinks();
 
     public abstract boolean hasDoubleHeatSinks();
 

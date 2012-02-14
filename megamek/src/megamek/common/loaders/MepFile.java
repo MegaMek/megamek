@@ -27,6 +27,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -209,7 +210,7 @@ public class MepFile implements IMechLoader {
 
             boolean dblSinks = "Double".equals(heatSinkType.trim());
             mech.addEngineSinks(Integer.parseInt(heatSinks.trim()),
-                    dblSinks);
+                    dblSinks?MiscType.F_DOUBLE_HEAT_SINK:MiscType.F_HEAT_SINK);
 
             mech.setStructureType(internalType);
 

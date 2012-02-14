@@ -167,8 +167,20 @@ public class TestMech extends TestEntity {
     }
 
     @Override
-    public int getWeightHeatSinks() {
-        return mech.heatSinks() - engine.getWeightFreeEngineHeatSinks();
+    public float getWeightHeatSinks() {
+        boolean hasCompact = false;
+        float compactHsTons = 0;
+        for (Mounted misc : mech.getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+                hasCompact = true;
+                compactHsTons += misc.getType().getTonnage(mech);
+            }
+        }
+        if (hasCompact) {
+            return compactHsTons - (engine.getWeightFreeEngineHeatSinks() * 1.5f);
+        } else {
+            return mech.heatSinks() - engine.getWeightFreeEngineHeatSinks();
+        }
     }
 
     @Override

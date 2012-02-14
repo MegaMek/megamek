@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author njrkrynn
  * @version
  */
@@ -34,6 +34,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
@@ -127,7 +128,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("heatsinks")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], false);
+        mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], MiscType.F_HEAT_SINK);
 
         if (dataFile.exists("internal_type")) {
             mech.setStructureType(dataFile.getDataAsInt("internal_type")[0]);

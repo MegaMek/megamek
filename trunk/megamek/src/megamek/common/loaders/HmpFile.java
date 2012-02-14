@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -230,6 +231,9 @@ implements IMechLoader
 
             heatSinks = readUnsignedShort(dis);
             heatSinkType = HeatSinkType.getType(readUnsignedShort(dis));
+            if (heatSinkType == HeatSinkType.COMPACT) {
+                heatSinks *= 2;
+            }
 
             armorType = ArmorType.getType(readUnsignedShort(dis));
 
@@ -543,7 +547,17 @@ implements IMechLoader
             }
 
             // add any heat sinks not allocated
-            mech.addEngineSinks(heatSinks - mech.heatSinks(), heatSinkType == HeatSinkType.DOUBLE);
+            BigInteger heatSinkFlag;
+            if (heatSinkType ==  HeatSinkType.DOUBLE) {
+                heatSinkFlag = MiscType.F_DOUBLE_HEAT_SINK;
+            } else if (heatSinkType ==  HeatSinkType.LASER) {
+                heatSinkFlag = MiscType.F_LASER_HEAT_SINK;
+            } else if (heatSinkType == HeatSinkType.COMPACT) {
+                heatSinkFlag = MiscType.F_COMPACT_HEAT_SINK;
+            } else {
+                heatSinkFlag = MiscType.F_HEAT_SINK;
+            }
+            mech.addEngineSinks(heatSinks - mech.heatSinks(), heatSinkFlag);
 
             return mech;
         } catch (Exception e) {

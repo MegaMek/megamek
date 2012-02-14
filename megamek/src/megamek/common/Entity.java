@@ -7928,11 +7928,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param loc
      *            The location that is destroyed.
      */
-    
+
     public void destroyLocation(int loc) {
     	destroyLocation(loc, false);
     }
-    
+
     /**
      * Marks all equipment in a location on this entity as destroyed.
      *

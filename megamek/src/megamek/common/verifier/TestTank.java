@@ -187,7 +187,7 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public int getWeightHeatSinks() {
+    public float getWeightHeatSinks() {
         int heat = getCountHeatSinks();
         heat -= engine.getWeightFreeEngineHeatSinks();
         if (heat < 0) {

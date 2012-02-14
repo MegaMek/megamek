@@ -309,6 +309,8 @@ public class MtfFile implements IMechLoader {
 
             boolean laserSinks = heatSinks.substring(14).startsWith("Laser");
 
+            boolean compactSinks = heatSinks.substring(14).startsWith("Compact");
+
             int expectedSinks = Integer.parseInt(heatSinks.substring(11, 13).trim());
 
             int baseHeatSinks = Integer.parseInt(baseChassieHeatSinks.substring("base chassis heat sinks:".length()).trim());
@@ -432,9 +434,11 @@ public class MtfFile implements IMechLoader {
 
             // add any heat sinks not allocated
             if (laserSinks) {
-                mech.addEngineSinks(expectedSinks - mech.heatSinks(), "CLLaser Heat Sink");
-            } else {
-                mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_LASER_HEAT_SINK);
+            } else if (dblSinks){
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK);
+            } else if (compactSinks) {
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_COMPACT_HEAT_SINK);
             }
 
             if (mech.isOmni()) {

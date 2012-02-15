@@ -439,6 +439,8 @@ public class MtfFile implements IMechLoader {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_DOUBLE_HEAT_SINK);
             } else if (compactSinks) {
                 mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_COMPACT_HEAT_SINK);
+            } else {
+                mech.addEngineSinks(expectedSinks - mech.heatSinks(), MiscType.F_HEAT_SINK);
             }
 
             if (mech.isOmni()) {

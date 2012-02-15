@@ -13,12 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -38,6 +33,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.plaf.DimensionUIResource;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -123,22 +119,20 @@ public class BotConfigDialog extends JDialog implements ActionListener,
     private JPanel okayPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 
-        JLabel nameLabel = new JLabel("Name: ");
-        panel.add(nameLabel);
         JPanel namepanel = new JPanel(new FlowLayout());
         namepanel.add(new JLabel("Name: "));
         namefield = new JTextField();
-        namefield.setColumns(12);
         namefield.setText("TestBot");
+        namefield.setColumns(12);
         namefield.setToolTipText("The name of the bot player.");
         namefield.addKeyListener(this);
-        panel.add(namefield);
         namepanel.add(namefield);
+        panel.add(namepanel);
 
         butOK.addActionListener(this);
         panel.add(butOK);
-        JPanel testbotconfigcard = new JPanel();
 
+        panel.validate();
         return panel;
     }
 

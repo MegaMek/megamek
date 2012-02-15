@@ -257,7 +257,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((game.getPhase() == IGame.Phase.PHASE_TARGETING) || (game.getPhase() == IGame.Phase.PHASE_OFFBOARD));
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect && (target.getTargetType() == Targetable.TYPE_ENTITY)
-                && (te.getMovementMode() == EntityMovementMode.VTOL) && (te.getElevation() > 0)
+                && ((((te.getMovementMode() == EntityMovementMode.VTOL) || (te.getMovementMode() == EntityMovementMode.WIGE)) && te.isAirborneVTOLorWIGE())
+                      || (te.isAirborne()))
                 && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
@@ -490,7 +491,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Attack during swarm.",
                     ToHitData.HIT_SWARM_CONVENTIONAL, side);
         } else if (isArtilleryFLAK) {
-            toHit = new ToHitData(9, "artillery FLAK");
+            toHit = new ToHitData(9, "artillery Flak");
+            if (te.isAirborne()) {
+                if (te.getAltitude() > 3) {
+                    if (te.getAltitude() > 9) {
+                        toHit.addModifier(TargetRoll.IMPOSSIBLE, "airborne aerospace at altitude > 10");
+                    } else if (te.getAltitude() > 6) {
+                        toHit.addModifier(2, "airborne aerospace at altitude 7-9");
+                    } else if (te.getAltitude() > 3) {
+                        toHit.addModifier(1, "airborne aerospace at altitude 4-6.");
+                    }
+                }
+            }
         } else {
             toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
             if (game.getOptions().booleanOption("rpg_gunnery")) {

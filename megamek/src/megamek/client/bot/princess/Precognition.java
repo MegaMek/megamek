@@ -106,7 +106,7 @@ public class Precognition implements Runnable {
             if (!e.isDeployed() || e.isOffBoard()) {
                 continue;
             }
-            if ((e != null) && ((!path_enumerator.last_known_location.containsKey(e.getId()))
+            if (((!path_enumerator.last_known_location.containsKey(e.getId()))
                     || (!path_enumerator.last_known_location.get(e.getId())
                             .equals(new CoordFacingCombo(e))))) {
                 // System.err.println("entity "+e.getDisplayName()+" not where I left it");
@@ -174,8 +174,12 @@ public class Precognition implements Runnable {
      * if a unit has moved, my precaculated paths are no longer valid
      */
     public synchronized void processGameEvents() {
-        while (!events_to_process.isEmpty()) {
-            GameEvent event = events_to_process.pollFirst();
+        LinkedList remainingEvents = events_to_process;
+        for (int count = 0; count < events_to_process.size(); count++) {
+            System.err.println("Processing event " + count + " out of " + events_to_process.size());
+            GameEvent event = events_to_process.get(count);
+            remainingEvents.remove(event);
+            count++;
             if (event instanceof GameEntityChangeEvent) {
                 // for starters, ignore entity changes that don't happen during
                 // the movement phase
@@ -229,6 +233,7 @@ public class Precognition implements Runnable {
                 }
             }
         }
+        events_to_process = remainingEvents;
     }
 
     /**

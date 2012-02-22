@@ -333,6 +333,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals("kind_rapid_ac")) {
+            if ((options.getOption("tacops_rapid_ac")).booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -515,7 +521,16 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
-        
+        if (option.getName().equals("tacops_rapid_ac")) {
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("kind_rapid_ac".equals(comp_i.option.getName())) {
+                    comp_i.setEditable(state);
+                    comp_i.setState(false);
+                }
+            }
+        }
+
     }
 
     private void setupButtons() {

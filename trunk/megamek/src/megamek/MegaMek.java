@@ -36,6 +36,7 @@ import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.verifier.EntityVerifier;
@@ -589,7 +590,7 @@ public class MegaMek {
                     w.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
-                    for (MechSummary unit : units) {/*
+                    for (MechSummary unit : units) {
                         String unitType = unit.getUnitType();
                         if (unitType.equalsIgnoreCase("mek")) {
                             unitType = "'Mech";
@@ -629,8 +630,9 @@ public class MegaMek {
                         w.write(",");
                         w.write(Integer.toString(unit.getRunMp()));
                         w.write(",");
-                        w.write(Integer.toString(unit.getJumpMp()));*/
+                        w.write(Integer.toString(unit.getJumpMp()));
                         //w.write(unit.getChassis()+(unit.getModel().equals("")?"|":" "+unit.getModel()+"|"));
+                        w.newLine();
                     }
                     w.close();
                 } catch (Exception ex) {

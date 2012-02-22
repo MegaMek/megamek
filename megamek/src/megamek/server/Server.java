@@ -25513,6 +25513,10 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         while (stuckEntities.hasMoreElements()) {
             Entity entity = stuckEntities.nextElement();
+            if (entity.getPosition() == null && entity.isDeployed()) {
+                System.out.println("Entity #" + entity.getId() + " does not know its position.");
+                continue;
+            }
             rollTarget = entity.getBasePilotingRoll();
             entity.addPilotingModifierForTerrain(rollTarget);
             // apart from swamp & liquid magma, -1 modifier

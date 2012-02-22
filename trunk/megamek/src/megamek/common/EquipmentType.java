@@ -16,6 +16,10 @@
 
 package megamek.common;
 
+import megamek.common.options.GameOptions;
+import megamek.common.util.StringUtil;
+import megamek.server.Server;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -712,4 +716,12 @@ public class EquipmentType {
         return "EquipmentType: "+name;
     }
 
+    protected static GameOptions getGameOptions() {
+        if (Server.getServerInstance() == null) {
+            return null;
+        } else if (Server.getServerInstance().getGame() == null) {
+            return null;
+        }
+        return Server.getServerInstance().getGame().getOptions();
+    }
 }

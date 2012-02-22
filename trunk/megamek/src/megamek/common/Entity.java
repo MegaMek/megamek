@@ -8446,6 +8446,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 String[] modes =
                     { "", "Rapid" };
                 ((WeaponType) mounted.getType()).setModes(modes);
+                if (game.getOptions().booleanOption("kind_rapid_ac")) {
+                    mounted.setKindRapidFire(true);
+                }
             } else if (mounted.getType() instanceof ISBombastLaser) {
                 int damage = 12;
                 ArrayList<String> modes = new ArrayList<String>();

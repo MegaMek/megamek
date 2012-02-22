@@ -22,6 +22,7 @@ import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
 import megamek.server.Server;
 
 /**
@@ -60,7 +61,15 @@ public abstract class ACWeapon extends AmmoWeapon {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Rapid")) {
-            return new RapidfireACWeaponHandler(toHit, waa, game, server);
+            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
+            if (weapon.isKindRapidFire()) {
+                toHitModifier = 1;
+                ah.setKindRapidFire(true);
+            } else {
+                toHitModifier = 0;
+                ah.setKindRapidFire(false);
+            }
+            return ah;
         }
         if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
             return new ACAPHandler(toHit, waa, game, server);
@@ -85,4 +94,22 @@ public abstract class ACWeapon extends AmmoWeapon {
         return new ACWeaponHandler(toHit, waa, game, server);
 
     }
+
+    @Override
+    public int getDamage() {
+        int dmg = super.getDamage();
+        if ((dmg != 5) && (dmg != 2)) {
+            return dmg;
+        }
+        GameOptions options = getGameOptions();
+        if (options == null) {
+            return dmg;
+        }
+        if (options.getOption("increased_ac_dmg").booleanValue()) {
+            dmg++;
+        }
+        return dmg;
+    }
+
+
 }

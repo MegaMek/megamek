@@ -171,6 +171,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
         addOption(advancedCombat, "increased_ac_dmg", false);
+        addOption(advancedCombat, "increased_iserll_range", false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$

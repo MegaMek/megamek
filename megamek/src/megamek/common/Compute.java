@@ -859,7 +859,7 @@ public class Compute {
         // add any target stealth modifier
         if (target instanceof Entity) {
             TargetRoll tmpTR = ((Entity) target).getStealthModifier(usingRange, ae);
-            if (tmpTR != null && tmpTR.getValue() != 0) {
+            if ((tmpTR != null) && (tmpTR.getValue() != 0)) {
                 mods.append(((Entity) target).getStealthModifier(usingRange, ae));
             }
         }
@@ -1690,7 +1690,7 @@ public class Compute {
             return new ToHitData();
         }
 
-        if (game.getOptions().booleanOption("tacops_standing_still") && (entity.moved == EntityMovementType.MOVE_NONE)
+        if (game.getOptions().booleanOption("tacops_standing_still") && (entity.mpUsed == 0)
                 && !entity.isImmobile()
                 && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
             ToHitData toHit = new ToHitData();

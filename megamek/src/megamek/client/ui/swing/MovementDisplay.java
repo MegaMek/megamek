@@ -2051,7 +2051,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (clientgui.getClient().game.getOptions().booleanOption(
+        if (!clientgui.getClient().game.getOptions().booleanOption(
                 "tacops_evade")) {
             return;
         }

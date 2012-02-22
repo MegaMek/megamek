@@ -3557,10 +3557,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                         .append(entity.getMovementAbbr(entity.moved)).append(":") //$NON-NLS-1$
                         .append(entity.delta_distance).append(" (+") //$NON-NLS-1$
                         .append(Compute.getTargetMovementModifier(game, entity.getId()).getValue())
-                        .append(");") //$NON-NLS-1$
+                        .append(")") //$NON-NLS-1$
+                        .append(entity.isEvading()?Messages.getString("BoardView1.Evade"):"")//$NON-NLS-1$ //$NON-NLS-2$
+                        .append(";") //$NON-NLS-1$
                         .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
-                        .append(entity.heat)
-                        .append(entity.isEvading()?Messages.getString("BoardView1.Evade"):"");
+                        .append(entity.heat);
                 if (entity.isCharging()) {
                     buffer.append(" ") //$NON-NLS-1$
                             .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$

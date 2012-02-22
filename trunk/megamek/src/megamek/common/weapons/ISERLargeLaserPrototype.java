@@ -21,6 +21,7 @@ import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
 import megamek.server.Server;
 
 /**
@@ -68,5 +69,19 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new PrototypeLaserHandler(toHit, waa, game, server);
+    }
+
+    @Override
+    public int getLongRange() {
+        GameOptions options = getGameOptions();
+        if (options == null) {
+            return super.getLongRange();
+        } else if (options.getOption("increased_iserll_range") == null) {
+            return super.getLongRange();
+        }
+        if (options.getOption("increased_iserll_range").booleanValue()) {
+            return 21;
+        }
+        return super.getLongRange();
     }
 }

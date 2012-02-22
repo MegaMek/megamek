@@ -293,11 +293,11 @@ public class WeaponType extends EquipmentType {
     public int[] getRanges(Mounted weapon) {
         // modify the ranges for ATM missile systems based on the ammo selected
         // TODO: this is not the right place to hardcode these
-        int minRange = minimumRange;
-        int sRange = shortRange;
-        int mRange = mediumRange;
-        int lRange = longRange;
-        int eRange = extremeRange;
+        int minRange = getMinimumRange();
+        int sRange = getShortRange();
+        int mRange = getMediumRange();
+        int lRange = getLongRange();
+        int eRange = getExtremeRange();
         if (getAmmoType() == AmmoType.T_ATM) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {

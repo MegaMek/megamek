@@ -1061,7 +1061,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, "heavy fog");
         }
 
-        // blowind sand mods
+        // blowing sand mods
         if (wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
                 && game.getPlanetaryConditions().isSandBlowing()
                 && (game.getPlanetaryConditions().getWindStrength() > PlanetaryConditions.WI_LIGHT_GALE)) {

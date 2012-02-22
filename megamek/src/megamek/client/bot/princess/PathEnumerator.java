@@ -304,6 +304,7 @@ public class PathEnumerator {
         if (e.getJumpMP() != 0) {
             MovePath jumpmove = new MovePath(g, e);
             jumpmove.addStep(MoveStepType.START_JUMP);
+            jumpmove.getStep(0).addDistance(1);
             ret.add(jumpmove);
         }
         // System.err.println("number of starting moves for "+e.getChassis()+" is "+ret.size());

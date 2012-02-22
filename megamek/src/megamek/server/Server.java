@@ -25479,6 +25479,7 @@ public class Server implements Runnable {
                                 || (entity.getMovementMode() == EntityMovementMode.WHEELED) || ((entity
                                 .getMovementMode() == EntityMovementMode.HOVER) && entity.isImmobile()))
                         && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) > 0)
+                        && (!(game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE) > 0) && (entity.getElevation() == game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV)))
                         && !(entity.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
                         && !(entity.hasWorkingMisc(MiscType.F_FLOTATION_HULL))) {
                     return true;
@@ -25513,7 +25514,7 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         while (stuckEntities.hasMoreElements()) {
             Entity entity = stuckEntities.nextElement();
-            if (entity.getPosition() == null && entity.isDeployed()) {
+            if ((entity.getPosition() == null) && entity.isDeployed()) {
                 System.out.println("Entity #" + entity.getId() + " does not know its position.");
                 continue;
             }

@@ -153,6 +153,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "tacops_ba_criticals", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_hotload", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_rapid_ac", false); //$NON-NLS-1$
+        addOption(advancedCombat, "kind_rapid_ac", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_grappling", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_jump_jet_attack", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_trip_attack", false); //$NON-NLS-1$
@@ -169,6 +170,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "vehicles_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
+        addOption(advancedCombat, "increased_ac_dmg", false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
@@ -248,22 +250,6 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, "rpg_gunnery", false); //$NON-NLS-1$
         addOption(rpg, "artillery_skill", false); //$NON-NLS-1$
         addOption(rpg, "toughness", false); //$NON-NLS-1$
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
 

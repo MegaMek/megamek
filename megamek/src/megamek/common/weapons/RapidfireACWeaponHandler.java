@@ -38,6 +38,8 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      */
     private static final long serialVersionUID = -1770392652874842106L;
 
+    private boolean kindRapidFire = false;
+
     /**
      * @param t
      * @param w
@@ -48,6 +50,14 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         super(t, w, g, s);
     }
 
+    public boolean getKindRapidFire() {
+        return kindRapidFire;
+    }
+
+    public void setKindRapidFire(boolean kindRapidFire) {
+        this.kindRapidFire = kindRapidFire;
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -55,8 +65,12 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if ((roll <= 4) && (howManyShots == 2)) {
-            if (roll > 2) {
+        int jamLevel = 4;
+        if (kindRapidFire) {
+            jamLevel = 2;
+        }
+        if ((roll <= jamLevel) && (howManyShots == 2)) {
+            if (roll > 2 || kindRapidFire) {
                 Report r = new Report(3161);
                 r.subject = subjectId;
                 r.newlines = 0;

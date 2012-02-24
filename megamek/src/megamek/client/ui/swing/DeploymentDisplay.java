@@ -587,7 +587,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 clientgui.frame,
                                 Messages
                                         .getString(
-                                                "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
+                                                "DeploymentDisplay.alertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.alertDialog1.title") //$NON-NLS-1$
                                 , JOptionPane.ERROR_MESSAGE);
             }
         } // End load-unit
@@ -627,11 +627,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 clientgui.frame,
                                 Messages
                                         .getString(
-                                                "DeploymentDisplay.allertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                                                "DeploymentDisplay.alertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.alertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End unload-unit
         else if (ev.getActionCommand().equals(DEPLOY_REMOVE)) {
-            remove();
+            if (JOptionPane.showConfirmDialog(clientgui.frame, Messages.getString("DeploymentDisplay.removeTitle"), Messages.getString("DeploymentDisplay.removeMessage", new Object[] {ce().getShortName()}), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                remove();
+            }
         } else if (ev.getActionCommand().equals(DEPLOY_ASSAULTDROP)) {
             assaultDropPreference = !assaultDropPreference;
             if (assaultDropPreference) {

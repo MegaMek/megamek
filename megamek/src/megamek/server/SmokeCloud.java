@@ -48,7 +48,7 @@ public class SmokeCloud implements Serializable{
     }
     
     public void setSmokeLevel(int level){
-        this.smokeLevel = Math.min(2, level);
+        this.smokeLevel = Math.min(4, level);
     }
     
     public int getSmokeLevel(){

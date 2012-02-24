@@ -1165,6 +1165,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("");
             p.println("super * \"smoke:1\" \"\" \"boring/smoke.gif\"");
             p.println("super * \"smoke:2\" \"\" \"boring/heavysmoke.gif\"");
+            p.println("super * \"smoke:3\" \"\" \"boring/lismoke.gif\"");
+            p.println("super * \"smoke:4\" \"\" \"boring/lismoke.gif\"");
             p.println("super * \"fire:1\" \"\" \"boring/fire.gif\"");
             p.println("super * \"fire:2\" \"\" \"boring/fire.gif\"");
             p.println("");

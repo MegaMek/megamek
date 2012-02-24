@@ -478,7 +478,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     public void driftSmokeReport(SmokeCloud cloud, boolean dis) {
         Report r;
         int size = cloud.getSmokeLevel();
-        if ((size == 2) && (dis == true)) {
+        if (((size == 2)||(size == 4)) && (dis == true)) {
             // heavy smoke drifts and dissipates to light
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {
                 if ( pos == 0 ) {
@@ -493,7 +493,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
             r = new Report(5212, Report.PUBLIC);
             vPhaseReport.addElement(r);
-        } else if ((size == 2) && (dis == false)) {
+        } else if (((size == 2)||(size == 4)) && (dis == false)) {
             // heavy smoke drifts
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {
                 if ( pos == 0 ) {
@@ -508,7 +508,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
             r = new Report(5213, Report.PUBLIC);
             vPhaseReport.addElement(r);
-        } else if ((size == 1) && (dis == true)) {
+        } else if (((size == 1)||(size == 3)) && (dis == true)) {
             // light smoke drifts and dissipates
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {
                 if ( pos == 0 ) {
@@ -524,7 +524,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
             r = new Report(5222, Report.PUBLIC);
             vPhaseReport.addElement(r);
 
-        } else if ((size == 1) && (dis == false)) {
+        } else if (((size == 1)||(size == 3)) && (dis == false)) {
             // light smoke drifts
 
             for ( int pos = 0; pos < cloud.getCoordsList().size(); pos++ ) {

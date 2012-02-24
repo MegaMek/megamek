@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -609,6 +610,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
+        nDamage = checkLI(nDamage, entityTarget, vPhaseReport);
 
         //some buildings scale remaining damage that is not absorbed
         //TODO: this isn't quite right for castles brian
@@ -834,7 +836,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hexType = "jungle";
             }
 
-            //Do not absorb more damage then the weapon can do.
+            //Do not absorb more damage than the weapon can do.
             treeAbsorbs = Math.min(nDamage, treeAbsorbs);
 
             nDamage = Math.max(0, nDamage-treeAbsorbs);
@@ -847,6 +849,72 @@ public class WeaponHandler implements AttackHandler, Serializable {
             terrainReport.indent(2);
             terrainReport.newlines = 0;
             vPhaseReport.add(terrainReport);
+        }
+        return nDamage;
+    }
+
+
+    /**
+     * Check for Laser Inhibiting smoke clouds
+     */
+    public int checkLI(int nDamage, Entity entityTarget,
+            Vector<Report> vPhaseReport) {
+
+        weapon = ae.getEquipment(waa.getWeaponId());
+        wtype = (WeaponType) weapon.getType();
+
+        ArrayList<Coords> coords = Coords.intervening(ae.getPosition(),
+                entityTarget.getPosition());
+        int refrac = 0;
+        double travel = 0;
+        double range = ae.getPosition().distance(target.getPosition());
+        double atkLev = ae.absHeight();
+        double tarLev = entityTarget.absHeight();
+        double levDif = Math.abs(atkLev - tarLev);
+        String hexType = "LASER inhibiting smoke";
+
+        // loop through all intervening coords.
+        // If you could move this to compute.java, then remove - import
+        // java.util.ArrayList;
+        for (Coords curr : coords) {
+            ITerrain smokeHex = game.getBoard().getHex(curr)
+                    .getTerrain(Terrains.SMOKE);
+            if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
+                    && wtype.hasFlag(WeaponType.F_ENERGY)
+                    && ((smokeHex.getLevel() == 3) || (smokeHex.getLevel() == 4))) {
+
+                int levit = ((game.getBoard().getHex(curr).getElevation()) + 2);
+
+                // does the hex contain LASER inhibiting smoke?
+                if ((tarLev > atkLev)
+                        && (levit >= ((travel * (levDif / range)) + atkLev))) {
+                    refrac++;
+                } else if ((atkLev > tarLev)
+                        && (levit >= (((range - travel) * (levDif / range)) + tarLev))) {
+                    refrac++;
+                } else if ((atkLev == tarLev) && (levit >= 0)) {
+                    refrac++;
+                }
+                travel++;
+            }
+        }
+        if (refrac != 0) {
+            // Damage reduced by 2 for each interviening smoke.
+            refrac = (refrac * 2);
+
+            // Do not absorb more damage than the weapon can do. (Are both of
+            // these really necessary?)
+            refrac = Math.min(nDamage, refrac);
+            nDamage = Math.max(0, (nDamage - refrac));
+
+            Report.addNewline(vPhaseReport);
+            Report fogReport = new Report(6427);
+            fogReport.subject = entityTarget.getId();
+            fogReport.add(hexType);
+            fogReport.add(refrac);
+            fogReport.indent(2);
+            fogReport.newlines = 0;
+            vPhaseReport.add(fogReport);
         }
         return nDamage;
     }

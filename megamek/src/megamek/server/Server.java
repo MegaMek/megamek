@@ -7396,6 +7396,36 @@ public class Server implements Runnable {
     }
 
     /**
+     * deliver LASER inhibiting smoke
+     *
+     * @param coords
+     *            the <code>Coords</code> where to deliver
+     */
+    public void deliverLIsmoke(Coords coords, Vector<Report> vPhaseReport) {
+        Report r = new Report(5186, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r);
+        createSmoke(coords, 4, 2);
+        sendChangedHex(coords);
+        for (int dir = 0; dir <= 5; dir++) {
+            Coords tempcoords = coords.translated(dir);
+            if (!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if (coords.equals(tempcoords)) {
+                continue;
+            }
+            r = new Report(5186, Report.PUBLIC);
+            r.indent(2);
+            r.add(tempcoords.getBoardNum());
+            vPhaseReport.add(r);
+            createSmoke(tempcoords, 4, 2);
+            sendChangedHex(tempcoords);
+        }
+    }
+
+    /**
      * deliver artillery inferno
      *
      * @param coords
@@ -26806,7 +26836,7 @@ public class Server implements Runnable {
      *
      * @param coords
      * @param level
-     *            1=Light 2=Heavy Smoke
+     *            1=Light 2=Heavy Smoke 3:light LI smoke 4: Heavy LI smoke
      * @param duration
      *            How long the smoke will last.
      */
@@ -26820,7 +26850,7 @@ public class Server implements Runnable {
      *
      * @param coords
      * @param level
-     *            1=Light 2=Heavy Smoke
+     *            1=Light 2=Heavy Smoke 3:light LI smoke 4: Heavy LI smoke
      * @param duration
      *            duration How long the smoke will last.
      */

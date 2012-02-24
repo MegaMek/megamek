@@ -957,9 +957,11 @@ public class LosEffects {
                 // LOS
                 // so check them both
                 if (hex.containsTerrain(Terrains.SMOKE)) {
-                    if (hex.terrainLevel(Terrains.SMOKE) == 1) {
+                    if ((hex.terrainLevel(Terrains.SMOKE) == 1)
+                        || (hex.terrainLevel(Terrains.SMOKE) == 3)
+                        ||(hex.terrainLevel(Terrains.SMOKE) == 4)) {
                         los.lightSmoke++;
-                    } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
+                    } else if ((hex.terrainLevel(Terrains.SMOKE) == 2)) {
                         los.heavySmoke++;
                     }
                 }

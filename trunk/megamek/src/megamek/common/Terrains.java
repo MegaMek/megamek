@@ -43,7 +43,7 @@ public class Terrains implements ITerrainFactory {
     public static final int ICE      = 17;
     public static final int SNOW     = 18; // 1: thin 2: deep  
     public static final int FIRE     = 19; // 1: normal fire 2: inferno fire
-    public static final int SMOKE    = 20; // 1: light smoke 2: heavy smoke
+    public static final int SMOKE    = 20; // 1: light smoke 2: heavy smoke 3:light LI smoke 4: Heavy LI smoke
     public static final int GEYSER   = 21; // 1: dormant 2: active 3: magma vent
     //unimplemented
     //Black Ice
@@ -160,6 +160,12 @@ public class Terrains implements ITerrainFactory {
                 }
                 if(level == 2) {
                     return "heavy smoke";
+                }
+                if(level == 3) {
+                    return "LASER inhibiting smoke";
+                }
+                if(level == 4) {
+                    return "LASER inhibiting smoke";
                 }
                 return "smoke (unknown)";
             case(SWAMP):

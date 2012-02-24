@@ -389,6 +389,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             server.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
         }
+        if (atype.getMunitionType() == AmmoType.M_LASER_INHIB) {
+            server.deliverLIsmoke(targetPos, vPhaseReport);
+            return false;
+        }
         int altitude = 0;
         if (isFlak) {
             altitude = target.getElevation();

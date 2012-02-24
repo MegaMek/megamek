@@ -1799,7 +1799,7 @@ public class Compute {
 
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus,
             boolean attackerInSameBuilding) {
-        Entity entityTarget = null;
+        Entity entityTarget = null; 
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
             entityTarget = (Entity) t;
@@ -1856,16 +1856,17 @@ public class Compute {
             }
         }
         if (!isAboveSmoke) {
-            if (hex.terrainLevel(Terrains.SMOKE) == 1) {
+            if ( (hex.terrainLevel(Terrains.SMOKE) == 1)
+               ||(hex.terrainLevel(Terrains.SMOKE) == 3)
+               ||(hex.terrainLevel(Terrains.SMOKE) == 4) ) {
                 toHit.addModifier(1, "target in light smoke");
-            } else if (hex.terrainLevel(Terrains.SMOKE) > 1) {
+            } else if (hex.terrainLevel(Terrains.SMOKE) == 2) {
                 if (eistatus > 0) {
                     toHit.addModifier(1, "target in heavy smoke");
                 } else {
                     toHit.addModifier(2, "target in heavy smoke");
                 }
             }
-
         }
         if (hex.terrainLevel(Terrains.GEYSER) == 2) {
             if (eistatus > 0) {

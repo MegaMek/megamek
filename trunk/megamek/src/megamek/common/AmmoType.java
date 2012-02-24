@@ -242,29 +242,30 @@ public class AmmoType extends EquipmentType {
     public static final long M_INFERNO_IV = 1l << 41;
     public static final long M_VIBRABOMB_IV = 1l << 42;
     public static final long M_SMOKE = 1l << 43;
-
+    public static final long M_LASER_INHIB = 1l << 44;
+    
     // Nuclear Munitions
-    public static final long M_DAVY_CROCKETT_M = 1l << 44;
-    public static final long M_SANTA_ANNA = 1l << 45;
+    public static final long M_DAVY_CROCKETT_M = 1l << 45;
+    public static final long M_SANTA_ANNA = 1l << 46;
 
     // tele-missile
-    public static final long M_TELE = 1l << 46;
+    public static final long M_TELE = 1l << 47;
 
     // fluid gun
     // TODO: implement all of these except coolant
     // water should also be used for vehicle flamers
     // TO page 361-363
-    public static final long M_WATER = 11 << 47;
-    public static final long M_PAINT_OBSCURANT = 11 << 48;
-    public static final long M_OIL_SLICK = 11 << 49;
-    public static final long M_ANTI_FLAME_FOAM = 11 << 50;
-    public static final long M_CORROSIVE = 11 << 51;
-    public static final long M_COOLANT = 11 << 52;
+    public static final long M_WATER = 11 << 48;
+    public static final long M_PAINT_OBSCURANT = 11 << 49;
+    public static final long M_OIL_SLICK = 11 << 50;
+    public static final long M_ANTI_FLAME_FOAM = 11 << 51;
+    public static final long M_CORROSIVE = 11 << 52;
+    public static final long M_COOLANT = 11 << 53;
 
     //vehicular grenade launcher
-    public static final long M_CHAFF = 1l << 53;
-    public static final long M_INCENDIARY = 1l << 54;
-    public static final long M_SMOKEGRENADE = 1l << 55;
+    public static final long M_CHAFF = 1l << 54;
+    public static final long M_INCENDIARY = 1l << 55;
+    public static final long M_SMOKEGRENADE = 1l << 56;
 
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
@@ -1198,6 +1199,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB, TechConstants.T_IS_EXPERIMENTAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -8878,6 +8880,10 @@ public class AmmoType extends EquipmentType {
                 cost *= .5;
             }
 
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_SMOKE_WARHEAD)) {
+                cost *= .5;
+            }
+
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_INCENDIARY_LRM)) {
                 cost *= 1.5;
             }
@@ -8928,7 +8934,9 @@ public class AmmoType extends EquipmentType {
             if (munition.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
                 cost *= 50;
             }
-
+            if (munition.getMunitionType() == AmmoType.M_LASER_INHIB) {
+                cost *= 4;
+            }
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_NLRM)) && (munition.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 cost *= 2;
             }

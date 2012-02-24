@@ -1329,16 +1329,15 @@ public class Client implements IClientCommandHandler {
      */
     private void checkDuplicateNamesDuringDelete(int id) {
         Entity entity = game.getEntity(id);
-        if(entity == null)
-        {
-        	return;
+        if (entity == null) {
+            return;
         }
         Object o = duplicateNameHash.get(entity.getShortNameRaw());
         if (o != null) {
             int count = ((Integer) o).intValue();
             if (count > 1) {
-                ArrayList<Entity> myEntities = game.getPlayerEntities(game
-                        .getPlayer(local_pn), false);
+                ArrayList<Entity> myEntities = game.getPlayerEntities(
+                        game.getPlayer(local_pn), false);
                 for (int i = 0; i < myEntities.size(); i++) {
                     Entity e = myEntities.get(i);
                     if (e.getShortNameRaw().equals(entity.getShortNameRaw())

@@ -40,4 +40,10 @@ public interface IOptionGroup extends IBasicOptionGroup {
      * @see IOptions#getGroups()
      */
     public abstract Enumeration<IOption> getOptions();
+
+    /**
+     * @return the <code>Enumeration</code> of the <code>IOption</code> sorted in alpha-numerically ascending order.
+     * @see IOptions#getGroups()
+     */
+    public abstract Enumeration<IOption> getSortedOptions();
 }

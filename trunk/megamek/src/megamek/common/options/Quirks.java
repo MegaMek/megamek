@@ -18,11 +18,13 @@ package megamek.common.options;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Dropship;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
+import megamek.common.Protomech;
 import megamek.common.Tank;
 
 /**
@@ -69,6 +71,12 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "searchlight", false); //$NON-NLS-1$
         addOption(posQuirk, "stable", false); //$NON-NLS-1$
         addOption(posQuirk, "trailer_hitch", false); //$NON-NLS-1$
+        addOption(posQuirk, "imp_com", false); //$NON-NLS-1$
+        addOption(posQuirk, "variable_range_long", false); //$NON-NLS-1$
+        addOption(posQuirk, "variable_range_short", false); //$NON-NLS-1$
+        addOption(posQuirk, "vtol_rotor", false); //$NON-NLS-1$
+        addOption(posQuirk, "rumble_seat", false);
+        addOption(posQuirk, "distracting", false);
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
@@ -103,6 +111,17 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, "unbalanced", false); //$NON-NLS-1$
         addOption(negQuirk, "weak_legs", false); //$NON-NLS-1$
         addOption(negQuirk, "weak_undercarriage", false); //$NON-NLS-1$
+        addOption(negQuirk, "flawed_cooling", false); //$NON-NLS-1$
+        addOption(negQuirk, "gas_hog", false); //$NON-NLS-1$
+        addOption(negQuirk, "poor_performance", false); //$NON-NLS-1$
+        addOption(negQuirk, "unstreamlined", false); //$NON-NLS-1$
+        addOption(negQuirk, "weak_head_1", false); //$NON-NLS-1$
+        addOption(negQuirk, "weak_head_2", false); //$NON-NLS-1$
+        addOption(negQuirk, "weak_head_3", false); //$NON-NLS-1$
+        addOption(negQuirk, "weak_head_4", false); //$NON-NLS-1$
+        addOption(negQuirk, "weak_head_5", false); //$NON-NLS-1$
+        addOption(negQuirk, "obsolete", false); //$NON-NLS-1$
+        addOption(negQuirk, "poor_sealing", false); //$NON-NLS-1$
         //quirks not implemented yet
         //Cooling System Flaws
         //Exposed Weapon Linkage (weapon-specific, sort of)
@@ -126,7 +145,11 @@ public class Quirks extends AbstractOptions {
 
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
 
-
+        if (((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) ||
+                (en.getEngine().getEngineType() == Engine.FUEL_CELL)) &&
+                quirk.getName().equals("gas_hog")) {
+            return true;
+        }
 
         if(en instanceof Mech) {
             if(quirk.getName().equals("atmo_flyer")
@@ -136,7 +159,10 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("internal_bomb")
                     || quirk.getName().equals("trailer_hitch")
                     || quirk.getName().equals("large_dropper")
-                    || quirk.getName().equals("weak_undercarriage")) {
+                    || quirk.getName().equals("weak_undercarriage")
+                    || quirk.getName().equals("vtol_rotor")
+                    || quirk.getName().equals("gas_hog")
+                    || quirk.getName().equals("unstreamlined")) {
                 return false;
             }
             return true;
@@ -172,7 +198,16 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("poor_life_support")
                     || quirk.getName().equals("unbalanced")
                     || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("weak_undercarriage")) {
+                    || quirk.getName().equals("weak_undercarriage")
+                    || quirk.getName().equals("vtol_rotor")
+                    || quirk.getName().equals("flawed_cooling")
+                    || quirk.getName().equals("unstreamlined")
+                    || quirk.getName().equals("gas_hog")
+                    || quirk.getName().equals("weak_head_1")
+                    || quirk.getName().equals("weak_head_2")
+                    || quirk.getName().equals("weak_head_3")
+                    || quirk.getName().equals("weak_head_4")
+                    || quirk.getName().equals("weak_head_5")) {
                 return false;
             }
             if(!en.getEngine().isFusion() && quirk.getName().equals("fragile_fuel")) {
@@ -220,7 +255,19 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("poor_life_support")
                     || quirk.getName().equals("unbalanced")
                     || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("weak_undercarriage")) {
+                    || quirk.getName().equals("weak_undercarriage")
+                    || quirk.getName().equals("vtol_rotor")
+                    || quirk.getName().equals("flawed_cooling")
+                    || quirk.getName().equals("unstreamlined")
+                    || quirk.getName().equals("weak_head_1")
+                    || quirk.getName().equals("weak_head_2")
+                    || quirk.getName().equals("weak_head_3")
+                    || quirk.getName().equals("weak_head_4")
+                    || quirk.getName().equals("weak_head_5")
+                    || quirk.getName().equals("gas_hog")
+                    || quirk.getName().equals("rumble_seat")
+                    || quirk.getName().equals("poor_performance")
+                    || quirk.getName().equals("distracting")) {
                 return false;
             }
             return true;
@@ -259,7 +306,20 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("poor_life_support")
                     || quirk.getName().equals("unbalanced")
                     || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("weak_undercarriage")) {
+                    || quirk.getName().equals("weak_undercarriage")
+                    || quirk.getName().equals("vtol_rotor")
+                    || quirk.getName().equals("flawed_cooling")
+                    || quirk.getName().equals("unstreamlined")
+                    || quirk.getName().equals("weak_head_1")
+                    || quirk.getName().equals("weak_head_2")
+                    || quirk.getName().equals("weak_head_3")
+                    || quirk.getName().equals("weak_head_4")
+                    || quirk.getName().equals("weak_head_5")
+                    || quirk.getName().equals("gas_hog")
+                    || quirk.getName().equals("rumble_seat")
+                    || quirk.getName().equals("poor_performance")
+                    || quirk.getName().equals("distracting")
+                    || quirk.getName().equals("poor_sealing")) {
                 return false;
             }
             return true;
@@ -289,7 +349,17 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("poor_life_support")
                     || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")) {
+                    || quirk.getName().equals("weak_undercarriage")
+                    || quirk.getName().equals("weak_legs")
+                    || quirk.getName().equals("vtol_rotor")
+                    || quirk.getName().equals("flawed_cooling")
+                    || quirk.getName().equals("rumble_seat")
+                    || quirk.getName().equals("weak_head_1")
+                    || quirk.getName().equals("weak_head_2")
+                    || quirk.getName().equals("weak_head_3")
+                    || quirk.getName().equals("weak_head_4")
+                    || quirk.getName().equals("weak_head_5")
+                    || quirk.getName().equals("poor_sealing")) {
                 return false;
             }
             return true;
@@ -315,10 +385,47 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("large_dropper")
                     || quirk.getName().equals("unbalanced")
-                    || quirk.getName().equals("weak_legs")) {
+                    || quirk.getName().equals("weak_legs")
+                    || quirk.getName().equals("vtol_rotor")
+                    || quirk.getName().equals("weak_head_1")
+                    || quirk.getName().equals("weak_head_2")
+                    || quirk.getName().equals("weak_head_3")
+                    || quirk.getName().equals("weak_head_4")
+                    || quirk.getName().equals("weak_head_5")
+                    || quirk.getName().equals("poor_sealing")) {
                 return false;
             }
             return true;
+        } else if (en instanceof Protomech) {
+            if (quirk.getName().equals("accurate")
+                    || quirk.getName().equals("distracting")
+                    || quirk.getName().equals("easy_maintain")
+                    || quirk.getName().equals("ext_twist")
+                    || quirk.getName().equals("imp_com")
+                    || quirk.getName().equals("imp_sensors")
+                    || quirk.getName().equals("imp_target_short")
+                    || quirk.getName().equals("imp_target_med")
+                    || quirk.getName().equals("imp_target_long")
+                    || quirk.getName().equals("variable_range_long")
+                    || quirk.getName().equals("ammo_feed")
+                    || quirk.getName().equals("bad_rep")
+                    || quirk.getName().equals("difficult_maintain")
+                    || quirk.getName().equals("exposed_linkage")
+                    || quirk.getName().equals("hard_pilot")
+                    || quirk.getName().equals("inaccurate")
+                    || quirk.getName().equals("no_twist")
+                    || quirk.getName().equals("obsolete")
+                    || quirk.getName().equals("poor_performance")
+                    || quirk.getName().equals("poor_sealing")
+                    || quirk.getName().equals("poor_target_short")
+                    || quirk.getName().equals("poor_target_med")
+                    || quirk.getName().equals("poor_target_long")
+                    || quirk.getName().equals("poor_work")
+                    || quirk.getName().equals("prototype")
+                    || quirk.getName().equals("sensor_ghosts")) {
+                return true;
+            }
+            return false;
         }
 
 

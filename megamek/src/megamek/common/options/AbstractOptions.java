@@ -15,8 +15,10 @@
 package megamek.common.options;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -178,6 +180,12 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                 return new OptionsEnumeration();
             }
 
+            public Enumeration<IOption> getSortedOptions() {
+                OptionsEnumeration oe = new OptionsEnumeration();
+                oe.sortOptions();
+                return oe;
+            }
+
             protected class OptionsEnumeration implements Enumeration<IOption> {
 
                 private Enumeration<String> optionNames;
@@ -202,6 +210,12 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                  */
                 public IOption nextElement() {
                     return getOption(optionNames.nextElement());
+                }
+                
+                public void sortOptions() {
+                    List<String> names = Collections.list(optionNames);
+                    Collections.sort(names);
+                    optionNames = Collections.enumeration(names);
                 }
 
             }

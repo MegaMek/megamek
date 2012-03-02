@@ -1558,10 +1558,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-
             panQuirks.add(new JLabel(group.getDisplayableName()), GBC.eol());
 
-            for (Enumeration<IOption> j = group.getOptions(); j
+            for (Enumeration<IOption> j = group.getSortedOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
 
@@ -1584,7 +1583,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panQuirks.add(labWpn, GBC.eol());
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements();) {
                 IOptionGroup group = i.nextElement();
-                for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements();) {
                     IOption option = j.nextElement();
                     if(!WeaponQuirks.isQuirkLegalFor(option, entity, (WeaponType)m.getType())) {
                         continue;

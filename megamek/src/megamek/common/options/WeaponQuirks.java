@@ -15,11 +15,17 @@
 package megamek.common.options;
 
 
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
+import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.EnergyWeapon;
 
 /**
  * Contains the options determining quirks of the unit
@@ -46,7 +52,10 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, "imp_cooling", false); //$NON-NLS-1$
         addOption(wpnQuirk, "poor_cooling", false); //$NON-NLS-1$
         addOption(wpnQuirk, "no_cooling", false); //$NON-NLS-1$
-        //addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "exposed_linkage", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "em_interference", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "jettison_capable", false); //$NON-NLS-1$
     }
     //unimplemented
     //ammo feed problem
@@ -63,6 +72,14 @@ public class WeaponQuirks extends AbstractOptions {
     }
     
     public static boolean isQuirkLegalFor(IOption quirk, Entity en, WeaponType wtype) {
+        
+        if (!(wtype instanceof AmmoWeapon) && quirk.getName().equals("ammo_feed")) {
+            return false;
+        }
+
+        if (!(wtype instanceof EnergyWeapon) && quirk.getName().equals("em_interference")) {
+            return false;
+        }
         
         if(en instanceof Tank || en instanceof BattleArmor) {
             if(quirk.getName().equals("imp_cooling")
@@ -83,9 +100,17 @@ public class WeaponQuirks extends AbstractOptions {
                 return false;
             }
         }
-        
-        
-        
+
+        if (quirk.getName().equals("jettison_capable")) {
+            if (en instanceof Protomech
+                    || en instanceof Aero
+                    || en instanceof Jumpship
+                    || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+
         return true;
         
     }

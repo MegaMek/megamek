@@ -73,7 +73,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
                 HitData targetTrooper = entityTarget.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 r.add(entityTarget.getLocationAbbr(targetTrooper));
                 vPhaseReport.add(r);
-                vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false));
+                vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false, 0));
                 done = true;
             }
         } else if (entityTarget instanceof Mech) {
@@ -135,7 +135,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
             // kill the firing trooper
             // TODO: should just be shut down for remainder of scenario
-            vPhaseReport.addAll(server.criticalEntity(ae, weapon.getLocation(), 0, false, false));
+            vPhaseReport.addAll(server.criticalEntity(ae, weapon.getLocation(), 0, false, false, 0));
         }
         return done;
     }

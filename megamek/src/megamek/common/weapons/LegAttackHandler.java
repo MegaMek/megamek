@@ -89,6 +89,6 @@ public class LegAttackHandler extends WeaponHandler {
         Report.addNewline(vPhaseReport);
         // Do criticals.
         vPhaseReport.addAll(server.criticalEntity(entityTarget, hit
-                .getLocation(), 0));
+                .getLocation(), 0, damage));
     }
 }

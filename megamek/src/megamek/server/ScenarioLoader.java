@@ -202,7 +202,7 @@ public class ScenarioLoader {
                         } else {
                             System.out
                                     .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, ch.loc, cs, false);
+                            s.applyCriticalHit(chp.entity, ch.loc, cs, false, 0, false);
                         }
                     }
                     // Handle Tanks differently.
@@ -216,7 +216,7 @@ public class ScenarioLoader {
                             System.out
                                     .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
                             s.applyCriticalHit(chp.entity, Entity.NONE, cs,
-                                    false);
+                                    false, 0, false);
                         }
 
                     } // End have-tank
@@ -691,7 +691,7 @@ public class ScenarioLoader {
         StringTokenizer st = new StringTokenizer(p.getProperty("Maps"), ",");
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
-                int n = y * nWidth + x;
+                int n = (y * nWidth) + x;
                 String sBoard = "RANDOM";
                 if (st.hasMoreTokens()) {
                     sBoard = st.nextToken();

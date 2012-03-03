@@ -5193,7 +5193,7 @@ public class Server implements Runnable {
                         if (loc == -1) {
                             addReport(vehicleMotiveDamage((Tank)entity, 0, true, cs.getIndex()));
                         } else {
-                            addReport(applyCriticalHit(entity, loc, cs, true));
+                            addReport(applyCriticalHit(entity, loc, cs, true, 0, false));
                         }
                     }
                     // do any PSR immediately
@@ -5750,16 +5750,16 @@ public class Server implements Runnable {
                         addReport(damageEntity(entity, new HitData(Mech.LOC_LLEG), leapDistance));
                         addReport(damageEntity(entity, new HitData(Mech.LOC_RLEG), leapDistance));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_LLEG, 0));
+                        addReport(criticalEntity(entity, Mech.LOC_LLEG, 0, 0));
                         addNewLines();
-                        addReport(criticalEntity(entity, Mech.LOC_RLEG, 0));
+                        addReport(criticalEntity(entity, Mech.LOC_RLEG, 0, 0));
                         if (entity instanceof QuadMech) {
                             addReport(damageEntity(entity, new HitData(Mech.LOC_LARM), leapDistance));
                             addReport(damageEntity(entity, new HitData(Mech.LOC_RARM), leapDistance));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_LARM, 0));
+                            addReport(criticalEntity(entity, Mech.LOC_LARM, 0, 0));
                             addNewLines();
-                            addReport(criticalEntity(entity, Mech.LOC_RARM, 0));
+                            addReport(criticalEntity(entity, Mech.LOC_RARM, 0, 0));
                         }
                     }
                     // skill check for fall
@@ -7698,7 +7698,7 @@ public class Server implements Runnable {
                         && (te.getArmor(hit.getLocation()) > 0)) {
                         critRollMod -= 2;
                     }
-                    vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), critRollMod));
+                    vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), critRollMod, 0));
                 }
             } else if (te instanceof Protomech) {
                 te.heatFromExternal += missiles;
@@ -10874,7 +10874,7 @@ public class Server implements Runnable {
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                        VTOL.CRIT_ROTOR_DESTROYED), false));
+                        VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
             // check for extending retractable blades
             if (paa.isBladeExtended(paa.getArm())) {
@@ -10888,7 +10888,7 @@ public class Server implements Runnable {
                 // to be handled differently
                 if (!(target instanceof Infantry)) {
                     addNewLines();
-                    addReport(criticalEntity(te, hit.getLocation(), 0, true, false));
+                    addReport(criticalEntity(te, hit.getLocation(), 0, true, false, damage));
                 }
                 if ((target instanceof BattleArmor) && (hit.getLocation() < te.locations())
                         && (te.getInternal(hit.getLocation()) > 0)) {
@@ -11142,11 +11142,11 @@ public class Server implements Runnable {
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                        VTOL.CRIT_ROTOR_DESTROYED), false));
+                        VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
             if (te.getQuirks().booleanOption("weak_legs")) {
                 addNewLines();
-                addReport(criticalEntity(te, hit.getLocation(), 0));
+                addReport(criticalEntity(te, hit.getLocation(), 0, 0));
             }
         }
 
@@ -11541,66 +11541,66 @@ public class Server implements Runnable {
                 r.add(taserRoll);
                 r.newlines = 0;
                 vPhaseReport.add(r);
-                if (!(ae.getWeight() > 100)) {
-                    if (te instanceof BattleArmor) {
-                        r = new Report(3706);
-                        r.addDesc(te);
-                        // shut down for rest of scenario, so we actually kill it
-                        // TODO: fix for salvage purposes
-                        HitData targetTrooper = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        r.add(te.getLocationAbbr(targetTrooper));
-                        vPhaseReport.add(r);
-                        vPhaseReport.addAll(criticalEntity(ae, targetTrooper.getLocation(), 0, false, false));
-                    } else if (te instanceof Mech) {
-                        if (((Mech)te).isIndustrial()) {
-                            if (taserRoll >= 8) {
-                                r = new Report(3705);
-                                r.addDesc(te);
-                                r.add(4);
-                                te.taserShutdown(4, false);
-                            } else {
-                                // suffer +2 to piloting and gunnery for 4 rounds
-                                r = new Report(3710);
-                                r.addDesc(te);
-                                r.add(2);
-                                r.add(4);
-                                te.setTaserInterference(2, 4, true);
-                            }
-                        } else {
-                            if (taserRoll >= 11) {
-                                r = new Report(3705);
-                                r.addDesc(te);
-                                r.add(3);
-                                vPhaseReport.add(r);
-                                te.taserShutdown(3, false);
-                            } else {
-                                r = new Report(3710);
-                                r.addDesc(te);
-                                r.add(2);
-                                r.add(3);
-                                vPhaseReport.add(r);
-                                te.setTaserInterference(2, 3, true);
-                            }
-                        }
-                    } else if ((te instanceof Protomech)
-                            || (te instanceof Tank)
-                            || (te instanceof Aero)) {
+
+                if (te instanceof BattleArmor) {
+                    r = new Report(3706);
+                    r.addDesc(te);
+                    // shut down for rest of scenario, so we actually kill it
+                    // TODO: fix for salvage purposes
+                    HitData targetTrooper = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    r.add(te.getLocationAbbr(targetTrooper));
+                    vPhaseReport.add(r);
+                    vPhaseReport.addAll(criticalEntity(ae, targetTrooper.getLocation(), 0, false, false, 0));
+                } else if (te instanceof Mech) {
+                    if (((Mech)te).isIndustrial()) {
                         if (taserRoll >= 8) {
                             r = new Report(3705);
                             r.addDesc(te);
                             r.add(4);
-                            vPhaseReport.add(r);
                             te.taserShutdown(4, false);
                         } else {
+                            // suffer +2 to piloting and gunnery for 4 rounds
                             r = new Report(3710);
                             r.addDesc(te);
                             r.add(2);
                             r.add(4);
+                            te.setTaserInterference(2, 4, true);
+                        }
+                    } else {
+                        if (taserRoll >= 11) {
+                            r = new Report(3705);
+                            r.addDesc(te);
+                            r.add(3);
                             vPhaseReport.add(r);
-                            te.setTaserInterference(2, 4, false);
+                            te.taserShutdown(3, false);
+                        } else {
+                            r = new Report(3710);
+                            r.addDesc(te);
+                            r.add(2);
+                            r.add(3);
+                            vPhaseReport.add(r);
+                            te.setTaserInterference(2, 3, true);
                         }
                     }
+                } else if ((te instanceof Protomech)
+                        || (te instanceof Tank)
+                        || (te instanceof Aero)) {
+                    if (taserRoll >= 8) {
+                        r = new Report(3705);
+                        r.addDesc(te);
+                        r.add(4);
+                        vPhaseReport.add(r);
+                        te.taserShutdown(4, false);
+                    } else {
+                        r = new Report(3710);
+                        r.addDesc(te);
+                        r.add(2);
+                        r.add(4);
+                        vPhaseReport.add(r);
+                        te.setTaserInterference(2, 4, false);
+                    }
                 }
+
             }
         }
 
@@ -12251,7 +12251,7 @@ public class Server implements Runnable {
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                        VTOL.CRIT_ROTOR_DESTROYED), false));
+                        VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
         }
 
@@ -13776,7 +13776,7 @@ public class Server implements Runnable {
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                        VTOL.CRIT_ROTOR_DESTROYED), false));
+                        VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
             // Target entities are pushed away or destroyed.
             Coords targetDest = Compute.getValidDisplacement(game, te.getId(), dest, direction);
@@ -13818,14 +13818,14 @@ public class Server implements Runnable {
 
         if (ae.getQuirks().booleanOption("weak_legs")) {
             addNewLines();
-            addReport(criticalEntity(ae, Mech.LOC_LLEG, 0));
+            addReport(criticalEntity(ae, Mech.LOC_LLEG, 0, 0));
             addNewLines();
-            addReport(criticalEntity(ae, Mech.LOC_RLEG, 0));
+            addReport(criticalEntity(ae, Mech.LOC_RLEG, 0, 0));
             if (ae instanceof QuadMech) {
                 addNewLines();
-                addReport(criticalEntity(ae, Mech.LOC_LARM, 0));
+                addReport(criticalEntity(ae, Mech.LOC_LARM, 0, 0));
                 addNewLines();
-                addReport(criticalEntity(ae, Mech.LOC_RARM, 0));
+                addReport(criticalEntity(ae, Mech.LOC_RARM, 0, 0));
             }
         }
 
@@ -14717,7 +14717,7 @@ public class Server implements Runnable {
                     } else {
                         r.choose(false);
                         addReport(r);
-                        addReport(oneCriticalEntity(entity, Compute.randomInt(8)));
+                        addReport(oneCriticalEntity(entity, Compute.randomInt(8), 0));
                         // add an empty report, for linebreaking
                         r = new Report(1210, Report.PUBLIC);
                         addReport(r);
@@ -14834,7 +14834,7 @@ public class Server implements Runnable {
                 }
                 // roll a critical hit
                 Report.addNewline(vPhaseReport);
-                addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus));
+                addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus, 0));
             } else if (entity instanceof Protomech) {
                 // this code is taken from inferno hits
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
@@ -15128,7 +15128,7 @@ public class Server implements Runnable {
                     }
                     vPhaseReport.add(r);
                     vPhaseReport.addAll(criticalEntity(mech, mech.rollHitLocation(ToHitData.HIT_NORMAL,
-                            ToHitData.SIDE_FRONT).getLocation(), mech.getLevelsFallen()));
+                            ToHitData.SIDE_FRONT).getLocation(), mech.getLevelsFallen(), 0));
                 }
             }
         }
@@ -16805,9 +16805,9 @@ public class Server implements Runnable {
                     if (origDamage > te.getBARRating(hit.getLocation())) {
                         if (te.hasArmoredChassis()) {
                             // crit roll with -1 mod
-                            vDesc.addAll(criticalEntity(te, hit.getLocation(), -1 + critBonus));
+                            vDesc.addAll(criticalEntity(te, hit.getLocation(), -1 + critBonus, damage_orig));
                         } else {
-                            vDesc.addAll(criticalEntity(te, hit.getLocation(), critBonus));
+                            vDesc.addAll(criticalEntity(te, hit.getLocation(), critBonus, damage_orig));
                         }
                     }
                 }
@@ -16959,7 +16959,7 @@ public class Server implements Runnable {
                     } else {
                         critIndex = Tank.CRIT_CREW_STUNNED;
                     }
-                    vDesc.addAll(applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true));
+                    vDesc.addAll(applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
                 }
 
                 // is there internal structure in the location hit?
@@ -17300,7 +17300,7 @@ public class Server implements Runnable {
             if ((te.getInternal(hit) != IArmorState.ARMOR_DESTROYED)
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.glancingMod() + critBonus));
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(), hit.glancingMod() + critBonus, damage_orig));
                 }
                 crits = 0;
 
@@ -17315,7 +17315,7 @@ public class Server implements Runnable {
                         critMod += hit.getSpecCritMod();
                         critMod += hit.glancingMod();
                     }
-                    vDesc.addAll(criticalEntity(te, hit.getLocation(), critMod + critBonus));
+                    vDesc.addAll(criticalEntity(te, hit.getLocation(), critMod + critBonus, damage_orig));
                 }
                 specCrits = 0;
             }
@@ -18181,7 +18181,7 @@ public class Server implements Runnable {
                 BattleArmor myBA = (BattleArmor) entity;
                 int numDeaths = (int) (Math.ceil((myBA.getNumberActiverTroopers())) / 2.0);
                 for (int x = 0; x < numDeaths; x++) {
-                    vDesc.addAll(applyCriticalHit(entity, 0, null, false));
+                    vDesc.addAll(applyCriticalHit(entity, 0, null, false, 0, false));
                 }
             } else if (entity instanceof Infantry) {
                 // Standard infantry are auto-killed in this band, unless
@@ -18197,18 +18197,18 @@ public class Server implements Runnable {
             } else if (entity instanceof Tank) {
                 // All vehicles suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
 
                 // ...and a Crew Killed hit.
-                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_KILLED), false));
+                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_KILLED), false, 0, false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
                 // 'Mechs suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
                 hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
 
                 // and four pilot hits.
                 vDesc.addAll(damageCrew(entity, 4));
@@ -18223,7 +18223,7 @@ public class Server implements Runnable {
                 BattleArmor myBA = (BattleArmor) entity;
                 int numDeaths = (int) (Math.ceil(((myBA.getNumberActiverTroopers())) / 4.0));
                 for (int x = 0; x < numDeaths; x++) {
-                    vDesc.addAll(applyCriticalHit(entity, 0, null, false));
+                    vDesc.addAll(applyCriticalHit(entity, 0, null, false, 0, false));
                 }
             } else if (entity instanceof Infantry) {
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
@@ -18238,14 +18238,14 @@ public class Server implements Runnable {
             } else if (entity instanceof Tank) {
                 // It takes one crit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
 
                 // Plus a Crew Stunned critical.
-                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED), false));
+                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED), false, 0, false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
                 // 'Mechs suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
-                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation(), 0));
 
                 // and two pilot hits.
                 vDesc.addAll(damageCrew(entity, 2));
@@ -18287,39 +18287,8 @@ public class Server implements Runnable {
      *            damaging Protomech torso weapons). This value is normally
      *            <code>true</code>, but it will be <code>false</code> when the
      *            hit is being applied from a saved game or scenario.
-     */
-    public Vector<Report> applyCriticalHit(Entity en, int loc, CriticalSlot cs, boolean secondaryEffects) {
-        return applyCriticalHit(en, loc, cs, secondaryEffects, -1, false);
-    }
-
-    /**
-     * Apply a single critical hit. The following private member of Server are
-     * accessed from this function, preventing it from being factored out of the
-     * Server class: destroyEntity() destroyLocation() checkEngineExplosion()
-     * damageCrew() explodeEquipment() game
-     *
-     * @param en
-     *            the <code>Entity</code> that is being damaged. This value may
-     *            not be <code>null</code>.
-     * @param loc
-     *            the <code>int</code> location of critical hit. This value may
-     *            be <code>Entity.NONE</code> for hits to <code>Tank</code>s and
-     *            for hits to a <code>Protomech</code> torso weapon.
-     * @param cs
-     *            the <code>CriticalSlot</code> being damaged. This value may
-     *            not be <code>null</code>. For critical hits on a
-     *            <code>Tank</code>, the index of the slot should be the index
-     *            of the critical hit table.
-     * @param secondaryEffects
-     *            the <code>boolean</code> flag that indicates whether to allow
-     *            critical hits to cause secondary effects (such as triggering
-     *            an ammo explosion, sending hovercraft to watery graves, or
-     *            damaging Protomech torso weapons). This value is normally
-     *            <code>true</code>, but it will be <code>false</code> when the
-     *            hit is being applied from a saved game or scenario.
      * @param damageCaused
-     *            the amount of damage causing this critical. Necessary for
-     *            Aeros, but may be -1 for other units.
+     *            the amount of damage causing this critical.
      * @param isCapital
      *            whether it was capital scale damage that caused critical
      */
@@ -18370,10 +18339,11 @@ public class Server implements Runnable {
                 r.subject = t.getId();
                 vDesc.add(r);
                 List<Entity> passengers = t.getLoadedUnits();
-                Entity target = passengers.get(Compute.randomInt(passengers.size()));
-                hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                // FIXME should be original weapon damage
-                vDesc.addAll(damageEntity(target, hit, 5));
+                if (passengers.size() > 0) {
+                    Entity target = passengers.get(Compute.randomInt(passengers.size()));
+                    hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    vDesc.addAll(damageEntity(target, hit, damageCaused));
+                }
                 break;
             case Tank.CRIT_COMMANDER:
                 if (en.getCrew().getOptions().booleanOption("vdni") || en.getCrew().getOptions().booleanOption("bvdni")) {
@@ -18594,11 +18564,13 @@ public class Server implements Runnable {
                         weapons.add(weap);
                     }
                 }
-                Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
-                weapon.setJammed(true);
-                t.addJammedWeapon(weapon);
-                r.add(weapon.getName());
-                vDesc.add(r);
+                if (weapons.size() > 0) {
+                    Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
+                    weapon.setJammed(true);
+                    t.addJammedWeapon(weapon);
+                    r.add(weapon.getName());
+                    vDesc.add(r);
+                }
                 break;
             }
             case VTOL.CRIT_PILOT:
@@ -19143,53 +19115,53 @@ public class Server implements Runnable {
                             case 1:
                                 if (((Protomech) en).isQuad()) {
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_A);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                             case 2:
                                 if (((Protomech) en).isQuad()) {
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_B);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_A);
-                                vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                 break;
                             case 3:
                                 if (((Protomech) en).isQuad()) {
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_C);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                             case 4:
                                 if (((Protomech) en).isQuad()) {
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_D);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                                 newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_B);
-                                vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                 break;
                             case 5:
                                 if (en.getWeight() > 9) {
                                     if (((Protomech) en).isQuad()) {
                                         newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_E);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                         break;
                                     }
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_C);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                             case 6:
                                 if (en.getWeight() > 9) {
                                     if (((Protomech) en).isQuad()) {
                                         newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_F);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                         break;
                                     }
                                     newSlot = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Protomech.SYSTEM_TORSO_WEAPON_C);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects));
+                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE, newSlot, secondaryEffects, damageCaused, isCapital));
                                     break;
                                 }
                         }
@@ -19417,7 +19389,7 @@ public class Server implements Runnable {
                 r.addDesc(en);
                 r.newlines = 0;
                 vDesc.addElement(r);
-                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2)));
+                vDesc.addAll(oneCriticalEntity(en, Compute.d6(2), damageCaused));
             }
             en.hitThisRoundByAntiTSM = false;
         }
@@ -19447,15 +19419,15 @@ public class Server implements Runnable {
      * Rolls and resolves critical hits with a die roll modifier.
      */
 
-    public Vector<Report> criticalEntity(Entity en, int loc, int critMod) {
-        return criticalEntity(en, loc, critMod, true, false);
+    public Vector<Report> criticalEntity(Entity en, int loc, int critMod, int damage) {
+        return criticalEntity(en, loc, critMod, true, false, damage);
     }
 
     /**
      * Rolls one critical hit
      */
-    private Vector<Report> oneCriticalEntity(Entity en, int loc) {
-        return criticalEntity(en, loc, 0, false, false);
+    private Vector<Report> oneCriticalEntity(Entity en, int loc, int damage) {
+        return criticalEntity(en, loc, 0, false, false, damage);
     }
 
     /**
@@ -19723,7 +19695,7 @@ public class Server implements Runnable {
      *            the <code>int</code> modifier to the critroll
      * @return a <code>Vector<Report></code> containing the phasereports
      */
-    private Vector<Report> criticalTank(Tank t, int loc, int critMod) {
+    private Vector<Report> criticalTank(Tank t, int loc, int critMod, int damage) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -19753,11 +19725,11 @@ public class Server implements Runnable {
 
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
-        vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true));
+        vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true, damage, false));
         if ((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion() && t.getQuirks().booleanOption("fragile_fuel")
                 && (Compute.d6(2) > 9)) {
             // BOOM!!
-            vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true));
+            vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true, damage, false));
         }
         return vDesc;
     }
@@ -19894,7 +19866,7 @@ public class Server implements Runnable {
      * Rolls and resolves critical hits on mechs or vehicles. if rollNumber is
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
-    public Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber, boolean isCapital) {
+    public Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber, boolean isCapital, int damage) {
 
         if (en.getQuirks().booleanOption("poor_work")) {
             critMod += 1;
@@ -19904,10 +19876,10 @@ public class Server implements Runnable {
         }
 
         if (en instanceof Tank) {
-            return criticalTank((Tank) en, loc, critMod);
+            return criticalTank((Tank) en, loc, critMod, damage);
         }
         if (en instanceof Aero) {
-            return criticalAero((Aero) en, loc, critMod, "unknown", 8, -1, isCapital);
+            return criticalAero((Aero) en, loc, critMod, "unknown", 8, damage, isCapital);
         }
         CriticalSlot slot = null;
         Vector<Report> vDesc = new Vector<Report>();
@@ -20152,7 +20124,7 @@ public class Server implements Runnable {
                         }
                     }
                 }
-                vDesc.addAll(applyCriticalHit(en, loc, slot, true));
+                vDesc.addAll(applyCriticalHit(en, loc, slot, true, damage, isCapital));
                 hits--;
             }
 

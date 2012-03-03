@@ -75,7 +75,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             HitData targetTrooper = entityTarget.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             r.add(entityTarget.getLocationAbbr(targetTrooper));
             vPhaseReport.add(r);
-            vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false));
+            vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false, 0));
             done = true;
         } else if (entityTarget instanceof Mech) {
             if (((Mech)entityTarget).isIndustrial()) {

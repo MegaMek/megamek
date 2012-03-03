@@ -8,6 +8,9 @@ v0.35.29-dev (SVN)
 + Removed duplicate entries from the messages.properties file.
 + Added full list of quirks from Strat Ops and TRO Prototypes to the Customize Mech dialog for completion purposes.
 + Set up alphabetic sorting of the quirks lists.
++ Bug 3496291: crash when rolling weapon jammed tank crit and tank has no weapon 
++ Bug: tank cargo destroyed crit should deal original attack damage to carried
+   infantry
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

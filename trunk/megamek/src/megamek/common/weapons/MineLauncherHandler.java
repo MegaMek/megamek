@@ -101,7 +101,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         hit.setGeneralDamageType(generalDamageType);
         // Do criticals.
         Vector<Report> specialDamageReport = server.criticalEntity(
-                entityTarget, hit.getLocation(), 0);
+                entityTarget, hit.getLocation(), 0, 4);
 
         // Replace "no effect" results with 4 points of damage.
         if ((specialDamageReport.lastElement()).messageId == 6005) {

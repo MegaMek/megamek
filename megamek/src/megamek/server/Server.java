@@ -3318,7 +3318,7 @@ public class Server implements Runnable {
      * @param elevation
      *            - the <code>int</code> elevation at which to unload, if both
      *            loader and loaded units use VTOL movement.
-     * @param evacuate - a <code>boolean</code> indicating whether this unit is being unloaded as a result of its carrying units destruction
+     * @param evacuation - a <code>boolean</code> indicating whether this unit is being unloaded as a result of its carrying units destruction
      * @return <code>true</code> if the unit was successfully unloaded,
      *         <code>false</code> if the unit isn't carried in unloader.
      */
@@ -7084,7 +7084,7 @@ public class Server implements Runnable {
     /**
      * If an aero unit takes off in the same turn that other units loaded,
      * then it risks damage to itself and those units
-     * @param entity - The <code>Entity</code> taking off
+     * @param a - The <code>Aero</code> taking off
      */
     private void checkForTakeoffDamage(Aero a) {
 
@@ -7585,12 +7585,9 @@ public class Server implements Runnable {
      *            the <code>Targetable</code> that is the target
      * @param missiles
      *            the <code>int</code> amount of missiles
-     * @param aimingMode
+     * @param called
      *            an <code>int</code> indicated the aiming mode used to fire the
      *            inferno missiles (for called shots)
-     * @param aimAt
-     *            an <code>int</code> indicating the location being aimed at
-     *            (for called shots)
      */
     public Vector<Report> deliverInfernoMissiles(Entity ae, Targetable t, int missiles, int called) {
         IHex hex = game.getBoard().getHex(t.getPosition());
@@ -8513,8 +8510,8 @@ public class Server implements Runnable {
      *
      * @param entity
      *            The <code>Entity</code> that should make the PSR
-     * @param roll
-     *            The <code>PilotingRollData</code> to be used for this PSR.
+     * @param targetroll
+     *            The <code>int</code> to be used for this PSR.
      *
      * @return true if check succeeds, false otherwise.
      *
@@ -15997,7 +15994,7 @@ public class Server implements Runnable {
      *            Is the damage coming through the hex the unit is facing?
      * @param underWater
      *            Is the damage coming from an underwater attack?
-     * @param nukeS2s
+     * @param nukeS2S
      *            is this a ship-to-ship nuke?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
@@ -20143,8 +20140,6 @@ public class Server implements Runnable {
      * @param loc
      *            the <code>int</code> location on the entity that needs to be
      *            checked for a breach.
-     * @param target
-     *            the <code>int</code> target number for the breach
      * @param hex
      *            the <code>IHex</code> the enitity occupies when checking This
      *            value will be <code>null</code> if the check is the result of
@@ -20164,8 +20159,6 @@ public class Server implements Runnable {
      * @param loc
      *            the <code>int</code> location on the entity that needs to be
      *            checked for a breach.
-     * @param target
-     *            the <code>int</code> target number for the breach
      * @param hex
      *            the <code>IHex</code> the enitity occupies when checking This
      *            value will be <code>null</code> if the check is the result of
@@ -21365,8 +21358,8 @@ public class Server implements Runnable {
      * lights a fire also checks to see that fire is possible in the specified
      * hex.
      *
-     * @param hex
-     *            - the <code>IHex</code> to be lit.
+     * @param c
+     *            - the <code>Coords</code> to be lit.
      * @param roll
      *            - the <code>TargetRoll</code> for the ignition roll
      * @param bInferno
@@ -21420,11 +21413,11 @@ public class Server implements Runnable {
      * course, also checks to see that fire is possible in the specified hex.
      * This version of the method will not report the attempt roll.
      *
-     * @param hex
-     *            - the <code>IHex</code> to be lit.
+     * @param c
+     *            - the <code>Coords</code> to be lit.
      * @param roll
      *            - the <code>int</code> target number for the ignition roll
-     * @param bAnyTerrain
+     * @param bInferno
      *            - <code>true</code> if the fire can be lit in any terrain. If
      *            this value is <code>false</code> the hex will be lit only if
      *            it contains Woods, jungle or a Building.
@@ -21438,8 +21431,8 @@ public class Server implements Runnable {
      * course, also checks to see that fire is possible in the specified hex.
      * This version of the method will not report the attempt roll.
      *
-     * @param hex
-     *            - the <code>IHex</code> to be lit.
+     * @param c
+     *            - the <code>Coords</code> to be lit.
      * @param roll
      *            - the <code>int</code> target number for the ignition roll
      */
@@ -21508,9 +21501,8 @@ public class Server implements Runnable {
     /**
      * remove fire from a hex
      *
-     * @param x
-     * @param y
-     * @param hex
+     * @param fireCoords
+     * @param reason
      */
     public void removeFire(Coords fireCoords, String reason) {
         IHex hex = game.getBoard().getHex(fireCoords);
@@ -21530,10 +21522,8 @@ public class Server implements Runnable {
     /**
      * Called when a fire is burning. Called 3 times per fire hex.
      *
-     * @param x
-     *            The <code>int</code> x-coordinate of the hex
-     * @param y
-     *            The <code>int</code> y-coordinate of the hex
+     * @param coords
+     *            The <code>Coords</code> x-coordinate of the hex
      */
     public void addSmoke(ArrayList<Coords> coords, int windDir, boolean bInferno) {
 
@@ -24119,8 +24109,8 @@ public class Server implements Runnable {
     /**
      * Tell the clients to replace the given building with rubble hexes.
      *
-     * @param bldg
-     *            - the <code>Building</code> that has collapsed.
+     * @param coords
+     *            - the <code>Coords</code> that has collapsed.
      * @return a <code>Packet</code> for the command.
      */
     private Packet createCollapseBuildingPacket(Coords coords) {
@@ -24132,8 +24122,8 @@ public class Server implements Runnable {
     /**
      * Tell the clients to replace the given building hexes with rubble hexes.
      *
-     * @param buildings
-     *            - a <code>Vector</code> of <code>Building</code>s that has
+     * @param coords
+     *            - a <code>Vector</code> of <code>Coords</code>s that has
      *            collapsed.
      * @return a <code>Packet</code> for the command.
      */
@@ -26426,7 +26416,7 @@ public class Server implements Runnable {
      *            Flak, hits flying units only, instead of flyers being immune
      * @param altitude
      *            Absolute altitude for flak attack
-     * @param mineclear
+     * @param mineClear
      *            Does this clear mines?
      * @param vPhaseReport
      *            The Vector of Reports for the phasereport

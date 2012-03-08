@@ -80,16 +80,6 @@
         <quirk>command_mech</quirk>
     </unit>
     <unit>
-        <chassis>Battle Hawk</chassis>
-        <model>BH-K305</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Battle Hawk</chassis>
-        <model>BH-K306</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
         <chassis>BattleMaster</chassis>
         <model>BLR-1D</model>
         <quirk>command_mech</quirk>
@@ -816,7 +806,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-3F</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>RT</location>
@@ -827,7 +816,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-3F Austin</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>RT</location>
@@ -838,7 +826,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-5D</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>LT</location>
@@ -849,7 +836,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-5DD</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>LT</location>
@@ -860,7 +846,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-5S Austin</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>RT</location>
@@ -871,7 +856,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-5S</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>RT</location>
@@ -882,7 +866,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-6D</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>RT</location>
@@ -893,7 +876,6 @@
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-6S</model>
-        <quirk>head_eject</quirk>
         <weaponQuirk>
             <weaponQuirkName>fast_reload</weaponQuirkName>
             <location>RT</location>
@@ -1365,51 +1347,6 @@
         <chassis>Mongoose</chassis>
         <model>MON-86</model>
         <quirk>command_mech</quirk>
-    </unit>
-    <unit>
-        <chassis>Nightsky</chassis>
-        <model>NGS-4S</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Nightsky</chassis>
-        <model>NGS-4T</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Nightsky</chassis>
-        <model>NGS-5S</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Nightsky</chassis>
-        <model>NGS-5T</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Nightsky</chassis>
-        <model>NGS-6S</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Nightsky</chassis>
-        <model>NGS-6T</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Pack Hunter II</chassis>
-        <model></model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Pack Hunter II</chassis>
-        <model>2</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Pack Hunter II</chassis>
-        <model>3</model>
-        <quirk>head_eject</quirk>
     </unit>
     <unit>
         <chassis>Quickdraw</chassis>
@@ -2000,56 +1937,6 @@
         <chassis>Warhammer</chassis>
         <model>WHM-11T</model>
         <quirk>searchlight</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-1</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-1A</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-1B</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-2</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-2X</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-3M</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-3S</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-4W</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-4WA</model>
-        <quirk>head_eject</quirk>
-    </unit>
-    <unit>
-        <chassis>Wolfhound</chassis>
-        <model>WLF-5</model>
-        <quirk>head_eject</quirk>
     </unit>
     <unit>
         <chassis>Wolverine</chassis>

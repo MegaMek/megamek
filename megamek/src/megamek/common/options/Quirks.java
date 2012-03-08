@@ -77,7 +77,6 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, "vtol_rotor", false); //$NON-NLS-1$
         addOption(posQuirk, "rumble_seat", false);
         addOption(posQuirk, "distracting", false);
-        addOption(posQuirk, "head_eject", false);
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
@@ -194,7 +193,6 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("exp_actuator")
                     || quirk.getName().equals("no_arms")
                     || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("large_dropper")
                     || quirk.getName().equals("poor_life_support")
@@ -205,7 +203,6 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("flawed_cooling")
                     || quirk.getName().equals("unstreamlined")
                     || quirk.getName().equals("gas_hog")
-                    || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("weak_head_1")
                     || quirk.getName().equals("weak_head_2")
                     || quirk.getName().equals("weak_head_3")
@@ -253,7 +250,6 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("fragile_fuel")
                     || quirk.getName().equals("no_arms")
                     || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("large_dropper")
                     || quirk.getName().equals("poor_life_support")
@@ -350,7 +346,6 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("exp_actuator")
                     || quirk.getName().equals("no_arms")
                     || quirk.getName().equals("no_eject")
-                    || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("no_twist")
                     || quirk.getName().equals("poor_life_support")
                     || quirk.getName().equals("unbalanced")
@@ -391,7 +386,6 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("large_dropper")
                     || quirk.getName().equals("unbalanced")
                     || quirk.getName().equals("weak_legs")
-                    || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("vtol_rotor")
                     || quirk.getName().equals("weak_head_1")
                     || quirk.getName().equals("weak_head_2")
@@ -420,7 +414,6 @@ public class Quirks extends AbstractOptions {
                     || quirk.getName().equals("hard_pilot")
                     || quirk.getName().equals("inaccurate")
                     || quirk.getName().equals("no_twist")
-                    || quirk.getName().equals("head_eject")
                     || quirk.getName().equals("obsolete")
                     || quirk.getName().equals("poor_performance")
                     || quirk.getName().equals("poor_sealing")

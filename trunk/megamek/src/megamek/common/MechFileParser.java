@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 import java.util.zip.ZipFile;
 
@@ -56,6 +57,7 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BuildingBlock;
+import megamek.common.util.StringUtil;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;
 import megamek.common.weapons.ISLightPPC;
@@ -71,6 +73,8 @@ public class MechFileParser {
     private static Vector<String> canonUnitNames = null;
     private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
     private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
+
+    private static DefaultQuirksHandler defaultQuirksHandler = new DefaultQuirksHandler();
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
@@ -189,6 +193,13 @@ public class MechFileParser {
         }
 
         m_entity = loader.getEntity();
+
+        try {
+            loadDefaultQuirks();
+        } catch (IOException e) {
+            throw new EntityLoadingException(e.getMessage());
+        }
+
         MechFileParser.postLoadInit(m_entity);
     }
 
@@ -596,6 +607,69 @@ public class MechFileParser {
             }
         }
     } // End private void postLoadInit(Entity) throws EntityLoadingException
+
+    private void loadDefaultQuirks() throws IOException {
+        
+        //Get a list of quirks for this entity.
+        List<QuirkEntry> quirks = defaultQuirksHandler.getQuirks(m_entity.getChassis(), m_entity.getModel());
+
+        //If this unit has no quirks, we do not need to proceed further.
+        if (quirks == null || quirks.isEmpty())
+            return;
+
+        //Load all the unit's quirks.
+        for (QuirkEntry q : quirks) {
+            
+            System.out.println("Attempting to add quirk: " + q.toLog());
+
+            //If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
+            if (StringUtil.isNullOrEmpty(q.getLocation())) {
+
+                //Activate the unit quirk.
+                if (m_entity.getQuirks().getOption(q.getQuirk()) == null) {
+                    System.err.println("Invalid quirk: " + q.toLog());
+                    continue;
+                }
+                m_entity.getQuirks().getOption(q.getQuirk()).setValue(true);
+                continue;
+            }
+
+            //Get the weapon in the indicated location and slot.
+            CriticalSlot cs = m_entity.getCritical(m_entity.getLocationFromAbbr(q.getLocation()), q.getSlot());
+            Mounted m = cs.getMount();
+            if (m == null) {
+                System.err.println("Critical slot does not exist for " + q.toLog());
+                continue;
+            }
+
+            //Make sure this is a weapon.
+            if (!(m.getType() instanceof WeaponType)) {
+                System.out.println(m.getName() + " is not a weapon.");
+                continue;
+            }
+            
+            //Make sure it is the weapon we expect.
+            boolean matchFound = false;
+            while (m.getType().getNames().hasMoreElements()) {
+                String typeName = m.getType().getNames().nextElement();
+                if (typeName.equals(q.getWeaponName())) {
+                    matchFound = true;
+                    break;
+                }
+            }
+            if (!matchFound) {
+                System.err.println(m.getType().getName() + " != " + q.getWeaponName());
+                continue;
+            }
+
+            //Activate the weapon quirk.
+            if (m.getQuirks().getOption(q.getQuirk()) == null) {
+                System.err.println("Invalid quirk: " + q.toLog());
+                continue;
+            }
+            m.getQuirks().getOption(q.getQuirk()).setValue(true);
+        }
+    }
 
     public static void main(String[] args) {
         if (args.length == 0) {

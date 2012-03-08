@@ -128,4 +128,14 @@ public class StringUtil {
                 + filename.substring(filename.lastIndexOf("."));
     }
 
+    /**
+     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
+     *
+     * @param text  The string to be evalutated.
+     * @return
+     */
+    public static boolean isNullOrEmpty(String text) {
+        return (text == null) || (text.trim().isEmpty());
+    }
+
 }

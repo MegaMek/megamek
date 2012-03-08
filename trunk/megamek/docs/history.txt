@@ -14,6 +14,7 @@ v0.35.29-dev (SVN)
 + Added a new file to mmconf (defaultQuirks.xml) for storing a list of default quirks for various units.  Currently, only the canonical quirks that I know about have been included.
 + Added code to parse the defaultQuirks.xml file and apply those quirks to units as they are loaded into MegaMek if the StratOps Quirks rules are being used.
 + Cleaned up some @param references in Server.java.
++ Literal backslash in DefaultQuirksHandler.initQuirksList() file path caused MegaMek to hang on startup on Linux platform; replaced with generic separator.
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

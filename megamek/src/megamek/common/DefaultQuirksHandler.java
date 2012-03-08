@@ -59,7 +59,7 @@ public class DefaultQuirksHandler {
         if (!filePath.endsWith(File.separator)) {
             filePath += File.separator;
         }
-        filePath += "mmconf\\defaultQuirks.xml";
+        filePath += "mmconf" + File.separator + "defaultQuirks.xml";
         File file = new File(filePath);
         if (!file.exists() || !file.isFile()) {
             throw new IOException("Could not open " + filePath);

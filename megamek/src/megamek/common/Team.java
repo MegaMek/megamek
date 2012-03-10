@@ -49,7 +49,26 @@ public final class Team extends TurnOrdered {
     public void addPlayer(Player p) {
         players.addElement(p);
     }
-
+    //get the next player on this team.
+    public Player getNextValidPlayer(Player p,IGame game){
+        Player next = null; 
+        //start from the next player
+        for (int i = players.indexOf(p)+1; i < players.size(); ++i){
+            if(game.getTurnForPlayer(players.get(i).getId()) != null ){
+                return players.get(i);
+            }
+        }
+        //if we haven't found one yet, start again from the beginning
+        //worst case we reach exactly our current player again.
+        for (int i = 0; i < players.indexOf(p)+1; ++i){
+            if(game.getTurnForPlayer(players.get(i).getId()) != null ){
+                return players.get(i);
+            }
+        }
+        //this should not happen, but if we don't find anything return ourselves again.
+        return p;
+        
+    }
     /**
      * Clear the initiative of this object.
      */

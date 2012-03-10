@@ -383,7 +383,12 @@ public class Client implements IClientCommandHandler {
     public MapSettings getMapSettings() {
         return mapSettings;
     }
-
+    /**
+     * give the initiative to the next player on the team.
+     */
+    public void sendNextPlayer(){
+        connection.send(new Packet(Packet.COMMAND_FORWARD_INITIATIVE));
+    }
     /**
      * Changes the game phase, and the displays that go along with it.
      */

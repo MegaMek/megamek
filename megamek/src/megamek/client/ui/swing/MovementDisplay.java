@@ -89,6 +89,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     public static final String MOVE_WALK = "moveWalk"; //$NON-NLS-1$
     public static final String MOVE_NEXT = "moveNext"; //$NON-NLS-1$
+    public static final String MOVE_FORWARD_INI = "moveForwardIni"; //$NON-NLS-1$
     public static final String MOVE_JUMP = "moveJump"; //$NON-NLS-1$
     public static final String MOVE_BACK_UP = "moveBackUp"; //$NON-NLS-1$
     public static final String MOVE_TURN = "moveTurn"; //$NON-NLS-1$
@@ -167,6 +168,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butMount;
     private JButton butClear;
     private JButton butNext;
+    private JButton butForwardIni;
     private JButton butMore;
     private JButton butRaise;
     private JButton butLower;
@@ -331,6 +333,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
         butNext.addKeyListener(this);
+        butForwardIni = new JButton(Messages.getString("MovementDisplay.butForwardIni")); //$NON-NLS-1$
+        butForwardIni.addActionListener(this);
+        butForwardIni.setEnabled(false);
+        butForwardIni.setActionCommand(MOVE_FORWARD_INI);
+        butForwardIni.addKeyListener(this);
         butDone.setText("<html><b>"+Messages.getString("MovementDisplay.butDone")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
         butLoad = new JButton(Messages.getString("MovementDisplay.butLoad")); //$NON-NLS-1$
@@ -752,8 +759,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         int x = 0;
         int y = 0;
         panButtons.add(butNext, GBC.std().gridx(x).gridy(y).fill());
-        x++;
 
+        x++;
         for (int i = buttonLayout * 8; (i < ((buttonLayout + 1) * 8))
                 && (i < buttonList.size()); i++) {
             if (x == 5) {
@@ -763,12 +770,28 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             panButtons.add(buttonList.get(i), GBC.std().gridx(x).gridy(y).fill());
             x++;
         }
+        if(x == 5){
+            y++;
+            x = 0;
+        }
+        panButtons.add(butForwardIni, GBC.std().gridx(x).gridy(y).fill());
+
         panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
         panButtons.add(butDone, GBC.std().gridx(5).gridy(0).gridheight(2).fill());
         panButtons.validate();
         panButtons.repaint();
     }
 
+    /**
+     * Hands over the current turn to the next valid player on the same team as the supplied player.
+     * If no player on the team apart from this player has any turns left it activates this player again. 
+     */
+    public synchronized void selectNextPlayer() {
+        clientgui.getClient().sendNextPlayer();
+        //endMyTurn();
+    }
+
+    
     /**
      * Selects an entity, by number, for movement.
      */
@@ -948,6 +971,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(true);
         setNextEnabled(true);
+        setForwardIniEnabled(true);
         butMore.setEnabled(true);
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
@@ -996,6 +1020,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setChargeEnabled(false);
         setDFAEnabled(false);
         setNextEnabled(false);
+        setForwardIniEnabled(false);
         butMore.setEnabled(false);
         butDone.setEnabled(false);
         setLoadEnabled(false);
@@ -2791,6 +2816,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             disableButtons();
             butDone.setEnabled(true);
             butNext.setEnabled(true);
+            setForwardIniEnabled(true);
             butLaunch.setEnabled(true);
         }
         return;
@@ -2814,6 +2840,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             disableButtons();
             butDone.setEnabled(true);
             butNext.setEnabled(true);
+            setForwardIniEnabled(true);
             butLaunch.setEnabled(true);
             updateRACButton();
             updateJoinButton();
@@ -3106,6 +3133,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(clientgui.getClient().getNextEntityNum(cen));
+        } else if (ev.getActionCommand().equals(MOVE_FORWARD_INI)) {
+            selectNextPlayer();
         } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {
             clear();
         } else if (ev.getSource().equals(butMore)) {
@@ -3791,6 +3820,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);
         clientgui.getMenuBar().setMoveNextEnabled(enabled);
+    }
+
+    private void setForwardIniEnabled(boolean enabled) {
+        //forward initiative can only be done if Teams have an initiative!
+        if(clientgui.getClient().game.getOptions().booleanOption("team_initiative")){
+            butForwardIni.setEnabled(enabled);
+            clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
+        }
+        else{ //turn them off regardless what is said!
+            butForwardIni.setEnabled(false);
+            clientgui.getMenuBar().setMoveForwardIniEnabled(false);
+        }
     }
 
     private void setLayMineEnabled(boolean enabled) {

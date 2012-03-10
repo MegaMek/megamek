@@ -82,6 +82,7 @@ import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
+import megamek.common.GameTurn.EntityClassTurn;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -2333,6 +2334,101 @@ public class Server implements Runnable {
         send(new Packet(Packet.COMMAND_ROUND_UPDATE, new Integer(game.getRoundCount())));
     }
 
+    /**
+     * Hand over a turn to the next player. This is only possible if you haven't yet started your turn (i.e. not yet moved anything
+     * like infantry where you have to move multiple units)
+     * 
+     * @param packet - 
+     * @param connid
+     */
+    private void receiveForwardIni(Packet packet, int connid){
+        //this is the player sending the packet" 
+        
+        Player current = getPlayer(connid);
+        
+        if (game.getTurn().getPlayerNum() != current.getId()){
+            //this player is not the current player, so just ignore this command!
+            return;
+        }
+        //if individual initiative is active we cannot forward our initiative ever!
+        if(game.getOptions().booleanOption("individual_initiative"))
+        {
+        	return;
+        }
+        //get the next player from the team this player is on.
+        Team currentteam = game.getTeamForPlayer(current);
+        Player next = currentteam.getNextValidPlayer(current,game);
+        //if the choosen player is a valid player, we change the turn order and inform the clients.
+        if ((next != null) && (game.getEntitiesOwnedBy(next) != 0) && (game.getTurnForPlayer(next.getId()) != null)) {
+            
+            int currentturnindex = game.getTurnIndex();
+            //now look for the next occurence of player next in the turn order
+            Vector<GameTurn> turns = game.getTurnVector();
+            GameTurn turn = game.getTurn();
+            //not entirely necessary. As we will also check this for the activity of the button but to be sure do it on the server too.
+            boolean isGeneralMoveTurn = (!(turn instanceof GameTurn.SpecificEntityTurn)
+                    && !(turn instanceof GameTurn.UnitNumberTurn)
+                    && !(turn instanceof GameTurn.UnloadStrandedTurn)
+                    && !(turn instanceof GameTurn.TriggerBPodTurn)
+                    && !(turn instanceof GameTurn.TriggerAPPodTurn));
+            if(!isGeneralMoveTurn){
+                //if this is not a general turn the player cannot forward his turn.
+                return;
+            }            
+            //if it is an entityclassturn we have to check make sure, that the turn it is exchanged with is the same kind of turn!
+            //in fact this requires an access function to the mask of an entityclassturn.
+            
+            boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
+            int classmask = 0;
+            if(isEntityClassTurn){
+                GameTurn.EntityClassTurn tempturn = (GameTurn.EntityClassTurn) turn;
+                classmask = tempturn.getTurnCode(); 
+            }
+
+            boolean switched = false;
+            int nextturnid = 0;
+            for(int i = currentturnindex; i < turns.size(); i++  ){
+                //if we find a turn for the specific player, swap the current player with the player noted there
+                //and stop 
+                if(turns.get(i).isValid(next.getId(), game)){
+                    nextturnid = i;
+                    if(isEntityClassTurn){
+                        //if we had an entityclassturn 
+                        if((turns.get(i) instanceof GameTurn.EntityClassTurn)){
+                            //and found another entityclassturn
+                            if(!(((GameTurn.EntityClassTurn)turns.get(i)).getTurnCode() == classmask)){
+                                //both have to refer to the SAME class(es) or they need to be rejected.
+                                continue;
+                            }
+                        }
+                        else{
+                            continue;
+                        }
+                    }
+                    switched = true;
+                    break;
+                }
+            }
+            
+            //update turn order
+            if (switched){
+                //lets hope this works... But I would assume, that the current turn has to end so lets call the function...                                
+                //
+                GameTurn nextturn = turns.get(nextturnid);
+                GameTurn currentturn = turns.get(currentturnindex);
+                turns.set(nextturnid, currentturn);
+                turns.set(currentturnindex, nextturn);
+                //update the turn packages for all players.
+                send(createTurnVectorPacket());
+                send(createTurnIndexPacket());
+            }
+            else{
+                //if nothing changed return without doing anything
+                return;
+            }
+             
+        }        
+    }
     /**
      * Tries to change to the next turn. If there are no more turns, ends the
      * current phase. If the player whose turn it is next is not connected, we
@@ -23190,6 +23286,10 @@ public class Server implements Runnable {
             receiveInitiativeRerollRequest(packet, connId);
             send(createPlayerDonePacket(connId));
             break;
+        case Packet.COMMAND_FORWARD_INITIATIVE:
+            receiveForwardIni(packet, connId);
+            break;
+        
         case Packet.COMMAND_CHAT:
             String chat = (String) packet.getObject(0);
             if (chat.startsWith("/")) {

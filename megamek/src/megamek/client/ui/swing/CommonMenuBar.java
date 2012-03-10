@@ -12,6 +12,7 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -99,6 +100,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem deployAssaultDrop;
     private JMenuItem moveWalk;
     private JMenuItem moveNext;
+    private JMenuItem moveForwardIni;
     private JMenuItem moveTurn;
     private JMenuItem moveLayMine;
     private JMenuItem moveLoad;
@@ -434,6 +436,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveNext = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveNext"), MovementDisplay.MOVE_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+        moveForwardIni = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveForwardIni"), MovementDisplay.MOVE_FORWARD_INI); //$NON-NLS-1$
         moveRaise = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveRaise"), MovementDisplay.MOVE_RAISE_ELEVATION); //$NON-NLS-1$
@@ -923,6 +928,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
     public synchronized void setMoveNextEnabled(boolean enabled) {
         moveNext.setEnabled(enabled);
+    }
+    public synchronized void setMoveForwardIniEnabled(boolean enabled) {
+        moveForwardIni.setEnabled(enabled);
     }
 
     public synchronized void setMoveLoadEnabled(boolean enabled) {

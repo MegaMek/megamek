@@ -110,6 +110,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
     private MenuItem moveWalk = null;
     private MenuItem moveNext = null;
+    private MenuItem moveForwardIni = null;
     private MenuItem moveTurn = null;
     private MenuItem moveLayMine = null;
     private MenuItem moveLoad = null;
@@ -435,6 +436,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
         moveNext = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveNext"), MovementDisplay.MOVE_NEXT, KeyEvent.VK_N); //$NON-NLS-1$
+        moveForwardIni = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveForwardIni"), MovementDisplay.MOVE_FORWARD_INI); //$NON-NLS-1$        
         moveRaise = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveRaise"), MovementDisplay.MOVE_RAISE_ELEVATION); //$NON-NLS-1$
@@ -920,6 +924,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener,
 
     public synchronized void setMoveNextEnabled(boolean enabled) {
         moveNext.setEnabled(enabled);
+    }
+    public synchronized void setForwardIniEnabled(boolean enabled) {
+        moveForwardIni.setEnabled(enabled);
     }
 
     public synchronized void setMoveLoadEnabled(boolean enabled) {

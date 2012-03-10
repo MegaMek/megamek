@@ -35,34 +35,34 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = server.getGame();
-        if (game.getOptions().booleanOption("tacops_start_fire")) {
-            this.vPhaseReport = vPhaseReport;
-            resolveSmoke();
-            this.vPhaseReport = null;
-        }
+
+        this.vPhaseReport = vPhaseReport;
+        resolveSmoke();
+        this.vPhaseReport = null;
+
     }
-    
+
     private void resolveSmoke() {
         updateSmoke();
         removeEmptyClouds();
     }
-    
+
     /**
      * Remove any empty clouds from the array
      */
     public void removeEmptyClouds() {
         Iterator<SmokeCloud> clouds = server.getSmokeCloudList().iterator();
-        
+
         while ( clouds.hasNext() ) {
             SmokeCloud cloud = clouds.next();
-            
+
             if ( cloud.getCoordsList().size() < 1 ) {
                 clouds.remove();
             }else if ( cloud.getSmokeLevel() < 1 ) {
                 server.removeSmokeTerrain(cloud);
                 clouds.remove();
             }
-            
+
         }
     }
 
@@ -71,7 +71,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      * @param cloud
      */
     public void createSmokeTerrain(SmokeCloud cloud){
-        
+
         for( Coords coords : cloud.getCoordsList() ){
             IHex smokeHex = game.getBoard().getHex(coords);
             if ( smokeHex != null ){
@@ -89,7 +89,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
             }
         }
     }
-    
+
     /**
      * Update the Map
      */
@@ -102,7 +102,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
         removeEmptyClouds();
         //Create new Smoke Clouds.
         for ( SmokeCloud cloud : server.getSmokeCloudList() ){
-            if ( cloud.getCoordsList().size() > 0 && cloud.getSmokeLevel() > 0 ) {
+            if ( (cloud.getCoordsList().size() > 0) && (cloud.getSmokeLevel() > 0) ) {
                 createSmokeTerrain(cloud);
             }
         }

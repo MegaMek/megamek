@@ -44,7 +44,7 @@ public class GamePhaseChangeEvent extends GameEvent {
      * @param newPhase
      */
     public GamePhaseChangeEvent(Object source, IGame.Phase oldPhase, IGame.Phase newPhase) {
-        super(source, GAME_PHASE_CHANGE);
+        super(source);
         this.oldPhase = oldPhase;
         this.newPhase = newPhase;
     }
@@ -67,4 +67,13 @@ public class GamePhaseChangeEvent extends GameEvent {
         return oldPhase;
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gamePhaseChange(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Phase Change";
+	}
 }

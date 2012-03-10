@@ -39,8 +39,8 @@ public abstract class GameEntityEvent extends GameEvent {
      * @param entity
      * @param type
      */
-    public GameEntityEvent(Object source, Entity entity, int type) {
-        super(source, type);
+    public GameEntityEvent(Object source, Entity entity) {
+        super(source);
         this.entity = entity;
     }
 

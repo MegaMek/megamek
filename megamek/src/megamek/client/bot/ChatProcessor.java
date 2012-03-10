@@ -21,7 +21,6 @@ import java.util.StringTokenizer;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Player;
-import megamek.common.event.GameEvent;
 import megamek.common.event.GamePlayerChatEvent;
 
 public class ChatProcessor {
@@ -79,9 +78,6 @@ public class ChatProcessor {
     }
 
     public void processChat(GamePlayerChatEvent ge, BotClient bot) {
-        if (ge.getType() != GameEvent.GAME_PLAYER_CHAT) {
-            return;
-        }
         if (bot.getLocalPlayer() == null) {
             return;
         }

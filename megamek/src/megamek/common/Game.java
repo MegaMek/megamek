@@ -36,14 +36,9 @@ import megamek.common.event.GameEntityNewOffboardEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
-import megamek.common.event.GameMapQueryEvent;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerConnectedEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
@@ -2645,60 +2640,7 @@ public class Game implements Serializable, IGame {
      */
     public void processGameEvent(GameEvent event) {
         for (Enumeration<GameListener> e = gameListeners.elements(); e.hasMoreElements();) {
-            GameListener l = e.nextElement();
-            switch (event.getType()) {
-            case GameEvent.GAME_PLAYER_CONNECTED:
-                l.gamePlayerConnected((GamePlayerConnectedEvent) event);
-                break;
-            case GameEvent.GAME_PLAYER_DISCONNECTED:
-                l.gamePlayerDisconnected((GamePlayerDisconnectedEvent) event);
-                break;
-            case GameEvent.GAME_PLAYER_CHANGE:
-                l.gamePlayerChange((GamePlayerChangeEvent) event);
-                break;
-            case GameEvent.GAME_PLAYER_CHAT:
-                l.gamePlayerChat((GamePlayerChatEvent) event);
-                break;
-            case GameEvent.GAME_PHASE_CHANGE:
-                l.gamePhaseChange((GamePhaseChangeEvent) event);
-                break;
-            case GameEvent.GAME_TURN_CHANGE:
-                l.gameTurnChange((GameTurnChangeEvent) event);
-                break;
-            case GameEvent.GAME_REPORT:
-                l.gameReport((GameReportEvent) event);
-                break;
-            case GameEvent.GAME_END:
-                l.gameEnd((GameEndEvent) event);
-                break;
-            case GameEvent.GAME_BOARD_NEW:
-                l.gameBoardNew((GameBoardNewEvent) event);
-                break;
-            case GameEvent.GAME_BOARD_CHANGE:
-                l.gameBoardChanged((GameBoardChangeEvent) event);
-                break;
-            case GameEvent.GAME_SETTINGS_CHANGE:
-                l.gameSettingsChange((GameSettingsChangeEvent) event);
-                break;
-            case GameEvent.GAME_MAP_QUERY:
-                l.gameMapQuery((GameMapQueryEvent) event);
-                break;
-            case GameEvent.GAME_ENTITY_NEW:
-                l.gameEntityNew((GameEntityNewEvent) event);
-                break;
-            case GameEvent.GAME_ENTITY_REMOVE:
-                l.gameEntityRemove((GameEntityRemoveEvent) event);
-                break;
-            case GameEvent.GAME_ENTITY_NEW_OFFBOARD:
-                l.gameEntityNewOffboard((GameEntityNewOffboardEvent) event);
-                break;
-            case GameEvent.GAME_ENTITY_CHANGE:
-                l.gameEntityChange((GameEntityChangeEvent) event);
-                break;
-            case GameEvent.GAME_NEW_ACTION:
-                l.gameNewAction((GameNewActionEvent) event);
-                break;
-            }
+            event.fireEvent(e.nextElement());
         }
     }
 

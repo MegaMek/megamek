@@ -34,7 +34,6 @@ import megamek.common.Minefield;
 import megamek.common.MovePath;
 import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.event.GameEvent;
 import megamek.common.event.GamePlayerChatEvent;
 
 public class Princess extends BotClient {
@@ -434,23 +433,21 @@ public class Princess extends BotClient {
     @Override
     protected void processChat(GamePlayerChatEvent ge) {
         System.err.println("received message: \"" + ge.getMessage() + "\"");
-        System.err.println("message type: " + ge.getType());
-        if (ge.getType() == GameEvent.GAME_PLAYER_CHAT) {
-            StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
-            String name = st.nextToken();
-            String message = st.nextToken();
-            if (message == null) {
-                return;
-            }
-            if (message.contains("flee")) {
-                System.err.println("received flee order");
-                sendChat("Run Away!");
-                should_flee = true;
-            }
+        System.err.println("message type: " + ge.getEventName());
+
+        StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
+        String name = st.nextToken();
+        String message = st.nextToken();
+        if (message == null) {
+            return;
+        }
+        if (message.contains("flee")) {
+            System.err.println("received flee order");
+            sendChat("Run Away!");
+            should_flee = true;
         }
 
         chatp.processChat(ge, this);
-
     }
 
     PathSearcher path_searcher;

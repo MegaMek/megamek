@@ -31,7 +31,16 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
      * @param player
      */
     public GameTurnChangeEvent(Object source, Player player) {
-        super(source, player, GAME_TURN_CHANGE);
+        super(source, player);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameTurnChange(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Turn Change";
+	}
 }

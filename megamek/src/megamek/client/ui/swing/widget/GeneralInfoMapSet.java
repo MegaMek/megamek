@@ -55,6 +55,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
             elevationR, fuelR, curSensorsR, visualRangeR;
     private PMSimpleLabel[] quirksR;
+    private PMSimpleLabel[] partRepsR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
@@ -226,6 +227,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             quirksR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
             content.addArea(quirksR[i]);
         }
+        
+        partRepsR = new PMSimpleLabel[20];
+        for (int i = 0; i < partRepsR.length; i++) {
+            partRepsR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
+            content.addArea(partRepsR[i]);
+        }
 
 
     }
@@ -300,7 +307,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         for(PMSimpleLabel element: quirksR) {
             element.setString(""); //$NON-NLS-1$
         }
-
+        for(PMSimpleLabel element: partRepsR) {
+            element.setString(""); //$NON-NLS-1$
+        }
+        
         int i = 0;
         for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
             IOptionGroup qGroup = qGroups.nextElement();
@@ -314,7 +324,20 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 }
             }
         }
+        for (Enumeration<IOptionGroup> repGroups = en.getPartialRepairs().getGroups(); repGroups.hasMoreElements();) {
+            IOptionGroup repGroup = repGroups.nextElement();
+            if(en.countPartialRepairs() > 0) {
+                partRepsR[i++].setString(repGroup.getDisplayableName());
+                for (Enumeration<IOption> partreps = repGroup.getOptions(); partreps.hasMoreElements();) {
+                    IOption partrep = partreps.nextElement();
+                    if(partrep.booleanValue()) {
+                        partRepsR[i++].setString("  " + partrep.getDisplayableNameWithValue());
+                    }
+                }
+            }
+        }
 
+        
         if (en.mpUsed > 0) {
             mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {

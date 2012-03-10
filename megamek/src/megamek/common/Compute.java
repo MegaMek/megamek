@@ -849,11 +849,23 @@ public class Compute {
             int minPenalty = (minRange - distance) + 1;
             mods.addModifier(minPenalty, "minimum range");
         }
+        //if partial sensor repairs are present the shot will be more difficult if its a non physical attack
+        //
+        if(ae.getPartialRepairs().booleanOption("sensors_1_crit")){
+            mods.addModifier(1,"sensor damage");
+        }
+        if(ae.getPartialRepairs().booleanOption("mech_sensors_2_crit")){
+            mods.addModifier(2,"sensor damage");
+        }
+        if(ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")){
+            mods.addModifier(1,"stabilizer damage");
+        }
 
+        
         //if this is an infantry weapon then we use a whole different calculation
         //to figure out range, so overwrite whatever we have at this point
         if(isWeaponInfantry) {
-        	mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
+            mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist), (InfantryWeapon)wtype);
         }
 
         // add any target stealth modifier

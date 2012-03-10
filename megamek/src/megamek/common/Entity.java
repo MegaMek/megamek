@@ -40,6 +40,7 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
+import megamek.common.options.PartialRepairs;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
@@ -115,6 +116,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private Pilot crew = new Pilot();
 
     private Quirks quirks = new Quirks();
+    private PartialRepairs partReps = new PartialRepairs();
 
     protected boolean shutDown = false;
     protected boolean shutDownThisPhase = false;
@@ -562,7 +564,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @see megamek.common.Entity#externalId
      */
     public int getExternalId() {
-    	return Integer.parseInt(externalId);
+        return Integer.parseInt(externalId);
     }
 
     public String getExternalIdAsString() {
@@ -580,7 +582,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setExternalId(int id) {
-    	externalId = Integer.toString(id);
+        externalId = Integer.toString(id);
     }
 
     /**
@@ -1931,11 +1933,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     public int getArmorForReal(int loc, boolean rear) {
-    	return armor[loc];
+        return armor[loc];
     }
     
     public int getArmorForReal(int loc) {
-    	return getArmorForReal(loc, false);
+        return getArmorForReal(loc, false);
     }
 
     /**
@@ -2073,7 +2075,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     public int getInternalForReal(int loc) {
-    	return internal[loc];
+        return internal[loc];
     }
 
     /**
@@ -2161,7 +2163,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean isLocationTrulyDestroyed(int loc) {
-    	return internal[loc] == IArmorState.ARMOR_DESTROYED;
+        return internal[loc] == IArmorState.ARMOR_DESTROYED;
     }
     
     /**
@@ -2198,7 +2200,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param status
      *            the status to set
      * @param allowChange
-     * 			  allow change of breached locations
+     *               allow change of breached locations
      */
     public void setLocationStatus(int loc, int status, boolean allowChange) {
         if (allowChange || (exposure[loc] > ILocationExposureStatus.BREACHED)) { // can't change
@@ -4738,6 +4740,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if (getQuirks().booleanOption("hard_pilot")) {
             roll.addModifier(+1, "hard to pilot");
+        }
+
+        if (getPartialRepairs().booleanOption("mech_gyro_1_crit")) {
+            roll.addModifier(+1, "Partial repair of Gyro (+1)");       
+        }
+        if (getPartialRepairs().booleanOption("mech_gyro_2_crit")) {
+            roll.addModifier(+1, "Partial repair of Gyro (+2)");       
         }
 
         if (game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued()) {
@@ -7930,7 +7939,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
 
     public void destroyLocation(int loc) {
-    	destroyLocation(loc, false);
+        destroyLocation(loc, false);
     }
 
     /**
@@ -7939,7 +7948,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param loc
      *            The location that is destroyed.
      * @param blownOff
-     * 			  true if the location was blown off
+     *               true if the location was blown off
      */
     public void destroyLocation(int loc, boolean blownOff) {
         // if it's already marked as destroyed, don't bother
@@ -7947,22 +7956,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return;
         }
         if(blownOff) {
-        	setLocationBlownOff(loc, true);
+            setLocationBlownOff(loc, true);
         } else {
-	        // mark armor, internal as doomed
-	        setArmor(IArmorState.ARMOR_DOOMED, loc, false);
-	        setInternal(IArmorState.ARMOR_DOOMED, loc);
-	        if (hasRearArmor(loc)) {
-	            setArmor(IArmorState.ARMOR_DOOMED, loc, true);
-	        }
+            // mark armor, internal as doomed
+            setArmor(IArmorState.ARMOR_DOOMED, loc, false);
+            setInternal(IArmorState.ARMOR_DOOMED, loc);
+            if (hasRearArmor(loc)) {
+                setArmor(IArmorState.ARMOR_DOOMED, loc, true);
+            }
         }
         // equipment marked missing
         for (Mounted mounted : getEquipment()) {
             if (((mounted.getLocation() == loc) && mounted.getType().isHittable()) || (mounted.isSplit() && (mounted.getSecondLocation() == loc))) {
                 if(blownOff) {
-                	mounted.setMissing(true);
+                    mounted.setMissing(true);
                 } else {
-                	mounted.setHit(true);
+                    mounted.setHit(true);
                 }
             }
         }
@@ -7975,9 +7984,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     engineHitsThisRound++;
                 }
                 if(blownOff) {
-                	cs.setMissing(true);
+                    cs.setMissing(true);
                 } else {
-                	cs.setHit(true);
+                    cs.setHit(true);
                 }
             }
         }
@@ -9119,9 +9128,24 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Quirks getQuirks() {
         return quirks;
     }
+    
+    public PartialRepairs getPartialRepairs(){
+        return partReps; 
+    }
 
     public void clearQuirks() {
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = j.nextElement();
+                option.clearValue();
+            }
+        }
+
+    }
+
+    public void clearPartialRepairs() {
+        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
@@ -9151,6 +9175,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return count;
     }
 
+    public int countPartialRepairs() {
+        int count = 0;
+        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption partRep = j.nextElement();
+
+                if (partRep.booleanValue()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
     /**
      * count the quirks for this unit, for a given group name
      */

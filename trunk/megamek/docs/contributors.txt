@@ -78,6 +78,7 @@
      Deric Page <dericpage@users.sourceforge.net>
      Dylan Myers <ralgith-erian@users.sourceforge.net>
      Gil Hamilton <iarei@users.sourceforge.net>
+     Neth <neoneth@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

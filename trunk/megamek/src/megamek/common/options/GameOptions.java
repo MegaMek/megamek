@@ -117,6 +117,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "tacops_mobile_hqs", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_fatigue", false); //$NON-NLS-1$
         addOption(advancedRules, "stratops_quirks", false); //$NON-NLS-1$
+        addOption(advancedRules, "stratops_partialrepairs", false); //$NON-NLS-1$
         addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
         addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
         addOption(advancedRules, "inclusive_sensor_range", false); //$NON-NLS-1$

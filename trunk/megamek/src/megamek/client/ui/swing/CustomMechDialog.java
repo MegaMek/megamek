@@ -80,6 +80,7 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
@@ -105,11 +106,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JPanel panEquip;
     private JPanel panDeploy;
     private JPanel panQuirks;
+    private JPanel panPartReps;
 
     private JScrollPane scrPilot;
     private JScrollPane scrEquip;
     private JScrollPane scrDeploy;
     private JScrollPane scrQuirks;
+    private JScrollPane scrPartreps;
 
     private JPanel panOptions;
     //private JScrollPane scrOptions;
@@ -288,10 +291,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private PilotOptions options;
     private Quirks quirks;
+    private PartialRepairs partReps;
     private HashMap<Integer, WeaponQuirks> h_wpnQuirks = new HashMap<Integer, WeaponQuirks>();
 
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
     private ArrayList<DialogOptionComponent> quirkComps = new ArrayList<DialogOptionComponent>();
+    private ArrayList<DialogOptionComponent> partRepsComps = new ArrayList<DialogOptionComponent>();
     private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer,ArrayList<DialogOptionComponent>>();
 
     private boolean editable;
@@ -319,11 +324,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panEquip = new JPanel(new GridBagLayout());
         panDeploy = new JPanel(new GridBagLayout());
         panQuirks = new JPanel(new GridBagLayout());
+        panPartReps = new JPanel(new GridBagLayout());
 
         scrPilot = new JScrollPane(panPilot);
         scrEquip = new JScrollPane(panEquip);
         scrDeploy = new JScrollPane(panDeploy);
         scrQuirks = new JScrollPane(panQuirks);
+        scrPartreps = new JScrollPane(panPartReps);
 
         panOptions = new JPanel(new GridBagLayout());
 
@@ -336,7 +343,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if(clientgui.getClient().game.getOptions().booleanOption("stratops_quirks")) {
             tabAll.addTab("Quirks", scrQuirks);
         }
-
+        if(clientgui.getClient().game.getOptions().booleanOption("stratops_partialrepairs")) {
+            tabAll.addTab(Messages.getString("CustomMechDialog.tabPartialRepairs"), scrPartreps);
+        }
         getContentPane().add(mainPanel);
 
         this.entity = entity;
@@ -344,6 +353,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.client = client;
         options = entity.getCrew().getOptions();
         quirks = entity.getQuirks();
+        partReps = entity.getPartialRepairs();
         for (Mounted m : entity.getWeaponList()) {
             h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
         }
@@ -1514,6 +1524,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         validate();
     }
 
+    private void setPartReps(){
+        IOption option;
+        for (final Object newVar : partRepsComps) {
+            DialogOptionComponent comp = (DialogOptionComponent) newVar;
+            option = comp.getOption();
+            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { // NON-NLS-$1
+                entity.getPartialRepairs().getOption(option.getName())
+                        .setValue("None"); // NON-NLS-$1
+            } else {
+                entity.getPartialRepairs().getOption(option.getName())
+                        .setValue(comp.getValue());
+            }
+        }
+
+    }
     private void setQuirks() {
         IOption option;
         for (final Object newVar : quirkComps) {
@@ -1546,6 +1571,26 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
         }
+    }
+    public void refreshPartReps() {
+        panPartReps.removeAll();
+        partRepsComps = new ArrayList<DialogOptionComponent>();
+        for (Enumeration<IOptionGroup> i = partReps.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            panPartReps.add(new JLabel(group.getDisplayableName()), GBC.eol());
+
+            for (Enumeration<IOption> j = group.getSortedOptions(); j
+                    .hasMoreElements();) {
+                IOption option = j.nextElement();
+
+                if(!PartialRepairs.isPartRepLegalFor(option, entity)) {
+                    continue;
+                }
+
+                addPartRep(option, editable);
+            }
+        }
+        validate();
     }
 
     public void refreshQuirks() {
@@ -1642,6 +1687,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panQuirks.add(optionComp, GBC.eol());
 
         quirkComps.add(optionComp);
+    }
+
+    private void addPartRep(IOption option, boolean editable) {
+        DialogOptionComponent optionComp = new DialogOptionComponent(this,
+                option, editable);
+        panPartReps.add(optionComp, GBC.eol());
+        partRepsComps.add(optionComp);
     }
 
     private void addWeaponQuirk(int key, IOption option, boolean editable) {
@@ -2072,6 +2124,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             setOptions();
             setQuirks();
+            setPartReps();
             if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
                 Entity chosen = client.getEntity(entityCorrespondance[choC3
                         .getSelectedIndex()]);

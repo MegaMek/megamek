@@ -1350,6 +1350,21 @@ public abstract class Mech extends Entity {
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
             engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
         }
+        //Partial Repairs of the engine cause additional heat
+        if ( getPartialRepairs().booleanOption("mech_reactor_3_crit")){
+            engineCritHeat += 8;
+        }
+        if ( getPartialRepairs().booleanOption("mech_reactor_2_crit")){
+            engineCritHeat += 5;
+        }
+        if ( getPartialRepairs().booleanOption("mech_reactor_1_crit")){
+            engineCritHeat += 3;
+        }
+        if ( getPartialRepairs().booleanOption("mech_engine_replace")){
+            engineCritHeat += 1;
+        }
+
+        // add the partial repair heat here.
         return engineCritHeat;
     }
 
@@ -1591,15 +1606,15 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getArmor(int loc, boolean rear) {
-    	if(isLocationBlownOff(loc)) {
-        	return IArmorState.ARMOR_DESTROYED;
+        if(isLocationBlownOff(loc)) {
+            return IArmorState.ARMOR_DESTROYED;
         }
         return getArmorForReal(loc, rear);
     }
 
     @Override
     public int getArmorForReal(int loc, boolean rear) {
-    	if (rear && hasRearArmor(loc)) {
+        if (rear && hasRearArmor(loc)) {
             return rearArmor[loc];
         }
         return super.getArmorForReal(loc, rear);
@@ -6587,18 +6602,18 @@ public abstract class Mech extends Entity {
         String toReturn = "";
         boolean first = true;
         if(isLocationBlownOff(loc)) {
-        	toReturn += "BLOWN OFF";
-        	first = false;
+            toReturn += "BLOWN OFF";
+            first = false;
         }
         if (isLocationTrulyDestroyed(loc)) {
             return toReturn;
         }
         if(getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
-        	if (!first) {
+            if (!first) {
                 toReturn += ", ";
             }
-        	toReturn += "BREACH";
-        	first = false;
+            toReturn += "BREACH";
+            first = false;
         }
         if (hasSystem(SYSTEM_LIFE_SUPPORT, loc) && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, loc) > 0)) {
             if (!first) {
@@ -6898,7 +6913,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getInternal(int loc) {
         if(isLocationBlownOff(loc)) {
-        	return IArmorState.ARMOR_DESTROYED;
+            return IArmorState.ARMOR_DESTROYED;
         }
         return super.getInternal(loc);
     }

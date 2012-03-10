@@ -72,6 +72,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
+import megamek.common.options.PartialRepairs;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         ItemListener, DoneButtoned {
@@ -1011,6 +1012,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
             if (!client.game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
                 entity.clearQuirks();
+            }
+
+            if (!client.game.getOptions().booleanOption("stratops_partialrepairs")) { //$NON-NLS-1$
+                entity.clearPartialRepairs();
             }
 
             boolean rpgSkills = client.game.getOptions().booleanOption(

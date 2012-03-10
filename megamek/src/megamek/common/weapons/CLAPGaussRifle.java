@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -58,6 +59,8 @@ public class CLAPGaussRifle extends GaussWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        this.introDate = 3069;
     }
 
     /*

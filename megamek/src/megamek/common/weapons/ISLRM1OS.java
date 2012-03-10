@@ -38,5 +38,8 @@ public class ISLRM1OS extends LRMWeapon {
         minimumRange = 6;
         bv = 3;
         flags = flags.or(F_ONESHOT);
+        this.introDate = 2676;
+        this.extinctDate = 2800;
+        this.reintroDate = 3030;
     }
 }

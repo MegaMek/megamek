@@ -1648,6 +1648,10 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.cost = 100000;
+        misc.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        misc.introDate = 2598;
+        misc.extinctDate = 2855;
+        misc.reintroDate = 3035;
         misc.flags = misc.flags.or(F_ARTEMIS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 
         return misc;
@@ -1663,6 +1667,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.cost = 100000;
         misc.criticals = 1;
+        misc.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        misc.introDate = 2598;
         misc.flags = misc.flags.or(F_ARTEMIS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 
         return misc;

@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -33,7 +34,8 @@ public abstract class MRMWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_MRM;
         this.toHitModifier = 1;
-        
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        this.introDate = 3058;
         this.atClass = CLASS_MRM;
     }
 

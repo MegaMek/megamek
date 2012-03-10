@@ -47,5 +47,6 @@ public class ISStreakSRM4 extends StreakSRMWeapon {
         this.cost = 90000;
         this.shortAV = 8;
         this.maxRange = RANGE_SHORT;
+        this.introDate = 3058;
     }
 }

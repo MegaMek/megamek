@@ -48,5 +48,6 @@ public class CLStreakSRM2 extends StreakSRMWeapon {
         shortAV = 4;
         medAV = 4;
         maxRange = RANGE_MED;
+        this.introDate = 2676;
     }
 }

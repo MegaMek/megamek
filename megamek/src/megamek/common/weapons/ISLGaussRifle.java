@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -60,6 +61,8 @@ public class ISLGaussRifle extends GaussWeapon {
         this.extAV = 8;
         this.maxRange = RANGE_EXT;
         this.explosionDamage = 16;
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        this.introDate = 3056;
     }
     
     /*

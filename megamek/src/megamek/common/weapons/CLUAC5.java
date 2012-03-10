@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -55,5 +56,7 @@ public class CLUAC5 extends UACWeapon {
         this.maxRange = RANGE_LONG;
         this.explosionDamage = damage;
         this.techRating = RATING_F;
+        availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_F,EquipmentType.RATING_D};
+        introDate = 2640;
     }
 }

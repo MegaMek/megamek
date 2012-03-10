@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -60,6 +61,8 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
+        this.extinctDate = 2950;
+        this.reintroDate = 3037;
     }
 
     /*

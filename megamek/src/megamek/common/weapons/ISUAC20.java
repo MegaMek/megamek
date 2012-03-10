@@ -53,5 +53,6 @@ public class ISUAC20 extends UACWeapon {
         medAV = 30;
         maxRange = RANGE_MED;
         explosionDamage = damage;
+        introDate = 3060;
     }
 }

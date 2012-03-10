@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -55,5 +56,7 @@ public class CLHeavyLargeLaser extends LaserWeapon {
         this.shortAV = 16;
         this.medAV = 16;
         this.maxRange = RANGE_MED;
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
+        this.introDate = 3059;
     }
 }

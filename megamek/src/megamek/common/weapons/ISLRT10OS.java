@@ -49,5 +49,8 @@ public class ISLRT10OS extends LRTWeapon {
         bv = 18;
         flags = flags.or(F_ONESHOT);
         cost = 50000;
+        this.introDate = 2676;
+        this.extinctDate = 2800;
+        this.reintroDate = 3030;
     }
 }

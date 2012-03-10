@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -53,5 +54,9 @@ public class ISUAC5 extends UACWeapon {
         this.medAV = 7;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
+        availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_F,EquipmentType.RATING_D};
+        introDate = 2640;
+        this.extinctDate = 2915;
+        this.reintroDate = 3035;
     }
 }

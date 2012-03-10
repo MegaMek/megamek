@@ -48,5 +48,6 @@ public class CLSRM6OS extends SRMWeapon {
         cost = 40000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
+        this.introDate = 2676;
     }
 }

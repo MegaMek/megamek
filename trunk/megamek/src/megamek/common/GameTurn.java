@@ -344,6 +344,14 @@ public class GameTurn implements Serializable {
         public boolean isValidClass(int classCode) {
             return (classCode & mask) != 0;
         }
+        
+        /**
+         * Get the class code of this turn
+         * @return the classcode of this turn
+         */
+        public int getTurnCode(){
+            return mask;
+        }
     }
 
     /**

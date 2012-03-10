@@ -87,6 +87,7 @@ DoneButtoned, KeyListener {
     private static final int NUM_BUTTON_LAYOUTS = 4;
 
     public static final String MOVE_WALK = "moveWalk"; //$NON-NLS-1$
+    public static final String MOVE_FORWARD_INI = "moveForwardIni"; //$NON-NLS-1$
     public static final String MOVE_NEXT = "moveNext"; //$NON-NLS-1$
     public static final String MOVE_JUMP = "moveJump"; //$NON-NLS-1$
     public static final String MOVE_BACK_UP = "moveBackUp"; //$NON-NLS-1$
@@ -115,6 +116,7 @@ DoneButtoned, KeyListener {
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
     public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
     public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
+    
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
@@ -165,11 +167,12 @@ DoneButtoned, KeyListener {
     private Button butSpace;
 
     private Button butClear;
-
+    
     private Button butNext;
     private Button butDone;
     private Button butMore;
-
+    private Button butForwardIni;
+    
     private Button butRaise;
     private Button butLower;
 
@@ -361,6 +364,12 @@ DoneButtoned, KeyListener {
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
         butNext.addKeyListener(this);
+        
+        butForwardIni = new Button(Messages.getString("MovementDisplay.butForwardIni")); //$NON-NLS-1$
+        butForwardIni.addActionListener(this);
+        butForwardIni.setEnabled(false);
+        butForwardIni.setActionCommand(MOVE_FORWARD_INI);
+        butForwardIni.addKeyListener(this);
 
         butDone = new Button(Messages.getString("MovementDisplay.butDone")); //$NON-NLS-1$
         butDone.addActionListener(this);
@@ -785,13 +794,21 @@ DoneButtoned, KeyListener {
                 }
             }
         }
-
-        panButtons.add(butNext);
+        panButtons.add(butNext);        
         for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6) && (i < buttonList.size()); i++) {
             panButtons.add(buttonList.get(i));
         }
+        panButtons.add(butForwardIni);
         panButtons.add(butMore);
         panButtons.validate();
+    }
+
+    /**
+     * Hands over the current turn to the next valid player on the same team as the supplied player.
+     * If no player on the team apart from this player has any turns left it activates this player again. 
+     */
+    public synchronized void selectNextPlayer() {
+        client.sendNextPlayer();
     }
 
     /**
@@ -835,17 +852,16 @@ DoneButtoned, KeyListener {
         final boolean isAero = (ce instanceof Aero);
         // ^-- I suppose these should really be methods, a-la
         // Entity.canCharge(), Entity.canDFA()...
-
         setWalkEnabled(!ce.isImmobile()
                 && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0)) && !ce.isStuck());
         setJumpEnabled(!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0) && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER));
         setBackUpEnabled(butWalk.isEnabled() && !isAero);
-
+        
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
         setRamEnabled(ce.canRam());
-
+        
         if (isInfantry) {
             if (client.game.containsMinefield(ce.getPosition())) {
                 setClearEnabled(true);
@@ -950,6 +966,7 @@ DoneButtoned, KeyListener {
         butDone.setLabel(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(true);
         setNextEnabled(true);
+        setForwardEnabled(true);
         butMore.setEnabled(true);
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
@@ -993,6 +1010,7 @@ DoneButtoned, KeyListener {
         setChargeEnabled(false);
         setDFAEnabled(false);
         setNextEnabled(false);
+        setForwardEnabled(false);
         butMore.setEnabled(false);
         butDone.setEnabled(false);
         setLoadEnabled(false);
@@ -2224,6 +2242,7 @@ DoneButtoned, KeyListener {
             disableButtons();
             butDone.setEnabled(true);
             butNext.setEnabled(true);
+            setForwardEnabled(true);
             butLaunch.setEnabled(true);
         }
         return;
@@ -2245,6 +2264,7 @@ DoneButtoned, KeyListener {
             disableButtons();
             butDone.setEnabled(true);
             butNext.setEnabled(true);
+            setForwardEnabled(true);
             butLaunch.setEnabled(true);
             updateRACButton();
             updateRecoveryButton();
@@ -2541,6 +2561,8 @@ DoneButtoned, KeyListener {
             moveTo(cmd);
         } else if (ev.getActionCommand().equals(MOVE_NEXT)) {
             selectEntity(client.getNextEntityNum(cen));
+        } else if (ev.getActionCommand().equals(MOVE_FORWARD_INI)) {
+            selectNextPlayer();
         } else if (ev.getActionCommand().equals(MOVE_CANCEL)) {
             clearAllMoves();
         } else if (ev.getSource() == butMore) {
@@ -3098,6 +3120,17 @@ DoneButtoned, KeyListener {
         clientgui.getMenuBar().setMoveNextEnabled(enabled);
     }
 
+    private void setForwardEnabled(boolean enabled) {
+        if(client.game.getOptions().booleanOption("team_initiative")){
+            butForwardIni.setEnabled(enabled);
+            clientgui.getMenuBar().setForwardIniEnabled(enabled);
+        }
+        else{ //turn them off regardless what is said!
+            butForwardIni.setEnabled(false);
+            clientgui.getMenuBar().setForwardIniEnabled(false);
+        }
+    }
+    
     private void setLayMineEnabled(boolean enabled) {
         butLayMine.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLayMineEnabled(enabled);

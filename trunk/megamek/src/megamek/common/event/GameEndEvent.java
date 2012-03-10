@@ -33,7 +33,16 @@ public class GameEndEvent extends GameEvent {
      * @param source event source
      */
     public GameEndEvent(Object source) {
-        super(source, GAME_END);
+        super(source);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameEnd(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "Game End";
+	}
 }

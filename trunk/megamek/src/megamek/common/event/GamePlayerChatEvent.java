@@ -33,7 +33,7 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
      * @param message
      */
     public GamePlayerChatEvent(Object source, Player player, String message) {
-        super(source, player, GAME_PLAYER_CHAT);
+        super(source, player);
         this.message = message;
     }
 
@@ -43,4 +43,14 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
     public String getMessage() {
         return message;
     }
+
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gamePlayerChat(this);
+	}
+	
+	@Override
+	public String getEventName() {
+		return "Chat";
+	}
 }

@@ -32,7 +32,7 @@ public class GameMapQueryEvent extends GameEvent {
      * @param settings
      */
     public GameMapQueryEvent(Object source, MapSettings settings) {
-        super(source, GAME_MAP_QUERY);
+        super(source);
         this.settings = settings;
     }
 
@@ -42,4 +42,14 @@ public class GameMapQueryEvent extends GameEvent {
     public MapSettings getSettings() {
         return settings;
     }
+
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameMapQuery(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "Game Map Query";
+	}
 }

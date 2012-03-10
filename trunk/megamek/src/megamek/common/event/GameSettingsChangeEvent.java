@@ -28,7 +28,16 @@ public class GameSettingsChangeEvent extends GameEvent {
      * @param source
      */
     public GameSettingsChangeEvent(Object source) {
-        super(source, GAME_SETTINGS_CHANGE);
+        super(source);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameSettingsChange(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "New Settings";
+	}
 }

@@ -30,13 +30,13 @@ public class GameNewActionEvent extends GameEvent {
     protected EntityAction action;
 
     /**
-     * Cunstruct new GameNewActionEvent
+     * Construct new GameNewActionEvent
      * 
      * @param source sender
      * @param action
      */
     public GameNewActionEvent(Object source, EntityAction action) {
-        super(source, GAME_NEW_ACTION);
+        super(source);
         this.action = action;
     }
 
@@ -47,4 +47,13 @@ public class GameNewActionEvent extends GameEvent {
         return action;
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameNewAction(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Game New Action";
+	}
 }

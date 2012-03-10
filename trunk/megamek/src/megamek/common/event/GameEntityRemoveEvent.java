@@ -31,7 +31,16 @@ public class GameEntityRemoveEvent extends GameEntityEvent {
      * @param entity
      */
     public GameEntityRemoveEvent(Object source, Entity entity) {
-        super(source, entity, GAME_ENTITY_REMOVE);
+        super(source, entity);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameEntityRemove(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Entity Remove";
+	}
 }

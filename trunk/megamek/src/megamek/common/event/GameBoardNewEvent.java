@@ -40,7 +40,7 @@ public class GameBoardNewEvent extends GameEvent {
      * @param newBoard new game board
      */
     public GameBoardNewEvent(Object source, IBoard oldBoard, IBoard newBoard) {
-        super(source, GAME_BOARD_NEW);
+        super(source);
         this.oldBoard = oldBoard;
         this.newBoard = newBoard;
     }
@@ -59,4 +59,13 @@ public class GameBoardNewEvent extends GameEvent {
         return oldBoard;
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameBoardNew(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "New Board";
+	}
 }

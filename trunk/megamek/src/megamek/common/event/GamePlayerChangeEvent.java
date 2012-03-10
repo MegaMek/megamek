@@ -31,7 +31,16 @@ public class GamePlayerChangeEvent extends GamePlayerEvent {
      * @param player
      */
     public GamePlayerChangeEvent(Object source, Player player) {
-        super(source, player, GAME_PLAYER_CHANGE);
+        super(source, player);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gamePlayerChange(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Status Change";
+	}
 }

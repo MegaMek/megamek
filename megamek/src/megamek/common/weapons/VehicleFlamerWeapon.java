@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -42,7 +43,8 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         String[] modeStrings =
             { "Damage", "Heat"};
         setModes(modeStrings);
-
+        this.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A,EquipmentType.RATING_B};
+        this.introDate = 1950;
         atClass = CLASS_POINT_DEFENSE;
     }
 

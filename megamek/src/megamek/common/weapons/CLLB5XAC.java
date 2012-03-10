@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -54,5 +55,7 @@ public class CLLB5XAC extends LBXACWeapon {
         this.longAV = 5;
         this.maxRange = RANGE_LONG;
         this.techRating = RATING_F;
+        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        introDate = 2825;
     }
 }

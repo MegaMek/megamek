@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -56,5 +57,7 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
+        this.extinctDate = 2950;
+        this.reintroDate = 3037;
     }
 }

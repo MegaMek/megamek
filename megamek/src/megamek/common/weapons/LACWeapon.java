@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 
 public abstract class LACWeapon extends ACWeapon {
 
@@ -30,6 +31,8 @@ public abstract class LACWeapon extends ACWeapon {
         super();
         this.ammoType = AmmoType.T_LAC;
         this.techRating = RATING_D;
+        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_F};
+        introDate = 3068;
     }
 
 

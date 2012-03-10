@@ -47,5 +47,6 @@ public class CLSRT2OS extends SRTWeapon {
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 5000;
+        this.introDate = 2676;
     }
 }

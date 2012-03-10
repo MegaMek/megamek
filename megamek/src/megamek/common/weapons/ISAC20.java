@@ -16,6 +16,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -55,5 +56,7 @@ public class ISAC20 extends ACWeapon {
         shortAV = 20;
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
+        availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_E,EquipmentType.RATING_D};
+        introDate = 2500;
     }
 }

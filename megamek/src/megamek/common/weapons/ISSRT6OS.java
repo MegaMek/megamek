@@ -47,5 +47,8 @@ public class ISSRT6OS extends SRTWeapon {
         bv = 12;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 40000;
+        this.introDate = 2676;
+        this.extinctDate = 2800;
+        this.reintroDate = 3030;
     }
 }

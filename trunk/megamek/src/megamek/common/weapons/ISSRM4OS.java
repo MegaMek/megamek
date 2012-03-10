@@ -49,5 +49,8 @@ public class ISSRM4OS extends SRMWeapon {
         cost = 30000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
+        this.introDate = 2676;
+        this.extinctDate = 2800;
+        this.reintroDate = 3030;
     }
 }

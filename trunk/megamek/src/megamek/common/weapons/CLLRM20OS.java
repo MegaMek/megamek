@@ -47,5 +47,6 @@ public class CLLRM20OS extends LRMWeapon {
         medAV = 12;
         longAV = 12;
         maxRange = RANGE_LONG;
+        this.introDate = 2676;
     }
 }

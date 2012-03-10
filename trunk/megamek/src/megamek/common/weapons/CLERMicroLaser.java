@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -54,5 +55,7 @@ public class CLERMicroLaser extends LaserWeapon {
         cost = 10000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
+        this.introDate = 3060;
     }
 }

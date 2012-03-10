@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -33,7 +34,8 @@ public abstract class MMLWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_MML;
         this.setModes(new String[] { "", "Indirect" });
-        
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        this.introDate = 3068;
         this.atClass = CLASS_MML;
     }
 

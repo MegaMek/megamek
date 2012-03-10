@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -54,6 +55,8 @@ public class CLLightMG extends MGWeapon {
         this.shortAV = 1;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AC;
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_C};
+        this.introDate = 3059;
     }
 
 }

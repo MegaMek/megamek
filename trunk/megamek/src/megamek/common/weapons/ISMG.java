@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -48,6 +49,8 @@ public class ISMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
+        this.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A,EquipmentType.RATING_B};
+        this.introDate = 1950;
     }
 
 }

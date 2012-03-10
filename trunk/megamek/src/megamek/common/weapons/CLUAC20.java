@@ -54,5 +54,6 @@ public class CLUAC20 extends UACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         techRating = RATING_F;
-   }
+        this.introDate = 2825;
+    }
 }

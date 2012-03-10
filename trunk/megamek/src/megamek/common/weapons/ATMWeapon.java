@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -33,6 +34,8 @@ public abstract class ATMWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.T_ATM;
         atClass = CLASS_ATM;
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
+        this.introDate = 3054;
     }
 
     /*

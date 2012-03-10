@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -51,5 +52,9 @@ public class ISLB10XAC extends LBXACWeapon {
         this.shortAV = 10;
         this.medAV = 10;
         this.maxRange = RANGE_MED;
+        availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
+        introDate = 2595;
+        this.extinctDate = 2840;
+        this.reintroDate = 3035;
     }
 }

@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -53,5 +54,7 @@ public class CLERLargePulseLaser extends PulseLaserWeapon {
         criticals = 3;
         bv = 272;
         cost = 400000;
+        this.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
+        this.introDate = 2620;
     }
 }

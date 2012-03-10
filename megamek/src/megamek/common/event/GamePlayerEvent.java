@@ -37,8 +37,8 @@ public abstract class GamePlayerEvent extends GameEvent {
      * @param player
      * @param type
      */
-    public GamePlayerEvent(Object source, Player player, int type) {
-        super(source, type);
+    public GamePlayerEvent(Object source, Player player) {
+        super(source);
         this.player = player;
     }
 

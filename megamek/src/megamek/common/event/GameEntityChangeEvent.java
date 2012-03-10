@@ -48,7 +48,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
      */
     public GameEntityChangeEvent(final Object source, final Entity entity,
             final Vector<UnitLocation> movePath) {
-        super(source, entity, GAME_ENTITY_CHANGE);
+        super(source, entity);
         this.movePath = movePath;
     }
 
@@ -74,4 +74,14 @@ public class GameEntityChangeEvent extends GameEntityEvent {
 
         return "Something happened.";
     }
+
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameEntityChange(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "Entity Change";
+	}
 }

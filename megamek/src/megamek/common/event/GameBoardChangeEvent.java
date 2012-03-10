@@ -31,7 +31,16 @@ public class GameBoardChangeEvent extends GameEvent {
      * @param source event source
      */
     public GameBoardChangeEvent(Object source) {
-        super(source, GAME_BOARD_CHANGE);
+        super(source);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameBoardChanged(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "Board Changed";
+	}
 }

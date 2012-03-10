@@ -34,7 +34,7 @@ public class GameEntityNewEvent extends GameEvent {
      * @param entity
      */
     public GameEntityNewEvent(Object source, Entity entity) {
-        super(source, GAME_ENTITY_NEW);
+        super(source);
         entities = new Vector<Entity>();
         entities.addElement(entity);
     }
@@ -44,7 +44,7 @@ public class GameEntityNewEvent extends GameEvent {
      * @param entities
      */
     public GameEntityNewEvent(Object source, Vector<Entity> entities) {
-        super(source, GAME_ENTITY_NEW);
+        super(source);
         this.entities = entities;
     }
 
@@ -55,4 +55,14 @@ public class GameEntityNewEvent extends GameEvent {
     public int getNumberOfEntities() {
         return entities.size();
     }
+
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameEntityNew(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "New Entities";
+	}
 }

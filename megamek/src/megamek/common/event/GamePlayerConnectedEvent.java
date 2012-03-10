@@ -31,7 +31,16 @@ public class GamePlayerConnectedEvent extends GamePlayerEvent {
      * @param player
      */
     public GamePlayerConnectedEvent(Object source, Player player) {
-        super(source, player, GAME_PLAYER_CONNECTED);
+        super(source, player);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gamePlayerConnected(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Game Player Connected";
+	}
 }

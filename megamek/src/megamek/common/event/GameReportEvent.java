@@ -33,7 +33,7 @@ public class GameReportEvent extends GameEvent {
      * @param s a String of the report
      */
     public GameReportEvent(Object source, String s) {
-        super(source, GAME_REPORT);
+        super(source);
         this.report = s;
     }
 
@@ -45,4 +45,14 @@ public class GameReportEvent extends GameEvent {
     public String getReport() {
         return this.report;
     }
+
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameReport(this);
+	}
+
+	@Override
+	public String getEventName() {
+		return "Game Report";
+	}
 }

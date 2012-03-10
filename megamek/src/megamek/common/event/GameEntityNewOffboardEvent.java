@@ -28,7 +28,16 @@ public class GameEntityNewOffboardEvent extends GameEvent {
      * @param source
      */
     public GameEntityNewOffboardEvent(Object source) {
-        super(source, GAME_ENTITY_NEW_OFFBOARD);
+        super(source);
     }
 
+	@Override
+	public void fireEvent(GameListener gl) {
+		gl.gameEntityNewOffboard(this);	
+	}
+
+	@Override
+	public String getEventName() {
+		return "Entity New Off-board";
+	}
 }

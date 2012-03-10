@@ -197,6 +197,15 @@ public class Tank extends Entity {
     }
 
     public boolean isTurretJammed(int turret) {
+        //this is rather a hack but the only idea I came up with.
+        //for the first time this is checked. If this is a partially repaired turret it will be jammed.
+        //so just set it to jammed and change the partial repair value to false.
+        
+        if (getPartialRepairs().booleanOption("veh_locked_turret")){
+            m_bTurretJammed = true;
+            m_bDualTurretJammed = true;
+            getPartialRepairs().getOption("veh_locked_turret").setValue(false);
+        }
         if (turret == LOC_TURRET) {
             return m_bTurretJammed;
         } else if (turret == LOC_TURRET_2) {
@@ -2790,11 +2799,11 @@ public class Tank extends Entity {
         String toReturn = "";
         boolean first = true;
         if(getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
-        	toReturn += "BREACH";
-        	first = false;
+            toReturn += "BREACH";
+            first = false;
         }
         if (isTurretLocked(loc)) {
-        	if (!first) {
+            if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Locked";

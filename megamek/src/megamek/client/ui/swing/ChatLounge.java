@@ -103,6 +103,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
+import megamek.common.options.PartialRepairs;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
@@ -1196,7 +1197,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             if (!clientgui.getClient().game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
                 entity.clearQuirks();
             }
-
+            if (!clientgui.getClient().game.getOptions().booleanOption("stratops_partialrepairs")) { //$NON-NLS-1$
+                entity.clearPartialRepairs();
+            }
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient().game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !clientgui.getClient().game.getOptions().booleanOption("real_blind_drop")) { //$NON-NLS-1$
@@ -1313,6 +1316,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
                 }
             }
         }
+        for (Enumeration<IOptionGroup> advGroups = entity.getPartialRepairs().getGroups(); advGroups.hasMoreElements();) {
+            IOptionGroup advGroup = advGroups.nextElement();
+            if (entity.countPartialRepairs() > 0) {
+                value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
+                    IOption adv = advs.nextElement();
+                    if (adv.booleanValue()) {
+                        value += "  " + adv.getDisplayableNameWithValue() + "<br>";
+                    }
+                }
+            }
+        }
+
         for (Mounted weapon : entity.getWeaponList()) {
             for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks().getGroups(); advGroups.hasMoreElements();) {
                 IOptionGroup advGroup = advGroups.nextElement();
@@ -1449,6 +1465,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
 
             int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
             int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
+            int partRepCount = entity.countPartialRepairs();
 
             value += "<b>" + entity.getShortName() + "</b><br>";
             value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
@@ -1462,6 +1479,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
             if ((posQuirkCount > 0) | (negQuirkCount > 0)) {
                 value += Messages.getString("ChatLounge.Quirks") + "+" + posQuirkCount + "/" + "-" + negQuirkCount + "<br>";
             }
+            if ((partRepCount > 0)) {
+                value += Messages.getString("ChatLounge.PartialRepairs") + " + "+ partRepCount + "<br>";
+            }
+
         }
         if (entity.isOffBoard()) {
             value += Messages.getString("ChatLounge.deploysOffBoard"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1737,6 +1758,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener, 
         CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity, editable);
         cmd.refreshOptions();
         cmd.refreshQuirks();
+        cmd.refreshPartReps();
         cmd.setTitle(entity.getShortName());
         cmd.setVisible(true);
         if (editable && cmd.isOkay()) {

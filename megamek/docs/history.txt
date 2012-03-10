@@ -6,15 +6,21 @@ v0.35.29-dev (SVN)
 + Possible fix for mechs deploying with double elevation when deploying on
     buildings
 + Removed duplicate entries from the messages.properties file.
-+ Added full list of quirks from Strat Ops and TRO Prototypes to the Customize Mech dialog for completion purposes.
++ Added full list of quirks from Strat Ops and TRO Prototypes to the Customize
+    Mech dialog for completion purposes.
 + Set up alphabetic sorting of the quirks lists.
 + Bug 3496291: crash when rolling weapon jammed tank crit and tank has no weapon 
 + Bug: tank cargo destroyed crit should deal original attack damage to carried
    infantry
-+ Added a new file to mmconf (defaultQuirks.xml) for storing a list of default quirks for various units.  Currently, only the canonical quirks that I know about have been included.
-+ Added code to parse the defaultQuirks.xml file and apply those quirks to units as they are loaded into MegaMek if the StratOps Quirks rules are being used.
++ Added a new file to mmconf (defaultQuirks.xml) for storing a list of default
+    quirks for various units.  Currently, only the canonical quirks that I know
+    about have been included.
++ Added code to parse the defaultQuirks.xml file and apply those quirks to units
+    as they are loaded into MegaMek if the StratOps Quirks rules are being used.
 + Cleaned up some @param references in Server.java.
-+ Literal backslash in DefaultQuirksHandler.initQuirksList() file path caused MegaMek to hang on startup on Linux platform; replaced with generic separator.
++ Literal backslash in DefaultQuirksHandler.initQuirksList() file path caused
+  MegaMek to hang on startup on Linux platform; replaced with generic separator.
++ Patch 3499557: added partial repairs option
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

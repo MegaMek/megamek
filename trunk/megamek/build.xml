@@ -93,6 +93,8 @@
 				<pathelement path="${basedir}" />
 				<pathelement path="${builddir}" />
 				<fileset dir="${libdir}" includes="*.jar" />
+				<pathelement path="${basedir}/src/" />
+				<pathelement path="${basedir}/l10n/" />
 			</classpath>
 		</java>
 	</target>

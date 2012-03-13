@@ -559,7 +559,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butEndOver.addKeyListener(this);
 
         // add buttons to the lists, except space, more & next
-        buttonsMech = new ArrayList<JButton>(19);
+        buttonsMech = new ArrayList<JButton>(21);
         buttonsMech.add(butWalk);
         buttonsMech.add(butJump);
         buttonsMech.add(butBackup);
@@ -580,8 +580,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
+        buttonsMech.add(butForwardIni);
 
-        buttonsTank = new ArrayList<JButton>(20);
+        buttonsTank = new ArrayList<JButton>(23);
         buttonsTank.add(butWalk);
         buttonsTank.add(butBackup);
         buttonsTank.add(butTurn);
@@ -604,8 +605,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butLower);
         buttonsTank.add(butTakeOff);
         buttonsTank.add(butVTakeOff);
+        buttonsTank.add(butForwardIni);
 
-        buttonsVtol = new ArrayList<JButton>(15);
+        buttonsVtol = new ArrayList<JButton>(16);
         buttonsVtol.add(butWalk);
         buttonsVtol.add(butBackup);
         buttonsVtol.add(butLower);
@@ -621,8 +623,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
+        buttonsVtol.add(butForwardIni);
 
-        buttonsInf = new ArrayList<JButton>(15);
+        buttonsInf = new ArrayList<JButton>(17);
         buttonsInf.add(butWalk);
         buttonsInf.add(butJump);
         buttonsInf.add(butLower);
@@ -639,8 +642,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butDigIn);
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
+        buttonsInf.add(butForwardIni);
 
-        buttonsAero = new ArrayList<JButton>(21);
+        buttonsAero = new ArrayList<JButton>(24);
         if (!clientgui.getClient().game.useVectorMove()) {
             buttonsAero.add(butWalk);
             buttonsAero.add(butAcc);
@@ -685,6 +689,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butLand);
             buttonsAero.add(butVLand);
         }
+        buttonsAero.add(butForwardIni);
 
         // layout button grid
         panButtons = new JPanel();
@@ -774,8 +779,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             y++;
             x = 0;
         }
-        panButtons.add(butForwardIni, GBC.std().gridx(x).gridy(y).fill());
-
         panButtons.add(butMore, GBC.std().gridx(4).gridy(1).fill());
         panButtons.add(butDone, GBC.std().gridx(5).gridy(0).gridheight(2).fill());
         panButtons.validate();
@@ -784,14 +787,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * Hands over the current turn to the next valid player on the same team as the supplied player.
-     * If no player on the team apart from this player has any turns left it activates this player again. 
+     * If no player on the team apart from this player has any turns left it activates this player again.
      */
     public synchronized void selectNextPlayer() {
         clientgui.getClient().sendNextPlayer();
         //endMyTurn();
     }
 
-    
+
     /**
      * Selects an entity, by number, for movement.
      */

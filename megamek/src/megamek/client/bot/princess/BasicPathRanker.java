@@ -54,7 +54,7 @@ public class BasicPathRanker extends PathRanker {
     // sacrifice to do one armor point worth of damage
     double hyper_aggression; // how much is it worth to me to get all up in the
     // face of an enemy
-    double herd_mentality; // how much is it worth to me to stay near my buddies
+//    double herd_mentality; // how much is it worth to me to stay near my buddies
 
     //Fleeing the board
     double self_preservation; //how closely will I follow the forced withdrawal rules.
@@ -73,8 +73,9 @@ public class BasicPathRanker extends PathRanker {
 //        blind_optimism = 0.9;
   //      enemy_underestimation = 0.5;
         foolish_bravery = 3.0;
-        hyper_aggression = 0.05;
-        herd_mentality = 0.01;
+        //hyper_aggression = 0.05;
+        hyper_aggression = 10.0;
+        //herd_mentality = 0.01;
         self_preservation = 30.0;
 
         fall_shame = Double.valueOf(props.getProperty("fall_shame"));
@@ -82,9 +83,9 @@ public class BasicPathRanker extends PathRanker {
       //  enemy_underestimation = Double.valueOf(props
         //        .getProperty("enemy_underestimation"));
         foolish_bravery = Double.valueOf(props.getProperty("foolish_bravery"));
-        hyper_aggression = Double
-                .valueOf(props.getProperty("hyper_aggression"));
-        herd_mentality = Double.valueOf(props.getProperty("herd_mentality"));
+        //hyper_aggression = Double
+//                .valueOf(props.getProperty("hyper_aggression"));
+        //herd_mentality = Double.valueOf(props.getProperty("herd_mentality"));
 
         best_damage_by_enemies = new TreeMap<Integer, Double>();
         
@@ -288,8 +289,8 @@ public class BasicPathRanker extends PathRanker {
             double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
             utility -= dist_to_enemy * hyper_aggression;
 
-            double dist_to_friend = distanceToClosestFriend(p, game);
-            utility -= dist_to_friend * herd_mentality;
+//            double dist_to_friend = distanceToClosestFriend(p, game);
+  //          utility -= dist_to_friend * herd_mentality;
         }
         
         //Should I be trying to withdraw?

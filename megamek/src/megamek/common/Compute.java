@@ -850,7 +850,7 @@ public class Compute {
             mods.addModifier(minPenalty, "minimum range");
         }
         //if partial sensor repairs are present the shot will be more difficult if its a non physical attack
-        //
+        if(ae.getPartialRepairs()!=null) {
         if(ae.getPartialRepairs().booleanOption("sensors_1_crit")){
             mods.addModifier(1,"sensor damage");
         }
@@ -859,6 +859,7 @@ public class Compute {
         }
         if(ae.getPartialRepairs().booleanOption("veh_stabilizer_crit")){
             mods.addModifier(1,"stabilizer damage");
+        }
         }
 
         

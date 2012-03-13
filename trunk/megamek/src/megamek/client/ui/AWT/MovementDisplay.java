@@ -116,7 +116,7 @@ DoneButtoned, KeyListener {
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
     public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
     public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
-    
+
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
@@ -167,12 +167,12 @@ DoneButtoned, KeyListener {
     private Button butSpace;
 
     private Button butClear;
-    
+
     private Button butNext;
     private Button butDone;
     private Button butMore;
     private Button butForwardIni;
-    
+
     private Button butRaise;
     private Button butLower;
 
@@ -364,7 +364,7 @@ DoneButtoned, KeyListener {
         butNext.setEnabled(false);
         butNext.setActionCommand(MOVE_NEXT);
         butNext.addKeyListener(this);
-        
+
         butForwardIni = new Button(Messages.getString("MovementDisplay.butForwardIni")); //$NON-NLS-1$
         butForwardIni.addActionListener(this);
         butForwardIni.setEnabled(false);
@@ -561,7 +561,7 @@ DoneButtoned, KeyListener {
         butSpace.addKeyListener(this);
 
         // add buttons to the lists, except space, more & next
-        buttonsMech = new ArrayList<Button>(22);
+        buttonsMech = new ArrayList<Button>(20);
         buttonsMech.add(butWalk);
         buttonsMech.add(butJump);
         buttonsMech.add(butBackup);
@@ -581,11 +581,7 @@ DoneButtoned, KeyListener {
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
-        // these are last, they won't be used by mechs
-        buttonsMech.add(butFortify);
-        buttonsMech.add(butLayMine);
-        buttonsMech.add(butLower);
-        buttonsMech.add(butRaise);
+        buttonsMech.add(butForwardIni);
 
         buttonsTank = new ArrayList<Button>(22);
         buttonsTank.add(butWalk);
@@ -605,15 +601,9 @@ DoneButtoned, KeyListener {
         buttonsTank.add(butRAC);
         buttonsTank.add(butLayMine);
         buttonsTank.add(butShakeOff);
-        // these are last, they won't be used by tanks
-        buttonsTank.add(butUp);
-        buttonsTank.add(butDown);
-        buttonsTank.add(butJump);
-        buttonsTank.add(butDigIn);
-        buttonsTank.add(butLower);
-        buttonsTank.add(butRaise);
+        buttonsTank.add(butForwardIni);
 
-        buttonsVtol = new ArrayList<Button>(22);
+        buttonsVtol = new ArrayList<Button>(15);
         buttonsVtol.add(butWalk);
         buttonsVtol.add(butBackup);
         buttonsVtol.add(butLower);
@@ -628,18 +618,9 @@ DoneButtoned, KeyListener {
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
-        // these are last, they won't be used by vtol
-        buttonsVtol.add(butLayMine);
-        buttonsVtol.add(butSwim);
-        buttonsVtol.add(butClimbMode);
-        buttonsVtol.add(butCharge);
-        buttonsVtol.add(butDfa);
-        buttonsVtol.add(butUp);
-        buttonsVtol.add(butDown);
-        buttonsVtol.add(butJump);
-        buttonsVtol.add(butDigIn);
+        buttonsVtol.add(butForwardIni);
 
-        buttonsInf = new ArrayList<Button>(22);
+        buttonsInf = new ArrayList<Button>(16);
         buttonsInf.add(butWalk);
         buttonsInf.add(butJump);
         buttonsInf.add(butLower);
@@ -655,15 +636,7 @@ DoneButtoned, KeyListener {
         buttonsInf.add(butDigIn);
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
-        // these are last, they won't be used by infantry
-        buttonsInf.add(butLoad);
-        buttonsInf.add(butUnload);
-        buttonsInf.add(butBackup);
-        buttonsInf.add(butHullDown);
-        buttonsInf.add(butCharge);
-        buttonsInf.add(butDfa);
-        buttonsInf.add(butUp);
-        buttonsInf.add(butDown);
+        buttonsInf.add(butForwardIni);
 
         buttonsAero = new ArrayList<Button>(22);
         if (!client.game.useVectorMove()) {
@@ -687,9 +660,6 @@ DoneButtoned, KeyListener {
             buttonsAero.add(butHover);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used
-            buttonsAero.add(butHullDown);
-            buttonsAero.add(butShakeOff);
         } else {
             buttonsAero.add(butThrust);
             buttonsAero.add(butTurnLeft);
@@ -706,15 +676,8 @@ DoneButtoned, KeyListener {
             buttonsAero.add(butJoin);
             buttonsAero.add(butRAC);
             buttonsAero.add(butDump);
-            // not used
-            buttonsAero.add(butUp);
-            buttonsAero.add(butDown);
-            buttonsAero.add(butJump);
-            buttonsAero.add(butDigIn);
-            buttonsAero.add(butFortify);
-            buttonsAero.add(butHullDown);
-            buttonsAero.add(butShakeOff);
         }
+        buttonsAero.add(butForwardIni);
         // TODO: allow Aeros to taxi if on the ground
 
         // layout button grid
@@ -780,7 +743,7 @@ DoneButtoned, KeyListener {
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
         while (!ok && (buttonLayout != 0)) {
-            for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6) && (i < buttonList.size()); i++) {
+            for (int i = buttonLayout * 6; (i < ((buttonLayout + 1) * 6)) && (i < buttonList.size()); i++) {
                 if (buttonList.get(i).isEnabled()) {
                     ok = true;
                     break;
@@ -789,23 +752,22 @@ DoneButtoned, KeyListener {
             if (!ok) {
                 // skip as nothing was enabled
                 buttonLayout++;
-                if (buttonLayout * 6 >= buttonList.size()) {
+                if ((buttonLayout * 6) >= buttonList.size()) {
                     buttonLayout = 0;
                 }
             }
         }
-        panButtons.add(butNext);        
-        for (int i = buttonLayout * 6; (i < (buttonLayout + 1) * 6) && (i < buttonList.size()); i++) {
+        panButtons.add(butNext);
+        for (int i = buttonLayout * 6; (i < ((buttonLayout + 1) * 6)) && (i < buttonList.size()); i++) {
             panButtons.add(buttonList.get(i));
         }
-        panButtons.add(butForwardIni);
         panButtons.add(butMore);
         panButtons.validate();
     }
 
     /**
      * Hands over the current turn to the next valid player on the same team as the supplied player.
-     * If no player on the team apart from this player has any turns left it activates this player again. 
+     * If no player on the team apart from this player has any turns left it activates this player again.
      */
     public synchronized void selectNextPlayer() {
         client.sendNextPlayer();
@@ -857,11 +819,11 @@ DoneButtoned, KeyListener {
         setJumpEnabled(!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0) && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER));
         setBackUpEnabled(butWalk.isEnabled() && !isAero);
-        
+
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
         setRamEnabled(ce.canRam());
-        
+
         if (isInfantry) {
             if (client.game.containsMinefield(ce.getPosition())) {
                 setClearEnabled(true);
@@ -1727,7 +1689,7 @@ DoneButtoned, KeyListener {
             velocityLeft = step.getVelocityLeft();
         }
         boolean evenx = (position.x % 2) == 0;
-        if ((velocityLeft > 0) && (((position.x == 0) && ((facing == 5) || (facing == 4))) || ((position.x == client.game.getBoard().getWidth() - 1) && ((facing == 1) || (facing == 2))) || ((position.y == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx) || ((position.y == 0) && (facing == 0)) || ((position.y == client.game.getBoard().getHeight() - 1) && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == client.game.getBoard().getHeight() - 1) && (facing == 3)))) {
+        if ((velocityLeft > 0) && (((position.x == 0) && ((facing == 5) || (facing == 4))) || ((position.x == (client.game.getBoard().getWidth() - 1)) && ((facing == 1) || (facing == 2))) || ((position.y == 0) && ((facing == 1) || (facing == 5) || (facing == 0)) && evenx) || ((position.y == 0) && (facing == 0)) || ((position.y == (client.game.getBoard().getHeight() - 1)) && ((facing == 2) || (facing == 3) || (facing == 4)) && !evenx) || ((position.y == (client.game.getBoard().getHeight() - 1)) && (facing == 3)))) {
             setFlyOffEnabled(true);
         } else {
             setFlyOffEnabled(false);
@@ -3130,7 +3092,7 @@ DoneButtoned, KeyListener {
             clientgui.getMenuBar().setForwardIniEnabled(false);
         }
     }
-    
+
     private void setLayMineEnabled(boolean enabled) {
         butLayMine.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLayMineEnabled(enabled);
@@ -3372,7 +3334,7 @@ DoneButtoned, KeyListener {
         // first check whether we are splitting hexes
         boolean split = false;
         double degree = start.degree(end);
-        if (degree % 60 == 30) {
+        if ((degree % 60) == 30) {
             split = true;
             in = Coords.intervening(start, end, true);
         }

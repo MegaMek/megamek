@@ -575,6 +575,7 @@ public class ScenarioLoader {
 
         StringTokenizer st = new StringTokenizer(sFactions, ",");
         Player[] out = new Player[st.countTokens()];
+        int team = Player.TEAM_NONE;
         for (int x = 0; x < out.length; x++) {
             out[x] = new Player(x, st.nextToken());
 
@@ -599,16 +600,15 @@ public class ScenarioLoader {
             out[x].setStartingPos(nDir);
 
             // Check for team setup
-            int team = Player.TEAM_NONE;
 
             try {
                 team = Integer.parseInt(p.getProperty("Team_"
                         + out[x].getName()));
             } catch (Exception e) {
-                team = Player.TEAM_NONE;
+                team++;
             }
 
-            out[x].setTeam(team);
+            out[x].setTeam(Math.min(team, 5));
 
             String minefields = p.getProperty("Minefields_" + out[x].getName());
             if (minefields != null) {

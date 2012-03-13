@@ -403,7 +403,7 @@ public class ScenarioLoader {
             // Check for unit external ids
             s = p.getProperty("Unit_" + sFaction + "_" + i + "_ExternalID");
             if (null != s) {
-                e.setExternalId(s);
+                e.setExternalIdAsString(s);
             }
 
             // Check for advantages

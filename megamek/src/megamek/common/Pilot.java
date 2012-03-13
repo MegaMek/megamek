@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -24,7 +24,7 @@ import megamek.common.options.PilotOptions;
 
 public class Pilot implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -141169182388269619L;
     private String name;
@@ -186,7 +186,7 @@ public class Pilot implements Serializable {
     public int getCommandBonus() {
         return commandBonus;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -516,7 +516,7 @@ public class Pilot implements Serializable {
 
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
-     * 
+     *
      * @param usePiloting
      *            whether or not to use the default value non-anti-mech
      *            infantry/BA should not use the anti-mech skill
@@ -553,7 +553,7 @@ public class Pilot implements Serializable {
      * Returns the BV multiplyer for a pilots gunnery/piloting. This function is
      * static to evaluate the BV of a unit, even when they have not yet been
      * assinged a pilot.
-     * 
+     *
      * @param gunnery
      *            the gunnery skill of the pilot
      * @param piloting
@@ -583,7 +583,7 @@ public class Pilot implements Serializable {
 
     /**
      * Determine if this pilot has abandoned her vehicle.
-     * 
+     *
      * @return <code>true</code> if the pilot has abandoned her vehicle,
      *         <code>false</code> if the pilot is still in the vehicle.
      */
@@ -593,7 +593,7 @@ public class Pilot implements Serializable {
 
     /**
      * Specify if this pilot has abandoned her vehicle.
-     * 
+     *
      * @param abandoned
      *            the <code>boolean</code> value to set.
      */
@@ -675,18 +675,18 @@ public class Pilot implements Serializable {
         return s;
     }
 
-    public void setExternalId(String i) {
+    public void setExternalIdAsString(String i) {
         externalId = i;
     }
-    
+
     public void setExternalId(int i) {
-    	externalId = Integer.toString(i);
+        externalId = Integer.toString(i);
     }
 
     public String getExternalIdAsString() {
         return externalId;
     }
-    
+
     public int getExternalId() {
         return Integer.parseInt(externalId);
     }
@@ -722,11 +722,11 @@ public class Pilot implements Serializable {
     public void setFatigue(int i) {
         fatigue = i;
     }
-    
+
     public void incrementFatigueCount() {
         fatigueCount++;
     }
-    
+
     public int rollGunnerySkill() {
         if(getOptions().booleanOption("aptitude_gunnery")) {
             return Compute.d6(3,2);
@@ -734,5 +734,5 @@ public class Pilot implements Serializable {
              return Compute.d6(2);
         }
     }
-    
+
 }

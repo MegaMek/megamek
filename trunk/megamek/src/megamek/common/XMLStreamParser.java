@@ -115,7 +115,7 @@ public class XMLStreamParser implements XMLResponder {
         }
 
         // Mark dependent locations as destroyed.
-        // Taharqa: I dont think we should do this here, it should be done anyway 
+        // Taharqa: I dont think we should do this here, it should be done anyway
         //if the xml is coded right and we now have to allow for truly blown off locations
         /*
         if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
@@ -123,7 +123,7 @@ public class XMLStreamParser implements XMLResponder {
         }
         */
     }
-    
+
     private void breachLocation(Entity en, int loc) {
     	 // equipment marked breached
         for (Mounted mounted : entity.getEquipment()) {
@@ -137,10 +137,10 @@ public class XMLStreamParser implements XMLResponder {
             if (cs != null) {
                 cs.setBreached(true);
             }
-        }     
+        }
         entity.setLocationStatus(loc, ILocationExposureStatus.BREACHED);
     }
-    
+
     private void blowOffLocation(Entity en, int loc) {
     	en.setLocationBlownOff(loc, true);
     	for (Mounted mounted : entity.getEquipment()) {
@@ -153,7 +153,7 @@ public class XMLStreamParser implements XMLResponder {
     		if (cs != null) {
     			cs.setMissing(true);
     		}
-    	}     
+    	}
    }
 
     // Public and Protected constants, constructors, and methods.
@@ -495,7 +495,7 @@ public class XMLStreamParser implements XMLResponder {
                     if ((null == extId) || (extId.length() == 0)) {
                         extId = "-1";
                     }
-                    entity.setExternalId(extId);
+                    entity.setExternalIdAsString(extId);
 
                     //quirks
                     String quirks = (String) attr.get(QUIRKS);
@@ -790,9 +790,9 @@ public class XMLStreamParser implements XMLResponder {
                     }
 
                     if ((null == extId) || (extId.length() == 0)) {
-                    	extId = "-1";
+                        extId = "-1";
                     }
-                    crew.setExternalId(extId);
+                    crew.setExternalIdAsString(extId);
 
                     pilots.add(crew);
                     if(null != entity) {
@@ -1248,7 +1248,7 @@ public class XMLStreamParser implements XMLResponder {
                 String driver = (String) attr.get( DRIVER );
                 String commander = (String) attr.get( COMMANDER );
 
-                
+
                 Tank t = (Tank)entity;
 
                 if ( sensors != null ) {
@@ -1259,15 +1259,15 @@ public class XMLStreamParser implements XMLResponder {
                     t.engineHit();
                     t.applyDamage();
                 }
-                
-                if ( driver != null  && driver.equalsIgnoreCase("hit")) {
+
+                if ( (driver != null)  && driver.equalsIgnoreCase("hit")) {
                     t.setDriverHit(true);
                 }
-                
-                if ( commander != null  && commander.equalsIgnoreCase("hit")) {
+
+                if ( (commander != null)  && commander.equalsIgnoreCase("hit")) {
                     t.setCommanderHit(true);
                 }
-                
+
             }
         } else if (name.equals(SLOT)) {
 

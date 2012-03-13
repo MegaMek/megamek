@@ -39,8 +39,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
-import megamek.common.options.Quirks;
 import megamek.common.options.PartialRepairs;
+import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
@@ -577,7 +577,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *            the new external ID for this Entity.
      * @see megamek.common.Entity#externalId
      */
-    public void setExternalId(String externalId) {
+    public void setExternalIdAsString(String externalId) {
         this.externalId = externalId;
     }
 
@@ -1931,11 +1931,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return getArmorForReal(loc, rear);
     }
-    
+
     public int getArmorForReal(int loc, boolean rear) {
         return armor[loc];
     }
-    
+
     public int getArmorForReal(int loc) {
         return getArmorForReal(loc, false);
     }
@@ -2073,7 +2073,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getInternal(int loc) {
         return getInternalForReal(loc);
     }
-    
+
     public int getInternalForReal(int loc) {
         return internal[loc];
     }
@@ -2159,18 +2159,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Is this location destroyed or breached?
      */
     public boolean isLocationBad(int loc) {
-        return getInternal(loc) == IArmorState.ARMOR_DESTROYED || isLocationBlownOff(loc);
+        return (getInternal(loc) == IArmorState.ARMOR_DESTROYED) || isLocationBlownOff(loc);
     }
 
     public boolean isLocationTrulyDestroyed(int loc) {
         return internal[loc] == IArmorState.ARMOR_DESTROYED;
     }
-    
+
     /**
      * Is this location destroyed or breached?
      */
     public boolean isLocationDoomed(int loc) {
-        return getInternal(loc) == IArmorState.ARMOR_DOOMED || isLocationBlownOff(loc);
+        return (getInternal(loc) == IArmorState.ARMOR_DOOMED) || isLocationBlownOff(loc);
     }
 
     /**
@@ -4743,10 +4743,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (getPartialRepairs().booleanOption("mech_gyro_1_crit")) {
-            roll.addModifier(+1, "Partial repair of Gyro (+1)");       
+            roll.addModifier(+1, "Partial repair of Gyro (+1)");
         }
         if (getPartialRepairs().booleanOption("mech_gyro_2_crit")) {
-            roll.addModifier(+1, "Partial repair of Gyro (+2)");       
+            roll.addModifier(+1, "Partial repair of Gyro (+2)");
         }
 
         if (game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued()) {
@@ -9128,9 +9128,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public Quirks getQuirks() {
         return quirks;
     }
-    
+
     public PartialRepairs getPartialRepairs(){
-        return partReps; 
+        return partReps;
     }
 
     public void clearQuirks() {
@@ -10065,7 +10065,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isHardenedArmorDamaged(HitData hit) {
         return hardenedArmorDamaged[hit.getLocation()];
     }
-    
+
     public void setLocationBlownOff(int loc, boolean damaged) {
         locationBlownOff[loc] = damaged;
     }

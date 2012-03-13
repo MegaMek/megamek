@@ -4742,11 +4742,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(+1, "hard to pilot");
         }
 
-        if (getPartialRepairs().booleanOption("mech_gyro_1_crit")) {
-            roll.addModifier(+1, "Partial repair of Gyro (+1)");
-        }
-        if (getPartialRepairs().booleanOption("mech_gyro_2_crit")) {
-            roll.addModifier(+1, "Partial repair of Gyro (+2)");
+        if (getPartialRepairs() != null) {
+            if (getPartialRepairs().booleanOption("mech_gyro_1_crit")) {
+                roll.addModifier(+1, "Partial repair of Gyro (+1)");
+            }
+            if (getPartialRepairs().booleanOption("mech_gyro_2_crit")) {
+                roll.addModifier(+1, "Partial repair of Gyro (+2)");
+            }
         }
 
         if (game.getOptions().booleanOption("tacops_fatigue") && crew.isPilotingFatigued()) {

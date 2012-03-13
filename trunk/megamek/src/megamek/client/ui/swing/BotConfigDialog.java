@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Hashtable;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -31,6 +32,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.plaf.DimensionUIResource;
@@ -68,6 +70,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
     DefaultListModel princess_targets_list_model = new DefaultListModel();
     JCheckBox princess_forcedwithdrawal;
     JComboBox princess_homeedge; //The board edge to be used in a forced withdrawal.
+    JSlider aggression_slidebar;
 
     private JTextField namefield;
     private boolean custom_name = false; // did user not use default name?
@@ -192,6 +195,23 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         princess_homeedge.setSelectedIndex(0);
         layout.setConstraints(princess_homeedge, constraints);
         panel.add(princess_homeedge);
+        
+        //Row 3.5
+        constraints.gridy++;
+        constraints.gridx=0;
+        JLabel aggressionlabel=new JLabel("Aggression");
+        panel.add(aggressionlabel,constraints);
+        constraints.gridy++;
+        aggression_slidebar=new JSlider(JSlider.HORIZONTAL,0,100,50);
+        Hashtable aggression_slidebar_labels = new Hashtable();
+        aggression_slidebar_labels.put(new Integer(0),new JLabel("Meek"));
+        aggression_slidebar_labels.put(new Integer(100),new JLabel("Beserker"));        
+        aggression_slidebar.setLabelTable(aggression_slidebar_labels);
+        aggression_slidebar.setPaintLabels(true);
+        panel.add(aggression_slidebar,constraints);
+        
+        
+        
 
         //Row 4 Column 1.
         constraints.gridy++;
@@ -280,7 +300,8 @@ public class BotConfigDialog extends JDialog implements ActionListener,
             return new TestBot(getBotName(), host, port);
         } else if (princess_radiobutton.isSelected()) {
             Princess toreturn = new Princess(getBotName(), host, port);
-            toreturn.verbosity = princess_verbosity.getSelectedIndex();
+            toreturn.verbosity = princess_verbosity.getSelectedIndex();           
+            toreturn.aggression = (double)aggression_slidebar.getValue();
             // Add targets, adjusting hexes appropriately
             for (int i = 0; i < princess_targets_list_model.getSize(); i++) {
                 int xpos = Integer.parseInt(((String)princess_targets_list_model.get(i))

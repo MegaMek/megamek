@@ -48,6 +48,9 @@ public class Princess extends BotClient {
     Precognition precognition;
     Thread precognition_thread;
     // PathEnumerator path_enumerator;
+    
+    //----Global Parameters-----
+    public double aggression;
 
     // ----These have to do with the goals or victiory conditions for the
     // bot----
@@ -414,6 +417,7 @@ public class Princess extends BotClient {
         }
         path_searcher = new PathSearcher();
         path_ranker = new BasicPathRanker(configfile);
+        path_ranker.hyper_aggression=0.1*Math.pow(10.0,aggression/50);
         path_ranker.botbase = this;
         path_searcher.ranker = path_ranker;
         fire_control = new FireControl();

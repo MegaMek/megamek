@@ -1625,9 +1625,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
             } else if ((tAlt - aAlt) > 2) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
-            } else if (((aAlt - tAlt) > 0) && ((Aero) te).isSpheroid()) {
+            } else if (((aAlt - tAlt) > 0) && ((te instanceof Aero)&&((Aero) te).isSpheroid())) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if (((aAlt - tAlt) < 0) && ((Aero) te).isSpheroid()) {
+            } else if (((aAlt - tAlt) < 0) && ((te instanceof Aero)&&((Aero) te).isSpheroid())) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
         }

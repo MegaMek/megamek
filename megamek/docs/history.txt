@@ -30,6 +30,8 @@ v0.35.29-dev (SVN)
 + Patch 3503850: fix MekHQ post battle transfer bug
 + Patch 3502322: Princess update - aggression slidebar
 + Bug 3503465: can't fire on bot in scenario
++ Fixed NPE in WeaponHandler.checkLI() caused by firing straight along upper or
+    lower edge of map.
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

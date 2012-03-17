@@ -877,6 +877,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // If you could move this to compute.java, then remove - import
         // java.util.ArrayList;
         for (Coords curr : coords) {
+            // skip hexes not actually on the board
+            if (!game.getBoard().contains(curr)) {
+                continue;
+            }
             ITerrain smokeHex = game.getBoard().getHex(curr)
                     .getTerrain(Terrains.SMOKE);
             if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)

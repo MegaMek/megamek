@@ -37,6 +37,7 @@ v0.35.29-dev (SVN)
 + Patch 3507879: c3/c3i save/load to/from MUL
 + Patch 3506151: Rapid Fire MG Save/load to/from MUL
 + Bug 3472708, Patch 3507908: GR explodes twice 
++ Patch 3504048: conditional autoejec
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

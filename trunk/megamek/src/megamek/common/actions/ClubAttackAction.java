@@ -38,7 +38,7 @@ import megamek.common.ToHitData;
 /**
  * The attacker makes a club attack on the target. This also covers mech melee
  * weapons like hatchets.
- *
+ * 
  * @author Ben
  * @version
  */
@@ -52,13 +52,15 @@ public class ClubAttackAction extends PhysicalAttackAction {
     private int aiming;
 
     /** Creates new ClubAttackAction */
-    public ClubAttackAction(int entityId, int targetId, Mounted club, int aimTable) {
+    public ClubAttackAction(int entityId, int targetId, Mounted club,
+            int aimTable) {
         super(entityId, targetId);
         this.club = club;
         aiming = aimTable;
     }
 
-    public ClubAttackAction(int entityId, int targetType, int targetId, Mounted club, int aimTable) {
+    public ClubAttackAction(int entityId, int targetType, int targetId,
+            Mounted club, int aimTable) {
         super(entityId, targetType, targetId);
         this.club = club;
         aiming = aimTable;
@@ -67,7 +69,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
     /**
      * Damage that the specified mech does with a club attack
      */
-    public static int getDamageFor(Entity entity, Mounted club, boolean targetInfantry) {
+    public static int getDamageFor(Entity entity, Mounted club,
+            boolean targetInfantry) {
         MiscType mType = (MiscType) (club.getType());
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
         if (mType.hasSubType(MiscType.S_SWORD)) {
@@ -117,7 +120,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 // when not active a vibro blade does normal sword damage
                 nDamage = (int) (Math.ceil(entity.getWeight() / 10.0) + 1.0);
             }
-        } else if (mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType.hasSubType(MiscType.S_COMBINE)) {
+        } else if (mType.hasSubType(MiscType.S_CHAIN_WHIP)
+                || mType.hasSubType(MiscType.S_COMBINE)) {
             nDamage = 3;
         } else if (mType.hasSubType(MiscType.S_ROCK_CUTTER)) {
             nDamage = 5;
@@ -126,7 +130,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // TSM doesn't apply to some weapons, including Saws.
-        if ((entity.heat >= 9) && !(mType.hasSubType(MiscType.S_DUAL_SAW) || mType.hasSubType(MiscType.S_CHAINSAW) || mType.hasSubType(MiscType.S_PILE_DRIVER) || mType.isShield() || mType.hasSubType(MiscType.S_WRECKING_BALL) || mType.hasSubType(MiscType.S_FLAIL) || (mType.isVibroblade() && club.curMode().equals("Active")) || mType.hasSubType(MiscType.S_BUZZSAW) || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType.hasSubType(MiscType.S_COMBINE)) && ((Mech) entity).hasTSM()) {
+        if ((entity.heat >= 9)
+                && !(mType.hasSubType(MiscType.S_DUAL_SAW)
+                        || mType.hasSubType(MiscType.S_CHAINSAW)
+                        || mType.hasSubType(MiscType.S_PILE_DRIVER)
+                        || mType.isShield()
+                        || mType.hasSubType(MiscType.S_WRECKING_BALL)
+                        || mType.hasSubType(MiscType.S_FLAIL)
+                        || (mType.isVibroblade() && club.curMode().equals(
+                                "Active"))
+                        || mType.hasSubType(MiscType.S_BUZZSAW)
+                        || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType
+                            .hasSubType(MiscType.S_COMBINE))
+                && ((Mech) entity).hasTSM()) {
             nDamage *= 2;
         }
         int clubLocation = club.getLocation();
@@ -141,17 +157,21 @@ public class ClubAttackAction extends PhysicalAttackAction {
             nDamage = Math.max(1, nDamage / 10);
         }
 
-        return nDamage + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
+        return nDamage
+                + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
     }
 
     public ToHitData toHit(IGame game) {
-        return ClubAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()), getClub(), aiming);
+        return ClubAttackAction.toHit(game, getEntityId(),
+                game.getTarget(getTargetType(), getTargetId()), getClub(),
+                aiming);
     }
 
     /**
      * To-hit number for the specified club to hit
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, Mounted club, int aimTable) {
+    public static ToHitData toHit(IGame game, int attackerId,
+            Targetable target, Mounted club, int aimTable) {
         final Entity ae = game.getEntity(attackerId);
 
         // arguments legal?
@@ -165,7 +185,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             throw new IllegalArgumentException("Club type is null");
         }
 
-        String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
+        String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae,
+                target);
         if (impossible != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
@@ -180,15 +201,21 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        if (((MiscType) club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE) && !((Mech) ae).hasExtendedRetractableBlade()) {
+        if (((MiscType) club.getType())
+                .hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                && !((Mech) ae).hasExtendedRetractableBlade()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Blade is Retracted.");
         }
 
-        if ((ae.getGrappled() != Entity.NONE) && (ae.getGrappleSide() == Entity.GRAPPLE_LEFT) && (club.getLocation() == Mech.LOC_LARM)) {
+        if ((ae.getGrappled() != Entity.NONE)
+                && (ae.getGrappleSide() == Entity.GRAPPLE_LEFT)
+                && (club.getLocation() == Mech.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
-        if ((ae.getGrappled() != Entity.NONE) && (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT) && (club.getLocation() == Mech.LOC_RARM)) {
+        if ((ae.getGrappled() != Entity.NONE)
+                && (ae.getGrappleSide() == Entity.GRAPPLE_RIGHT)
+                && (club.getLocation() == Mech.LOC_RARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
@@ -196,14 +223,26 @@ public class ClubAttackAction extends PhysicalAttackAction {
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int attackerHeight = attackerElevation + ae.height();
-        final int targetElevation = target.getElevation() + targHex.getElevation();
+        final int targetElevation = target.getElevation()
+                + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
-        final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB) && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB));
-        final boolean hasClaws = (((BipedMech) ae).hasClaw(Mech.LOC_RARM) || ((BipedMech) ae).hasClaw(Mech.LOC_LARM));
+        final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB) && ((MiscType) club
+                .getType()).hasSubType(MiscType.S_CLUB));
+        final boolean hasClaws = (((BipedMech) ae).hasClaw(Mech.LOC_RARM) || ((BipedMech) ae)
+                .hasClaw(Mech.LOC_LARM));
         final boolean shield = ((MiscType) club.getType()).isShield();
         boolean needsHand = true;
 
-        if (hasClaws || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)) || (((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL)) || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)) || (((MiscType) club.getType()).hasSubType(MiscType.S_BUZZSAW)) || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) || (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)) || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))) {
+        if (hasClaws
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL))
+                || (((MiscType) club.getType())
+                        .hasSubType(MiscType.S_WRECKING_BALL))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_BUZZSAW))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))) {
             needsHand = false;
         }
 
@@ -211,30 +250,44 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         if (bothArms) {
             // check if both arms are present & operational
-            if (ae.isLocationBad(Mech.LOC_RARM) || ae.isLocationBad(Mech.LOC_LARM)) {
+            if (ae.isLocationBad(Mech.LOC_RARM)
+                    || ae.isLocationBad(Mech.LOC_LARM)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
             }
             // check if attacker has fired arm-mounted weapons
-            if (ae.weaponFiredFrom(Mech.LOC_RARM) || ae.weaponFiredFrom(Mech.LOC_LARM)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
+            if (ae.weaponFiredFrom(Mech.LOC_RARM)
+                    || ae.weaponFiredFrom(Mech.LOC_LARM)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Weapons fired from arm this turn");
             }
             // need shoulder and hand actuators
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM) || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder actuator destroyed");
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
+                    || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER,
+                            Mech.LOC_LARM)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Shoulder actuator destroyed");
             }
-            if ((!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) || !ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) && needsHand) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hand actuator destroyed");
+            if ((!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) || !ae
+                    .hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM))
+                    && needsHand) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Hand actuator destroyed");
             }
         } else if (shield) {
             if (!ae.hasPassiveShield(club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Shield not in passive mode");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Shield not in passive mode");
             }
         } else if (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)) {
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Upper actuator destroyed");
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM,
+                    club.getLocation())) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Upper actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Lower actuator destroyed");
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM,
+                    club.getLocation())) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Lower actuator destroyed");
             }
         } else {
             // check if arm is present
@@ -243,14 +296,18 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
             // check if attacker has fired arm-mounted weapons
             if (ae.weaponFiredFrom(club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Weapons fired from arm this turn");
             }
             // need shoulder and hand actuators
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder actuator destroyed");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Shoulder actuator destroyed");
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation()) && needsHand) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Hand actuator destroyed");
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, club.getLocation())
+                    && needsHand) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Hand actuator destroyed");
             }
         }
 
@@ -260,22 +317,31 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // club must not be damaged
-        if (!shield && (ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, ae.getEquipmentNum(club), club.getLocation()) > 0)) {
+        if (!shield
+                && (ae.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                        ae.getEquipmentNum(club), club.getLocation()) > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Club is damaged");
         }
 
         // check elevation (target must be within one level, except for VTOL)
         if (target.isAirborneVTOLorWIGE()) {
-            if (((targetElevation - attackerElevation) > 3) || ((targetElevation - attackerElevation) < 0)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
+            if (((targetElevation - attackerElevation) > 3)
+                    || ((targetElevation - attackerElevation) < 0)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Target elevation not in range");
             }
-        } else if ((targetHeight < attackerElevation) || (targetElevation > attackerHeight)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
+        } else if ((targetHeight < attackerElevation)
+                || (targetElevation > attackerHeight)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target elevation not in range");
         }
 
         // check facing
-        int clubArc = bothArms ? Compute.ARC_FORWARD : (club.getLocation() == Mech.LOC_LARM ? Compute.ARC_LEFTARM : Compute.ARC_RIGHTARM);
-        if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target, clubArc)) {
+        int clubArc = bothArms ? Compute.ARC_FORWARD
+                : (club.getLocation() == Mech.LOC_LARM ? Compute.ARC_LEFTARM
+                        : Compute.ARC_RIGHTARM);
+        if (!Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(), target,
+                clubArc)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
@@ -285,8 +351,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK) || (target instanceof GunEmplacement)) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Targeting adjacent building.");
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (target instanceof GunEmplacement)) {
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
+                    "Targeting adjacent building.");
         }
 
         // Set the base BTH
@@ -296,17 +365,39 @@ public class ClubAttackAction extends PhysicalAttackAction {
         // penalties.
         if (((MiscType) club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
             base += 2;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE) || ((MiscType) club.getType()).hasSubType(MiscType.S_ROCK_CUTTER) || ((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL) || ((MiscType) club.getType()).hasSubType(MiscType.S_LANCE) || ((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL) || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE) || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE_THB)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE)
+                || ((MiscType) club.getType())
+                        .hasSubType(MiscType.S_ROCK_CUTTER)
+                || ((MiscType) club.getType())
+                        .hasSubType(MiscType.S_WRECKING_BALL)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE_THB)) {
             base += 1;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW) || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) {
             base += 0;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_HATCHET) || ((MiscType) club.getType()).hasSubType(MiscType.S_MINING_DRILL)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_HATCHET)
+                || ((MiscType) club.getType())
+                        .hasSubType(MiscType.S_MINING_DRILL)) {
             base -= 1;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE) || ((MiscType) club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE) || ((MiscType) club.getType()).hasSubType(MiscType.S_SWORD) || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAIN_WHIP) || ((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_SMALL) || ((MiscType) club.getType()).isVibroblade() || ((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
+                || ((MiscType) club.getType())
+                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_SWORD)
+                || ((MiscType) club.getType())
+                        .hasSubType(MiscType.S_CHAIN_WHIP)
+                || ((MiscType) club.getType())
+                        .hasSubType(MiscType.S_SHIELD_SMALL)
+                || ((MiscType) club.getType()).isVibroblade()
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)) {
             base -= 2;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+        } else if (((MiscType) club.getType())
+                .hasSubType(MiscType.S_SHIELD_MEDIUM)) {
             base -= 3;
-        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_LARGE)) {
+        } else if (((MiscType) club.getType())
+                .hasSubType(MiscType.S_SHIELD_LARGE)) {
             base -= 4;
         } else {
             base -= 1;
@@ -333,27 +424,36 @@ public class ClubAttackAction extends PhysicalAttackAction {
             if (hasClaws) {
                 toHit.addModifier(2, "Mek has claws");
             }
-            if (ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
+            if (ae.hasFunctionalArmAES(Mech.LOC_RARM)
+                    && ae.hasFunctionalArmAES(Mech.LOC_LARM)) {
                 toHit.addModifier(-1, "AES modifer");
             }
         } else {
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation())) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM,
+                    club.getLocation())) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
                 if ((((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Unable to use lance with upper arm actuator missing or destroyed");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                            "Unable to use lance with upper arm actuator missing or destroyed");
                 }
             }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation())) {
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM,
+                    club.getLocation())) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
                 if ((((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Unable to use lance with lower arm actuator missing or destroyed");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
+                            "Unable to use lance with lower arm actuator missing or destroyed");
                 }
             }
             // Rules state +2 bth if your using a club with claws.
-            if (hasClaws && (((MiscType)club.getType()).hasSubType(MiscType.S_CLUB))) {
+            if (hasClaws
+                    && (((MiscType) club.getType()).hasSubType(MiscType.S_CLUB))) {
                 toHit.addModifier(2, "Mek has claws");
             }
-            if ((((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)) && (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club.getLocation()) || !ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club.getLocation()))) {
+            if ((((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
+                    && (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM,
+                            club.getLocation()) || !ae.hasWorkingSystem(
+                            Mech.ACTUATOR_UPPER_ARM, club.getLocation()))) {
             }
             if (ae.hasFunctionalArmAES(club.getLocation())) {
                 toHit.addModifier(-1, "AES modifer");

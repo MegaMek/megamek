@@ -31,17 +31,18 @@ import java.util.Vector;
 import megamek.common.options.PilotOptions;
 
 /**
- * This class provides static methods to save a list of <code>Entity</code>s
- * to, and load a list of <code>Entity</code>s from a file.
+ * This class provides static methods to save a list of <code>Entity</code>s to,
+ * and load a list of <code>Entity</code>s from a file.
  */
 public class EntityListFile {
 
     /**
      * Produce a string describing this armor value. Valid output values are any
      * integer from 0 to 100, N/A, or Destroyed.
-     *
-     * @param points - the <code>int</code> value of the armor. This value may
-     *            be any valid value of entity armor (including NA, DOOMED, and
+     * 
+     * @param points
+     *            - the <code>int</code> value of the armor. This value may be
+     *            any valid value of entity armor (including NA, DOOMED, and
      *            DESTROYED).
      * @return a <code>String</code> that matches the armor value.
      */
@@ -63,22 +64,26 @@ public class EntityListFile {
 
     /**
      * Produce a string describing the equipment in a critical slot.
-     *
-     * @param index - the <code>String</code> index of the slot. This value
-     *            should be a positive integer or "N/A".
-     * @param mount - the <code>Mounted</code> object of the equipment. This
-     *            value should be <code>null</code> for a slot with system
-     *            equipment.
-     * @param isHit - a <code>boolean</code> that identifies this slot as
-     *            having taken a hit.
-     * @param isDestroyed - a <code>boolean</code> that identifies the
-     *            equipment as having been destroyed. Note that a single slot in
-     *            a multi-slot piece of equipment can be destroyed but not hit;
-     *            it is still available to absorb additional critical hits.
+     * 
+     * @param index
+     *            - the <code>String</code> index of the slot. This value should
+     *            be a positive integer or "N/A".
+     * @param mount
+     *            - the <code>Mounted</code> object of the equipment. This value
+     *            should be <code>null</code> for a slot with system equipment.
+     * @param isHit
+     *            - a <code>boolean</code> that identifies this slot as having
+     *            taken a hit.
+     * @param isDestroyed
+     *            - a <code>boolean</code> that identifies the equipment as
+     *            having been destroyed. Note that a single slot in a multi-slot
+     *            piece of equipment can be destroyed but not hit; it is still
+     *            available to absorb additional critical hits.
      * @return a <code>String</code> describing the slot.
      */
     private static String formatSlot(String index, Mounted mount,
-            boolean isHit, boolean isDestroyed, boolean isRepairable, boolean isMissing) {
+            boolean isHit, boolean isDestroyed, boolean isRepairable,
+            boolean isMissing) {
         StringBuffer output = new StringBuffer();
 
         output.append("         <slot index=\"");
@@ -102,6 +107,9 @@ public class EntityListFile {
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
+            }
+            if (mount.isRapidfire()) {
+                output.append("\" rfmg=\"true");
             }
             if (mount.countQuirks() > 0) {
                 output.append("\" quirks=\"");
@@ -132,8 +140,9 @@ public class EntityListFile {
     /**
      * Helper function that generates a string identifying the state of the
      * locations for an entity.
-     *
-     * @param entity - the <code>Entity</code> whose location state is needed
+     * 
+     * @param entity
+     *            - the <code>Entity</code> whose location state is needed
      */
     private static String getLocString(Entity entity) {
         boolean isMech = entity instanceof Mech;
@@ -146,11 +155,13 @@ public class EntityListFile {
         // and only record damage and ammo.
         for (int loc = 0; loc < entity.locations(); loc++) {
 
-        	//if the location is blown off, remove it so we can get the real values
-        	boolean blownOff = entity.isLocationBlownOff(loc);
-        	
+            // if the location is blown off, remove it so we can get the real
+            // values
+            boolean blownOff = entity.isLocationBlownOff(loc);
+
             // Record destroyed locations.
-            if (!(entity instanceof Aero) && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
+            if (!(entity instanceof Aero)
+                    && !((entity instanceof Infantry) && !(entity instanceof BattleArmor))
                     && (entity.getOInternal(loc) != IArmorState.ARMOR_NA)
                     && (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
@@ -161,30 +172,33 @@ public class EntityListFile {
             if (!isDestroyed) {
                 if (entity.getOArmor(loc) != entity.getArmorForReal(loc)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(EntityListFile.formatArmor(entity.getArmorForReal(loc)));
+                    thisLoc.append(EntityListFile.formatArmor(entity
+                            .getArmorForReal(loc)));
                     thisLoc.append("\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
                 if (entity.getOInternal(loc) != entity.getInternalForReal(loc)) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(EntityListFile.formatArmor(entity.getInternalForReal(loc)));
+                    thisLoc.append(EntityListFile.formatArmor(entity
+                            .getInternalForReal(loc)));
                     thisLoc.append("\" type=\"Internal\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
                 if (entity.hasRearArmor(loc)
-                        && (entity.getOArmor(loc, true) != entity.getArmorForReal(loc,
-                                true))) {
+                        && (entity.getOArmor(loc, true) != entity
+                                .getArmorForReal(loc, true))) {
                     thisLoc.append("         <armor points=\"");
-                    thisLoc.append(EntityListFile.formatArmor(entity.getArmorForReal(loc, true)));
+                    thisLoc.append(EntityListFile.formatArmor(entity
+                            .getArmorForReal(loc, true)));
                     thisLoc.append("\" type=\"Rear\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
-                if(entity.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
+                if (entity.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
                     thisLoc.append("         <breached/>");
                     thisLoc.append(CommonConstants.NL);
                 }
-                if(blownOff) {
-                	thisLoc.append("         <blownOff/>");
+                if (blownOff) {
+                    thisLoc.append("         <blownOff/>");
                     thisLoc.append(CommonConstants.NL);
                 }
             }
@@ -199,7 +213,8 @@ public class EntityListFile {
                 if (null == slot) {
 
                     // Nope. Record missing actuators on Biped Mechs.
-                    if (isMech && !entity.entityIsQuad()
+                    if (isMech
+                            && !entity.entityIsQuad()
                             && ((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))
                             && ((loop == 2) || (loop == 3))) {
                         thisLoc.append("         <slot index=\"");
@@ -222,24 +237,36 @@ public class EntityListFile {
                     // have been blown off.
                     if (!isDestroyed && isMech && slot.isMissing()
                             && !slot.isHit() && !slot.isDestroyed()) {
-                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                        thisLoc.append(EntityListFile.formatSlot(
+                                String.valueOf(loop + 1), mount, slot.isHit(),
+                                slot.isDestroyed(), slot.isRepairable(),
                                 slot.isMissing()));
                         haveSlot = true;
                     }
 
                     // Record damaged slots in undestroyed locations.
                     else if (!isDestroyed && slot.isDamaged()) {
-                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                        thisLoc.append(EntityListFile.formatSlot(
+                                String.valueOf(loop + 1), mount, slot.isHit(),
+                                slot.isDestroyed(), slot.isRepairable(),
                                 slot.isMissing()));
                         haveSlot = true;
                     }
 
-                    //record any quirks
+                    // record any quirks
                     else if ((null != mount) && (mount.countQuirks() > 0)) {
-                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                        thisLoc.append(EntityListFile.formatSlot(
+                                String.valueOf(loop + 1), mount, slot.isHit(),
+                                slot.isDestroyed(), slot.isRepairable(),
+                                slot.isMissing()));
+                        haveSlot = true;
+                    }
+
+                    // Record Rapid Fire Machine Guns
+                    else if ((mount != null) && (mount.isRapidfire())) {
+                        thisLoc.append(EntityListFile.formatSlot(
+                                String.valueOf(loop + 1), mount, slot.isHit(),
+                                slot.isDestroyed(), slot.isRepairable(),
                                 slot.isMissing()));
                         haveSlot = true;
                     }
@@ -263,8 +290,9 @@ public class EntityListFile {
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof WeaponType)
                             && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
-                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
-                                mount, slot.isHit(), slot.isDestroyed(), slot.isRepairable(),
+                        thisLoc.append(EntityListFile.formatSlot(
+                                String.valueOf(loop + 1), mount, slot.isHit(),
+                                slot.isDestroyed(), slot.isRepairable(),
                                 slot.isMissing()));
                         haveSlot = true;
                     }
@@ -276,14 +304,16 @@ public class EntityListFile {
             // Tanks don't have slots, and Protomechs only have
             // system slots, so we have to handle the ammo specially.
             if ((entity instanceof Tank) || (entity instanceof Protomech)) {
-            	if(entity instanceof Tank && ((Tank)entity).isStabiliserHit(loc)) {
-            		thisLoc.append("         <stabilizer isHit=\"true\"/>\n");
-            	}
+                if (entity instanceof Tank
+                        && ((Tank) entity).isStabiliserHit(loc)) {
+                    thisLoc.append("         <stabilizer isHit=\"true\"/>\n");
+                }
                 for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
-                        thisLoc.append(EntityListFile.formatSlot("N/A", mount, false, false, false, false));
+                        thisLoc.append(EntityListFile.formatSlot("N/A", mount,
+                                false, false, false, false));
                         haveSlot = true;
                     }
 
@@ -332,7 +362,7 @@ public class EntityListFile {
 
             // Reset the "location is destroyed" flag.
             isDestroyed = false;
-            
+
         } // Handle the next location
 
         // If there is no location string, return a null.
@@ -349,9 +379,8 @@ public class EntityListFile {
             // Tanks do wierd things with ammo.
             if (entity instanceof Tank) {
                 output.insert(0, CommonConstants.NL);
-                output
-                        .insert(0,
-                                "      Tanks have special needs, so don't delete any ammo slots.");
+                output.insert(0,
+                        "      Tanks have special needs, so don't delete any ammo slots.");
             }
         }
 
@@ -361,17 +390,20 @@ public class EntityListFile {
     } // End private static String getLocString( Entity )
 
     /**
-     * Save the <code>Entity</code>s in the list to the given file. <p/> The
-     * <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
+     * Save the <code>Entity</code>s in the list to the given file.
+     * <p/>
+     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
-     *
-     * @param file - The current contents of the file will be discarded and all
-     *            <code>Entity</code>s in the list will be written to the
-     *            file.
-     * @param list - a <code>Vector</code> containing <code>Entity</code>s
-     *            to be stored in a file.
-     * @throws IOException is thrown on any error.
+     * 
+     * @param file
+     *            - The current contents of the file will be discarded and all
+     *            <code>Entity</code>s in the list will be written to the file.
+     * @param list
+     *            - a <code>Vector</code> containing <code>Entity</code>s to be
+     *            stored in a file.
+     * @throws IOException
+     *             is thrown on any error.
      */
     public static void saveTo(File file, ArrayList<Entity> list)
             throws IOException {
@@ -393,7 +425,7 @@ public class EntityListFile {
         while (items.hasNext()) {
             final Entity entity = items.next();
 
-            if(entity instanceof FighterSquadron) {
+            if (entity instanceof FighterSquadron) {
                 continue;
             }
 
@@ -408,13 +440,23 @@ public class EntityListFile {
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
-            if(!entity.getExternalIdAsString().equals("-1")) {
+            if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
                 output.write(entity.getExternalIdAsString());
             }
             if (entity.countQuirks() > 0) {
                 output.write("\" quirks=\"");
                 output.write(String.valueOf(entity.getQuirkList("::")));
+            }
+            if (entity.getC3Master() != null) {
+                output.write("\" c3MasterIs=\"");
+                output.write(entity.getGame()
+                        .getEntity(entity.getC3Master().getId())
+                        .getC3UUIDAsString());
+            }
+            if (entity.hasC3() || entity.hasC3i()) {
+                output.write("\" c3UUID=\"");
+                output.write(entity.getC3UUIDAsString());
             }
             output.write("\">");
             output.write(CommonConstants.NL);
@@ -427,7 +469,9 @@ public class EntityListFile {
             output.write(crew.getNickname().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");
             output.write(String.valueOf(crew.getGunnery()));
-            if ((null != entity.getGame()) && entity.getGame().getOptions().booleanOption("rpg_gunnery")) {
+            if ((null != entity.getGame())
+                    && entity.getGame().getOptions()
+                            .booleanOption("rpg_gunnery")) {
                 output.write("\" gunneryL=\"");
                 output.write(String.valueOf(crew.getGunneryL()));
                 output.write("\" gunneryM=\"");
@@ -437,19 +481,21 @@ public class EntityListFile {
             }
             output.write("\" piloting=\"");
             output.write(String.valueOf(crew.getPiloting()));
-            if((null != entity.getGame()) && entity.getGame().getOptions().booleanOption("artillery_skill")) {
+            if ((null != entity.getGame())
+                    && entity.getGame().getOptions()
+                            .booleanOption("artillery_skill")) {
                 output.write("\" artillery=\"");
                 output.write(String.valueOf(crew.getArtillery()));
             }
-            if(crew.getToughness() != 0) {
+            if (crew.getToughness() != 0) {
                 output.write("\" toughness=\"");
                 output.write(String.valueOf(crew.getToughness()));
             }
-            if(crew.getInitBonus() != 0) {
+            if (crew.getInitBonus() != 0) {
                 output.write("\" initB=\"");
                 output.write(String.valueOf(crew.getInitBonus()));
             }
-            if(crew.getCommandBonus() != 0) {
+            if (crew.getCommandBonus() != 0) {
                 output.write("\" commandB=\"");
                 output.write(String.valueOf(crew.getCommandBonus()));
             }
@@ -463,15 +509,18 @@ public class EntityListFile {
             output.write(String.valueOf(crew.isEjected()));
             if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
                 output.write("\" advantages=\"");
-                output.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));
+                output.write(String.valueOf(crew.getOptionList("::",
+                        PilotOptions.LVL3_ADVANTAGES)));
             }
             if (crew.countOptions(PilotOptions.EDGE_ADVANTAGES) > 0) {
                 output.write("\" edge=\"");
-                output.write(String.valueOf(crew.getOptionList("::", PilotOptions.EDGE_ADVANTAGES)));
+                output.write(String.valueOf(crew.getOptionList("::",
+                        PilotOptions.EDGE_ADVANTAGES)));
             }
             if (crew.countOptions(PilotOptions.MD_ADVANTAGES) > 0) {
                 output.write("\" implants=\"");
-                output.write(String.valueOf(crew.getOptionList("::", PilotOptions.MD_ADVANTAGES)));
+                output.write(String.valueOf(crew.getOptionList("::",
+                        PilotOptions.MD_ADVANTAGES)));
             }
             if (entity instanceof Mech) {
                 if (((Mech) entity).isAutoEject()) {
@@ -479,16 +528,39 @@ public class EntityListFile {
                 } else {
                     output.write("\" autoeject=\"false");
                 }
+                if (entity.game.getOptions().booleanOption(
+                        "conditional_ejection")) {
+                    if (((Mech) entity).isCondEjectAmmo()) {
+                        output.write("\" condejectammo=\"true");
+                    } else {
+                        output.write("\" condejectammo=\"false");
+                    }
+                    if (((Mech) entity).isCondEjectEngine()) {
+                        output.write("\" condejectengine=\"true");
+                    } else {
+                        output.write("\" condejectengine=\"false");
+                    }
+                    if (((Mech) entity).isCondEjectCTDest()) {
+                        output.write("\" condejectctdest=\"true");
+                    } else {
+                        output.write("\" condejectctdest=\"false");
+                    }
+                    if (((Mech) entity).isCondEjectHeadshot()) {
+                        output.write("\" condejectctheadshot=\"true");
+                    } else {
+                        output.write("\" condejectctheadshot=\"false");
+                    }
+                }
             }
-            if(!Pilot.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
+            if (!Pilot.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
                 output.write("\" portraitCat=\"");
                 output.write(crew.getPortraitCategory());
             }
-            if(!Pilot.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
+            if (!Pilot.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
                 output.write("\" portraitFile=\"");
                 output.write(crew.getPortraitFileName());
             }
-            if(!crew.getExternalIdAsString().equals("-1")) {
+            if (!crew.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
                 output.write(crew.getExternalIdAsString());
             }
@@ -502,52 +574,52 @@ public class EntityListFile {
                 if (tentity.isTurretLocked(Tank.LOC_TURRET)) {
                     output.write(EntityListFile.getTurretLockedString(tentity));
                 }
-                //crits
+                // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
 
-            //add a bunch of stuff for aeros
-            if(entity instanceof Aero) {
+            // add a bunch of stuff for aeros
+            if (entity instanceof Aero) {
                 Aero a = (Aero) entity;
 
-                //SI
+                // SI
                 output.write("      <structural integrity=\"");
                 output.write(String.valueOf(a.getSI()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                //heat sinks
+                // heat sinks
                 output.write("      <heat sinks=\"");
                 output.write(String.valueOf(a.getHeatSinks()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                //fuel
+                // fuel
                 output.write("      <fuel left=\"");
                 output.write(String.valueOf(a.getFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
-                //TODO: dropship docking collars, bays
+                // TODO: dropship docking collars, bays
 
-                //large craft stuff
-                if(a instanceof Jumpship) {
+                // large craft stuff
+                if (a instanceof Jumpship) {
                     Jumpship j = (Jumpship) a;
 
-                    //kf integrity
+                    // kf integrity
                     output.write("      <KF integrity=\"");
                     output.write(String.valueOf(j.getKFIntegrity()));
                     output.write("\"/>");
                     output.write(CommonConstants.NL);
 
-                    //kf sail integrity
+                    // kf sail integrity
                     output.write("      <sail integrity=\"");
                     output.write(String.valueOf(j.getSailIntegrity()));
                     output.write("\"/>");
                     output.write(CommonConstants.NL);
                 }
 
-                //crits
+                // crits
                 output.write(EntityListFile.getAeroCritString(a));
 
             }
@@ -556,6 +628,25 @@ public class EntityListFile {
             String loc = EntityListFile.getLocString(entity);
             if (null != loc) {
                 output.write(loc);
+            }
+
+            // Write the C3i Data if needed
+            if (entity.hasC3i()) {
+                output.write("      <c3iset>");
+                output.write(CommonConstants.NL);
+                Iterator<Entity> c3iList = list.iterator();
+                while (c3iList.hasNext()) {
+                    final Entity C3iEntity = c3iList.next();
+
+                    if (C3iEntity.onSameC3NetworkAs(entity)) {
+                        output.write("         <c3i_link link=\"");
+                        output.write(C3iEntity.getC3UUIDAsString());
+                        output.write("\"/>");
+                        output.write(CommonConstants.NL);
+                    }
+                }
+                output.write("      </c3iset>");
+                output.write(CommonConstants.NL);
             }
 
             // Finish writing this entity to the file.
@@ -580,66 +671,65 @@ public class EntityListFile {
     }
 
     private static String getMovementString(Tank e) {
-        String retVal = "      <motive damage=\"";     
+        String retVal = "      <motive damage=\"";
         retVal = retVal.concat(Integer.toString(e.getMotiveDamage()));
-        retVal = retVal.concat( "\" penalty=\"");
+        retVal = retVal.concat("\" penalty=\"");
         retVal = retVal.concat(Integer.toString(e.getMotivePenalty()));
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
 
-    //  Aero crits
+    // Aero crits
     private static String getAeroCritString(Aero a) {
 
         String retVal = "      <acriticals";
         String critVal = "";
 
-        //        crits
-        if(a.getAvionicsHits() > 0) {
+        // crits
+        if (a.getAvionicsHits() > 0) {
             critVal = critVal.concat(" avionics=\"");
             critVal = critVal.concat(Integer.toString(a.getAvionicsHits()));
             critVal = critVal.concat("\"");
         }
-        if(a.getSensorHits() > 0) {
+        if (a.getSensorHits() > 0) {
             critVal = critVal.concat(" sensors=\"");
             critVal = critVal.concat(Integer.toString(a.getSensorHits()));
             critVal = critVal.concat("\"");
         }
-        if(a.getEngineHits() > 0) {
+        if (a.getEngineHits() > 0) {
             critVal = critVal.concat(" engine=\"");
             critVal = critVal.concat(Integer.toString(a.getEngineHits()));
             critVal = critVal.concat("\"");
         }
-        if(a.getFCSHits() > 0) {
+        if (a.getFCSHits() > 0) {
             critVal = critVal.concat(" fcs=\"");
             critVal = critVal.concat(Integer.toString(a.getFCSHits()));
             critVal = critVal.concat("\"");
         }
-        if(a.getCICHits() > 0) {
+        if (a.getCICHits() > 0) {
             critVal = critVal.concat(" cic=\"");
             critVal = critVal.concat(Integer.toString(a.getCICHits()));
             critVal = critVal.concat("\"");
         }
-        if(a.getLeftThrustHits() > 0) {
+        if (a.getLeftThrustHits() > 0) {
             critVal = critVal.concat(" leftThrust=\"");
             critVal = critVal.concat(Integer.toString(a.getLeftThrustHits()));
             critVal = critVal.concat("\"");
         }
-        if(a.getRightThrustHits() > 0) {
+        if (a.getRightThrustHits() > 0) {
             critVal = critVal.concat(" rightThrust=\"");
             critVal = critVal.concat(Integer.toString(a.getRightThrustHits()));
             critVal = critVal.concat("\"");
         }
-        if(!a.hasLifeSupport()) {
+        if (!a.hasLifeSupport()) {
             critVal = critVal.concat(" lifeSupport=\"none\"");
         }
-        if(a.isGearHit()) {
+        if (a.isGearHit()) {
             critVal = critVal.concat(" gear=\"none\"");
         }
 
-
-        if(!critVal.equals("")) {
-            //then add beginning and end
+        if (!critVal.equals("")) {
+            // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
         } else {
@@ -649,39 +739,39 @@ public class EntityListFile {
         return retVal;
 
     }
-    
-//  Aero crits
+
+    // Aero crits
     private static String getTankCritString(Tank t) {
 
         String retVal = "      <tcriticals";
         String critVal = "";
 
-        //        crits
-        if(t.getSensorHits() > 0) {
+        // crits
+        if (t.getSensorHits() > 0) {
             critVal = critVal.concat(" sensors=\"");
             critVal = critVal.concat(Integer.toString(t.getSensorHits()));
             critVal = critVal.concat("\"");
         }
-        if(t.isEngineHit()) {
+        if (t.isEngineHit()) {
             critVal = critVal.concat(" engine=\"");
             critVal = critVal.concat("hit");
             critVal = critVal.concat("\"");
         }
-        
-        if(t.isDriverHit()) {
+
+        if (t.isDriverHit()) {
             critVal = critVal.concat(" driver=\"");
             critVal = critVal.concat("hit");
             critVal = critVal.concat("\"");
         }
-        
-        if(t.isCommanderHit()) {
+
+        if (t.isCommanderHit()) {
             critVal = critVal.concat(" commander=\"");
             critVal = critVal.concat("hit");
             critVal = critVal.concat("\"");
         }
 
-        if(!critVal.equals("")) {
-            //then add beginning and end
+        if (!critVal.equals("")) {
+            // then add beginning and end
             retVal = retVal.concat(critVal);
             retVal = retVal.concat("/>\n");
         } else {
@@ -693,16 +783,19 @@ public class EntityListFile {
     }
 
     /**
-     * Load a list of <code>Entity</code>s from the given file. <p/> The
-     * <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
+     * Load a list of <code>Entity</code>s from the given file.
+     * <p/>
+     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
      * other campaign-related information are retained but data specific to a
      * particular game is ignored.
-     *
-     * @param file - the <code>File</code> to load from.
-     * @return A <code>Vector</code> containing <code>Entity</code>s loaded
-     *         from the file. This vector may be empty, but it will not be
+     * 
+     * @param file
+     *            - the <code>File</code> to load from.
+     * @return A <code>Vector</code> containing <code>Entity</code>s loaded from
+     *         the file. This vector may be empty, but it will not be
      *         <code>null</code>.
-     * @throws IOException is thrown on any error.
+     * @throws IOException
+     *             is thrown on any error.
      */
     public static Vector<Entity> loadFrom(File file) throws IOException {
 

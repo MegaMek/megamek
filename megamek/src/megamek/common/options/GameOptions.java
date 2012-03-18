@@ -34,7 +34,7 @@ import megamek.common.CommonConstants;
 
 /**
  * Contains the options determining play in the current game.
- *
+ * 
  * @author Ben
  */
 public class GameOptions extends AbstractOptions {
@@ -101,7 +101,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
-//        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
+        //        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
         addOption(advancedRules, "double_blind", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_sensors", false); //$NON-NLS-1$
         addOption(advancedRules, "supress_all_double_blind_messages", false); //$NON-NLS-1$
@@ -185,7 +185,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "tacops_taking_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_leg_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_walk_backwards", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_fast_infantry_move", false);  //$NON-NLS-1$
+        addOption(advancedGroundMovement, "tacops_fast_infantry_move", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicle_lance_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "vehicle_lance_movement_number", 4); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_hull_down", false); //$NON-NLS-1$
@@ -202,28 +202,28 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
-        addOption(advAeroRules,"aero_ground_move", true); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_capital_fighter", false); //$NON-NLS-1$
-        addOption(advAeroRules,"fuel_consumption", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_conv_fusion_bonus", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_harjel", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_grav_effects", false); //$NON-NLS-1$
-        addOption(advAeroRules,"advanced_movement", false); //$NON-NLS-1$
-        addOption(advAeroRules,"heat_by_bay", false); //$NON-NLS-1$
-        addOption(advAeroRules,"atmospheric_control", false); //$NON-NLS-1$
-        addOption(advAeroRules,"ammo_explosions", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_aa_fire", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_aaa_laser", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_bracket_fire", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_ecm", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_sensor_shadow", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_over_penetrate", false); //$NON-NLS-1$
-        addOption(advAeroRules,"stratops_space_bomb", false); //$NON-NLS-1$
-        addOption(advAeroRules,"variable_damage_thresh", false); //$NON-NLS-1$
-        addOption(advAeroRules,"at2_nukes", false); //$NON-NLS-1$
-        addOption(advAeroRules,"ind_weapons_grounded_dropper", false); //$NON-NLS-1$
-        addOption(advAeroRules,"return_flyover", false); //$NON-NLS-1$
-        addOption(advAeroRules,"aa_move_mod", false); //$NON-NLS-1$
+        addOption(advAeroRules, "aero_ground_move", true); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_capital_fighter", false); //$NON-NLS-1$
+        addOption(advAeroRules, "fuel_consumption", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_conv_fusion_bonus", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_harjel", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_grav_effects", false); //$NON-NLS-1$
+        addOption(advAeroRules, "advanced_movement", false); //$NON-NLS-1$
+        addOption(advAeroRules, "heat_by_bay", false); //$NON-NLS-1$
+        addOption(advAeroRules, "atmospheric_control", false); //$NON-NLS-1$
+        addOption(advAeroRules, "ammo_explosions", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_aa_fire", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_aaa_laser", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_bracket_fire", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_ecm", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_sensor_shadow", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_over_penetrate", false); //$NON-NLS-1$
+        addOption(advAeroRules, "stratops_space_bomb", false); //$NON-NLS-1$
+        addOption(advAeroRules, "variable_damage_thresh", false); //$NON-NLS-1$
+        addOption(advAeroRules, "at2_nukes", false); //$NON-NLS-1$
+        addOption(advAeroRules, "ind_weapons_grounded_dropper", false); //$NON-NLS-1$
+        addOption(advAeroRules, "return_flyover", false); //$NON-NLS-1$
+        addOption(advAeroRules, "aa_move_mod", false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
         addOption(initiative, "inf_move_even", false); //$NON-NLS-1$
@@ -252,6 +252,7 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, "rpg_gunnery", false); //$NON-NLS-1$
         addOption(rpg, "artillery_skill", false); //$NON-NLS-1$
         addOption(rpg, "toughness", false); //$NON-NLS-1$
+        addOption(rpg, "conditional_ejection", false); //$NON-NLS-1$
 
         //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
 
@@ -326,8 +327,8 @@ public class GameOptions extends AbstractOptions {
                 IOption tempOption = getOption(name);
 
                 if (null != tempOption) {
-                    if (!tempOption.getValue().toString().equals(
-                            value.toString())) {
+                    if (!tempOption.getValue().toString()
+                            .equals(value.toString())) {
                         try {
                             switch (tempOption.getType()) {
                                 case IOption.STRING:
@@ -371,8 +372,9 @@ public class GameOptions extends AbstractOptions {
 
     /**
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
-     *
-     * @param options <code>Vector</code> of <code>IBasicOption</code>
+     * 
+     * @param options
+     *            <code>Vector</code> of <code>IBasicOption</code>
      */
     public static void saveOptions(Vector<IBasicOption> options) {
         try {
@@ -411,13 +413,13 @@ public class GameOptions extends AbstractOptions {
             output.flush();
             output.close();
         } catch (IOException e) {
-            //if there are errors, the file is not saved properly.
+            // if there are errors, the file is not saved properly.
         }
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     @Override

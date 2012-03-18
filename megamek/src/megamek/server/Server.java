@@ -16179,7 +16179,11 @@ public class Server implements Runnable {
         if (ammoExplosion) {
             if (te instanceof Mech) {
                 Mech mech = (Mech) te;
-                if (mech.isAutoEject()) {
+                if (mech.isAutoEject()
+                        && (!game.getOptions().booleanOption(
+                                "conditional_ejection") || (game.getOptions()
+                                .booleanOption("conditional_ejection") && mech
+                                .isCondEjectAmmo()))) {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
                 }
@@ -17299,7 +17303,9 @@ public class Server implements Runnable {
                                     && !te.getCrew().isDoomed()
                                     && game.getOptions().booleanOption("tacops_skin_of_the_teeth_ejection")) {
                                 Mech mech = (Mech) te;
-                                if (mech.isAutoEject()) {
+                                if (mech.isAutoEject() && (!game.getOptions().booleanOption("conditional_ejection")
+									|| (game.getOptions().booleanOption("conditional_ejection")
+									&& mech.isCondEjectHeadshot()))) {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
@@ -17310,6 +17316,23 @@ public class Server implements Runnable {
                                     vDesc.addAll(ejectEntity(te, true));
                                 }
                             }
+
+							if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_CT)  && !te.getCrew().isDead()
+                                    && !te.getCrew().isDoomed()) {
+								Mech mech = (Mech) te;
+                                if (mech.isAutoEject() && (!game.getOptions().booleanOption("conditional_ejection")
+									|| (game.getOptions().booleanOption("conditional_ejection")
+									&& mech.isCondEjectCTDest()))) {
+                                    if (mech.getCrew().getHits() < 5) {
+                                        Report.addNewline(vDesc);
+                                        mech.setDoomed(false);
+                                        //vDesc.addAll(damageCrew(te, 5 - mech.getCrew().getHits()));
+                                        mech.setDoomed(true);
+                                    }
+                                    autoEject = true;
+                                    vDesc.addAll(ejectEntity(te, true));
+                                }
+							}
 
                             if ((hit.getLocation() == Mech.LOC_HEAD)
                                     || ((hit.getLocation() == Mech.LOC_CT) && ((ammoExplosion && !autoEject) || areaSatArty))) {
@@ -17615,7 +17638,12 @@ public class Server implements Runnable {
 
                 if (en instanceof Mech) {
                     Mech mech = (Mech) en;
-                    if (mech.isAutoEject()) {
+                    if (mech.isAutoEject()
+                            && (!game.getOptions().booleanOption(
+                                    "conditional_ejection") || (game
+                                    .getOptions().booleanOption(
+                                            "conditional_ejection") && mech
+                                    .isCondEjectEngine()))) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
                 }
@@ -18639,13 +18667,13 @@ public class Server implements Runnable {
                     // attacker chooses, we'll use the highest BV weapon
                     weapon = weapons.get(0);
                 }
-                weapon.setHit(true);
                 r.add(weapon.getName());
                 vDesc.add(r);
                 // explosive weapons e.g. gauss now explode
-                if (weapon.getType().isExplosive()) {
+                if (weapon.getType().isExplosive() && !weapon.isHit() && !weapon.isDestroyed()) {
                     vDesc.addAll(explodeEquipment(t, loc, weapon));
                 }
+                weapon.setHit(true);
                 break;
             }
             case Tank.CRIT_WEAPON_JAM: {
@@ -18968,11 +18996,13 @@ public class Server implements Runnable {
                             }
                         }
                     }
-                    weapon.setHit(true);
                     r.add(weapon.getName());
                     vDesc.add(r);
                     // explosive weapons e.g. gauss now explode
+					if (weapon.getType().isExplosive() && !weapon.isHit() && !weapon.isDestroyed()) {
                     vDesc.addAll(explodeEquipment(a, loc, weapon));
+                	}
+                    weapon.setHit(true);
                 } else {
                     r = new Report(9155);
                     r.subject = a.getId();
@@ -19344,6 +19374,25 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 switch (cs.getIndex()) {
                 case Mech.SYSTEM_COCKPIT:
+                	// Lets auto-eject if we can!
+                    if (en instanceof Mech) {
+                    	Mech mech = (Mech) en;
+	                    if (game.getOptions().booleanOption("tacops_skin_of_the_teeth_ejection")) {
+	                        if (mech.isAutoEject() && (!game.getOptions().booleanOption("conditional_ejection")
+	                        	|| (game.getOptions().booleanOption("conditional_ejection")
+	                        	&& mech.isCondEjectHeadshot()))) {
+	                            if (mech.getCrew().getHits() < 5) {
+	                                Report.addNewline(vDesc);
+	                                mech.setDoomed(false);
+	                                vDesc.addAll(damageCrew(en, 5 - mech.getCrew().getHits()));
+	                                mech.setDoomed(true);
+	                            }
+	                            //autoEject = true;
+	                            vDesc.addAll(ejectEntity(en, true));
+	                        }
+	                    }
+                    }
+                    
                     // Don't kill a pilot multiple times.
                     if (Pilot.DEATH > en.getCrew().getHits()) {
                         // boink!
@@ -22289,6 +22338,84 @@ public class Server implements Runnable {
         }
 
         game.addEntity(entity.getId(), entity);
+
+        // Now we relink C3/C3i to our guys! Yes, this is hackish... but, we do
+        // what we must.
+        // Its just too bad we have to loop over the entire entities array..
+        if (entity.hasC3() || entity.hasC3i()) {
+            boolean C3iSet = false;
+
+            for (Enumeration<Entity> entities = game.getEntities(); entities
+                    .hasMoreElements();) {
+                Entity e = entities.nextElement();
+
+                // C3 Checks
+                if (entity.hasC3()) {
+                    if (entity.getC3MasterIsUUIDAsString() != null
+                            && entity.getC3MasterIsUUIDAsString().equals(
+                                    e.getC3UUIDAsString())) {
+                        System.out.println("Attempting to C3 slave "
+                                + entity.getC3UUIDAsString() + " to "
+                                + e.getC3UUIDAsString());
+                        entity.setC3Master(e);
+                        entity.setC3MasterIsUUIDAsString(null);
+                    } else if (e.getC3MasterIsUUIDAsString() != null
+                            && e.getC3MasterIsUUIDAsString().equals(
+                                    entity.getC3UUIDAsString())) {
+                        System.out.println("Attempting to C3 slave "
+                                + e.getC3UUIDAsString() + " to "
+                                + entity.getC3UUIDAsString());
+                        e.setC3Master(entity);
+                        e.setC3MasterIsUUIDAsString(null);
+                    }
+                }
+
+                // C3i Checks
+                if (entity.hasC3i() && C3iSet == false) {
+                    int pos = 0;
+                    System.out
+                            .println("Checking for C3i links for: "
+                                    + entity.getChassis() + " ("
+                                    + entity.getId() + ")");
+                    while (pos < Entity.MAX_C3i_NODES) {
+                        System.out.println("C3i Loop position: " + pos);
+                        // We've reached our own UUID... so we'll start a
+                        // network ourself.
+                        if ((entity.getC3iNextUUIDAsString(pos) != null)
+                                && (entity.getC3UUIDAsString() != null)
+                                && entity.getC3iNextUUIDAsString(pos).equals(
+                                        entity.getC3UUIDAsString())) {
+                            System.out
+                                    .println("Attempting to setup a new C3i Network");
+                            entity.setC3NetIdSelf();
+                            C3iSet = true;
+                            break;
+                        }
+                        // We've found a network, join it.
+                        else if ((entity.getC3iNextUUIDAsString(pos) != null)
+                                && (e.getC3UUIDAsString() != null)
+                                && entity.getC3iNextUUIDAsString(pos).equals(
+                                        e.getC3UUIDAsString())) {
+                            System.out
+                                    .println("Attempting to set C3i Network to: "
+                                            + e.getC3NetId());
+                            entity.setC3NetId(e);
+                            System.out.println("C3i Net ID set to: "
+                                    + entity.getC3NetId());
+                            C3iSet = true;
+                            break;
+                        }
+
+                        pos++;
+                    }
+                    System.out
+                            .println("Finished checking for C3i links for: "
+                                    + entity.getChassis() + " ("
+                                    + entity.getId() + ")");
+                }
+            }
+        }
+
         send(createAddEntityPacket(entity.getId()));
     }
 

@@ -7817,6 +7817,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getQuirks().booleanOption("poor_target_short")) {
             mod++;
         }
+        if (getQuirks().booleanOption("variable_range_long")) {
+            mod++;
+        }
+        if (getQuirks().booleanOption("variable_range_short")) {
+            mod--;
+        }
         return mod;
     }
 
@@ -7843,6 +7849,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod--;
         }
         if (getQuirks().booleanOption("poor_target_long")) {
+            mod++;
+        }
+        if (getQuirks().booleanOption("variable_range_long")) {
+            mod--;
+        }
+        if (getQuirks().booleanOption("variable_range_short")) {
             mod++;
         }
         return mod;

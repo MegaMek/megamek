@@ -876,6 +876,9 @@ public class FireControl {
         boolean isShooterInfantry = (shooter instanceof Infantry);
         boolean isWeaponInfantry = ((WeaponType) mw.getType())
                 .hasFlag(WeaponType.F_INFANTRY);
+        if ((shooter_state.position == null) || (target_state.position == null)) {
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "null position");
+        }
         int distance = shooter_state.position.distance(target_state.position);
 
         if ((distance == 0) && (!isShooterInfantry)) {

@@ -445,8 +445,8 @@ public final class Player extends TurnOrdered {
             return 1;
         }
 
-        return (enemyUnitCount / ourUnitCount)
-                + (ourUnitCount / enemyUnitCount) - 1;
+        return ((enemyUnitCount / ourUnitCount)
+                + (ourUnitCount / enemyUnitCount)) - 1;
     }
 
     public void setCompensationInitBonus(int newBonus) {
@@ -472,6 +472,9 @@ public final class Player extends TurnOrdered {
         int bonusHQ = 0;
         int bonusMD = 0;
         int bonusQ = 0;
+        if (game == null) {
+            return 0;
+        }
         if (game.getEntitiesVector() == null) {
             return 0;
         }

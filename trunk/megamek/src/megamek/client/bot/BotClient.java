@@ -23,6 +23,24 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.client.Client;
 import megamek.common.AmmoType;
@@ -30,6 +48,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityListFile;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
@@ -52,8 +71,14 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import megamek.client.ui.swing.ReportDisplay;
 
 public abstract class BotClient extends Client {
+
+    // a frame, to show stuff in
+    public JFrame frame;
 
 
     public class CalculateBotTurn implements Runnable {
@@ -197,12 +222,48 @@ public abstract class BotClient extends Client {
                 sendDone(true);
                 break;
             case PHASE_VICTORY:
+                runEndGame();
                 sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
                 die();
                 break;
             }
         } catch (Throwable t) {
             t.printStackTrace();
+        }
+    }
+
+    private void runEndGame() {
+        // Make a list of the player's living units.
+        ArrayList<Entity> living = game.getPlayerEntities(getLocalPlayer(), false);
+
+        // Be sure to include all units that have retreated.
+        for (Enumeration<Entity> iter = game.getRetreatedEntities(); iter.hasMoreElements();) {
+            Entity ent = iter.nextElement();
+            if (ent.getOwnerId() == getLocalPlayer().getId()) {
+                living.add(ent);
+            }
+        }
+
+        if (living.isEmpty()) {
+            return;
+		}
+
+        String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+        File logDir = new File(sLogDir);
+        if (!logDir.exists()) {
+            logDir.mkdir();
+        }
+        String fileName = "Bot_"+getLocalPlayer().getName()+".mul";
+        if (PreferenceManager.getClientPreferences().stampFilenames()) {
+            fileName = StringUtil.addDateTimeStamp(fileName);
+        }
+        File unitFile = new File(sLogDir + File.separator + fileName);
+        try {
+            // Save the destroyed entities to the file.
+            EntityListFile.saveTo(unitFile, living);
+        } catch (IOException excep) {
+            excep.printStackTrace(System.err);
+            doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
         }
     }
 
@@ -937,5 +998,18 @@ public abstract class BotClient extends Client {
     public void retrieveServerInfo() {
         super.retrieveServerInfo();
         initialize();
+    }
+
+    /**
+     * Pops up a dialog box showing an alert
+     */
+    public void doAlertDialog(String title, String message) {
+        JTextPane textArea = new JTextPane();
+        ReportDisplay.setupStylesheet(textArea);
+
+        textArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        textArea.setText("<pre>"+message+"</pre>");
+        JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 }

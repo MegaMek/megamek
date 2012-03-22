@@ -1476,7 +1476,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
 
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
-                living.add(iter.nextElement());
+                Entity ent = iter.nextElement();
+                if (ent.getOwnerId() == getClient().getLocalPlayer().getId()) {
+                    living.add(ent);
+                }
             }
 
             // Allow players to save their living units to a file.

@@ -583,9 +583,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      *
      * and a file for salvage
      */
-     public void doSaveUnit()
-        {
-            for(Enumeration<Player> iter= getClient().game.getPlayers();iter.hasMoreElements();){
+    public void doSaveUnit() {
+         for(Enumeration<Player> iter= getClient().game.getPlayers();iter.hasMoreElements();) {
                 Player p=iter.nextElement();
                 ArrayList<Entity> l = getClient().game.getPlayerEntities(p, false);
                 // Be sure to include all units that have retreated.
@@ -1372,7 +1371,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = getClient().game.getRetreatedEntities(); iter.hasMoreElements();) {
-                living.add(iter.nextElement());
+                Entity ent = iter.nextElement();
+                if (ent.getOwnerId() == getClient().getLocalPlayer().getId()) {
+                    living.add(ent);
+                }
             }
 
             // Allow players to save their living units to a file.

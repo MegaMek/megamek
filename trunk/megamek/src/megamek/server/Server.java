@@ -82,7 +82,6 @@ import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
-import megamek.common.GameTurn.EntityClassTurn;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -2337,15 +2336,15 @@ public class Server implements Runnable {
     /**
      * Hand over a turn to the next player. This is only possible if you haven't yet started your turn (i.e. not yet moved anything
      * like infantry where you have to move multiple units)
-     * 
-     * @param packet - 
+     *
+     * @param packet -
      * @param connid
      */
     private void receiveForwardIni(Packet packet, int connid){
-        //this is the player sending the packet" 
-        
+        //this is the player sending the packet"
+
         Player current = getPlayer(connid);
-        
+
         if (game.getTurn().getPlayerNum() != current.getId()){
             //this player is not the current player, so just ignore this command!
             return;
@@ -2360,7 +2359,7 @@ public class Server implements Runnable {
         Player next = currentteam.getNextValidPlayer(current,game);
         //if the choosen player is a valid player, we change the turn order and inform the clients.
         if ((next != null) && (game.getEntitiesOwnedBy(next) != 0) && (game.getTurnForPlayer(next.getId()) != null)) {
-            
+
             int currentturnindex = game.getTurnIndex();
             //now look for the next occurence of player next in the turn order
             Vector<GameTurn> turns = game.getTurnVector();
@@ -2374,26 +2373,26 @@ public class Server implements Runnable {
             if(!isGeneralMoveTurn){
                 //if this is not a general turn the player cannot forward his turn.
                 return;
-            }            
+            }
             //if it is an entityclassturn we have to check make sure, that the turn it is exchanged with is the same kind of turn!
             //in fact this requires an access function to the mask of an entityclassturn.
-            
+
             boolean isEntityClassTurn = (turn instanceof GameTurn.EntityClassTurn);
             int classmask = 0;
             if(isEntityClassTurn){
                 GameTurn.EntityClassTurn tempturn = (GameTurn.EntityClassTurn) turn;
-                classmask = tempturn.getTurnCode(); 
+                classmask = tempturn.getTurnCode();
             }
 
             boolean switched = false;
             int nextturnid = 0;
             for(int i = currentturnindex; i < turns.size(); i++  ){
                 //if we find a turn for the specific player, swap the current player with the player noted there
-                //and stop 
+                //and stop
                 if(turns.get(i).isValid(next.getId(), game)){
                     nextturnid = i;
                     if(isEntityClassTurn){
-                        //if we had an entityclassturn 
+                        //if we had an entityclassturn
                         if((turns.get(i) instanceof GameTurn.EntityClassTurn)){
                             //and found another entityclassturn
                             if(!(((GameTurn.EntityClassTurn)turns.get(i)).getTurnCode() == classmask)){
@@ -2409,10 +2408,10 @@ public class Server implements Runnable {
                     break;
                 }
             }
-            
+
             //update turn order
             if (switched){
-                //lets hope this works... But I would assume, that the current turn has to end so lets call the function...                                
+                //lets hope this works... But I would assume, that the current turn has to end so lets call the function...
                 //
                 GameTurn nextturn = turns.get(nextturnid);
                 GameTurn currentturn = turns.get(currentturnindex);
@@ -2426,8 +2425,8 @@ public class Server implements Runnable {
                 //if nothing changed return without doing anything
                 return;
             }
-             
-        }        
+
+        }
     }
     /**
      * Tries to change to the next turn. If there are no more turns, ends the
@@ -17006,11 +17005,14 @@ public class Server implements Runnable {
                     r.add(damage);
                     r.indent(3);
                     vDesc.addElement(r);
-                    boolean rearArmor = te.hasRearArmor(hit.getLocation());
-                    if (damage > te.getArmor(hit.getLocation(), rearArmor)) {
-                        te.setArmor(IArmorState.ARMOR_DESTROYED, hit.getLocation(), rearArmor);
+                    int loc = hit.getLocation();
+                    if ((te instanceof Mech) && (((Mech) te).isArm(loc) || ((Mech) te).locationIsLeg(loc))) {
+                        loc = te.getTransferLocation(loc);
+                    }
+                    if (damage > te.getArmor(loc, true)) {
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
                     } else {
-                        te.setArmor(te.getArmor(hit.getLocation(), rearArmor) - damage, hit.getLocation(), rearArmor);
+                        te.setArmor(te.getArmor(loc, true) - damage, loc, true);
                     }
 
                     if (te.getInternal(hit) > 0) {
@@ -17291,12 +17293,12 @@ public class Server implements Runnable {
                             // neither survivable nor salvagable.
                             // Only ammo explosions in the CT are devastating.
                             vDesc
-                                    .addAll(destroyEntity(
-                                            te,
-                                            "damage",
-                                            !ammoExplosion,
-                                            !((ammoExplosion || areaSatArty) && ((te instanceof Tank) || ((te instanceof Mech) && (hit
-                                                    .getLocation() == Mech.LOC_CT))))));
+                            .addAll(destroyEntity(
+                                    te,
+                                    "damage",
+                                    !ammoExplosion,
+                                    !((ammoExplosion || areaSatArty) && ((te instanceof Tank) || ((te instanceof Mech) && (hit
+                                            .getLocation() == Mech.LOC_CT))))));
                             // If the head is destroyed, kill the crew.
 
                             if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_HEAD) && !te.getCrew().isDead()
@@ -17304,8 +17306,8 @@ public class Server implements Runnable {
                                     && game.getOptions().booleanOption("tacops_skin_of_the_teeth_ejection")) {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject() && (!game.getOptions().booleanOption("conditional_ejection")
-									|| (game.getOptions().booleanOption("conditional_ejection")
-									&& mech.isCondEjectHeadshot()))) {
+                                        || (game.getOptions().booleanOption("conditional_ejection")
+                                                && mech.isCondEjectHeadshot()))) {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
@@ -17317,12 +17319,12 @@ public class Server implements Runnable {
                                 }
                             }
 
-							if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_CT)  && !te.getCrew().isDead()
+                            if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_CT)  && !te.getCrew().isDead()
                                     && !te.getCrew().isDoomed()) {
-								Mech mech = (Mech) te;
+                                Mech mech = (Mech) te;
                                 if (mech.isAutoEject() && (!game.getOptions().booleanOption("conditional_ejection")
-									|| (game.getOptions().booleanOption("conditional_ejection")
-									&& mech.isCondEjectCTDest()))) {
+                                        || (game.getOptions().booleanOption("conditional_ejection")
+                                                && mech.isCondEjectCTDest()))) {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
@@ -17332,7 +17334,7 @@ public class Server implements Runnable {
                                     autoEject = true;
                                     vDesc.addAll(ejectEntity(te, true));
                                 }
-							}
+                            }
 
                             if ((hit.getLocation() == Mech.LOC_HEAD)
                                     || ((hit.getLocation() == Mech.LOC_CT) && ((ammoExplosion && !autoEject) || areaSatArty))) {
@@ -17355,6 +17357,16 @@ public class Server implements Runnable {
                         r.add(damage);
                         r.indent(3);
                         vDesc.addElement(r);
+                        if ((te instanceof Mech) && (te.locationIsLeg(hit.getLocation()) || ((Mech)te).isArm(hit.getLocation()))) {
+                            //CASE in an arm or leg preventing damage means the rest goes to the rear armor of the transfer location
+                            int loc = te.getTransferLocation(hit.getLocation());
+                            if (damage > te.getArmor(loc, true)) {
+                                te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
+                            } else {
+                                te.setArmor(te.getArmor(loc, true) - damage, loc, true);
+                            }
+                        }
+
 
                         // ... but page 21 of the Ask The Precentor Martial FAQ
                         // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
@@ -19392,7 +19404,7 @@ public class Server implements Runnable {
 	                        }
 	                    }
                     }
-                    
+
                     // Don't kill a pilot multiple times.
                     if (Pilot.DEATH > en.getCrew().getHits()) {
                         // boink!
@@ -22351,7 +22363,7 @@ public class Server implements Runnable {
 
                 // C3 Checks
                 if (entity.hasC3()) {
-                    if (entity.getC3MasterIsUUIDAsString() != null
+                    if ((entity.getC3MasterIsUUIDAsString() != null)
                             && entity.getC3MasterIsUUIDAsString().equals(
                                     e.getC3UUIDAsString())) {
                         System.out.println("Attempting to C3 slave "
@@ -22359,7 +22371,7 @@ public class Server implements Runnable {
                                 + e.getC3UUIDAsString());
                         entity.setC3Master(e);
                         entity.setC3MasterIsUUIDAsString(null);
-                    } else if (e.getC3MasterIsUUIDAsString() != null
+                    } else if ((e.getC3MasterIsUUIDAsString() != null)
                             && e.getC3MasterIsUUIDAsString().equals(
                                     entity.getC3UUIDAsString())) {
                         System.out.println("Attempting to C3 slave "
@@ -22371,7 +22383,7 @@ public class Server implements Runnable {
                 }
 
                 // C3i Checks
-                if (entity.hasC3i() && C3iSet == false) {
+                if (entity.hasC3i() && (C3iSet == false)) {
                     int pos = 0;
                     System.out
                             .println("Checking for C3i links for: "
@@ -23416,7 +23428,7 @@ public class Server implements Runnable {
         case Packet.COMMAND_FORWARD_INITIATIVE:
             receiveForwardIni(packet, connId);
             break;
-        
+
         case Packet.COMMAND_CHAT:
             String chat = (String) packet.getObject(0);
             if (chat.startsWith("/")) {

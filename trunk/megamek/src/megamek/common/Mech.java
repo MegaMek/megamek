@@ -295,7 +295,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Damage the cowl. Returns amount of excess damage
-     * 
+     *
      * @param amount
      * @return
      */
@@ -348,7 +348,7 @@ public abstract class Mech extends Entity {
 
     /**
      * find the least restrictive location of the two locations passed in
-     * 
+     *
      * @param location1
      * @param location2
      * @return
@@ -411,7 +411,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#newRound(int)
      */
     @Override
@@ -526,7 +526,7 @@ public abstract class Mech extends Entity {
 
     /**
      * This function returns true iff the system is in perfect condition.
-     * 
+     *
      * @param system
      *            the system to check
      * @return false if the system is damaged.
@@ -580,7 +580,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have composite internal structure?
-     * 
+     *
      * @return
      */
     public boolean hasCompositeStructure() {
@@ -589,7 +589,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have reinforced internal structure?
-     * 
+     *
      * @return
      */
     public boolean hasReinforcedStructure() {
@@ -598,7 +598,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech mount MASC?
-     * 
+     *
      * @return
      */
     public boolean hasMASC() {
@@ -635,7 +635,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have working jump boosters?
-     * 
+     *
      * @return
      */
     public boolean hasJumpBoosters() {
@@ -736,7 +736,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have industrial TSM=
-     * 
+     *
      * @return
      */
     public boolean hasIndustrialTSM() {
@@ -751,7 +751,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have a null-sig-system?
-     * 
+     *
      * @return
      */
     public boolean hasNullSig() {
@@ -767,7 +767,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have a void-sig-system?
-     * 
+     *
      * @return
      */
     public boolean hasVoidSig() {
@@ -783,7 +783,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have tracks?
-     * 
+     *
      * @return
      */
     public boolean hasTracks() {
@@ -799,7 +799,7 @@ public abstract class Mech extends Entity {
 
     /**
      * does this mech have a chameleon light polarization shield?
-     * 
+     *
      * @return
      */
     public boolean hasChameleonShield() {
@@ -815,7 +815,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getStandingHeat()
      */
     @Override
@@ -825,7 +825,7 @@ public abstract class Mech extends Entity {
 
     /**
      * set this mech's <code>Engine</code>
-     * 
+     *
      * @param e
      *            the <code>Engine</code> to set
      */
@@ -838,7 +838,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Used to set this Mech's original walk mp
-     * 
+     *
      * @return this units calculated walking speed, dependent on engine rating
      *         and weight
      */
@@ -857,7 +857,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getWalkHeat()
      */
     @Override
@@ -867,13 +867,13 @@ public abstract class Mech extends Entity {
 
     /**
      * Returns whether this mech should use conditional ejection
-     * 
+     *
      * @return
      */
     /*
      * public boolean shouldUseConditionalEject() { if (game !=null &&
      * game.getOptions().booleanOption("conditional_ejection")) { return true; }
-     * 
+     *
      * return false; }
      */
 
@@ -908,7 +908,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
      */
     @Override
@@ -929,7 +929,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getRunMPwithoutMASC(boolean, boolean, boolean)
      */
     @Override
@@ -965,7 +965,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getSprintMP()
      */
     @Override
@@ -978,7 +978,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
      */
     @Override
@@ -1002,7 +1002,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
      */
     @Override
@@ -1012,7 +1012,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
      * boolean)
      */
@@ -1048,7 +1048,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getRunningGravityLimit()
      */
     @Override
@@ -1124,7 +1124,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Gives the bonus to Jump MP conferred by a mech partial wing.
-     * 
+     *
      * @param mount
      *            The mounted location of the Wing
      * @return The Jump MP bonus conferred by the wing
@@ -1203,7 +1203,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Gives the heat capacity bonus conferred by a mech partial wing.
-     * 
+     *
      * @return the heat capacity bonus provided by the wing
      */
     private int getPartialWingHeatBonus() {
@@ -1264,7 +1264,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getJumpHeat(int)
      */
     @Override
@@ -1399,7 +1399,7 @@ public abstract class Mech extends Entity {
     /**
      * base for adding engine sinks. Newer method allows externals to say how
      * much are engine HS.
-     * 
+     *
      * @param totalSinks
      *            the amount of heatsinks to add to the engine
      * @param sinkName
@@ -1414,7 +1414,7 @@ public abstract class Mech extends Entity {
 
     /**
      * add heat sinks into the engine
-     * 
+     *
      * @param sinkName
      *            the <code>String</code> determining the type of heatsink to
      *            add. must be a lookupname of a heatsinktype
@@ -1653,7 +1653,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#canChangeSecondaryFacing()
      */
     @Override
@@ -1706,7 +1706,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#hasRearArmor(int)
      */
     @Override
@@ -1839,7 +1839,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#rollHitLocation(int, int)
      */
     @Override
@@ -1850,7 +1850,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#rollHitLocation(int, int, int, int)
      */
     @Override
@@ -2515,7 +2515,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Sets the internal structure for the mech.
-     * 
+     *
      * @param head
      *            head
      * @param ct
@@ -4482,7 +4482,7 @@ public abstract class Mech extends Entity {
     /**
      * Calculate the C-bill cost of the mech. Passing null as the argument will
      * skip the detailed report processing.
-     * 
+     *
      * @return The cost in C-Bills of the 'Mech in question.
      */
     @Override
@@ -4799,7 +4799,7 @@ public abstract class Mech extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4830,7 +4830,7 @@ public abstract class Mech extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -4971,7 +4971,7 @@ public abstract class Mech extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -5083,7 +5083,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -5790,7 +5790,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a standard cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
@@ -5815,7 +5815,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addIndustrialCockpit() {
@@ -5840,7 +5840,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an industrial cockpit. Note: This is
      * part of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addPrimitiveCockpit() {
@@ -5865,7 +5865,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an industrial primitive cockpit.
      * Note: This is part of the mek creation public API, and might not be
      * referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addIndustrialPrimitiveCockpit() {
@@ -5890,7 +5890,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a small cockpit. Note: This is part
      * of the mek creation public API, and might not be referenced by any
      * MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
@@ -5953,7 +5953,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a torso-mounted cockpit. Note: This
      * is part of the mek creation public API, and might not be referenced by
      * any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -5996,7 +5996,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a standard gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
@@ -6016,7 +6016,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a compact gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
@@ -6035,7 +6035,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for an extra-light gyro. Also set the
      * gyro type variable. Note: This is part of the mek creation public API,
      * and might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
@@ -6058,7 +6058,7 @@ public abstract class Mech extends Entity {
      * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
      * type variable. Note: This is part of the mek creation public API, and
      * might not be referenced by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -6074,7 +6074,7 @@ public abstract class Mech extends Entity {
      * method before setting a mek's engine object will result in a NPE. Note:
      * This is part of the mek creation public API, and might not be referenced
      * by any MegaMek code.
-     * 
+     *
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -6259,7 +6259,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Does this mech have an undamaged HarJel system in this location?
-     * 
+     *
      * @param loc
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
@@ -6411,7 +6411,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -6421,7 +6421,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getHQIniBonus()
      */
     @Override
@@ -6436,7 +6436,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getBARRating()
      */
     @Override
@@ -6453,7 +6453,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Is this an Industrial Mech?
-     * 
+     *
      * @return if this mech has an industrial inner structure
      */
     public boolean isIndustrial() {
@@ -6463,7 +6463,7 @@ public abstract class Mech extends Entity {
     /**
      * set if this mech just moved into water that would kill it because of the
      * lack of environmental sealing
-     * 
+     *
      * @param moved
      */
     public void setJustMovedIntoIndustrialKillingWater(boolean moved) {
@@ -6473,7 +6473,7 @@ public abstract class Mech extends Entity {
     /**
      * did this mech just moved into water that would kill it because we lack
      * environmental sealing?
-     * 
+     *
      * @return
      */
     public boolean isJustMovedIntoIndustrialKillingWater() {
@@ -6484,7 +6484,7 @@ public abstract class Mech extends Entity {
      * should this mech die at the end of turn because it's an IndustrialMech
      * without environmental sealing that moved into water last round and stayed
      * there?
-     * 
+     *
      * @return
      */
     public boolean shouldDieAtEndOfTurnBecauseOfWater() {
@@ -6494,7 +6494,7 @@ public abstract class Mech extends Entity {
     /**
      * Set if this Mech's ICE Engine is stalled or not should only be used for
      * industrial mechs carrying an ICE engine
-     * 
+     *
      * @param stalled
      */
     public void setStalled(boolean stalled) {
@@ -6504,7 +6504,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#isStalled()
      */
     @Override
@@ -6514,7 +6514,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#isShutDown()
      */
     @Override
@@ -6524,7 +6524,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#doCheckEngineStallRoll(java.util.Vector)
      */
     @Override
@@ -6573,7 +6573,7 @@ public abstract class Mech extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#checkUnstall(java.util.Vector)
      */
     @Override
@@ -6622,7 +6622,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Is this a primitive Mech?
-     * 
+     *
      * @return
      */
     public boolean isPrimitive() {
@@ -6690,7 +6690,7 @@ public abstract class Mech extends Entity {
 
     /**
      * how many levels did this mech fall this turn?
-     * 
+     *
      * @return
      */
     public int getLevelsFallen() {
@@ -6707,7 +6707,7 @@ public abstract class Mech extends Entity {
 
     /**
      * Is the passed in location an arm?
-     * 
+     *
      * @param loc
      * @return
      */

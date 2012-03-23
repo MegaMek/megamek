@@ -17009,6 +17009,17 @@ public class Server implements Runnable {
                     if ((te instanceof Mech) && (((Mech) te).isArm(loc) || ((Mech) te).locationIsLeg(loc))) {
                         loc = te.getTransferLocation(loc);
                     }
+                    if ((te instanceof Mech) && (loc == Mech.LOC_HEAD)) {
+                        int half = (int) Math.ceil(((Mech) te).getOArmor(loc, false) / 2);
+                        if (damage > half) {
+                            damage = half;
+						}
+                        if (damage > te.getArmor(loc, false)) {
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
+                        } else {
+                            te.setArmor(te.getArmor(loc, false) - damage, loc, false);
+                        }
+					}
                     if (damage > te.getArmor(loc, true)) {
                         te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
                     } else {
@@ -17359,13 +17370,18 @@ public class Server implements Runnable {
                         vDesc.addElement(r);
                         if ((te instanceof Mech) && (te.locationIsLeg(hit.getLocation()) || ((Mech)te).isArm(hit.getLocation()))) {
                             //CASE in an arm or leg preventing damage means the rest goes to the rear armor of the transfer location
+                            te.setLocationBlownOff(hit.getLocation(), true);
                             int loc = te.getTransferLocation(hit.getLocation());
                             if (damage > te.getArmor(loc, true)) {
                                 te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
                             } else {
                                 te.setArmor(te.getArmor(loc, true) - damage, loc, true);
                             }
+                            te.setLocationBlownOff(loc, true);
                         }
+                        if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_HEAD)) {
+                            te.setLocationBlownOff(hit.getLocation(), true);
+					    }
 
 
                         // ... but page 21 of the Ask The Precentor Martial FAQ

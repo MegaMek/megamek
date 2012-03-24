@@ -171,6 +171,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean gotPavementBonus = false;
     public boolean hitThisRoundByAntiTSM = false;
     public boolean inReverse = false;
+    protected boolean struck = false;
+    protected boolean fell = false;
 
     private int[] exposure;
     private int[] armor;
@@ -4466,6 +4468,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *            the <code>int</code> number of the new round
      */
     public void newRound(int roundNumber) {
+        fell = false;
+        struck = false;
         unloadedThisTurn = false;
         loadedThisTurn = false;
         done = false;
@@ -11272,6 +11276,38 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         return pos;
+    }
+
+    /**
+     * Indicates if a unit was physically struck (punch, kick, DFA, etc).
+     * @return
+     */
+    public boolean wasStruck() {
+        return struck;
+    }
+
+    /**
+     * Indicates if a unit was physically struck (punch, kick, DFA, etc).
+     * @return
+     */
+    public void setStruck(boolean struck) {
+        this.struck = struck;
+    }
+
+    /**
+     * Indicates if a unit has falling in the current phase.
+     * @return
+     */
+    public boolean hasFallen() {
+        return fell;
+    }
+
+    /**
+     * Indicates if a unit has falling in the current phase.
+     * @return
+     */
+    public void setFallen(boolean fell) {
+        this.fell = fell;
     }
 
 }

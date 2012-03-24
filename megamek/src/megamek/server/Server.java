@@ -2151,6 +2151,7 @@ public class Server implements Runnable {
             // movement phase
             checkForFlamingDamage();
             checkForTeleMissileAttacks();
+            checkForFlawedCooling();
             // check phase report
             if (vPhaseReport.size() > 1) {
                 game.addReports(vPhaseReport);
@@ -2180,6 +2181,7 @@ public class Server implements Runnable {
             applyBuildingDamage();
             checkForPSRFromDamage();
             addReport(resolvePilotingRolls());
+            checkForFlawedCooling();
             // check phase report
             if (vPhaseReport.size() > 1) {
                 game.addReports(vPhaseReport);
@@ -2201,6 +2203,7 @@ public class Server implements Runnable {
             checkForPSRFromDamage();
             addReport(resolvePilotingRolls());
             resolveSinkVees();
+            checkForFlawedCooling();
             // check phase report
             if (vPhaseReport.size() > 1) {
                 game.addReports(vPhaseReport);
@@ -2251,6 +2254,8 @@ public class Server implements Runnable {
             applyBuildingDamage();
             checkForPSRFromDamage();
             addReport(resolvePilotingRolls());
+
+            checkForFlawedCooling();
 
             sendSpecialHexDisplayPackets();
 
@@ -14964,6 +14969,85 @@ public class Server implements Runnable {
         }
     }
 
+    private void clearFlawedCoolingFlags(Entity entity) {
+        //If we're not using quirks, no need to do this check.
+        if (!game.getOptions().booleanOption("stratops_quirks")) {
+            return;
+        }
+        //Only applies to units that track heat.
+        if (!(entity instanceof Mech ||
+                ((entity instanceof Aero) && !((entity instanceof SmallCraft) || (entity instanceof Jumpship))))) {
+            return;
+        }
+
+        //Check for existence of flawed cooling quirk.
+        if (!entity.getQuirks().booleanOption("flawed_cooling")) {
+            return;
+        }
+        entity.setFallen(false);
+        entity.setStruck(false);
+    }
+
+    private void checkForFlawedCooling() {
+
+        //If we're not using quirks, no need to do this check.
+        if (!game.getOptions().booleanOption("stratops_quirks")) {
+            return;
+        }
+
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+
+            final Entity entity = i.nextElement();
+
+            //Only applies to units that track heat.
+            if (!(entity instanceof Mech ||
+                    ((entity instanceof Aero) && !((entity instanceof SmallCraft) || (entity instanceof Jumpship))))) {
+                continue;
+            }
+
+            //Check for existence of flawed cooling quirk.
+            if (!entity.getQuirks().booleanOption("flawed_cooling")) {
+                continue;
+            }
+
+
+            //Perform the check.
+            if (entity.damageThisPhase >= 20) {
+                addReport(doFlawedCoolingCheck("20+ damage", entity));
+            }
+            if (entity.hasFallen()) {
+                addReport(doFlawedCoolingCheck("fall", entity));
+            }
+            if (entity.wasStruck()) {
+                addReport(doFlawedCoolingCheck("being struck", entity));
+            }
+            clearFlawedCoolingFlags(entity);
+        }
+    }
+
+    /**
+     * Checks to see if Flawed Cooling is triggered and generates a report of the result.
+     * @param reason
+     * @param entity
+     * @return
+     */
+    private Vector<Report> doFlawedCoolingCheck(String reason, Entity entity) {
+        Vector<Report> out = new Vector<Report>();
+        Report r = new Report(9800);
+        r.addDesc(entity);
+        r.add(reason);
+        int roll = Compute.d6(2);
+        r.add(roll);
+        out.add(r);
+        if (roll >= 10) {
+            Report s = new Report(9805);
+            entity.heatBuildup += 5;
+            out.add(s);
+        }
+
+        return out;
+    }
+
     /**
      * Checks to see if any entity takes enough damage that requires them to
      * make a piloting roll
@@ -21100,6 +21184,8 @@ public class Server implements Runnable {
      * Makes a mech fall.
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos, int height, int facing, PilotingRollData roll) {
+        entity.setFallen(true);
+
         Vector<Report> vPhaseReport = new Vector<Report>();
         Report r;
 
@@ -25193,6 +25279,7 @@ public class Server implements Runnable {
         // Not all targets are Entities.
         Targetable target = game.getTarget(aaa.getTargetType(), aaa.getTargetId());
         if (target instanceof Entity) {
+            ((Entity)target).setStruck(true);
             creditKill((Entity) target, game.getEntity(cen));
         }
     }

@@ -105,7 +105,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JPanel panPilot;
     private JPanel panEquip;
     private JPanel panDeploy;
-    private JPanel panQuirks;
+    private QuirksPanel panQuirks;
     private JPanel panPartReps;
 
     private JScrollPane scrPilot;
@@ -343,7 +343,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot = new JPanel(new GridBagLayout());
         panEquip = new JPanel(new GridBagLayout());
         panDeploy = new JPanel(new GridBagLayout());
-        panQuirks = new JPanel(new GridBagLayout());
+        quirks = entity.getQuirks();
+        panQuirks = new QuirksPanel(entity, quirks, editable, this, h_wpnQuirks);
         panPartReps = new JPanel(new GridBagLayout());
 
         scrPilot = new JScrollPane(panPilot);
@@ -379,7 +380,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.clientgui = clientgui;
         this.client = client;
         options = entity.getCrew().getOptions();
-        quirks = entity.getQuirks();
         partReps = entity.getPartialRepairs();
         for (Mounted m : entity.getWeaponList()) {
             h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
@@ -1613,37 +1613,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void setQuirks() {
-        IOption option;
-        for (final Object newVar : quirkComps) {
-            DialogOptionComponent comp = (DialogOptionComponent) newVar;
-            option = comp.getOption();
-            if ((comp.getValue() == Messages.getString("CustomMechDialog.None"))) { // NON-NLS-$1
-                entity.getQuirks().getOption(option.getName()).setValue("None"); // NON-NLS-$1
-            } else {
-                entity.getQuirks().getOption(option.getName())
-                        .setValue(comp.getValue());
-            }
-        }
-        // now for weapon quirks
-        Set<Integer> set = h_wpnQuirkComps.keySet();
-        Iterator<Integer> iter = set.iterator();
-        while (iter.hasNext()) {
-            int key = iter.next();
-            Mounted m = entity.getEquipment(key);
-            ArrayList<DialogOptionComponent> wpnQuirkComps = h_wpnQuirkComps
-                    .get(key);
-            for (final Object newVar : wpnQuirkComps) {
-                DialogOptionComponent comp = (DialogOptionComponent) newVar;
-                option = comp.getOption();
-                if ((comp.getValue() == Messages
-                        .getString("CustomMechDialog.None"))) { // NON-NLS-$1
-                    m.getQuirks().getOption(option.getName()).setValue("None"); // NON-NLS-$1
-                } else {
-                    m.getQuirks().getOption(option.getName())
-                            .setValue(comp.getValue());
-                }
-            }
-        }
+        panQuirks.setQuirks();
     }
 
     public void refreshPartReps() {
@@ -1669,56 +1639,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     public void refreshQuirks() {
-        panQuirks.removeAll();
-        quirkComps = new ArrayList<DialogOptionComponent>();
-        for (Mounted m : entity.getWeaponList()) {
-            h_wpnQuirkComps.put(entity.getEquipmentNum(m),
-                    new ArrayList<DialogOptionComponent>());
-        }
-
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            panQuirks.add(new JLabel(group.getDisplayableName()), GBC.eol());
-
-            for (Enumeration<IOption> j = group.getSortedOptions(); j
-                    .hasMoreElements();) {
-                IOption option = j.nextElement();
-
-                if (!Quirks.isQuirkLegalFor(option, entity)) {
-                    continue;
-                }
-
-                addQuirk(option, editable);
-            }
-        }
-
-        // now for weapon quirks
-        Set<Integer> set = h_wpnQuirks.keySet();
-        Iterator<Integer> iter = set.iterator();
-        while (iter.hasNext()) {
-            int key = iter.next();
-            Mounted m = entity.getEquipment(key);
-            WeaponQuirks wpnQuirks = h_wpnQuirks.get(key);
-            JLabel labWpn = new JLabel(m.getName() + " ("
-                    + entity.getLocationName(m.getLocation()) + ")");
-            panQuirks.add(labWpn, GBC.eol());
-            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i
-                    .hasMoreElements();) {
-                IOptionGroup group = i.nextElement();
-                for (Enumeration<IOption> j = group.getSortedOptions(); j
-                        .hasMoreElements();) {
-                    IOption option = j.nextElement();
-                    if (!WeaponQuirks.isQuirkLegalFor(option, entity,
-                            (WeaponType) m.getType())) {
-                        continue;
-                    }
-                    addWeaponQuirk(key, option, editable);
-                }
-            }
-        }
-
-        validate();
+        panQuirks.refreshQuirks();
     }
 
     private void addGroup(IOptionGroup group, GridBagLayout gridbag,
@@ -1761,27 +1682,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         optionComps.add(optionComp);
     }
 
-    private void addQuirk(IOption option, boolean editable) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, editable);
-        panQuirks.add(optionComp, GBC.eol());
-
-        quirkComps.add(optionComp);
-    }
-
     private void addPartRep(IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option, editable);
         panPartReps.add(optionComp, GBC.eol());
         partRepsComps.add(optionComp);
-    }
-
-    private void addWeaponQuirk(int key, IOption option, boolean editable) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, editable);
-
-        panQuirks.add(optionComp, GBC.eol());
-        h_wpnQuirkComps.get(key).add(optionComp);
     }
 
     public void optionClicked(DialogOptionComponent comp, IOption option,

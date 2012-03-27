@@ -48,9 +48,11 @@ v0.35.29-dev (SVN)
     at the end the game just prior to disconnecting themselves.
 + clan CASE/CASE II in arms rules clarification (rear armor of adjacent torso
     should get blown)
-+ bug 3510281: CASE & CASE II incorrectly implemented
++ Bug 3510281: CASE & CASE II incorrectly implemented
 + Implemented the Flawed Cooling quirk from Strat Ops.
-+ Broke the quirks panel out into a separate class so that it can be referenced from MekHQ.
++ Broke the quirks panel out into a separate class so that it can be referenced
+    from MekHQ.
++ RFE 3512060: color black out notice red
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

@@ -57,7 +57,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     private JPanel panButtons;
     private JPanel panMain;
-    
+
     private JComboBox chPlayer;
 
     public RandomNameDialog(ClientGUI clientgui) {
@@ -74,7 +74,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         rng = client.getRandomNameGenerator();
 
         updateFactions();
-        
+
         updatePlayerChoice();
 
         butOkay.addActionListener(this);
@@ -84,7 +84,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         setLocationRelativeTo(clientgui.frame);
 
     }
-    
+
     private void updateFactions() {
         //Fill the combobox with choices
         Iterator<String> factions = rng.getFactions();
@@ -146,14 +146,14 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource() == butOkay) {
-            Client c = null;           
+            Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
                 c = clientgui.getBots().get(name);
             }
             if (c == null) {
                 c = client;
-            }          
+            }
             saveSettings();
             // go through all of the units provided for this player and assign random names
             for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {

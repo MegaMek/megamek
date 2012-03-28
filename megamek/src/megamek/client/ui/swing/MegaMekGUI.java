@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import static megamek.common.Compute.d6;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -132,8 +133,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         // set visible on middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
         frame.pack();
-        frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2,
-                screenSize.height / 2 - frame.getSize().height / 2);
+        frame.setLocation((screenSize.width / 2) - (frame.getSize().width / 2),
+                (screenSize.height / 2) - (frame.getSize().height / 2));
 
         // init the cache
         MechSummaryCache.getInstance();
@@ -349,7 +350,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize client
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")
@@ -444,7 +447,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
         client = new Client(hd.playerName, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")
@@ -485,7 +490,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                 String s = f.getName();
                 int i = s.lastIndexOf('.');
 
-                if ((i > 0) && (i < s.length() - 1)) {
+                if ((i > 0) && (i < (s.length() - 1))) {
                     ext = s.substring(i + 1).toLowerCase();
                 }
 
@@ -683,6 +688,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         ConnectDialog cd;
         cd = new ConnectDialog(frame);
         cd.setVisible(true);
+
         // verify dialog data
         if ((cd.playerName == null) || (cd.serverAddr == null)
                 || (cd.port == 0)) {
@@ -708,7 +714,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize game
         client = new Client(cd.playerName, cd.serverAddr, cd.port);
         ClientGUI gui = new ClientGUI(client);
+        frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at ").append(

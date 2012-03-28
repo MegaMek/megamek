@@ -53,6 +53,7 @@ v0.35.29-dev (SVN)
 + Broke the quirks panel out into a separate class so that it can be referenced
     from MekHQ.
 + RFE 3512060: color black out notice red
++ Improve startup time
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

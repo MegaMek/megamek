@@ -29,61 +29,64 @@ import megamek.common.Compute;
 /**
  * Author: Jay Lawson
  * This class sets up a random name generator that can then be used
- * to generate random pilot names. it will have a couple different settings 
+ * to generate random pilot names. it will have a couple different settings
  * and flexible input files
- * 
+ *
  * Files are located in data/names/
  * All files are comma-delimited text files.
- * 
+ *
  * The masterancestry.txt file shows the correspondence between the different ethnic names and their numeric
- * code in the database. This file is currently not actually read in by MM, but is provided as a reference. The same 
+ * code in the database. This file is currently not actually read in by MM, but is provided as a reference. The same
  * numeric code must be used across all of the files listed below. Currently the numeric codes must be listed in exact
  * sequential order (i.e. no skipping numbers) for the program to work correctly.
- * 
+ *
  * The name database is located in three files: firstname_males.txt, firstname_females.txt, and surnames.txt.
  * There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
  *    fld1 - The name itself, either a male/female first name or a surname
  *    fld2 - a frequency weight to account for some names being more common than others. Currently this is
  *           not being used.
  *    fld3 - the numeric code identifying the "ethnic" group this name belongs to
- *    
- * Faction files are located in data/names/factions. The name that is given before ".txt" is used as the key for the 
+ *
+ * Faction files are located in data/names/factions. The name that is given before ".txt" is used as the key for the
  * faction. The faction files will have varying number of fields depending on how many ethnic groups exist. The faction
  * file does two things. First, it identifies the relative frequency of different ethnic surnames for a faction. Second,
- * it identifies the correspondence between first names and surnames. This allows, for example, for more Japanese first 
+ * it identifies the correspondence between first names and surnames. This allows, for example, for more Japanese first
  * names regardless of surname in the Draconis Combine. There should be a line in the Faction file for each ethnic group.
  *     fld1 - the id for the ethnic group
  *     fld2 - the ethnic group name. Not currently read in, just for easy reference.
  *     fld3 - The relative frequency of this ethnic surname in the faction.
- *     fld4-fldn - These fields identify the relative frequency of first names from an ethnic group given the surname 
- *                 listed in fld1.   
- * 
+ *     fld4-fldn - These fields identify the relative frequency of first names from an ethnic group given the surname
+ *                 listed in fld1.
+ *
  */
 public class RandomNameGenerator implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 5765118329881301375L;
-    
+
     private static RandomNameGenerator rng;
-    
+
     Map<String, Vector<String>> firstm;
     Map<String, Vector<String>> firstf;
     Map<String, Vector<String>> last;
     Map<String, Vector<String>> factionLast;
     Map<String, Map<String, Vector<String>>> factionFirst;
-    
+
     private int percentFemale;
     private String chosenFaction;
-    
-    public RandomNameGenerator() {  
-        this.percentFemale = 50;
-        this.chosenFaction = "General";
+    private Thread loader;
+    private boolean initialized;
+    private boolean initializing;
+
+    public RandomNameGenerator() {
+        percentFemale = 50;
+        chosenFaction = "General";
     }
-    
+
     public void populateNames() {
-       
+
         //TODO: how do I weight name vectors by frequency, without making them gargantuan?
         if(null == firstm) {
             firstm = new HashMap<String, Vector<String>>();
@@ -100,9 +103,9 @@ public class RandomNameGenerator implements Serializable {
         if(null == factionFirst) {
             factionFirst = new HashMap<String, Map<String, Vector<String>>>();
         }
-        
+
         Scanner input = null;
-        
+
         //READ IN MALE FIRST NAMES
         try {
             File fnmf = new File("./data/names/firstnames_male.txt");
@@ -138,8 +141,8 @@ public class RandomNameGenerator implements Serializable {
         } catch (FileNotFoundException fne) {
             System.err.println("Unable to find firstnames_male.txt");
         }
-        
-        
+
+
         //READ IN FEMALE FIRST NAMES
         try {
             File fnff = new File("./data/names/firstnames_female.txt");
@@ -175,7 +178,7 @@ public class RandomNameGenerator implements Serializable {
         } catch (FileNotFoundException fne) {
             System.err.println("Unable to find firstnames_female.txt");
         }
-        
+
         //READ IN SURNAMES
         try {
             File lnf = new File("./data/names/surnames.txt");
@@ -211,8 +214,8 @@ public class RandomNameGenerator implements Serializable {
         } catch (FileNotFoundException fne) {
             System.err.println("Unable to find surnames.txt");
         }
-        
-        
+
+
         //READ IN FACTION FILES
         //all faction files should be in the faction directory
         File dir = new File("./data/names/factions/");
@@ -223,7 +226,7 @@ public class RandomNameGenerator implements Serializable {
         for(int filen = 0; filen<filenames.length; filen++) {
             String filename = filenames[filen];
             String key = filename.split("\\.txt")[0];
-            if(key.length() < 1 || factionLast.containsKey(key)) {
+            if((key.length() < 1) || factionLast.containsKey(key)) {
                 continue;
             }
             factionLast.put(key, new Vector<String>());
@@ -249,7 +252,7 @@ public class RandomNameGenerator implements Serializable {
                 Vector<String> v = new Vector<String>();
                 for(int i = 3; i < values.length; i++) {
                     freq = Integer.parseInt(values[i]);
-                    //TODO: damm - I don't have the integer codes for ethnicity here, for now just assume they are the 
+                    //TODO: damm - I don't have the integer codes for ethnicity here, for now just assume they are the
                     //same as i-2
                     while(freq>0) {
                         v.add(Integer.toString(i-2));
@@ -258,10 +261,10 @@ public class RandomNameGenerator implements Serializable {
                 }
                 hash.put(ethnicity, v);
             }
-            factionFirst.put(key, hash);      
+            factionFirst.put(key, hash);
         }
     }
-    
+
     /**
      * Generate a single random name
      * @return - a string giving the name
@@ -269,21 +272,21 @@ public class RandomNameGenerator implements Serializable {
     public String generate() {
         return generate(isFemale());
     }
-        
+
     public String generate(boolean isFemale) {
 
-        if(null != chosenFaction && null != factionLast && null!=factionFirst && null!=firstm && null != firstf && null!=last) {
-            //this is a total hack, but for now lets assume that 
-            //if the chosenFaction name contains the word "clan" 
+        if((null != chosenFaction) && (null != factionLast) && (null!=factionFirst) && (null!=firstm) && (null != firstf) && (null!=last)) {
+            //this is a total hack, but for now lets assume that
+            //if the chosenFaction name contains the word "clan"
             //we should only spit out first names
             boolean isClan = chosenFaction.toLowerCase().contains("clan");
-            
+
             Vector<String> ethnicities = factionLast.get(chosenFaction);
-            if(null != ethnicities && ethnicities.size() > 0) {
+            if((null != ethnicities) && (ethnicities.size() > 0)) {
                 String eLast = ethnicities.get(Compute.randomInt(ethnicities.size()));
                 //ok now we need to decide on a first name list
                 ethnicities = factionFirst.get(chosenFaction).get(eLast);
-                if(null != ethnicities && ethnicities.size() > 0) {
+                if((null != ethnicities) && (ethnicities.size() > 0)) {
                     String eFirst = ethnicities.get(Compute.randomInt(ethnicities.size()));
                     //ok now we can get the first and last name vectors
                     if(isClan) {
@@ -293,8 +296,8 @@ public class RandomNameGenerator implements Serializable {
                     if(isFemale) {
                         fnames = firstf.get(eFirst);
                     }
-                    Vector<String> lnames = last.get(eLast);                
-                    if(null != fnames && null != lnames && fnames.size() > 0 && lnames.size() > 0) {
+                    Vector<String> lnames = last.get(eLast);
+                    if((null != fnames) && (null != lnames) && (fnames.size() > 0) && (lnames.size() > 0)) {
                         String first = fnames.get(Compute.randomInt(fnames.size()));
                         String last = lnames.get(Compute.randomInt(lnames.size()));
                         if(isClan) {
@@ -307,30 +310,30 @@ public class RandomNameGenerator implements Serializable {
         }
         return "Unnamed";
     }
-    
+
     public Iterator<String> getFactions() {
         if(null == factionLast) {
             return null;
         }
         return factionLast.keySet().iterator();
     }
-    
+
     public String getChosenFaction() {
         return chosenFaction;
     }
-    
+
     public void setChosenFaction(String s) {
-        this.chosenFaction = s;
+        chosenFaction = s;
     }
-    
+
     public int getPercentFemale() {
         return percentFemale;
     }
-    
+
     public void setPerentFemale(int i) {
-        this.percentFemale = i;
+        percentFemale = i;
     }
-    
+
     /**
      * randomly select gender
      * @return true if female
@@ -338,7 +341,7 @@ public class RandomNameGenerator implements Serializable {
     public boolean isFemale() {
         return Compute.randomInt(100) < percentFemale;
     }
-    
+
     public void clear() {
         firstm = null;
         firstf = null;
@@ -346,19 +349,29 @@ public class RandomNameGenerator implements Serializable {
         factionFirst = null;
         factionLast = null;
     }
-    
+
     public static void initialize() {
-    	if(rng != null && rng.last != null) {
-    		return;
-    	}
-    	rng = new RandomNameGenerator();
-    	rng.populateNames();
+        if((rng != null) && (rng.last != null)) {
+            return;
+        }
+        rng = new RandomNameGenerator();
+        if (!rng.initialized && !rng.initializing) {
+            rng.loader = new Thread(new Runnable() {
+                public void run() {
+                    rng.initializing = true;
+                    rng.populateNames();
+                    rng.initialized = true;
+                }
+            }, "Random Name Generator name populator");
+            rng.loader.setPriority(Thread.NORM_PRIORITY - 1);
+            rng.loader.start();
+        }
     }
-    
+
     public static RandomNameGenerator getInstance() {
-    	if(null == rng) {
-    		initialize();
-    	}
-    	return rng;
+        if(null == rng) {
+            initialize();
+        }
+        return rng;
     }
 }

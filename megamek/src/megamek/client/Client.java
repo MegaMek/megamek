@@ -406,7 +406,7 @@ public class Client implements IClientCommandHandler {
             // free some memory thats only needed in lounge
             MechSummaryCache.dispose();
             MechFileParser.dispose();
-            getRandomUnitGenerator().clear();
+            RandomUnitGenerator.getInstance().clear();
             getRandomNameGenerator().clear();
             memDump("entering deployment phase"); //$NON-NLS-1$
             break;
@@ -426,14 +426,13 @@ public class Client implements IClientCommandHandler {
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
         case PHASE_LOUNGE:
+            RandomNameGenerator.initialize();
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {
-                    RandomNameGenerator.initialize();
                     RandomUnitGenerator.initialize();
                 }
             });
             if (MechSummaryCache.getInstance().isInitialized()) {
-                RandomNameGenerator.initialize();
                 RandomUnitGenerator.initialize();
             }
             duplicateNameHash.clear(); // reset this
@@ -1415,10 +1414,6 @@ public class Client implements IClientCommandHandler {
 
     public RandomNameGenerator getRandomNameGenerator() {
         return RandomNameGenerator.getInstance();
-    }
-
-    public RandomUnitGenerator getRandomUnitGenerator() {
-        return RandomUnitGenerator.getInstance();
     }
 
     public ArrayList<ArrayList<Integer>> getAvailableMapSizes() {

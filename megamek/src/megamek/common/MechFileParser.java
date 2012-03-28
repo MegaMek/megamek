@@ -505,12 +505,12 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                      // huh. this shouldn't happen
            throw new EntityLoadingException("No available PPC to match Capacitor!");
-            } 
+            }
 
          } // End crossLink-PPC Capacitor
 
       } // Check the next piece of equipment.
-        
+
         // need to load all those weapons in the weapon bays
         if (ent.usesWeaponBays()) {
             ent.loadAllWeapons();
@@ -609,18 +609,19 @@ public class MechFileParser {
     } // End private void postLoadInit(Entity) throws EntityLoadingException
 
     private void loadDefaultQuirks() throws IOException {
-        
+
         //Get a list of quirks for this entity.
         List<QuirkEntry> quirks = defaultQuirksHandler.getQuirks(m_entity.getChassis(), m_entity.getModel());
 
         //If this unit has no quirks, we do not need to proceed further.
-        if (quirks == null || quirks.isEmpty())
+        if ((quirks == null) || quirks.isEmpty()) {
             return;
+        }
 
         //Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
-            
-            System.out.println("Attempting to add quirk: " + q.toLog());
+
+            //System.out.println("Attempting to add quirk: " + q.toLog());
 
             //If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtil.isNullOrEmpty(q.getLocation())) {
@@ -644,10 +645,10 @@ public class MechFileParser {
 
             //Make sure this is a weapon.
             if (!(m.getType() instanceof WeaponType)) {
-                System.out.println(m.getName() + " is not a weapon.");
+                System.err.println(m.getName() + " is not a weapon.");
                 continue;
             }
-            
+
             //Make sure it is the weapon we expect.
             boolean matchFound = false;
             while (m.getType().getNames().hasMoreElements()) {

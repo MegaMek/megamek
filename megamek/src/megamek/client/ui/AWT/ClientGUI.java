@@ -257,10 +257,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX()) || (x + w > virtualBounds.getMaxX())) {
+            if ((x < virtualBounds.getMinX()) || ((x + w) > virtualBounds.getMaxX())) {
                 x = 0;
             }
-            if ((y < virtualBounds.getMinY()) || (y + h > virtualBounds.getMaxY())) {
+            if ((y < virtualBounds.getMinY()) || ((y + h) > virtualBounds.getMaxY())) {
                 y = 0;
             }
             if (w > virtualBounds.getWidth()) {
@@ -354,11 +354,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
         w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if (x + w > screenSize.width) {
+        if ((x + w) > screenSize.width) {
             x = 0;
             w = Math.min(w, screenSize.width);
         }
-        if (y + h > screenSize.height) {
+        if ((y + h) > screenSize.height) {
             y = 0;
             h = Math.min(h, screenSize.height);
         }
@@ -378,11 +378,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         y = GUIPreferences.getInstance().getRulerPosY();
         h = GUIPreferences.getInstance().getRulerSizeHeight();
         w = GUIPreferences.getInstance().getRulerSizeWidth();
-        if (x + w > screenSize.width) {
+        if ((x + w) > screenSize.width) {
             x = 0;
             w = Math.min(w, screenSize.width);
         }
-        if (y + h > screenSize.height) {
+        if ((y + h) > screenSize.height) {
             y = 0;
             h = Math.min(h, screenSize.height);
         }
@@ -1410,7 +1410,6 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                 case PHASE_END:
                 case PHASE_VICTORY:
                     setMapVisible(false);
-                    // nemchenk, 2004-01-01 -- hide MechDisplay at the end
                     mechW.setVisible(false);
                     break;
                 default:

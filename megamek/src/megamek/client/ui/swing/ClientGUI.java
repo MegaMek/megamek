@@ -119,18 +119,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public MechDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
-    private MapMenu popup;// = new
-    // JPopupMenu(Messages.getString("ClientGUI.BoardPopup"));
+    private MapMenu popup;
     private UnitOverview uo;
-    private Ruler ruler; // added by kenn
+    private Ruler ruler;
     protected JComponent curPanel;
     public ChatLounge chatlounge;
 
     // some dialogs...
     GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
-    // private CustomBattleArmorDialog customBADialog;
-    private CustomFighterSquadronDialog customFSDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
@@ -315,12 +312,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void initialize() {
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
-
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
+            System.out.println(System.nanoTime());
             Class<?> c = getClass().getClassLoader().loadClass(System.getProperty("megamek.client.ui.AWT.boardView", "megamek.client.ui.swing.BoardView1"));
             bv = (IBoardView) c.getConstructor(IGame.class).newInstance(client.game);
+            System.out.println(System.nanoTime());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
@@ -332,7 +330,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
 
         layoutFrame();
-        frame.setVisible(true);
         menuBar.addActionListener(this);
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -342,10 +339,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 die();
             }
         });
-        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
-        if (!MechSummaryCache.getInstance().isInitialized()) {
-            unitLoadingDialog.setVisible(true);
-        }
         cb2 = new ChatterBox2(this, bv);
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
@@ -420,14 +413,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+        if (!MechSummaryCache.getInstance().isInitialized()) {
+            unitLoadingDialog.setVisible(true);
+        }
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
-        // customBADialog = new CustomBattleArmorDialog(this);
-        customFSDialog = new CustomFighterSquadronDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         randomNameDialog = new RandomNameDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
-        //new Thread(customBADialog, "Custom Battle Armor Dialog").start(); //$NON-NLS-1$
+        frame.setVisible(true);
     }
 
     /**
@@ -707,15 +702,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
     public MechSelectorDialog getMechSelectorDialog() {
         return mechSelectorDialog;
-    }
-
-    /*
-     * public CustomBattleArmorDialog getCustomBADialog() { return
-     * customBADialog; }
-     */
-
-    public CustomFighterSquadronDialog getCustomFSDialog() {
-        return customFSDialog;
     }
 
     public StartingPositionDialog getStartingPositionDialog() {

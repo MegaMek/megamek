@@ -149,7 +149,7 @@ WindowListener, TreeSelectionListener {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
         m_clientgui = cl;
         m_client = cl.getClient();
-        rug = m_client.getRandomUnitGenerator();
+        rug = RandomUnitGenerator.getInstance();
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame);
         // set defaults
@@ -264,7 +264,6 @@ WindowListener, TreeSelectionListener {
         //construct the RAT panel
         m_pRAT.setLayout(new GridBagLayout());
         m_tUnits.setText("4");
-        updateRATs();
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -447,7 +446,7 @@ WindowListener, TreeSelectionListener {
                 if(m_pMain.getSelectedIndex() == 1) {
                     int units = Integer.parseInt(m_tUnits.getText());
                     if(units > 0) {
-                        unitsModel.setData(m_client.getRandomUnitGenerator().generate(units));
+                        unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();

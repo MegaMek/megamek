@@ -32,7 +32,7 @@ import megamek.common.MechSummaryCache;
 public class UnitLoadingDialog extends JDialog {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -3454307876761238915L;
     private JLabel lLoading = new JLabel(Messages
@@ -71,8 +71,8 @@ public class UnitLoadingDialog extends JDialog {
         setSize(250, 130);
         // move to middle of screen
         Dimension screenSize = frame.getToolkit().getScreenSize();
-        setLocation(screenSize.width / 2 - getSize().width / 2,
-                screenSize.height / 2 - getSize().height / 2);
+        setLocation((screenSize.width / 2) - (getSize().width / 2),
+                (screenSize.height / 2) - (getSize().height / 2));
 
         Runnable r = new Runnable() {
             public void run() {
@@ -86,7 +86,7 @@ public class UnitLoadingDialog extends JDialog {
                 }
             }
         };
-        Thread t = new Thread(r, "Unit Loader"); //$NON-NLS-1$
+        Thread t = new Thread(r, "Unit Loader Dialog"); //$NON-NLS-1$
         t.start();
     }
 

@@ -57,22 +57,25 @@ public class RandomUnitGenerator implements Serializable {
     //and the vectors just contain the unit names listed a number of times equal to
     //the frequency
     Map<String, Vector<String>> rats;
-	private static RandomUnitGenerator rug;
+    private static RandomUnitGenerator rug;
+    private Thread loader;
+    private boolean initialized;
+    private boolean initializing;
 
 
-    /** 
+    /**
     * Plain old data class used to represent nodes in a Random Assignment Table tree.
-    * RATs are grouped into categories based on directory structure, and will be 
+    * RATs are grouped into categories based on directory structure, and will be
     * displayed hierarchically to the user.
     */
     public static class RatTreeNode implements Comparable<RatTreeNode> {
         public RatTreeNode(String name) {
             this.name = name;
-            this.children = new Vector<RatTreeNode>();
+            children = new Vector<RatTreeNode>();
         }
 
         public int compareTo(RatTreeNode rtn) {
-            return this.name.compareTo(rtn.name);
+            return name.compareTo(rtn.name);
         }
 
         public String name;
@@ -245,20 +248,34 @@ public class RandomUnitGenerator implements Serializable {
         rats = null;
         ratTree = null;
     }
-    
+
     public static void initialize() {
-    	if(rug != null && rug.rats != null) {
-    		return;
-    	}
-    	rug = new RandomUnitGenerator();
-    	rug.populateUnits();
+        if((rug != null) && (rug.rats != null)) {
+            return;
+        }
+        rug = new RandomUnitGenerator();
+        if (!rug.initialized && !rug.initializing) {
+            rug.loader = new Thread(new Runnable() {
+                public void run() {
+                    rug.initializing = true;
+                    rug.populateUnits();
+                    rug.initialized = true;
+                }
+            }, "Random Unit Generator unit populator");
+            rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
+            rug.loader.start();
+        }
     }
-    
+
     public static RandomUnitGenerator getInstance() {
-    	if(null == rug) {
-    		initialize();
-    	}
-    	return rug;
+        if(null == rug) {
+            initialize();
+        }
+        return rug;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
 }

@@ -2207,20 +2207,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
             bcd.setVisible(true);
             if (bcd.dialog_aborted) {
-                return; // user didn't click 'ok', add no bot
+                return; //user didn't click 'ok', add no bot
             }
-            BotClient c = bcd.getSelectedBot(clientgui.getClient().getHost(),
-                    clientgui.getClient().getPort());
-            c.game.addGameListener(new BotGUI(c));
-            try {
-                c.connect();
-            } catch (Exception e) {
-                clientgui
-                        .doAlertDialog(
-                                Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            if (clientgui.getBots().containsKey(bcd.getBotName())) {
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertExistsBot.title"), Messages.getString("ChatLounge.AlertExistsBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                BotClient c = bcd.getSelectedBot(clientgui.getClient().getHost(), clientgui.getClient().getPort());
+                c.game.addGameListener(new BotGUI(c));
+                try {
+                    c.connect();
+                } catch (Exception e) {
+                    clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                c.retrieveServerInfo();
+                clientgui.getBots().put(bcd.getBotName(), c);
             }
-            c.retrieveServerInfo();
-            clientgui.getBots().put(bcd.getBotName(), c);
         } else if (ev.getSource().equals(butRemoveBot)) {
             Client c = getPlayerSelected();
             if ((c == null) || c.equals(clientgui.getClient())) {

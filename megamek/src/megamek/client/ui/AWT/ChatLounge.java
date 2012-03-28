@@ -1856,17 +1856,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else {
                 name = p.getText();
             }
-            BotClient c = new TestBot(name, client.getHost(), client.getPort());
-            c.game.addGameListener(new BotGUI(c));
-            try {
-                c.connect();
-            } catch (Exception e) {
-                clientgui
-                        .doAlertDialog(
-                                Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            if (clientgui.getBots().containsKey(name)) {
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertExistsBot.title"), Messages.getString("ChatLounge.AlertExistsBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                BotClient c = new TestBot(name, client.getHost(), client.getPort());
+                c.game.addGameListener(new BotGUI(c));
+                try {
+                    c.connect();
+                } catch (Exception e) {
+                    clientgui
+                            .doAlertDialog(
+                                    Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                c.retrieveServerInfo();
+                clientgui.getBots().put(name, c);
             }
-            c.retrieveServerInfo();
-            clientgui.getBots().put(name, c);
         } else if (ev.getSource() == butRemoveBot) {
             Client c = getPlayerListSelected(lisPlayerInfo);
             if ((c == null) || (c == client)) {

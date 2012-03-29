@@ -671,6 +671,23 @@ public class Server implements Runnable {
             }
             team++;
             Player newPlayer = new Player(connId, name);
+            int colorInd = newPlayer.getColorIndex();
+            Enumeration<Player> players = game.getPlayers();
+            while (players.hasMoreElements() && colorInd < Player.colorNames.length) {
+                final Player p = players.nextElement();
+                if (p.getId() == newPlayer.getId()) {
+                    continue;
+                }
+                if (p.getColorIndex() == colorInd) {
+                    colorInd++;
+                }
+            }
+            if (colorInd == -1) {
+                colorInd = 0;
+            }
+            newPlayer.setColorIndex(colorInd);
+            newPlayer.setCamoCategory(Player.NO_CAMO);
+            newPlayer.setCamoFileName(Player.colorNames[colorInd]);
             newPlayer.setTeam(Math.min(team, 5));
             game.addPlayer(connId, newPlayer);
             validatePlayerInfo(connId);

@@ -1934,6 +1934,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((null == locationAbbrs) || (loc >= locationAbbrs.length)) {
             return "";
         }
+        if (loc == Entity.LOC_NONE) {
+            return "System Wide";
+        }
         return locationAbbrs[loc];
     }
 

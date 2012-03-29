@@ -114,9 +114,9 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         getContentPane().add(butPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
+                - (getSize().width / 2), (frame.getLocation().y
+                + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -130,9 +130,9 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                                 .showMessageDialog(
                                         m_frame,
                                         Messages
-                                                .getString("MegaMek.ScenarioErrorAllert.message"),
+                                                .getString("MegaMek.ScenarioErrorAlert.message"),
                                         Messages
-                                                .getString("MegaMek.ScenarioErrorAllert.title"),
+                                                .getString("MegaMek.ScenarioErrorAlert.title"),
                                         JOptionPane.ERROR_MESSAGE);
                         return;
                     }

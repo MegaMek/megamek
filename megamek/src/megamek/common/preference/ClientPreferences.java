@@ -39,8 +39,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY)
                 + File.separator + "mechfiles");
         store.setDefault(METASERVER_NAME,
-                "http://www.damour.info/cgi-bin/james/metaserver");
-        store.setDefault(GOAL_PLAYERS, 2);
+                "http://megamek.sourceforge.net/serverbrowser");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
         // store.setDefault(GAMELOG_MAX_SIZE, 1);
@@ -73,7 +72,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
     public boolean useAverageSkills() {
         return store.getBoolean(USE_AVERAGE_SKILLS);
     }
-    
+
     public boolean generateNames() {
         return store.getBoolean(GENERATE_NAMES);
     }
@@ -179,7 +178,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
     public void setUseAverageSkills(boolean state) {
         store.setValue(USE_AVERAGE_SKILLS, state);
     }
-    
+
     public void setGenerateNames(boolean state) {
         store.setValue(GENERATE_NAMES, state);
     }

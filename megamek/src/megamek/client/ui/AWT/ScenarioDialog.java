@@ -25,7 +25,7 @@ import megamek.common.Player;
  */
 public class ScenarioDialog extends Dialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -991978467413706967L;
     public static final int T_ME = 0;
@@ -141,9 +141,9 @@ public class ScenarioDialog extends Dialog implements ActionListener {
         add(butPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
+                - (getSize().width / 2), (frame.getLocation().y
+                + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -156,7 +156,7 @@ public class ScenarioDialog extends Dialog implements ActionListener {
                         new AlertDialog(
                                 m_frame,
                                 Messages
-                                        .getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                                        .getString("MegaMek.ScenarioErrorAlert.title"), Messages.getString("MegaMek.ScenarioErrorAlert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                         return;
                     }
                     bMeSet = true;

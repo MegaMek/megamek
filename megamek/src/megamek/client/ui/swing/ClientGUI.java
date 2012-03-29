@@ -315,10 +315,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
-            System.out.println(System.nanoTime());
             Class<?> c = getClass().getClassLoader().loadClass(System.getProperty("megamek.client.ui.AWT.boardView", "megamek.client.ui.swing.BoardView1"));
             bv = (IBoardView) c.getConstructor(IGame.class).newInstance(client.game);
-            System.out.println(System.nanoTime());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);

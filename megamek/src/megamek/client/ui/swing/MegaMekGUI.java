@@ -296,21 +296,6 @@ public class MegaMekGUI implements IMegaMekGUI {
             return;
         }
 
-        /***********************************************************************
-         * WORK IN PROGRESS // Register the game, if appropriate. String
-         * metaserver = null; if (hd.register) { StringBuffer buff = new
-         * StringBuffer (hd.metaserver); buff.append ("?action=register")
-         * .append ("&port=") .append (hd.port) .append ("&owner=") .append
-         * (hd.name) .append ("&goalPlayers=") .append (hd.goalPlayers) .append
-         * ("&version=") .append (MegaMek.VERSION) ; metaserver =
-         * buff.toString(); try { URL metaURL = new URL (metaserver);
-         * BufferedReader reader = new BufferedReader (new InputStreamReader
-         * (metaURL.openStream())); String line = reader.readLine(); while (null
-         * != line) { System.out.println (line); line = reader.readLine(); } }
-         * catch (Exception except) { except.printStackTrace(); } } /* WORK IN
-         * PROGRESS
-         **********************************************************************/
-
         // Players should have to enter a non-blank, non-whitespace name.
         boolean foundValid = false;
         char[] nameChars = hd.playerName.toCharArray();
@@ -332,7 +317,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         d6();
         // start server
         try {
-            server = new Server(hd.serverPass, hd.port);
+            server = new Server(hd.serverPass, hd.port, hd.register, hd.register?hd.metaserver:"");
         } catch (IOException ex) {
             System.err.println("could not create server socket on port "
                     + hd.port);
@@ -344,7 +329,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.HostGameAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
         }
         // initialize client
@@ -361,7 +346,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.HostGameAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
         }
@@ -434,7 +419,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.HostGameAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
         }
         if (!server.loadGame(fc.getSelectedFile())) {
@@ -458,7 +443,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.HostGameAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
         }
@@ -530,7 +515,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.HostScenarioAllert.message") + e.getMessage(), Messages.getString("MegaMek.HostScenarioAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.HostScenarioAlert.message") + e.getMessage(), Messages.getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -589,7 +574,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.HostScenarioAllert1.message"), Messages.getString("MegaMek.HostScenarioAllert1.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.HostScenarioAlert1.message"), Messages.getString("MegaMek.HostScenarioAlert1.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -610,7 +595,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.HostGameAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.HostGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
         }
         server.setGame(g);
@@ -632,7 +617,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                                 frame,
                                 error.toString(),
                                 Messages
-                                        .getString("MegaMek.HostScenarioAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                                        .getString("MegaMek.HostScenarioAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
                 frame.setVisible(false);
                 client.die();
             }
@@ -707,7 +692,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             JOptionPane
                     .showMessageDialog(
                             frame,
-                            Messages.getString("MegaMek.ConnectAllert.message"), Messages.getString("MegaMek.ConnectAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                            Messages.getString("MegaMek.ConnectAlert.message"), Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -725,7 +710,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.ConnectAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
         }
@@ -755,7 +740,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages
-                                    .getString("MegaMek.ConnectGameAllert.message"), Messages.getString("MegaMek.ConnectGameAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                    .getString("MegaMek.ConnectGameAlert.message"), Messages.getString("MegaMek.ConnectGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
 
@@ -777,7 +762,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             error.toString(),
-                            Messages.getString("MegaMek.ConnectAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            Messages.getString("MegaMek.ConnectAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             frame.setVisible(false);
             client.die();
         }

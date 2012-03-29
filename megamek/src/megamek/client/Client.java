@@ -429,11 +429,11 @@ public class Client implements IClientCommandHandler {
             RandomNameGenerator.initialize();
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {
-                    RandomUnitGenerator.initialize();
+                    RandomUnitGenerator.getInstance();
                 }
             });
             if (MechSummaryCache.getInstance().isInitialized()) {
-                RandomUnitGenerator.initialize();
+                RandomUnitGenerator.getInstance();
             }
             duplicateNameHash.clear(); // reset this
             break;

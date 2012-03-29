@@ -15,16 +15,22 @@
 
 package megamek.server;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -240,6 +246,8 @@ public class Server implements Runnable {
     // server setup
     private String password;
 
+    private final String metaServerUrl;
+
     private ServerSocket serverSocket;
 
     private String motd;
@@ -321,6 +329,11 @@ public class Server implements Runnable {
 
     };
 
+    public Server(String password, int port) throws IOException {
+        this(password, port, false, "");
+    }
+
+
     /**
      * Construct a new GameHost and begin listening for incoming clients.
      *
@@ -329,9 +342,13 @@ public class Server implements Runnable {
      * @param port
      *            the <code>int</code> value that specifies the port that is
      *            used
+     * @param registerWithServerBrowser
+     *            a <code>boolean</code> indicating wether we should register
+     *            with the master server browser on megamek.info
      */
-    public Server(String password, int port) throws IOException {
+    public Server(String password, int port, boolean registerWithServerBrowser, String metaServerUrl) throws IOException {
         serverInstance = this;
+        this.metaServerUrl = metaServerUrl;
         this.password = password.length() > 0 ? password : null;
         // initialize server socket
         serverSocket = new ServerSocket(port);
@@ -401,13 +418,15 @@ public class Server implements Runnable {
         // Fully initialised, now accept connections
         connector = new Thread(this, "Connection Listener");
         connector.start();
-        final TimerTask register = new TimerTask() {
-            @Override
-            public void run() {
-                registerWithServerBrowser(true);
-            }
-        };
-        t.schedule(register, 1, 40000);
+        if (registerWithServerBrowser) {
+            final TimerTask register = new TimerTask() {
+                @Override
+                public void run() {
+                    registerWithServerBrowser(true, Server.getServerInstance().metaServerUrl);
+                }
+            };
+            t.schedule(register, 1, 40000);
+        }
     }
 
     /**
@@ -533,7 +552,10 @@ public class Server implements Runnable {
         connections.removeAllElements();
         connectionIds.clear();
         t.cancel();
-        registerWithServerBrowser(false);
+        if (metaServerUrl != "") {
+            registerWithServerBrowser(false, metaServerUrl);
+        }
+
         System.out.flush();
     }
 
@@ -673,7 +695,7 @@ public class Server implements Runnable {
             Player newPlayer = new Player(connId, name);
             int colorInd = newPlayer.getColorIndex();
             Enumeration<Player> players = game.getPlayers();
-            while (players.hasMoreElements() && colorInd < Player.colorNames.length) {
+            while (players.hasMoreElements() && (colorInd < Player.colorNames.length)) {
                 final Player p = players.nextElement();
                 if (p.getId() == newPlayer.getId()) {
                     continue;
@@ -14992,7 +15014,7 @@ public class Server implements Runnable {
             return;
         }
         //Only applies to units that track heat.
-        if (!(entity instanceof Mech ||
+        if (!((entity instanceof Mech) ||
                 ((entity instanceof Aero) && !((entity instanceof SmallCraft) || (entity instanceof Jumpship))))) {
             return;
         }
@@ -15017,7 +15039,7 @@ public class Server implements Runnable {
             final Entity entity = i.nextElement();
 
             //Only applies to units that track heat.
-            if (!(entity instanceof Mech ||
+            if (!((entity instanceof Mech) ||
                     ((entity instanceof Aero) && !((entity instanceof SmallCraft) || (entity instanceof Jumpship))))) {
                 continue;
             }
@@ -27307,9 +27329,9 @@ public class Server implements Runnable {
         addReport(r);
     }
 
-    private void registerWithServerBrowser(boolean register) {
-        /*try {
-            URL url = new URL("http://maltemuth.com/announce");
+    private void registerWithServerBrowser(boolean register, String urlString) {
+        try {
+            URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -27355,6 +27377,6 @@ public class Server implements Runnable {
             rd.close();
             printout.close ();
         } catch (Exception e) {
-        }*/
+        }
     }
 }

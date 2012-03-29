@@ -37,7 +37,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
-import megamek.common.FighterSquadron;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.BipedMech;
@@ -49,6 +48,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.EntitySelector;
+import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -1551,7 +1551,6 @@ DoneButtoned, KeyListener {
             return;
         }
 
-        FighterSquadron fs = (FighterSquadron) ce;
         Aero a = (Aero) ce;
 
         // only allow thrust if there is thrust left to spend
@@ -1561,7 +1560,7 @@ DoneButtoned, KeyListener {
             mpUsed = last.getMpUsed();
         }
 
-        if ((ce instanceof FighterSquadron && mpUsed >= fs.getWalkMP()) || (!(ce instanceof FighterSquadron) && mpUsed >= a.getRunMP())) {
+        if (((ce instanceof FighterSquadron) && (mpUsed >= ((FighterSquadron)ce).getWalkMP())) || (!(ce instanceof FighterSquadron) && (mpUsed >= a.getRunMP()))) {
             setThrustEnabled(false);
         } else {
             setThrustEnabled(true);

@@ -56,6 +56,7 @@ v0.35.29-dev (SVN)
 + Improve startup time
 + Bug 3512499: Fighter Squadrons cannot spend thrust in vectored movement
 + Bug 3487642: cannot change team or start side of 2nd bot
++ Bug 3463111: Color/Camo Misrepresentation
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

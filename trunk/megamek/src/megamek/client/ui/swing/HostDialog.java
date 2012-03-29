@@ -25,15 +25,14 @@ import megamek.common.preference.PreferenceManager;
  */
 public class HostDialog extends JDialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -103094006944170081L;
     public String playerName;
     public String serverPass;
     public int port;
-    private boolean register;
-    private String metaserver;
-    private int goalPlayers;
+    public boolean register;
+    public String metaserver;
     private JLabel yourNameL;
     private JLabel serverPassL;
     private JLabel portL;
@@ -42,9 +41,7 @@ public class HostDialog extends JDialog implements ActionListener {
     private JTextField portF;
     private JCheckBox registerC;
     JLabel metaserverL;
-    JTextField metaserverF;
-    JLabel goalL;
-    JTextField goalF;
+    public JTextField metaserverF;
     private JButton okayB;
     private JButton cancelB;
 
@@ -73,12 +70,6 @@ public class HostDialog extends JDialog implements ActionListener {
         metaserverF = new JTextField(metaserver);
         metaserverL.setEnabled(register);
         metaserverF.setEnabled(register);
-        int goalNumber = cs.getGoalPlayers();
-        goalL = new JLabel(
-                Messages.getString("MegaMek.goalL"), SwingConstants.RIGHT); //$NON-NLS-1$
-        goalF = new JTextField(Integer.toString(goalNumber), 2);
-        goalL.setEnabled(register);
-        goalF.setEnabled(register);
         registerC = new JCheckBox(Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
         register = false;
         registerC.setSelected(register);
@@ -90,8 +81,6 @@ public class HostDialog extends JDialog implements ActionListener {
                 }
                 metaserverL.setEnabled(state);
                 metaserverF.setEnabled(state);
-                goalL.setEnabled(state);
-                goalF.setEnabled(state);
             }
         });
         okayB = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
@@ -134,18 +123,20 @@ public class HostDialog extends JDialog implements ActionListener {
         gridbag.setConstraints(portF, c);
         getContentPane().add(portF);
 
-        /***********************************************************************
-         * WORK IN PROGRESS c.gridwidth = GridBagConstraints.REMAINDER; c.anchor =
-         * GridBagConstraints.WEST; gridbag.setConstraints(registerC, c);
-         * add(registerC); c.gridwidth = 1; c.anchor = GridBagConstraints.EAST;
-         * gridbag.setConstraints(metaserverL, c); add(metaserverL); c.gridwidth =
-         * GridBagConstraints.REMAINDER; c.anchor = GridBagConstraints.WEST;
-         * gridbag.setConstraints(metaserverF, c); add(metaserverF); c.gridwidth =
-         * 1; c.anchor = GridBagConstraints.EAST; gridbag.setConstraints(goalL,
-         * c); add(goalL); c.gridwidth = GridBagConstraints.REMAINDER; c.anchor =
-         * GridBagConstraints.WEST; gridbag.setConstraints(goalF, c);
-         * add(goalF); /* WORK IN PROGRESS
-         **********************************************************************/
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(registerC, c);
+        add(registerC);
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(metaserverL, c);
+        add(metaserverL);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(metaserverF, c);
+        add(metaserverF);
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
 
         c.ipadx = 20;
         c.ipady = 5;
@@ -158,9 +149,9 @@ public class HostDialog extends JDialog implements ActionListener {
         getContentPane().add(cancelB);
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
+                - (getSize().width / 2), (frame.getLocation().y
+                + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -171,11 +162,9 @@ public class HostDialog extends JDialog implements ActionListener {
                 register = registerC.isSelected();
                 metaserver = metaserverF.getText();
                 port = Integer.parseInt(portF.getText());
-                goalPlayers = Integer.parseInt(goalF.getText());
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
                 port = 2346;
-                goalPlayers = 2;
             }
 
             // update settings
@@ -187,9 +176,6 @@ public class HostDialog extends JDialog implements ActionListener {
             PreferenceManager.getClientPreferences().setValue(
                     "megamek.megamek.metaservername", //$NON-NLS-1$
                     metaserver);
-            PreferenceManager.getClientPreferences().setValue(
-                    "megamek.megamek.goalplayers", //$NON-NLS-1$
-                    Integer.toString(goalPlayers));
         }
         setVisible(false);
     }

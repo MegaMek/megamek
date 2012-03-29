@@ -91,12 +91,13 @@ public class RandomUnitGenerator implements Serializable {
         chosenRAT = "TW Heavy Mech (Kurita)";
     }
 
-    public void populateUnits() {
+    public synchronized void populateUnits() {
         rats = new HashMap<String, Vector<String>>();
         ratTree = new RatTreeNode("Random Assignment Tables");
 
         File dir = new File("./data/rat/");
         loadRatsFromDirectory(dir);
+        rug.initialized = true;
     }
 
     private void loadRatsFromDirectory(File dir) {
@@ -249,27 +250,20 @@ public class RandomUnitGenerator implements Serializable {
         ratTree = null;
     }
 
-    public static void initialize() {
-        if((rug != null) && (rug.rats != null)) {
-            return;
+    public static synchronized RandomUnitGenerator getInstance() {
+        if(null == rug) {
+            rug = new RandomUnitGenerator();
         }
-        rug = new RandomUnitGenerator();
         if (!rug.initialized && !rug.initializing) {
+            rug.initializing = true;
             rug.loader = new Thread(new Runnable() {
                 public void run() {
-                    rug.initializing = true;
                     rug.populateUnits();
-                    rug.initialized = true;
+
                 }
             }, "Random Unit Generator unit populator");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rug.loader.start();
-        }
-    }
-
-    public static RandomUnitGenerator getInstance() {
-        if(null == rug) {
-            initialize();
         }
         return rug;
     }

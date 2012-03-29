@@ -23,7 +23,7 @@ import megamek.common.preference.PreferenceManager;
  */
 public class HostDialog extends Dialog implements ActionListener {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4493711407007393414L;
     public String name;
@@ -31,15 +31,12 @@ public class HostDialog extends Dialog implements ActionListener {
     public int port;
     public boolean register;
     public String metaserver;
-    public int goalPlayers;
 
     protected Label yourNameL, serverPassL, portL;
     protected TextField yourNameF, serverPassF, portF;
     protected Checkbox registerC;
     protected Label metaserverL;
     protected TextField metaserverF;
-    protected Label goalL;
-    protected TextField goalF;
     protected Button okayB, cancelB;
 
     public HostDialog(Frame frame) {
@@ -70,12 +67,6 @@ public class HostDialog extends Dialog implements ActionListener {
         metaserverL.setEnabled(register);
         metaserverF.setEnabled(register);
 
-        int goalNumber = cs.getGoalPlayers();
-        goalL = new Label(Messages.getString("MegaMek.goalL"), Label.RIGHT); //$NON-NLS-1$
-        goalF = new TextField(Integer.toString(goalNumber), 2);
-        goalL.setEnabled(register);
-        goalF.setEnabled(register);
-
         registerC = new Checkbox(Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
         register = false;
         registerC.setState(register);
@@ -87,8 +78,6 @@ public class HostDialog extends Dialog implements ActionListener {
                 }
                 metaserverL.setEnabled(state);
                 metaserverF.setEnabled(state);
-                goalL.setEnabled(state);
-                goalF.setEnabled(state);
             }
         });
 
@@ -140,19 +129,18 @@ public class HostDialog extends Dialog implements ActionListener {
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(portF, c);
         add(portF);
-
-        /***********************************************************************
-         * WORK IN PROGRESS c.gridwidth = GridBagConstraints.REMAINDER; c.anchor =
-         * GridBagConstraints.WEST; gridbag.setConstraints(registerC, c);
-         * add(registerC); c.gridwidth = 1; c.anchor = GridBagConstraints.EAST;
-         * gridbag.setConstraints(metaserverL, c); add(metaserverL); c.gridwidth =
-         * GridBagConstraints.REMAINDER; c.anchor = GridBagConstraints.WEST;
-         * gridbag.setConstraints(metaserverF, c); add(metaserverF); c.gridwidth =
-         * 1; c.anchor = GridBagConstraints.EAST; gridbag.setConstraints(goalL,
-         * c); add(goalL); c.gridwidth = GridBagConstraints.REMAINDER; c.anchor =
-         * GridBagConstraints.WEST; gridbag.setConstraints(goalF, c);
-         * add(goalF); /* WORK IN PROGRESS
-         **********************************************************************/
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(registerC, c);
+        add(registerC);
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(metaserverL, c);
+        add(metaserverL);
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        gridbag.setConstraints(metaserverF, c);
+        add(metaserverF);
 
         c.ipadx = 20;
         c.ipady = 5;
@@ -167,9 +155,9 @@ public class HostDialog extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2
-                - getSize().width / 2, frame.getLocation().y
-                + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
+                - (getSize().width / 2), (frame.getLocation().y
+                + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -180,11 +168,9 @@ public class HostDialog extends Dialog implements ActionListener {
                 register = registerC.getState();
                 metaserver = metaserverF.getText();
                 port = Integer.parseInt(portF.getText());
-                goalPlayers = Integer.parseInt(goalF.getText());
             } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
                 port = 2346;
-                goalPlayers = 2;
             }
 
             // update settings
@@ -195,9 +181,6 @@ public class HostDialog extends Dialog implements ActionListener {
             PreferenceManager.getClientPreferences().setValue(
                     "megamek.megamek.metaservername", //$NON-NLS-1$
                     metaserver);
-            PreferenceManager.getClientPreferences().setValue(
-                    "megamek.megamek.goalplayers", //$NON-NLS-1$
-                    Integer.toString(goalPlayers));
         }
         setVisible(false);
     }

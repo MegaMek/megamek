@@ -366,6 +366,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 scrDeploy);
         if (clientgui.getClient().game.getOptions().booleanOption(
                 "stratops_quirks")) {
+            scrQuirks.setPreferredSize(scrEquip.getPreferredSize());
             tabAll.addTab("Quirks", scrQuirks);
         }
         if (clientgui.getClient().game.getOptions().booleanOption(

@@ -23,7 +23,6 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.GridBagLayout;

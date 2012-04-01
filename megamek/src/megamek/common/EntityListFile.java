@@ -600,6 +600,26 @@ public class EntityListFile {
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
 
+                // Write the Bomb Data if needed
+                int[] bombChoices = new int[BombType.B_NUM];
+                bombChoices = a.getBombChoices();
+                if (bombChoices.length > 0) {
+                    output.write("      <bombs>");
+                    output.write(CommonConstants.NL);
+                    for (int type = 0; type < BombType.B_NUM; type++) {
+                        if (bombChoices[type] > 0) {
+                            output.write("         <bomb type=\"");
+                            output.write(String.valueOf(type));
+                            output.write("\" load=\"");
+                            output.write(String.valueOf(bombChoices[type]));
+                            output.write("\"/>");
+                            output.write(CommonConstants.NL);
+                        }
+                    }
+                    output.write("      </bombs>");
+                    output.write(CommonConstants.NL);
+                }
+
                 // TODO: dropship docking collars, bays
 
                 // large craft stuff

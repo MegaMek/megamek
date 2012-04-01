@@ -82,6 +82,12 @@ public class XMLStreamParser implements XMLResponder {
     private int c3i = Entity.NONE;
 
     /**
+     * The current bomb set in the entity being parsed.
+     */
+    private int bombset = Entity.NONE;
+    int[] bombChoices = new int[BombType.B_NUM];
+
+    /**
      * Flag that indicates the current location is destroyed.
      */
     private boolean locDestroyed = false;
@@ -575,6 +581,42 @@ public class XMLStreamParser implements XMLResponder {
                     entity.setC3iNextUUIDAsString(pos, link);
                 }
             }
+        } else if (name.equals(BOMBS)) {
+            // Are we in the outside of an Entity?
+            if (entity == null) {
+                warning.append("Found a Bomb set outside of an Entity.\n");
+            }
+            // Are we in the middle of parsing an Entity's location?
+            else if (bombset != Entity.NONE) {
+                warning.append("Found a Bomb set while parsing a Bomb set.\n");
+            } else {
+                bombset = 1;
+            }
+        } else if (name.equals(BOMB)) {
+
+            // Are we in the outside of an Entity?
+            if (entity == null) {
+                warning.append("Found a bomb outside of an Entity.\n");
+            }
+
+            // Is this entity not an Aero?
+            else if (!(entity instanceof Aero)) {
+                warning.append("Found a bomb but Entity is not a Fighter.\n");
+            }
+
+            // Are we in the outside of parsing an Entity's location?
+            else if (bombset == Entity.NONE) {
+                warning.append("Found a bomb while outside of a Bomb set.\n");
+            }
+
+            // Handle the location.
+            else {
+                bombChoices = ((Aero) entity).getBombChoices();
+                String type = (String) attr.get(TYPE);
+                String load = (String) attr.get(LOAD);
+                bombChoices[Integer.parseInt(type)] = Integer.parseInt(load);
+            }
+            ((Aero) entity).setBombChoices(bombChoices);
         } else if (name.equals(FLUFF)) {
             // Do nothing.
         } else if (name.equals(PILOT)) {

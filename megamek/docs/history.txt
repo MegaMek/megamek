@@ -59,6 +59,7 @@ v0.35.29-dev (SVN)
 + Bug 3463111: Color/Camo Misrepresentation
 + client side of megamek server browser
 + Fixed size of Customize Mech dialog when Quirks are active.
++ Fighter bomb loads saved to and loaded from MUL files
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

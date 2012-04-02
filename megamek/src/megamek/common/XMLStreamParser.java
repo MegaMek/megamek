@@ -32,7 +32,7 @@ import megamek.common.loaders.EntityLoadingException;
  * described by the file, "xml-spec.txt", then this class can return entities.
  * If unexpected entities are encountered while parsing a well-formed stream, a
  * warning message will be available.
- * 
+ *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
  */
@@ -99,7 +99,7 @@ public class XMLStreamParser implements XMLResponder {
 
     /**
      * Marks all equipment in a location on an <code>Entity<code> as destroyed.
-     * 
+     *
      * @param en
      *            - the <code>Entity</code> whose location is destroyed.
      * @param loc
@@ -263,6 +263,9 @@ public class XMLStreamParser implements XMLResponder {
     public static final String MPENALTY = "penalty";
     public static final String C3MASTERIS = "c3MasterIs";
     public static final String C3UUID = "c3UUID";
+    public static final String BOMBS = "bombs";
+    public static final String BOMB = "bomb";
+    public static final String LOAD = "load";
 
     /**
      * Special values recognized by this parser.
@@ -286,7 +289,7 @@ public class XMLStreamParser implements XMLResponder {
     /**
      * Parse the indicated XML stream. Any warning message or
      * <code>Entity</code>s from a previously parsed stream will be discarded.
-     * 
+     *
      * @param input
      *            - the <code>InputStream</code> to be parsed.
      * @exception ParseException
@@ -310,7 +313,7 @@ public class XMLStreamParser implements XMLResponder {
     /**
      * Construct an object and parse the XML stream. Any warning message or
      * <code>Entity</code>s from a previously parsed stream will be discarded.
-     * 
+     *
      * @param input
      *            - the <code>InputStream</code> to be parsed.
      * @exception ParseException
@@ -324,7 +327,7 @@ public class XMLStreamParser implements XMLResponder {
 
     /**
      * Determine if unexpected XML entities were encountered during parsing.
-     * 
+     *
      * @return <code>true</code> if a non-fatal warning occured.
      */
     public boolean hasWarningMessage() {
@@ -333,7 +336,7 @@ public class XMLStreamParser implements XMLResponder {
 
     /**
      * Get the warning message from the last parse.
-     * 
+     *
      * @return The <code>String</code> warning message from the last parse. If
      *         there is no warning message, then an <code>null</code> value is
      *         returned.
@@ -348,7 +351,7 @@ public class XMLStreamParser implements XMLResponder {
     /**
      * Get any <code>Entity</code>s parsed from the last input stream. Entities
      * may have been parsed out of the stream, even if errors were encountered.
-     * 
+     *
      * @return A <code>Vector</code> containing <code>Entity</code>s parsed from
      *         the stream. This <code>Vector</code> may be empty, but it will
      *         never be <code>null</code>.

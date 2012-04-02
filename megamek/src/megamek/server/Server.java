@@ -27356,12 +27356,12 @@ public class Server implements Runnable {
             if (serverAccessKey != null) {
                 content += "&key="+serverAccessKey;
             }
-            System.out.println(content);
+            //System.out.println(content);
             printout.writeBytes(content);
             printout.flush ();
             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
-            System.out.println(conn.getResponseCode()+ " "+conn.getResponseMessage());
+            //System.out.println(conn.getResponseCode()+ " "+conn.getResponseMessage());
             if (conn.getResponseCode() == 200) {
                 while ((line = rd.readLine()) != null) {
                     System.out.println(line);

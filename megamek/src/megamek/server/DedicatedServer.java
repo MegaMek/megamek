@@ -38,6 +38,7 @@ public class DedicatedServer {
                 usePort = PreferenceManager.getClientPreferences()
                         .getLastServerPort();
             }
+            String announceUrl = cp.getAnnounceUrl();
 
             // kick off a RNG check
             megamek.common.Compute.d6();
@@ -45,7 +46,7 @@ public class DedicatedServer {
             Server dedicated;
             try {
                 dedicated = new Server(PreferenceManager.getClientPreferences()
-                        .getLastServerPass(), usePort);
+                        .getLastServerPass(), usePort, !announceUrl.equals(""), announceUrl);
             } catch (IOException ex) {
                 StringBuffer error = new StringBuffer();
                 error.append("Error: could not start server at localhost")
@@ -79,9 +80,11 @@ public class DedicatedServer {
 
         private String gameFilename;
         private int port;
+        private String announceUrl = "";
 
         // Options
         private static final String OPTION_PORT = "port"; //$NON-NLS-1$
+        private static final String OPTION_ANNOUNCE = "announce"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -89,17 +92,21 @@ public class DedicatedServer {
 
         /**
          * Returns the port option value or <code>-1</code> if it wasn't set
-         * 
+         *
          * @return port option value or <code>-1</code> if it wasn't set
          */
         public int getPort() {
             return port;
         }
 
+        public String getAnnounceUrl() {
+            return announceUrl;
+        }
+
         /**
          * Returns the game file name option value or <code>null</code> if it
          * wasn't set
-         * 
+         *
          * @return the game file name option value or <code>null</code> if it
          *         wasn't set
          */
@@ -109,9 +116,13 @@ public class DedicatedServer {
 
         @Override
         protected void start() throws ParseException {
-            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_PORT)) {
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_PORT)) {
                 nextToken();
                 parsePort();
+            }
+            if ((getToken() == TOK_OPTION) && getTokenValue().equals(OPTION_ANNOUNCE)) {
+                nextToken();
+                parseAnnounce();
             }
             if (getToken() == TOK_LITERAL) {
                 gameFilename = getTokenValue();
@@ -131,12 +142,20 @@ public class DedicatedServer {
                     //ignore, leave at -1
                 }
                 nextToken();
-                if (newPort < 0 || newPort > 65535) {
-                    error("invalid port number"); //$NON-NLS-1$                                    
+                if ((newPort < 0) || (newPort > 65535)) {
+                    error("invalid port number"); //$NON-NLS-1$
                 }
-                this.port = newPort;
+                port = newPort;
             } else {
-                error("port number expected"); //$NON-NLS-1$                
+                error("port number expected"); //$NON-NLS-1$
+            }
+        }
+
+        private void parseAnnounce() throws ParseException {
+            if (getToken() == TOK_LITERAL) {
+                announceUrl = getTokenValue();
+            } else {
+                error("meta server announce URL expected"); //$NON-NLS-1$
             }
         }
 

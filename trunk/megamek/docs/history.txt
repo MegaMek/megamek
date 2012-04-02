@@ -60,6 +60,8 @@ v0.35.29-dev (SVN)
 + client side of megamek server browser
 + Fixed size of Customize Mech dialog when Quirks are active.
 + Fighter bomb loads saved to and loaded from MUL files
++ added option so that deds can register with the server browser.
+   To do so, add the following commandline arguments: "-announce http://stormy-light-2818.herokuapp.com/announce"
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

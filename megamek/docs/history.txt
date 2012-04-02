@@ -1,5 +1,7 @@
 ﻿﻿VERSION HISTORY:
 ----------------
+v0.35.30-dev (SVN)
+
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)
 + Show confirmation dialog when trying to remove unit in deploymentphase

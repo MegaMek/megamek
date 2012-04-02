@@ -517,7 +517,8 @@ public class MiscType extends EquipmentType {
                 // 10% of unit weight
                 // round to half ton TODO: round to kilograms for small support
                 // vees, but we don't support them yet
-                return (float) (Math.ceil(entity.getWeight() / 20) * 2.0);
+                float weight = entity.getWeight() / 10;
+                return (float) (Math.ceil(weight * 2.0)) / 2.0f;
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {

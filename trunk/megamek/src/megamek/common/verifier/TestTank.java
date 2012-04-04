@@ -263,6 +263,18 @@ public class TestTank extends TestEntity {
                 }
             }
         }
+        for (int loc = 0; loc < tank.locations(); loc++) {
+            int count = 0;
+            for (Mounted misc : tank.getMisc()) {
+                if ((misc.getLocation() == loc) && misc.getType().hasFlag(MiscType.F_MANIPULATOR)) {
+                    count++;
+                }
+            }
+            if (count > 2) {
+                buff.append("max of 2 manipulators per location");
+                return false;
+            }
+        }
         if (tank instanceof VTOL) {
             for (Mounted m : tank.getEquipment()) {
                 if (m.getLocation() == VTOL.LOC_ROTOR) {

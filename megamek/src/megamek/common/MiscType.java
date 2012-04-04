@@ -185,6 +185,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_BULLDOZER = BigInteger.valueOf(1).shiftLeft(139);
     public static final BigInteger F_EXTERNAL_STORES_HARDPOINT = BigInteger.valueOf(1).shiftLeft(140);
     public static final BigInteger F_COMPACT_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(141);
+    public static final BigInteger F_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(142);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1113,6 +1114,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRefuelingDrogue());
         EquipmentType.addType(MiscType.createBulldozer());
         EquipmentType.addType(MiscType.createExternalStoresHardpoint());
+        EquipmentType.addType(MiscType.createManipulator());
 
     }
 
@@ -5605,6 +5607,19 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_B;
         misc.availRating = new int[]{RATING_D, RATING_E, RATING_D};
         misc.flags = misc.flags.or(F_EXTERNAL_STORES_HARDPOINT).or(F_SUPPORT_TANK_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createManipulator() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 0.01f;
+        misc.cost = 7500;
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Manipulator";
+        misc.setInternalName(misc.name);
+        misc.techRating = RATING_C;
+        misc.availRating = new int[]{RATING_C, RATING_D, RATING_C};
+        misc.flags = misc.flags.or(F_MANIPULATOR).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         return misc;
     }
 

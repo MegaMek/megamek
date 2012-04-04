@@ -68,7 +68,7 @@ public class HostDialog extends Dialog implements ActionListener {
         metaserverF.setEnabled(register);
 
         registerC = new Checkbox(Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
-        register = false;
+        register = true;
         registerC.setState(register);
         registerC.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {

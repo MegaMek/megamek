@@ -6701,11 +6701,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "ExtendedLRM 5 Ammo";
+        ammo.name = "Extended LRM 5 Ammo";
         ammo.shortName = "ELRM 5";
-        ammo.setInternalName("IS Ammo ExtendedLRM-5");
-        ammo.addLookupName("ISExtendedLRM5 Ammo");
-        ammo.addLookupName("IS ExtendedLRM 5 Ammo");
+        ammo.setInternalName("IS Ammo Extended LRM-5");
+        ammo.addLookupName("ISExtended LRM5 Ammo");
+        ammo.addLookupName("IS Extended LRM 5 Ammo");
         ammo.addLookupName("ELRM-5 Ammo (THB)");
         ammo.addLookupName("ELRM 5 Ammo");
         ammo.damagePerShot = 1;
@@ -6725,11 +6725,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "ExtendedLRM 10 Ammo";
+        ammo.name = "Extended LRM 10 Ammo";
         ammo.shortName = "ELRM 10";
-        ammo.setInternalName("IS Ammo ExtendedLRM-10");
-        ammo.addLookupName("ISExtendedLRM10 Ammo");
-        ammo.addLookupName("IS ExtendedLRM 10 Ammo");
+        ammo.setInternalName("IS Ammo Extended LRM-10");
+        ammo.addLookupName("ISExtended LRM10 Ammo");
+        ammo.addLookupName("IS Extended LRM 10 Ammo");
         ammo.addLookupName("ELRM-10 Ammo (THB)");
         ammo.addLookupName("ELRM 10 Ammo");
         ammo.damagePerShot = 1;
@@ -6749,11 +6749,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "ExtendedLRM 15 Ammo";
+        ammo.name = "Extended LRM 15 Ammo";
         ammo.shortName = "ELRM 15";
-        ammo.setInternalName("IS Ammo ExtendedLRM-15");
-        ammo.addLookupName("ISExtendedLRM15 Ammo");
-        ammo.addLookupName("IS ExtendedLRM 15 Ammo");
+        ammo.setInternalName("IS Ammo Extended LRM-15");
+        ammo.addLookupName("ISExtended LRM15 Ammo");
+        ammo.addLookupName("IS Extended LRM 15 Ammo");
         ammo.addLookupName("ELRM-15 Ammo (THB)");
         ammo.addLookupName("ELRM 15 Ammo");
         ammo.damagePerShot = 1;
@@ -6773,11 +6773,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        ammo.name = "ExtendedLRM 20 Ammo";
+        ammo.name = "Extended LRM 20 Ammo";
         ammo.shortName = "ELRM 20";
-        ammo.setInternalName("IS Ammo ExtendedLRM-20");
-        ammo.addLookupName("ISExtendedLRM20 Ammo");
-        ammo.addLookupName("IS ExtendedLRM 20 Ammo");
+        ammo.setInternalName("IS Ammo Extended LRM-20");
+        ammo.addLookupName("ISExtended LRM20 Ammo");
+        ammo.addLookupName("IS Extended LRM 20 Ammo");
         ammo.addLookupName("ELRM-20 Ammo (THB)");
         ammo.addLookupName("ELRM 20 Ammo");
         ammo.damagePerShot = 1;
@@ -7826,9 +7826,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "LightSCC Ammo";
-        ammo.setInternalName("Ammo LightSCC");
-        ammo.addLookupName("LightSCC Ammo");
+        ammo.name = "Light SCC Ammo";
+        ammo.setInternalName("Ammo Light SCC");
+        ammo.addLookupName("Light SCC Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SCC;
@@ -7845,9 +7845,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "MediumSCC Ammo";
-        ammo.setInternalName("Ammo MediumSCC");
-        ammo.addLookupName("MediumSCC Ammo");
+        ammo.name = "Medium SCC Ammo";
+        ammo.setInternalName("Ammo Medium SCC");
+        ammo.addLookupName("Medium SCC Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SCC;
@@ -7864,9 +7864,9 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "HeavySCC Ammo";
-        ammo.setInternalName("Ammo HeavySCC");
-        ammo.addLookupName("HeavySCC Ammo");
+        ammo.name = "Heavy SCC Ammo";
+        ammo.setInternalName("Ammo Heavy SCC");
+        ammo.addLookupName("Heavy SCC Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_SCC;

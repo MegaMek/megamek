@@ -3475,7 +3475,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
-        misc.name = "Anti Personal Weapon Mount";
+        misc.name = "Anti Personnel Weapon Mount";
         misc.setInternalName("BAAPMount");
         misc.tonnage = 0.0f;
         misc.criticals = 0;

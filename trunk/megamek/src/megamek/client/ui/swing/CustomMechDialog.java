@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -56,7 +55,6 @@ import megamek.client.ui.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.BombType;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -91,7 +89,7 @@ import megamek.common.preference.PreferenceManager;
  * Currently, changing pilots, setting up C3 networks, changing ammunition,
  * deploying artillery offboard, setting MGs to rapidfire, setting auto-eject is
  * supported.
- * 
+ *
  * @author Ben
  */
 public class CustomMechDialog extends ClientDialog implements ActionListener,
@@ -832,8 +830,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
 
-        Aero a = (Aero) entity;
-        m_bombs = new BombChoicePanel(a.getBombChoices(), a.getMaxBombPoints());
+        m_bombs = new BombChoicePanel((Aero) entity, client.game.getOptions().booleanOption("at2_nukes"),
+                client.game.getOptions().booleanOption("allow_advanced_ammo"));
         panBombs.add(m_bombs, GBC.std());
     }
 
@@ -1124,7 +1122,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         /**
          * Get the number of shots in the mount.
-         * 
+         *
          * @return the <code>int</code> number of shots in the mount.
          */
         int getShotsLeft() {
@@ -1133,7 +1131,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         /**
          * Set the number of shots in the mount.
-         * 
+         *
          * @param shots
          *            the <code>int</code> number of shots for the mount.
          */
@@ -1183,136 +1181,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         public void setEnabled(boolean enabled) {
             m_choice.setEnabled(enabled);
         }
-    }
-
-    class BombChoicePanel extends JPanel implements ItemListener {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 483782753790544050L;
-
-        private JComboBox[] b_choices = new JComboBox[BombType.B_NUM];
-        private JLabel[] b_labels = new JLabel[BombType.B_NUM];
-        private int maxPoints = 0;
-        private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
-
-        public BombChoicePanel(int[] bombChoices, int maxBombPoints) {
-            maxPoints = maxBombPoints;
-
-            // how many bomb points am I currently using?
-            int curBombPoints = 0;
-            for (int i = 0; i < bombChoices.length; i++) {
-                curBombPoints += bombChoices[i] * BombType.getBombCost(i);
-            }
-            int availBombPoints = maxBombPoints - curBombPoints;
-
-            GridBagLayout g = new GridBagLayout();
-            setLayout(g);
-            GridBagConstraints c = new GridBagConstraints();
-
-            int column = 0;
-            int row = 0;
-            for (int type = 0; type < BombType.B_NUM; type++) {
-
-                b_labels[type] = new JLabel();
-                b_choices[type] = new JComboBox();
-
-                for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                        / BombType.getBombCost(type)), bombChoices[type]); x++) {
-                    b_choices[type].addItem(Integer.toString(x));
-                }
-
-                b_choices[type].setSelectedIndex(bombChoices[type]);
-                b_labels[type].setText(BombType.getBombName(type));
-                b_choices[type].addItemListener(this);
-
-                if ((type == BombType.B_ALAMO)
-                        && !client.game.getOptions().booleanOption("at2_nukes")) {
-                    b_choices[type].setEnabled(false);
-                }
-                if ((type > BombType.B_TAG)
-                        && !client.game.getOptions().booleanOption(
-                                "allow_advanced_ammo")) {
-                    b_choices[type].setEnabled(false);
-                }
-                if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)
-                        || (type == BombType.B_TAG)) {
-                    b_choices[type].setEnabled(false);
-                }
-
-                if (row >= maxRows) {
-                    row = 0;
-                    column += 2;
-                }
-
-                c.gridx = column;
-                c.gridy = row;
-                c.anchor = GridBagConstraints.EAST;
-                g.setConstraints(b_labels[type], c);
-                add(b_labels[type]);
-
-                c.gridx = column + 1;
-                c.gridy = row;
-                c.anchor = GridBagConstraints.WEST;
-                g.setConstraints(b_choices[type], c);
-                add(b_choices[type]);
-                row++;
-            }
-        }
-
-        public void itemStateChanged(ItemEvent ie) {
-
-            int[] current = new int[BombType.B_NUM];
-            int curPoints = 0;
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                current[type] = b_choices[type].getSelectedIndex();
-                curPoints += current[type] * BombType.getBombCost(type);
-            }
-
-            int availBombPoints = maxPoints - curPoints;
-
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                b_choices[type].removeItemListener(this);
-                b_choices[type].removeAllItems();
-                for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                        / BombType.getBombCost(type)), current[type]); x++) {
-                    b_choices[type].addItem(Integer.toString(x));
-                }
-                b_choices[type].setSelectedIndex(current[type]);
-                b_choices[type].addItemListener(this);
-            }
-        }
-
-        public void applyChoice() {
-            int[] choices = new int[BombType.B_NUM];
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                choices[type] = b_choices[type].getSelectedIndex();
-            }
-
-            ((Aero) entity).setBombChoices(choices);
-
-        }
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            for (int type = 0; type < BombType.B_NUM; type++) {
-                if ((type == BombType.B_ALAMO)
-                        && !client.game.getOptions().booleanOption("at2_nukes")) {
-                    b_choices[type].setEnabled(false);
-                } else if ((type > BombType.B_TAG)
-                        && !client.game.getOptions().booleanOption(
-                                "allow_advanced_ammo")) {
-                    b_choices[type].setEnabled(false);
-                } else if ((type == BombType.B_ASEW)
-                        || (type == BombType.B_ALAMO)
-                        || (type == BombType.B_TAG)) {
-                    b_choices[type].setEnabled(false);
-                } else {
-                    b_choices[type].setEnabled(enabled);
-                }
-            }
-        }
-
     }
 
     /**

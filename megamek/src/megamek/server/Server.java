@@ -27364,14 +27364,14 @@ public class Server implements Runnable {
             //System.out.println(conn.getResponseCode()+ " "+conn.getResponseMessage());
             if (conn.getResponseCode() == 200) {
                 while ((line = rd.readLine()) != null) {
-                    System.out.println(line);
+                    //System.out.println(line);
                     if (serverAccessKey == null) {
                         serverAccessKey = line;
                     }
                 }
             } else {
                 while ((line = rd.readLine()) != null) {
-                    System.out.println(line);
+                    //System.out.println(line);
                 }
             }
             rd.close();

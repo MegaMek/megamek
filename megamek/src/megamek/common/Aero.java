@@ -26,8 +26,6 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.PPCWeapon;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -1059,7 +1057,7 @@ public class Aero extends Entity {
 
         boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
 
-        for (int loc = 0; loc < (locations() - 1); loc++) {
+        for (int loc = 0; loc < (this instanceof SmallCraft?locations():(locations() - 1)); loc++) {
 
             int modularArmor = 0;
             for (Mounted mounted : getEquipment()) {
@@ -1263,87 +1261,6 @@ public class Aero extends Entity {
             bvText.append(endRow);
         }
 
-        // subtract for explosive ammo
-        double ammoPenalty = 0;
-        // need to keep track of any ammo type already used
-        boolean[][] ammoTypesUsed = new boolean[AmmoType.NUM_TYPES][41];
-        for (Mounted mounted : getEquipment()) {
-            int loc = mounted.getLocation();
-            int toSubtract = 15;
-            EquipmentType etype = mounted.getType();
-
-            // only count explosive ammo
-            if (!etype.isExplosive()) {
-                continue;
-            }
-            // PPCs with capacitors subtract 1
-            if (etype instanceof PPCWeapon) {
-                if (mounted.getLinkedBy() != null) {
-                    toSubtract = 1;
-                } else {
-                    continue;
-                }
-            }
-
-            // do not count weapon groups
-            if (mounted.isWeaponGroup()) {
-                continue;
-            }
-
-            // CASE means no subtraction
-            // clan ASF have CASE automatically
-            if (hasCase() || isClan()) {
-                continue;
-            }
-
-            // don't count oneshot ammo
-            if (loc == LOC_NONE) {
-                continue;
-            }
-
-            // gauss rifles only subtract 1 point per slot
-            if (etype instanceof GaussWeapon) {
-                toSubtract = 1;
-            }
-
-            // only ammo counts from here on out
-            if ((etype instanceof AmmoType)) {
-                AmmoType aType = (AmmoType) etype;
-                // empty ammo shouldn't count
-                if (mounted.getShotsLeft() == 0) {
-                    continue;
-                }
-                // only subtract once for each weapon
-                // we identify by matching via the ammoType var and the racksize
-                if (ammoTypesUsed[aType.ammoType][aType.getRackSize()]) {
-                    continue;
-                }
-                ammoTypesUsed[aType.ammoType][aType.getRackSize()] = true;
-            }
-            ammoPenalty += toSubtract;
-        }
-        dbv = Math.max(1, dbv - ammoPenalty);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Explosive Weapons/Equipment Penalty ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= -");
-        bvText.append(ammoPenalty);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
 
         bvText.append("-------------");
         bvText.append(endColumn);
@@ -2817,6 +2734,7 @@ public class Aero extends Entity {
      *
      * @return
      */
+    @Override
     public boolean hasCase() {
 
         boolean hasCase = false;

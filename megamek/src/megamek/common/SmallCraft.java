@@ -520,7 +520,7 @@ public class SmallCraft extends Aero {
 
         // add in controls
         // bridge
-        cost += 200000 + 10 * weight;
+        cost += 200000 + (10 * weight);
         // computer
         cost += 200000;
         // life support
@@ -536,7 +536,7 @@ public class SmallCraft extends Aero {
         cost += 100000 * getSI();
 
         // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + 10 * getWeight();
+        cost += 25000 + (10 * getWeight());
 
         // engine
         double engineMultiplier = 0.065;
@@ -546,16 +546,16 @@ public class SmallCraft extends Aero {
         double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
         cost += engineWeight * 1000;
         // drive unit
-        cost += 500 * getOriginalWalkMP() * weight / 100.0;
+        cost += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // fuel tanks
-        cost += 200 * getFuel() / 80.0;
+        cost += (200 * getFuel()) / 80.0;
 
         // armor
         cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
+        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
         cost += sinkCost * getHeatSinks();
 

@@ -243,7 +243,7 @@ public class AmmoType extends EquipmentType {
     public static final long M_VIBRABOMB_IV = 1l << 42;
     public static final long M_SMOKE = 1l << 43;
     public static final long M_LASER_INHIB = 1l << 44;
-    
+
     // Nuclear Munitions
     public static final long M_DAVY_CROCKETT_M = 1l << 45;
     public static final long M_SANTA_ANNA = 1l << 46;
@@ -7829,6 +7829,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Light SCC Ammo";
         ammo.setInternalName("Ammo Light SCC");
         ammo.addLookupName("Light SCC Ammo");
+        ammo.addLookupName("LightSCC Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SCC;
@@ -7848,6 +7849,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Medium SCC Ammo";
         ammo.setInternalName("Ammo Medium SCC");
         ammo.addLookupName("Medium SCC Ammo");
+        ammo.addLookupName("MediumSCC Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SCC;
@@ -7867,6 +7869,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Heavy SCC Ammo";
         ammo.setInternalName("Ammo Heavy SCC");
         ammo.addLookupName("Heavy SCC Ammo");
+        ammo.addLookupName("HeavySCC Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_SCC;

@@ -160,6 +160,9 @@ public class Compute {
      */
     public static Entity stackingViolation(IGame game, int enteringId, Coords coords) {
         Entity entering = game.getEntity(enteringId);
+        if (entering == null) {
+            return null;
+        }
         return Compute.stackingViolation(game, entering, coords, null);
     }
 

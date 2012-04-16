@@ -8,6 +8,7 @@ v0.35.30-dev (SVN)
 + Broke out the BombChoicePanel into a separate class so that it may be accessed
     from MekHQ.
 + Bug: Aero BV fix
++ Fix stacking check NPE
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

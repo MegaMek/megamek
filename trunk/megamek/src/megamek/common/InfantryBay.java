@@ -89,7 +89,7 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Infantry - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " tons" : " ton");
+        return "Infantry Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " tons" : " ton");
     }
 
     @Override

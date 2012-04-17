@@ -333,54 +333,59 @@ public class BLKFile {
             blk.writeBlockData("transporters", tran.toString());
         }
 
-        int engineCode = BLKFile.FUSION;
-        switch (t.getEngine().getEngineType()) {
-            case Engine.COMBUSTION_ENGINE:
-                engineCode = BLKFile.ICE;
-                break;
-            case Engine.LIGHT_ENGINE:
-                engineCode = BLKFile.LIGHT;
-                break;
-            case Engine.XL_ENGINE:
-                engineCode = BLKFile.XL;
-                break;
-            case Engine.XXL_ENGINE:
-                engineCode = BLKFile.XXL;
-                break;
-            case Engine.FUEL_CELL:
-                engineCode = BLKFile.FUELCELL;
-                break;
-            case Engine.FISSION:
-                engineCode = BLKFile.FISSION;
-                break;
-            case Engine.NONE:
-                engineCode = BLKFile.NONE;
-                break;
-        }
-        blk.writeBlockData("engine_type", engineCode);
         blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
-        if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
-            blk.writeBlockData("armor_type", t.getArmorType(1));
-            blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
-        } else if (t.hasPatchworkArmor()) {
-            blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
-            for (int i = 1; i < t.locations(); i++) {
-                blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
-                blk.writeBlockData(t.getLocationName(i) + "_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
+
+        if (!(t instanceof Infantry)) {
+            int engineCode = BLKFile.FUSION;
+            switch (t.getEngine().getEngineType()) {
+                case Engine.COMBUSTION_ENGINE:
+                    engineCode = BLKFile.ICE;
+                    break;
+                case Engine.LIGHT_ENGINE:
+                    engineCode = BLKFile.LIGHT;
+                    break;
+                case Engine.XL_ENGINE:
+                    engineCode = BLKFile.XL;
+                    break;
+                case Engine.XXL_ENGINE:
+                    engineCode = BLKFile.XXL;
+                    break;
+                case Engine.FUEL_CELL:
+                    engineCode = BLKFile.FUELCELL;
+                    break;
+                case Engine.FISSION:
+                    engineCode = BLKFile.FISSION;
+                    break;
+                case Engine.NONE:
+                    engineCode = BLKFile.NONE;
+                    break;
             }
+            blk.writeBlockData("engine_type", engineCode);
+            if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
+                blk.writeBlockData("armor_type", t.getArmorType(1));
+                blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));
+            } else if (t.hasPatchworkArmor()) {
+                blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
+                for (int i = 1; i < t.locations(); i++) {
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", t.getArmorType(i));
+                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech", TechConstants.getTechName(t.getArmorTechLevel(i)));
+                }
+            }
+            if (t.getStructureType() != 0) {
+                blk.writeBlockData("internal_type", t.getStructureType());
+            }
+            if (t.isOmni()) {
+                blk.writeBlockData("omni", 1);
+            }
+            int armor_array[];
+            armor_array = new int[t.locations() - 1];
+            for (int i = 1; i < t.locations(); i++) {
+                armor_array[i - 1] = t.getOArmor(i);
+            }
+            blk.writeBlockData("armor", armor_array);
         }
-        if (t.getStructureType() != 0) {
-            blk.writeBlockData("internal_type", t.getStructureType());
-        }
-        if (t.isOmni()) {
-            blk.writeBlockData("omni", 1);
-        }
-        int armor_array[];
-        armor_array = new int[t.locations() - 1];
-        for (int i = 1; i < t.locations(); i++) {
-            armor_array[i - 1] = t.getOArmor(i);
-        }
-        blk.writeBlockData("armor", armor_array);
+
+
 
         Vector<Vector<String>> eq = new Vector<Vector<String>>(t.locations());
         for (int i = 0; i < t.locations(); i++) {
@@ -429,6 +434,8 @@ public class BLKFile {
             if (ba.isExoskeleton()) {
                 blk.writeBlockData("exoskeleton", "true");
             }
+            blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
+            blk.writeBlockData("armor", new int[]{ba.getArmor(1)});
         }
 
         if (t.getUseManualBV()) {

@@ -186,6 +186,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_EXTERNAL_STORES_HARDPOINT = BigInteger.valueOf(1).shiftLeft(140);
     public static final BigInteger F_COMPACT_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(141);
     public static final BigInteger F_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(142);
+    public static final BigInteger F_CARGOLIFTER = BigInteger.valueOf(1).shiftLeft(143);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -3385,10 +3386,11 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Cargo Lifter";
         misc.setInternalName("BACargoLifter");
-        misc.tonnage = 0.0f;
+        misc.tonnage = 0.03f;
         misc.criticals = 0;
+        misc.cost = 250;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_CARGOLIFTER);
         misc.bv = 0;
 
         return misc;

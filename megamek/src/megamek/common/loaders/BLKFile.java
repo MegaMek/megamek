@@ -326,7 +326,7 @@ public class BLKFile {
             }
         }
         blk.writeBlockData("type", type);
-        blk.writeBlockData("tonnage", t.getWeight());
+
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
 
         for (Transporter tran : t.getTransports()) {
@@ -336,6 +336,7 @@ public class BLKFile {
         blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
 
         if (!(t instanceof Infantry)) {
+
             int engineCode = BLKFile.FUSION;
             switch (t.getEngine().getEngineType()) {
                 case Engine.COMBUSTION_ENGINE:
@@ -436,6 +437,10 @@ public class BLKFile {
             }
             blk.writeBlockData("jumpingMP", ba.getOriginalJumpMP());
             blk.writeBlockData("armor", new int[]{ba.getArmor(1)});
+            blk.writeBlockData("Trooper Count", (int)t.getWeight());
+            blk.writeBlockData("weightclass", ba.getWeightClass());
+        } else {
+            blk.writeBlockData("tonnage", t.getWeight());
         }
 
         if (t.getUseManualBV()) {

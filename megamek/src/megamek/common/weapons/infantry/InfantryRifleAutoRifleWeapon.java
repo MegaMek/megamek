@@ -33,7 +33,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
     public InfantryRifleAutoRifleWeapon() {
         super();
         techLevel = TechConstants.T_TW_ALL;
-        name = "Infantry Automatic Rifle";
+        name = "Infantry Auto Rifle";
         setInternalName(name);
         addLookupName("InfantryAssaultRifle");
         addLookupName("Auto Rifle");
@@ -43,6 +43,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.52;
         infantryRange = 1;
+        damage = 1;
         minimumRange = 0;
         shortRange = 1;
         mediumRange = 2;

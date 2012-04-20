@@ -32,7 +32,7 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
     public InfantryPortableMGWeapon() {
         super();
         techLevel = TechConstants.T_INTRO_BOXSET;
-        name = "Portable MG";
+        name = "Infantry Portable MG";
         setInternalName(name);
         addLookupName("InfantryMGPortable");
         addLookupName("InfantryMG");

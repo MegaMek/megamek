@@ -44,6 +44,7 @@ public class InfantrySupportHeavyMachineGunWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT);
         infantryDamage = 0.94;
         infantryRange = 2;
+        damage = 1;
         minimumRange = 0;
         shortRange = 2;
         mediumRange = 4;

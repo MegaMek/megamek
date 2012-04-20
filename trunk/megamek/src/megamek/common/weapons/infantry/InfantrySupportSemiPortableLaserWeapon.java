@@ -36,7 +36,6 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
         name = "Infantry Semi-Portable Laser";
         setInternalName(name);
         addLookupName("InfantrySemiPortableLaser");
-        addLookupName("InfantrySupportLaser");
         ammoType = AmmoType.T_NA;
         cost = 5000;
         bv = 3.69;

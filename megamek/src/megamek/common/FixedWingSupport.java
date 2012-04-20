@@ -136,4 +136,16 @@ public class FixedWingSupport extends ConvFighter {
         }
         maxBombPoints = bombpoints;
     }
+
+    @Override
+    public void initializeThresh(int loc) {
+        int bar = getBARRating(loc);
+        if (bar == 10) {
+            setThresh((int) Math.ceil(getArmor(loc) / 10.0), loc);
+        } else if (bar >= 2) {
+            setThresh(1, loc);
+        } else {
+            setThresh(0, loc);
+        }
+    }
 }

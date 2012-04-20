@@ -42,5 +42,11 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
         infantryDamage = 0.65;
         infantryRange = 1;
+        damage = 1;
+        minimumRange = 0;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
     }
 }

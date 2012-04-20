@@ -43,5 +43,10 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.52;
         infantryRange = 1;
+        minimumRange = 0;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
     }
 }

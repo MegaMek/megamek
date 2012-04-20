@@ -11,6 +11,7 @@ v0.35.30-dev (SVN)
 + Fix stacking check NPE
 + BA cargo lifter construction data fix
 + BA BLK saving fix
++ fixed wing support damage threshold
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

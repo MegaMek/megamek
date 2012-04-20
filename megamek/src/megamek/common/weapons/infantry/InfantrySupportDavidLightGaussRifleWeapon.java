@@ -42,5 +42,10 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.56;
         infantryRange = 3;
         crew = 1;
+        minimumRange = 0;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
     }
 }

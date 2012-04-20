@@ -44,5 +44,10 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
         infantryDamage = 1.05;
         infantryRange = 6;
         crew = 4;
+        minimumRange = 0;
+        shortRange = 6;
+        mediumRange = 12;
+        longRange = 18;
+        extremeRange = 24;
     }
 }

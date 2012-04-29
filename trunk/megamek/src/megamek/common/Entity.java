@@ -4068,7 +4068,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setC3NetIdSelf() {
-        c3NetIdString = "C3i." + getId();
+        c3NetIdString = getId();
     }
 
     /**

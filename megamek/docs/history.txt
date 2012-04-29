@@ -13,6 +13,7 @@ v0.35.30-dev (SVN)
 + BA BLK saving fix
 + fixed wing support damage threshold
 + some infantry weapon ranges for when mounted on support vees
++ clean up C3i inconsistency in Entity.java
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

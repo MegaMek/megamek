@@ -658,7 +658,7 @@ public class EntityListFile {
                 while (c3iList.hasNext()) {
                     final Entity C3iEntity = c3iList.next();
 
-                    if (C3iEntity.onSameC3NetworkAs(entity)) {
+                    if (C3iEntity.onSameC3NetworkAs(entity, true)) {
                         output.write("         <c3i_link link=\"");
                         output.write(C3iEntity.getC3UUIDAsString());
                         output.write("\"/>");

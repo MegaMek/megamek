@@ -22523,29 +22523,18 @@ public class Server implements Runnable {
                     }
                 }
 
-                // C3i Checks
+                // C3i Checks// C3i Checks
                 if (entity.hasC3i() && (C3iSet == false)) {
+					entity.setC3NetIdSelf();
                     int pos = 0;
                     System.out
                             .println("Checking for C3i links for: "
                                     + entity.getChassis() + " ("
-                                    + entity.getId() + ")");
+                                    + entity.getId() + ", " + entity.getC3UUIDAsString() + ")");
                     while (pos < Entity.MAX_C3i_NODES) {
-                        System.out.println("C3i Loop position: " + pos);
-                        // We've reached our own UUID... so we'll start a
-                        // network ourself.
-                        if ((entity.getC3iNextUUIDAsString(pos) != null)
-                                && (entity.getC3UUIDAsString() != null)
-                                && entity.getC3iNextUUIDAsString(pos).equals(
-                                        entity.getC3UUIDAsString())) {
-                            System.out
-                                    .println("Attempting to setup a new C3i Network");
-                            entity.setC3NetIdSelf();
-                            C3iSet = true;
-                            break;
-                        }
+                        System.out.println("C3i Slot: " + pos + ",  ID: " + entity.getC3iNextUUIDAsString(pos));
                         // We've found a network, join it.
-                        else if ((entity.getC3iNextUUIDAsString(pos) != null)
+                        if ((entity.getC3iNextUUIDAsString(pos) != null)
                                 && (e.getC3UUIDAsString() != null)
                                 && entity.getC3iNextUUIDAsString(pos).equals(
                                         e.getC3UUIDAsString())) {

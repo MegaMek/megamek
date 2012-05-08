@@ -200,7 +200,7 @@ public class Tank extends Entity {
         //this is rather a hack but the only idea I came up with.
         //for the first time this is checked. If this is a partially repaired turret it will be jammed.
         //so just set it to jammed and change the partial repair value to false.
-        
+
         if (getPartialRepairs().booleanOption("veh_locked_turret")){
             m_bTurretJammed = true;
             m_bDualTurretJammed = true;
@@ -1615,7 +1615,7 @@ public class Tank extends Entity {
 
         // and then factor in pilot
         double pilotFactor = 1;
-        if (!ignorePilot && null != getCrew()) {
+        if (!ignorePilot && (null != getCrew())) {
             pilotFactor = getCrew().getBVSkillMultiplier();
         }
 
@@ -2666,8 +2666,12 @@ public class Tank extends Entity {
 
     @Override
     public void setArmorType(int armType) {
+        setArmorType(armType, true);
+    }
+
+    public void setArmorType(int armType, boolean addMount) {
         super.setArmorType(armType);
-        if (armType == EquipmentType.T_ARMOR_STEALTH) {
+        if ((armType == EquipmentType.T_ARMOR_STEALTH) && addMount) {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH)), LOC_BODY);
             } catch (LocationFullException e) {

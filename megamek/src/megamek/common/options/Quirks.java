@@ -22,6 +22,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
+import megamek.common.IGame;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Protomech;
@@ -37,8 +38,14 @@ public class Quirks extends AbstractOptions {
     public static final String POS_QUIRKS = "PosQuirks"; //$NON-NLS-1$
     public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
 
+    public IGame game = null;
+
     public Quirks() {
         super();
+    }
+
+    public void setGame(IGame g) {
+        game = g;
     }
 
     @Override
@@ -453,6 +460,8 @@ public class Quirks extends AbstractOptions {
         }
     }
 
-
-
+    @Override
+    public boolean booleanOption(String name) {
+        return super.booleanOption(name) && ((game != null) && game.getOptions().booleanOption("stratops_quirks"));
+    }
 }

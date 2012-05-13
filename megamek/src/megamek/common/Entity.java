@@ -611,6 +611,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setGame(IGame game) {
         this.game = game;
+        quirks.setGame(game);
         restore();
         // Make sure the owner is set.
         if (null == owner) {

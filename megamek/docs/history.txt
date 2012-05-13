@@ -79,6 +79,7 @@ v0.35.29 (2012-04-02)
 + Fighter bomb loads saved to and loaded from MUL files
 + added option so that deds can register with the server browser.
    To do so, add the following commandline arguments: "-announce http://stormy-light-2818.herokuapp.com/announce"
++ Bug 3524538: Stratops quirks
 
 v0.35.28 (2012-22-02, 23:07 UTC+1)
 + Added bridgelayer construction data

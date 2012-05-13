@@ -74,12 +74,12 @@ public class Bay implements Transporter {
      *            - The weight of troops (in tons) this space can carry.
      * @param bayNumber2
      */
-    public Bay(double space, int doors, int bayNumber2) {
+    public Bay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
-        bayNumber = bayNumber;
+        this.bayNumber = bayNumber;
     }
 
     public int getDoors() {

@@ -16,6 +16,7 @@ v0.35.30-dev (SVN)
 + ignore ECM for C3/C3i when saving unit list
 + fixed bug with new re-linking of C3i networks from MUL files
 + removed extra debug logging for C3/C3i relinking
++ aero Bay stuff for MML
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

@@ -43,12 +43,14 @@ public final class BattleArmorBay extends Bay {
      *
      * @param space
      *            - The weight of troops (in tons) this space can carry.
+     * @param bayNumber
      */
-    public BattleArmorBay(double space, int doors) {
+    public BattleArmorBay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.bayNumber = bayNumber;
     }
 
     /**

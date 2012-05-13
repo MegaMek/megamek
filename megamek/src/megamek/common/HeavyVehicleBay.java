@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -40,21 +40,23 @@ public final class HeavyVehicleBay extends Bay {
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
-     * 
+     *
      * @param space
      *            - The weight of troops (in tons) this space can carry.
+     * @param bayNumber
      */
-    public HeavyVehicleBay(double space, int doors) {
+    public HeavyVehicleBay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.bayNumber = bayNumber;
     }
 
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>

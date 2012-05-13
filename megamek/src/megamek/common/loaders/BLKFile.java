@@ -455,6 +455,10 @@ public class BLKFile {
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 transporter = transporter.toLowerCase();
+                // for bays, we have to save the baynumber in each bay, because
+                // one conceputal bay can contain several different ones
+                // we default to bay 1
+                int bayNumber = 1;
                 // TroopSpace:
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
@@ -465,85 +469,155 @@ public class BLKFile {
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new CargoBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new CargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("liquidcargobay:", 0)) {
                     String numbers = transporter.substring(15);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new LiquidCargoBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new LiquidCargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("insulatedcargobay:", 0)) {
                     String numbers = transporter.substring(18);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new InsulatedCargoBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new InsulatedCargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("refrigeratedcargobay:", 0)) {
                     String numbers = transporter.substring(21);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new RefrigeratedCargoBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new RefrigeratedCargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("livestockcargobay:", 0)) {
                     String numbers = transporter.substring(18);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new LivestockCargoBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new LivestockCargoBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("asfbay:", 0)) {
                     String numbers = transporter.substring(7);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new ASFBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new ASFBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("smallcraftbay:", 0)) {
                     String numbers = transporter.substring(14);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new SmallCraftBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new SmallCraftBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("mechbay:", 0)) {
                     String numbers = transporter.substring(8);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new MechBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new MechBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("lightvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new LightVehicleBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new LightVehicleBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("heavyvehiclebay:", 0)) {
                     String numbers = transporter.substring(16);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new HeavyVehicleBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new HeavyVehicleBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new InfantryBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new InfantryBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("battlearmorbay:", 0)) {
                     String numbers = transporter.substring(15);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new BattleArmorBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new BattleArmorBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("bay:", 0)) {
                     String numbers = transporter.substring(4);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new Bay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new Bay(size, doors, bayNumber));
                 } else if (transporter.startsWith("protomechbay:", 0)) {
                     String numbers = transporter.substring(13);
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
-                    e.addTransporter(new ProtomechBay(size, doors));
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // if no bay nunber is specified, we default to 1
+                    }
+                    e.addTransporter(new ProtomechBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("crewquarters:", 0)) {
                     String numbers = transporter.substring(13);
                     String temp[] = numbers.split(":");

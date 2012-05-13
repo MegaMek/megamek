@@ -45,12 +45,14 @@ public final class InfantryBay extends Bay {
      *
      * @param space
      *            - The weight of troops (in tons) this space can carry.
+     * @param bayNumber
      */
-    public InfantryBay(double space, int doors) {
+    public InfantryBay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.bayNumber = bayNumber;
     }
 
     /**

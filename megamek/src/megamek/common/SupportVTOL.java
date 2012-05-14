@@ -84,7 +84,7 @@ public class SupportVTOL extends VTOL implements Serializable {
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
     }
-    
+
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps
@@ -95,5 +95,30 @@ public class SupportVTOL extends VTOL implements Serializable {
             return 2;
         }
         return 3;
+    }
+
+    public float getBaseEngineValue() {
+        if (getWeight() < 5) {
+            return 0.002f;
+        } else if (!isSuperHeavy()) {
+            return 0.0025f;
+        } else {
+            return 0.004f;
+        }
+    }
+
+    public float getBaseChassisValue() {
+        if (getWeight() < 5) {
+            return 0.2f;
+        } else if (!isSuperHeavy()) {
+            return 0.25f;
+        } else {
+            return 0.3f;
+        }
+    }
+
+    @Override
+    public int getTotalSlots() {
+        return 5 + (int) Math.floor(getWeight() / 10);
     }
  }

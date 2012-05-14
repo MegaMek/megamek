@@ -196,4 +196,117 @@ public class SupportTank extends Tank {
         }
     }
 
+    public float getBaseEngineValue() {
+        switch (movementMode) {
+            /*case AIRSHIP:
+                if (getWeight() < 5) {
+                    return 0.005f;
+                } else {
+                    return 0.008f;
+                }*/
+            case HOVER:
+                if (getWeight() < 5) {
+                    return 0.0025f;
+                } else if (!isSuperHeavy()) {
+                    return 0.004f;
+                } else {
+                    return 0.008f;
+                }
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                if (getWeight() < 5) {
+                    return 0.004f;
+                } else {
+                    return 0.007f;
+                }
+            case TRACKED:
+                if (getWeight() < 5) {
+                    return 0.006f;
+                } else if (!isSuperHeavy()) {
+                    return 0.013f;
+                } else {
+                    return 0.025f;
+                }
+            case WHEELED:
+                if (getWeight() < 5) {
+                    return 0.0025f;
+                } else if (!isSuperHeavy()) {
+                    return 0.0075f;
+                } else {
+                    return 0.015f;
+                }
+            case WIGE:
+                if (getWeight() < 5) {
+                    return 0.003f;
+                } else if (!isSuperHeavy()) {
+                    return 0.005f;
+                } else {
+                    return 0.006f;
+                }
+           default:
+               return 0f;
+        }
+    }
+
+    public float getBaseChassisValue() {
+        switch (movementMode) {
+            /*case AIRSHIP:
+                if (getWeight() < 5) {
+                    return 0.2f;
+                } else {
+                    return 0.25f;
+                }*/
+            case HOVER:
+                if (getWeight() < 5) {
+                    return 0.2f;
+                } else if (!isSuperHeavy()) {
+                    return 0.25f;
+                } else {
+                    return 0.3f;
+                }
+            case NAVAL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else {
+                    return 0.15f;
+                }
+            case TRACKED:
+                if (getWeight() < 5) {
+                    return 0.13f;
+                } else if (!isSuperHeavy()) {
+                    return 0.15f;
+                } else {
+                    return 0.25f;
+                }
+            case WHEELED:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else if (!isSuperHeavy()) {
+                    return 0.15f;
+                } else {
+                    return 0.18f;
+                }
+            case WIGE:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else if (!isSuperHeavy()) {
+                    return 0.15f;
+                } else {
+                    return 0.17f;
+                }
+           default:
+               return 0f;
+        }
+    }
+
+    @Override
+    public int getTotalSlots() {
+        return 5 + (int) Math.floor(getWeight() / 10);
+    }
+
+
+
 }

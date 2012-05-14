@@ -148,4 +148,28 @@ public class FixedWingSupport extends ConvFighter {
             setThresh(0, loc);
         }
     }
+
+    public float getBaseEngineValue() {
+        if (getWeight() < 5) {
+            return 0.005f;
+        } else if (getWeight() <= 100) {
+            return 0.01f;
+        } else {
+            return 0.015f;
+        }
+    }
+
+    public float getBaseChassisValue() {
+        if (getWeight() < 5) {
+            return 0.08f;
+        } else if (getWeight() <= 100) {
+            return 0.1f;
+        } else {
+            return 0.15f;
+        }
+    }
+
+    public int getTotalSlots() {
+        return 5 + (int) Math.floor(getWeight() / 10);
+    }
 }

@@ -81,6 +81,8 @@ import megamek.common.preference.PreferenceManager;
  * @since 2012-05-20
  */
 public class EquipChoicePanel extends JPanel implements Serializable {
+    static final long serialVersionUID = 672299770230285567L;
+
     private final Entity entity;
 
     private int[] entityCorrespondance;

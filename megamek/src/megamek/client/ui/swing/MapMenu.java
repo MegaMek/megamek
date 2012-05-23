@@ -1050,7 +1050,11 @@ public class MapMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int twistDir = Integer.parseInt(e.getActionCommand());
-                    ((FiringDisplay) currentPanel).torsoTwist(twistDir);
+                    if (currentPanel instanceof FiringDisplay) {
+                        ((FiringDisplay) currentPanel).torsoTwist(twistDir);
+                    } else if (currentPanel instanceof TargetingPhaseDisplay) {
+                        ((TargetingPhaseDisplay) currentPanel).torsoTwist(twistDir);
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -1069,7 +1073,11 @@ public class MapMenu extends JPopupMenu {
                 try {
                     StringTokenizer result = new StringTokenizer(e.getActionCommand(), "|");
                     Coords coord = new Coords(Integer.parseInt(result.nextToken()), Integer.parseInt(result.nextToken()));
-                    ((FiringDisplay) currentPanel).torsoTwist(coord);
+                    if (currentPanel instanceof FiringDisplay) {
+                        ((FiringDisplay) currentPanel).torsoTwist(coord);
+                    } else if (currentPanel instanceof TargetingPhaseDisplay) {
+                        ((TargetingPhaseDisplay) currentPanel).torsoTwist(coord);
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

@@ -290,7 +290,7 @@ public abstract class Mech extends Entity {
     }
 
     public boolean hasCowl() {
-        return getQuirks().booleanOption("cowl");
+        return hasQuirk("cowl");
     }
 
     /**
@@ -1658,7 +1658,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean canChangeSecondaryFacing() {
-        if (getQuirks().booleanOption("no_twist")) {
+        if (hasQuirk("no_twist")) {
             return false;
         }
         return !isProne();
@@ -1671,7 +1671,7 @@ public abstract class Mech extends Entity {
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
-            if (getQuirks().booleanOption("ext_twist")) {
+            if (hasQuirk("ext_twist")) {
                 return (rotate == 0) || (rotate == 1) || (rotate == 2)
                         || (rotate == -1) || (rotate == -2) || (rotate == -5)
                         || (rotate == -4) || (rotate == 5) || (rotate == 4);
@@ -1696,7 +1696,7 @@ public abstract class Mech extends Entity {
         }
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-        if ((rotate == 3) && getQuirks().booleanOption("ext_twist")) {
+        if ((rotate == 3) && hasQuirk("ext_twist")) {
             // if the unit can do an extended torso twist and the area chosen
             // was directly behind them, then just rotate one way
             return (getFacing() + 2) % 6;
@@ -4763,7 +4763,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        if (getQuirks().booleanOption("cramped_cockpit")) {
+        if (hasQuirk("cramped_cockpit")) {
             roll.addModifier(1, "cramped cockpit");
         }
 

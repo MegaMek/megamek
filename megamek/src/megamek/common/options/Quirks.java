@@ -38,16 +38,6 @@ public class Quirks extends AbstractOptions {
     public static final String POS_QUIRKS = "PosQuirks"; //$NON-NLS-1$
     public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
 
-    public IGame game = null;
-
-    public Quirks() {
-        super();
-    }
-
-    public void setGame(IGame g) {
-        game = g;
-    }
-
     @Override
     public void initialize() {
         //positive quirks
@@ -458,10 +448,5 @@ public class Quirks extends AbstractOptions {
         protected QuirksInfo() {
             super("QuirksInfo"); //$NON-NLS-1$
         }
-    }
-
-    @Override
-    public boolean booleanOption(String name) {
-        return super.booleanOption(name) && ((game != null) && game.getOptions().booleanOption("stratops_quirks"));
     }
 }

@@ -312,17 +312,19 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
         
         int i = 0;
-        for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
-            IOptionGroup qGroup = qGroups.nextElement();
-            if(en.countQuirks(qGroup.getKey()) > 0) {
-                quirksR[i++].setString(qGroup.getDisplayableName());
-                for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks.hasMoreElements();) {
-                    IOption quirk = quirks.nextElement();
-                    if(quirk.booleanValue()) {
-                        quirksR[i++].setString("  " + quirk.getDisplayableNameWithValue());
-                    }
-                }
-            }
+        if(null != en.getGame() && en.getGame().getOptions().booleanOption("stratops_quirks")) {
+	        for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
+	            IOptionGroup qGroup = qGroups.nextElement();
+	            if(en.countQuirks(qGroup.getKey()) > 0) {
+	                quirksR[i++].setString(qGroup.getDisplayableName());
+	                for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks.hasMoreElements();) {
+	                    IOption quirk = quirks.nextElement();
+	                    if(quirk.booleanValue()) {
+	                        quirksR[i++].setString("  " + quirk.getDisplayableNameWithValue());
+	                    }
+	                }
+	            }
+	        }
         }
         for (Enumeration<IOptionGroup> repGroups = en.getPartialRepairs().getGroups(); repGroups.hasMoreElements();) {
             IOptionGroup repGroup = repGroups.nextElement();

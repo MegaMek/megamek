@@ -72,11 +72,11 @@ public class BipedMech extends Mech {
             canFlip = false;
         }
 
-        if (getQuirks().booleanOption("hyper_actuator")) {
+        if (hasQuirk("hyper_actuator")) {
             canFlip = true;
         }
 
-        if (getQuirks().booleanOption("no_arms")) {
+        if (hasQuirk("no_arms")) {
             canFlip = false;
         }
 
@@ -793,7 +793,7 @@ public class BipedMech extends Mech {
 
     public void addStandingPenalties(PilotingRollData roll) {
 
-        if (getQuirks().booleanOption("no_arms")) {
+        if (hasQuirk("no_arms")) {
             roll.addModifier(2, "no/minimal arms");
             return;
         }

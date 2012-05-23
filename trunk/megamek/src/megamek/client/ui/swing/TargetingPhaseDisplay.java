@@ -715,7 +715,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist in the proper direction.
      */
-    private void torsoTwist(Coords cTarget) {
+    void torsoTwist(Coords cTarget) {
         int direction = ce().getFacing();
 
         if (null != cTarget) {
@@ -739,7 +739,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      *            right, 0 if we're twisting to the left, 1 if to the right.
      */
 
-    private void torsoTwist(int twistDirection) {
+    void torsoTwist(int twistDirection) {
         int direction = ce().getSecondaryFacing();
         if (twistDirection == 0) {
             clearAttacks();

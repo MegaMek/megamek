@@ -1010,10 +1010,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 entity.getCrew().clearOptions();
             }
 
-            if (!client.game.getOptions().booleanOption("stratops_quirks")) { //$NON-NLS-1$
-                entity.clearQuirks();
-            }
-
             if (!client.game.getOptions().booleanOption("stratops_partialrepairs")) { //$NON-NLS-1$
                 entity.clearPartialRepairs();
             }

@@ -148,7 +148,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
 
         //check for no/minimal arms quirk
-        if(ae.getQuirks().booleanOption("no_arms")) {
+        if(ae.hasQuirk("no_arms")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No/minimal arms");
         }
 

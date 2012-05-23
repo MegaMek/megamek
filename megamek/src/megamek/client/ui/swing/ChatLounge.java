@@ -1246,11 +1246,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     "manei_domini")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
-
-            if (!clientgui.getClient().game.getOptions().booleanOption(
-                    "stratops_quirks")) { //$NON-NLS-1$
-                entity.clearQuirks();
-            }
+            
             if (!clientgui.getClient().game.getOptions().booleanOption(
                     "stratops_partialrepairs")) { //$NON-NLS-1$
                 entity.clearPartialRepairs();
@@ -1386,20 +1382,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 + entity.getTotalOInternal()
                 + Messages.getString("ChatLounge.internal") + "<br>";
         value += "<br>";
-        for (Enumeration<IOptionGroup> advGroups = entity.getQuirks()
-                .getGroups(); advGroups.hasMoreElements();) {
-            IOptionGroup advGroup = advGroups.nextElement();
-            if (entity.countQuirks(advGroup.getKey()) > 0) {
-                value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                        .hasMoreElements();) {
-                    IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
-                        value += "  " + adv.getDisplayableNameWithValue()
-                                + "<br>";
-                    }
-                }
-            }
+        if(entity.getGame() != null && entity.getGame().getOptions().booleanOption("stratops_quirks")) {
+	        for (Enumeration<IOptionGroup> advGroups = entity.getQuirks()
+	                .getGroups(); advGroups.hasMoreElements();) {
+	            IOptionGroup advGroup = advGroups.nextElement();
+	            if (entity.countQuirks(advGroup.getKey()) > 0) {
+	                value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
+	                for (Enumeration<IOption> advs = advGroup.getOptions(); advs
+	                        .hasMoreElements();) {
+	                    IOption adv = advs.nextElement();
+	                    if (adv.booleanValue()) {
+	                        value += "  " + adv.getDisplayableNameWithValue()
+	                                + "<br>";
+	                    }
+	                }
+	            }
+	        }
+	        for (Mounted weapon : entity.getWeaponList()) {
+	            for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks()
+	                    .getGroups(); advGroups.hasMoreElements();) {
+	                IOptionGroup advGroup = advGroups.nextElement();
+	                if (entity.countQuirks(advGroup.getKey()) > 0) {
+	                    value += "<b>" + weapon.getDesc() + "</b><br>";
+	                    for (Enumeration<IOption> advs = advGroup.getOptions(); advs
+	                            .hasMoreElements();) {
+	                        IOption adv = advs.nextElement();
+	                        if (adv.booleanValue()) {
+	                            value += "  " + adv.getDisplayableNameWithValue()
+	                                    + "<br>";
+	                        }
+	                    }
+	                }
+	            }
+	        }
         }
         for (Enumeration<IOptionGroup> advGroups = entity.getPartialRepairs()
                 .getGroups(); advGroups.hasMoreElements();) {
@@ -1417,23 +1432,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
 
-        for (Mounted weapon : entity.getWeaponList()) {
-            for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks()
-                    .getGroups(); advGroups.hasMoreElements();) {
-                IOptionGroup advGroup = advGroups.nextElement();
-                if (entity.countQuirks(advGroup.getKey()) > 0) {
-                    value += "<b>" + weapon.getDesc() + "</b><br>";
-                    for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                            .hasMoreElements();) {
-                        IOption adv = advs.nextElement();
-                        if (adv.booleanValue()) {
-                            value += "  " + adv.getDisplayableNameWithValue()
-                                    + "<br>";
-                        }
-                    }
-                }
-            }
-        }
+        
         value += "</html>";
         return value;
 

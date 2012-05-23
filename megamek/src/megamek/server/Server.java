@@ -11280,7 +11280,7 @@ public class Server implements Runnable {
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                         VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
-            if (te.getQuirks().booleanOption("weak_legs")) {
+            if (te.hasQuirk("weak_legs")) {
                 addNewLines();
                 addReport(criticalEntity(te, hit.getLocation(), 0, 0));
             }
@@ -13934,7 +13934,7 @@ public class Server implements Runnable {
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
-        if (ae.getQuirks().booleanOption("reinforced_legs")) {
+        if (ae.hasQuirk("reinforced_legs")) {
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
@@ -13952,7 +13952,7 @@ public class Server implements Runnable {
             damageTaken -= cluster;
         }
 
-        if (ae.getQuirks().booleanOption("weak_legs")) {
+        if (ae.hasQuirk("weak_legs")) {
             addNewLines();
             addReport(criticalEntity(ae, Mech.LOC_LLEG, 0, 0));
             addNewLines();
@@ -13997,7 +13997,7 @@ public class Server implements Runnable {
     private PilotingRollData getKickPushPSR(Entity psrEntity, Entity attacker, Entity target, String reason) {
         int mod = 0;
         PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod, reason);
-        if (psrEntity.getQuirks().booleanOption("stable")) {
+        if (psrEntity.hasQuirk("stable")) {
             psr.addModifier(-1, "stable");
         }
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
@@ -14066,7 +14066,7 @@ public class Server implements Runnable {
                 }
 
                 // Combat computers help manage heat
-                if (entity.getQuirks().booleanOption("combat_computer")) {
+                if (entity.hasQuirk("combat_computer")) {
                     int reduce = Math.min(entity.heatBuildup, 4);
                     r = new Report(5026);
                     r.subject = entity.getId();
@@ -14477,7 +14477,7 @@ public class Server implements Runnable {
             entity.coolFromExternal = 0;
 
             // Combat computers help manage heat
-            if (entity.getQuirks().booleanOption("combat_computer")) {
+            if (entity.hasQuirk("combat_computer")) {
                 int reduce = Math.min(entity.heatBuildup, 4);
                 r = new Report(5026);
                 r.subject = entity.getId();
@@ -14749,10 +14749,10 @@ public class Server implements Runnable {
                         Mech.LOC_HEAD);
             }
             int damageHeat = entity.heat;
-            if (entity.getQuirks().booleanOption("imp_life_support")) {
+            if (entity.hasQuirk("imp_life_support")) {
                 damageHeat -= 5;
             }
-            if (entity.getQuirks().booleanOption("poor_life_support")) {
+            if (entity.hasQuirk("poor_life_support")) {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0) && ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat >= 0)))
@@ -15020,7 +15020,7 @@ public class Server implements Runnable {
         }
 
         //Check for existence of flawed cooling quirk.
-        if (!entity.getQuirks().booleanOption("flawed_cooling")) {
+        if (!entity.hasQuirk("flawed_cooling")) {
             return;
         }
         entity.setFallen(false);
@@ -15045,7 +15045,7 @@ public class Server implements Runnable {
             }
 
             //Check for existence of flawed cooling quirk.
-            if (!entity.getQuirks().booleanOption("flawed_cooling")) {
+            if (!entity.hasQuirk("flawed_cooling")) {
                 continue;
             }
 
@@ -15120,13 +15120,13 @@ public class Server implements Runnable {
                             // the weight class PSR modifier is not cumulative
                             damPRD.addModifier(weightMod, "weight class modifier", false);
                         }
-                        if (entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
+                        if (entity.hasQuirk("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addPSR(damPRD);
                     } else {
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), 1, "20+ damage");
-                        if (entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
+                        if (entity.hasQuirk("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addPSR(damPRD);
@@ -15141,7 +15141,7 @@ public class Server implements Runnable {
                         StringBuffer reportStr = new StringBuffer();
                         reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
                         PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
-                        if (entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
+                        if (entity.hasQuirk("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addControlRoll(damPRD);
@@ -15150,7 +15150,7 @@ public class Server implements Runnable {
                         if (((Aero) entity).wasCritThresh()) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
                                     "damage threshold exceeded");
-                            if (entity.getQuirks().booleanOption("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
+                            if (entity.hasQuirk("easy_pilot") && (entity.getCrew().getPiloting() > 3)) {
                                 damThresh.addModifier(-1, "easy to pilot");
                             }
                             game.addControlRoll(damThresh);
@@ -18967,7 +18967,7 @@ public class Server implements Runnable {
                 r.subject = a.getId();
                 r.newlines = 0;
                 int boomTarget = 9;
-                if (a.getQuirks().booleanOption("fragile_fuel")) {
+                if (a.hasQuirk("fragile_fuel")) {
                     boomTarget = 7;
                 }
                 if (a.isLargeCraft() && a.isClan() && game.getOptions().booleanOption("stratops_harjel")) {
@@ -20019,7 +20019,7 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType), true, damage, false));
-        if ((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion() && t.getQuirks().booleanOption("fragile_fuel")
+        if ((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion() && t.hasQuirk("fragile_fuel")
                 && (Compute.d6(2) > 9)) {
             // BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, Tank.CRIT_FUEL_TANK), true, damage, false));
@@ -20161,10 +20161,10 @@ public class Server implements Runnable {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber, boolean isCapital, int damage) {
 
-        if (en.getQuirks().booleanOption("poor_work")) {
+        if (en.hasQuirk("poor_work")) {
             critMod += 1;
         }
-        if (en.getQuirks().booleanOption("prototype")) {
+        if (en.hasQuirk("prototype")) {
             critMod += 2;
         }
 
@@ -25526,7 +25526,7 @@ public class Server implements Runnable {
                 Report.addNewline(vDesc);
                 if ((rollTarget.getValue() - diceRoll) > 1) {
                     int damage = (rollTarget.getValue() - diceRoll) / 2;
-                    if (entity.getQuirks().booleanOption("difficult_eject")) {
+                    if (entity.hasQuirk("difficult_eject")) {
                         damage++;
                     }
                     vDesc.addAll(damageCrew(pilot, damage));

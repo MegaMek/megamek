@@ -1077,13 +1077,13 @@ public class Mounted implements Serializable, RoundUpdated {
             }
             // multiply by number of shots and number of weapons
             heat = heat * getCurrentShots() * getNWeapons();
-            if (getQuirks().booleanOption("imp_cooling")) {
+            if (hasQuirk("imp_cooling")) {
                 heat = Math.max(1, heat - 1);
             }
-            if (getQuirks().booleanOption("poor_cooling")) {
+            if (hasQuirk("poor_cooling")) {
                 heat += 1;
             }
-            if (getQuirks().booleanOption("no_cooling")) {
+            if (hasQuirk("no_cooling")) {
                 heat += 2;
             }
             if (hasChargedCapacitor() == 2) {
@@ -1173,27 +1173,32 @@ public class Mounted implements Serializable, RoundUpdated {
         this.quirks = quirks;
     }
 
+    /**
+     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean options, 
+     * as it will not check game options for quirks. Use Mounted#hasQuirk instead
+     * @return
+     */
     public WeaponQuirks getQuirks() {
         return quirks;
     }
 
-    public void clearQuirks() {
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
-                IOption option = j.nextElement();
-                option.clearValue();
-            }
-        }
-
+    public boolean hasQuirk(String name) {
+    	if(null == entity || null == entity.getGame() || !entity.getGame().getOptions().booleanOption("stratops_quirks")) {
+    		return false;
+    	}
+    	return quirks.booleanOption(name);
     }
-
+    
     /**
      * count all the quirks for this unit, positive and negative
      */
     public int countQuirks() {
         int count = 0;
 
+        if(null == entity || null == entity.game || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+        	return count;
+        }
+        
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
@@ -1214,6 +1219,10 @@ public class Mounted implements Serializable, RoundUpdated {
     public String getQuirkList(String sep) {
         StringBuffer qrk = new StringBuffer();
 
+        if(null == entity || null == entity.game || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+        	return qrk.toString();
+        }
+        
         if (null == sep) {
             sep = "";
         }

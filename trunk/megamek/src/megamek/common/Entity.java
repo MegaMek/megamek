@@ -611,7 +611,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setGame(IGame game) {
         this.game = game;
-        quirks.setGame(game);
         restore();
         // Make sure the owner is set.
         if (null == owner) {
@@ -3792,7 +3791,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             getPosition());
         }
         // check for quirk
-        if (getQuirks().booleanOption("imp_sensors")) {
+        if (hasQuirk("imp_sensors")) {
             return !checkECM
                     || !Compute.isAffectedByECM(this, getPosition(),
                             getPosition());
@@ -3826,7 +3825,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // TODO: assuming the range of this active probe is 2
         // http://www.classicbattletech.com/forums/index.php/topic,52961.new.html#new
         int quirkBonus = 0;
-        if (getQuirks().booleanOption("imp_sensors")) {
+        if (hasQuirk("imp_sensors")) {
             quirkBonus = 2;
         }
 
@@ -5044,7 +5043,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             roll.addModifier(-2, "careful stand");
         }
 
-        if (getQuirks().booleanOption("hard_pilot")) {
+        if (hasQuirk("hard_pilot")) {
             roll.addModifier(+1, "hard to pilot");
         }
 
@@ -5804,11 +5803,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * calculate any changes to the PSR modifier for entering difficult terrain
      */
     private void adjustDifficultTerrainPSRModifier(PilotingRollData psr) {
-        if (getQuirks().booleanOption("easy_pilot")
+        if (hasQuirk("easy_pilot")
                 && (getCrew().getPiloting() > 3)) {
             psr.addModifier(-1, "easy to pilot");
         }
-        if (getQuirks().booleanOption("unbalanced")) {
+        if (hasQuirk("unbalanced")) {
             psr.addModifier(+1, "unbalanced");
         }
     }
@@ -7819,16 +7818,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getShortRangeModifier() {
         int mod = 0;
-        if (getQuirks().booleanOption("imp_target_short")) {
+        if (hasQuirk("imp_target_short")) {
             mod--;
         }
-        if (getQuirks().booleanOption("poor_target_short")) {
+        if (hasQuirk("poor_target_short")) {
             mod++;
         }
-        if (getQuirks().booleanOption("variable_range_long")) {
+        if (hasQuirk("variable_range_long")) {
             mod++;
         }
-        if (getQuirks().booleanOption("variable_range_short")) {
+        if (hasQuirk("variable_range_short")) {
             mod--;
         }
         return mod;
@@ -7839,10 +7838,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().booleanOption("sniper")) {
             mod = mod / 2;
         }
-        if (getQuirks().booleanOption("imp_target_med")) {
+        if (hasQuirk("imp_target_med")) {
             mod--;
         }
-        if (getQuirks().booleanOption("poor_target_med")) {
+        if (hasQuirk("poor_target_med")) {
             mod++;
         }
         return mod;
@@ -7853,16 +7852,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getCrew().getOptions().booleanOption("sniper")) {
             mod = mod / 2;
         }
-        if (getQuirks().booleanOption("imp_target_long")) {
+        if (hasQuirk("imp_target_long")) {
             mod--;
         }
-        if (getQuirks().booleanOption("poor_target_long")) {
+        if (hasQuirk("poor_target_long")) {
             mod++;
         }
-        if (getQuirks().booleanOption("variable_range_long")) {
+        if (hasQuirk("variable_range_long")) {
             mod--;
         }
-        if (getQuirks().booleanOption("variable_range_short")) {
+        if (hasQuirk("variable_range_short")) {
             mod++;
         }
         return mod;
@@ -9420,10 +9419,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getQuirkIniBonus() {
         // command battlemech and and battle computer are not cumulative
-        if (getQuirks().booleanOption("battle_computer") && !getCrew().isDead()
+        if (hasQuirk("battle_computer") && !getCrew().isDead()
                 && !getCrew().isUnconscious()) {
             return 2;
-        } else if (getQuirks().booleanOption("command_mech")
+        } else if (hasQuirk("command_mech")
                 && !getCrew().isDead() && !getCrew().isUnconscious()) {
             return 1;
         }
@@ -9757,25 +9756,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.quirks = quirks;
     }
 
+    /**
+     * Retrieves the quirks object for entity. DO NOT USE this to check boolean options, 
+     * as it will not check game options for quirks. Use entity#hasQuirk instead
+     * @return
+     */
     public Quirks getQuirks() {
         return quirks;
+    }
+    
+    public boolean hasQuirk(String name) {
+    	if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+    		return false;
+    	}
+    	return quirks.booleanOption(name);
     }
 
     public PartialRepairs getPartialRepairs() {
         return partReps;
-    }
-
-    public void clearQuirks() {
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
-                .hasMoreElements();) {
-            IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
-                IOption option = j.nextElement();
-                option.clearValue();
-            }
-        }
-
     }
 
     public void clearPartialRepairs() {
@@ -9797,6 +9795,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int countQuirks() {
         int count = 0;
 
+        if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+        	return count;
+        }
+        
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
@@ -9836,6 +9838,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int countQuirks(String grpKey) {
         int count = 0;
 
+        if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+        	return count;
+        }
+        
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
@@ -9862,6 +9868,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getQuirkList(String sep) {
         StringBuffer qrk = new StringBuffer();
 
+        if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+        	return qrk.toString();
+        }
+        		
         if (null == sep) {
             sep = "";
         }

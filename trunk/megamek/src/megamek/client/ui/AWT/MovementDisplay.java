@@ -914,7 +914,7 @@ DoneButtoned, KeyListener {
         if (client.game.getOptions().booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
             setEjectEnabled((!isInfantry) && !(isMech && (((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) && ce.isActive());
         } else {
-            setEjectEnabled(isMech && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) && ce.isActive() && !ce.getQuirks().booleanOption("no_eject"));
+            setEjectEnabled(isMech && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) && ce.isActive() && !ce.hasQuirk("no_eject"));
         }
         setupButtonPanel();
 

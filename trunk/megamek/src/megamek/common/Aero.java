@@ -2124,13 +2124,13 @@ public class Aero extends Entity {
         }
 
         // quirks?
-        if (getQuirks().booleanOption("atmo_flyer") && !game.getBoard().inSpace()) {
+        if (hasQuirk("atmo_flyer") && !game.getBoard().inSpace()) {
             prd.addModifier(-1, "atmospheric flyer");
         }
-        if (getQuirks().booleanOption("atmo_instability") && !game.getBoard().inSpace()) {
+        if (hasQuirk("atmo_instability") && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (getQuirks().booleanOption("cramped_cockpit")) {
+        if (hasQuirk("cramped_cockpit")) {
             prd.addModifier(1, "cramped cockpit");
         }
 

@@ -892,15 +892,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // quirks
-        if (ae.getQuirks().booleanOption("sensor_ghosts")) {
+        if (ae.hasQuirk("sensor_ghosts")) {
             toHit.addModifier(+1, "sensor ghosts");
         }
 
-        if (weapon.getQuirks().booleanOption("accurate")) {
+        if (weapon.hasQuirk("accurate")) {
             toHit.addModifier(-1, "accurate weapon");
         }
 
-        if (weapon.getQuirks().booleanOption("inaccurate")) {
+        if (weapon.hasQuirk("inaccurate")) {
             toHit.addModifier(+1, "inaccurate weapon");
         }
 
@@ -1187,7 +1187,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // add range mods
         toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
 
-        if (ae.getQuirks().booleanOption("anti_air") && (target instanceof Entity)) {
+        if (ae.hasQuirk("anti_air") && (target instanceof Entity)) {
             if (target.isAirborneVTOLorWIGE() || target.isAirborne()) {
                 toHit.addModifier(-2, "anti-air targetting system vs. aerial unit");
             }
@@ -1219,7 +1219,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // units with the narrow/low profile quirk are harder to hit
-        if ((te != null) && te.getQuirks().booleanOption("low_profile")) {
+        if ((te != null) && te.hasQuirk("low_profile")) {
             toHit.addModifier(1, "narrow/low profile");
         }
 

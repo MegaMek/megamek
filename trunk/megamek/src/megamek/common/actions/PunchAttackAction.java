@@ -135,7 +135,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         //check for no/minimal arms quirk
-        if(ae.getQuirks().booleanOption("no_arms")) {
+        if(ae.hasQuirk("no_arms")) {
             return "No/minimal arms";
         }
 

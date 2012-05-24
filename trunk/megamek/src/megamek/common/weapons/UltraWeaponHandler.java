@@ -171,7 +171,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if ((roll < 8) && (howManyShots == 2)) {
+        if ((roll == 2) && (howManyShots == 2)) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);

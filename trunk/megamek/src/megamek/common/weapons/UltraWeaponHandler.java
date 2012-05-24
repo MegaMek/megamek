@@ -101,8 +101,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         bSalvo = true;
 
-        if (howManyShots == 1) {
-            return howManyShots;
+        if (howManyShots == 1 || game.getOptions().booleanOption("uac_tworolls")) {
+            return 1;
         }
 
         int shotsHit;
@@ -171,18 +171,20 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if ((roll == 2) && (howManyShots == 2)) {
+        if ((roll < 8) && (howManyShots == 2)) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
+            isJammed = true;
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                 r.messageId = 3160;
-                weapon.setHit(true);
+                if (!game.getOptions().booleanOption("uac_tworolls")) {
+                    weapon.setHit(true);
+                }
             } else {
                 r.messageId = 3170;
             }
             vPhaseReport.addElement(r);
-            return false;
         }
         return false;
     }
@@ -219,7 +221,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return true;
+        return !game.getOptions().booleanOption("uac_tworolls");
     }
 
 }

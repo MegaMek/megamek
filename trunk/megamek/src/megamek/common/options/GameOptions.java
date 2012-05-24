@@ -173,6 +173,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
         addOption(advancedCombat, "increased_ac_dmg", false);
         addOption(advancedCombat, "increased_iserll_range", false);
+        addOption(advancedCombat, "uac_tworolls", false);
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
@@ -200,6 +201,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "no_premove_vibra", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "falls_end_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
+        addOption(advancedGroundMovement, "unjam_uac", false);
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
         addOption(advAeroRules, "aero_ground_move", true); //$NON-NLS-1$

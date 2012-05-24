@@ -10304,14 +10304,36 @@ public class Server implements Runnable {
     private void resolveUnjam(Entity entity) {
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
-        r = new Report(3025);
+        if (game.getOptions().booleanOption("unjam_uac")) {
+            r = new Report(3026);
+        } else {
+            r = new Report(3025);
+        }
         r.subject = entity.getId();
         r.addDesc(entity);
         addReport(r);
         for (Mounted mounted : entity.getTotalWeaponList()) {
-            if (mounted.isJammed()) {
+            if (mounted.isJammed() && !mounted.isDestroyed()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
                 if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                    int roll = Compute.d6(2);
+                    r = new Report(3030);
+                    r.indent();
+                    r.subject = entity.getId();
+                    r.add(wtype.getName());
+                    r.add(TN);
+                    r.add(roll);
+                    if (roll >= TN) {
+                        r.choose(true);
+                        mounted.setJammed(false);
+                    } else {
+                        r.choose(false);
+                    }
+                    addReport(r);
+                }
+                // Unofficial option to unjam Ultra Autocannons like Rotary Autocannons
+                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                        && game.getOptions().booleanOption("unjam_uac")) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);
                     r.indent();

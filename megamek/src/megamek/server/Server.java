@@ -5682,7 +5682,7 @@ public class Server implements Runnable {
                 if (!entity.isCarefulStand()) {
                     break;
                 }
-            } else {
+            } else if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 entity.setHullDown(false);
             }
 

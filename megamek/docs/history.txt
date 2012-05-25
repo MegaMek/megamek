@@ -27,6 +27,7 @@ v0.35.30-dev (SVN)
 + Feature: Unofficial rule option: UACs in Ultra Mode are rolled as two attacks instead of rolled on the 2 column of the hits chart
 + separated BLKFile.encode into a BLFile.getBlock and BLKFile.encode to allow writing internally to string
 + Bug 3529657: Scaled back weapons hitting airborne targets do full damage
++ added "Infantry Automatic Rifle" to InfantryRifleAutoRifle lookup names for reverse compatability
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

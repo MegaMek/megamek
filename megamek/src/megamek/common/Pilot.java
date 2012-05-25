@@ -561,7 +561,7 @@ public class Pilot implements Serializable {
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        return bvMod[Math.min(8, gunnery)][Math.min(8, piloting)];
+        return bvMod[Math.max(Math.min(8, gunnery),0)][Math.max(Math.min(8, piloting),0)];
     }
 
     public int modifyPhysicalDamagaForMeleeSpecialist() {

@@ -373,8 +373,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
                 if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
                     bSalvo = true;
+                    hits = nDamPerHit;
                     nDamPerHit = 1;
-                    hits = attackValue;
                     nCluster = 5;
                 } else if(ae.isCapitalFighter()) {
                     bSalvo = true;
@@ -388,18 +388,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         r.add(" ");
                         vPhaseReport.add(r);
                     }
-                    nDamPerHit = attackValue * nhit;
+                    nDamPerHit = nDamPerHit * nhit;
                     hits = 1;
                     nCluster = 1;
                 } else if(usesClusterTable() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
                     bSalvo = true;
+                    hits = nDamPerHit;
                     nDamPerHit = 1;
-                    hits = attackValue;
                     nCluster = 5;
                 } else {
-                    nDamPerHit = attackValue;
-                    hits = 1;
-                    nCluster = 1;
+                    // This was set above, we don't need to reset it here. - ralgith
+                    // nDamPerHit = attackValue;
+                    // hits = 1;
+                    // nCluster = 1;
                 }
             }
 

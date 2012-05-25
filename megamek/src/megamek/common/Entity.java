@@ -11328,5 +11328,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setFallen(boolean fell) {
         this.fell = fell;
     }
+    
+    /**
+     * This is used to get an alternative cost that will be added
+     * to the MechSummaryCache - at the moment it is primarily used to 
+     * rework infantry costs for MekHQ, but it could be applied to other
+     * unit types as well - defaults to -1, so there is no confusion
+     * @return
+     */
+    public double getAlternateCost() {
+    	return -1;
+    }
 
 }

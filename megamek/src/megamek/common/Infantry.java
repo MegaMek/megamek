@@ -815,6 +815,8 @@ public class Infantry extends Entity {
         }
         weaponCost = weaponCost / squadsize;
 
+        //TODO: add in armor cost - a little tricky because we don't track exact armor
+        
         double cost = Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
@@ -826,6 +828,47 @@ public class Infantry extends Entity {
         return cost;
     }
 
+    @Override
+    public double getAlternateCost() {
+    	double cost = 0;
+        if(null != primaryW) {
+            cost += primaryW.getCost(this, false) * (squadsize - secondn);
+        }
+        if(null != secondW) {
+            cost += secondW.getCost(this, false) * secondn;
+        }
+        cost = cost / squadsize;
+        //Add in motive type costs
+        switch (getMovementMode()){
+	        case INF_UMU:
+	            cost += 17888 * 1;
+	            break;
+	        case INF_LEG:
+	            break;
+	        case INF_MOTORIZED:
+	        	cost += 17888 * 0.6;
+	            break;
+	        case INF_JUMP:
+	        	cost += 17888 * 1.6;
+	            break;
+	        case HOVER:
+	        case WHEELED:
+	        case TRACKED:
+	        	cost += 17888 * 2.2;
+	            break;
+	        default:
+	            break;
+        }
+        cost *= menStarting;
+        //add in field gun costs
+        for (Mounted mounted : getEquipment()) {
+            if(mounted.getLocation() == LOC_FIELD_GUNS) {
+                cost += mounted.getType().getCost(this, false);
+            }
+        }
+        return cost;
+    }
+    
     @Override
     public boolean doomedInVacuum() {
         return !hasSpaceSuit();

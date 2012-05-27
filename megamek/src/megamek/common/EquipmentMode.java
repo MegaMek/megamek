@@ -70,10 +70,21 @@ public class EquipmentMode {
      * @return the localized displayable name presented by the GUI to the user.
      */
     public String getDisplayableName() {
+        return getDisplayableName(false)
+    }
+    
+    /**
+     * @return the localized displayable name presented by the GUI to the user.
+     */
+    public String getDisplayableName(boolean wantNormal) {
         String result = EquipmentMessages.getString("EquipmentMode." + name);
         if (result != null)
             return result;
-        return EquipmentMessages.getString("EquipmentMode.Normal");
+        if (wantNormal) {
+            return EquipmentMessages.getString("EquipmentMode.Normal");
+        } else {
+            return name;
+        }
     }
 
     /**

@@ -308,6 +308,15 @@ public class EquipmentType {
         this.modes = newModes;
     }
 
+    /**
+     * Clears the modes that this type of equipment can be in. This is useful where
+     * a subtype such as Streak LRMs has no modes, but the supertype of that type
+     * such as standard LRMs has modes that do not apply to the subtype
+     */
+    protected void clearModes() {
+        this.modes = null;
+    }
+
     public void addEndTurnMode(String mode) {
         endTurnModes.add(mode);
     }

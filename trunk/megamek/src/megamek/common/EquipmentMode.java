@@ -73,7 +73,7 @@ public class EquipmentMode {
         String result = EquipmentMessages.getString("EquipmentMode." + name);
         if (result != null)
             return result;
-        return name;
+        return EquipmentMessages.getString("EquipmentMode.Normal");
     }
 
     /**

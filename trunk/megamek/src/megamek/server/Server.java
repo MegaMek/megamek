@@ -17151,24 +17151,22 @@ public class Server implements Runnable {
                     r.indent(3);
                     vDesc.addElement(r);
                     int loc = hit.getLocation();
-                    if ((te instanceof Mech) && (((Mech) te).isArm(loc) || ((Mech) te).locationIsLeg(loc))) {
-                        loc = te.getTransferLocation(loc);
-                    }
-                    if ((te instanceof Mech) && (loc == Mech.LOC_HEAD)) {
+                    if ((te instanceof Mech) && (loc == Mech.LOC_HEAD || ((Mech) te).isArm(loc) || ((Mech) te).locationIsLeg(loc))) {
                         int half = (int) Math.ceil(((Mech) te).getOArmor(loc, false) / 2);
                         if (damage > half) {
                             damage = half;
 						}
-                        if (damage > te.getArmor(loc, false)) {
+                        if (damage >= te.getArmor(loc, false)) {
                             te.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
                         } else {
                             te.setArmor(te.getArmor(loc, false) - damage, loc, false);
                         }
-					}
-                    if (damage > te.getArmor(loc, true)) {
+					} else {
+                        if (damage >= te.getArmor(loc, true)) {
                         te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
                     } else {
                         te.setArmor(te.getArmor(loc, true) - damage, loc, true);
+                    }
                     }
 
                     if (te.getInternal(hit) > 0) {

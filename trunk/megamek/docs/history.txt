@@ -35,6 +35,7 @@ v0.35.30-dev (SVN)
 + Bug 3528850: Streak LRMs
 + Bug 3529891: critical hits needing colored red
 + Bug 3529773: When switching LRMs back to standard mode msg is truncated
++ Missing semi-colon
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

@@ -568,12 +568,12 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui
             .systemMessage(Messages
                     .getString(
-                            "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() })); //$NON-NLS-1$
+                            "FiringDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName(true) })); //$NON-NLS-1$
         } else {
             clientgui
             .systemMessage(Messages
                     .getString(
-                            "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
+                            "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName(true) })); //$NON-NLS-1$
         }
 
         updateTarget();

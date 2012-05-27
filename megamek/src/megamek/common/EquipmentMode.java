@@ -70,7 +70,7 @@ public class EquipmentMode {
      * @return the localized displayable name presented by the GUI to the user.
      */
     public String getDisplayableName() {
-        return getDisplayableName(false)
+        return getDisplayableName(false);
     }
     
     /**

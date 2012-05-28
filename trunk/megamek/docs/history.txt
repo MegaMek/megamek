@@ -38,6 +38,7 @@ v0.35.30-dev (SVN)
 + Missing semi-colon
 + Bug 3526146: Backhoe on Quad
 + Bug 3527663: Case II Rules Update for limbs
++ Bug 3529875: Damage vs Aircraft / hot dropping units
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

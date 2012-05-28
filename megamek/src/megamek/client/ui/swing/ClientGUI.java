@@ -1100,9 +1100,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList = new JFileChooser(".");
             dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("Mul Files", "mul");
+            dlgLoadList.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File dir) {
+                return ((dir.getName() != null) && (dir.getName().endsWith(
+                        ".mul") || dir.isDirectory())); //$NON-NLS-1$
+            }
 
-            dlgLoadList.setFileFilter(filter);
+            @Override
+            public String getDescription() {
+                return "*.mul";
+            }
+        });
         }
         // Default to the player's name.
         dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
@@ -1532,13 +1541,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (null != dir.getName())
-                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                return ((null != dir.getName())
+                        && (dir.getName().endsWith(".board") || dir.isDirectory())); //$NON-NLS-1$
             }
 
             @Override
             public String getDescription() {
-                return ".board";
+                return "*.board";
             }
         });
         int returnVal = fc.showSaveDialog(frame);

@@ -504,13 +504,13 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (null != dir.getName())
-                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                return ((null != dir.getName())
+                        && (dir.getName().endsWith(".board") || dir.isDirectory())); //$NON-NLS-1$
             }
 
             @Override
             public String getDescription() {
-                return ".board";
+                return "*.board";
             }
         });
         int returnVal = fc.showOpenDialog(frame);
@@ -616,13 +616,13 @@ public class BoardEditor extends JComponent implements ItemListener,
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (null != dir.getName())
-                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                return ((null != dir.getName())
+                        && (dir.getName().endsWith(".board") || dir.isDirectory())); //$NON-NLS-1$
             }
 
             @Override
             public String getDescription() {
-                return ".board";
+                return "*.board";
             }
         });
         int returnVal = fc.showSaveDialog(frame);

@@ -357,20 +357,18 @@ public class MegaMekGUI implements IMegaMekGUI {
 
     void loadGame() {
         JFileChooser fc = new JFileChooser("savegames");
-        fc
-                .setLocation(frame.getLocation().x + 150,
-                        frame.getLocation().y + 100);
+        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("MegaMek.SaveGameDialog.title"));
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((dir.getName() != null) && dir.getName().endsWith(
-                        ".sav")); //$NON-NLS-1$
+                return ((dir.getName() != null) && (dir.getName().endsWith(
+                        ".sav") || dir.isDirectory())); //$NON-NLS-1$
             }
 
             @Override
             public String getDescription() {
-                return ".sav";
+                return "*.sav";
             }
         });
         int returnVal = fc.showOpenDialog(frame);

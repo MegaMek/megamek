@@ -40,6 +40,7 @@ v0.35.30-dev (SVN)
 + Bug 3527663: Case II Rules Update for limbs
 + Bug 3529875: Damage vs Aircraft / hot dropping units
 + Fix file filters so that directories show. No more annoyance! Yay!
++ Bug 3520623: Optional rule to skip immobile units in movement phase
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

@@ -7296,9 +7296,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
 
-        // TODO: check for any weapon attacks
-
+        // Check for weapons. If we find them, return true. Otherwise... we return false.
+        for (Mounted mounted : getWeaponList()) {
+            WeaponType wtype = (WeaponType) mounted.getType();
+            if (!wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
         return true;
+    }
+        }
+
+        return false;
     }
 
     /**
@@ -7319,7 +7325,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // must be active
-        if (!isActive() || isImmobile()) {
+        if (!isActive() || (isImmobile() && !canUnjamRAC())) {
             return false;
         }
 

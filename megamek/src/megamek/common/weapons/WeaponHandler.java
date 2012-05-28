@@ -362,10 +362,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             // yeech. handle damage. . different weapons do this in very different
             // ways
-            int hits = 1;
-            if(!(target.isAirborne())) {
-                hits = calcHits(vPhaseReport);
-            }
+            int hits = calcHits(vPhaseReport);
             int nCluster = calcnCluster();
 
             //Now I need to adjust this for attacks on aeros because they use attack values and different rules
@@ -397,10 +394,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     nDamPerHit = 1;
                     nCluster = 5;
                 } else {
-                    // This was set above, we don't need to reset it here. - ralgith
-                    // nDamPerHit = attackValue;
-                    // hits = 1;
-                    // nCluster = 1;
+                    hits = 1;
+                    nCluster = 1;
                 }
             }
 

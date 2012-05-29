@@ -9350,6 +9350,15 @@ public class Server implements Runnable {
         // trigger any special things for moving to the new hex
         vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
         vPhaseReport.addAll(doSetLocationsExposure(entity, destHex, false, entity.getElevation()));
+        // Falling into water instantly destroys most non-mechs
+        if ((destHex.terrainLevel(Terrains.WATER) > 0) && !(entity instanceof Mech) && !(entity instanceof Protomech)
+                && !((entity.getRunMP() > 0) && (entity.getMovementMode() == EntityMovementMode.HOVER))
+                && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
+                && (entity.getMovementMode() != EntityMovementMode.NAVAL)
+                && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
+            vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
+        }
         // mechs that were stuck will automatically fall in their new hex
         if (wasStuck && (entity instanceof Mech) && !entity.isProne()) {
             if (roll == null) {

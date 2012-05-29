@@ -2657,6 +2657,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getFirstWeapon() {
         for (Mounted mounted : getWeaponList()) {
+            // Now phase appropriate, since we don't really care to select weapons we can't use during this phase... do we?
+            if ((mounted.getType().hasFlag(WeaponType.F_TAG)
+                    && (game.getPhase() == IGame.Phase.PHASE_FIRING))
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG)
+                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING))
+                    || mounted.getType().hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
             if (mounted.isReady()) {
                 return getEquipmentNum(mounted);
             }
@@ -2668,17 +2676,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns the next ready weapon, starting at the specified index
      */
     public int getNextWeapon(int start) {
-        boolean past = false;
         for (Mounted mounted : getWeaponList()) {
-
-            if (past
-                    && (mounted != null)
+            if ((mounted != null)
                     && (mounted.isReady())
                     && (!mounted.getType().hasFlag(WeaponType.F_AMS))
                     && ((mounted.getLinked() == null) || (mounted.getLinked()
                             .getShotsLeft() > 0))) {
-                if (mounted.getType().hasFlag(WeaponType.F_TAG)
-                        && (game.getPhase() == IGame.Phase.PHASE_FIRING)) {
+                if ((mounted.getType().hasFlag(WeaponType.F_TAG)
+                        && (game.getPhase() == IGame.Phase.PHASE_FIRING))
+                        || (!mounted.getType().hasFlag(WeaponType.F_TAG)
+                        && (game.getPhase() == IGame.Phase.PHASE_TARGETING))) {
                     continue;
                 }
                 if (mounted.getType().hasFlag(WeaponType.F_MG)) {
@@ -2691,10 +2698,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             if (getEquipmentNum(mounted) == start) {
-                past = true;
-                continue;
-            }
-            if (past && (getEquipmentNum(mounted) == start)) {
                 return getFirstWeapon();
             }
         }
@@ -7299,7 +7302,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Check for weapons. If we find them, return true. Otherwise... we return false.
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            if (!wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
+            if (!wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()
+                    && mounted.getLinked().getShotsLeft() > 0) {
         return true;
     }
         }

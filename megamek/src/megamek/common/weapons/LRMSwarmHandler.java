@@ -280,6 +280,10 @@ public class LRMSwarmHandler extends LRMHandler {
                     vPhaseReport.addElement(r);
                 }
             }
+
+            // Reset the Swarm Missiles variable to 0 because if we don't it thinks we've already computed this when we fire the next rack.
+            swarmMissilesNowLeft = 0;
+
         }
         return false;
     }

@@ -43,6 +43,7 @@ v0.35.30-dev (SVN)
 + Bug 3520623: Optional rule to skip immobile units in movement phase
 + Bug 3524542: Automatically confirm unit is done during firing phase
 + Forgotten Ammo Check added for Bugfix for 3520623.
++ Bug 3521136: Vehicles pushed (charged) into water don't die
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

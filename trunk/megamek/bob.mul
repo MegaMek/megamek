@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<unit>
+
+   <entity chassis="Centaur" model="2" type="Biped" commander="false" deployment="0">
+      <pilot name="Angus Addems" nick="" gunnery="4" piloting="5" ejected="false"/>
+      The first slot in a location is at index="1".
+      <location index="1"> Torso
+         <slot index="N/A" type="Clan Ammo SRM-2" shots="10" isDestroyed="false"/>
+      </location>
+   </entity>
+
+</unit>

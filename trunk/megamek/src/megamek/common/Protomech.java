@@ -1315,7 +1315,9 @@ public class Protomech extends Entity {
     @Override
     public void setCrew(Pilot p) {
         super.setCrew(p);
-        getCrew().setPiloting(5);
+        if(null != p) {
+        	getCrew().setPiloting(5);
+        }
     }
 
     @Override

@@ -838,28 +838,70 @@ public class Infantry extends Entity {
             cost += secondW.getCost(this, false) * secondn;
         }
         cost = cost / squadsize;
+        cost *= menStarting;
         //Add in motive type costs
         switch (getMovementMode()){
 	        case INF_UMU:
-	            cost += 17888 * 1;
+	            cost += 17888 * 1 * menStarting;
 	            break;
 	        case INF_LEG:
 	            break;
 	        case INF_MOTORIZED:
-	        	cost += 17888 * 0.6;
+	        	cost += 17888 * 0.6 * menStarting;
 	            break;
 	        case INF_JUMP:
-	        	cost += 17888 * 1.6;
+	        	cost += 17888 * 1.6 * menStarting;
 	            break;
 	        case HOVER:
+	        	cost += 17888 * 2.2 * 5 * Math.ceil(menStarting/5.0);
+	            break;
 	        case WHEELED:
+	        	cost += 17888 * 2.2 * 6 * Math.ceil(menStarting/6.0);
+	            break;
 	        case TRACKED:
-	        	cost += 17888 * 2.2;
+	        	cost += 17888 * 2.2 * 7 * Math.ceil(menStarting/7.0);
 	            break;
 	        default:
 	            break;
         }
-        cost *= menStarting;
+        //add in infantry armor
+        long armorprice = 0;
+		if(damageDivisor > 1) {
+			if(isArmorEncumbering()) {
+				armorprice += 1600;
+			} else {
+				armorprice += 4300;
+			}
+		}
+		int nSneak = 0;
+		if(hasSneakCamo()) {
+			nSneak++;
+		}
+		if(hasSneakECM()) {
+			nSneak++;
+		}
+		if(hasSneakIR()) {
+			nSneak++;
+		}
+		
+		if(hasDEST()) {
+			armorprice += 50000;
+		} 
+		else if(nSneak == 1) {
+			armorprice += 7000;
+		}
+		else if(nSneak == 2) {
+			armorprice += 21000;
+		}
+		else if(nSneak == 3) {
+			armorprice += 28000;
+		}
+		
+		if(hasSpaceSuit()) {
+			armorprice += 5000;
+		}
+		cost += armorprice * menStarting;
+        
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {

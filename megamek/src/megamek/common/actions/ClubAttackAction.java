@@ -471,6 +471,22 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
+        if (game.getOptions().booleanOption("clubs_punch") && (target instanceof Mech)) {
+            toHit.setHitTable(ToHitData.HIT_PUNCH);
+            if ((attackerHeight == targetElevation) && !ae.isHullDown()) {
+                if (target.getHeight() == 0) {
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_KICK);
+                }
+            } else {
+                if ( ae.isHullDown() ) {
+                    toHit.setHitTable(ToHitData.HIT_KICK);
+                } else {
+                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                }
+            }
+        } else {
         if (attackerElevation == targetElevation) {
             if (shield) {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
@@ -492,6 +508,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         } else {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
+        }
         }
 
         // factor in target side

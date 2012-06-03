@@ -259,7 +259,7 @@ public abstract class BotClient extends Client {
         }
         File unitFile = new File(sLogDir + File.separator + fileName);
         try {
-            // Save the destroyed entities to the file.
+            // Save the entities to the file.
             EntityListFile.saveTo(unitFile, living);
         } catch (IOException excep) {
             excep.printStackTrace(System.err);

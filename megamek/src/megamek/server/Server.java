@@ -1947,6 +1947,16 @@ public class Server implements Runnable {
             clearReports();
             prepareVictoryReport();
             game.addReports(vPhaseReport);
+            // Before we send the full entities packet we need to loop through the fighters in squadrons and damage them.
+            for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements();) {
+                Entity entity = ents.nextElement();
+                if (entity instanceof Aero && !(entity instanceof FighterSquadron)) {
+                    Aero a = (Aero) entity;
+                    if (a.isPartOfFighterSquadron() || a.isCapitalFighter()) {
+                        a.doDisbandDamage();
+                    }
+                }
+            }
             send(createFullEntitiesPacket());
             send(createReportPacket(null));
             send(createEndOfGamePacket());

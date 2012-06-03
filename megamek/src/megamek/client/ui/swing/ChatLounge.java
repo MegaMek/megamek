@@ -2011,7 +2011,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             name = "Flying Circus";
         }
         FighterSquadron fs = new FighterSquadron(name);
-        fs.setOwner(clientgui.getClient().getLocalPlayer());
+        fs.setOwner(clientgui.getClient().game.getEntity(fighterIds.firstElement()).getOwner());
         clientgui.getClient().sendAddSquadron(fs, fighterIds);
     }
 
@@ -2969,7 +2969,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     fighters.add(e.getId());
                 }
+                if (fighters.size() > 6) {
+                    JOptionPane.showMessageDialog(clientgui.frame,
+                        Messages.getString("FighterSquadron.toomany"),
+                                                  Messages.getString("FighterSquadron.error"),
+                                                  JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                } else {
                 loadFS(fighters);
+                }
             } else if (command.equalsIgnoreCase("SWAP")) {
                 int id = Integer.parseInt(st.nextToken());
                 swapPilots(entity, id);
@@ -3027,6 +3034,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
+            boolean sameSide = true;
+            int prevOwnerId = -1;
             for (Entity en : entities) {
                 if (en.getTransportId() == Entity.NONE) {
                     allLoaded = false;
@@ -3036,6 +3045,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (!en.isCapitalFighter() || (en instanceof FighterSquadron)) {
                     allCapFighter = false;
                 }
+                if (prevOwnerId != -1 && en.getOwnerId() != prevOwnerId) {
+                    sameSide = false;
+                }
+                prevOwnerId = en.getOwnerId();
             }
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
@@ -3129,7 +3142,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.setEnabled((isOwner || isBot));
                     popup.add(menuItem);
                 }
-                if (allCapFighter && allUnloaded) {
+                if (allCapFighter && allUnloaded && sameSide) {
                     menuItem = new JMenuItem("Start Fighter Squadron");
                     menuItem.setActionCommand("SQUADRON");
                     menuItem.addActionListener(this);

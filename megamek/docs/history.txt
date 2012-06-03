@@ -50,6 +50,9 @@ v0.35.30-dev (SVN)
 + null check on "Auto Confirm" from Bugfix 3524542
 + another null check on "Auto Confirm" from Bugfix 3524542
 + fixing getNextWeapon bug introduced with Bugfix 3524542 (This does the same thing as original code I removed, but in a cleaner more understandable fashion...)
++ Bug 3530570: Fighters in Capital Squadrons damage tracking
++ Bug 3512512: Trying to create fighter squadron for a bot illegal argument
++ Bug 3511651: Selecting more than 6 fighters at once & squadron
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

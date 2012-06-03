@@ -7302,7 +7302,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // Check for weapons. If we find them, return true. Otherwise... we return false.
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            if (!wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()
+            if ((wtype != null) && !wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()
                     && mounted.getLinked().getShotsLeft() > 0) {
         return true;
     }
@@ -7349,7 +7349,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
+            if ((wtype != null) && wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
                 return true;
             }
         }

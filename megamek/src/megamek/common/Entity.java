@@ -11361,4 +11361,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     	return -1;
     }
 
+    /**
+     * Are we trapped inside of a destroyed transport?
+     * If so we shouldn't count for BV, which is why we have this check.
+     */
+    public boolean isTrapped() {
+        if (getTransportId() != Entity.NONE && game.getEntity(getTransportId()).isDestroyed()) {
+            return true;
+        }
+        return false;
+    }
 }

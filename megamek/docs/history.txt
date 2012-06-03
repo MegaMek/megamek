@@ -53,6 +53,8 @@ v0.35.30-dev (SVN)
 + Bug 3530570: Fighters in Capital Squadrons damage tracking
 + Bug 3512512: Trying to create fighter squadron for a bot illegal argument
 + Bug 3511651: Selecting more than 6 fighters at once & squadron
++ Bug 3427659: Killer Whale display issue in "Equipment" tab
++ Bug 3441396: Units locked inside destroyed dropships.
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

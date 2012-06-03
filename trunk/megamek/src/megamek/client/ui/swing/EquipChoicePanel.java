@@ -388,7 +388,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             .getAmmoType() == AmmoType.T_AR10) && at
                             .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
                 SantaAnnaChoicePanel sacp = new SantaAnnaChoicePanel(m);
-                panSantaAnna.add(sacp, GBC.std());
+                panSantaAnna.add(sacp, GBC.eol());
                 m_vSantaAnna.add(sacp);
             }
         }

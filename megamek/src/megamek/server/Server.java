@@ -894,14 +894,11 @@ public class Server implements Runnable {
         // the COMMAND_END_OF_GAME command
         // see the Bug 1225949.
         // TODO Perhaps there is a better solution to handle the Bot disconnect
-        if ((game.getEntitiesOwnedBy(player) > 0) && (phase != IGame.Phase.PHASE_VICTORY)) {
+        // Done. Ghost players (Bots mostly) are now removed during the resetGame(), so we don't need to do it here.
+        // This fixes Bug 3399000 without reintroducing 1225949
             player.setGhost(true);
             player.setDone(true);
             send(createPlayerUpdatePacket(player.getId()));
-        } else {
-            game.removePlayer(player.getId());
-            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
-        }
 
         // make sure the game advances
         if (game.phaseHasTurns(game.getPhase()) && (null != game.getTurn())) {

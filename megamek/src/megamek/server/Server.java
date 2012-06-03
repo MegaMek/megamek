@@ -8450,6 +8450,11 @@ public class Server implements Runnable {
         while (targets.hasMoreElements()) {
             Entity entity = targets.nextElement();
 
+            // Airborne entities wont get hit by the mines...
+            if (entity.isAirborne()) {
+                continue;
+            }
+
             // check for the "no_premove_vibra" option
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
@@ -25785,7 +25790,7 @@ public class Server implements Runnable {
             Enumeration<Entity> pickupEntities = game.getEntities(e.getPosition());
             while (pickupEntities.hasMoreElements()) {
                 Entity pe = pickupEntities.nextElement();
-                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()) {
+                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne()) {
                     continue;
                 }
                 if (!pickedUp && (pe.getOwnerId() == e.getOwnerId()) && (pe.getId() != e.getId())) {
@@ -25813,7 +25818,7 @@ public class Server implements Runnable {
                 Enumeration<Entity> pickupEnemyEntities = game.getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements()) {
                     Entity pe = pickupEnemyEntities.nextElement();
-                    if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()) {
+                    if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne()) {
                         continue;
                     }
                     if (pe instanceof MechWarrior) {

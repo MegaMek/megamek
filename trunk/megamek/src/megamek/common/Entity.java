@@ -2676,7 +2676,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns the next ready weapon, starting at the specified index
      */
     public int getNextWeapon(int start) {
+        boolean looped = false;
         for (Mounted mounted : getWeaponList()) {
+            // Make sure we actually reach the start...
+            if (looped == false) {
+                if (getEquipmentNum(mounted) == start) {
+                    looped = true;
+                }
+                continue;
+            }
+
+            // Start reached, now we can attempt to pick a weapon.
             if ((mounted != null)
                     && (mounted.isReady())
                     && (!mounted.getType().hasFlag(WeaponType.F_AMS))
@@ -2697,6 +2707,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return getEquipmentNum(mounted);
             }
 
+            // Whups! We've reached the weapon we started with. Lets find the first "free" weapon.
             if (getEquipmentNum(mounted) == start) {
                 return getFirstWeapon();
             }

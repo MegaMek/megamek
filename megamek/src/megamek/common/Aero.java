@@ -3688,4 +3688,55 @@ public class Aero extends Entity {
             return false;
         }
     }
+
+    // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34
+    public void doDisbandDamage() {
+        int loc = -1;
+        int roll = -1;
+        int dealt = 0;
+
+        // Check for critical threshold and if so damage one facing of the fighter completely. Armor and SI. Also 3 engine hits.
+        if (wasCritThresh()) {
+            while (loc == -1) {
+                roll = Compute.d6();
+                if (roll > 4) {
+                    continue;
+                }
+                loc = roll;
+            }
+            setArmor(0, loc);
+            setSI(0);
+            setEngineHits(Math.max(3, getEngineHits()));
+        }
+
+        // Move on to actual damage...
+        int damage = getCap0Armor() - getCapArmor();
+        damage -= dealt; // We already dealt a bunch of damage, move on.
+        if (damage < 1) {
+            return;
+        }
+        int hits = (int) Math.ceil(damage / 5.0);
+        int damPerHit = 5;
+        for (int i = 0; i < hits; i++) {
+            loc = -1;
+            roll = -1;
+            while (loc == -1) {
+                roll = Compute.d6();
+                if (roll > 4) {
+                    continue;
+                }
+                loc = roll;
+            }
+            setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
+            // We did too much damage, so we need to damage the SI, but we wont reduce the SI below 1 here since the fighter survived or was crit threshed.
+            if (getArmor(loc) < 0) {
+                if (getSI() > 1) {
+                    int damageSI = ((0 - getArmor(loc)) / 2); // SI Damage is halved
+                    setSI(Math.max(getSI() - damageSI, 1)); // If the fighter wasn't actually destroyed, then we've got this going on.
+                }
+                setArmor(0, loc);
+            }
+            damage -= damPerHit;
+        }
+    }
 }

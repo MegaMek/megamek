@@ -366,7 +366,7 @@ public final class Player extends TurnOrdered {
 
         while (survivors.hasMoreElements()) {
             Entity entity = survivors.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed()) {
+            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !entity.isTrapped()) {
                 bv += entity.calculateBattleValue();
             }
         }

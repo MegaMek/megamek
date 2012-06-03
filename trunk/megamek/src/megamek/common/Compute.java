@@ -1825,8 +1825,8 @@ public class Compute {
             }
         }
 
-        boolean isAboveWoods = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 2);
-        boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 3);
+        boolean isAboveWoods = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 2) || (entityTarget.isAirborne()));
+        boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 3) || (entityTarget.isAirborne()));
         ToHitData toHit = new ToHitData();
 
         if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {

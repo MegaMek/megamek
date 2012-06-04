@@ -59,6 +59,7 @@ v0.35.30-dev (SVN)
 + Bug 3399000: multiple bot - salvage file problem
 + Feature 3528485: Hatchets/Swords unofficial target like punch
 + Feature 3530179: (Unofficial) With TacOps CapFi count singles as non-cap
++ Feature 3518889: Unofficial rule : Vehicles and motive damage
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

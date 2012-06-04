@@ -168,11 +168,15 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "tacops_advanced_mech_hit_locations", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_coolant_failure", false); //$NON-NLS-1$
         addOption(advancedCombat, "no_tac", false); //$NON-NLS-1$
+        addOption(advancedCombat, "vehicles_threshold", false); //$NON-NLS-1$
+        addOption(advancedCombat, "vehicles_threshold_variable", false); //$NON-NLS-1$
+        addOption(advancedCombat, "vehicles_threshold_divisor", 10); //$NON-NLS-1$
         addOption(advancedCombat, "vehicles_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$
         addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
         addOption(advancedCombat, "increased_ac_dmg", false);
         addOption(advancedCombat, "increased_iserll_range", false);
+        addOption(advancedCombat, "unjam_uac", false);
         addOption(advancedCombat, "uac_tworolls", false);
         addOption(advancedCombat, "clubs_punch", false);
 
@@ -202,7 +206,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "no_premove_vibra", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "falls_end_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
-        addOption(advancedGroundMovement, "unjam_uac", false);
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
         addOption(advAeroRules, "aero_ground_move", true); //$NON-NLS-1$

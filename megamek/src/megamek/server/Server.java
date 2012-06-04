@@ -16860,7 +16860,21 @@ public class Server implements Runnable {
                     }
                 }
 
-                // is this a mech dumping ammo being hit in the rear torso?
+                // If we're using optional tank damage thresholds, setup our hit effects now...
+                if ((te instanceof Tank) && game.getOptions().booleanOption("vehicles_threshold")) {
+                    int thresh = (int)Math.ceil((game.getOptions().booleanOption("vehicles_threshold_variable") ? te.getArmor(hit) : te.getOArmor(hit)) / game.getOptions().intOption("vehicles_threshold_divisor"));
+                    if (damage > thresh) {
+                        hit.setEffect(((Tank)te).getPotCrit());
+                        ((Tank)te).setOverThresh(true);
+                        // TACs from the hit location table
+                        crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1 : 0;
+                    } else {
+                        ((Tank)te).setOverThresh(false);
+                        crits = 0;
+                    }
+                }
+
+                // is this a mech/tank dumping ammo being hit in the rear torso?
                 if (((te instanceof Mech) && hit.isRear() && bTorso)
                         || ((te instanceof Tank) && (hit.getLocation() == Tank.LOC_REAR))) {
                     for (Mounted mAmmo : te.getAmmo()) {

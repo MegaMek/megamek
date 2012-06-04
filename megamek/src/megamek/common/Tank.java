@@ -110,11 +110,31 @@ public class Tank extends Entity {
     private boolean driverHit = false;
     private boolean commanderHit = false;
 
+    // set up some vars for what the critical effects would be
+    private int potCrit = CRIT_NONE;
+    private boolean overThresh = false;
+
     // pain-shunted units can take two driver and commander hits and two hits
     // before being killed
     private boolean driverHitPS = false;
     private boolean commanderHitPS = false;
     private boolean crewHitPS = false;
+
+    public int getPotCrit() {
+        return potCrit;
+    }
+
+    public void setPotCrit(int crit) {
+        potCrit = crit;
+    }
+
+    public boolean getOverThresh() {
+        return overThresh;
+    }
+
+    public void setOverThresh(boolean tf) {
+        overThresh = tf;
+    }
 
     public boolean hasNoTurret() {
         return m_bHasNoTurret;
@@ -638,6 +658,7 @@ public class Tank extends Entity {
         boolean bRear = false;
         boolean ignoreTurret = m_bHasNoTurret || (table == ToHitData.HIT_UNDERWATER);
         int motiveMod = 0;
+        setPotCrit(HitData.EFFECT_NONE);
         if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !ignoreTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
             if (!hasNoDualTurret()) {
@@ -682,23 +703,50 @@ public class Tank extends Entity {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_CRITICAL);
+                    } else {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
                     break;
                 case 3:
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                     rv.setMotiveMod(motiveMod);
                     break;
                 case 4:
+                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                        setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                     rv.setMotiveMod(motiveMod);
                     break;
                 case 5:
                     if (bSide) {
+                        if (game.getOptions().booleanOption("vehicles_threshold")) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                            rv = new HitData(LOC_FRONT);
+                        } else {
                         rv = new HitData(LOC_FRONT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
                     } else if (bRear) {
+                        if (game.getOptions().booleanOption("vehicles_threshold")) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                            rv = new HitData(LOC_LEFT);
+                        } else {
                         rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
+                    } else {
+                        if (game.getOptions().booleanOption("vehicles_threshold")) {
+                            setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                            rv = new HitData(LOC_LEFT);
                     } else {
                         rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
                     }
                     rv.setMotiveMod(motiveMod);
                     break;
@@ -707,7 +755,11 @@ public class Tank extends Entity {
                     break;
                 case 8:
                     if (bSide && !game.getOptions().booleanOption("tacops_vehicle_effective")) {
+                        if (game.getOptions().booleanOption("vehicles_threshold")) {
+                            setPotCrit(HitData.EFFECT_CRITICAL);
+                        } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
                     }
                     break;
                 case 9:
@@ -721,11 +773,26 @@ public class Tank extends Entity {
                         }
                     } else {
                         if (bSide) {
+                            if (game.getOptions().booleanOption("vehicles_threshold")) {
+                                setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                rv = new HitData(LOC_REAR);
+                            } else {
                             rv = new HitData(LOC_REAR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                            }
                         } else if (bRear) {
+                            if (game.getOptions().booleanOption("vehicles_threshold")) {
+                                setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                rv = new HitData(LOC_RIGHT);
+                            } else {
                             rv = new HitData(LOC_RIGHT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                            }
+                        } else {
+                            if (game.getOptions().booleanOption("vehicles_threshold")) {
+                                setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                                rv = new HitData(LOC_LEFT);
                         } else {
                             rv = new HitData(LOC_LEFT, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        }
                         }
                         rv.setMotiveMod(motiveMod);
                     }
@@ -780,15 +847,30 @@ public class Tank extends Entity {
                                 roll += 2;
                             }
                             if (roll <= 3) {
+                                if (game.getOptions().booleanOption("vehicles_threshold")) {
+                                    setPotCrit(HitData.EFFECT_CRITICAL);
+                                    rv = new HitData(LOC_TURRET_2);
+                                } else {
                                 rv = new HitData(LOC_TURRET_2, false, HitData.EFFECT_CRITICAL);
+                                }
+                            } else {
+                                if (game.getOptions().booleanOption("vehicles_threshold")) {
+                                    setPotCrit(HitData.EFFECT_CRITICAL);
+                                    rv = new HitData(LOC_TURRET);
                             } else {
                                 rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
                             }
+                            }
+                        } else {
+                            if (game.getOptions().booleanOption("vehicles_threshold")) {
+                                setPotCrit(HitData.EFFECT_CRITICAL);
+                                rv = new HitData(LOC_TURRET);
                         } else {
                             rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
                         }
                     }
             }
+        }
         }
         if (table == ToHitData.HIT_SWARM) {
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
@@ -2152,7 +2234,7 @@ public class Tank extends Entity {
         if (roll > 12) {
             roll = 12;
         }
-        if (roll < 6) {
+        if (roll < 6 || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {

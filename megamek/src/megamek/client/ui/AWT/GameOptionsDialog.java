@@ -339,6 +339,18 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
             } else {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals("vehicles_threshold_divisor")) {
+            if ((options.getOption("vehicles_threshold")).booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals("vehicles_threshold_variable")) {
+            if ((options.getOption("vehicles_threshold")).booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -530,7 +542,19 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 }
             }
         }
-
+        if (option.getName().equals("vehicles_threshold")) {
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("vehicles_threshold_variable".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(state);
+                    comp_i.setState(false);
+                }
+                if ("vehicles_threshold_divisor".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(state);
+                    comp_i.resetToDefault();
+                }
+            }
+        }
     }
 
     private void setupButtons() {

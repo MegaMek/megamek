@@ -6317,6 +6317,16 @@ public abstract class Mech extends Entity {
     }
 
     @Override
+    public void destroyLocation(int loc, boolean blownOff) {
+        super.destroyLocation(loc, blownOff);
+        // if it's a leg, the entity falls
+        if (locationIsLeg(loc)) {
+            game.addPSR(new PilotingRollData(getId(),
+                    TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
+        }
+    }
+
+    @Override
     public boolean hasCASEII(int location) {
 
         for (Mounted mount : this.getEquipment()) {

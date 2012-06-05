@@ -191,6 +191,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JComboBox choDeployment = new JComboBox();
 
+    private JLabel labDeployShutdown = new JLabel(
+            Messages.getString("CustomMechDialog.labDeployShutdown"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JCheckBox chDeployShutdown = new JCheckBox();
+
     private JLabel labCommander = new JLabel(
             Messages.getString("CustomMechDialog.labCommander"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -488,6 +493,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         panDeploy.add(labDeployment, GBC.std());
         panDeploy.add(choDeployment, GBC.eol());
+        if (clientgui.getClient().game.getOptions().booleanOption("begin_shutdown")) {
+            panDeploy.add(labDeployShutdown, GBC.std());
+            panDeploy.add(chDeployShutdown, GBC.eol());
+            chDeployShutdown.setSelected(entity.isManualShutdown());
+        }
         refreshDeployment();
 
         if (eligibleForOffBoard) {
@@ -570,6 +580,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldInit.setEnabled(false);
             fldCommandInit.setEnabled(false);
             choDeployment.setEnabled(false);
+            chDeployShutdown.setEnabled(false);
             chCommander.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
@@ -1032,6 +1043,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // entity.setDeployRound((choDeployment.getSelectedIndex() ==
             // 0?0:choDeployment.getSelectedIndex()+1));
             entity.setDeployRound(choDeployment.getSelectedIndex());
+
+            // Should the entity begin the game shutdown?
+            if (chDeployShutdown.isSelected() && clientgui.getClient().game.getOptions().booleanOption("begin_shutdown")) {
+                entity.performManualShutdown();
+            } else { // We need to else this in case someone turned the option on, set their units, and then turned the option off.
+                entity.performManualStartup();
+            }
 
             // update commander status
             entity.setCommander(chCommander.isSelected());

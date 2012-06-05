@@ -122,6 +122,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
     public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
     public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
+    public static final String MOVE_SHUTDOWN = "moveShutDown"; //$NON-NLS-1$
+    public static final String MOVE_STARTUP = "moveStartup"; //$NON-NLS-1$
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
@@ -182,6 +184,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butShakeOff;
     private JButton butReckless;
     private JButton butEvade;
+    private JButton butShutdown;
+    private JButton butStartup;
 
     private JButton butAcc;
     private JButton butDec;
@@ -415,6 +419,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butEvade.setActionCommand(MOVE_EVADE);
         butEvade.addKeyListener(this);
 
+        butShutdown = new JButton(Messages.getString("MovementDisplay.butShutdown")); //$NON-NLS-1$
+        butShutdown.addActionListener(this);
+        butShutdown.setEnabled(false);
+        butShutdown.setActionCommand(MOVE_SHUTDOWN);
+        butShutdown.addKeyListener(this);
+
+        butStartup = new JButton(Messages.getString("MovementDisplay.butStartup")); //$NON-NLS-1$
+        butStartup.addActionListener(this);
+        butStartup.setEnabled(false);
+        butStartup.setActionCommand(MOVE_STARTUP);
+        butStartup.addKeyListener(this);
+
         butAcc = new JButton(Messages.getString("MovementDisplay.butAcc")); //$NON-NLS-1$
         butAcc.addActionListener(this);
         butAcc.setEnabled(false);
@@ -576,6 +592,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butSearchlight);
         buttonsMech.add(butHullDown);
         buttonsMech.add(butEvade);
+        if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
+            buttonsMech.add(butShutdown);
+            buttonsMech.add(butStartup);
+        }
         buttonsMech.add(butReckless);
         buttonsMech.add(butSwim);
         buttonsMech.add(butEject);
@@ -607,6 +627,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butTakeOff);
         buttonsTank.add(butVTakeOff);
         buttonsTank.add(butForwardIni);
+        if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
+            buttonsTank.add(butShutdown);
+            buttonsTank.add(butStartup);
+        }
 
         buttonsVtol = new ArrayList<JButton>(16);
         buttonsVtol.add(butWalk);
@@ -625,6 +649,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
         buttonsVtol.add(butForwardIni);
+        if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
+            buttonsVtol.add(butShutdown);
+            buttonsVtol.add(butStartup);
+        }
 
         buttonsInf = new ArrayList<JButton>(17);
         buttonsInf.add(butWalk);
@@ -691,6 +719,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butVLand);
         }
         buttonsAero.add(butForwardIni);
+        if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
+            buttonsAero.add(butShutdown);
+            buttonsAero.add(butStartup);
+        }
 
         // layout button grid
         panButtons = new JPanel();
@@ -1036,6 +1068,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setAccEnabled(false);
         setDecEnabled(false);
         setEvadeEnabled(false);
+        setShutdownEnabled(false);
+        setStartupEnabled(false);
         setEvadeAeroEnabled(false);
         setAccNEnabled(false);
         setDecNEnabled(false);
@@ -1057,8 +1091,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setVLandEnabled(false);
         setLowerEnabled(false);
         setRecklessEnabled(false);
-        setEvadeAeroEnabled(false);
-        setEvadeEnabled(false);
         setGoProneEnabled(false);
         butClimbMode.setEnabled(false);
         butDigIn.setEnabled(false);
@@ -1657,6 +1689,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateTakeOffButtons();
             updateLandButtons();
             updateEvadeButton();
+            updateShutdownButton();
+            updateStartupButton();
             updateFlyOffButton();
             updateLaunchButton();
             updateDropButton();
@@ -2091,6 +2125,44 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         setEvadeEnabled((cmd.getLastStepMovementType() != EntityMovementType.MOVE_JUMP)
                 && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_SPRINT));
+    }
+
+    private void updateShutdownButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        if (!clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
+            return;
+        }
+
+        if (ce instanceof Infantry) {
+            return;
+        }
+
+        setShutdownEnabled(!ce.isManualShutdown() && !ce.isStartupThisPhase());
+    }
+
+    private void updateStartupButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        if (!clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
+            return;
+        }
+
+        if (ce instanceof Infantry) {
+            return;
+        }
+
+        setStartupEnabled(ce.isManualShutdown() && !ce.isShutDownThisPhase());
     }
 
     private void updateRecklessButton() {
@@ -3467,6 +3539,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_EVADE)) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
+        } else if (ev.getActionCommand().equals(MOVE_SHUTDOWN)) {
+            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.ShutdownDialog.title"),
+                                        Messages.getString("MovementDisplay.ShutdownDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                clear();
+                cmd.addStep(MoveStepType.SHUTDOWN);
+                ready();
+            }
+        } else if (ev.getActionCommand().equals(MOVE_STARTUP)) {
+            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.StartupDialog.title"),
+                                        Messages.getString("MovementDisplay.StartupDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                clear();
+                cmd.addStep(MoveStepType.STARTUP);
+                ready();
+            }
         } else if (ev.getActionCommand().equals(MOVE_EVADE_AERO)) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
@@ -3611,6 +3697,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateManeuverButton();
         updateDumpButton();
         updateEvadeButton();
+        updateShutdownButton();
+        updateStartupButton();
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();
@@ -3973,6 +4061,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setEvadeEnabled(boolean enabled) {
         butEvade.setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
+    }
+
+    private void setShutdownEnabled(boolean enabled) {
+        butShutdown.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveShutdownEnabled(enabled);
+    }
+
+    private void setStartupEnabled(boolean enabled) {
+        butStartup.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveStartupEnabled(enabled);
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {

@@ -115,6 +115,8 @@ public class MoveStep implements Serializable {
     private int recoveryUnit = -1;
     TreeMap<Integer, Vector<Integer>> launched = new TreeMap<Integer, Vector<Integer>>();
     private boolean isEvading = false;
+    private boolean isShuttingDown = false;
+    private boolean isStartingUp = false;
     private boolean isRolled = false;
 
     //for maneuvers
@@ -832,6 +834,14 @@ public class MoveStep implements Serializable {
                 setMp(2);
             }
             break;
+        case SHUTDOWN:
+            setShuttingDown(true);
+            // Do something here...
+            break;
+        case STARTUP:
+            setStartingUp(true);
+            // Do something here...
+            break;
         case ROLL:
             if(prev.isRolled) {
                 isRolled = false;
@@ -958,6 +968,8 @@ public class MoveStep implements Serializable {
         velocityLeft = prev.velocityLeft;
         nTurns = prev.nTurns;
         isEvading = prev.isEvading;
+        isShuttingDown = prev.isShuttingDown;
+        isStartingUp = prev.isStartingUp;
         nRolls = prev.nRolls;
         isRolled = prev.isRolled;
         mv = prev.mv.clone();
@@ -1194,6 +1206,14 @@ public class MoveStep implements Serializable {
 
     public boolean isEvading() {
         return isEvading;
+    }
+
+    public boolean isShuttingDown() {
+        return isShuttingDown;
+    }
+
+    public boolean isStartingUp() {
+        return isStartingUp;
     }
 
     public boolean isRolled() {
@@ -1443,6 +1463,14 @@ public class MoveStep implements Serializable {
 
     public void setEvading(boolean b) {
         isEvading = b;
+    }
+
+    public void setShuttingDown(boolean b) {
+        isShuttingDown = b;
+    }
+
+    public void setStartingUp(boolean b) {
+        isStartingUp = b;
     }
 
     /**
@@ -1763,6 +1791,12 @@ public class MoveStep implements Serializable {
             }
             //evading means running
             movementType = EntityMovementType.MOVE_RUN;
+        }
+        if (type == MoveStepType.SHUTDOWN) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        if (type == MoveStepType.STARTUP) {
+            movementType = EntityMovementType.MOVE_NONE;
         }
 
 
@@ -2364,6 +2398,11 @@ public class MoveStep implements Serializable {
                 && !entity.getCrew().isUnconscious()
                 && ((type == MoveStepType.UNJAM_RAC)
                         || (type == MoveStepType.EJECT) || (type == MoveStepType.SEARCHLIGHT))) {
+            return true;
+        }
+
+        // We're wanting to startup our reactor and we're not unconscious
+        if (type == MoveStepType.STARTUP && !entity.getCrew().isUnconscious()) {
             return true;
         }
 

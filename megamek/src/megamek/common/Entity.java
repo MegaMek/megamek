@@ -7377,7 +7377,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // must be active
-        if (!isActive() || (isImmobile() && !canUnjamRAC())) {
+        if (!isActive() || (isImmobile() && !canUnjamRAC()) || isManualShutdown()) {
             return false;
         }
 

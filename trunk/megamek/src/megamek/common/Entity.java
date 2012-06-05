@@ -121,6 +121,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private Quirks quirks = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
 
+    // Variable for manually shutdown mechs.
+    protected boolean manualShutdown = false;
+    protected boolean startupThisPhase = false;
+
     protected boolean shutDown = false;
     protected boolean shutDownThisPhase = false;
     protected boolean doomed = false;
@@ -699,6 +703,31 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         recoveryTurn = r;
     }
 
+    public boolean isManualShutdown() {
+        return manualShutdown;
+    }
+
+    public void setManualShutdown(boolean tf) {
+        this.manualShutdown = tf;
+    }
+
+    public void performManualShutdown() {
+        if (isManualShutdown() || getTaserShutdownRounds() != 0 || isShutDown()) {
+            return;
+        }
+        setShutDown(true);
+        setManualShutdown(true);
+    }
+
+    public void performManualStartup() {
+        if (!isManualShutdown() || getTaserShutdownRounds() != 0) {
+            return;
+        }
+        setShutDown(false);
+        setManualShutdown(false);
+        setStartupThisPhase(true);
+    }
+
     /**
      * Checks if this is a clan unit. It is determined by tech level.
      *
@@ -830,6 +859,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isShutDownThisPhase() {
         return shutDownThisPhase;
+    }
+
+    public void setStartupThisPhase(boolean shutDown) {
+        startupThisPhase = shutDown;
+    }
+
+    public boolean isStartupThisPhase() {
+        return startupThisPhase;
     }
 
     public boolean isDoomed() {

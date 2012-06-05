@@ -1266,6 +1266,7 @@ public class Server implements Runnable {
             entity.rolledForEngineExplosion = false;
             entity.dodging = false;
             entity.setShutDownThisPhase(false);
+            entity.setStartupThisPhase(false);
 
             // reset done to false
 
@@ -5826,6 +5827,16 @@ public class Server implements Runnable {
 
             if (step.getType() == MoveStepType.EVADE) {
                 entity.setEvading(true);
+            }
+
+            if (step.getType() == MoveStepType.SHUTDOWN) {
+                entity.performManualShutdown();
+                sendServerChat(entity.getDisplayName() + " has shutdown.");
+            }
+
+            if (step.getType() == MoveStepType.STARTUP) {
+                entity.performManualStartup();
+                sendServerChat(entity.getDisplayName() + " has started up.");
             }
 
             if (step.getType() == MoveStepType.ROLL) {
@@ -14154,7 +14165,7 @@ public class Server implements Runnable {
                 }
 
                 // heat effects: start up
-                if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
+                if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                     // only start up if not shut down by taser
                     if (entity.getTaserShutdownRounds() == 0) {
                         if (entity.heat < 14) {
@@ -14632,7 +14643,8 @@ public class Server implements Runnable {
                 mtHeat = false;
             }
             // heat effects: start up
-            if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
+            if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()
+                    && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                 if (entity.getTaserShutdownRounds() == 0) {
                     if (entity.heat < 14) {
                         // automatically starts up again

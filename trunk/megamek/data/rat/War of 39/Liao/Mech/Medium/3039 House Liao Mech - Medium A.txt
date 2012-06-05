@@ -9,7 +9,7 @@ Vindicator VND-1R, 5
 Vindicator VND-1R, 4
 Shadow Hawk SHD-2H, 3
 Blackjack BJ-3, 2
-Cronus CRS-3M, 1
+Cronus CNS-3M, 1
 ##Version 1 - May 2011
 ##From RUS Files
 ##Editted by Dave "Hammer" Nawton

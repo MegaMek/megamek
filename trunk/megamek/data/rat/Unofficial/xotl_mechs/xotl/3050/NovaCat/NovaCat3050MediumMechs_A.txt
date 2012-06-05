@@ -84,7 +84,7 @@ Griffin GRF-1N,570
 Gladiator GLD-3R,20
 Gladiator GLD-4R,250
 Wolverine WVR-6M,110
-Cronus CRS-3M,250
+Cronus CNS-3M,250
 Ryoken (Stormcrow) C,40
 Battle Cobra A,40
 Battle Cobra Prime,110

@@ -72,7 +72,7 @@ Trebuchet TBT-5N,130
 Griffin GRF-1N,370
 Gladiator GLD-4R,90
 Wolverine WVR-6M,80
-Cronus CRS-3M,100
+Cronus CNS-3M,100
 Ryoken (Stormcrow) C,30
 Nobori-nin (Huntsman) A,10
 Nobori-nin (Huntsman) Prime,20

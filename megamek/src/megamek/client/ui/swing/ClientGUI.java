@@ -1095,6 +1095,32 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * selected, and ammunition expended in a prior engagement.
      */
     protected void loadListFile() {
+        loadListFile(client.getLocalPlayer());
+    }
+
+    /**
+     * Allow the player to select a MegaMek Unit List file to load. The
+     * <code>Entity</code>s in the file will replace any that the player has
+     * already selected. As such, this method should only be called in the chat
+     * lounge. The file can record damage sustained, non- standard munitions
+     * selected, and ammunition expended in a prior engagement.
+     *
+     * @param Client
+     */
+    protected void loadListFile(Client c) {
+        loadListFile(c.getLocalPlayer());
+    }
+
+    /**
+     * Allow the player to select a MegaMek Unit List file to load. The
+     * <code>Entity</code>s in the file will replace any that the player has
+     * already selected. As such, this method should only be called in the chat
+     * lounge. The file can record damage sustained, non- standard munitions
+     * selected, and ammunition expended in a prior engagement.
+     *
+     * @param Player
+     */
+    protected void loadListFile(Player player) {
         // Build the "load unit" dialog, if necessary.
         if (dlgLoadList == null) {
             dlgLoadList = new JFileChooser(".");
@@ -1114,7 +1140,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         });
         }
         // Default to the player's name.
-        dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName() + ".mul")); //$NON-NLS-1$
+        dlgLoadList.setSelectedFile(new File(player.getName() + ".mul")); //$NON-NLS-1$
 
         int returnVal = dlgLoadList.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
@@ -1131,7 +1157,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
                 // Add the units from the file.
                 for (Entity entity : loadedUnits) {
-                    entity.setOwner(client.getLocalPlayer());
+                    entity.setOwner(player);
                     client.sendAddEntity(entity);
                 }
             } catch (IOException excep) {

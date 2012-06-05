@@ -35,7 +35,7 @@ Cicada CDA-2B,50
 Cicada CDA-3C,50
 Vindicator VND-1AA "Avenging Angel",90
 Vindicator VND-1R,2380
-Cronus CRS-3M,550
+Cronus CNS-3M,550
 Clint CLNT-2-4T,50
 Clint CLNT-1-2R,50
 Enforcer ENF-4R,10

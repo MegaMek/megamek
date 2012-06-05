@@ -1,6 +1,6 @@
 3039 House Marik Mech - Medium A
 Hunchback HBK-4G, 1
-Cronus CRS-3M, 2
+Cronus CNS-3M, 2
 Hunchback HBK-4N, 3
 Hermes II HER-2M "Mercury", 4
 Griffin GRF-1N, 5

@@ -34,7 +34,7 @@ Liao3039MediumMechs_A
 Cicada CDA-3C,5
 Vindicator VND-1AA "Avenging Angel",9
 Vindicator VND-1R,238
-Cronus CRS-3M,105
+Cronus CNS-3M,105
 Clint CLNT-1-2R,5
 Cicada CDA-2A,8
 Clint CLNT-2-3T,9

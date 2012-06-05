@@ -36,7 +36,7 @@ Icarus II ICR-1S,30
 Hermes II HER-2M "Mercury",90
 Trebuchet TBT-5J,30
 Wolverine WVR-6M,940
-Cronus CRS-3M,80
+Cronus CNS-3M,80
 Scorpion SCP-1N,130
 Vindicator VND-1R,60
 Vulcan VL-2T,490

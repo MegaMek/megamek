@@ -49,7 +49,8 @@ v0.35.30-dev (SVN)
 + null check on Protomech#setCrew
 + null check on "Auto Confirm" from Bugfix 3524542
 + another null check on "Auto Confirm" from Bugfix 3524542
-+ fixing getNextWeapon bug introduced with Bugfix 3524542 (This does the same thing as original code I removed, but in a cleaner more understandable fashion...)
++ fixing getNextWeapon bug introduced with Bugfix 3524542 (This does the same thing as original code I removed,
+    but in a cleaner more understandable fashion...)
 + Bug 3530570: Fighters in Capital Squadrons damage tracking
 + Bug 3512512: Trying to create fighter squadron for a bot illegal argument
 + Bug 3511651: Selecting more than 6 fighters at once & squadron
@@ -62,9 +63,12 @@ v0.35.30-dev (SVN)
 + Feature 3518889: Unofficial rule : Vehicles and motive damage
 + Feature 3529119: Allow "Load Unit" list button to detect which player...
 + RAT Bug: Cronus needed fixed, its CNS, not CRS - Also renamed the file in mechs.zip (file itself was already edited)
-+ Organized l10n/megamek/common/options/messages.properties GameOptions to match whats in the GameOptions.java file in order to make everything easier to find
++ Organized l10n/megamek/common/options/messages.properties GameOptions to match whats in the GameOptions.java
+    file in order to make everything easier to find
 + Feature 1885975: Begin Shutdown
 + Feature 951044: Manual Shutdown
++ Bug: When using the unofficial Manual Shutdown option & the skip ineligible during movement option, manually shutdown
+    mechs are skipped and can never be restarted.
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

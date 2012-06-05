@@ -351,6 +351,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
             } else {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals("begin_shutdown")) {
+            if ((options.getOption("manual_shutdown")).booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -552,6 +558,15 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 if ("vehicles_threshold_divisor".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.resetToDefault();
+                }
+            }
+        }
+        if (option.getName().equals("manual_shutdown")) {
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("begin_shutdown".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(state);
+                    comp_i.setState(false);
                 }
             }
         }

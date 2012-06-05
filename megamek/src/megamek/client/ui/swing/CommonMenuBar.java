@@ -123,6 +123,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveLower;
     private JMenuItem moveReckless;
     private JMenuItem moveEvade;
+    private JMenuItem moveShutdown;
+    private JMenuItem moveStartup;
     private JMenuItem moveAcc = null;
     private JMenuItem moveDec = null;
     private JMenuItem moveAccN = null;
@@ -451,6 +453,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveEvade = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveEvade"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$
+        moveShutdown = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveShutdown"), MovementDisplay.MOVE_SHUTDOWN); //$NON-NLS-1$
+        moveStartup = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveStartup"), MovementDisplay.MOVE_STARTUP); //$NON-NLS-1$
 
         //create aero movement sub-menu
         aeromenu = new JMenu(Messages.getString("CommonMenuBar.AeroMenu")); //$NON-NLS-1$
@@ -1025,6 +1033,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     }
     public synchronized void setMoveEvadeEnabled(boolean enabled) {
         moveEvade.setEnabled(enabled);
+    }
+    public synchronized void setMoveShutdownEnabled(boolean enabled) {
+        moveShutdown.setEnabled(enabled);
+    }
+    public synchronized void setMoveStartupEnabled(boolean enabled) {
+        moveStartup.setEnabled(enabled);
     }
     public synchronized void setMoveEvadeAeroEnabled(boolean enabled) {
         moveEvadeAero.setEnabled(enabled);

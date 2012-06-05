@@ -243,8 +243,8 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, "protos_move_multi", false); //$NON-NLS-1$
         addOption(initiative, "inf_proto_move_multi", 3); //$NON-NLS-1$
         //addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
-        addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
         //addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$
         addOption(initiative, "front_load_initiative", false);
@@ -260,6 +260,8 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, "artillery_skill", false); //$NON-NLS-1$
         addOption(rpg, "toughness", false); //$NON-NLS-1$
         addOption(rpg, "conditional_ejection", false); //$NON-NLS-1$
+        addOption(rpg, "manual_shutdown", false); //$NON-NLS-1$
+        addOption(rpg, "begin_shutdown", false); //$NON-NLS-1$
 
         //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
 

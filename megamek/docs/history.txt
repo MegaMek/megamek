@@ -60,6 +60,8 @@ v0.35.30-dev (SVN)
 + Feature 3528485: Hatchets/Swords unofficial target like punch
 + Feature 3530179: (Unofficial) With TacOps CapFi count singles as non-cap
 + Feature 3518889: Unofficial rule : Vehicles and motive damage
++ Feature 3529119: Allow "Load Unit" list button to detect which player...
++ RAT Bug: Cronus needed fixed, its CNS, not CRS - Also renamed the file in mechs.zip (file itself was already edited)
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

@@ -2305,7 +2305,7 @@ Crimson Langur A|
 Crimson Langur B|
 Crimson Langur C|
 Cronus CNS-5M|
-Cronus CRS-3M|
+Cronus CNS-3M|
 Cyclops CP-11-H|
 Fafnir FNR-5|
 Fafnir FNR-5B|

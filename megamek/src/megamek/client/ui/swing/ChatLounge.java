@@ -2155,15 +2155,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             customizePlayer();
         } else if (ev.getSource().equals(butDeleteAll)) {
             // Build a Vector of this player's entities.
-            ArrayList<Entity> currentUnits = clientgui.getClient().game
-                    .getPlayerEntities(clientgui.getClient().getLocalPlayer(),
-                            false);
+            Client c = getPlayerSelected();
+            if (c == null) {
+                clientgui
+                        .doAlertDialog(
+                                Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            ArrayList<Entity> currentUnits = c.game.getPlayerEntities(c.getLocalPlayer(), false);
 
             // Walk through the vector, deleting the entities.
             Iterator<Entity> entities = currentUnits.iterator();
             while (entities.hasNext()) {
                 final Entity entity = entities.next();
-                clientgui.getClient().sendDeleteEntity(entity.getId());
+                c.sendDeleteEntity(entity.getId());
             }
         } else if (ev.getSource().equals(butOptions)) {
             // Make sure the game options dialog is editable.
@@ -2195,13 +2200,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource().equals(butLoadList)) {
             // Allow the player to replace their current
             // list of entities with a list from a file.
-            clientgui.loadListFile();
+            Client c = getPlayerSelected();
+            if (c == null) {
+                clientgui
+                        .doAlertDialog(
+                                Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            clientgui.loadListFile(c.getLocalPlayer());
         } else if (ev.getSource().equals(butSaveList)) {
             // Allow the player to save their current
             // list of entities to a file.
-            clientgui.saveListFile(clientgui.getClient().game
-                    .getPlayerEntities(clientgui.getClient().getLocalPlayer(),
-                            false));
+            Client c = getPlayerSelected();
+            if (c == null) {
+                clientgui
+                        .doAlertDialog(
+                                Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            clientgui.saveListFile(c.game.getPlayerEntities(c.getLocalPlayer(), false), c.getLocalPlayer().getName());
         } else if (ev.getSource().equals(butAddBot)) {
             BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
             bcd.setVisible(true);
@@ -2445,6 +2462,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (c instanceof BotClient) {
                 butRemoveBot.setEnabled(true);
             }
+            boolean tf = (!c.game.getPlayerEntities(c.getLocalPlayer(), false).isEmpty());
+            butDeleteAll.setEnabled(tf);
+            butSaveList.setEnabled(tf);
             refreshCamos();
             choTeam.setSelectedIndex(c.getLocalPlayer().getTeam());
         } else if (event.getSource().equals(lisBoardsAvailable)) {
@@ -2591,8 +2611,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int row = tablePlayers.rowAtPoint(e.getPoint());
                 Player player = playerModel.getPlayerAt(row);
                 if (player != null) {
-                    boolean isOwner = player.equals(clientgui.getClient()
-                            .getLocalPlayer());
+                    boolean isOwner = player.equals(clientgui.getClient().getLocalPlayer());
                     boolean isBot = clientgui.getBots().get(player.getName()) != null;
                     if ((isOwner || isBot)) {
                         customizePlayer();
@@ -2615,8 +2634,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             JPopupMenu popup = new JPopupMenu();
             int row = tablePlayers.rowAtPoint(e.getPoint());
             Player player = playerModel.getPlayerAt(row);
-            boolean isOwner = player.equals(clientgui.getClient()
-                    .getLocalPlayer());
+            boolean isOwner = player.equals(clientgui.getClient().getLocalPlayer());
             boolean isBot = clientgui.getBots().get(player.getName()) != null;
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;

@@ -22973,9 +22973,9 @@ public class Server implements Runnable {
         if (game.hasTacticalGenius(player)) {
             game.addInitiativeRerollRequest(game.getTeamForPlayer(player));
         }
-        /*if (null != player) {
+        if (null != player) {
             player.setDone(true);
-        }*/
+        }
         checkReady();
     }
 

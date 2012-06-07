@@ -202,7 +202,30 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
     }
 
     protected void loadEquipment(Dropship a, String sName, int nLoc) throws EntityLoadingException {
-        String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
+        String[] saEquip1 = dataFile.getDataAsString(sName + " Equipment");
+        String[] saEquip2 = new String[2];
+        String[] saEquip;
+        
+        // Special case handling for the LongTomIIICannon in the Fortress BLK
+        // A bit of a hack, but it works...
+        if (nLoc == Aero.LOC_NOSE && dataFile.exists("transporters")) {
+            String[] transporters = dataFile.getDataAsString("transporters");
+            for (String transporter : transporters) {
+                if (transporter.equals("LongTomIIICannon")) {
+                    saEquip2[0] = "ISLongTom";
+                    saEquip2[1] = "ISLongTomAmmo:125";
+                }
+            }
+        }
+        if (saEquip2 != null && saEquip2[0] != null) {
+            saEquip = new String[saEquip1.length + saEquip2.length];
+            System.arraycopy(saEquip2, 0, saEquip, 0, saEquip2.length);
+            System.arraycopy(saEquip1, 0, saEquip, 2, saEquip1.length);
+        } else {
+            saEquip = new String[saEquip1.length];
+            System.arraycopy(saEquip1, 0, saEquip, 0, saEquip1.length);
+        }
+
         if (saEquip == null) {
             return;
         }

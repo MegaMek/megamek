@@ -1,5 +1,7 @@
 ﻿﻿VERSION HISTORY:
 ----------------
+v0.35.31-dev (SVN)
+
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error
 + Added industrial manipulator construction data

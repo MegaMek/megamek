@@ -25811,12 +25811,13 @@ public class Server implements Runnable {
             boolean pickedUp = false;
             MechWarrior e = (MechWarrior) mechWarriors.nextElement();
             Enumeration<Entity> pickupEntities = game.getEntities(e.getPosition());
+            // Check for owner entities first...
             while (pickupEntities.hasMoreElements()) {
                 Entity pe = pickupEntities.nextElement();
-                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne()) {
+                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne() || (pe.getOwnerId() != e.getOwnerId())) {
                     continue;
                 }
-                if (!pickedUp && (pe.getOwnerId() == e.getOwnerId()) && (pe.getId() != e.getId())) {
+                if (!pickedUp && (pe.getId() != e.getId())) {
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
                         r = new Report(6415, Report.PUBLIC);
@@ -25837,6 +25838,37 @@ public class Server implements Runnable {
                     break;
                 }
             }
+            // Check for allied entities next...
+            if (!pickedUp) {
+                pickupEntities = game.getEntities(e.getPosition());
+            while (pickupEntities.hasMoreElements()) {
+                Entity pe = pickupEntities.nextElement();
+                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne()) {
+                    continue;
+                }
+                    if (!pickedUp && pe.getOwner().getTeam() != Player.TEAM_NONE && (pe.getOwner().getTeam() == e.getOwner().getTeam()) && (pe.getId() != e.getId())) {
+                    if (pe instanceof MechWarrior) {
+                        // MWs have a beer together
+                        r = new Report(6415, Report.PUBLIC);
+                        r.add(pe.getDisplayName());
+                        addReport(r);
+                        continue;
+                    }
+                    // Pick up the unit.
+                    pe.pickUp(e);
+                    // The picked unit is being carried by the loader.
+                    e.setPickedUpById(pe.getId());
+                    e.setPickedUpByExternalId(pe.getExternalIdAsString());
+                    pickedUp = true;
+                    r = new Report(6420, Report.PUBLIC);
+                    r.add(e.getDisplayName());
+                    r.addDesc(pe);
+                    addReport(r);
+                    break;
+                }
+            }
+            }
+            // Now check for anyone else...
             if (!pickedUp) {
                 Enumeration<Entity> pickupEnemyEntities = game.getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements()) {

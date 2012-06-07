@@ -61,6 +61,7 @@ import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.weapons.ArtilleryCannonWeapon;
+import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISHGaussRifle;
@@ -2619,7 +2620,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if(!ae.isAirborne() && (distance == 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
                 return "Only aft weapons may target units at zero range";
             }
-            if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)) {
+            if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1) && !(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return "Target is too low for nose weapons";
             }
             if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)) {

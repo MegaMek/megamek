@@ -17,11 +17,16 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.AmmoType;
+import megamek.common.IGame;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class ArtilleryBayWeapon extends BayWeapon {
+public class ArtilleryBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -34,6 +39,7 @@ public class ArtilleryBayWeapon extends BayWeapon {
         super();
         //tech levels are a little tricky
         this.techLevel = TechConstants.T_ALL;
+        this.flags = flags.or(F_ARTILLERY);
         this.name = "Artillery Bay";
         this.setInternalName(this.name);
         this.heat = 0;
@@ -47,5 +53,28 @@ public class ArtilleryBayWeapon extends BayWeapon {
         this.cost = 0;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_ARTILLERY;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.server.Server)
+     */
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.getMunitionType() == AmmoType.M_HOMING) {
+            if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+                return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa, game, server);
+            }
+            return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa, game, server);
+        } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
+            return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game, server);
+        } else {
+            return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, server);
+        }
     }
 }

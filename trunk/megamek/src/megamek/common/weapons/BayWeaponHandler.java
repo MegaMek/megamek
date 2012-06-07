@@ -39,6 +39,11 @@ public class BayWeaponHandler extends WeaponHandler {
      */
 
     private static final long serialVersionUID = -1618484541772117621L;
+    Mounted ammo;
+
+    protected BayWeaponHandler() {
+        //deserialization only
+    }
 
     /**
      * @param t

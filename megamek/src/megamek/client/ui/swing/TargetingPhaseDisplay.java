@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.common.Dropship;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -50,6 +51,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
@@ -427,6 +429,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // If the weapon does not have modes, just exit.
         Mounted m = ce().getEquipment(wn);
         if ((m == null) || !m.getType().hasModes()) {
+            return;
+        }
+
+
+        // Dropship Artillery cannot be switched to "Direct" Fire
+        final WeaponType wtype = (WeaponType) m.getType();
+        if ((ce() instanceof Dropship) && (wtype instanceof ArtilleryWeapon)) {
             return;
         }
 

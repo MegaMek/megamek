@@ -591,8 +591,10 @@ public class MechFileParser {
                     String name;
                     while ((s = br.readLine()) != null) {
                         int nIndex1 = s.indexOf('|');
-                        name = s.substring(0, nIndex1);
-                        canonUnitNames.addElement(name);
+                        if (nIndex1 > -1) {
+                            name = s.substring(0, nIndex1);
+                            canonUnitNames.addElement(name);
+                        }
                     }
                 } catch (FileNotFoundException e) {
                 }

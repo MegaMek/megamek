@@ -421,17 +421,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                             || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
                         handleIgnitionDamage(vPhaseReport, bldg, hits);
+                        hits = 0;
                     }
                     // targeting a hex for clearing
                     if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
                         nDamage = nDamPerHit * hits;
                         handleClearDamage(vPhaseReport, bldg, nDamage);
+                        hits = 0;
                     }
                     // Targeting a building.
                     if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                         // The building takes the full brunt of the attack.
                         nDamage = nDamPerHit * hits;
                         handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
+                        hits = 0;
                     }
                     if (entityTarget != null) {
                         handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,

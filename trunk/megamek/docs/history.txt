@@ -3,6 +3,7 @@
 v0.35.31-dev (SVN)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.
 + Bug: Game hangs when targeting woods or buildings.
++ Bug 3534222: RACs not working with Unofficial UAC rules
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

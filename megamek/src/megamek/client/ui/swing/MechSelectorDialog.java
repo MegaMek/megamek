@@ -275,11 +275,11 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         panelFilterBtns.add(lblUnitType, c);
 
         DefaultComboBoxModel unitTypeModel = new DefaultComboBoxModel();
+        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
-        unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
-        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
         comboUnitType.setPreferredSize(new java.awt.Dimension(200, 27));
@@ -425,7 +425,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         RowFilter<MechTableModel, Integer> unitTypeFilter = null;
         final int nType = comboType.getSelectedIndex();
         final int nClass = comboWeight.getSelectedIndex();
-        final int nUnit = comboUnitType.getSelectedIndex();
+        final int nUnit = comboUnitType.getSelectedIndex() - 1;
         //If current expression doesn't parse, don't update.
         try {
             unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
@@ -458,7 +458,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                                      || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
                                      || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
                                      || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
-                            && ((nUnit == UnitType.SIZE) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
+                            && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                             /*Advanced Search*/
                             && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))) {
                         //yuck, I have to pull up a full Entity to get MechView to search in

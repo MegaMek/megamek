@@ -2667,7 +2667,7 @@ public abstract class Mech extends Entity {
         for (int i = 0; i < locations(); i++) {
             explosiveFound = false;
             for (Mounted m : getEquipment()) {
-                if (m.getType().isExplosive() && (m.getLocation() == i)) {
+                if (m.getType().isExplosive(m) && (m.getLocation() == i)) {
                     explosiveFound = true;
                 }
             }
@@ -3025,7 +3025,7 @@ public abstract class Mech extends Entity {
             EquipmentType etype = mounted.getType();
 
             // only count explosive ammo
-            if (!etype.isExplosive()) {
+            if (!etype.isExplosive(mounted)) {
                 continue;
             }
             // PPCs with capacitors subtract 1

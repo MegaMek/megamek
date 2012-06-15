@@ -18659,7 +18659,7 @@ public class Server implements Runnable {
                             * ((AmmoType) m.getType()).getRackSize();
                     m.setShotsLeft(0);
                     // non-explosive ammo can't explode
-                    if (!m.getType().isExplosive()) {
+                    if (!m.getType().isExplosive(m)) {
                         continue;
                     }
                     damage += tmp;
@@ -18888,7 +18888,7 @@ public class Server implements Runnable {
                 r.add(weapon.getName());
                 vDesc.add(r);
                 // explosive weapons e.g. gauss now explode
-                if (weapon.getType().isExplosive() && !weapon.isHit() && !weapon.isDestroyed()) {
+                if (weapon.getType().isExplosive(weapon) && !weapon.isHit() && !weapon.isDestroyed()) {
                     vDesc.addAll(explodeEquipment(t, loc, weapon));
                 }
                 weapon.setHit(true);
@@ -19217,7 +19217,7 @@ public class Server implements Runnable {
                     r.add(weapon.getName());
                     vDesc.add(r);
                     // explosive weapons e.g. gauss now explode
-					if (weapon.getType().isExplosive() && !weapon.isHit() && !weapon.isDestroyed()) {
+					if (weapon.getType().isExplosive(weapon) && !weapon.isHit() && !weapon.isDestroyed()) {
                     vDesc.addAll(explodeEquipment(a, loc, weapon));
                 	}
                     weapon.setHit(true);
@@ -19728,7 +19728,7 @@ public class Server implements Runnable {
             // Handle equipment explosions.
             // Equipment explosions are secondary effects and
             // do not occur when loading from a scenario.
-            if (((secondaryEffects && eqType.isExplosive()) || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
+            if (((secondaryEffects && eqType.isExplosive(mounted)) || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
                     && !hitBefore) {
                 vDesc.addAll(explodeEquipment(en, loc, mounted));
             }
@@ -20445,7 +20445,7 @@ public class Server implements Runnable {
                 if ((en instanceof Mech)
                         && (en.getCrew().hasEdgeRemaining() && en.getCrew().getOptions().booleanOption("edge_when_explosion"))
                         && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                        && en.getEquipment(slot.getIndex()).getType().isExplosive()) {
+                        && en.getEquipment(slot.getIndex()).getType().isExplosive(en.getEquipment(slot.getIndex()))) {
                     en.getCrew().decreaseEdge();
                     r = new Report(6530);
                     r.subject = en.getId();
@@ -21248,7 +21248,7 @@ public class Server implements Runnable {
                     continue;
                 }
                 AmmoType atype = (AmmoType) mounted.getType();
-                if (!atype.isExplosive()) {
+                if (!atype.isExplosive(mounted)) {
                     continue;
                 }
                 // coolant pods and flamer coolant ammo don't explode from heat
@@ -23833,7 +23833,7 @@ public class Server implements Runnable {
                 }
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType) mounted.getType();
-                if (!atype.isExplosive() || (atype.getMunitionType() != AmmoType.M_INFERNO)) {
+                if (!atype.isExplosive(mounted) || (atype.getMunitionType() != AmmoType.M_INFERNO)) {
                     continue;
                 }
                 // Find the most destructive undamaged ammo.
@@ -24893,7 +24893,7 @@ public class Server implements Runnable {
             for(GunEmplacement gun : guns) {
                 for(Mounted ammo : gun.getAmmo()) {
                     ammo.setHit(true);
-                    if(ammo.getType().isExplosive()) {
+                    if(ammo.getType().isExplosive(ammo)) {
                         boom += ammo.getShotsLeft() * ((AmmoType) ammo.getType()).getDamagePerShot() * ((AmmoType) ammo.getType()).getRackSize();
                     }
                 }

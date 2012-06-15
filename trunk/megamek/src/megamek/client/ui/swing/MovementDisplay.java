@@ -251,6 +251,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         gear = MovementDisplay.GEAR_LAND;
         shiftheld = false;
         clientgui.getBoardView().addBoardViewListener(this);
+        clientgui.getClient().game.setupTeams();
         setupStatusBar(Messages
                 .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         butClear = new JButton(Messages.getString("MovementDisplay.butClear")); //$NON-NLS-1$
@@ -601,7 +602,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
+        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
+                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
         buttonsMech.add(butForwardIni);
+        }
 
         buttonsTank = new ArrayList<JButton>(23);
         buttonsTank.add(butWalk);
@@ -626,7 +630,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butLower);
         buttonsTank.add(butTakeOff);
         buttonsTank.add(butVTakeOff);
+        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
+                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
         buttonsTank.add(butForwardIni);
+        }
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
             buttonsTank.add(butShutdown);
             buttonsTank.add(butStartup);
@@ -648,7 +655,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
+        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
+                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
         buttonsVtol.add(butForwardIni);
+        }
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
             buttonsVtol.add(butShutdown);
             buttonsVtol.add(butStartup);
@@ -671,7 +681,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butDigIn);
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
+        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
+                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
         buttonsInf.add(butForwardIni);
+        }
 
         buttonsAero = new ArrayList<JButton>(24);
         if (!clientgui.getClient().game.useVectorMove()) {
@@ -718,7 +731,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butLand);
             buttonsAero.add(butVLand);
         }
+        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
+                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
         buttonsAero.add(butForwardIni);
+        }
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
             buttonsAero.add(butShutdown);
             buttonsAero.add(butStartup);
@@ -3916,11 +3932,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     private void setForwardIniEnabled(boolean enabled) {
         //forward initiative can only be done if Teams have an initiative!
-        if(clientgui.getClient().game.getOptions().booleanOption("team_initiative")){
+        if (clientgui.getClient().game.getOptions().booleanOption("team_initiative")) {
             butForwardIni.setEnabled(enabled);
             clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
-        }
-        else{ //turn them off regardless what is said!
+        } else { //turn them off regardless what is said!
             butForwardIni.setEnabled(false);
             clientgui.getMenuBar().setMoveForwardIniEnabled(false);
         }

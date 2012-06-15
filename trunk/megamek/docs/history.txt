@@ -7,6 +7,7 @@ v0.35.31-dev (SVN)
 + Moved "All" from bottom to top of Swing unit type selection list.
 + Bug 3483346: Depth 5 water shows as land in isometric and atmospheric 
 + Feature 3529300: Metal Deposits in Map Editor & MagScan sensors
++ Bug 3533479: Next Player button shown/enabled when you have no teammates
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

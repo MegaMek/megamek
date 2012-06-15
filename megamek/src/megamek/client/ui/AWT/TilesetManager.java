@@ -435,6 +435,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         return camo;
     }
 
+    public Image getEntityCamo(Entity entity) {
+        return null;
+    }
+
     /**
      * Load a single entity image
      */

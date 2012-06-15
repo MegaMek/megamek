@@ -49,6 +49,7 @@ import javax.swing.table.TableCellRenderer;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.util.DirectoryItems;
 
@@ -82,6 +83,9 @@ public class CamoChoiceDialog extends JDialog {
     String filename;
     private int colorIndex;
     private Player player;
+    private Entity entity;
+
+    private boolean select;
     
     /**
      * Create a dialog that allows players to choose a camo pattern.
@@ -202,16 +206,27 @@ public class CamoChoiceDialog extends JDialog {
 
     private void select() {                                          
         category = camoModel.getCategory();
-        if(category.equals(Player.NO_CAMO)) {
+        if(category.equals(Player.NO_CAMO) && entity == null) {
             colorIndex = tableCamo.getSelectedRow();
         }
         if(tableCamo.getSelectedRow() != -1) {
             filename = (String) camoModel.getValueAt(tableCamo.getSelectedRow(), 0);
         }
+        if (sourceButton == null && entity != null) {
+            if (category.equals(Player.NO_CAMO)) {
+                entity.setCamoCategory(null);
+                entity.setCamoFileName(null);
+            } else {
+                entity.setCamoCategory(category);
+                entity.setCamoFileName(filename);
+            }
+        } else {
         player.setColorIndex(colorIndex);
         player.setCamoCategory(category);
         player.setCamoFileName(filename);
         sourceButton.setIcon(generateIcon(category, filename));
+        }
+        select = true;
         setVisible(false);
     }                                         
 
@@ -264,7 +279,28 @@ public class CamoChoiceDialog extends JDialog {
     	colorIndex = player.getColorIndex();
     	category = player.getCamoCategory();
     	filename = player.getCamoFileName();
+        if (sourceButton != null) {
     	sourceButton.setIcon(generateIcon(category, filename));
+        }
+    	comboCategories.getModel().setSelectedItem(category);
+    	fillTable(category);
+    	int rowIndex = 0;
+    	for(int i = 0; i < camoModel.getRowCount(); i++) {
+            if(((String) camoModel.getValueAt(i, 0)).equals(filename)) {
+                rowIndex = i;
+                break;
+            }
+        }
+        tableCamo.setRowSelectionInterval(rowIndex, rowIndex); 	
+    }
+    
+    public void setEntity(Entity e) {
+    	entity = e;
+        if (entity == null) {
+            return;
+        }
+        category = entity.getCamoCategory() == null ? player.getCamoCategory() : entity.getCamoCategory();
+        filename = entity.getCamoFileName() == null ? player.getCamoFileName() : entity.getCamoFileName();
     	comboCategories.getModel().setSelectedItem(category);
     	fillTable(category);
     	int rowIndex = 0;
@@ -489,5 +525,9 @@ public class CamoChoiceDialog extends JDialog {
            }
        }
    }
+
+    public boolean isSelect() {
+        return select;
+    }
 
 }

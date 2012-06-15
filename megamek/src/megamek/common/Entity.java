@@ -89,6 +89,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected int id = Entity.NONE;
 
+    protected String camoCategory = Player.NO_CAMO;
+    protected String camoFileName = null;
+
     /** ID settable by external sources (such as mm.net) */
     protected String externalId = "-1";
 
@@ -11413,5 +11416,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         return false;
+    }
+
+    // Deal with per entity camo
+    public void setCamoCategory(String name) {
+        camoCategory = name;
+    }
+
+    public String getCamoCategory() {
+        return camoCategory;
+    }
+
+    public void setCamoFileName(String name) {
+        camoFileName = name;
+    }
+
+    public String getCamoFileName() {
+        return camoFileName;
     }
 }

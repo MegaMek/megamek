@@ -1294,7 +1294,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
-        Image camo = bv.getTilesetManager().getPlayerCamo(player);
+        Image camo = null;
+        if (entity.getCamoFileName() != null) {
+            camo = bv.getTilesetManager().getEntityCamo(entity);
+        } else {
+            camo = bv.getTilesetManager().getPlayerCamo(player);
+        }
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp)));
     }

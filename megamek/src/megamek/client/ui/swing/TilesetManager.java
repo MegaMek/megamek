@@ -449,6 +449,39 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /**
+     * Get the camo pattern for the given player.
+     *
+     * @param player - the <code>Player</code> whose camo pattern is needed.
+     * @return The <code>Image</code> of the player's camo pattern. This value
+     *         will be <code>null</code> if the player has selected no camo
+     *         pattern or if there was an error loading it.
+     */
+    public Image getEntityCamo(Entity entity) {
+
+        // Return a null if the player has selected no camo file.
+        if ((null == entity.getCamoCategory())
+                || Player.NO_CAMO.equals(entity.getCamoCategory())) {
+            return null;
+        }
+
+        // Try to get the player's camo file.
+        Image camo = null;
+        try {
+
+            // Translate the root camo directory name.
+            String category = entity.getCamoCategory();
+            if (Player.ROOT_CAMO.equals(category)) {
+                category = ""; //$NON-NLS-1$
+            }
+            camo = (Image) camos.getItem(category, entity.getCamoFileName());
+
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
+        return camo;
+    }
+
+    /**
      * Load a single entity image
      */
     public synchronized void loadImage(Entity entity, int secondaryPos) {
@@ -458,13 +491,18 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Player player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
-        Image camo = getPlayerCamo(player);
+        Image camo = null;
+        if (getEntityCamo(entity) != null) {
+            camo = getEntityCamo(entity);
+        } else {
+            camo = getPlayerCamo(player);
+        }
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded
         for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
             EntityImage onList = j.next();
-            if (onList.getBase().equals(base) && (onList.tint == tint)) {
+            if (onList.getBase().equals(base) && (onList.tint == tint) && onList.getCamo().equals(camo)) {
                 entityImage = onList;
                 break;
             }
@@ -527,6 +565,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             this.camo = camo;
             parent = comp;
             this.wreck = wreck;
+        }
+
+        public Image getCamo() {
+            return camo;
         }
 
         public void loadFacings() {

@@ -9,6 +9,7 @@ v0.35.31-dev (SVN)
 + Feature 3529300: Metal Deposits in Map Editor & MagScan sensors
 + Bug 3533479: Next Player button shown/enabled when you have no teammates
 + Feature 2898093: Camo by Unit
++ Bug 3533892: All guns treated as "explosive equipment" for edge
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

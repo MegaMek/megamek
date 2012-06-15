@@ -339,6 +339,19 @@ public class Sensor implements Serializable {
         }
     }
 
+    public int getModForMetalContent(Entity en, Entity te) {
+        // how much metal is affecting the entity?
+        int metal = Compute.getMetalInPath(en, en.getPosition(), te.getPosition());
+
+        switch(type) {
+        case (TYPE_MEK_MAGSCAN):
+        case (TYPE_VEE_MAGSCAN):
+            return metal;
+        default:
+            return 0;
+        }
+    }
+
     public int entityAdjustments(int range, Entity target, IGame game) {
 
         //you need to have moved to be detected by sesmic and be on the ground

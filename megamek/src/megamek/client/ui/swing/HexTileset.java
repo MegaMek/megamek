@@ -144,6 +144,12 @@ public class HexTileset {
 
         while (iter.hasNext()) {
             HexEntry entry = iter.next();
+
+            // Metal deposits don't count for visual
+            if (entry.getHex().containsTerrain(Terrains.METAL_CONTENT)) {
+                hex.removeTerrain(Terrains.METAL_CONTENT);
+            }
+            
             double thisMatch = baseMatch(hex, entry.getHex());
             // stop if perfect match
             if (thisMatch == 1.0) {

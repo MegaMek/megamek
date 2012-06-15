@@ -1143,6 +1143,13 @@ super * "building:4:75;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship
 
 ##STANDARD BUILDINGS, NO ARMOR##
 
+super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:1" "" "boring/cropped_farm.png"
+super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:2" "" "boring/cropped_church.png"
+super * "building:1;bldg_elev:3;bldg_cf:*;fluff:11:3" "" "boring/light_bldg.png"
+super * "building:2;bldg_elev:3;bldg_cf:*;fluff:11:4" "" "boring/cropped_cannon_tower.png"
+super * "building:3;bldg_elev:3;bldg_cf:*;fluff:11:5" "" "boring/cropped_refinery.png"
+super * "building:3;bldg_elev:4;bldg_cf:*;fluff:11:6" "" "boring/cropped_mage_tower.png"
+
 super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif"
 super * "building:4;bldg_elev:2;bldg_cf:*" "" "singlehex/hardened_2.gif"
 super * "building:4;bldg_elev:3;bldg_cf:*" "" "singlehex/hardened_3.gif"
@@ -1164,13 +1171,6 @@ super * "building:1;bldg_elev:1;bldg_cf:*" "" "singlehex/light_6.gif"
 super * "building:1;bldg_elev:2;bldg_cf:*" "" "singlehex/light_1.gif"
 super * "building:1;bldg_elev:3;bldg_cf:*" "" "singlehex/light_4.gif"
 super * "building:1;bldg_elev:4;bldg_cf:*" "" "singlehex/light_2.gif"
-
-super * "building:1;bldg_elev:1;bldg_cf:*" "" "boring/cropped_farm.png"
-super * "building:1;bldg_elev:2;bldg_cf:*" "" "boring/cropped_church.png"
-super * "building:1;bldg_elev:3;bldg_cf:*" "" "boring/light_bldg.png"
-super * "building:2;bldg_elev:3;bldg_cf:*" "" "boring/cropped_cannon_tower.png"
-super * "building:3;bldg_elev:3;bldg_cf:*" "" "boring/cropped_refinery.png"
-super * "building:3;bldg_elev:4;bldg_cf:*" "" "boring/cropped_mage_tower.png"
 
 super * "building:1:00;bldg_elev:*;bldg_cf:*" "" "light/light_roof00.gif"
 super * "building:1:01;bldg_elev:*;bldg_cf:*" "" "light/light_roof01.gif"
@@ -1783,6 +1783,18 @@ super * "legs:3" "" "limbs/leg2.gif"
 
 #super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
 #super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf2.gif;boring/hf3.gif"
+super * "woods:3" "" "boring/uhf.gif"
+
+#super * "jungle:1" "" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
+#super * "jungle:2" "" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
+#super * "jungle:3" "" "isometric/trees/ultra_heavy_jungle1.png"
+
+base * "water:0" "" "boring/blue_water_1.gif"
+base * "water:1" "" "boring/blue_water_1.gif"
+base * "water:2" "" "boring/blue_water_2.gif"
+base * "water:3" "" "boring/blue_water_3.gif"
+base * "water:4" "" "boring/blue_water_4.gif"
+base * "water:*" "" "boring/blue_water_4.gif"
 
 base 0 "" "" "boring/beige_plains_0.gif"
 base 1 "" "" "boring/beige_plains_1.gif"
@@ -1840,11 +1852,6 @@ base -3 "ice:1" "" "boring/ice_-3.gif"
 base -4 "ice:1" "" "boring/ice_-4.gif"
 base -5 "ice:1" "" "boring/ice_-5.gif"
 base -6 "ice:1" "" "boring/ice_-6.gif"
-
-base * "water:1" "" "boring/blue_water_1.gif"
-base * "water:2" "" "boring/blue_water_2.gif"
-base * "water:3" "" "boring/blue_water_3.gif"
-base * "water:4" "" "boring/blue_water_4.gif"
 
 base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
 base 1 "pavement:1" "" "boring/grey_pavement_1.gif"

@@ -130,6 +130,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "armed_mechwarriors", false); //$NON-NLS-1$
         addOption(advancedRules, "pilots_visual_range_one", false); //$NON-NLS-1$
         addOption(advancedRules, "pilots_cannot_spot", false); //$NON-NLS-1$
+        addOption(advancedRules, "metal_content", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_ams", false); //$NON-NLS-1$

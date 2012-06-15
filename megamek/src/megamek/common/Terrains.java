@@ -80,6 +80,7 @@ public class Terrains implements ITerrainFactory {
     public static final int FLUFF = 39;
     public static final int ARMS  = 40; // blown off arms for use as clubs, level = number of arms in that hex
     public static final int LEGS  = 41; // blown off legs for use as clubs, level = number of legs in that hex
+    public static final int METAL_CONTENT = 42; // Is there metal content that will block magscan sensors?
 
     private static final String[] names = { "none", "woods", "water", "rough", 
         "rubble", "jungle", "sand", "tundra", "magma", "planted_fields",
@@ -89,7 +90,7 @@ public class Terrains implements ITerrainFactory {
         "building", "bldg_cf", "bldg_elev", "bldg_basement", "bldg_class", "bldg_armor", "bridge", "bridge_cf",
         "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev", "fuel_tank_magn", 
         "impassable", "elevator", "fortified", "screen",
-        "fluff", "arms", "legs" };
+        "fluff", "arms", "legs", "metal_deposit" };
 
     public static final int SIZE = names.length;
 
@@ -244,6 +245,26 @@ public class Terrains implements ITerrainFactory {
                 return "impassable terrain";
             case(ELEVATOR):
                 return "elevator";
+            case(METAL_CONTENT):
+                if(level < 1) {
+                    return "no metal content";
+                }
+                if(level == 1) {
+                    return "very low metal content";
+                }
+                if(level == 2) {
+                    return "low metal content";
+                }
+                if(level == 3 || level == 4) {
+                    return "medium metal content";
+                }
+                if(level == 5 || level == 6) {
+                    return "high metal content";
+                }
+                if(level == 7 || level == 8) {
+                    return "very high metal content";
+                }
+                return "extreme high metal content";
             default:
                 return null;
         }
@@ -376,6 +397,11 @@ public class Terrains implements ITerrainFactory {
             return 70;
         case(FIELDS):
             return 30;
+        /*case(METAL_CONTENT):
+            if(level < 1) {
+                return 0;
+            }
+            return level;*/
         default:
             return 0;
         }

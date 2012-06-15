@@ -17708,7 +17708,7 @@ public class Server implements Runnable {
         }
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjcent hexes
-        if (ammoExplosion && game.getOptions().booleanOption("tacops_ammunition") && (damage > 0)
+        if (ammoExplosion && game.getOptions().booleanOption("tacops_ammunition") && (damage_orig > 0)
                 && ((damage_orig / 10) > 0)) {
 
             Report.addNewline(vDesc);

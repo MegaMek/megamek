@@ -20,6 +20,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.common.IHex;
+import megamek.common.Terrains;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
@@ -2999,6 +3001,10 @@ public class Compute {
         check += sensor.getModsForStealth(te);
         // ECM bubbles
         check += sensor.getModForECM(ae);
+        // Metal Content...
+        if (ae.getGame().getOptions().booleanOption("metal_content")) {
+            check += sensor.getModForMetalContent(ae, te);
+        }
 
         return Compute.getSensorBracket(check);
     }
@@ -3594,6 +3600,25 @@ public class Compute {
             }
         }
         return worstECM;
+    }
+
+    /**
+     * Check for ferrous metal content in terrain on path from a to b
+     * return the total content.
+     */
+    public static int getMetalInPath(Entity ae, Coords a, Coords b) {
+        // get intervening Coords.
+        ArrayList<Coords> coords = Coords.intervening(a, b);
+        // loop through all intervening coords, check each if they are ECM
+        // affected
+        int metalContent = 0;
+        for (Coords c : coords) {
+            if (ae.getGame().getBoard().getHex(c).containsTerrain(Terrains.METAL_CONTENT)) {
+                metalContent += ae.getGame().getBoard().getHex(c).terrainLevel(Terrains.METAL_CONTENT);
+            }
+        }
+
+        return metalContent;
     }
 
     /**

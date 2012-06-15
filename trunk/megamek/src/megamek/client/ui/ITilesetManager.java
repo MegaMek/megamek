@@ -31,6 +31,8 @@ public interface ITilesetManager {
 
     public Image getPlayerCamo(Player player);
 
+    public Image getEntityCamo(Entity entity);
+
     public Image iconFor(Entity e);
 
     public Image loadPreviewImage(Entity entity, Image camo, int tint, Component bp);

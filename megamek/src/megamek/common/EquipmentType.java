@@ -29,6 +29,14 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.common.AmmoType;
+import megamek.common.weapons.BPodWeapon;
+import megamek.common.weapons.HVACWeapon;
+import megamek.common.weapons.MPodWeapon;
+import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.TAGHandler;
+import megamek.common.weapons.Weapon;
+
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
  * actuators.
@@ -222,7 +230,62 @@ public class EquipmentType {
         return tankslots;
     }
 
-    public boolean isExplosive() {
+    public boolean isExplosive(Mounted mounted) {
+        // Special case: discharged M- and B-pods shouldn't explode.
+        if ((this instanceof MPodWeapon || this instanceof BPodWeapon) && mounted.getLinked().getShotsLeft() == 0) {
+            return false;
+        }
+
+        // special-case. RACs only explode when jammed
+        if ((mounted.getType() instanceof WeaponType)
+                && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC_ROTARY)) {
+            if (!mounted.isJammed()) {
+                return false;
+            }
+        }
+
+        // special case. ACs only explode when firing incendiary ammo
+        if ((mounted.getType() instanceof WeaponType)
+                && ((((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_AC) || (((WeaponType) mounted
+                        .getType()).getAmmoType() == AmmoType.T_LAC))) {
+            if (!mounted.isUsedThisRound()) {
+                return false;
+            }
+            Mounted ammo = mounted.getLinked();
+            if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
+                    || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
+                return false;
+            }
+
+            WeaponType wtype = (WeaponType) mounted.getType();
+            if ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
+                return false;
+            }
+        }
+
+        //special case. HVACs only explode when there's ammo left
+        if (mounted.getType() instanceof HVACWeapon) {
+            if (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0) {
+                return false;
+            }
+        }
+
+        // special case. Blue Shield Particle Field Damper only explodes when switched on
+        if ((mounted.getType() instanceof MiscType) && (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
+            return false;
+        }
+
+        // special case. PPC with Capacitor only explodes when charged
+        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && !mounted.curMode().equals("Charge")) {
+            return false;
+        }
+        if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
+            return false;
+        }
+
+        // If we're here, then none of the special cases apply and we should just return our own explosive status.
         return explosive;
     }
 

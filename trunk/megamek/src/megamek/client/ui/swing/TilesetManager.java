@@ -836,6 +836,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("super * \"road:2:62\" \"\" \"fluff/road_trees_62.gif\"");
             p.println("super * \"road:2:63\" \"\" \"fluff/road_trees_63.gif\"");
             p.println("");
+            p.println("super * \"building:1;bldg_elev:1;bldg_cf:*;fluff:11:1\" \"\" \"boring/cropped_farm.png\"");
+            p.println("super * \"building:1;bldg_elev:2;bldg_cf:*;fluff:11:2\" \"\" \"boring/cropped_church.png\"");
+            p.println("super * \"building:1;bldg_elev:3;bldg_cf:*;fluff:11:3\" \"\" \"boring/light_bldg.png\"");
+            p.println("super * \"building:2;bldg_elev:3;bldg_cf:*;fluff:11:4\" \"\" \"boring/cropped_cannon_tower.png\"");
+            p.println("super * \"building:3;bldg_elev:3;bldg_cf:*;fluff:11:5\" \"\" \"boring/cropped_refinery.png\"");
+            p.println("super * \"building:3;bldg_elev:4;bldg_cf:*;fluff:11:6\" \"\" \"boring/cropped_mage_tower.png\"");
+            p.println("");
             p.println("super * \"building:4;bldg_elev:1;bldg_cf:*\" \"\" \"singlehex/hardened_1.gif\"");
             p.println("super * \"building:4;bldg_elev:2;bldg_cf:*\" \"\" \"singlehex/hardened_2.gif\"");
             p.println("super * \"building:4;bldg_elev:3;bldg_cf:*\" \"\" \"singlehex/hardened_3.gif\"");
@@ -857,13 +864,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("super * \"building:1;bldg_elev:2;bldg_cf:*\" \"\" \"singlehex/light_1.gif\"");
             p.println("super * \"building:1;bldg_elev:3;bldg_cf:*\" \"\" \"singlehex/light_4.gif\"");
             p.println("super * \"building:1;bldg_elev:4;bldg_cf:*\" \"\" \"singlehex/light_2.gif\"");
-            p.println("");
-            p.println("super * \"building:1;bldg_elev:1;bldg_cf:*\" \"\" \"boring/cropped_farm.png\"");
-            p.println("super * \"building:1;bldg_elev:2;bldg_cf:*\" \"\" \"boring/cropped_church.png\"");
-            p.println("super * \"building:1;bldg_elev:3;bldg_cf:*\" \"\" \"boring/light_bldg.png\"");
-            p.println("super * \"building:2;bldg_elev:3;bldg_cf:*\" \"\" \"boring/cropped_cannon_tower.png\"");
-            p.println("super * \"building:3;bldg_elev:3;bldg_cf:*\" \"\" \"boring/cropped_refinery.png\"");
-            p.println("super * \"building:3;bldg_elev:4;bldg_cf:*\" \"\" \"boring/cropped_mage_tower.png\"");
             p.println("");
             p.println("super * \"building:1:00;bldg_elev:*;bldg_cf:*\" \"\" \"light/light_roof00.gif\"");
             p.println("super * \"building:1:01;bldg_elev:*;bldg_cf:*\" \"\" \"light/light_roof01.gif\"");
@@ -1181,6 +1181,11 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("");
             p.println("super * \"woods:1\" \"\" \"boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif\"");
             p.println("super * \"woods:2\" \"\" \"boring/hf0.gif;boring/hf1.gif;boring/hf2.gif;boring/hf3.gif\"");
+            p.println("super * \"woods:3\" \"\" \"boring/uhf.gif\"");
+
+            p.println("super * \"jungle:1\" \"\" \"jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png\"");
+            p.println("super * \"jungle:2\" \"\" \"jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png\"");
+            p.println("super * \"jungle:3\" \"\" \"jungle/ultra_heavy_jungle1.png\"");
             p.println("");
             p.println("base 0 \"\" \"\" \"boring/beige_plains_0.gif\"");
             p.println("base 1 \"\" \"\" \"boring/beige_plains_1.gif\"");

@@ -5,6 +5,8 @@ v0.35.31-dev (SVN)
 + Bug: Game hangs when targeting woods or buildings.
 + Bug 3534222: RACs not working with Unofficial UAC rules
 + Moved "All" from bottom to top of Swing unit type selection list.
++ Bug 3483346: Depth 5 water shows as land in isometric and atmospheric 
++ Feature 3529300: Metal Deposits in Map Editor & MagScan sensors
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

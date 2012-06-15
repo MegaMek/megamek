@@ -43,15 +43,16 @@ super * "jungle:1" "" "isometric/trees/light_jungle1.png;isometric/trees/light_j
 super * "jungle:2" "" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
 super * "jungle:3" "" "isometric/trees/ultra_heavy_jungle1.png"
 
-super * "geyser:1" "" "boring/geyservent.gif"
-# geyser 2 is rendered with smoke
-super * "geyser:3" "" "boring/geyservent.gif"
-
 super * "water:0" "" "transparent/blue_water_1.png"
 super * "water:1" "" "transparent/blue_water_1.png"
 super * "water:2" "" "transparent/blue_water_2.png"
 super * "water:3" "" "transparent/blue_water_3.png"
 super * "water:4" "" "transparent/blue_water_4.png"
+super * "water:*" "" "transparent/blue_water_4.png"
+
+super * "geyser:1" "" "boring/geyservent.gif"
+# geyser 2 is rendered with smoke
+super * "geyser:3" "" "boring/geyservent.gif"
 
 super * "rapids:1" "" "transparent/rapids.png"
 super * "rapids:2" "" "transparent/rapids.png"
@@ -1394,6 +1395,13 @@ super * "building:4:75;bldg_elev:*;bldg_cf:*;bldg_armor:*" "" "hardened/dropship
 
 ##STANDARD BUILDINGS, NO ARMOR##
 
+super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:1" "" "boring/cropped_farm.png"
+super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:2" "" "boring/cropped_church.png"
+super * "building:1;bldg_elev:3;bldg_cf:*;fluff:11:3" "" "boring/light_bldg.png"
+super * "building:2;bldg_elev:3;bldg_cf:*;fluff:11:4" "" "boring/cropped_cannon_tower.png"
+super * "building:3;bldg_elev:3;bldg_cf:*;fluff:11:5" "" "boring/cropped_refinery.png"
+super * "building:3;bldg_elev:4;bldg_cf:*;fluff:11:6" "" "boring/cropped_mage_tower.png"
+
 super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif"
 super * "building:4;bldg_elev:2;bldg_cf:*" "" "singlehex/hardened_2.gif"
 super * "building:4;bldg_elev:3;bldg_cf:*" "" "singlehex/hardened_3.gif"
@@ -1415,13 +1423,6 @@ super * "building:1;bldg_elev:1;bldg_cf:*" "" "singlehex/light_6.gif"
 super * "building:1;bldg_elev:2;bldg_cf:*" "" "singlehex/light_1.gif"
 super * "building:1;bldg_elev:3;bldg_cf:*" "" "singlehex/light_4.gif"
 super * "building:1;bldg_elev:4;bldg_cf:*" "" "singlehex/light_2.gif"
-
-super * "building:1;bldg_elev:1;bldg_cf:*" "" "boring/cropped_farm.png"
-super * "building:1;bldg_elev:2;bldg_cf:*" "" "boring/cropped_church.png"
-super * "building:1;bldg_elev:3;bldg_cf:*" "" "boring/light_bldg.png"
-super * "building:2;bldg_elev:3;bldg_cf:*" "" "boring/cropped_cannon_tower.png"
-super * "building:3;bldg_elev:3;bldg_cf:*" "" "boring/cropped_refinery.png"
-super * "building:3;bldg_elev:4;bldg_cf:*" "" "boring/cropped_mage_tower.png"
 
 super * "building:1:00;bldg_elev:*;bldg_cf:*" "" "light/light_roof00.gif"
 super * "building:1:01;bldg_elev:*;bldg_cf:*" "" "light/light_roof01.gif"

@@ -232,7 +232,7 @@ public class EquipmentType {
 
     public boolean isExplosive(Mounted mounted) {
         // Special case: discharged M- and B-pods shouldn't explode.
-        if ((this instanceof MPodWeapon || this instanceof BPodWeapon) && mounted.getLinked().getShotsLeft() == 0) {
+        if ((this instanceof MPodWeapon || this instanceof BPodWeapon) && (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() == 0)) {
             return false;
         }
 
@@ -267,7 +267,7 @@ public class EquipmentType {
 
         //special case. HVACs only explode when there's ammo left
         if (mounted.getType() instanceof HVACWeapon) {
-            if (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0) {
+            if (mounted.getEntity() == null || mounted.getLinked() == null || mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0) {
                 return false;
             }
         }

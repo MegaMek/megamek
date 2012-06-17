@@ -64,7 +64,7 @@ public class LargeSupportTank extends SupportTank {
         boolean bSide = false;
         boolean bRearSide = false;
         boolean bRear = false;
-        int motiveMod = 0;
+        int motiveMod = getMotiveSideMod(side);
         if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !m_bHasNoTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
             nArmorLoc = LOC_TURRET;
@@ -72,26 +72,18 @@ public class LargeSupportTank extends SupportTank {
         if (side == ToHitData.SIDE_FRONTLEFT) {
             nArmorLoc = LOC_FRONTLEFT;
             bSide = true;
-            motiveMod = 2;
         } else if (side == ToHitData.SIDE_FRONTRIGHT) {
             nArmorLoc = LOC_FRONTRIGHT;
             bSide = true;
-            motiveMod = 2;
         } else if (side == ToHitData.SIDE_REARRIGHT) {
             nArmorLoc = LOC_REARRIGHT;
             bRearSide = true;
-            motiveMod = 1;
         } else if (side == ToHitData.SIDE_REARLEFT) {
             nArmorLoc = LOC_REARLEFT;
             bRearSide = true;
-            motiveMod = 1;
         } else if (side == ToHitData.SIDE_REAR) {
             nArmorLoc = LOC_REAR;
-            motiveMod = 1;
             bRear = true;
-        }
-        if(game.getOptions().booleanOption("tacops_vehicle_effective")) {
-            motiveMod = 0;
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;

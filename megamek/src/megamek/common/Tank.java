@@ -167,6 +167,34 @@ public class Tank extends Entity {
     public void setMotivePenalty(int p) {
         motivePenalty = p;
     }
+    
+    /** The attack direction modifier for rolls on the motive system hits
+     * table for the given side (as defined in {@link ToHitData}). This will return
+     * 0 if Tactical Operations vehicle effectiveness rules are in effect or if the
+     * side parameter falls outside ToHitData's range of "fixed" side values; in
+     * particular, it will return 0 if handed {@link ToHitData#SIDE_RANDOM}.
+     * 
+     * @param side The attack direction as specified above.
+     * @return The appropriate directional roll modifier.
+     */
+    public int getMotiveSideMod(int side) {
+        if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
+            return 0;
+        }
+        switch(side) {
+            case ToHitData.SIDE_LEFT:
+            case ToHitData.SIDE_RIGHT:
+            case ToHitData.SIDE_FRONTLEFT:
+            case ToHitData.SIDE_FRONTRIGHT:
+            case ToHitData.SIDE_REARLEFT:
+            case ToHitData.SIDE_REARRIGHT:
+                return 2;
+            case ToHitData.SIDE_REAR:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
@@ -657,7 +685,7 @@ public class Tank extends Entity {
         boolean bSide = false;
         boolean bRear = false;
         boolean ignoreTurret = m_bHasNoTurret || (table == ToHitData.HIT_UNDERWATER);
-        int motiveMod = 0;
+        int motiveMod = getMotiveSideMod(side);
         setPotCrit(HitData.EFFECT_NONE);
         if ((side == ToHitData.SIDE_FRONT) && isHullDown() && !ignoreTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
@@ -676,18 +704,12 @@ public class Tank extends Entity {
         if (side == ToHitData.SIDE_LEFT) {
             nArmorLoc = LOC_LEFT;
             bSide = true;
-            motiveMod = 2;
         } else if (side == ToHitData.SIDE_RIGHT) {
             nArmorLoc = LOC_RIGHT;
             bSide = true;
-            motiveMod = 2;
         } else if (side == ToHitData.SIDE_REAR) {
             nArmorLoc = LOC_REAR;
-            motiveMod = 1;
             bRear = true;
-        }
-        if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
-            motiveMod = 0;
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;

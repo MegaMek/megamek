@@ -13540,6 +13540,16 @@ public class Server implements Runnable {
         r.indent();
         addReport(r);
 
+        // Charging vehicles check for possible motive system hits.
+        if (ae instanceof Tank) {
+            r = new Report(4241);
+            r.indent();
+            addReport(r);
+            int side = Compute.targetSideTable(te, ae);
+            int mod = ((Tank) ae).getMotiveSideMod(side);
+            addReport(vehicleMotiveDamage((Tank) ae, mod));
+        }
+        
         // work out which locations have spikes
         int[] spikes = new int[ae.locations()];
         for (int i = 0; i < ae.locations(); i++) {
@@ -13578,6 +13588,19 @@ public class Server implements Runnable {
         r.indent();
         addReport(r);
 
+        // Vehicles that have *been* charged check for motive system damage, too...
+        // ...though VTOLs don't use that table and should lose their rotor instead,
+        // which would be handled as part of the damage already.
+        if (te instanceof Tank && !(te instanceof VTOL)) {
+            r = new Report(4242);
+            r.indent();
+            addReport(r);
+            
+            int side = Compute.targetSideTable(ae, te);
+            int mod = ((Tank) ae).getMotiveSideMod(side);
+            addReport(vehicleMotiveDamage((Tank) te, mod));
+        }
+        
         // work out which locations have spikes
         spikes = new int[te.locations()];
         for (int i = 0; i < te.locations(); i++) {

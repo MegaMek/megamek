@@ -9580,9 +9580,6 @@ public class Server implements Runnable {
             entity.setElevation(0);
         } else if (hex.containsTerrain(Terrains.ICE)) {
             entity.setElevation(0);
-        } else if (entity instanceof Mech) {
-            // mechs might go underwater
-            entity.setElevation(hex.surface()-hex.floor());
         } else {
             Building bld = game.getBoard().getBuildingAt(entity.getPosition());
             if ((bld != null) && (bld.getType() == Building.WALL)) {

@@ -35,6 +35,7 @@ super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swam
 super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
 super * "rough:2" "" "transparent/ultra_rough.png"
 
+super * "woods:1;fluff:12" "" "boring/orchard.png"
 super * "woods:1" "" "isometric/trees/lf0.gif;isometric/trees/lf1.gif;isometric/trees/lf2.gif;isometric/trees/lf3.gif;isometric/trees/lf4.gif"
 super * "woods:2" "" "isometric/trees/hf0.gif;isometric/trees/hf1.gif;isometric/trees/hf3.gif"
 super * "woods:3" "" "isometric/trees/uhf.gif"
@@ -199,6 +200,8 @@ super * "fluff:5:04" "" "fluff/cars_5.gif"
 super * "fluff:5:05" "" "fluff/cars_6.gif"
 super * "fluff:5:06" "" "fluff/cars_7.gif"
 super * "fluff:5:07" "" "fluff/cars_8.gif"
+super * "fluff:5:98" "" "fluff/cars_2b.gif"
+super * "fluff:5:99" "" "fluff/cars_3b.gif"
 
 super * "fluff:4:00" "" "fluff/square1.gif"
 super * "fluff:4:01" "" "fluff/square2.gif"
@@ -239,6 +242,8 @@ super * "fluff:9:08" "" "fluff/maglevtrain3.gif"
 super * "fluff:9:09" "" "fluff/maglevtrain4.gif"
 super * "fluff:9:10" "" "fluff/maglevtrain5.gif"
 super * "fluff:9:11" "" "fluff/maglevtrain6.gif"
+
+super * "fluff:13:00" "" "fluff/pigs1.png;fluff/pigs2.png"
 
 super * "fuel_tank:*;fuel_tank_elev:*;fuel_tank_cf:*;fuel_tank_magn:*" "" "singlehex/fuel.gif"
 super * "fuel_tank:1:00;fuel_tank_elev:*;fuel_tank_cf:*;fuel_tank_magn:*" "" "light/light_roof00.gif"
@@ -1401,6 +1406,7 @@ super * "building:1;bldg_elev:3;bldg_cf:*;fluff:11:3" "" "boring/light_bldg.png"
 super * "building:2;bldg_elev:3;bldg_cf:*;fluff:11:4" "" "boring/cropped_cannon_tower.png"
 super * "building:3;bldg_elev:3;bldg_cf:*;fluff:11:5" "" "boring/cropped_refinery.png"
 super * "building:3;bldg_elev:4;bldg_cf:*;fluff:11:6" "" "boring/cropped_mage_tower.png"
+super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:7" "" "boring/cropped_barn.png"
 
 super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif"
 super * "building:4;bldg_elev:2;bldg_cf:*" "" "singlehex/hardened_2.gif"
@@ -1897,6 +1903,8 @@ base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
 base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
 
 base * "planted_fields:1" "" "boring/fields.gif"
+base * "planted_fields:2" "" "boring/vineyard.png"
+base * "planted_fields:3" "" "boring/soybeans.png"
 
 base * "mud:1" "" "boring/mud_1.gif"
 base * "mud:2" "" "boring/mud_2.gif"

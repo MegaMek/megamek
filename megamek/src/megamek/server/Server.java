@@ -16893,7 +16893,7 @@ public class Server implements Runnable {
                 }
 
                 // If we're using optional tank damage thresholds, setup our hit effects now...
-                if ((te instanceof Tank) && game.getOptions().booleanOption("vehicles_threshold")) {
+                if ((te instanceof Tank) && game.getOptions().booleanOption("vehicles_threshold") && !(te instanceof VTOL || te instanceof GunEmplacement)) {
                     int thresh = (int)Math.ceil((game.getOptions().booleanOption("vehicles_threshold_variable") ? te.getArmor(hit) : te.getOArmor(hit)) / game.getOptions().intOption("vehicles_threshold_divisor"));
                     if (damage > thresh) {
                         hit.setEffect(((Tank)te).getPotCrit());
@@ -17863,8 +17863,12 @@ public class Server implements Runnable {
 
                 if (en instanceof Mech) {
                     Mech mech = (Mech) en;
-                    if (mech.isAutoEject() && game.getOptions().booleanOption("conditional_ejection")
-                            && mech.isCondEjectEngine()) {
+                    if (mech.isAutoEject()
+                            && (!game.getOptions().booleanOption(
+                                    "conditional_ejection") || (game
+                                    .getOptions().booleanOption(
+                                            "conditional_ejection") && mech
+                                    .isCondEjectEngine()))) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
                 }

@@ -15,6 +15,13 @@ v0.35.31-dev (SVN)
 + Bug 3535718: Problem with new SVN
 + Bug: Vehicles executing or hit by a successful charge attack not rolling for motive system damage as per TW p. 148.
 + Bug 3535786: 'Mechs deployed on water hexes deploy to surface, not sea bottom.
++ New hexset images: cropped_barn.png, orchard.png, pigs1.png, pigs2.png, vineyard.png, soybeans.png...
+        barn: building:1;bldg_elev:2;bldg_cf:*;fluff:11:7
+        orchard: woods:1;fluff:12
+        pigs (will randomly choose between 1 and 2): fluff:13:00
+            fluff:13 category for any more animals... I plan on doing horses, cattle, and chickens.
+        vineyard: planted_fields:2
+        soybeans: planted_fields:3
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

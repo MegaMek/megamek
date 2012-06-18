@@ -26,6 +26,7 @@ v0.35.31-dev (SVN)
 + Bug: Conditional ejection options active by default even with conditional ejection itself unchecked.
 + Bug: Engine Explosion incorrectly changed by previous commit
 + Bug 3536029: Damage Threshold for VTOLs
++ Bug: Torso-mounted modular armor absorbs hits from both front and rear.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

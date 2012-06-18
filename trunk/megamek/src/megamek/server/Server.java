@@ -16759,7 +16759,7 @@ public class Server implements Runnable {
 
             if (!ammoExplosion && !damageIS
                     && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
-                damage = te.getDamageReductionFromModularArmor(hit.getLocation(), damage, vDesc);
+                damage = te.getDamageReductionFromModularArmor(hit, damage, vDesc);
             }
 
             // Destroy searchlights on 7+ (torso hits on mechs)

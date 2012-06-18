@@ -23,6 +23,7 @@ v0.35.31-dev (SVN)
         vineyard: planted_fields:2
         soybeans: planted_fields:3
 + Bug 3535390: Ammo explosion in limb with Clan CASE causes side torso to "blow off" without destroying components.
++ Bug: Conditional ejection options active by default even with conditional ejection itself unchecked.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

@@ -17543,9 +17543,8 @@ public class Server implements Runnable {
                             if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_CT)  && !te.getCrew().isDead()
                                     && !te.getCrew().isDoomed()) {
                                 Mech mech = (Mech) te;
-                                if (mech.isAutoEject() && (!game.getOptions().booleanOption("conditional_ejection")
-                                        || (game.getOptions().booleanOption("conditional_ejection")
-                                                && mech.isCondEjectCTDest()))) {
+                                if (mech.isAutoEject() && game.getOptions().booleanOption("conditional_ejection")
+                                                && mech.isCondEjectCTDest()) {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
@@ -17864,12 +17863,8 @@ public class Server implements Runnable {
 
                 if (en instanceof Mech) {
                     Mech mech = (Mech) en;
-                    if (mech.isAutoEject()
-                            && (!game.getOptions().booleanOption(
-                                    "conditional_ejection") || (game
-                                    .getOptions().booleanOption(
-                                            "conditional_ejection") && mech
-                                    .isCondEjectEngine()))) {
+                    if (mech.isAutoEject() && game.getOptions().booleanOption("conditional_ejection")
+                            && mech.isCondEjectEngine()) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
                 }

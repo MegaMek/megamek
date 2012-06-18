@@ -24,6 +24,8 @@ v0.35.31-dev (SVN)
         soybeans: planted_fields:3
 + Bug 3535390: Ammo explosion in limb with Clan CASE causes side torso to "blow off" without destroying components.
 + Bug: Conditional ejection options active by default even with conditional ejection itself unchecked.
++ Bug: Engine Explosion incorrectly changed by previous commit
++ Bug 3536029: Damage Threshold for VTOLs
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

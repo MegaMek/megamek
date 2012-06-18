@@ -17578,21 +17578,9 @@ public class Server implements Runnable {
                         r.add(damage);
                         r.indent(3);
                         vDesc.addElement(r);
-                        if ((te instanceof Mech) && (te.locationIsLeg(hit.getLocation()) || ((Mech)te).isArm(hit.getLocation()))) {
-                            //CASE in an arm or leg preventing damage means the rest goes to the rear armor of the transfer location
+                        if ((te instanceof Mech) && (te.locationIsLeg(hit.getLocation()) || ((Mech)te).isArm(hit.getLocation()) || (hit.getLocation() == Mech.LOC_HEAD))) {
                             te.setLocationBlownOff(hit.getLocation(), true);
-                            int loc = te.getTransferLocation(hit.getLocation());
-                            if (damage > te.getArmor(loc, true)) {
-                                te.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
-                            } else {
-                                te.setArmor(te.getArmor(loc, true) - damage, loc, true);
-                            }
-                            te.setLocationBlownOff(loc, true);
                         }
-                        if ((te instanceof Mech) && (hit.getLocation() == Mech.LOC_HEAD)) {
-                            te.setLocationBlownOff(hit.getLocation(), true);
-					    }
-
 
                         // ... but page 21 of the Ask The Precentor Martial FAQ
                         // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf

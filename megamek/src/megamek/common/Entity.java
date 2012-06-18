@@ -9305,8 +9305,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
-    public int getDamageReductionFromModularArmor(int loc, int damage,
+    public int getDamageReductionFromModularArmor(HitData hit, int damage,
             Vector<Report> vDesc) {
+        int loc = hit.getLocation();
         if (!hasModularArmor(loc)) {
             return damage;
         }
@@ -9315,7 +9316,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && !mount.isDestroyed()
                     && (mount.getType() instanceof MiscType)
                     && ((MiscType) mount.getType())
-                            .hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                            .hasFlag(MiscType.F_MODULAR_ARMOR)
+                    // On 'Mech torsos only, modular armor covers either front
+                    // or rear, as mounted.
+                    && (!(this instanceof Mech)
+                            || !(loc == Mech.LOC_CT || loc == Mech.LOC_LT || loc == Mech.LOC_RT)
+                            || (hit.isRear() == mount.isRearMounted()))) {
 
                 int damageAbsorption = mount.getBaseDamageCapacity()
                         - mount.getDamageTaken();

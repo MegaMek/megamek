@@ -14185,10 +14185,10 @@ public class Server implements Runnable {
                 }
 
                 // heat effects: start up
-                if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
+                if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
                     // only start up if not shut down by taser
                     if (entity.getTaserShutdownRounds() == 0) {
-                        if (entity.heat < 14) {
+                        if (entity.heat < 14 && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
                             r = new Report(5045);
@@ -14221,7 +14221,7 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(startup);
                             r.add(suroll);
-                            if (suroll >= startup) {
+                            if (suroll >= startup && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                                 // start 'er back up
                                 entity.setShutDown(false);
                                 r.choose(true);
@@ -14237,7 +14237,9 @@ public class Server implements Runnable {
                             int roll = Compute.d6(2);
                             if (roll >= 8) {
                                 entity.setTaserShutdownRounds(0);
+                                if (!(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                                 entity.setShutDown(false);
+                                }
                                 entity.setBATaserShutdown(false);
                             }
                         }
@@ -14402,7 +14404,9 @@ public class Server implements Runnable {
                     doFlamingDamage(entity);
                 }
                 if (entity.getTaserShutdownRounds() == 0) {
+                     if (!(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                     entity.setShutDown(false);
+                     }
                     entity.setBATaserShutdown(false);
                 } else {
                     // if we're shutdown by a BA taser, we might activate
@@ -14411,7 +14415,9 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 8) {
                             entity.setTaserShutdownRounds(0);
+                             if (!(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                             entity.setShutDown(false);
+                             }
                             entity.setBATaserShutdown(false);
                         }
                     }
@@ -14663,10 +14669,9 @@ public class Server implements Runnable {
                 mtHeat = false;
             }
             // heat effects: start up
-            if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()
-                    && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
+            if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (entity.heat < 14) {
+                    if (entity.heat < 14 && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
                         r = new Report(5045);
@@ -14701,7 +14706,7 @@ public class Server implements Runnable {
                         r.addDesc(entity);
                         r.add(startup);
                         r.add(suroll);
-                        if (suroll >= startup) {
+                        if (suroll >= startup && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                             // start 'er back up
                             entity.setShutDown(false);
                             r.choose(true);
@@ -14717,7 +14722,9 @@ public class Server implements Runnable {
                         int roll = Compute.d6(2);
                         if (roll >= 7) {
                             entity.setTaserShutdownRounds(0);
+                             if (!(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                             entity.setShutDown(false);
+                             }
                             entity.setBATaserShutdown(false);
                         }
                     }

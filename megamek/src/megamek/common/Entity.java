@@ -723,12 +723,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void performManualStartup() {
-        if (!isManualShutdown() || getTaserShutdownRounds() != 0) {
+        if (!isManualShutdown()) {
             return;
         }
-        setShutDown(false);
         setManualShutdown(false);
+        if (getTaserShutdownRounds() == 0) {
+            setShutDown(false);
         setStartupThisPhase(true);
+    }
     }
 
     /**
@@ -939,7 +941,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isActive(int turn) {
-        boolean isActive = !shutDown && !destroyed && getCrew().isActive()
+        boolean isActive = !shutDown && !isManualShutdown() && !destroyed && getCrew().isActive()
                 && !unloadedThisTurn;
 
         if ((turn > -1) && isActive) {
@@ -7406,7 +7408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // must be active
-        if (!isActive() || (isImmobile() && !canUnjamRAC()) && !isManualShutdown()) {
+        if (!isActive() || (isImmobile() && !canUnjamRAC())) {
             return false;
         }
 
@@ -8763,7 +8765,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // If we're using the unofficial option for single fighters staying standard scale & we're not a member of a squadron... then false.
-        if (game.getOptions().booleanOption("single_no_cap") && !isPartOfFighterSquadron()) {
+        if (isFighter() && game.getOptions().booleanOption("single_no_cap") && !isPartOfFighterSquadron()) {
             return false;
         }
         

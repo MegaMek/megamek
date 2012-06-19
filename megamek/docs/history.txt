@@ -32,6 +32,8 @@ v0.35.31-dev (SVN)
 + Bug: getNextWeapon() not working exactly correct - TAG && Artillery were backwards.
 + Added skipping of array linked MGs to getFirstWeapon()
 + Bug 3536174: Artillery Units can only fire "one" artillery...
++ Bug: Dropships do no damage
++ Bug 3536170: Beginning the game shutdown with tanks they auto-start...
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

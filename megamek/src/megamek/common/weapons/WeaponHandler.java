@@ -394,6 +394,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     nDamPerHit = 1;
                     nCluster = 5;
                 } else {
+                    nDamPerHit = attackValue;
                     hits = 1;
                     nCluster = 1;
                 }

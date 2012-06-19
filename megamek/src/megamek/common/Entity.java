@@ -2696,15 +2696,31 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *         ready.
      */
     public int getFirstWeapon() {
-        for (Mounted mounted : getWeaponList()) {
             // Now phase appropriate, since we don't really care to select weapons we can't use during this phase... do we?
+        for (Mounted mounted : getWeaponList()) {
+            // TAG only in the correct phase...
             if ((mounted.getType().hasFlag(WeaponType.F_TAG)
-                    && (game.getPhase() == IGame.Phase.PHASE_FIRING))
+                    && (game.getPhase() != IGame.Phase.PHASE_OFFBOARD))
                     || (!mounted.getType().hasFlag(WeaponType.F_TAG)
-                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING))
+                    && (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))
                     || mounted.getType().hasFlag(WeaponType.F_AMS)) {
                 continue;
             }
+
+            // Artillery only in the correct phase...
+            if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                    && game.getPhase() == IGame.Phase.PHASE_TARGETING) {
+                continue;
+            }
+
+            // No linked MGs...
+            if (mounted.getType().hasFlag(WeaponType.F_MG)) {
+                if (hasLinkedMGA(mounted)) {
+                    continue;
+                }
+            }
+
+            // It must be ready to be used...
             if (mounted.isReady()) {
                 return getEquipmentNum(mounted);
             }
@@ -2732,12 +2748,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (!mounted.getType().hasFlag(WeaponType.F_AMS))
                     && ((mounted.getLinked() == null) || (mounted.getLinked()
                             .getShotsLeft() > 0))) {
+
+                // TAG only in the correct phase...
                 if ((mounted.getType().hasFlag(WeaponType.F_TAG)
-                        && (game.getPhase() == IGame.Phase.PHASE_FIRING))
+                        && (game.getPhase() != IGame.Phase.PHASE_OFFBOARD))
                         || (!mounted.getType().hasFlag(WeaponType.F_TAG)
-                        && (game.getPhase() == IGame.Phase.PHASE_TARGETING))) {
+                        && (game.getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
                     continue;
                 }
+
+                // Artillery only in the correct phase...
+                if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                        && game.getPhase() == IGame.Phase.PHASE_TARGETING) {
+                    continue;
+                }
+
+                // No linked MGs...
                 if (mounted.getType().hasFlag(WeaponType.F_MG)) {
                     if (hasLinkedMGA(mounted)) {
                         continue;

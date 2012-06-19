@@ -66,7 +66,7 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
+        // Only mechs
         if (unit instanceof Mech) {
             result = true;
         }

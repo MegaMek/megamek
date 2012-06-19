@@ -2289,17 +2289,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     .getEntities(ce.getPosition());
             boolean isGood = false;
             while (entities.hasMoreElements()) {
-                // Is the other unit friendly and not the current entity?
                 other = entities.nextElement();
-                if (ce.getOwner().equals(other.getOwner()) && !ce.equals(other)) {
-                    // Yup. If the current entity has at least 1 MP, if it can
+                // If the other unit is friendly and not the current entity
+                // and the current entity has at least 1 MP, if it can
                     // transport the other unit, and if the other hasn't moved
                     // then enable the "Load" button.
                     if ((ce.getWalkMP() > 0) && ce.canLoad(other)
                             && other.isLoadableThisTurn()) {
                         setLoadEnabled(true);
                         isGood = true;
-                    }
 
                     // We can stop looking.
                     break;
@@ -2479,10 +2477,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     .getEntities(loadeePos);
             boolean isGood = false;
             while (entities.hasMoreElements()) {
-                // Is the other unit friendly and not the current entity?
                 other = entities.nextElement();
-                if (!ce.getOwner().isEnemyOf(other.getOwner())
-                        && !ce.equals(other)) {
+                // Is the other unit friendly and not the current entity?
                     // must be done with its movement
                     // it also must be same heading and velocity
                     if ((other instanceof Aero) && other.isDone()
@@ -2497,12 +2493,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                     .getVectors())) {
                                 setRecoverEnabled(true);
                                 isGood = true;
+
+                            // We can stop looking now.
+                            break;
                             }
                         } else if (cmd.getFinalVelocity() == oa
                                 .getCurrentVelocity()) {
                             setRecoverEnabled(true);
                             isGood = true;
-                        }
+
+                        // We can stop looking now.
+                        break;
                     }
                 }
                 // Nope. Discard it.
@@ -2546,12 +2547,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 .getEntities(loadeePos);
         boolean isGood = false;
         while (entities.hasMoreElements()) {
-            // Is the other unit friendly and not the current entity?
             other = entities.nextElement();
-            if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
+            // Is the other unit friendly and not the current entity?
                 // must be done with its movement
                 // it also must be same heading and velocity
-                if (other.isCapitalFighter() && other.isDone()
+            if (ce.getOwner().equals(other.getOwner()) && other.isCapitalFighter() && other.isDone()
                         && other.canLoad(ce)
                         && (cmd.getFinalFacing() == other.getFacing())) {
                     // now lets check velocity
@@ -2563,12 +2563,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                 .getVectors())) {
                             setJoinEnabled(true);
                             isGood = true;
+
+                        // We're done looping now...
+                        break;
                         }
                     } else if (cmd.getFinalVelocity() == oa
                             .getCurrentVelocity()) {
                         setJoinEnabled(true);
                         isGood = true;
-                    }
+
+                    // We're done looping now...
+                    break;
                 }
             }
             // Nope. Discard it.
@@ -2742,9 +2747,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         Enumeration<Entity> entities = clientgui.getClient().game
                 .getEntities(loadeePos);
         while (entities.hasMoreElements()) {
-            // Is the other unit friendly and not the current entity?
             other = entities.nextElement();
-            if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
+            // Is the other unit friendly and not the current entity?
                 // must be done with its movement
                 // it also must be same heading and velocity
                 if ((other instanceof Aero)
@@ -2766,7 +2770,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         choices.add(other);
                     }
                 }
-            }
             // Nope. Discard it.
             other = null;
         } // Check the next entity in this position.
@@ -2840,9 +2843,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         Enumeration<Entity> entities = clientgui.getClient().game
                 .getEntities(loadeePos);
         while (entities.hasMoreElements()) {
-            // Is the other unit friendly and not the current entity?
             other = entities.nextElement();
-            if (!ce.getOwner().isEnemyOf(other.getOwner()) && !ce.equals(other)) {
+            // Is the other unit friendly and not the current entity?
                 // must be done with its movement
                 // it also must be same heading and velocity
                 if ((other instanceof Aero)
@@ -2864,7 +2866,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         choices.add(other);
                     }
                 }
-            }
             // Nope. Discard it.
             other = null;
         } // Check the next entity in this position.

@@ -28,6 +28,9 @@ v0.35.31-dev (SVN)
 + Bug 3536029: Damage Threshold for VTOLs
 + Bug: Torso-mounted modular armor absorbs hits from both front and rear.
 + Bug: Airborne/Space battle damage with cluster weapons not correct (again), and... "hopefully" dropship weapon bays doing no damage to fighters in space
++ WIP: Load teammates' entities
++ Bug: getNextWeapon() not working exactly correct - TAG && Artillery were backwards.
++ Added skipping of array linked MGs to getFirstWeapon()
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

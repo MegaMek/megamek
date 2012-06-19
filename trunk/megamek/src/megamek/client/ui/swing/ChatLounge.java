@@ -1761,7 +1761,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if ((c != null) && (c.getLocalPlayer().getTeam() != team)) {
             c.getLocalPlayer().setTeam(team);
             c.sendPlayerInfo();
+            // WIP on getting entities to be able to be loaded by teammates
+            /*Iterator<Entity> playerUnits = c.game.getPlayerEntities(c.getLocalPlayer(), false).iterator();
+            while (playerUnits.hasNext()) {
+                Entity unit = playerUnits.next();
+                if (unit.getTransportId() != Entity.NONE && unit.getGame().getEntity(unit.getTransportId()).getOwner().getTeam() != unit.getOwner().getTeam()) {
+                    Entity unloader = unit.getGame().getEntity(unit.getTransportId());
+                    unloader.unload(unit);
+                    unit.setTransportId(Entity.NONE);
+                    c.sendUpdateEntity(unit);
+                    c.sendUpdateEntity(unloader);
+                }
+                if (unit.getLoadedUnits().isEmpty() == false) {
+                    for(Entity loaded : unit.getLoadedUnits()) {
+                        if (unit.getOwner().getTeam() != loaded.getOwner().getTeam()) {
+                            unit.unload(loaded);
+                            loaded.setTransportId(Entity.NONE);
+                            c.sendUpdateEntity(loaded);
+                            c.sendUpdateEntity(unit);
         }
+    }
+                }
+            }*/
+            }
+        //refreshEntities();
     }
 
     /**

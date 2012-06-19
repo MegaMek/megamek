@@ -366,7 +366,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int nCluster = calcnCluster();
 
             //Now I need to adjust this for attacks on aeros because they use attack values and different rules
-            if(target.isAirborne()) {
+            if(target.isAirborne() || game.getBoard().inSpace()) {
                 //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
                 if(wtype.hasFlag(WeaponType.F_SPACE_BOMB)) {
                     bSalvo = true;
@@ -390,7 +390,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     nCluster = 1;
                 } else if(usesClusterTable() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
                     bSalvo = true;
-                    hits = nDamPerHit;
+                    hits = nDamPerHit * hits;
                     nDamPerHit = 1;
                     nCluster = 5;
                 } else {

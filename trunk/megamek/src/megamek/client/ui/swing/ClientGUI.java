@@ -1614,7 +1614,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return (null != dir.getName()) && dir.getName().endsWith(".png"); //$NON-NLS-1$
+                return (null != dir.getName()) && (dir.getName().endsWith(".png") || dir.isDirectory()); //$NON-NLS-1$
             }
 
             @Override

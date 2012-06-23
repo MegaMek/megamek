@@ -38,6 +38,7 @@ v0.35.31-dev (SVN)
 + Bug 3536356: Princess jump movement undervalued due to mixing for- and backward movement (which normal players can't even do).
 + Bug 3537192: Players disconnecting in lounge become permanent ghosts
 + Feature: Version mismatch reporting. If both the client and server support the version information exchange, then they will report mismatched versions.
++ Bug: One-shot weapon ammunition on vehicles causing/included in ammo critical hits.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

@@ -2346,7 +2346,7 @@ public class Tank extends Entity {
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
-                            if (!m.isDestroyed() && !m.isHit()) {
+                            if (!m.isDestroyed() && !m.isHit() && m.getLocation() != Entity.LOC_NONE) {
                                 return CRIT_AMMO;
                             }
                         }
@@ -2389,7 +2389,7 @@ public class Tank extends Entity {
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
-                            if (!m.isDestroyed() && !m.isHit()) {
+                            if (!m.isDestroyed() && !m.isHit() && m.getLocation() != Entity.LOC_NONE) {
                                 return CRIT_AMMO;
                             }
                         }

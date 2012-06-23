@@ -2044,8 +2044,7 @@ public class Game implements Serializable, IGame {
             Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
             for (int i = 0; i < entities.size(); i++) {
                 Entity e = entities.elementAt(i);
-                if (initiativeRerollRequests.contains(getTeamForPlayer(e
-                        .getOwner()))) {
+                if (initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
                     vRerolls.add(e);
                 }
             }

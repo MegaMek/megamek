@@ -1358,9 +1358,9 @@ public class Server implements Runnable {
      * ready.
      */
     private void resetActivePlayersDone() {
-        if (isReportingPhase()) {
+        /*if (isReportingPhase()) {
             return;
-        }
+        }*/
         for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = i.nextElement();
 
@@ -23655,7 +23655,7 @@ public class Server implements Runnable {
             break;
         case Packet.COMMAND_REROLL_INITIATIVE:
             receiveInitiativeRerollRequest(packet, connId);
-            send(createPlayerDonePacket(connId));
+            // send(createPlayerDonePacket(connId));
             break;
         case Packet.COMMAND_FORWARD_INITIATIVE:
             receiveForwardIni(packet, connId);

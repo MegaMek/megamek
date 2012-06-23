@@ -35,6 +35,7 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
+import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.commands.AddBotCommand;
 import megamek.client.commands.ClientCommand;
@@ -1055,6 +1056,10 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_SERVER_GREETING:
             connected = true;
             send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
+            Object[] versionData = new Object[2];
+            versionData[0] = MegaMek.VERSION;
+            versionData[1] = Long.toString(MegaMek.TIMESTAMP);
+            send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, versionData));
             break;
         case Packet.COMMAND_SERVER_CORRECT_NAME:
             correctName(c);

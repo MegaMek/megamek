@@ -643,6 +643,35 @@ public class Server implements Runnable {
         return oldName;
     }
 
+    private void receivePlayerVersion(Packet packet, int connId) {
+        String version = (String) packet.getObject(0);
+        long timestamp = Long.parseLong((String) packet.getObject(1));
+        StringBuffer buf = new StringBuffer();
+        boolean needs = false;
+        if (!version.equals(MegaMek.VERSION)) {
+            buf.append("Client/Server version mismatch. Server reports: "+MegaMek.VERSION+", Client reports: "+version);
+            needs = true;
+        }
+        String ts1 = new Date(MegaMek.TIMESTAMP).toString();
+        String ts2 = new Date(timestamp).toString();
+        if (MegaMek.TIMESTAMP > 0L && timestamp > 0L && timestamp != MegaMek.TIMESTAMP) {
+            if (!version.equals(MegaMek.VERSION)) {
+                buf.append("\nClient/Server timestamp mismatch. Server reports: "+ts1+", Client reports: "+ts2);
+            } else {
+                buf.append("Client/Server timestamp mismatch. Server reports: "+ts1+", Client reports: "+ts2);
+            }
+            needs = true;
+        }
+
+        // Now, if we need to, send message!
+        if (needs) {
+            Player player = getPlayer(connId);
+            if (null != player) {
+                sendServerChat("For "+player.getName()+" Server reports:\n"+buf.toString());
+            }
+        }
+    }
+
     /**
      * Recieves a player name, sent from a pending connection, and connects that
      * connection.
@@ -896,9 +925,14 @@ public class Server implements Runnable {
         // TODO Perhaps there is a better solution to handle the Bot disconnect
         // Done. Ghost players (Bots mostly) are now removed during the resetGame(), so we don't need to do it here.
         // This fixes Bug 3399000 without reintroducing 1225949
+        if (phase == IGame.Phase.PHASE_VICTORY || phase == IGame.Phase.PHASE_LOUNGE || player.isObserver()) {
+            game.removePlayer(player.getId());
+            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
+        } else {
             player.setGhost(true);
             player.setDone(true);
             send(createPlayerUpdatePacket(player.getId()));
+        }
 
         // make sure the game advances
         if (game.phaseHasTurns(game.getPhase()) && (null != game.getTurn())) {
@@ -14195,7 +14229,7 @@ public class Server implements Runnable {
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             addReport(r);
-                        } else {
+                        } else if (!(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                             // roll for startup
                             int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                             if (mtHeat) {
@@ -14221,7 +14255,7 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(startup);
                             r.add(suroll);
-                            if (suroll >= startup && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
+                            if (suroll >= startup) {
                                 // start 'er back up
                                 entity.setShutDown(false);
                                 r.choose(true);
@@ -14678,7 +14712,7 @@ public class Server implements Runnable {
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         addReport(r);
-                    } else {
+                    } else if (!(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                         // roll for startup
                         int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
                         if (mtHeat) {
@@ -14706,7 +14740,7 @@ public class Server implements Runnable {
                         r.addDesc(entity);
                         r.add(startup);
                         r.add(suroll);
-                        if (suroll >= startup && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
+                        if (suroll >= startup) {
                             // start 'er back up
                             entity.setShutDown(false);
                             r.choose(true);
@@ -23592,6 +23626,9 @@ public class Server implements Runnable {
         }
         // act on it
         switch (packet.getCommand()) {
+        case Packet.COMMAND_CLIENT_VERSIONS:
+            receivePlayerVersion(packet, connId);
+            break;
         case Packet.COMMAND_CLOSE_CONNECTION:
             // We have a client going down!
             IConnection c = getConnection(connId);

@@ -162,7 +162,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
     public void rerollInitiative() {
         rerolled = true;
         rerollInitiativeB.setEnabled(false);
-        readyB.setEnabled(false);
+        //readyB.setEnabled(false);
         client.sendRerollInitiativeRequest();
     }
 

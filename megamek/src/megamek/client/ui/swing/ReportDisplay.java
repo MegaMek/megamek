@@ -128,7 +128,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     public void rerollInitiative() {
         rerolled = true;
         rerollInitiativeB.setEnabled(false);
-        butDone.setEnabled(false);
+        //butDone.setEnabled(false);
         clientgui.getClient().sendRerollInitiativeRequest();
     }
 

@@ -410,7 +410,7 @@ public class VTOL extends Tank {
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
-                            if (!m.isDestroyed() && !m.isHit()) {
+                            if (!m.isDestroyed() && !m.isHit() && m.getLocation() != Entity.LOC_NONE) {
                                 return CRIT_AMMO;
                             }
                         }

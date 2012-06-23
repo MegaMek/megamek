@@ -18702,6 +18702,10 @@ public class Server implements Runnable {
                 vDesc.add(r);
                 int damage = 0;
                 for (Mounted m : t.getAmmo()) {
+                    // Don't include ammo of one-shot weapons.
+                    if (m.getLocation() == Entity.LOC_NONE) {
+                        continue;
+                    }
                     m.setHit(true);
                     int tmp = m.getShotsLeft() * ((AmmoType) m.getType()).getDamagePerShot()
                             * ((AmmoType) m.getType()).getRackSize();

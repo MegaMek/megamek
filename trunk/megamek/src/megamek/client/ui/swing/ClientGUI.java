@@ -1361,7 +1361,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // This update is for reports that get sent at odd times,
             // currently Tactical Genius reroll requests and when
             // a player wishes to continue moving after a fall.
-            if ((e.getReport() == null) && (curPanel instanceof ReportDisplay)) {
+            if (curPanel instanceof ReportDisplay) {
                 // Tactical Genius
                 ((ReportDisplay) curPanel).appendReportTab(getClient().phaseReport);
                 ((ReportDisplay) curPanel).resetReadyButton();
@@ -1372,6 +1372,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     if (!((ReportDisplay) curPanel).hasRerolled()) {
                         ((ReportDisplay) curPanel).resetRerollButton();
                     }
+                }
+                // Show a popup to the players so that we know whats up!
+                if (!(getClient() instanceof TestBot)) {
+                    doAlertDialog("Tactical Genius Report", e.getReport());
                 }
             } else {
                 // Continued movement after getting up

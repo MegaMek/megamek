@@ -1131,7 +1131,7 @@ public class MapMenu extends JPopupMenu {
             } else {
                 menu.add(createTorsoTwistJMenuItem(coords));
             }
-        } else if (myEntity instanceof GunEmplacement || ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(Tank.LOC_TURRET) > -1))) {
+        } else if ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(Tank.LOC_TURRET) > -1)) {
             menu.setText("Turret Twist");
             if (coords.equals(myEntity.getPosition())) {
                 menu.add(createTorsoTwistJMenuItem(1));

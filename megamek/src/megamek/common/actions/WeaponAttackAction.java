@@ -2079,7 +2079,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         // Infantry can't clear woods.
         if (isAttackerInfantry && (Targetable.TYPE_HEX_CLEAR == target.getTargetType())) {
+            if (hexTarget.containsTerrain(Terrains.WOODS)) {
             return "Infantry can not clear woods.";
+        }
         }
 
         // only screen launchers may launch screens (what a coincidence)

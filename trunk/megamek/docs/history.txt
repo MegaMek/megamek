@@ -46,6 +46,8 @@ v0.35.31-dev (SVN)
 + Feature: Princess will now add any building with a Gun Emplacement to her strategic targets automatically
 + Bug: Checking Tank for turret Location when your Tank is actually a GunEmplacement drops an error because locations[] is too small.
 + Bug 3537444: Attempting to "Clear" (Destroy/Damge) a bridge with infantry
++ Bug 3537459: Unjam RAC not usable with tank pavement movement
++ Bug: Missing IHex hexTarget in new code for infantry checking for woods when attempting to clear.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

@@ -903,7 +903,7 @@ public class MapMenu extends JPopupMenu {
                     if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
-                } if ((h != null) && h.containsTerrain(Terrains.BUILDING)) {
+                } if ((h != null) && (h.containsTerrain(Terrains.BUILDING) || h.containsTerrain(Terrains.BRIDGE))) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
                     if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));

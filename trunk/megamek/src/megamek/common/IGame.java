@@ -641,6 +641,11 @@ public interface IGame {
     public abstract Enumeration<Entity> getEntities(Coords c);
 
     /**
+     * Returns an Enumeration of the active entities at the given coordinates.
+     */
+    public abstract Enumeration<Entity> getEntities(Coords c, boolean ignore);
+
+    /**
      * Returns a Vector of the active entities at the given coordinates.
      */
     public abstract Vector<Entity> getEntitiesVector(Coords c);

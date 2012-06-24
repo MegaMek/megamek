@@ -41,6 +41,9 @@ v0.35.31-dev (SVN)
 + Bug: One-shot weapon ammunition on vehicles causing/included in ammo critical hits.
 + Bug 3528477: Update initiative roll when using Tactical Genius
 + Bug: Tactical Genius update above was failing to enable done buttons again.
++ Bug 3537456: Turrets cannot be right click selected during firing
++ Bug 3537472: Princess will target Gun Emplacements & other non-targetable
++ Feature: Princess will now add any building with a Gun Emplacement to her strategic targets automatically
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

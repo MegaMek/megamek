@@ -1581,7 +1581,7 @@ public class FireControl {
         ArrayList<Targetable> ret = new ArrayList<Targetable>();
         for (Entity e : game.getEntitiesVector()) {
             if (e.getOwner().isEnemyOf(shooter.getOwner())
-                    && (e.getPosition() != null) && !e.isOffBoard()) {
+                    && (e.getPosition() != null) && !e.isOffBoard() && e.isTargetable()) {
                 ret.add(e);
             }
         }

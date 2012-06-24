@@ -2202,6 +2202,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getInternalForReal(int loc) {
+        if (this instanceof GunEmplacement && loc == Tank.LOC_TURRET)  {
+            return Tank.LOC_TURRET;
+        }
         return internal[loc];
     }
 

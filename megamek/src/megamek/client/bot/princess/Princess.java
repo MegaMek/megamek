@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -26,9 +27,11 @@ import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.bot.princess.PathRanker.RankedPath;
+import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.GunEmplacement;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
@@ -394,6 +397,26 @@ public class Princess extends BotClient {
                 sendChat("Building in Hex "
                         + strategic_targets.get(i).toFriendlyString()
                         + " designated strategic target.");
+            }
+        }
+
+        // Pick up on any turrets and shoot their buildings as well.
+        Enumeration<Building> buildings = game.getBoard().getBuildings();
+        while (buildings.hasMoreElements()) {
+            Building bldg = buildings.nextElement();
+            Enumeration<Coords> bldgCoords = bldg.getCoords();
+            while (bldgCoords.hasMoreElements()) {
+                Coords coords = bldgCoords.nextElement();
+                for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements();) {
+                    Entity entity = i.nextElement();
+                    BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
+                    if (entity instanceof GunEmplacement && entity.getOwner().isEnemyOf(getLocalPlayer()) && fire_control.additional_targets.indexOf(bt) == -1) {
+                        fire_control.additional_targets.add(bt);
+                        sendChat("Building in Hex "
+                                + coords.toFriendlyString()
+                                + " designated target due to Gun Emplacement.");
+                    }
+                }
             }
         }
     }

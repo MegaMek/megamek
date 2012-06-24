@@ -35,6 +35,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
+import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -313,7 +314,7 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Select");
         // add select options
         if (canSelectEntities()) {
-            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = client.game.getEntities(coords, canTargetEntities()); i.hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (client.getMyTurn().isValidEntity(entity, client.game)) {
                     menu.add(selectJMenuItem(entity));
@@ -326,7 +327,7 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
-        for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = client.game.getEntities(coords, true); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             menu.add(viewJMenuItem(entity));
         }
@@ -1130,7 +1131,7 @@ public class MapMenu extends JPopupMenu {
             } else {
                 menu.add(createTorsoTwistJMenuItem(coords));
             }
-        } else if ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(Tank.LOC_TURRET) > -1)) {
+        } else if (myEntity instanceof GunEmplacement || ((myEntity instanceof Tank) && (((Tank) myEntity).getInternal(Tank.LOC_TURRET) > -1))) {
             menu.setText("Turret Twist");
             if (coords.equals(myEntity.getPosition())) {
                 menu.add(createTorsoTwistJMenuItem(1));

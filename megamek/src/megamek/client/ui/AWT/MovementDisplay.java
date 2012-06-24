@@ -1449,7 +1449,7 @@ DoneButtoned, KeyListener {
         if (null == ce) {
             return;
         }
-        setUnjamEnabled(ce.canUnjamRAC() && ((gear == MovementDisplay.GEAR_LAND) || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP)) && (cmd.getMpUsed() <= ce.getWalkMP()));
+        setUnjamEnabled(ce.canUnjamRAC() && ((gear == MovementDisplay.GEAR_LAND) || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP)) && (cmd.getMpUsed() <= ce.getWalkMP() || (cmd.getLastStep().isOnlyPavement() && cmd.getMpUsed() <= (ce.getWalkMP() + 1))));
     }
 
     private void updateSearchlightButton() {
@@ -2536,7 +2536,7 @@ DoneButtoned, KeyListener {
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_CHARGE)
                     || (gear == MovementDisplay.GEAR_DFA)
-                    || (cmd.getMpUsed() > ce.getWalkMP())
+                    || ((cmd.getMpUsed() > ce.getWalkMP()) && !(cmd.getLastStep().isOnlyPavement() && cmd.getMpUsed() <= (ce.getWalkMP() + 1)))
                     || (gear == MovementDisplay.GEAR_SWIM)
                     || (gear == MovementDisplay.GEAR_RAM)) {
                 // in the wrong gear

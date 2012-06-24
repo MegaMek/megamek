@@ -1360,12 +1360,19 @@ public class Game implements Serializable, IGame {
      * Returns an Enumeration of the active entities at the given coordinates.
      */
     public Enumeration<Entity> getEntities(Coords c) {
+        return getEntities(c, false);
+    }
+
+    /**
+     * Returns an Enumeration of the active entities at the given coordinates.
+     */
+    public Enumeration<Entity> getEntities(Coords c, boolean ignore) {
         Vector<Entity> vector = new Vector<Entity>();
 
         // Only build the list if the coords are on the board.
         if (board.contains(c)) {
             for (Entity entity : entities) {
-                if (!entity.isTargetable()) {
+                if (!entity.isTargetable() && !ignore) {
                     continue;
                 }
                 if (c.equals(entity.getPosition())) {

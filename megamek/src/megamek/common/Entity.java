@@ -6603,7 +6603,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             result.append(next.getUnusedString());
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
-                result.append("<br>");
+                result.append("\n");
             }
         }
 

@@ -5196,7 +5196,7 @@ public class Compute {
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
                 Entity other = entities.nextElement();
-                if (en.getOwner().equals(other.getOwner()) && !en.equals(other)
+                if ((en.getOwner().equals(other.getOwner()) || en.getOwner().getTeam() == other.getOwner().getTeam()) && !en.equals(other)
                         && (other instanceof SmallCraft) && other.canLoad(en) && !other.isAirborne()
                         && (Math.abs((hex.surface() + other.getElevation()) - elev) < 3) && !mountable.contains(other)) {
                     mountable.add(other);

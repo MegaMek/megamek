@@ -448,7 +448,7 @@ public class BLKFile {
          }
          return blk;
     }
-    
+
     public static void encode(String fileName, Entity t) {
     	BuildingBlock blk = BLKFile.getBlock(t);
         blk.writeBlockFile(fileName);
@@ -600,7 +600,7 @@ public class BLKFile {
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // if no bay nunber is specified, we default to 1
                     }
-                    e.addTransporter(new BattleArmorBay(size, doors, bayNumber));
+                    e.addTransporter(new BattleArmorBay(size, doors, bayNumber, e.isClan()));
                 } else if (transporter.startsWith("bay:", 0)) {
                     String numbers = transporter.substring(4);
                     String temp[] = numbers.split(":");

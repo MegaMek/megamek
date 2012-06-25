@@ -50,6 +50,8 @@ v0.35.31-dev (SVN)
 + Bug: Missing IHex hexTarget in new code for infantry checking for woods when attempting to clear.
 + string fix for battlearmor bays
 + Bug 3521474: Allow units to load/be loaded by "allied" units.
++ Bug: Compute.getMountableUnits() not checking for allied units.
++ Bug: MechDisplay showing <br> tags since \n should have been used and wasn't.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

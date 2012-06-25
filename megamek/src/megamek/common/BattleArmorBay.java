@@ -26,6 +26,8 @@ public final class BattleArmorBay extends Bay {
      */
     private static final long serialVersionUID = 7091227399812361916L;
 
+    private boolean isClan = false;
+
     /**
      * The default constructor is only for serialization.
      */
@@ -45,12 +47,13 @@ public final class BattleArmorBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      * @param bayNumber
      */
-    public BattleArmorBay(double space, int doors, int bayNumber) {
+    public BattleArmorBay(double space, int doors, int bayNumber, boolean isClan) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        this.isClan = isClan;
     }
 
     /**
@@ -89,7 +92,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " squads" : " squad");
+        return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? isClan?" points":" squads" : isClan?" point":" squad");
     }
 
     @Override

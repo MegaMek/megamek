@@ -355,7 +355,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butMount.addActionListener(this);
         butMount.setEnabled(false);
         butMount.setActionCommand(MOVE_MOUNT);
-        butLoad.addKeyListener(this);
+        butMount.addKeyListener(this);
         butUnload = new JButton(Messages.getString("MovementDisplay.butUnload")); //$NON-NLS-1$
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
@@ -3455,7 +3455,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     .getEntities(ce.getPosition());
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
-                if (ce.getOwner().equals(other.getOwner()) && !ce.equals(other)) {
+                //if (ce.getOwner().equals(other.getOwner()) && !ce.equals(other)) {
+                if (ce != null && !ce.equals(other) && ce.canLoad(other, false)) {
                     loadedUnits.add(other);
                     break;
                 }

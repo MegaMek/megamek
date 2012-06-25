@@ -49,6 +49,7 @@ v0.35.31-dev (SVN)
 + Bug 3537459: Unjam RAC not usable with tank pavement movement
 + Bug: Missing IHex hexTarget in new code for infantry checking for woods when attempting to clear.
 + string fix for battlearmor bays
++ Bug 3521474: Allow units to load/be loaded by "allied" units.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

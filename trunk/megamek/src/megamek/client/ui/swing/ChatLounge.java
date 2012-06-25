@@ -1761,30 +1761,33 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if ((c != null) && (c.getLocalPlayer().getTeam() != team)) {
             c.getLocalPlayer().setTeam(team);
             c.sendPlayerInfo();
+            
             // WIP on getting entities to be able to be loaded by teammates
-            /*Iterator<Entity> playerUnits = c.game.getPlayerEntities(c.getLocalPlayer(), false).iterator();
-            while (playerUnits.hasNext()) {
-                Entity unit = playerUnits.next();
-                if (unit.getTransportId() != Entity.NONE && unit.getGame().getEntity(unit.getTransportId()).getOwner().getTeam() != unit.getOwner().getTeam()) {
-                    Entity unloader = unit.getGame().getEntity(unit.getTransportId());
-                    unloader.unload(unit);
-                    unit.setTransportId(Entity.NONE);
+            for (Entity unit : c.game.getPlayerEntities(c.getLocalPlayer(), false)) {
+                // If unit has empty bays it needs to be updated in order for other entities to be able to load into it.
+                if ((unit.getTransports().size() > 0) && (unit.getLoadedUnits().isEmpty()) && (unit.getTransportId() == Entity.NONE)) {
                     c.sendUpdateEntity(unit);
-                    c.sendUpdateEntity(unloader);
                 }
-                if (unit.getLoadedUnits().isEmpty() == false) {
-                    for(Entity loaded : unit.getLoadedUnits()) {
-                        if (unit.getOwner().getTeam() != loaded.getOwner().getTeam()) {
-                            unit.unload(loaded);
-                            loaded.setTransportId(Entity.NONE);
-                            c.sendUpdateEntity(loaded);
-                            c.sendUpdateEntity(unit);
+
+                // Unload this unit if its being transported.
+                if (unit.getTransportId() != Entity.NONE) {
+                    unloader(unit);
+                }
         }
+
+            // Loop through everyone elses entities and if they no longer have a legal loading, remove them.
+            // I am aware this is an odd way to do it, however I couldn't get it to work by looping through the
+            // unit.getLoadedUnits() - it always returned with an empty list even when there was loaded units.
+            for (Entity unit : c.game.getEntitiesVector()) {
+                if (unit.getOwner().equals(c.getLocalPlayer())) {
+                    continue;
+                }
+
+                if (unit.getTransportId() != Entity.NONE && (c.game.getEntity(unit.getTransportId()).getOwner().getTeam() != unit.getOwner().getTeam())) {
+                    unloader(unit);
     }
                 }
-            }*/
             }
-        //refreshEntities();
     }
 
     /**
@@ -3163,13 +3166,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     boolean canLoad = false;
                     for (Entity loader : clientgui.getClient().game
                             .getEntitiesVector()) {
-                        // TODO: for now, I am going to allow loading of
-                        // player's units not teammates
-                        // It would be nice to relax this, but it will take some
-                        // work - we will
-                        // have to listen for team changes and unload units if a
-                        // teammate changes
-                        // to an enemy
                         // TODO don't allow capital fighters to load one another
                         // at the moment
                         if (loader.isCapitalFighter()
@@ -3178,9 +3174,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         }
                         boolean loadable = true;
                         for (Entity en : entities) {
-                            if (!loader.canLoad(en, false)
-                                    || (loader.getId() == en.getId())
-                                    || (loader.getOwnerId() != en.getOwnerId())) {
+                            if (!loader.canLoad(en, false) || (loader.getId() == en.getId())) {
                                 loadable = false;
                                 break;
                             }

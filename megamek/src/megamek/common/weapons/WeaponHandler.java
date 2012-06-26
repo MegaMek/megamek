@@ -350,7 +350,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (bMissed && !missReported) {
+                if (game.getOptions().booleanOption("uac_tworolls") && (wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) && i == 2) {
+                    reportMiss(vPhaseReport, true);
+                } else {
                 reportMiss(vPhaseReport);
+                }
 
                 // Works out fire setting, AMS shots, and whether continuation is
                 // necessary.
@@ -453,7 +457,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.subject = ae.getId();
                     vPhaseReport.addElement(r);
                     i--;
-                } else {
+                } else {  // If not jammed, it gets the second shot...    
                     r = new Report(9900);
                     r.indent();
                     r.subject = ae.getId();
@@ -751,10 +755,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void reportMiss(Vector<Report> vPhaseReport) {
+        reportMiss(vPhaseReport, false);
+    }
+
+    protected void reportMiss(Vector<Report> vPhaseReport, boolean singleNewline) {
         // Report the miss.
         Report r = new Report(3220);
         r.subject = subjectId;
+        if (singleNewline) {
+            r.newlines = 1;
+        } else {
         r.newlines = 2;
+        }
         vPhaseReport.addElement(r);
     }
 

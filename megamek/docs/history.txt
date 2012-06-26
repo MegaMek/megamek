@@ -61,6 +61,8 @@ v0.35.31-dev (SVN)
         cattle (will randomly choose between 1, 2 and 3): fluff:13:03
         bison: fluff:13:04
 + Corrected alignment on cropped_barn.png
++ Bug 3536913: Critical slots in destroyed locations marked off prematurely.
++ Bug: Destruction of the same leg counting twice for PSR purposes.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

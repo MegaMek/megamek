@@ -52,6 +52,7 @@ v0.35.31-dev (SVN)
 + Bug 3521474: Allow units to load/be loaded by "allied" units.
 + Bug: Compute.getMountableUnits() not checking for allied units.
 + Bug: MechDisplay showing <br> tags since \n should have been used and wasn't.
++ Bug 3537986: Weapon List missing in MechDisplay (Linux)
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

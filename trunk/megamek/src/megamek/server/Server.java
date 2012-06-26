@@ -16338,7 +16338,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         int te_n = te.getId();
-
+        
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
@@ -17325,7 +17325,7 @@ public class Server implements Runnable {
 
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-
+                    
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
                     if ((te instanceof Mech) && ((Mech) te).hasCompositeStructure()) {
@@ -17481,8 +17481,10 @@ public class Server implements Runnable {
                             }
                         }
 
-                        // Destroy the location.
-                        te.destroyLocation(hit.getLocation());
+                        // Mark off the internal structure here, but *don't*
+                        // destroy the location just yet -- there are checks
+                        // still to run!
+                        te.setInternal(0, hit);
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
 
@@ -17710,6 +17712,12 @@ public class Server implements Runnable {
             if (isHeadHit && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
+            }
+            
+            // If the location has run out of internal structure, finally actually
+            // destroy it here.
+            if (te.getInternal(hit) <= 0) {
+                te.destroyLocation(hit.getLocation());
             }
 
             // loop to next location

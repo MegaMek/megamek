@@ -666,7 +666,7 @@ public class MechDisplay extends JPanel {
             JScrollPane tWeaponScroll = new JScrollPane(weaponList);
             tWeaponScroll.setMinimumSize(new Dimension(200, 100));
             tWeaponScroll.setPreferredSize(new Dimension(200, 100));
-            add(tWeaponScroll, GBC.eol().insets(15, 9, 15, 9).fill(GridBagConstraints.BOTH).anchor(GridBagConstraints.CENTER).gridy(0).gridx(0));
+            add(tWeaponScroll, GBC.eol().insets(15, 9, 15, 9).fill(GridBagConstraints.HORIZONTAL).anchor(GridBagConstraints.CENTER).gridy(0).gridx(0));
 
             // adding Ammo choice + label
 

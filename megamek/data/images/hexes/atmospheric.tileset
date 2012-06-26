@@ -310,6 +310,10 @@ super * "fluff:9:10" "" "fluff/maglevtrain5.gif"
 super * "fluff:9:11" "" "fluff/maglevtrain6.gif"
 
 super * "fluff:13:00" "" "fluff/pigs1.png;fluff/pigs2.png"
+super * "fluff:13:01" "" "fluff/cattle1.png;fluff/cattle2.png;fluff/cattle3.png"
+super * "fluff:13:02" "" "fluff/horses1.png;fluff/horses2.png"
+super * "fluff:13:03" "" "fluff/chickens1.png;fluff/chickens2.png;fluff/chickens3.png"
+super * "fluff:13:04" "" "fluff/bison1.png"
 
 super * "fuel_tank:*;fuel_tank_elev:*;fuel_tank_cf:*;fuel_tank_magn:*" "" "singlehex/fuel.gif"
 super * "fuel_tank:1:00;fuel_tank_elev:*;fuel_tank_cf:*;fuel_tank_magn:*" "" "light/light_roof00.gif"
@@ -1474,6 +1478,7 @@ super * "building:2;bldg_elev:3;bldg_cf:*;fluff:11:4" "" "boring/cropped_cannon_
 super * "building:3;bldg_elev:3;bldg_cf:*;fluff:11:5" "" "boring/cropped_refinery.png"
 super * "building:3;bldg_elev:4;bldg_cf:*;fluff:11:6" "" "boring/cropped_mage_tower.png"
 super * "building:1;bldg_elev:2;bldg_cf:*;fluff:11:7" "" "boring/cropped_barn.png"
+super * "building:1;bldg_elev:1;bldg_cf:*;fluff:11:8" "" "boring/chicken_coop.png"
 
 super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif"
 super * "building:4;bldg_elev:2;bldg_cf:*" "" "singlehex/hardened_2.gif"

@@ -28,7 +28,6 @@ v0.35.31-dev (SVN)
 + Bug 3536029: Damage Threshold for VTOLs
 + Bug: Torso-mounted modular armor absorbs hits from both front and rear.
 + Bug: Airborne/Space battle damage with cluster weapons not correct (again), and... "hopefully" dropship weapon bays doing no damage to fighters in space
-+ WIP: Load teammates' entities
 + Bug: getNextWeapon() not working exactly correct - TAG && Artillery were backwards.
 + Added skipping of array linked MGs to getFirstWeapon()
 + Bug 3536174: Artillery Units can only fire "one" artillery...
@@ -54,6 +53,14 @@ v0.35.31-dev (SVN)
 + Bug: MechDisplay showing <br> tags since \n should have been used and wasn't.
 + Bug 3537986: Weapon List missing in MechDisplay (Linux)
 + Bug: UAC with two rolls option inserts extra newline when it misses (normal behavior that should be cancelled for that situation)
++ New hexset images:chicken_coop.png, cattle1.png, cattle2.png, cattle3.png, chickens1.png, chickens2.png, chickens3.png,
+        bison1.png, horses1.png, horses2.png
+        chicken coop: building:1;bldg_elev:1;bldg_cf:*;fluff:11:8
+        cattle (will randomly choose between 1, 2 and 3): fluff:13:01
+        horses (will randomly choose between 1 and 2): fluff:13:02
+        cattle (will randomly choose between 1, 2 and 3): fluff:13:03
+        bison: fluff:13:04
++ Corrected alignment on cropped_barn.png
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

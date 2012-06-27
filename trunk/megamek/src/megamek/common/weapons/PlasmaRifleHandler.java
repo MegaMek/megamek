@@ -18,6 +18,7 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
@@ -203,6 +204,9 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
+        
+        nDamage *= 2; // Plasma weapons deal double damage to woods.
+        
         // report that damage was "applied" to terrain
         Report r = new Report(3385);
         r.indent();
@@ -223,4 +227,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }
+    
+    @Override
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, Coords coords) {
+        // Plasma weapons deal double damage to buildings.
+        super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
+    }
+
 }

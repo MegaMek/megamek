@@ -284,7 +284,7 @@ public class BattleArmor extends Infantry {
         int j = getOriginalWalkMP();
         if (hasMyomerBooster()) {
             if (!ignoreMyomerBooster) {
-                if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
+                if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
                     j++;
                 } else {
                     j += 2;
@@ -295,9 +295,9 @@ public class BattleArmor extends Infantry {
             j++;
         }
         if (hasDWP() && !ignoreDWP) {
-            if (getWeightClass() == EntityWeightClass.WEIGHT_BA_MEDIUM) {
+            if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
                 j -= 3;
-            } else if (getWeightClass() >= EntityWeightClass.WEIGHT_BA_HEAVY) {
+            } else if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
                 j -= 2;
             }
             if (j == 0) {
@@ -1252,19 +1252,19 @@ public class BattleArmor extends Infantry {
     public void setWeightClass(int inWC) {
         switch (inWC) {
             case 0:
-                weightClass = EntityWeightClass.WEIGHT_BA_PAL;
+                weightClass = EntityWeightClass.WEIGHT_ULTRA_LIGHT;
                 break;
             case 1:
-                weightClass = EntityWeightClass.WEIGHT_BA_LIGHT;
+                weightClass = EntityWeightClass.WEIGHT_LIGHT;
                 break;
             case 2:
-                weightClass = EntityWeightClass.WEIGHT_BA_MEDIUM;
+                weightClass = EntityWeightClass.WEIGHT_MEDIUM;
                 break;
             case 3:
-                weightClass = EntityWeightClass.WEIGHT_BA_HEAVY;
+                weightClass = EntityWeightClass.WEIGHT_HEAVY;
                 break;
             case 4:
-                weightClass = EntityWeightClass.WEIGHT_BA_ASSAULT;
+                weightClass = EntityWeightClass.WEIGHT_ASSAULT;
                 break;
         }
     }
@@ -1445,19 +1445,19 @@ public class BattleArmor extends Infantry {
         buff.append("<weightclass>");
         buff.append(newline);
         switch (getWeightClass()) {
-            case EntityWeightClass.WEIGHT_BA_PAL:
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
                 buff.append("0");
                 break;
-            case EntityWeightClass.WEIGHT_BA_LIGHT:
+            case EntityWeightClass.WEIGHT_LIGHT:
                 buff.append("1");
                 break;
-            case EntityWeightClass.WEIGHT_BA_MEDIUM:
+            case EntityWeightClass.WEIGHT_MEDIUM:
                 buff.append("2");
                 break;
-            case EntityWeightClass.WEIGHT_BA_HEAVY:
+            case EntityWeightClass.WEIGHT_HEAVY:
                 buff.append("3");
                 break;
-            case EntityWeightClass.WEIGHT_BA_ASSAULT:
+            case EntityWeightClass.WEIGHT_ASSAULT:
                 buff.append("4");
                 break;
         }
@@ -1654,23 +1654,23 @@ public class BattleArmor extends Infantry {
             int tArmoredGloveCount = countWorkingMisc(MiscType.F_ARMORED_GLOVE);
             int tBattleClawCount = countWorkingMisc(MiscType.F_BATTLE_CLAW);
             switch (getWeightClass()) {
-                case EntityWeightClass.WEIGHT_BA_PAL:
-                case EntityWeightClass.WEIGHT_BA_LIGHT:
+                case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                case EntityWeightClass.WEIGHT_LIGHT:
                     if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 0) || (tBattleClawCount > 0)) {
                         return true;
                     }
                     break;
-                case EntityWeightClass.WEIGHT_BA_MEDIUM:
+                case EntityWeightClass.WEIGHT_MEDIUM:
                     if ((tBasicManipulatorCount > 0) || (tBattleClawCount > 0)) {
                         return true;
                     }
                     break;
-                case EntityWeightClass.WEIGHT_BA_HEAVY:
+                case EntityWeightClass.WEIGHT_HEAVY:
                     if ((tBasicManipulatorCount > 0) || (tBattleClawCount > 0)) {
                         return true;
                     }
                     break;
-                case EntityWeightClass.WEIGHT_BA_ASSAULT:
+                case EntityWeightClass.WEIGHT_ASSAULT:
                 default:
                     return false;
             }

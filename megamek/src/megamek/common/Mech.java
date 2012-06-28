@@ -6551,7 +6551,19 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(r);
             r = new Report(2285);
             r.subject = getId();
-            PilotingRollData base = getBasePilotingRoll();
+            // Stall check is made against unmodified Piloting skill...
+            PilotingRollData base = new PilotingRollData(getId(), getCrew()
+                    .getPiloting(), "Base piloting skill");
+            // ...but dead or unconscious pilots should still auto-fail.
+            if (getCrew().isDead() || getCrew().isDoomed()
+                    || (getCrew().getHits() >= 6)) {
+                base = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                        "Pilot dead");
+            }
+            else if (!getCrew().isActive()) {
+                base = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE,
+                        "Pilot unconscious");
+            }
             r.add(base.getValueAsString());
             r.add(base.getDesc());
             vPhaseReport.add(r);
@@ -6567,7 +6579,7 @@ public abstract class Mech extends Entity {
             r.subject = getId();
             r.add(base.getValueAsString());
             r.add(diceRoll);
-            if (diceRoll <= base.getValue()) {
+            if (diceRoll < base.getValue()) {
                 r.choose(false);
                 setStalled(true);
                 r.newlines = 0;
@@ -6600,8 +6612,20 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(r);
             r = new Report(2285);
             r.subject = getId();
+            // Unstall check is made against unmodified Piloting skill...
             PilotingRollData base = new PilotingRollData(getId(), getCrew()
                     .getPiloting(), "Base piloting skill");
+            // ...but dead or unconscious pilots should still auto-fail, same as
+            // for stalling.
+            if (getCrew().isDead() || getCrew().isDoomed()
+                    || (getCrew().getHits() >= 6)) {
+                base = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                        "Pilot dead");
+            }
+            else if (!getCrew().isActive()) {
+                base = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE,
+                        "Pilot unconscious");
+            }
             r.add(base.getValueAsString());
             r.add(base.getDesc());
             vPhaseReport.add(r);
@@ -6617,7 +6641,7 @@ public abstract class Mech extends Entity {
             r.subject = getId();
             r.add(base.getValueAsString());
             r.add(diceRoll);
-            if (diceRoll <= base.getValue()) {
+            if (diceRoll < base.getValue()) {
                 r.choose(false);
                 vPhaseReport.add(r);
             } else {

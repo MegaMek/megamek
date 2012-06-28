@@ -68,6 +68,10 @@ v0.35.31-dev (SVN)
 + Bug 1424577: GE's not properly sorted by weight class
 + Bug: Leg being destroyed and blown off at the same time still counted as two events.
 + Bug: PSR modifier for blown-off leg applied twice the phase it happens (once for the event, once as pre-existing damage).
++ Bug: Stall check for ICE-powered IndustrialMechs affected by preexisting damage.
++ Bug: Unstall check for ICE-powered IndustrialMechs possibly successful even if pilot dead/unconscious.
++ Bug: Stall/unstall checks failing on roll = target number (should be success).
++ IndustrialMech End Phase checks (including unstalling) moved to after checking for pilot wakeup.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

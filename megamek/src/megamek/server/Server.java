@@ -1926,7 +1926,6 @@ public class Server implements Runnable {
             // write End Phase header
             addReport(new Report(5005, Report.PUBLIC));
             checkForSuffocation();
-            checkForIndustrialEndOfTurn();
             game.getPlanetaryConditions().determineWind();
             send(createPlanetaryConditionsPacket());
             for (DynamicTerrainProcessor tp : terrainProcessors) {
@@ -1937,6 +1936,7 @@ public class Server implements Runnable {
             send(createFlarePacket());
             resolveAmmoDumps();
             resolveCrewWakeUp();
+            checkForIndustrialEndOfTurn();
             resolveMechWarriorPickUp();
             resolveVeeINarcPodRemoval();
             resolveFortify();

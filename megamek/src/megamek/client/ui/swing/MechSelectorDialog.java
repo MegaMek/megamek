@@ -252,10 +252,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
         DefaultComboBoxModel weightModel = new DefaultComboBoxModel();
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
-            weightModel.addElement(EntityWeightClass.getClassName(i));
+            weightModel.addElement(EntityWeightClass.getAllClassNames(i));
         }
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
-        weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
+        weightModel.setSelectedItem(EntityWeightClass.getAllClassNames(0));
         comboWeight.setModel(weightModel);
         comboWeight.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));

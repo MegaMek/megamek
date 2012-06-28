@@ -529,8 +529,8 @@ public class MechFileParser {
                 int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
                 int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
                 switch (ent.getWeightClass()) {
-                    case EntityWeightClass.WEIGHT_BA_PAL:
-                    case EntityWeightClass.WEIGHT_BA_LIGHT:
+                    case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                    case EntityWeightClass.WEIGHT_LIGHT:
                         if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
                                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false, false);
@@ -541,7 +541,7 @@ public class MechFileParser {
                             }
                         }
                         break;
-                    case EntityWeightClass.WEIGHT_BA_MEDIUM:
+                    case EntityWeightClass.WEIGHT_MEDIUM:
                         if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
                                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false, false);
@@ -552,8 +552,8 @@ public class MechFileParser {
                             }
                         }
                         break;
-                    case EntityWeightClass.WEIGHT_BA_HEAVY:
-                    case EntityWeightClass.WEIGHT_BA_ASSAULT:
+                    case EntityWeightClass.WEIGHT_HEAVY:
+                    case EntityWeightClass.WEIGHT_ASSAULT:
                     default:
                         break;
                 }

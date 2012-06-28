@@ -394,7 +394,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener, ItemLi
     private void populateChoices() {
 
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
-            m_chWeightClass.addItem(EntityWeightClass.getClassName(i));
+            m_chWeightClass.addItem(EntityWeightClass.getAllClassNames(i));
         }
         m_chWeightClass.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         m_chWeightClass.select(5);

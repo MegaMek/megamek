@@ -784,11 +784,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     // TODO: WeightClass is no longer correct. See the Tech Manual
     public int getWeightClass() {
-        return EntityWeightClass.getWeightClass(getWeight());
+        return EntityWeightClass.getWeightClass(getWeight(), this);
     }
 
     public String getWeightClassName() {
-        return EntityWeightClass.getClassName(getWeightClass());
+        return EntityWeightClass.getClassName(getWeightClass(), this);
     }
 
     public void setWeight(float weight) {

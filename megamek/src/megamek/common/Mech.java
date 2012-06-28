@@ -6313,6 +6313,13 @@ public abstract class Mech extends Entity {
 
     @Override
     public void destroyLocation(int loc, boolean blownOff) {
+        // If it's already destroyed, don't bother -- as of 12/06/28, super.
+        // destroyLocation() will just return having done nothing itself and
+        // then we'd potentially end up with a second PSR for an already-destroyed
+        // leg.
+        if (getInternal(loc) < 0) {
+            return;
+        }
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (locationIsLeg(loc)) {
@@ -7569,12 +7576,13 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Report the location as destroyed if blown off
+     * Report the location as destroyed if blown off in a previous phase, doomed if
+     * blown off in this one.
      */
     @Override
     public int getInternal(int loc) {
         if (isLocationBlownOff(loc)) {
-            return IArmorState.ARMOR_DESTROYED;
+            return isLocationBlownOffThisPhase(loc) ? IArmorState.ARMOR_DOOMED : IArmorState.ARMOR_DESTROYED;
         }
         return super.getInternal(loc);
     }

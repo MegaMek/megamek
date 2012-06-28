@@ -193,11 +193,15 @@ public class MovePath implements Cloneable, Serializable {
         // check for illegal jumps
         final Coords start = entity.getPosition();
         final Coords land = step.getPosition();
+        if (start == null || land == null) { // If we have null for either coordinate then we know the step isn't legal.
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        } else {
         final int distance = start.distance(land);
         if (isJumping()) {
             if (step.isThisStepBackwards() || step.getMpUsed() > distance) {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
+        }
         }
 
         // If the new step is legal and is a different position than

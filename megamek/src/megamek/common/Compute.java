@@ -1220,9 +1220,9 @@ public class Compute {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity friend = i.nextElement();
 
-            // TODO : can units being transported be used for C3 spotting?
+            // TODO : can units being transported be used for C3 spotting? For now we'll say no.
             if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend)
-                    || !friend.isDeployed()) {
+                    || !friend.isDeployed() || friend.getTransportId() != Entity.NONE) {
                 continue; // useless to us...
             }
 

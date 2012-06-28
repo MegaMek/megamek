@@ -66,6 +66,8 @@ v0.35.31-dev (SVN)
 + Ontos (Sealed) mislabeled as 3053 Upgrade in data file.
 + Bug: Plasma cannon/rifle damage not doubled against woods or buildings (TW p. 139).
 + Bug 1424577: GE's not properly sorted by weight class
++ Bug: Leg being destroyed and blown off at the same time still counted as two events.
++ Bug: PSR modifier for blown-off leg applied twice the phase it happens (once for the event, once as pre-existing damage).
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

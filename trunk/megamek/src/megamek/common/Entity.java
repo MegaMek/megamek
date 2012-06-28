@@ -161,6 +161,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean _isEMId = false;
     protected boolean[] hardenedArmorDamaged;
     protected boolean[] locationBlownOff;
+    protected boolean[] locationBlownOffThisPhase;
     protected int[] armorType;
     protected int[] armorTechLevel;
 
@@ -527,6 +528,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         hardenedArmorDamaged = new boolean[locations()];
         locationBlownOff = new boolean[locations()];
+        locationBlownOffThisPhase = new boolean[locations()];
         setC3NetId(this);
         quirks.initialize();
         secondaryPositions = new HashMap<Integer, Coords>();
@@ -2290,7 +2292,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isLocationBad(int loc) {
         return (getInternal(loc) == IArmorState.ARMOR_DESTROYED)
-                || isLocationBlownOff(loc);
+                || (isLocationBlownOff(loc) && !isLocationBlownOffThisPhase(loc));
     }
 
     public boolean isLocationTrulyDestroyed(int loc) {
@@ -4699,6 +4701,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
+        // Reset any "blown off this phase" markers.
+        for (int i = 0; i < locations(); i++) {
+            setLocationBlownOffThisPhase(i, false);
+        }
+        
         // destroy armor/internals if the section was removed
         for (int i = 0; i < locations(); i++) {
             if (getInternal(i) == IArmorState.ARMOR_DOOMED) {
@@ -8605,6 +8612,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (blownOff) {
             setLocationBlownOff(loc, true);
+            setLocationBlownOffThisPhase(loc, true);
         } else {
             // mark armor, internal as doomed
             setArmor(IArmorState.ARMOR_DOOMED, loc, false);
@@ -10953,7 +10961,31 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isLocationBlownOff(int loc) {
         return locationBlownOff[loc];
     }
+    
+    /** Marks the location as blown off in the current phase. This should
+     * be called together with {@link #setLocationBlownOff(int, boolean) } whenever
+     * a location gets blown off <em>during play</em>, to allow relevant methods
+     * (notably {@link #isLocationBad(int) }) to distinguish between fresh and
+     * preexisting damage. A location's "newly blown off" status resets with
+     * the next call to {@link #applyDamage() }.
+     * 
+     * @param loc Subclass-dependent code for the location.
+     * @param damaged The location's "recently blown off" status.
+     */
+    public void setLocationBlownOffThisPhase(int loc, boolean damaged) {
+        locationBlownOffThisPhase[loc] = damaged;
+    }
 
+    /** Has the indicated location been blown off this phase (as opposed
+     * to either earlier or not at all)?
+     * 
+     * @param loc Subclass-dependent code for the location.
+     * @return The locations "recently blown off" status.
+     */
+    public boolean isLocationBlownOffThisPhase(int loc) {
+        return locationBlownOffThisPhase[loc];
+    }
+    
     /**
      * does this entity have patchwork armor?
      *

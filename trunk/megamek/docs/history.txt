@@ -65,6 +65,7 @@ v0.35.31-dev (SVN)
 + Bug: Destruction of the same leg counting twice for PSR purposes.
 + Ontos (Sealed) mislabeled as 3053 Upgrade in data file.
 + Bug: Plasma cannon/rifle damage not doubled against woods or buildings (TW p. 139).
++ Bug 1424577: GE's not properly sorted by weight class
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

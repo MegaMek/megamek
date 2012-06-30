@@ -15571,7 +15571,7 @@ public class Server implements Runnable {
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
-            if (diceRoll < rollTarget.getValue()) {
+            if (diceRoll < rollTarget.getValue() || (game.getOptions().booleanOption("tacops_fumbles") && diceRoll == 2)) {
                 r.choose(false);
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
@@ -15767,7 +15767,7 @@ public class Server implements Runnable {
             r.add(roll.getValueAsString());
             r.add(diceRoll);
             r.subject = entity.getId();
-            if (diceRoll < roll.getValue()) {
+            if (diceRoll < roll.getValue() || (game.getOptions().booleanOption("tacops_fumbles") && diceRoll == 2)) {
                 r.choose(false);
                 vPhaseReport.add(r);
                 if (moving) {

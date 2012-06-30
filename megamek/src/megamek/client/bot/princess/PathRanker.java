@@ -28,13 +28,14 @@ public class PathRanker {
     Princess botbase;
 
     class RankedPath implements Comparable<RankedPath>{
+        public MovePath path;
+        public double rank;
+
         public RankedPath() {};
         public RankedPath(double r,MovePath p) {
             rank=r;
             path=p;
         }
-        public MovePath path;
-        public double rank;
         public int compareTo(RankedPath p) {
             if(rank<p.rank) {
                 return -1;
@@ -153,7 +154,7 @@ public class PathRanker {
     }
 
     /**
-     * Get all the enemies of a unit
+     * Get all the friends of a unit
      */
     ArrayList<Entity> getFriends(Entity myunit, IGame game) {
         ArrayList<Entity> friends = new ArrayList<Entity>();

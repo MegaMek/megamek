@@ -287,16 +287,17 @@ public class TestBot extends BotClient {
                         WeaponType test_weapon = new WeaponType();
 
                         test_weapon = (WeaponType) equip.getType();
-                        if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY)
+                        if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY
+                                || (game.getOptions().booleanOption("uac_tworolls")
+                                && (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA
+                                || test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))
                                 && (equip.isJammed() == true)) {
-                            rac_damage = rac_damage
-                                    + (4 * (test_weapon.getDamage()));
+                            rac_damage = rac_damage + (4 * (test_weapon.getDamage()));
                         } else {
                             if (equip.canFire()) {
                                 other_damage += test_weapon.getDamage();
                                 if (test_weapon.getMediumRange() > clearance_range) {
-                                    clearance_range = test_weapon
-                                            .getMediumRange();
+                                    clearance_range = test_weapon.getMediumRange();
                                 }
                             }
                         }

@@ -497,8 +497,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         (ce().getMovementMode() == EntityMovementMode.HOVER)) {
                     ce().setElevation(0);
                 } else if (ce() instanceof VTOL) {
-                    // VTOLs go to elevation 1
+                    // VTOLs go to elevation 1... unless they were set in the Lounge.
+                    if (ce().getElevation() < 1) {
                     ce().setElevation(1);
+                    }
                 } else {
                     // everything else goes to elevation 0, or on the floor of a water hex
                     ce().setElevation(deployhex.floor() - deployhex.surface());

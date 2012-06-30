@@ -17716,8 +17716,10 @@ public class Server implements Runnable {
             }
             
             // If the location has run out of internal structure, finally actually
-            // destroy it here.
-            if (te.getInternal(hit) <= 0) {
+            // destroy it here. *EXCEPTION:* Aero units have 0 internal structure
+            // in every location by default and are handled elsewhere, so they
+            // get a bye.
+            if (!(te instanceof Aero) && te.getInternal(hit) <= 0) {
                 te.destroyLocation(hit.getLocation());
             }
 

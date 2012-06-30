@@ -76,6 +76,7 @@ v0.35.31-dev (SVN)
 + Bug 3537029: Princess gets NPE when opponent BA is riding
 + Bug 3539075: Damage clearing ALL armor on location for fighters (on any hit).
 + Bug 3538851: Princess doesn't attempt to unjam weapons...
++ Feature 3538540: Fumbles
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

@@ -75,6 +75,7 @@ v0.35.31-dev (SVN)
 + Bug 3423819: c3 units boarding dropships (fixed both Bot NPEs relating to this, however I'm not sure if those were the only NPEs. I didn't get more.)
 + Bug 3537029: Princess gets NPE when opponent BA is riding
 + Bug 3539075: Damage clearing ALL armor on location for fighters (on any hit).
++ Bug 3538851: Princess doesn't attempt to unjam weapons...
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

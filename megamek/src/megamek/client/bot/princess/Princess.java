@@ -178,6 +178,10 @@ public class Princess extends BotClient {
         Entity moving_entity = null;
         Entity e = game.getFirstEntity();
         do {
+            // ignore loaded and off-board units
+            if ((e.getPosition() == null) || e.isOffBoard()) {
+                continue;
+            }
             if (e.isImmobile()) {
                 moving_entity = e;
                 break;
@@ -193,6 +197,10 @@ public class Princess extends BotClient {
             double furthest_dist = 0;
             e = game.getFirstEntity();
             do {
+                // ignore loaded and off-board units
+                if ((e.getPosition() == null) || e.isOffBoard()) {
+                    continue;
+                }
                 double dist = BasicPathRanker.distanceToClosestEnemy(e,
                         e.getPosition(), game);
                 if ((moving_entity == null) || (dist > furthest_dist)) {

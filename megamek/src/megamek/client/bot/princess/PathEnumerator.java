@@ -25,14 +25,17 @@ import java.util.TreeSet;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
+import megamek.common.WeaponType;
 
 public class PathEnumerator {
 
@@ -484,6 +487,68 @@ public class PathEnumerator {
                     ret.add(start.clone().addStep(MoveStepType.CAREFUL_STAND));
                 } else {
                     ret.add(start.clone().addStep(MoveStepType.GET_UP));
+                }
+            }
+
+            // If this unit has a jammed RAC, and it has only walked,
+            // add an unjam action
+            if (start.getLastStep() != null) {
+                if (start.getEntity().canUnjamRAC()) {
+                    if ((start.getLastStep().getMovementType() == EntityMovementType.MOVE_WALK)
+                            || (start.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
+                            || (start.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
+                        // Cycle through all available weapons, only unjam if the
+                        // jam(med)
+                        // RACs count for a significant portion of possible damage
+                        int rac_damage = 0;
+                        int other_damage = 0;
+                        int clearance_range = 0;
+                        for (Mounted equip : start.getEntity().getWeaponList()) {
+                            WeaponType test_weapon = new WeaponType();
+
+                            test_weapon = (WeaponType) equip.getType();
+                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY
+                                    || (game.getOptions().booleanOption("uac_tworolls")
+                                    && (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA
+                                    || test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))
+                                    && (equip.isJammed() == true)) {
+                                rac_damage = rac_damage + (4 * (test_weapon.getDamage()));
+                            } else {
+                                if (equip.canFire()) {
+                                    other_damage += test_weapon.getDamage();
+                                    if (test_weapon.getMediumRange() > clearance_range) {
+                                        clearance_range = test_weapon.getMediumRange();
+                                    }
+                                }
+                            }
+                        }
+                        // Even if the jammed RAC doesn't make up a significant
+                        // portion
+                        // of the units damage, its still better to have it
+                        // functional
+                        // If nothing is "close" then unjam anyways
+                        int check_range = 100;
+                        for (Enumeration<Entity> unit_selection = game
+                                .getEntities(); unit_selection.hasMoreElements();) {
+                            Entity enemy = unit_selection.nextElement();
+                            if ((start.getEntity().getPosition() != null)
+                                    && (enemy.getPosition() != null)
+                                    && (enemy.isEnemyOf(start.getEntity()))) {
+                                if (enemy.isVisibleToEnemy()) {
+                                    if (start.getEntity().getPosition()
+                                            .distance(enemy.getPosition()) < check_range) {
+                                        check_range = start.getEntity()
+                                                .getPosition().distance(
+                                                        enemy.getPosition());
+                                    }
+                                }
+                            }
+                        }
+                        if ((rac_damage >= other_damage)
+                                || (check_range < clearance_range)) {
+                            ret.add(start.clone().addStep(MoveStepType.UNJAM_RAC));
+                        }
+                    }
                 }
             }
 

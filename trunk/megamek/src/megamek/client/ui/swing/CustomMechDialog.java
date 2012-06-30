@@ -75,6 +75,7 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -93,7 +94,7 @@ import megamek.common.preference.PreferenceManager;
  * @author Ben
  */
 public class CustomMechDialog extends ClientDialog implements ActionListener,
-        DialogOptionListener {
+        DialogOptionListener, ItemListener {
 
     /**
      *
@@ -196,6 +197,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JCheckBox chDeployShutdown = new JCheckBox();
 
+    private JLabel labDeployProne = new JLabel(
+            Messages.getString("CustomMechDialog.labDeployProne"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JCheckBox chDeployProne = new JCheckBox();
+
+    private JLabel labDeployHullDown = new JLabel(
+            Messages.getString("CustomMechDialog.labDeployHullDown"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JCheckBox chDeployHullDown = new JCheckBox();
+
     private JLabel labCommander = new JLabel(
             Messages.getString("CustomMechDialog.labCommander"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -227,6 +238,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labStartAltitude"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldStartAltitude = new JTextField(3);
+
+    private JLabel labStartHeight = new JLabel(
+            Messages.getString("CustomMechDialog.labStartHeight"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JTextField fldStartHeight = new JTextField(3);
 
     private JPanel panButtons = new JPanel();
 
@@ -490,14 +506,31 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartAltitude, GBC.std());
             panDeploy.add(fldStartAltitude, GBC.eol());
         }
+        if (entity instanceof VTOL) {
+            panDeploy.add(labStartHeight, GBC.std());
+            panDeploy.add(fldStartHeight, GBC.eol());
+        }
 
         panDeploy.add(labDeployment, GBC.std());
         panDeploy.add(choDeployment, GBC.eol());
-        if (clientgui.getClient().game.getOptions().booleanOption("begin_shutdown")) {
+        if (clientgui.getClient().game.getOptions().booleanOption("begin_shutdown") && !(entity instanceof Infantry) && !(entity instanceof GunEmplacement)) {
             panDeploy.add(labDeployShutdown, GBC.std());
             panDeploy.add(chDeployShutdown, GBC.eol());
             chDeployShutdown.setSelected(entity.isManualShutdown());
         }
+
+        if (entity instanceof Mech) {
+            panDeploy.add(labDeployHullDown, GBC.std());
+            panDeploy.add(chDeployHullDown, GBC.eol());
+            chDeployHullDown.setSelected(entity.isHullDown() && !entity.isProne());
+            chDeployHullDown.addItemListener(this);
+
+            panDeploy.add(labDeployProne, GBC.std());
+            panDeploy.add(chDeployProne, GBC.eol());
+            chDeployProne.setSelected(entity.isProne() && !entity.isHullDown());
+            chDeployProne.addItemListener(this);
+        }
+
         refreshDeployment();
 
         if (eligibleForOffBoard) {
@@ -565,6 +598,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartAltitude.setText(new Integer(a.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
         }
+        if (entity instanceof VTOL) {
+            VTOL v = (VTOL) entity;
+            fldStartHeight.setText(new Integer(v.getElevation()).toString());
+            fldStartHeight.addActionListener(this);
+        }
 
         if (!editable) {
             fldName.setEnabled(false);
@@ -581,12 +619,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldCommandInit.setEnabled(false);
             choDeployment.setEnabled(false);
             chDeployShutdown.setEnabled(false);
+            chDeployProne.setEnabled(false);
+            chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
             fldStartVelocity.setEnabled(false);
             fldStartAltitude.setEnabled(false);
+            fldStartHeight.setEnabled(false);
 			m_equip.initialize();
         }
 
@@ -918,6 +959,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             int command = 0;
             int velocity = 0;
             int altitude = 0;
+            int height = 0;
             int offBoardDistance;
             String externalId = entity.getCrew().getExternalIdAsString();
             try {
@@ -934,6 +976,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if (entity instanceof Aero) {
                     velocity = Integer.parseInt(fldStartVelocity.getText());
                     altitude = Integer.parseInt(fldStartAltitude.getText());
+                }
+                if (entity instanceof VTOL) {
+                    height = Integer.parseInt(fldStartHeight.getText());
                 }
             } catch (NumberFormatException e) {
                 JOptionPane
@@ -970,6 +1015,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                     Messages.getString("CustomMechDialog.EnterCorrectAltitude"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
+            }
+
+            if (entity instanceof VTOL && height > 50) {
+                JOptionPane
+                            .showMessageDialog(
+                                    clientgui.frame,
+                                    Messages.getString("CustomMechDialog.EnterCorrectHeight"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
             }
 
             if (chOffBoard.isSelected()) {
@@ -1028,6 +1081,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     a.liftOff(altitude);
                 }
             }
+            if (entity instanceof VTOL) {
+                VTOL v = (VTOL) entity;
+                v.setElevation(height);
+            }
 
             // If the player wants to swap unit numbers, update both
             // entities and send an update packet for the other entity.
@@ -1050,6 +1107,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             } else { // We need to else this in case someone turned the option on, set their units, and then turned the option off.
                 entity.performManualStartup();
             }
+
+            // Should the entity begin the game prone?
+            entity.setProne(chDeployProne.isSelected());
+
+            // Should the entity begin the game prone?
+            entity.setHullDown(chDeployHullDown.isSelected());
 
             // update commander status
             entity.setCommander(chCommander.isSelected());
@@ -1089,6 +1152,17 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         if (nextOne != null) {
             clientgui.chatlounge.customizeMech(nextOne);
+        }
+    }
+
+    public void itemStateChanged(ItemEvent itemEvent) {
+        if (itemEvent.getSource().equals(chDeployProne)) {
+            chDeployHullDown.setSelected(false);
+            return;
+        }
+        if (itemEvent.getSource().equals(chDeployHullDown)) {
+            chDeployProne.setSelected(false);
+            return;
         }
     }
 

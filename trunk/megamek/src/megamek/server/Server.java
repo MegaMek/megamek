@@ -14189,6 +14189,42 @@ public class Server implements Runnable {
                 // how much heat can we sink?
                 int tosink = entity.getHeatCapacityWithWater();
 
+                // should we use a coolant pod?
+                int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
+                int possibleSinkage = ((Aero) entity).getHeatSinks() - entity.getCoolantFailureAmount();
+                for (Mounted m : entity.getEquipment()) {
+                    if (m.getType() instanceof AmmoType) {
+                        AmmoType at = (AmmoType) m.getType();
+                        if ((at.getAmmoType() == AmmoType.T_COOLANT_POD) && m.isAmmoUsable()) {
+                            EquipmentMode mode = m.curMode();
+                            if (mode.equals("dump")) {
+                                r = new Report(5260);
+                                r.subject = entity.getId();
+                                addReport(r);
+                                m.setShotsLeft(0);
+                                tosink += possibleSinkage;
+                                break;
+                            }
+                            if (mode.equals("safe") && ((entity.heat - tosink) > safeHeat)) {
+                                r = new Report(5265);
+                                r.subject = entity.getId();
+                                addReport(r);
+                                m.setShotsLeft(0);
+                                tosink += possibleSinkage;
+                                break;
+                            }
+                            if (mode.equals("efficient") && ((entity.heat - tosink) >= possibleSinkage)) {
+                                r = new Report(5270);
+                                r.subject = entity.getId();
+                                addReport(r);
+                                m.setShotsLeft(0);
+                                tosink += possibleSinkage;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 tosink = Math.min(tosink, entity.heat);
                 entity.heat -= tosink;
                 r = new Report(5035);

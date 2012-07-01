@@ -260,14 +260,14 @@ public class EntityWeightClass {
         if ((wClass >= 0) && (wClass < SIZE)) {
             return Messages.getString("EntityWeightClass." + wClass);
         }
-        throw new IllegalArgumentException("Unknown Weight Class in getClassName");
+        throw new IllegalArgumentException("Unknown Weight Class in getClassName(int, en)");
     }
 
-    public static String getAllClassNames(int nameVal) {
+    public static String getClassName(int nameVal) {
         if ((nameVal >= 0) && (nameVal < SIZE)) {
             return Messages.getString("EntityWeightClass." + classAppends[nameVal]);
         }
-        throw new IllegalArgumentException("Unknown Weight Class in getAllClassNames");
+        throw new IllegalArgumentException("Unknown Weight Class in getClassName(int)");
     }
 
 }

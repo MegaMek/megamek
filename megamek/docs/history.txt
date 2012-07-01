@@ -80,6 +80,7 @@ v0.35.31-dev (SVN)
 + Bug: Infantry, BA, and Gun Emplacements could be deployed shutdown
 + Feature 3537449: Deployment Options
 + Bug: EntityWeightClass.getClassName(int) needed by MekHQ
++ Bug 3391583: Coolant pods not triggered for Aero units
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

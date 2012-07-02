@@ -81,6 +81,7 @@ v0.35.31-dev (SVN)
 + Feature 3537449: Deployment Options
 + Bug: EntityWeightClass.getClassName(int) needed by MekHQ
 + Bug 3391583: Coolant pods not triggered for Aero units
++ Bug: BA bay weight wrong
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

@@ -92,7 +92,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? isClan?" points":" squads" : isClan?" point":" squad");
+        return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? isClan?" Points":" Squads" : isClan?" Point":" Squad");
     }
 
     @Override
@@ -102,7 +102,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public float getWeight() {
-        return (float) totalSpace * 2;
+        return (float) totalSpace * 2 * (isClan?5:4);
     }
 
     @Override

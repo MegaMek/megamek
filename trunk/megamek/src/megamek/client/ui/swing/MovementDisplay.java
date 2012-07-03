@@ -124,6 +124,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
     public static final String MOVE_SHUTDOWN = "moveShutDown"; //$NON-NLS-1$
     public static final String MOVE_STARTUP = "moveStartup"; //$NON-NLS-1$
+    public static final String MOVE_SELF_DESTRUCT = "moveSelfDestruct"; //$NON-NLS-1$
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
@@ -186,6 +187,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butEvade;
     private JButton butShutdown;
     private JButton butStartup;
+    private JButton butSelfDestruct;
 
     private JButton butAcc;
     private JButton butDec;
@@ -432,6 +434,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butStartup.setActionCommand(MOVE_STARTUP);
         butStartup.addKeyListener(this);
 
+        butSelfDestruct = new JButton(Messages.getString("MovementDisplay.butSelfDestruct")); //$NON-NLS-1$
+        butSelfDestruct.addActionListener(this);
+        butSelfDestruct.setEnabled(false);
+        butSelfDestruct.setActionCommand(MOVE_SELF_DESTRUCT);
+        butSelfDestruct.addKeyListener(this);
+
         butAcc = new JButton(Messages.getString("MovementDisplay.butAcc")); //$NON-NLS-1$
         butAcc.addActionListener(this);
         butAcc.setEnabled(false);
@@ -597,6 +605,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsMech.add(butShutdown);
             buttonsMech.add(butStartup);
         }
+        if (clientgui.getClient().game.getOptions().booleanOption("tacops_self_destruct")) {
+            buttonsMech.add(butSelfDestruct);
+        }
         buttonsMech.add(butReckless);
         buttonsMech.add(butSwim);
         buttonsMech.add(butEject);
@@ -638,6 +649,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsTank.add(butShutdown);
             buttonsTank.add(butStartup);
         }
+        if (clientgui.getClient().game.getOptions().booleanOption("tacops_self_destruct")) {
+            buttonsTank.add(butSelfDestruct);
+        }
 
         buttonsVtol = new ArrayList<JButton>(16);
         buttonsVtol.add(butWalk);
@@ -662,6 +676,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
             buttonsVtol.add(butShutdown);
             buttonsVtol.add(butStartup);
+        }
+        if (clientgui.getClient().game.getOptions().booleanOption("tacops_self_destruct")) {
+            buttonsVtol.add(butSelfDestruct);
         }
 
         buttonsInf = new ArrayList<JButton>(17);
@@ -738,6 +755,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
             buttonsAero.add(butShutdown);
             buttonsAero.add(butStartup);
+        }
+        if (clientgui.getClient().game.getOptions().booleanOption("tacops_self_destruct")) {
+            buttonsAero.add(butSelfDestruct);
         }
 
         // layout button grid
@@ -1086,6 +1106,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setEvadeEnabled(false);
         setShutdownEnabled(false);
         setStartupEnabled(false);
+        setSelfDestructEnabled(false);
         setEvadeAeroEnabled(false);
         setAccNEnabled(false);
         setDecNEnabled(false);
@@ -1707,6 +1728,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateEvadeButton();
             updateShutdownButton();
             updateStartupButton();
+            updateSelfDestructButton();
             updateFlyOffButton();
             updateLaunchButton();
             updateDropButton();
@@ -2179,6 +2201,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         setStartupEnabled(ce.isManualShutdown() && !ce.isShutDownThisPhase());
+    }
+
+    private void updateSelfDestructButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        if (!clientgui.getClient().game.getOptions().booleanOption("tacops_self_destruct")) {
+            return;
+        }
+
+        if (ce instanceof Infantry) {
+            return;
+        }
+
+        setSelfDestructEnabled(ce.getEngine().isFusion() && !ce.getSelfDestructing() && !ce.getSelfDestructInitiated());
     }
 
     private void updateRecklessButton() {
@@ -3571,6 +3612,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 cmd.addStep(MoveStepType.STARTUP);
                 ready();
             }
+        } else if (ev.getActionCommand().equals(MOVE_SELF_DESTRUCT)) {
+            if (clientgui.doYesNoDialog(Messages.getString("MovementDisplay.SelfDestructDialog.title"),
+                                        Messages.getString("MovementDisplay.SelfDestructDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                cmd.addStep(MoveStepType.SELF_DESTRUCT);
+                ready();
+            }
         } else if (ev.getActionCommand().equals(MOVE_EVADE_AERO)) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
@@ -3717,6 +3764,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateEvadeButton();
         updateShutdownButton();
         updateStartupButton();
+        updateSelfDestructButton();
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();
@@ -4088,6 +4136,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setStartupEnabled(boolean enabled) {
         butStartup.setEnabled(enabled);
         clientgui.getMenuBar().setMoveStartupEnabled(enabled);
+    }
+
+    private void setSelfDestructEnabled(boolean enabled) {
+        butSelfDestruct.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveSelfDestructEnabled(enabled);
     }
 
     private void setEvadeAeroEnabled(boolean enabled) {

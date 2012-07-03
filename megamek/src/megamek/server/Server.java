@@ -1936,6 +1936,7 @@ public class Server implements Runnable {
             send(createFlarePacket());
             resolveAmmoDumps();
             resolveCrewWakeUp();
+            resolveSelfDestruct();
             checkForIndustrialEndOfTurn();
             resolveMechWarriorPickUp();
             resolveVeeINarcPodRemoval();
@@ -2252,6 +2253,7 @@ public class Server implements Runnable {
             // write Weapon Attack Phase header
             addReport(new Report(3000, Report.PUBLIC));
             resolveAllButWeaponAttacks();
+            resolveSelfDestructions();
             reportGhostTargetRolls();
             reportLargeCraftECCMRolls();
             resolveOnlyWeaponAttacks();
@@ -5871,6 +5873,10 @@ public class Server implements Runnable {
             if (step.getType() == MoveStepType.STARTUP) {
                 entity.performManualStartup();
                 sendServerChat(entity.getDisplayName() + " has started up.");
+            }
+
+            if (step.getType() == MoveStepType.SELF_DESTRUCT) {
+                entity.setSelfDestructing(true);
             }
 
             if (step.getType() == MoveStepType.ROLL) {
@@ -10061,6 +10067,64 @@ public class Server implements Runnable {
                 }
             }
         }
+    }
+
+    /*
+     * Called during the weapons firing phase to initiate self destructions.
+     */
+    private void resolveSelfDestructions() {
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
+        for (Enumeration<Entity> entities = game.getEntities(); entities.hasMoreElements();) {
+            Entity e = entities.nextElement();
+            if (e.getSelfDestructInitiated()) {
+                r = new Report(6166, Report.PUBLIC);
+                int target = e.getCrew().getPiloting();
+                int roll = Compute.d6(2);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.indent();
+                r.add(target);
+                r.add(roll);
+                if (roll >= target) {
+                    r.choose(true);
+                } else {
+                    r.choose(false);
+                }
+                vDesc.add(r);
+
+                // Blow it up...
+                if (roll >= target) {
+                    int engineRating = e.getEngine().getRating();
+                    r = new Report(5400, Report.PUBLIC);
+                    r.subject = e.getId();
+                    r.indent(2);
+                    vDesc.add(r);
+
+                    if (e instanceof Mech) {
+                        Mech mech = (Mech) e;
+                        if (mech.isAutoEject()
+                                && (!game.getOptions().booleanOption(
+                                        "conditional_ejection") || (game
+                                        .getOptions().booleanOption(
+                                                "conditional_ejection") && mech
+                                        .isCondEjectEngine()))) {
+                            vDesc.addAll(ejectEntity(e, true));
+                        }
+                    }
+
+                    doFusionEngineExplosion(engineRating, e.getPosition(), vDesc, null);
+                    Report.addNewline(vDesc);
+                    r = new Report(5410, Report.PUBLIC);
+                    r.subject = e.getId();
+                    r.indent(2);
+                    Report.addNewline(vDesc);
+                    vDesc.add(r);
+                }
+                e.setSelfDestructInitiated(false);
+            }
+        }
+        addReport(vDesc);
     }
 
     private void reportGhostTargetRolls() {
@@ -16164,6 +16228,22 @@ public class Server implements Runnable {
         }
     }
 
+    /*
+     * Resolve any outstanding self destructions...
+     */
+    private void resolveSelfDestruct() {
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.getSelfDestructing()) {
+                e.setSelfDestructing(false);
+                e.setSelfDestructInitiated(true);
+                Report r = new Report(5535, Report.PUBLIC);
+                r.subject = e.getId();
+                r.addDesc(e);
+                addReport(r);
+            }
+        }
+    }
+
     /**
      * Resolve any potential fatal damage to Capital Fighter after each
      * individual attacker is finished
@@ -17556,6 +17636,8 @@ public class Server implements Runnable {
                                 if (game.getOptions().booleanOption("auto_abandon_unit")) {
                                     vDesc.addAll(abandonEntity(te));
                                 }
+                                te.setSelfDestructing(false);
+                                te.setSelfDestructInitiated(false);
                             }
                         }
 
@@ -18873,6 +18955,8 @@ public class Server implements Runnable {
                 boolean engineExploded = checkEngineExplosion(t, vDesc, 1);
                 if (engineExploded) {
                     vDesc.addAll(destroyEntity(en, "engine destruction", true, true));
+                    t.setSelfDestructing(false);
+                    t.setSelfDestructInitiated(false);
                 }
                 if (t.isAirborneVTOLorWIGE()) {
                     PilotingRollData psr = t.getBasePilotingRoll();
@@ -19339,6 +19423,8 @@ public class Server implements Runnable {
                 if ((a.getEngineHits() >= a.getMaxEngineHits()) || engineExploded) {
                     // this engine hit puts the ASF out of commission
                     vDesc.addAll(destroyEntity(a, "engine destruction", true, true));
+                    a.setSelfDestructing(false);
+                    a.setSelfDestructInitiated(false);
                 }
                 break;
             case Aero.CRIT_LEFT_THRUSTER:
@@ -19738,6 +19824,8 @@ public class Server implements Runnable {
                         if (game.getOptions().booleanOption("auto_abandon_unit")) {
                             vDesc.addAll(abandonEntity(en));
                         }
+                        en.setSelfDestructing(false);
+                        en.setSelfDestructInitiated(false);
                     }
                     break;
                 case Mech.SYSTEM_GYRO:

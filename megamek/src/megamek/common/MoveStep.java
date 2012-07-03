@@ -117,6 +117,7 @@ public class MoveStep implements Serializable {
     private boolean isEvading = false;
     private boolean isShuttingDown = false;
     private boolean isStartingUp = false;
+    private boolean isSelfDestructing = false;
     private boolean isRolled = false;
 
     //for maneuvers
@@ -842,6 +843,10 @@ public class MoveStep implements Serializable {
             setStartingUp(true);
             // Do something here...
             break;
+        case SELF_DESTRUCT:
+            setSelfDestructing(true);
+            // Do something here...
+            break;
         case ROLL:
             if(prev.isRolled) {
                 isRolled = false;
@@ -970,6 +975,7 @@ public class MoveStep implements Serializable {
         isEvading = prev.isEvading;
         isShuttingDown = prev.isShuttingDown;
         isStartingUp = prev.isStartingUp;
+        isSelfDestructing = prev.isSelfDestructing;
         nRolls = prev.nRolls;
         isRolled = prev.isRolled;
         mv = prev.mv.clone();
@@ -1214,6 +1220,10 @@ public class MoveStep implements Serializable {
 
     public boolean isStartingUp() {
         return isStartingUp;
+    }
+
+    public boolean isSelfDestructing() {
+        return isSelfDestructing;
     }
 
     public boolean isRolled() {
@@ -1471,6 +1481,10 @@ public class MoveStep implements Serializable {
 
     public void setStartingUp(boolean b) {
         isStartingUp = b;
+    }
+
+    public void setSelfDestructing(boolean b) {
+        isSelfDestructing = b;
     }
 
     /**
@@ -1796,6 +1810,9 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         }
         if (type == MoveStepType.STARTUP) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        if (type == MoveStepType.SELF_DESTRUCT) {
             movementType = EntityMovementType.MOVE_NONE;
         }
 
@@ -2403,6 +2420,11 @@ public class MoveStep implements Serializable {
 
         // We're wanting to startup our reactor and we're not unconscious
         if (type == MoveStepType.STARTUP && !entity.getCrew().isUnconscious()) {
+            return true;
+        }
+
+        // We're wanting to self destruct our reactor and we're not unconscious
+        if (type == MoveStepType.SELF_DESTRUCT && !entity.getCrew().isUnconscious()) {
             return true;
         }
 

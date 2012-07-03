@@ -150,6 +150,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean findingClub = false;
     protected boolean armsFlipped = false;
     protected boolean unjammingRAC = false;
+    protected boolean selfDestructing = false;
+    protected boolean selfDestructInitiated = false;
     protected boolean hasSpotlight = false;
     protected boolean illuminated = false;
     protected boolean spotlightIsActive = false;
@@ -11502,5 +11504,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public String getCamoFileName() {
         return camoFileName;
+    }
+
+    public boolean getSelfDestructing() {
+        return selfDestructing;
+    }
+
+    public void setSelfDestructing(boolean tf) {
+        this.selfDestructing = tf;
+    }
+
+    public boolean getSelfDestructInitiated() {
+        return selfDestructInitiated;
+    }
+
+    public void setSelfDestructInitiated(boolean tf) {
+        this.selfDestructInitiated = tf;
     }
 }

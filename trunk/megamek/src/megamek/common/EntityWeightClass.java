@@ -51,7 +51,7 @@ public class EntityWeightClass {
 
     // Total number of unique unit weight designations. Should be 1 more than the number above.
     public static final int SIZE = 12;
-    private static String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.0", "DS.1", "DS.2", "JS.0", "JS.1" };
+    private static String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.7", "DS.8", "DS.9", "JS.10", "JS.11" };
 
 
     private static float[] BAWeightLimits = { 0.4f, 0.75f, 1, 1.5f, 2 };

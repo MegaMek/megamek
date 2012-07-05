@@ -84,6 +84,15 @@ v0.35.31-dev (SVN)
 + Bug: BA bay weight wrong
 + Bug: EntityWeightClass.getClassName() returns incorrect for JumpShips, Warships, and DropShips.
 + Feature 3537042: Implement Self Destruct Rules
++ Data 2826902: Fuel Tank and Ultra Rubble Tiles
++ Data 3369564: Depth 4 animated water
++ Data 3369563: Depth 3 animated water
++ Data 3369562: Depth 2 animated water
++ Data 3369561: Depth 1 animated water
++ Data 3369556: Hex art 2
++ Data 3369555: Hex art 1
++ Data 2826895: Railway tile pieces for megamek
++ Data two new hexsets with "high quality" images (hq_atmospheric and hq_isometric)
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

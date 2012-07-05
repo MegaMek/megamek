@@ -18,6 +18,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Scrollbar;
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,6 +50,8 @@ public class MiniReportDisplay extends Dialog implements ActionListener {
 
         add(BorderLayout.SOUTH, butOkay);
         add(BorderLayout.CENTER, taData);
+        Scrollbar scrollPane = new Scrollbar(Scrollbar.VERTICAL);
+        add(scrollPane, BorderLayout.EAST);
         setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
                 GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();

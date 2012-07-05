@@ -94,6 +94,8 @@ v0.35.31-dev (SVN)
 + Data 2826895: Railway tile pieces for megamek
 + Data two new hexsets with "high quality" images (hq_atmospheric and hq_isometric)
 + Fixed broken image links to Thor (Summoner) 'Mechs in mechset.txt.
++ Data 2832395: Lunar/Mars Building and Tunnel Tiles (added under the lunar tileset)
++ Data: new "Lunar Sample 16x17.board" to show off the new Lunar/Mars buildings
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

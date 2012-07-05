@@ -23,6 +23,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 
 import megamek.client.ui.Messages;
@@ -53,7 +54,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         getContentPane().setLayout(new BorderLayout());
 
         getContentPane().add(BorderLayout.SOUTH, butOkay);
-        getContentPane().add(BorderLayout.CENTER, taData);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(taData);
+        getContentPane().add(BorderLayout.CENTER, scrollPane);
         setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(), GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
         setLocation(GUIPreferences.getInstance().getMiniReportPosX(), GUIPreferences.getInstance().getMiniReportPosY());

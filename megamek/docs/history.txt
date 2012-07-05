@@ -96,6 +96,8 @@ v0.35.31-dev (SVN)
 + Fixed broken image links to Thor (Summoner) 'Mechs in mechset.txt.
 + Data 2832395: Lunar/Mars Building and Tunnel Tiles (added under the lunar tileset)
 + Data: new "Lunar Sample 16x17.board" to show off the new Lunar/Mars buildings
++ Bug 3007140 / Patch 3534055: In-phase Round Report cannot be scrolled
++ Bug 3529311 / Patch 3534060: Server browser defaults to check (enabled) but text box not
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

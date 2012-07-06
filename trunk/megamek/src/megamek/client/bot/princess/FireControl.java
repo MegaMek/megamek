@@ -252,7 +252,7 @@ public class FireControl {
          * Helper function that calculates expected damage
          */
         private void initDamage(IGame game) {
-            if (to_hit.getValue() > 13) {
+            if (to_hit.getValue() > 12) {
                 prob_to_hit = 0;
                 max_damage = 0;
                 heat = 0;

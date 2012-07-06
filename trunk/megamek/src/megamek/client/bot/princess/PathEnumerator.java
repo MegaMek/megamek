@@ -322,6 +322,7 @@ public class PathEnumerator {
      */
     ArrayList<MovePath> getNextMoves(IGame game, MovePath start) {
         ArrayList<MovePath> ret = new ArrayList<MovePath>();
+        ArrayList<MovePath> test = new ArrayList<MovePath>();
         if (start.getEntity() instanceof Aero) {
             // if I've already done something illegal, or flown off, ignore
             if ((start.getSecondLastStep() != null)
@@ -483,9 +484,9 @@ public class PathEnumerator {
             }
             // get up if laying down
             if (start.getFinalProne() || start.getFinalHullDown()) {
-                if (start.getEntity().isCarefulStand()) {
+                if (start.getEntity().isCarefulStand() && (start.getEntity().checkGetUp(start.clone().addStep(MoveStepType.CAREFUL_STAND).getLastStep()).getValue() < 13)) {
                     ret.add(start.clone().addStep(MoveStepType.CAREFUL_STAND));
-                } else {
+                } else if (start.getEntity().checkGetUp(start.clone().addStep(MoveStepType.GET_UP).getLastStep()).getValue() < 13) {
                     ret.add(start.clone().addStep(MoveStepType.GET_UP));
                 }
             }

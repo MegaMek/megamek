@@ -252,6 +252,15 @@ public class FireControl {
          * Helper function that calculates expected damage
          */
         private void initDamage(IGame game) {
+            if (to_hit.getValue() > 13) {
+                prob_to_hit = 0;
+                max_damage = 0;
+                heat = 0;
+                expected_criticals = 0;
+                kill_probability = 0;
+                expected_damage_on_hit = 0;
+                return;
+            }
             prob_to_hit = Compute.oddsAbove(to_hit.getValue()) / 100.0;
             heat = ((WeaponType) weapon.getType()).getHeat();
             // if(action!=null) {

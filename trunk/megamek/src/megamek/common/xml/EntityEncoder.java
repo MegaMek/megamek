@@ -201,7 +201,7 @@ public class EntityEncoder {
         out.write("\" damageThisPhase=\"");
         out.write(String.valueOf(entity.damageThisPhase));
         out.write("\" engineHitsThisRound=\"");
-        out.write(String.valueOf(entity.engineHitsThisRound));
+        out.write(String.valueOf(entity.engineHitsThisPhase));
         out.write("\" rolledForEngineExplosion=\"");
         out.write(entity.rolledForEngineExplosion ? "true" : "false");
         out.write("\" dodging=\"");

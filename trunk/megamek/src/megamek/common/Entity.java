@@ -191,7 +191,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private int[] orig_internal;
     public int damageThisPhase;
     public int damageThisRound;
-    public int engineHitsThisRound;
+    public int engineHitsThisPhase;
     public boolean rolledForEngineExplosion = false; // So that we don't roll
     // twice in one round
     public boolean dodging;
@@ -8643,7 +8643,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                         && (cs.getIndex() == Mech.SYSTEM_ENGINE)
                         && !cs.isDamaged()) {
-                    engineHitsThisRound++;
+                    engineHitsThisPhase++;
                 }
                 if (blownOff) {
                     cs.setMissing(true);

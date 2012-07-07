@@ -1296,7 +1296,7 @@ public class Server implements Runnable {
             // tele-missiles need a record of damage last phase
             entity.damageThisRound += entity.damageThisPhase;
             entity.damageThisPhase = 0;
-            entity.engineHitsThisRound = 0;
+            entity.engineHitsThisPhase = 0;
             entity.rolledForEngineExplosion = false;
             entity.dodging = false;
             entity.setShutDownThisPhase(false);
@@ -17616,31 +17616,6 @@ public class Server implements Runnable {
                             }
                         }
 
-                        if ((te instanceof Mech)
-                                && ((hit.getLocation() == Mech.LOC_RT) || (hit.getLocation() == Mech.LOC_LT))) {
-
-                            boolean engineExploded = false;
-
-                            int numEngineHits = 0;
-                            numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
-                                    Mech.LOC_CT);
-                            numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
-                                    Mech.LOC_RT);
-                            numEngineHits += te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
-                                    Mech.LOC_LT);
-
-                            engineExploded = checkEngineExplosion(te, vDesc, numEngineHits);
-                            if (!engineExploded && (numEngineHits > 2)) {
-                                // third engine hit
-                                vDesc.addAll(destroyEntity(te, "engine destruction"));
-                                if (game.getOptions().booleanOption("auto_abandon_unit")) {
-                                    vDesc.addAll(abandonEntity(te));
-                                }
-                                te.setSelfDestructing(false);
-                                te.setSelfDestructInitiated(false);
-                            }
-                        }
-
                         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)) {
                             // if rotor is destroyed, movement goes bleh.
                             // I think this will work?
@@ -17656,19 +17631,17 @@ public class Server implements Runnable {
                     nextHit = te.getTransferLocation(hit);
                     if (nextHit.getLocation() == Entity.LOC_DESTROYED) {
                         if (te instanceof Mech) {
-                            // add all non-destroyed engine crits
-                            te.engineHitsThisRound += te.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
+                            // Start with the number of engine crits in this location, if any...
+                            te.engineHitsThisPhase += te.getNumberOfCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
                                     hit.getLocation());
-                            // and substract those that where hit previously
-                            // this round
-                            // hackish, but works.
-                            te.engineHitsThisRound -= te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
+                            // ...then deduct the ones destroyed previously or critically
+                            // hit this round already. That leaves the ones actually
+                            // destroyed with the location.
+                            te.engineHitsThisPhase -= te.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE,
                                     hit.getLocation());
                         }
 
-                        boolean engineExploded = false;
-
-                        engineExploded = checkEngineExplosion(te, vDesc, te.engineHitsThisRound);
+                        boolean engineExploded = checkEngineExplosion(te, vDesc, te.engineHitsThisPhase);
 
                         if (!engineExploded && !((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR))) {
                             // Entity destroyed. Ammo explosions are
@@ -17839,6 +17812,24 @@ public class Server implements Runnable {
             // get a bye.
             if (!(te instanceof Aero) && te.getInternal(hit) <= 0) {
                 te.destroyLocation(hit.getLocation());
+                
+                // Check for possible engine destruction here
+                if ((te instanceof Mech)
+                        && ((hit.getLocation() == Mech.LOC_RT) || (hit.getLocation() == Mech.LOC_LT))) {
+
+                    int numEngineHits = te.getEngineHits();
+                    boolean engineExploded = checkEngineExplosion(te, vDesc, numEngineHits);
+                    
+                    if (!engineExploded && (numEngineHits > 2)) {
+                        // third engine hit
+                        vDesc.addAll(destroyEntity(te, "engine destruction"));
+                        if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                            vDesc.addAll(abandonEntity(te));
+                        }
+                        te.setSelfDestructing(false);
+                        te.setSelfDestructInitiated(false);
+                    }
+                }
             }
 
             // loop to next location
@@ -17936,7 +17927,9 @@ public class Server implements Runnable {
                 && !(en instanceof Tank)) {
             return false;
         }
-        if (en.isDestroyed()) {
+        // If this method gets called for an entity that's already destroyed or that
+        // hasn't taken any actual engine hits this phase yet, do nothing.
+        if (en.isDestroyed() || en.engineHitsThisPhase <= 0) {
             return false;
         }
         int explosionBTH = 10;
@@ -17961,7 +17954,7 @@ public class Server implements Runnable {
         }
         // ICE can always explode and roll every time hit
         if (engine.isFusion()
-                && (!game.getOptions().booleanOption("tacops_engine_explosions") || (en.engineHitsThisRound < hitsPerRound))) {
+                && (!game.getOptions().booleanOption("tacops_engine_explosions") || (en.engineHitsThisPhase < hitsPerRound))) {
             return false;
         }
         if (!engine.isFusion()) {
@@ -17988,7 +17981,7 @@ public class Server implements Runnable {
         r.subject = en.getId();
         r.indent(2);
         r.addDesc(en);
-        r.add(en.engineHitsThisRound);
+        r.add(en.engineHitsThisPhase);
         vDesc.addElement(r);
         r = new Report(6155);
         r.subject = en.getId();
@@ -18951,7 +18944,7 @@ public class Server implements Runnable {
                 r.subject = t.getId();
                 vDesc.add(r);
                 t.engineHit();
-                t.engineHitsThisRound++;
+                t.engineHitsThisPhase++;
                 boolean engineExploded = checkEngineExplosion(t, vDesc, 1);
                 if (engineExploded) {
                     vDesc.addAll(destroyEntity(en, "engine destruction", true, true));
@@ -19417,7 +19410,7 @@ public class Server implements Runnable {
                 r.subject = a.getId();
                 r.newlines = 0;
                 vDesc.add(r);
-                a.engineHitsThisRound++;
+                a.engineHitsThisPhase++;
                 boolean engineExploded = checkEngineExplosion(a, vDesc, 1);
                 a.setEngineHits(a.getEngineHits() + 1);
                 if ((a.getEngineHits() >= a.getMaxEngineHits()) || engineExploded) {
@@ -19808,16 +19801,11 @@ public class Server implements Runnable {
                     // if the slot is missing, the location was previously
                     // destroyedd and the enginehit was then counted already
                     if (!cs.isMissing()) {
-                        en.engineHitsThisRound++;
+                        en.engineHitsThisPhase++;
                     }
-                    boolean engineExploded = false;
+                    int numEngineHits = en.getEngineHits();
+                    boolean engineExploded = checkEngineExplosion(en, vDesc, numEngineHits);
 
-                    int numEngineHits = 0;
-                    numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-                    numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
-                    numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-
-                    engineExploded = checkEngineExplosion(en, vDesc, numEngineHits);
                     if (!engineExploded && (numEngineHits > 2)) {
                         // third engine hit
                         vDesc.addAll(destroyEntity(en, "engine destruction"));

@@ -100,6 +100,7 @@ v0.35.31-dev (SVN)
 + Bug 3529311 / Patch 3534060: Server browser defaults to check (enabled) but text box not
 + Bug 3518300: Princess Bot impossible rolls
 + Bug 3541025: Miscounted destroyed engine criticals
++ Bug: (Clan) CASE in limbs/head preventing ammo explosions from properly destroying the location.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error

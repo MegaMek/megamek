@@ -1,6 +1,6 @@
 ﻿﻿VERSION HISTORY:
 ----------------
-v0.35.31-dev (SVN)
+v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.
 + Bug: Game hangs when targeting woods or buildings.
 + Bug 3534222: RACs not working with Unofficial UAC rules

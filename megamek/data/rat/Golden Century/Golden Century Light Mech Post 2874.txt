@@ -1,0 +1,12 @@
+2874 Golden Century Light Mech
+Mongoose MON-66,1
+Commando IIC,2
+UrbanMech IIC,3
+Firefly C,4
+Icestorm,5
+Locust IIC,6
+Peregrine (Horned Owl),5
+Locust IIC 2,4
+Peregrine (Horned Owl) 2,3
+Locust IIC 2,2
+Dasher (Fire Moth) Prime,1

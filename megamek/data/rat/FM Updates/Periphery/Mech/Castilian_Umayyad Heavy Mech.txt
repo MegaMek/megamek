@@ -1,0 +1,12 @@
+Castilian / Umayyad Heavy Mechs 3067 FM-U
+Quickdraw QKD-4G,1
+Warhammer WHM-6R,2
+Catapult CPLT-A1,3
+Orion ON1-K,4
+Quickdraw QKD-4G,5
+Grasshopper GHR-5H,6
+Catapult CPLT-C1,5
+Grasshopper GHR-5H,4
+Catapult CPLT-A1,3
+JagerMech JM6-S,2
+Archer ARC-2R,1

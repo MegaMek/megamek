@@ -1,0 +1,12 @@
+2821 Operations Klondike Pentagon Heavy Mech C 
+Excalibur EXC-B2b,1
+Ostroc OSR-2Cb,2
+Marauder MAD-2R,3
+Bombardier BMB-12D,4
+Flashman FLS-8K,5
+Guillotine GLT-3N,6
+Thunderbolt TDR-5S,5
+Crusader CRD-3R,4
+Black Knight BL6b-KNT,3
+Galahad GLH-2D,2
+Cestus CTS-6Y,1

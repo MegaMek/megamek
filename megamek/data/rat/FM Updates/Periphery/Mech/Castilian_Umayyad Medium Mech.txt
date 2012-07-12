@@ -1,0 +1,12 @@
+Castilian / Umayyad Medium Mechs 3067 FM-U
+Wolverine WVR-6R,1
+Hunchback HBK-4G,2
+Vulcan VL-2T,3
+Trebuchet TBT-5S,4
+Blackjack BJ-1,5
+Cicada CDA-2A,6
+Shadow Hawk SHD-2H,5
+Whitworth WTH-1,4
+Clint CLNT-2-3T,3
+Centurion CN9-A,2
+Hermes II HER-2S,1

@@ -1,0 +1,12 @@
+Periphery Light Mechs C 3067 FM-U
+Hermes HER-1A,1
+Panther PNT-9R,2
+UrbanMech UM-R60,3
+Spider SDR-5V,4
+Javelin JVN-10N,5
+Wasp WSP-1A,6
+Locust LCT-1V,5
+Stinger STG-3R,4
+Firestarter FS9-H,3
+Commando COM-2D,2
+UrbanMech UM-R60L,1

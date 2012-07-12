@@ -1,0 +1,12 @@
+DCMS Assault Mechs D 3067 FM-U
+Charger CGR-3K,1
+Banshee BNC-3E,2
+Cyclops CP-10-Z,3
+Stalker STK-3F,4
+Victor VTR-9B,5
+Charger CGR-1A1,6
+Atlas AS7-D,5
+BattleMaster BLR-1G,4
+Awesome AWS-8Q,3
+Goliath GOL-1H,2
+Victor VTR-9K,1

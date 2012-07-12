@@ -1,0 +1,12 @@
+Marian Hegemony Light Mechs 3067 FM-U
+Wolfhound WLF-1,1
+Firestarter FS9-S,2
+Jackal JA-KL-1532,3
+Javelin JVN-10N,4
+Panther PNT-9R,5
+Firestarter FS9-C,6
+Commando COM-4H,5
+Javelin JVN-10P,4
+Panther PNT-9R,3
+Locust LCT-1V2,2
+Brigand LDT-X2,1

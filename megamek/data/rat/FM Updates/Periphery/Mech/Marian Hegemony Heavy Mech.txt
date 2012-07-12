@@ -1,0 +1,12 @@
+Marian Hegemony Heavy Mechs 3067 FM-U
+Tempest TMP-3M,1
+Marauder MAD-3D,2
+Cataphract CTF-3D,3
+Orion ON2-M,4
+Warhammer WHM-7M,5
+Grasshopper GHR-5N,6
+Catapult CPLT-H2,5
+Thunderbolt TDR-7SE,4
+Archer ARC-8M,3
+JagerMech JM6-H,2
+Orion ON1-M,1

@@ -1,6 +1,18 @@
 ﻿﻿VERSION HISTORY:
 ----------------
 v0.35.32-dev (SVN)
++ Data 3369808: Historical Brush War RAT's
++ Data 3401148: Era 3062 RAT (placed in another folder as an alternate set to the ones in already)
++ Data 3428031: HTP- Misery RAT
++ Data 3437717: Field Manual Updates Mercenary RAT's
++ Data 3439037: Historical Operation Klondike RAT files
++ Data 3439470: Golden Century RAT files
++ Data 3470480: Inner Sphere Regular Infantry RATs
++ Data 3541170: Random Assignment Tables from FM:3085
++ Data 3541172: Inner Sphere and Periphery RAT's from 3085
++ Data 3367441: DCMS and Periphery RATs from FM:Updates
++ Data 3367640: Nova Cat FM Updates RATs
++ Data 3361932: LAAF FM Updates RATs
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

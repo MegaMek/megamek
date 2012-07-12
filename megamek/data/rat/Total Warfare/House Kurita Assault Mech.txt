@@ -1,0 +1,14 @@
+House Kurita Assault 'Mech
+Tai-sho TSH-7S,1
+Naginata NG-C3A,2
+Hatamoto-Chi HTM-27T,3
+Sunder SD1-O,4
+Atlas AS7-K,5
+Hatamoto-Chi HTM-27T,6
+Mauler MAL-1R,5
+Katana (Crockett) CRK-5003-2,4
+Charger CGR-3K,3
+Sunder SD1-OB,2
+Akuma AKU-1X,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

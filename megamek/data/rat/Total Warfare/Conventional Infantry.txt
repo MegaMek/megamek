@@ -1,0 +1,14 @@
+Conventional Infantry
+Mechanized Hover Platoon (Rifle),1
+Mechanized Wheeled Platoon (Rifle),2
+Mechanized Wheeled Platoon (Rifle),3
+Jump Platoon (Rifle),4
+Motorized Platoon (Rifle),5
+Foot Platoon (Rifle),6
+Foot Platoon (Rifle),5
+Motorized Platoon (Rifle),4
+Jump Platoon (Rifle),3
+Mechanized Tracked Platoon (Rifle),2
+Mechanized Hover Platoon (Rifle),1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

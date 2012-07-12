@@ -1,0 +1,12 @@
+3062 Clan Ghost Bear - Aerospace
+Bashkir Prime,1
+Visigoth C,2
+Kirghiz B,3
+Sulla A,4
+Jengiz Prime,5
+Visigoth Prime,6
+Sulla A,5
+Visigoth B,7
+Turk C,6
+Jengiz Prime,5
+Kirghiz Prime,4

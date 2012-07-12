@@ -1,0 +1,4 @@
+3062 Clan Diamond Shark - Assault Vehicle
+Huitzilopochtli Assault Tank 'Huey',16
+Mars Assault Vehicle,20
+Mars Assault Vehicle (XL),12

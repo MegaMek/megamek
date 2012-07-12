@@ -1,0 +1,12 @@
+3055 Mercenary - Heavy
+Flashman FLS-7K,1
+Orion ON1-K,2
+Rifleman RFL-3N,3
+Crusader CRD-3R,4
+Thunderbolt TDR-5S,5
+Archer ARC-2R,6
+Warhammer WHM-6R,5
+Marauder MAD-3R,4
+Catapult CPLT-C1,3
+Gallowglas GAL-1GLS,2
+War Dog WR-DG-02FC,1

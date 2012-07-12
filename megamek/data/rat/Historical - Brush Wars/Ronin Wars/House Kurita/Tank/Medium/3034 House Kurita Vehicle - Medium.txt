@@ -1,0 +1,12 @@
+3034 House Kurita Medium Vehicles
+Maxim Heavy Hover Transport,1
+Hetzer Wheeled Assault Gun,2
+Hetzer Wheeled Assault Gun,3
+Drillson Heavy Hover Tank,4
+Maxim Heavy Hover Transport,5
+Vedette Medium Tank,6
+Hetzer Wheeled Assault Gun,5
+Condor Heavy Hover Tank,4
+Vedette Medium Tank,3
+Hetzer Wheeled Assault Gun,2
+Maxim Heavy Hover Transport,1

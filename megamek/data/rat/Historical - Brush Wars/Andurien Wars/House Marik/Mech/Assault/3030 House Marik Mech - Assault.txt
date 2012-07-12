@@ -1,0 +1,12 @@
+3030 House Marik Mech - Assault
+Atlas AS7-D,1
+Goliath GOL-1H,2
+Awesome AWS-8Q,3
+Awesome AWS-8Q,4
+BattleMaster BLR-1G,5
+Stalker STK-3F,6
+Banshee BNC-3M,5
+BattleMaster BLR-1G,4
+Stalker STK-3F,3
+Cyclops CP-10-Z,2
+Banshee BNC-3Q,1

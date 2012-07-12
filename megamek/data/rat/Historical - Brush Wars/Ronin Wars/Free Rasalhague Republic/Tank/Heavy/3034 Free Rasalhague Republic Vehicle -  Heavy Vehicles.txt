@@ -1,0 +1,12 @@
+3034 Free Rasalhague Republic Vehicle -  Heavy Vehicles
+Von Luckner Heavy Tank VNL-K65N,1
+Rommel Tank,2
+Bulldog Medium Tank,3
+Manticore Heavy Tank,4
+Po Heavy Tank,5
+LRM Carrier,6
+SRM Carrier,5
+Bulldog Medium Tank,4
+Patton Tank,3
+Pike Support Vehicle,2
+Von Luckner Heavy Tank VNL-K65N,1

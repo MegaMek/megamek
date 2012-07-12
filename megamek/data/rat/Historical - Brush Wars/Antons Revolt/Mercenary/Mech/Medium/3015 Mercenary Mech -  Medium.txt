@@ -1,0 +1,12 @@
+3015 Mercenary Mech -  Medium
+Blackjack BJ-1,1
+Assassin ASN-21,2
+Hunchback HBK-4G,3
+Griffin GRF-1N,4
+Whitworth WTH-1,5
+Shadow Hawk SHD-2H,6
+Phoenix Hawk PXH-1,5
+Centurion CN9-A,4
+Wolverine WVR-6R,3
+Trebuchet TBT-5N,2
+Scorpion SCP-1N,1

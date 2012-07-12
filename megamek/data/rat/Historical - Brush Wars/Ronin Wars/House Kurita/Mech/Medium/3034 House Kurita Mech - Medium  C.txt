@@ -1,0 +1,12 @@
+3034 House Kurita Mech - Medium  C
+Cicada CDA-2A,1
+Vulcan VL-2T,2
+Whitworth WTH-1,3
+Griffin GRF-1N,4
+Phoenix Hawk PXH-1,5
+Wolverine WVR-6R,6
+Shadow Hawk SHD-2H,5
+Hunchback HBK-4G,4
+Dervish DV-6M,3
+Scorpion SCP-1N,2
+Assassin ASN-21,1

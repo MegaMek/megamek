@@ -1,0 +1,12 @@
+3015 House Marik Vehicle - Assault
+Behemoth Heavy Tank,1
+Schrek PPC Carrier,2
+Schrek PPC Carrier,3
+Demolisher Heavy Tank,4
+Demolisher Heavy Tank,5
+Demolisher Heavy Tank,6
+Demolisher Heavy Tank,5
+Ontos Heavy Tank,4
+Ontos Heavy Tank,3
+Ontos Heavy Tank,2
+Ontos Heavy Tank,1

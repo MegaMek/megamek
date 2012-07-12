@@ -1,0 +1,12 @@
+3015 House Marik Mech - Medium
+Vulcan VL-2T,1
+Hunchback HBK-4G,2
+Griffin GRF-1N,3
+Whitworth WTH-1,4
+Trebuchet TBT-5N,5
+Phoenix Hawk PXH-1,6
+Hermes II HER-2S,5
+Hermes II HER-2M "Mercury",4
+Wolverine WVR-6M,3
+Shadow Hawk SHD-2H,2
+Cicada CDA-2A,1

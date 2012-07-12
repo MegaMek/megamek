@@ -1,0 +1,45 @@
+##############################################################################
+# Purely my own concotion.  I simply divided up the various infantry types
+# with Foot being more common than Mortorized which is more common than Jump,
+# which is more common than Mechanized.
+# Likewise, within their motive type, Rifles are the most common with missile
+# troops being the least.
+# Compiled by: Deric Page (deric.page@usa.net)
+##############################################################################
+3050-plus Inner Sphere and Periphery Infantry
+Foot Platoon (Rifle),120
+Foot Platoon (Flamer),60
+Foot Platoon (MG),80
+Foot Platoon (Laser),60
+Foot Platoon (LRM),40
+Foot Platoon (SRM),40
+Motorized Platoon (Rifle),90
+Motorized Platoon (Flamer),45
+Motorized Platoon (MG),60
+Motorized Platoon (Laser),45
+Motorized Platoon (LRM),30
+Motorized Platoon (SRM),30
+Jump Platoon (Rifle),60
+Jump Platoon (Flamer),30
+Jump Platoon (MG),40
+Jump Platoon (Laser),30
+Jump Platoon (LRM),20
+Jump Platoon (SRM),20
+Mechanized Hover Platoon (Rifle),6
+Mechanized Hover Platoon (Flamer),3
+Mechanized Hover Platoon (MG),4
+Mechanized Hover Platoon (Laser),3
+Mechanized Hover Platoon (LRM),2
+Mechanized Hover Platoon (SRM),2
+Mechanized Tracked Platoon (Rifle),12
+Mechanized Tracked Platoon (Flamer),6
+Mechanized Tracked Platoon (MG),8
+Mechanized Tracked Platoon (Laser),6
+Mechanized Tracked Platoon (LRM),4
+Mechanized Tracked Platoon (SRM),4
+Mechanized Wheeled Platoon (Rifle),12
+Mechanized Wheeled Platoon (Flamer),6
+Mechanized Wheeled Platoon (MG),8
+Mechanized Wheeled Platoon (Laser),6
+Mechanized Wheeled Platoon (LRM),4
+Mechanized Wheeled Platoon (SRM),4

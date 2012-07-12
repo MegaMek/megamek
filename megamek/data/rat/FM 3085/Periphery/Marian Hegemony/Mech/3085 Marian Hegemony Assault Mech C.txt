@@ -1,0 +1,12 @@
+3085 Marian Hegemony Assault Mech C
+Stalker STK-3F,1
+Victor VTR-9B,2
+Charger CGR-2A2,3
+Longbow LGB-13C,4
+Cyclops CP-11-H,5
+Longbow LGB-7Q,6
+Awesome AWS-8Q,5
+Awesome AWS-9M,4
+Goliath GOL-6H,3
+BattleMaster BLR-3M,2
+Cerberus MR-V2,1

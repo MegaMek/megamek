@@ -1,0 +1,12 @@
+3085 Clan Diamond Shark Medium Aerospace Second Line
+Lightning LTN-G15b,1
+Corsair CSR-V12b,2
+Hellcat II HCT-213C,3
+Gotha GTHA-500b,4
+Lightning LTN-G15,5
+Tyre,6
+Ammon,5
+Troika CMT-3T,4
+Ammon,3
+Tatsu MIK-O,2
+Ammon,1

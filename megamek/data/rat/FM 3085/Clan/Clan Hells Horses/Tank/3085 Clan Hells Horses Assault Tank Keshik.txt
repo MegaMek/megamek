@@ -1,0 +1,12 @@
+3085 Clan Hell's Horses Assault Tank Keshik
+Mars Assault Vehicle,1
+Demolisher Heavy Tank (Clan),2
+Huitzilopochtli Assault Tank 'Huey',3
+Heimdall Ground Monitor Tank Prime,4
+Mars Assault Vehicle (ATM),5
+Mars Assault Vehicle (XL),6
+Mars Assault Vehicle,5
+Morrigu Fire Support Vehicle,4
+Mars Assault Vehicle (XL),3
+Huitzilopochtli Assault Tank 'Huey' (AAA),2
+Mars Assault Vehicle (HAG),1

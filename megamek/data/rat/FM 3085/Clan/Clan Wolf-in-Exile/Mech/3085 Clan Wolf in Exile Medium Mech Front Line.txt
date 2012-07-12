@@ -1,0 +1,12 @@
+3085 Clan Wolf in Exile Medium Mech Front Line
+Black Hawk,1
+Ursus II,2
+Fenris (Ice Ferret) Prime,3
+Pouncer Prime,4
+Phantom Prime,5
+Arctic Wolf Prime,6
+Fenris (Ice Ferret) Prime,5
+Fenris (Ice Ferret) Prime,4
+Phantom Prime,3
+Black Hawk,2
+Pouncer Prime,1

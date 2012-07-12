@@ -1,0 +1,12 @@
+3085 Cappellan Confederation Assault Mech B
+Striker STC-2D,1
+Emperor EMP-6L,2
+Victor VTR-10L,3
+Yu Huang Y-H10G,4
+Pillager PLG-3Z,5
+Emperor EMP-7L,6
+Goliath GOL-3L,5
+Sunder SD1-O,4
+Yu Huang Y-H9GC,3
+Pillager PLG-5Z,2
+Warhammer IIC 8,1

@@ -1,0 +1,12 @@
+3085 Filtvelt Coalition Light Mech F
+Hornet HNT-152,1
+Stinger STG-3R,2
+Wasp WSP-1A,3
+Locust LCT-1V,4
+Firestarter FS9-H,5
+Valkyrie VLK-QF,6
+Hornet HNT-171,5
+Valkyrie VLK-QA,4
+Locust LCT-3D,3
+Toro TR-A-1,2
+Javelin JVN-10N,1

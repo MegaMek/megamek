@@ -1,0 +1,12 @@
+3085 Republic of the Sphere Assault Mech Principes Guards
+Viking VKG-2G,1
+Nightstar NSR-9SS,2
+Highlander HGN-732,3
+Warlord BLR-2Dr,4
+Gunslinger GUN-1ERD,5
+Awesome AWS-10KM,6
+Emperor EMP-6D,5
+Phoenix Hawk IIC 7,4
+Hauptmann HA1-O,3
+Banshee BNC-9S,2
+Thunder Hawk TDK-7X,1

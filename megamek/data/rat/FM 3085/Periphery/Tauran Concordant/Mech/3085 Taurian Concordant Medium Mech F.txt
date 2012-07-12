@@ -1,0 +1,12 @@
+3085 Taurian Concordant Medium Mech F
+Blackjack BJ-1,1
+Vulcan VL-5T,2
+Whitworth WTH-1,3
+Whitworth WTH-2,4
+Griffin GRF-1N,5
+Snake SNK-1V,6
+Shadow Hawk SHD-2H,5
+Hunchback HBK-4G,4
+Phoenix Hawk PXH-1,3
+Trebuchet TBT-5N,2
+Enforcer ENF-4R,1

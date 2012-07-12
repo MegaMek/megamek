@@ -1,0 +1,12 @@
+3085 Clan Jade Falcon Assault Mech Keshik
+Marauder IIC 6,1
+Kraken (Bane) 4,2
+BattleMaster C,3
+Turkina Prime,4
+Jupiter,5
+Turkina Prime,6
+Gladiator (Executioner) Prime,5
+Jupiter 3,4
+Man O' War (Gargoyle) Prime,3
+Masakari (Warhawk) Prime,2
+Scylla 3,1

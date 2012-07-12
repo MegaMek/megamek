@@ -1,0 +1,12 @@
+3085 Magistracy of Canopus Assault Mech C
+Stalker STK-3H,1
+Longbow LGB-0W,2
+Cyclops CP-10-Q,3
+Longbow LGB-7Q,4
+Longbow LGB-7V,5
+Stalker STK-3F,6
+Awesome AWS-8Q,5
+Banshee BNC-3Mr,4
+Awesome AWS-9Q,3
+Cerberus MR-V2,2
+Emperor EMP-6A,1

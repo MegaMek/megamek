@@ -1,0 +1,12 @@
+3085 Calderon Protectorate Heavy Mech B
+Archer ARC-2R,1
+Thunderbolt TDR-5S,2
+Warhammer WHM-6R,3
+Archer ARC-2R,4
+Cataphract CTF-1X,5
+Helios HEL-3D,6
+Orion ON1-K,5
+Cataphract CTF-3L,4
+Marauder MAD-3R,3
+Ti Ts'ang TSG-9H,2
+Thunder THR-1L,1

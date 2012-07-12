@@ -1,0 +1,12 @@
+2821 Operations Klondike Clan Heavy Vehicle
+Burke,1
+Magi,2
+Demon (Royal),3
+Von Luckner Heavy Tank VNL-K65N (LB),4
+Burke (Royal),5
+Demon (Royal),6
+Bon Luckner Heavy Tank VNL-K65N (LRM),5
+Merkava Mk. VIII,4
+Padilla,3
+Marksman,2
+Burke (Royal),1

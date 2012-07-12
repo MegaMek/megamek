@@ -1,0 +1,12 @@
+Magistracy of Canopus Assault Mechs B 3067 FM-U
+Devastator DVS-2,1
+Emperor EMP-6A,2
+Stalker STK-3F,3
+Atlas AS7-D,4
+Charger CGR-1A5,5
+Stalker STK-3F,6
+Awesome AWS-8Q,5
+Longbow LGB-7Q,4
+Victor VTR-9K,3
+Cyclops CP-11-A,2
+Awesome AWS-9M,1

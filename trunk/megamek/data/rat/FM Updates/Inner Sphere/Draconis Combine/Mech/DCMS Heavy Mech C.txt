@@ -1,0 +1,12 @@
+DCMS Heavy Mechs C 3067 FM-U
+Black Hawk-KU BHKU-O,1
+War Dog WR-DG-02FC,2
+Ostroc OSR-2D,3
+JagerMech JM6-DD,4
+Marauder MAD-5D,5
+Grand Dragon DRG-5K,6
+Dragon DRG-5N,5
+Quickdraw QKD-5M,4
+Orion ON1-K,3
+Crusader CRD-5K,2
+Marauder MAD-3R,1

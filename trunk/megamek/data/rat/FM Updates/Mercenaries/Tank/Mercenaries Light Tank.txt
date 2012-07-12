@@ -1,0 +1,12 @@
+Mercenaries Light Tank
+Centipede Scout Car,1
+Scorpion Light Tank,2
+Blizzard Hover Transport,3
+Hunter Light Support Tank (3054 Upgrade),4
+Galleon Light Tank GAL-102,5
+Pegasus Scout Hover Tank (3058 Upgrade),6
+Saladin Assault Hover Tank,5
+J. Edgar Light Hover Tank,4
+Cavalry Attack Helicopter,3
+Warrior Attack Helicopter H-8,2
+Yellow Jacket Gunship,1

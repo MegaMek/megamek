@@ -1,0 +1,12 @@
+LAAF Heavy Mechs C 3067 (FMU)
+Warhammer WHM-7S,1
+Crusader CRD-5S,2
+Grasshopper GHR-5J,3
+Penetrator PTR-6S,4
+Caesar CES-3R,5
+Axman AXM-1N,6
+Marauder MAD-5S,5
+War Dog WR-DG-02FC,4
+Archer ARC-6S,3
+Falconer FLC-8R,2
+Maelstrom MTR-5K,1

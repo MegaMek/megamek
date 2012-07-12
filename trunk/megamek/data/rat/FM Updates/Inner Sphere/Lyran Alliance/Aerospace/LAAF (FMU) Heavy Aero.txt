@@ -1,0 +1,12 @@
+LAAF Heavy Aerospace 3067 (FMU)
+Eagle EGL-R6,1
+Riever F-100,2
+Chippewa CHP-W5,3
+Stuka STU-K10,4
+Chippewa CHP-W5,5
+Chippewa CHP-W7,6
+Eisensturm EST-R3,5
+Stuka STU-K5,4
+Slayer SL-15,3
+Eisensturm EST-O,2
+Thunderbird TRB-D36,1

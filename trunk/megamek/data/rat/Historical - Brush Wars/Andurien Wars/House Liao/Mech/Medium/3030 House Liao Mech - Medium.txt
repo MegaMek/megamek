@@ -1,0 +1,12 @@
+3030 House Liao Mech - Medium
+Shadow Hawk SHD-2H,1
+Dervish DV-6M,2
+Whitworth WTH-1,3
+Enforcer ENF-4R,4
+Blackjack BJ-1,5
+Vindicator VND-1R,6
+Phoenix Hawk PXH-1,5
+Griffin GRF-1N,4
+Hunchback HBK-4G,3
+Wolverine WVR-6R,2
+Scorpion SCP-1N,1

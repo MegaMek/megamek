@@ -1,0 +1,14 @@
+WoB Assault Mech B
+Spartan SPT-N3,1
+Zeus ZEU-10WB,2
+Emperor EMP-6M,3
+Grand Titan T-IT-N10M,4
+King Crab KGC-001,5
+Thug THG-12E,6
+Cerberus MR-5M,5
+Banshee BNC-8S,4
+Viking VKG-3W,3
+Marauder II MAD-5W,2
+Highlander HGN-736,1
+# by Ben "MKerensky" G.
+#3/7/11

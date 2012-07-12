@@ -1,0 +1,12 @@
+3015 House Marik Vehicle - Light
+Ferret Light Scout VTOL,1
+Harasser Missile Platform,2
+Saladin Assault Hover Tank,3
+Scorpion Light Tank,4
+Scimitar Medium Hover Tank,5
+Galleon Light Tank GAL-100,6
+Galleon Light Tank GAL-100,5
+Saracen Medium Hover Tank,4
+Pegasus Scout Hover Tank,3
+Harasser Missile Platform (LRM),2
+Warrior Attack Helicopter H-7,1

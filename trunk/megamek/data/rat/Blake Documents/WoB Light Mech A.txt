@@ -1,0 +1,12 @@
+WoB Light Mech A
+Hussar HSR-950-D,1
+Nexus II NXS2-B,2
+Ostscout OTT-9CS,3
+Gurkha GUR-2G,4
+Red Shift RDS-2A,5
+Falcon Hawk FNHK-9K1B,6
+Nexus II NXS2-A,5
+Gurkha GUR-4G,4
+Red Shift RDS-2B,3
+Mercury MCY-104,2
+Malak C-MK-O Invictus,1

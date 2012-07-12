@@ -1,0 +1,12 @@
+3034 House Steiner Mech - Light  C
+Spider SDR-5V,1
+Firestarter FS9-M "Mirage",2
+Stinger STG-3G,3
+Firestarter FS9-H,4
+Stinger STG-3R,5
+Commando COM-2D,6
+Locust LCT-1V,5
+Wasp WSP-1A,4
+Javelin JVN-10N,3
+Firestarter FS9-H,2
+Ostscout OTT-7J,1

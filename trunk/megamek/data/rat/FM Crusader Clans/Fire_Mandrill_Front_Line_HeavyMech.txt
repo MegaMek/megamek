@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Heavy Mechs (Fire Mandrill),
+Vulture (Mad Dog) B,1
+Thor (Summoner) C,2
+Thor (Summoner) B,3
+Cauldron-Born (Ebon Jaguar) C,4
+Vulture (Mad Dog) Prime,5
+Cauldron-Born (Ebon Jaguar) B,6
+Thor (Summoner) Prime,5
+Thor (Summoner) A,4
+Cauldron-Born (Ebon Jaguar) A,3
+Vulture (Mad Dog) A,2
+Cauldron-Born (Ebon Jaguar) Prime,1

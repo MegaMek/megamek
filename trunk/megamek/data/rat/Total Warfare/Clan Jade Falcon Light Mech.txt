@@ -1,0 +1,14 @@
+Clan Jade Falcon Light 'Mech
+Locust IIC 4,1
+Cougar C,2
+Hellion Prime,3
+Fire Falcon H,4
+Cougar Prime,5
+Fire Falcon Prime,6
+Uller (Kit Fox) Prime,5
+Uller (Kit Fox) A,4
+Fire Falcon B,3
+Hellion B,2
+Spirit,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

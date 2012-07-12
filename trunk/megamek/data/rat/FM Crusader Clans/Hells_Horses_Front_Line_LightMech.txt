@@ -1,0 +1,12 @@
+Crusader Clan Front-Line Light Mechs (Hell's Horses),
+Dasher (Fire Moth) A,1
+Dasher (Fire Moth) Prime,2
+Koshi (Mist Lynx) B,3
+Koshi (Mist Lynx) Prime,4
+Hankyu (Arctic Cheetah) Prime,5
+Uller (Kit Fox) Prime,6
+Uller (Kit Fox) B,5
+Puma (Adder) Prime,4
+Puma (Adder) B,3
+Dasher (Fire Moth) Prime,2
+Dasher (Fire Moth) D,1

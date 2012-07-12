@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Heavy Mechs (Wolf),
+Black Knight BL-6-KNT,1
+Viper (Black Python),2
+Galahad (Glass Spider),3
+Rifleman IIC,4
+Galahad (Glass Spider),5
+Galahad (Glass Spider),6
+Bombardier BMB-12D,5
+Rifleman IIC,4
+Exterminator EXT-4D,3
+Flashman FLS-8K,2
+Mad Cat (Timber Wolf) Prime,1

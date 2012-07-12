@@ -1,0 +1,14 @@
+Inner Sphere Vehicle Medium
+Goblin Infantry Support Vehicle, 1
+Blizzard Hover Transport,2
+Hetzer Wheeled Assault Gun, 3
+Drillson Heavy Hover Tank, 4
+Myrmidon Medium Tank, 5
+Vedette Medium Tank, 6
+Maxim Heavy Hover Transport, 5
+Condor Heavy Hover Tank, 4
+Vedette Medium Tank, 3
+Maxim Heavy Hover Transport (BA Factory Upgrade), 2
+Regulator Hovertank, 1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

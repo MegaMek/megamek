@@ -1,0 +1,12 @@
+3085 Clan Diamond Shark Assault Tank Keshik
+Behemoth,1
+Ontos Heavy Tank,2
+Morrigu Fire Support Vehicle,3
+Sturmfeur Heavy Tank,4
+Heimdall Ground Monitor Tank Prime,5
+Morrigu Fire Support Vehicle,6
+Morrigu Fire Support Vehicle (Laser),5
+Demolisher Heavy Tank (Clan),4
+Huitzilopochtli Assault Tank 'Huey',3
+Alacorn Heavy Tank Mk VI,2
+Mars Assault Vehicle (HAG),1

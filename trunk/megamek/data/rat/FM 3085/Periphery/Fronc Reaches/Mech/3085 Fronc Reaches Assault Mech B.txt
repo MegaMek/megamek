@@ -1,0 +1,12 @@
+3085 Fronc Reaches Assault Mech B
+Longbow LGB-13C,1
+Cyclops CP-11-H,2
+Awesome AWS-8Q,3
+Stalker STK-3F,4
+BattleMaster BLR-1G,5
+Awesome AWS-9Q,6
+Yu Huang Y-H9G,5
+Atlas AS7-D,4
+Devastator DVS-1D,3
+Emperor EMP-6A,2
+Pillager PLG-3Z,1

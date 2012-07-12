@@ -1,0 +1,12 @@
+3085 Draconis Combine Heavy Mech A
+Grand Dragon DRG-9KC,1
+Marauder MAD-9W2,2
+Ninja-To NJT-3,3
+Grasshopper GHR-7K,4
+Black Hawk-KU BHKU-O,5
+Shugenja SJA-8H,6
+Maelstrom MTR-5K,5
+Avatar AV1-O,4
+Ha Otoko 3,3
+Warhammer WHM-8K,2
+Excalibur EXC-CS,1

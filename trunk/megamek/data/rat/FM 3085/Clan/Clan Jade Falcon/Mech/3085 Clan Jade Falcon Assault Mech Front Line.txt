@@ -1,0 +1,12 @@
+3085 Clan Jade Falcon Assault Mech Front Line
+Jupiter 2,1
+Kraken (Bane) 3,2
+Marauder IIC 6,3
+Kraken (Bane) 4,4
+BattleMaster C,5
+Turkina Prime,6
+Jupiter,5
+Turkina Prime,4
+Gladiator (Executioner) Prime,3
+Jupiter 3,2
+Man O' War (Gargoyle) Prime,1

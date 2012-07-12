@@ -1,0 +1,12 @@
+3085 Cappellan Confederation Heavy Mech C
+Ti Ts'ang TSG-9H,1
+Cataphract CTF-3L,2
+Thunder THR-1L,3
+Jinggau JN-G8A,4
+Warhammer WHM-4L,5
+Lao Hu LHU-3C,6
+Thunder THR-3L,5
+Cataphract CTF-4L,4
+Crusader CRD-8L,3
+Black Hawk-KU BHKU-O,2
+Catapult CPLT-C5,1

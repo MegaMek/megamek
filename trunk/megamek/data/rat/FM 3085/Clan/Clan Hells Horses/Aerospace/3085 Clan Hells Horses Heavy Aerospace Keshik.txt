@@ -1,0 +1,12 @@
+3085 Clan Hell's Horses Heavy Aerospace Keshik
+Hammerhead HMR-HDb,1
+Hydaspes,2
+Xerxes,3
+Xerxes (Gauss),4
+Xerxes,5
+Hydaspes,6
+Xerxes (Gauss),5
+Kirghiz Prime,4
+Jengiz Prime,3
+Scytha Prime,2
+Xerxes,1

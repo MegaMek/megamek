@@ -1,0 +1,12 @@
+3062 Clan Ghost Bear - Medium
+Great Wyrm,1
+Fenris (Ice Ferret) C,2
+Dragonfly (Viper) B,3
+Dragonfly (Viper) A,4
+Ryoken (Stormcrow) Prime,5
+Dragonfly (Viper) Prime,6
+Dragonfly (Viper) Prime,5
+Dragonfly (Viper) A,4
+Black Hawk (Nova) B,3
+Ursus,2
+Stooping Hawk D,1

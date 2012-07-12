@@ -1,0 +1,12 @@
+3085 Marian Hegemony Assault Mech B
+Charger CGR-2A2,1
+Longbow LGB-13C,2
+Cyclops CP-11-H,3
+Longbow LGB-7Q,4
+Awesome AWS-8Q,5
+Awesome AWS-9M,6
+Goliath GOL-6H,5
+BattleMaster BLR-3M,4
+Cerberus MR-V2,3
+Atlas AS7-D,2
+Marauder II MAD-4H,1

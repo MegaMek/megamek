@@ -1,0 +1,12 @@
+3085 Marian Hegemony Medium Mech B
+Assassin ASN-23,1
+Whitworth WTH-1H,2
+Whitworth WTH-2,3
+Griffin GRF-1N,4
+Gladiator GLD-1R,5
+Hunchback HBK-4H,6
+Centurion CN9-D,5
+Centurion CN9-Ar,4
+Shadow Hawk SHD-5M,3
+Centurion CN9-A,2
+Phoenix Hawk PXH-4L,1

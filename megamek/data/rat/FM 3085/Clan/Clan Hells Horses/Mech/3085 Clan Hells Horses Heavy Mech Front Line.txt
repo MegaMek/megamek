@@ -1,0 +1,12 @@
+3085 Clan Hell's Horses Heavy Mech Front Line
+Loki (Hellbringer) Prime,1
+Bowman 2,2
+Vulture (Mad Dog) Prime,3
+Thor (Summoner) Prime,4
+Loki (Hellbringer) Prime,5
+Vulture (Mad Dog) Prime,6
+Thor (Summoner) Prime,5
+Vulture (Mad Dog) Prime,4
+Thor (Summoner) Prime,3
+Cauldron-Born (Ebon Jaguar) Prime,2
+Balius Prime,1

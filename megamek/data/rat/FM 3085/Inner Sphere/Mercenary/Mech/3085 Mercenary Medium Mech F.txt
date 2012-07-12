@@ -1,0 +1,12 @@
+3085 Mercenary Medium Mech F
+Vulcan VL-2T,1
+Hatchetman HCT-3F,2
+Hunchback HBK-4P,3
+Gladiator GLD-1R,4
+Whitworth WTH-2,5
+Centurion CN9-A,6
+Phoenix Hawk PXH-1,5
+Rook NH-1A,4
+Trebuchet TBT-5N,3
+Clint CLNT-2-3U,2
+Enforcer ENF-4R,1

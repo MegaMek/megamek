@@ -1,0 +1,12 @@
+3085 Periphery General - Lesser States Light Mech D
+Stinger STG-3R,1
+Firestarter FS9-H,2
+Commando COM-2D,3
+Locust LCT-1V,4
+Javelin JVN-10N,5
+Wasp WSP-1A,6
+Stinger STG-3P,5
+Flea FLE-19,4
+Stinger STG-5T,3
+Anubis ABS-3L,2
+Firestarter FS9-C,1

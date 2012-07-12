@@ -1,0 +1,12 @@
+3085 Principality of Regulus Medium Mech B
+Griffin GRF-3M,1
+Shadow Hawk SHD-5M,2
+Wolverine WVR-7M,3
+Hunchback HBK-6N,4
+Trebuchet TBT-3C,5
+Wraith TR1,6
+Shockwave SKW-2F,5
+Blitzkrieg BTZ-3F,4
+Strider SR1-O,3
+Shadow Hawk SHD-7M,2
+Blackjack BJ2-O,1

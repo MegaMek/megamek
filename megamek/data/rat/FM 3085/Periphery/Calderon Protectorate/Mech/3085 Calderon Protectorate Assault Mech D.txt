@@ -1,0 +1,12 @@
+3085 Calderon Protectorate Assault Mech D
+Cyclops CP-10-Q,1
+Victor VTR-9B,2
+Stalker STK-4N,3
+Stalker STK-3F,4
+Longbow LGB-7Q,5
+Stalker STK-3F,6
+Longbow LGB-0W,5
+Awesome AWS-8Q,4
+BattleMaster BLR-1G,3
+Awesome AWS-9Q,2
+Devastator DVS-1D,1

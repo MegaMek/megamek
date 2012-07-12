@@ -1,0 +1,12 @@
+3085 Cappellan Confederation Light Mech C
+Flea FLE-17,1
+Duan Gung D9-G9,2
+Cossack C-SK1,3
+Raven RVN-3L,4
+Stinger STG-6L,5
+Anubis ABS-3T,6
+Wasp WSP-3L,5
+Duan Gung D9-G10,4
+Flea FLE-20,3
+Raven RVN-4Lr,2
+Ebony MEB-9,1

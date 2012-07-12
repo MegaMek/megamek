@@ -1,0 +1,12 @@
+3085 Magistracy of Canopus Medium Mech F
+Blackjack BJ-1,1
+Vulcan VL-2T,2
+Whitworth WTH-2,3
+Whitworth WTH-1,4
+Shadow Hawk SHD-2H,5
+Shadow Hawk SHD-2H,6
+Griffin GRF-1N,5
+Hunchback HBK-4G,4
+Snake SNK-1V,3
+Shadow Hawk SHD-7M,2
+Phoenix Hawk PXH-1,1

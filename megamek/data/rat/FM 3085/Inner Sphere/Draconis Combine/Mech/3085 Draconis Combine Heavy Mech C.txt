@@ -1,0 +1,12 @@
+3085 Draconis Combine Heavy Mech C
+Crusader CRD-5K,1
+Ostroc OSR-4K,2
+Daikyu DAI-02,3
+No-Dachi NDA-2KC,4
+Grand Dragon DRG-9KC,5
+Marauder MAD-9W2,6
+Ninja-To NJT-3,5
+Grasshopper GHR-7K,4
+Black Hawk-KU BHKU-O,3
+Shugenja SJA-8H,2
+Maelstrom MTR-5K,1

@@ -1,0 +1,12 @@
+3085 Draconis Combine Light Mech B
+Jenner JR7-C3,1
+Hitman HM-1r,2
+Venom SDR-9KC,3
+Panther PNT-10K2,4
+Spider SDR-7KC,5
+Tarantula ZPH-4A,6
+Valiant V4-LNT-K7,5
+Wight WGT-1LAW/SC3,4
+Mongoose MON-86,3
+Owens OW-1,2
+Morrigan 2,1

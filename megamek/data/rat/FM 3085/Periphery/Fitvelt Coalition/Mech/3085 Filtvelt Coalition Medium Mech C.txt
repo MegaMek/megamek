@@ -1,0 +1,12 @@
+3085 Filtvelt Coalition Medium Mech C
+Watchman WTC-4M,1
+Wolverine WVR-6R,2
+Sentry SNT-04,3
+Centurion CN9-A,4
+Phoenix Hawk PXH-3D,5
+Enforcer ENF-4R,6
+Griffin GRF-1N,5
+Wolverine WVR-7D,4
+Shadow Hawk SHD-2D,3
+Enforcer ENF-5D,2
+Dervish DV-6Mr,1

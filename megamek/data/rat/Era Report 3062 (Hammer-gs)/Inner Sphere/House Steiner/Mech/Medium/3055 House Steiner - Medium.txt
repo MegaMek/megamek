@@ -1,0 +1,12 @@
+3055 House Steiner - Medium
+Firestarter FS9-O,1
+Enfield END-6Q,2
+Stealth STH-1D,3
+Blackjack BJ-1,4
+Sentry SNT-04,5
+Enforcer ENF-4R,6
+Hatchetman HCT-3F,5
+Centurion CN9-A,4
+Nightsky NGS-4S,3
+Bushwacker BSW-S2,2
+Blitzkrieg BTZ-3F,1

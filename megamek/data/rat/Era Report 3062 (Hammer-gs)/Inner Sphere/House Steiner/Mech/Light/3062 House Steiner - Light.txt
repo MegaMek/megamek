@@ -1,0 +1,12 @@
+3062 House Steiner - Light
+Night Hawk NTK-2Q,1
+Javelin JVN-10P,2
+Garm GRM-01B,3
+Fireball ALM-7D,4
+Wolfhound WLF-2,5
+Commando COM-5S,6
+Valkyrie VLK-QD,5
+Dart DRT-3S,4
+Battle Hawk BH-K305,3
+Spector SPR-5F,2
+Talon TLN-5W,1

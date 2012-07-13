@@ -13,6 +13,7 @@ v0.35.32-dev (SVN)
 + Data 3367441: DCMS and Periphery RATs from FM:Updates
 + Data 3367640: Nova Cat FM Updates RATs
 + Data 3361932: LAAF FM Updates RATs
++ Bug 3543735: dropship bugs
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

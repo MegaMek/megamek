@@ -613,8 +613,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
-        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
-                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
+        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null) &&
+                (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
         buttonsMech.add(butForwardIni);
         }
 
@@ -641,8 +641,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsTank.add(butLower);
         buttonsTank.add(butTakeOff);
         buttonsTank.add(butVTakeOff);
-        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
-                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
+        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null) &&
+                (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
         buttonsTank.add(butForwardIni);
         }
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
@@ -669,8 +669,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
         buttonsVtol.add(butShakeOff);
-        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
-                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
+        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null) &&
+                (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
         buttonsVtol.add(butForwardIni);
         }
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
@@ -698,8 +698,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         buttonsInf.add(butDigIn);
         buttonsInf.add(butFortify);
         buttonsInf.add(butClear);
-        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
-                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
+        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null) &&
+                (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
         buttonsInf.add(butForwardIni);
         }
 
@@ -748,8 +748,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butLand);
             buttonsAero.add(butVLand);
         }
-        if (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null &&
-                clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1) {
+        if ((clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()) != null) &&
+                (clientgui.getClient().game.getTeamForPlayer(clientgui.getClient().getLocalPlayer()).getSize() > 1)) {
         buttonsAero.add(butForwardIni);
         }
         if (clientgui.getClient().game.getOptions().booleanOption("manual_shutdown")) {
@@ -1784,7 +1784,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
                         || (gear == MovementDisplay.GEAR_TURN) || (gear == MovementDisplay.GEAR_BACKUP))
-                && ((cmd.getMpUsed() <= ce.getWalkMP()) || (cmd.getLastStep().isOnlyPavement() && cmd.getMpUsed() <= (ce.getWalkMP() + 1))));
+                && ((cmd.getMpUsed() <= ce.getWalkMP()) || (cmd.getLastStep().isOnlyPavement() && (cmd.getMpUsed() <= (ce.getWalkMP() + 1)))));
     }
 
     private void updateSearchlightButton() {
@@ -2479,6 +2479,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         .getString("MovementDisplay.ChooseHex.title"), //$NON-NLS-1$
                 JOptionPane.QUESTION_MESSAGE, null, choices, null);
         Coords choice = null;
+        if (selected == null) {
+            return choice;
+        }
         for(Coords c : ring) {
             if(selected.equals(c.toString())) {
                 choice = c;
@@ -3279,7 +3282,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_CHARGE)
                     || (gear == MovementDisplay.GEAR_DFA)
-                    || ((cmd.getMpUsed() > ce.getWalkMP()) && !(cmd.getLastStep().isOnlyPavement() && cmd.getMpUsed() <= (ce.getWalkMP() + 1)))
+                    || ((cmd.getMpUsed() > ce.getWalkMP()) && !(cmd.getLastStep().isOnlyPavement() && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
                     || (gear == MovementDisplay.GEAR_SWIM)
                     || (gear == MovementDisplay.GEAR_RAM)) {
                 // in the wrong gear
@@ -3497,7 +3500,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
                 //if (ce.getOwner().equals(other.getOwner()) && !ce.equals(other)) {
-                if (ce != null && !ce.equals(other) && ce.canLoad(other, false)) {
+                if ((ce != null) && !ce.equals(other) && ce.canLoad(other, false)) {
                     loadedUnits.add(other);
                     break;
                 }

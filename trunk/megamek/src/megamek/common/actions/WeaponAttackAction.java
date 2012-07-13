@@ -1881,7 +1881,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.isAirborne() || ae.isAirborneVTOLorWIGE()) {
                 if (isArtilleryDirect) {
                     return "Flying units can't make direct-fire artillery attacks";
-                } else if (isArtilleryIndirect && (atype.getAmmoType() != AmmoType.T_ARROW_IV)) {
+                } else if (isArtilleryIndirect && (wtype.getAmmoType() != AmmoType.T_ARROW_IV)) {
                     return "Flying units can't fire non-Arrow-IV artillery.";
                 }
             }
@@ -2623,7 +2623,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if(!ae.isAirborne() && (distance == 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
                 return "Only aft weapons may target units at zero range";
             }
-            if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1) && !(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
+            if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1) && !((wtype instanceof ArtilleryWeapon) || wtype.hasFlag(WeaponType.F_ARTILLERY))) {
                 return "Target is too low for nose weapons";
             }
             if ((!weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT)) && (altDif < 0)) {

@@ -715,11 +715,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setManualShutdown(boolean tf) {
-        this.manualShutdown = tf;
+        manualShutdown = tf;
     }
 
     public void performManualShutdown() {
-        if (isManualShutdown() || getTaserShutdownRounds() != 0 || isShutDown()) {
+        if (isManualShutdown() || (getTaserShutdownRounds() != 0) || isShutDown()) {
             return;
         }
         setShutDown(true);
@@ -1531,7 +1531,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getFacing() {
         if (Entity.NONE != conveyance) {
-            return game.getEntity(conveyance).getFacing();
+            Entity transporter = game.getEntity(conveyance);
+            if (transporter == null) {
+                transporter = game.getOutOfGameEntity(conveyance);
+            }
+            return transporter.getFacing();
         }
         return facing;
     }
@@ -1591,7 +1595,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && mounted.isJammed() && !mounted.isDestroyed()) {
                 return true;
             }
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+            if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                     && mounted.isJammed() && !mounted.isDestroyed() && game.getOptions().booleanOption("unjam_uac")) {
                 return true;
             }
@@ -2206,7 +2210,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getInternalForReal(int loc) {
-        if (this instanceof GunEmplacement && loc == Tank.LOC_TURRET)  {
+        if ((this instanceof GunEmplacement) && (loc == Tank.LOC_TURRET))  {
             return Tank.LOC_TURRET;
         }
         return internal[loc];
@@ -2718,7 +2722,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Artillery only in the correct phase...
             if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    && game.getPhase() == IGame.Phase.PHASE_TARGETING) {
+                    && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                 continue;
             }
 
@@ -2768,7 +2772,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 // Artillery only in the correct phase...
                 if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                        && game.getPhase() == IGame.Phase.PHASE_TARGETING) {
+                        && (game.getPhase() == IGame.Phase.PHASE_TARGETING)) {
                     continue;
                 }
 
@@ -4707,7 +4711,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             setLocationBlownOffThisPhase(i, false);
         }
-        
+
         // destroy armor/internals if the section was removed
         for (int i = 0; i < locations(); i++) {
             if (getInternal(i) == IArmorState.ARMOR_DOOMED) {
@@ -8781,7 +8785,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (isFighter() && game.getOptions().booleanOption("single_no_cap") && !isPartOfFighterSquadron()) {
             return false;
         }
-        
+
         return game.getOptions().booleanOption("stratops_capital_fighter")
                 && isFighter();
     }
@@ -9361,7 +9365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     // On 'Mech torsos only, modular armor covers either front
                     // or rear, as mounted.
                     && (!(this instanceof Mech)
-                            || !(loc == Mech.LOC_CT || loc == Mech.LOC_LT || loc == Mech.LOC_RT)
+                            || !((loc == Mech.LOC_CT) || (loc == Mech.LOC_LT) || (loc == Mech.LOC_RT))
                             || (hit.isRear() == mount.isRearMounted()))) {
 
                 int damageAbsorption = mount.getBaseDamageCapacity()
@@ -9876,16 +9880,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Retrieves the quirks object for entity. DO NOT USE this to check boolean options, 
+     * Retrieves the quirks object for entity. DO NOT USE this to check boolean options,
      * as it will not check game options for quirks. Use entity#hasQuirk instead
      * @return
      */
     public Quirks getQuirks() {
         return quirks;
     }
-    
+
     public boolean hasQuirk(String name) {
-    	if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+    	if((null == game) || !game.getOptions().booleanOption("stratops_quirks")) {
     		return false;
     	}
     	return quirks.booleanOption(name);
@@ -9914,10 +9918,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int countQuirks() {
         int count = 0;
 
-        if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+        if((null == game) || !game.getOptions().booleanOption("stratops_quirks")) {
         	return count;
         }
-        
+
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
@@ -9957,10 +9961,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int countQuirks(String grpKey) {
         int count = 0;
 
-        if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+        if((null == game) || !game.getOptions().booleanOption("stratops_quirks")) {
         	return count;
         }
-        
+
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
@@ -9987,10 +9991,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getQuirkList(String sep) {
         StringBuffer qrk = new StringBuffer();
 
-        if(null == game || !game.getOptions().booleanOption("stratops_quirks")) {
+        if((null == game) || !game.getOptions().booleanOption("stratops_quirks")) {
         	return qrk.toString();
         }
-        		
+
         if (null == sep) {
             sep = "";
         }
@@ -10963,14 +10967,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isLocationBlownOff(int loc) {
         return locationBlownOff[loc];
     }
-    
+
     /** Marks the location as blown off in the current phase. This should
      * be called together with {@link #setLocationBlownOff(int, boolean) } whenever
      * a location gets blown off <em>during play</em>, to allow relevant methods
      * (notably {@link #isLocationBad(int) }) to distinguish between fresh and
      * preexisting damage. A location's "newly blown off" status resets with
      * the next call to {@link #applyDamage() }.
-     * 
+     *
      * @param loc Subclass-dependent code for the location.
      * @param damaged The location's "recently blown off" status.
      */
@@ -10980,14 +10984,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /** Has the indicated location been blown off this phase (as opposed
      * to either earlier or not at all)?
-     * 
+     *
      * @param loc Subclass-dependent code for the location.
      * @return The locations "recently blown off" status.
      */
     public boolean isLocationBlownOffThisPhase(int loc) {
         return locationBlownOffThisPhase[loc];
     }
-    
+
     /**
      * does this entity have patchwork armor?
      *
@@ -11466,10 +11470,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setFallen(boolean fell) {
         this.fell = fell;
     }
-    
+
     /**
      * This is used to get an alternative cost that will be added
-     * to the MechSummaryCache - at the moment it is primarily used to 
+     * to the MechSummaryCache - at the moment it is primarily used to
      * rework infantry costs for MekHQ, but it could be applied to other
      * unit types as well - defaults to -1, so there is no confusion
      * @return
@@ -11483,8 +11487,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * If so we shouldn't count for BV, which is why we have this check.
      */
     public boolean isTrapped() {
-        if (getTransportId() != Entity.NONE && game.getEntity(getTransportId()).isDestroyed()) {
-            return true;
+        if (getTransportId() != Entity.NONE) {
+            Entity transport = game.getEntity(getTransportId());
+            if (transport == null) {
+                transport = game.getOutOfGameEntity(getTransportId());
+            }
+            if (transport.isDestroyed()) {
+                return true;
+            }
         }
         return false;
     }
@@ -11511,7 +11521,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setSelfDestructing(boolean tf) {
-        this.selfDestructing = tf;
+        selfDestructing = tf;
     }
 
     public boolean getSelfDestructInitiated() {
@@ -11519,6 +11529,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setSelfDestructInitiated(boolean tf) {
-        this.selfDestructInitiated = tf;
+        selfDestructInitiated = tf;
     }
 }

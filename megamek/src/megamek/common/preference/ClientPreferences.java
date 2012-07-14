@@ -39,7 +39,7 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY)
                 + File.separator + "mechfiles");
         store.setDefault(METASERVER_NAME,
-                "http://megamek.sourceforge.net/serverbrowser");
+                "http://stormy-light-2818.herokuapp.com/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
         // store.setDefault(GAMELOG_MAX_SIZE, 1);

@@ -154,6 +154,7 @@ public class DedicatedServer {
         private void parseAnnounce() throws ParseException {
             if (getToken() == TOK_LITERAL) {
                 announceUrl = getTokenValue();
+                nextToken();
             } else {
                 error("meta server announce URL expected"); //$NON-NLS-1$
             }

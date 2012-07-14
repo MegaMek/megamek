@@ -654,7 +654,7 @@ public class Server implements Runnable {
         }
         String ts1 = new Date(MegaMek.TIMESTAMP).toString();
         String ts2 = new Date(timestamp).toString();
-        if (MegaMek.TIMESTAMP > 0L && timestamp > 0L && timestamp != MegaMek.TIMESTAMP) {
+        if ((MegaMek.TIMESTAMP > 0L) && (timestamp > 0L) && (timestamp != MegaMek.TIMESTAMP)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append("\nClient/Server timestamp mismatch. Server reports: "+ts1+", Client reports: "+ts2);
             } else {
@@ -925,7 +925,7 @@ public class Server implements Runnable {
         // TODO Perhaps there is a better solution to handle the Bot disconnect
         // Done. Ghost players (Bots mostly) are now removed during the resetGame(), so we don't need to do it here.
         // This fixes Bug 3399000 without reintroducing 1225949
-        if (phase == IGame.Phase.PHASE_VICTORY || phase == IGame.Phase.PHASE_LOUNGE || player.isObserver()) {
+        if ((phase == IGame.Phase.PHASE_VICTORY) || (phase == IGame.Phase.PHASE_LOUNGE) || player.isObserver()) {
             game.removePlayer(player.getId());
             send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(player.getId())));
         } else {
@@ -1983,7 +1983,7 @@ public class Server implements Runnable {
             // Before we send the full entities packet we need to loop through the fighters in squadrons and damage them.
             for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements();) {
                 Entity entity = ents.nextElement();
-                if (entity instanceof Aero && !(entity instanceof FighterSquadron)) {
+                if ((entity instanceof Aero) && !(entity instanceof FighterSquadron)) {
                     Aero a = (Aero) entity;
                     if (a.isPartOfFighterSquadron() || a.isCapitalFighter()) {
                         a.doDisbandDamage();
@@ -10459,7 +10459,7 @@ public class Server implements Runnable {
                     addReport(r);
                 }
                 // Unofficial option to unjam Ultra Autocannons like Rotary Autocannons
-                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
+                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                         && game.getOptions().booleanOption("unjam_uac")) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);
@@ -13644,7 +13644,7 @@ public class Server implements Runnable {
             int mod = ((Tank) ae).getMotiveSideMod(side);
             addReport(vehicleMotiveDamage((Tank) ae, mod));
         }
-        
+
         // work out which locations have spikes
         int[] spikes = new int[ae.locations()];
         for (int i = 0; i < ae.locations(); i++) {
@@ -13686,16 +13686,16 @@ public class Server implements Runnable {
         // Vehicles that have *been* charged check for motive system damage, too...
         // ...though VTOLs don't use that table and should lose their rotor instead,
         // which would be handled as part of the damage already.
-        if (te instanceof Tank && !(te instanceof VTOL)) {
+        if ((te instanceof Tank) && !(te instanceof VTOL)) {
             r = new Report(4242);
             r.indent();
             addReport(r);
-            
+
             int side = Compute.targetSideTable(ae, te);
             int mod = ((Tank) ae).getMotiveSideMod(side);
             addReport(vehicleMotiveDamage((Tank) te, mod));
         }
-        
+
         // work out which locations have spikes
         spikes = new int[te.locations()];
         for (int i = 0; i < te.locations(); i++) {
@@ -14322,7 +14322,7 @@ public class Server implements Runnable {
                 if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
                     // only start up if not shut down by taser
                     if (entity.getTaserShutdownRounds() == 0) {
-                        if (entity.heat < 14 && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
+                        if ((entity.heat < 14) && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                             // automatically starts up again
                             entity.setShutDown(false);
                             r = new Report(5045);
@@ -14805,7 +14805,7 @@ public class Server implements Runnable {
             // heat effects: start up
             if ((entity.heat < autoShutDownHeat) && entity.isShutDown() && !entity.isStalled()) {
                 if (entity.getTaserShutdownRounds() == 0) {
-                    if (entity.heat < 14 && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
+                    if ((entity.heat < 14) && !(game.getOptions().booleanOption("manual_shutdown") && entity.isManualShutdown())) {
                         // automatically starts up again
                         entity.setShutDown(false);
                         r = new Report(5045);
@@ -15671,7 +15671,7 @@ public class Server implements Runnable {
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
-            if (diceRoll < rollTarget.getValue() || (game.getOptions().booleanOption("tacops_fumbles") && diceRoll == 2)) {
+            if ((diceRoll < rollTarget.getValue()) || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
                 r.choose(false);
                 vPhaseReport.add(r);
                 // walking and running, 1 damage per MP used more than we would
@@ -15867,7 +15867,7 @@ public class Server implements Runnable {
             r.add(roll.getValueAsString());
             r.add(diceRoll);
             r.subject = entity.getId();
-            if (diceRoll < roll.getValue() || (game.getOptions().booleanOption("tacops_fumbles") && diceRoll == 2)) {
+            if ((diceRoll < roll.getValue()) || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
                 r.choose(false);
                 vPhaseReport.add(r);
                 if (moving) {
@@ -16454,7 +16454,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         int te_n = te.getId();
-        
+
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
@@ -17050,7 +17050,7 @@ public class Server implements Runnable {
                 }
 
                 // If we're using optional tank damage thresholds, setup our hit effects now...
-                if ((te instanceof Tank) && game.getOptions().booleanOption("vehicles_threshold") && !(te instanceof VTOL || te instanceof GunEmplacement)) {
+                if ((te instanceof Tank) && game.getOptions().booleanOption("vehicles_threshold") && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
                     int thresh = (int)Math.ceil((game.getOptions().booleanOption("vehicles_threshold_variable") ? te.getArmor(hit) : te.getOArmor(hit)) / game.getOptions().intOption("vehicles_threshold_divisor"));
                     if (damage > thresh) {
                         hit.setEffect(((Tank)te).getPotCrit());
@@ -17375,7 +17375,7 @@ public class Server implements Runnable {
                     r.indent(3);
                     vDesc.addElement(r);
                     int loc = hit.getLocation();
-                    if ((te instanceof Mech) && (loc == Mech.LOC_HEAD || ((Mech) te).isArm(loc) || ((Mech) te).locationIsLeg(loc))) {
+                    if ((te instanceof Mech) && ((loc == Mech.LOC_HEAD) || ((Mech) te).isArm(loc) || ((Mech) te).locationIsLeg(loc))) {
                         int half = (int) Math.ceil(((Mech) te).getOArmor(loc, false) / 2);
                         if (damage > half) {
                             damage = half;
@@ -17441,7 +17441,7 @@ public class Server implements Runnable {
 
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-                    
+
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
                     if ((te instanceof Mech) && ((Mech) te).hasCompositeStructure()) {
@@ -17801,21 +17801,21 @@ public class Server implements Runnable {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
             }
-            
+
             // If the location has run out of internal structure, finally actually
             // destroy it here. *EXCEPTION:* Aero units have 0 internal structure
             // in every location by default and are handled elsewhere, so they
             // get a bye.
-            if (!(te instanceof Aero) && te.getInternal(hit) <= 0) {
+            if (!(te instanceof Aero) && (te.getInternal(hit) <= 0)) {
                 te.destroyLocation(hit.getLocation());
-                
+
                 // Check for possible engine destruction here
                 if ((te instanceof Mech)
                         && ((hit.getLocation() == Mech.LOC_RT) || (hit.getLocation() == Mech.LOC_LT))) {
 
                     int numEngineHits = te.getEngineHits();
                     boolean engineExploded = checkEngineExplosion(te, vDesc, numEngineHits);
-                    
+
                     if (!engineExploded && (numEngineHits > 2)) {
                         // third engine hit
                         vDesc.addAll(destroyEntity(te, "engine destruction"));
@@ -17925,7 +17925,7 @@ public class Server implements Runnable {
         }
         // If this method gets called for an entity that's already destroyed or that
         // hasn't taken any actual engine hits this phase yet, do nothing.
-        if (en.isDestroyed() || en.engineHitsThisPhase <= 0) {
+        if (en.isDestroyed() || (en.engineHitsThisPhase <= 0)) {
             return false;
         }
         int explosionBTH = 10;
@@ -26020,7 +26020,7 @@ public class Server implements Runnable {
                 if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne()) {
                     continue;
                 }
-                    if (!pickedUp && pe.getOwner().getTeam() != Player.TEAM_NONE && (pe.getOwner().getTeam() == e.getOwner().getTeam()) && (pe.getId() != e.getId())) {
+                    if (!pickedUp && (pe.getOwner().getTeam() != Player.TEAM_NONE) && (pe.getOwner().getTeam() == e.getOwner().getTeam()) && (pe.getId() != e.getId())) {
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
                         r = new Report(6415, Report.PUBLIC);

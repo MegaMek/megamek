@@ -232,7 +232,7 @@ public class EquipmentType {
 
     public boolean isExplosive(Mounted mounted) {
         // Special case: discharged M- and B-pods shouldn't explode.
-        if ((this instanceof MPodWeapon || this instanceof BPodWeapon) && (mounted.getLinked() == null || mounted.getLinked().getShotsLeft() == 0)) {
+        if ((this instanceof MPodWeapon || this instanceof BPodWeapon) && (mounted.getLinked() == null || mounted.getLinked().getUsableShotsLeft() == 0)) {
             return false;
         }
 

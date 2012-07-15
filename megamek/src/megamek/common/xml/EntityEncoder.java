@@ -397,7 +397,7 @@ public class EntityEncoder {
         output.append(mount.isRearMounted() ? "true" : "false");
         if (mount.getType() instanceof AmmoType) {
             output.append("\" shots=\"");
-            output.append(String.valueOf(mount.getShotsLeft()));
+            output.append(String.valueOf(mount.getBaseShotsLeft()));
         }
         output.append("\" curMode=\"");
         output.append(mount.curMode().getName());
@@ -464,7 +464,7 @@ public class EntityEncoder {
             }
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
-                output.append(String.valueOf(mount.getShotsLeft()));
+                output.append(String.valueOf(mount.getBaseShotsLeft()));
             }
         }
         output.append("\" isHit=\"");
@@ -561,7 +561,7 @@ public class EntityEncoder {
                         output.append("<slot index=\"N/A\" type=\"");
                         output.append(mount.getType().getInternalName());
                         output.append("\" shots=\"");
-                        output.append(String.valueOf(mount.getShotsLeft()));
+                        output.append(String.valueOf(mount.getBaseShotsLeft()));
                         output.append("\"/>");
                     }
 

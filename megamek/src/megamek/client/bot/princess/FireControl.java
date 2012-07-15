@@ -857,7 +857,7 @@ public class FireControl {
             if (mw.getLinked() == null) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "ammo is gone");
             }
-            if (mw.getLinked().getShotsLeft() == 0) {
+            if (mw.getLinked().getUsableShotsLeft() == 0) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "weapon out of ammo");
             }
@@ -1010,7 +1010,7 @@ public class FireControl {
             if (mw.getLinked() == null) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "ammo is gone");
             }
-            if (mw.getLinked().getShotsLeft() == 0) {
+            if (mw.getLinked().getUsableShotsLeft() == 0) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "weapon out of ammo");
             }

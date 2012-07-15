@@ -59,7 +59,7 @@ public abstract class AmmoWeapon extends Weapon {
         Entity ae = waa.getEntity(g);
         Mounted weapon = ae.getEquipment(waa.getWeaponId());
         Mounted ammo = weapon.getLinked();
-        if (ammo == null || ammo.getShotsLeft() < 1) {
+        if (ammo == null || ammo.getUsableShotsLeft() < 1) {
             ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }

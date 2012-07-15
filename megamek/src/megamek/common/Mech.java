@@ -3105,7 +3105,7 @@ public abstract class Mech extends Entity {
             }
 
             // empty ammo shouldn't count
-            if ((etype instanceof AmmoType) && (mounted.getShotsLeft() == 0)) {
+            if ((etype instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
                 continue;
             }
 
@@ -4174,7 +4174,7 @@ public abstract class Mech extends Entity {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
+            if (mounted.getUsableShotsLeft() == 0) {
                 continue;
             }
 

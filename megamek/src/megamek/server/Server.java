@@ -17567,7 +17567,7 @@ public class Server implements Runnable {
                                     AmmoType at = (AmmoType) m.getType();
                                     if (((at.getAmmoType() == AmmoType.T_SRM) || (at.getAmmoType() == AmmoType.T_MML))
                                             && (at.getMunitionType() == AmmoType.M_INFERNO)) {
-                                        infernos += at.getRackSize() * m.getShotsLeft();
+                                        infernos += at.getRackSize() * m.getHittableShotsLeft();
                                     }
                                 } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
                                     // immune to inferno explosion
@@ -18825,7 +18825,7 @@ public class Server implements Runnable {
                         continue;
                     }
                     m.setHit(true);
-                    int tmp = m.getShotsLeft() * ((AmmoType) m.getType()).getDamagePerShot()
+                    int tmp = m.getHittableShotsLeft() * ((AmmoType) m.getType()).getDamagePerShot()
                             * ((AmmoType) m.getType()).getRackSize();
                     m.setShotsLeft(0);
                     // non-explosive ammo can't explode
@@ -19272,7 +19272,7 @@ public class Server implements Runnable {
                 // go through bomb list and choose one
                 ArrayList<Mounted> bombs = new ArrayList<Mounted>();
                 for (Mounted bomb : a.getBombs()) {
-                    if (!bomb.isDestroyed() && bomb.getType().isHittable() && (bomb.getShotsLeft() > 0)) {
+                    if (bomb.getType().isHittable() && (bomb.getHittableShotsLeft() > 0)) {
                         bombs.add(bomb);
                     }
                 }
@@ -19905,7 +19905,7 @@ public class Server implements Runnable {
             }
 
             // Make sure that ammo in this slot is exhaused.
-            if (mounted.getShotsLeft() > 0) {
+            if (mounted.getBaseShotsLeft() > 0) {
                 mounted.setShotsLeft(0);
             }
 
@@ -21216,7 +21216,7 @@ public class Server implements Runnable {
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((mounted.getType() instanceof MPodWeapon)
                 || (mounted.getType() instanceof BPodWeapon))
-                && (mounted.getLinked().getShotsLeft() == 0)) {
+                && (mounted.getLinked().getHittableShotsLeft() == 0)) {
             return vDesc;
         }
 
@@ -21273,7 +21273,7 @@ public class Server implements Runnable {
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) || (((AmmoType) mounted.getType())
                         .getAmmoType() == AmmoType.T_MML))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
-                && (mounted.getShotsLeft() > 0)) {
+                && (mounted.getHittableShotsLeft() > 0)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
 
@@ -21285,7 +21285,7 @@ public class Server implements Runnable {
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM) ||
                    (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
-                && (mounted.getShotsLeft() > 0)) {
+                && (mounted.getHittableShotsLeft() > 0)) {
             damage = ((mounted.getExplosionDamage())/2);
         }
         // coolant explodes for 2 damage and reduces heat by 3
@@ -21293,7 +21293,7 @@ public class Server implements Runnable {
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_VEHICLE_FLAMER) ||
                    (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_HEAVY_FLAMER))
                 && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_COOLANT)
-                && (mounted.getShotsLeft() > 0)) {
+                && (mounted.getHittableShotsLeft() > 0)) {
             damage = 2;
             en.coolFromExternal += 3;
         }
@@ -21426,8 +21426,8 @@ public class Server implements Runnable {
                 if ((atype.getAmmoType() == AmmoType.T_COOLANT_POD) || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) || (atype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)) && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
                     continue;
                 }
-                // ignore empty bins
-                if (mounted.getShotsLeft() == 0) {
+                // ignore empty, destroyed, or missing bins
+                if (mounted.getHittableShotsLeft() == 0) {
                     continue;
                 }
                 // TW page 160, compare one rack's
@@ -25068,7 +25068,7 @@ public class Server implements Runnable {
                 for(Mounted ammo : gun.getAmmo()) {
                     ammo.setHit(true);
                     if(ammo.getType().isExplosive(ammo)) {
-                        boom += ammo.getShotsLeft() * ((AmmoType) ammo.getType()).getDamagePerShot() * ((AmmoType) ammo.getType()).getRackSize();
+                        boom += ammo.getHittableShotsLeft() * ((AmmoType) ammo.getType()).getDamagePerShot() * ((AmmoType) ammo.getType()).getRackSize();
                     }
                 }
             }

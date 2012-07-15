@@ -60,11 +60,11 @@ public class AmmoWeaponHandler extends WeaponHandler {
             System.out.println("Handler can't find any ammo!  Oh no!");
         }
 
-        if (ammo.getShotsLeft() <= 0) {
+        if (ammo.getUsableShotsLeft() <= 0) {
             ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
-        ammo.setShotsLeft(ammo.getShotsLeft() - 1);
+        ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
         super.useAmmo();
     }
 

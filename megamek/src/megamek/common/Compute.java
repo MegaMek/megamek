@@ -2328,7 +2328,7 @@ public class Compute {
 
         for (Mounted abin : shooter.getAmmo()) {
             if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
-                if (abin.getShotsLeft() > 0) {
+                if (abin.getUsableShotsLeft() > 0) {
                     abin_type = (AmmoType) abin.getType();
                     if (!AmmoType.canDeliverMinefield(abin_type)) {
                         fabin = abin;
@@ -2344,7 +2344,7 @@ public class Compute {
         // Thunder-type ammos and empty bins are excluded from the list
         for (Mounted abin : shooter.getAmmo()) {
             if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
-                if (abin.getShotsLeft() > 0) {
+                if (abin.getUsableShotsLeft() > 0) {
                     abin_type = (AmmoType) abin.getType();
                     if (!AmmoType.canDeliverMinefield(abin_type)) {
                         no_bin = false;
@@ -2381,7 +2381,7 @@ public class Compute {
             // For each valid ammo bin
             for (Mounted abin : shooter.getAmmo()) {
                 if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin)) {
-                    if (abin.getShotsLeft() > 0) {
+                    if (abin.getUsableShotsLeft() > 0) {
                         abin_type = (AmmoType) abin.getType();
                         if (!AmmoType.canDeliverMinefield(abin_type)) {
 

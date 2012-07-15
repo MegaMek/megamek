@@ -976,7 +976,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
          * @return the <code>int</code> number of shots in the mount.
          */
         /* package */int getShotsLeft() {
-            return m_mounted.getShotsLeft();
+            return m_mounted.getBaseShotsLeft();
         }
 
         /**
@@ -1004,7 +1004,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         public SantaAnnaChoicePanel(Mounted m) {
             m_mounted = m;
             m_choice = new Choice();
-            for (int i = 0; i <= m_mounted.getShotsLeft(); i++) {
+            for (int i = 0; i <= m_mounted.getBaseShotsLeft(); i++) {
                 m_choice.add(Integer.toString(i));
             }
             int loc;
@@ -1190,7 +1190,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         public ProtomechMunitionChoicePanel(Mounted m, Vector<AmmoType> vTypes) {
             super(m, vTypes);
             m_origAmmo = (AmmoType) m.getType();
-            m_origShotsLeft = m.getShotsLeft();
+            m_origShotsLeft = m.getBaseShotsLeft();
         }
 
         /**

@@ -88,7 +88,7 @@ public abstract class UnitStatusFormatter {
         StringBuffer sb = new StringBuffer(1024);
         for (Mounted ammo : e.getAmmo()) {
             sb.append(ammo.getName());
-            sb.append(": ").append(ammo.getShotsLeft()).append(
+            sb.append(": ").append(ammo.getBaseShotsLeft()).append(
                     CommonConstants.NL);
         }
         return sb.toString();

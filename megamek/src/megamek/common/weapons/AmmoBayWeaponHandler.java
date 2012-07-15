@@ -62,7 +62,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             Mounted bayW = ae.getEquipment(wId);
             //check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
-            if(null == bayWAmmo || bayWAmmo.getShotsLeft() < 1) {
+            if(null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                 //try loadinsg something else
                 ae.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinked();
@@ -91,13 +91,13 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 if(current_av > 0) {
                     int shots = bayW.getCurrentShots();
                     for(int i = 0; i < shots; i++) {
-                        if(null == bayWAmmo || bayWAmmo.getShotsLeft() < 1) {
+                        if(null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
                             //try loadinsg something else
                             ae.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinked();
                         }
                         if(null != bayWAmmo) {
-                            bayWAmmo.setShotsLeft(bayWAmmo.getShotsLeft() - 1);
+                            bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                         }
                     }
                 }

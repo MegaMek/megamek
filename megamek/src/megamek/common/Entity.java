@@ -2630,7 +2630,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int totalShotsLeft = 0;
         for (Mounted amounted : getAmmo()) {
             if ((amounted.getType() == et) && !amounted.isDumping()) {
-                totalShotsLeft += amounted.getShotsLeft();
+                totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }
         return totalShotsLeft;
@@ -2650,7 +2650,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int totalShotsLeft = 0;
         for (Mounted amounted : getAmmo()) {
             if (amounted.getType().equals(et) && !amounted.isDumping()) {
-                totalShotsLeft += amounted.getShotsLeft();
+                totalShotsLeft += amounted.getUsableShotsLeft();
             }
         }
         return totalShotsLeft;
@@ -2760,7 +2760,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (mounted.isReady())
                     && (!mounted.getType().hasFlag(WeaponType.F_AMS))
                     && ((mounted.getLinked() == null) || (mounted.getLinked()
-                            .getShotsLeft() > 0))) {
+                            .getUsableShotsLeft() > 0))) {
 
                 // TAG only in the correct phase...
                 if ((mounted.getType().hasFlag(WeaponType.F_TAG)
@@ -2904,7 +2904,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Vector<Mounted> bombs = new Vector<Mounted>();
         for (Mounted bomb : getBombs()) {
             BombType btype = (BombType) bomb.getType();
-            if (!bomb.isInoperable() && (bomb.getShotsLeft() > 0)
+            if (!bomb.isInoperable() && (bomb.getUsableShotsLeft() > 0)
                     && btype.hasFlag(flag)) {
                 bombs.add(bomb);
             }
@@ -4689,10 +4689,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * called.
      */
     public void applyDamage() {
-        // mark all damaged equipment destroyed and empty
+        // mark all damaged equipment destroyed
         for (Mounted mounted : getEquipment()) {
             if (mounted.isHit()) {
-                mounted.setShotsLeft(0);
                 mounted.setDestroyed(true);
             }
         }
@@ -4761,7 +4760,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             if (wtype.getAmmoType() != AmmoType.T_NA) {
                 if ((mounted.getLinked() == null)
-                        || (mounted.getLinked().getShotsLeft() <= 0)
+                        || (mounted.getLinked().getUsableShotsLeft() <= 0)
                         || mounted.getLinked().isDumping()) {
                     loadWeaponWithSameAmmo(mounted);
                 }
@@ -4792,7 +4791,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // make sure ammo is loaded
                 Mounted ammo = weapon.getLinked();
                 if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
-                        && ((ammo == null) || (ammo.getShotsLeft() == 0) || ammo
+                        && ((ammo == null) || (ammo.getUsableShotsLeft() == 0) || ammo
                                 .isDumping())) {
                     loadWeapon(weapon);
                     ammo = weapon.getLinked();
@@ -4800,7 +4799,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 // try again
                 if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
-                        && ((ammo == null) || (ammo.getShotsLeft() == 0) || ammo
+                        && ((ammo == null) || (ammo.getUsableShotsLeft() == 0) || ammo
                                 .isDumping())) {
                     // No ammo for this AMS.
                     continue;
@@ -6957,7 +6956,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype
                     .getAmmoType() == AmmoType.T_MML))
                     && (atype.getMunitionType() == AmmoType.M_INFERNO)
-                    && (amounted.getShotsLeft() > 0)) {
+                    && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
         }
@@ -7398,7 +7397,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype != null) && (!wtype.hasFlag(WeaponType.F_AMS) && !wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()
-                    && ((mounted.getLinked() == null) || (mounted.getLinked().getShotsLeft() > 0)))) {
+                    && ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() > 0)))) {
         return true;
     }
         }
@@ -9570,7 +9569,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (amounted.getNSantaAnna() > 0) {
                 // first reduce the current ammo load by number of santa annas
                 int nSantaAnna = amounted.getNSantaAnna();
-                amounted.setShotsLeft(Math.max(amounted.getShotsLeft()
+                amounted.setShotsLeft(Math.max(amounted.getBaseShotsLeft()
                         - nSantaAnna, 0));
                 // save the new ammo information
                 locations.add(amounted.getLocation());
@@ -10130,7 +10129,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int[] getBombLoadout() {
         int[] loadout = new int[BombType.B_NUM];
         for (Mounted bomb : getBombs()) {
-            if ((bomb.getShotsLeft() > 0)
+            if ((bomb.getUsableShotsLeft() > 0)
                     && (bomb.getType() instanceof BombType)) {
                 int type = ((BombType) bomb.getType()).getBombType();
                 loadout[type] = loadout[type] + 1;

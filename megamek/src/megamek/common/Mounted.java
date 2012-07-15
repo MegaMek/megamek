@@ -483,10 +483,55 @@ public class Mounted implements Serializable, RoundUpdated {
         jammedThisTurn = j;
     }
 
-    public int getShotsLeft() {
+    /** The number of shots of ammunition currently stored in this
+     * Mounted irregardless of its operational status. Or in other words,
+     * the straight value last set by {@link #setShotsLeft(int)}, even if this
+     * ammo slot is no longer functional or indeed notionally no longer part of
+     * the unit formerly carrying it. This is the 'general' base value that
+     * should be used for display, reporting, entity encoding and salvage
+     * purposes.
+     * 
+     * @see #getHittableShotsLeft()
+     * @see #getUsableShotsLeft() 
+     * @return The base 'true' number of shots in this slot.
+     */
+    public int getBaseShotsLeft() {
         return shotsLeft;
     }
 
+    /** Convenience method returning the number of shots of ammunition
+     * in this Mounted that may be affected by a critical hit. This
+     * method returns 0 if this Mounted is marked as destroyed or missing and
+     * the same value as {@link #getBaseShotsLeft()} otherwise.
+     * 
+     * @see #getBaseShotsLeft() 
+     * @see #getUsableShotsLeft()
+     * @return The number of 'hittable' shots in this slot.
+     */
+    public int getHittableShotsLeft() {
+        if (destroyed || missing) {
+            return 0;
+        }
+        return shotsLeft;
+    }
+    
+    /** Convenience method returning the number of shots of ammunition
+     * in this Mounted that can actually be used <em>as</em> ammunition.
+     * This method returns 0 if this Mounted is marked as destroyed, missing,
+     * or breached and thus nonfunctional and the same value as
+     * {@link #getBaseShotsLeft()} otherwise.
+     * 
+     * @see #getBaseShotsLeft() 
+     * @see #getHittableShotsLeft()
+     * @return The number of usable shots in this slot.
+     */
+    public int getUsableShotsLeft() {
+        if (destroyed || missing || useless) {
+            return 0;
+        }
+        return shotsLeft;
+    }
+    
     public void setShotsLeft(int shotsLeft) {
         if (shotsLeft < 0) {
             shotsLeft = 0;
@@ -772,7 +817,7 @@ public class Mounted implements Serializable, RoundUpdated {
             if ((type instanceof GaussWeapon) && type.hasModes() && curMode().equals("Powered Down")) {
                 return 0;
             }
-            if (isHotLoaded() && (getLinked().getShotsLeft() > 0)) {
+            if (isHotLoaded() && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
@@ -859,11 +904,11 @@ public class Mounted implements Serializable, RoundUpdated {
 
     /**
      * Returns false if this ammo should not be loaded. Checks if the ammo is
-     * already destroyed, is being dumped, has been breached, is already used
-     * up, or is locationless (oneshot ammo).
+     * already destroyed or missing, is being dumped, has been breached, is already
+     * used up, or is locationless (oneshot ammo).
      */
     public boolean isAmmoUsable() {
-        if (destroyed || m_bDumping || useless || (shotsLeft <= 0) || (location == Entity.LOC_NONE)) {
+        if (destroyed || missing || m_bDumping || useless || (shotsLeft <= 0) || (location == Entity.LOC_NONE)) {
             return false;
         }
         return true;

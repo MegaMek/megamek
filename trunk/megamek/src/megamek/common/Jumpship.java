@@ -606,7 +606,7 @@ public class Jumpship extends Aero {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
+            if (mounted.getUsableShotsLeft() == 0) {
                 continue;
             }
 
@@ -626,12 +626,12 @@ public class Jumpship extends Aero {
             String key = atype.getAmmoType() + ":" + atype.getRackSize() + ";" + arc;
             double ammoWeight = mounted.getType().getTonnage(this);
             if (atype.isCapital()) {
-                ammoWeight = mounted.getShotsLeft() * atype.getAmmoRatio();
+                ammoWeight = mounted.getUsableShotsLeft() * atype.getAmmoRatio();
             }
             // new errata: round partial tons of ammo up to the full ton
             ammoWeight = Math.ceil(weight);
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
-                ammoWeight = mounted.getShotsLeft();
+                ammoWeight = mounted.getUsableShotsLeft();
             }
             if (!keys.contains(key)) {
                 keys.add(key);

@@ -156,11 +156,11 @@ public class MGHandler extends AmmoWeaponHandler {
             checkAmmo();
             int ammoUsage = 3 * nRapidDamHeatPerHit;
             for (int i = 0; i < ammoUsage; i++) {
-                if (ammo.getShotsLeft() <= 0) {
+                if (ammo.getUsableShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);
                     ammo = weapon.getLinked();
                 }
-                ammo.setShotsLeft(ammo.getShotsLeft() - 1);
+                ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             }
             setDone();
         } else {

@@ -355,7 +355,7 @@ public class TestMech extends TestEntity {
         int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
             if (m.getLocation() == Entity.LOC_NONE) {
-                if ((m.getType() instanceof AmmoType) && (m.getShotsLeft() <= 1)) {
+                if ((m.getType() instanceof AmmoType) && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
                 if (!(m.getType() instanceof MiscType)) {

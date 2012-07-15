@@ -57,7 +57,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
         for(int wId: m.getBayWeapons()) {
             Mounted weapon = ae.getEquipment(wId);
             Mounted ammo = weapon.getLinked();
-            if (ammo == null || ammo.getShotsLeft() < 1) {
+            if (ammo == null || ammo.getUsableShotsLeft() < 1) {
                 ae.loadWeaponWithSameAmmo(weapon);
                 ammo = weapon.getLinked();
             }

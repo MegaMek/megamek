@@ -254,7 +254,7 @@ public class ScenarioLoader {
                             if (ammo.getType() instanceof AmmoType) {
                                 // Also make sure we dont exceed the max aloud
                                 ammo.setShotsLeft(Math.min(sa.setAmmoTo,
-                                        ammo.getShotsLeft()));
+                                        ammo.getBaseShotsLeft()));
                             }
                         }
                     }

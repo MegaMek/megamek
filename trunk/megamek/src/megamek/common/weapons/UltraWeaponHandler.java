@@ -68,20 +68,20 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             // can't happen?
 
         }
-        if (ammo.getShotsLeft() == 0) {
+        if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // there will be some ammo somewhere, otherwise shot will not have
             // been fired.
         }
-        if (ammo.getShotsLeft() == 1) {
+        if (ammo.getUsableShotsLeft() == 1) {
             ammo.setShotsLeft(0);
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // that fired one, do we need to fire another?
-            ammo.setShotsLeft(ammo.getShotsLeft() - ((howManyShots == 2) ? 1 : 0));
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - ((howManyShots == 2) ? 1 : 0));
         } else {
-            ammo.setShotsLeft(ammo.getShotsLeft() - howManyShots);
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
         }
 
     }

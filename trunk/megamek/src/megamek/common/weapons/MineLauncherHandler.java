@@ -151,11 +151,11 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
 
         // use up ammo
         for (int i = 0; i < nShots; i++) {
-            if (ammo.getShotsLeft() <= 0) {
+            if (ammo.getUsableShotsLeft() <= 0) {
                 ae.loadWeaponWithSameAmmo(weapon);
                 ammo = weapon.getLinked();
             }
-            ammo.setShotsLeft(ammo.getShotsLeft() - 1);
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
         }
     }
 }

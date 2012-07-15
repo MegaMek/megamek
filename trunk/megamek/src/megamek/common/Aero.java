@@ -348,7 +348,7 @@ public class Aero extends Entity {
     public int getBombPoints() {
         int points = 0;
         for (Mounted bomb : getBombs()) {
-            if (bomb.getShotsLeft() > 0) {
+            if (bomb.getUsableShotsLeft() > 0) {
                 points += BombType.getBombCost(((BombType) bomb.getType()).getBombType());
             }
         }
@@ -1839,7 +1839,7 @@ public class Aero extends Entity {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
+            if (mounted.getUsableShotsLeft() == 0) {
                 continue;
             }
 

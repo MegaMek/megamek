@@ -437,7 +437,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         // decrement the ammo
                         if (mAmmo != null) {
                             mAmmo.setShotsLeft(Math.max(0,
-                                    mAmmo.getShotsLeft() - 1));
+                                    mAmmo.getBaseShotsLeft() - 1));
                         }
 
                         // set the ams as having fired
@@ -511,7 +511,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
                 // increase ammo by one, becaues we just incorrectly used one up
-                weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
+                weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft()+1);
                 // if the new attack has an impossible to-hit, go on to next entity
                 if (ah == null) {
                     continue;

@@ -66,19 +66,19 @@ public class MGAWeaponHandler extends MGHandler {
             howManyShots = total;
         }
         shotsNeedFiring = howManyShots;
-        if (ammo.getShotsLeft() == 0) {
+        if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // there will be some ammo somewhere, otherwise shot will not have
             // been fired.
         }
-        while (shotsNeedFiring > ammo.getShotsLeft()) {
-            shotsNeedFiring -= ammo.getShotsLeft();
+        while (shotsNeedFiring > ammo.getUsableShotsLeft()) {
+            shotsNeedFiring -= ammo.getBaseShotsLeft();
             ammo.setShotsLeft(0);
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
         }
-        ammo.setShotsLeft(ammo.getShotsLeft() - shotsNeedFiring);
+        ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
     }
 
     /*

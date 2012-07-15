@@ -118,12 +118,12 @@ public class AttackOption extends ToHitData {
             final boolean usesAmmo = (!isInfantryWeapon & (w.getAmmoType() != AmmoType.T_NA));
 
             final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
-            if (usesAmmo && ((ammo == null) || (ammo.getShotsLeft() == 0))) {
+            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
                 this.value = 0.0; // should have already been caught...
                 primary_expected = 0.0;
                 expected = 0.0;
             } else if (usesAmmo) {
-                ammoLeft = ammo.getShotsLeft();
+                ammoLeft = ammo.getUsableShotsLeft();
             }
         }
     }

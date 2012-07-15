@@ -618,7 +618,7 @@ public class MechView {
         for (Mounted mounted : entity.getAmmo()) {
             if (mounted.isDestroyed()) {
                 sAmmo.append("<tr bgcolor='red'>");
-            } else if (mounted.getShotsLeft() < 1) {
+            } else if (mounted.getUsableShotsLeft() < 1) {
                 sAmmo.append("<tr bgcolor='yellow'>");
             } else {
                 sAmmo.append("<tr>");
@@ -629,7 +629,7 @@ public class MechView {
                         .append(entity.getLocationAbbr(mounted.getLocation()))
                         .append("</td>");
                 sAmmo.append("<td align='right'>")
-                        .append(mounted.getShotsLeft()).append("</td>");
+                        .append(mounted.getBaseShotsLeft()).append("</td>");
             }
         }
         sAmmo.append("</table>");

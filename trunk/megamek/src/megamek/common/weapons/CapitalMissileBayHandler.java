@@ -95,7 +95,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             Weapon w = (Weapon) bayW.getType();
             //increase ammo by one, we'll use one that we shouldn't use
             // in the next line
-            bayW.getLinked().setShotsLeft(bayW.getLinked().getShotsLeft()+1);
+            bayW.getLinked().setShotsLeft(bayW.getLinked().getBaseShotsLeft()+1);
             (w.fire(newWaa, game, server)).handle(phase, vPhaseReport);
         }
     }

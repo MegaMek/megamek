@@ -1431,7 +1431,7 @@ public class Tank extends Entity {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
+            if (mounted.getUsableShotsLeft() == 0) {
                 continue;
             }
 
@@ -2702,7 +2702,7 @@ public class Tank extends Entity {
         Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
         for (Mounted ammo : getAmmo()) {
             // don't count oneshot ammo
-            if ((ammo.getLocation() == Entity.LOC_NONE) && (ammo.getShotsLeft() == 1)) {
+            if ((ammo.getLocation() == Entity.LOC_NONE) && (ammo.getBaseShotsLeft() == 1)) {
                 continue;
             }
             AmmoType at = (AmmoType) ammo.getType();

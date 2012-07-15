@@ -85,7 +85,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
             for(int i = 0; i < payload[type]; i++) {
                 //find the first mounted bomb of this type and drop it
                 for(Mounted bomb : ae.getBombs()) {
-                    if(!bomb.isDestroyed() && bomb.getShotsLeft() > 0
+                    if(!bomb.isDestroyed() && bomb.getUsableShotsLeft() > 0
                            && ((BombType)bomb.getType()).getBombType() == type) {
                         bomb.setShotsLeft(0);
                         break;

@@ -684,7 +684,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
              * @return the <code>int</code> number of shots in the mount.
              */
             int getShotsLeft() {
-                return m_mounted.getShotsLeft();
+                return m_mounted.getBaseShotsLeft();
             }
 
             /**
@@ -712,7 +712,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             public SantaAnnaChoicePanel(Mounted m) {
                 m_mounted = m;
                 m_choice = new JComboBox();
-                for (int i = 0; i <= m_mounted.getShotsLeft(); i++) {
+                for (int i = 0; i <= m_mounted.getBaseShotsLeft(); i++) {
                     m_choice.addItem(Integer.toString(i));
                 }
                 int loc;
@@ -758,7 +758,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             ProtomechMunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
                 super(m, vTypes);
                 m_origAmmo = (AmmoType) m.getType();
-                m_origShotsLeft = m.getShotsLeft();
+                m_origShotsLeft = m.getBaseShotsLeft();
             }
 
             /**

@@ -101,7 +101,7 @@ public class EntityListFile {
             }
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
-                output.append(String.valueOf(mount.getShotsLeft()));
+                output.append(String.valueOf(mount.getBaseShotsLeft()));
             }
             if ((mount.getType() instanceof WeaponType)
                     && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
@@ -280,7 +280,7 @@ public class EntityListFile {
                         thisLoc.append("\" type=\"");
                         thisLoc.append(mount.getType().getInternalName());
                         thisLoc.append("\" shots=\"");
-                        thisLoc.append(String.valueOf(mount.getShotsLeft()));
+                        thisLoc.append(String.valueOf(mount.getBaseShotsLeft()));
                         thisLoc.append("\"/>");
                         thisLoc.append(CommonConstants.NL);
                         haveSlot = true;

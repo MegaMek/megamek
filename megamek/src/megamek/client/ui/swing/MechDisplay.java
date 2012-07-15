@@ -1118,7 +1118,7 @@ public class MechDisplay extends JPanel {
                     int shotsLeft = 0;
                     if ((mounted.getLinked() != null)
                             && !mounted.getLinked().isDumping()) {
-                        shotsLeft = mounted.getLinked().getShotsLeft();
+                        shotsLeft = mounted.getLinked().getUsableShotsLeft();
                     }
 
                     EquipmentType typeUsed = null;
@@ -2047,7 +2047,7 @@ public class MechDisplay extends JPanel {
                         && !m.isDestroyed()
                         && !m.isJammed()
                         && ((m.getLinked() == null) || (m.getLinked()
-                                .getShotsLeft() > 0))) {
+                                .getUsableShotsLeft() > 0))) {
                     WeaponType bayWType = ((WeaponType) m.getType());
                     heat = heat + m.getCurrentHeat();
                     double mAVShort = bayWType.getShortAV();
@@ -2625,7 +2625,7 @@ public class MechDisplay extends JPanel {
                         en.getOwner());
                 if ((m == null) || !bOwner
                         || ((!(m.getType() instanceof AmmoType)
-                                || (m.getShotsLeft() <= 0)) && !m.isDWPMounted())
+                                || (m.getUsableShotsLeft() <= 0)) && !m.isDWPMounted())
                         || (m.isDWPMounted() && (m.getLinkedBy() == null))) {
                     return;
                 }
@@ -2761,7 +2761,7 @@ public class MechDisplay extends JPanel {
                         && (m.getType() instanceof AmmoType)
                         && !m.getType().hasInstantModeSwitch()
                         && (clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                        && (m.getShotsLeft() > 0) && !m.isDumping()
+                        && (m.getUsableShotsLeft() > 0) && !m.isDumping()
                         && en.isActive()
                         && (clientgui.getClient().game.getOptions().intOption(
                                 "dumping_from_round") <= clientgui.getClient().game

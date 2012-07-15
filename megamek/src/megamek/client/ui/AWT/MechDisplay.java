@@ -1094,7 +1094,7 @@ public class MechDisplay extends BufferedPanel {
                     int shotsLeft = 0;
                     if ((mounted.getLinked() != null)
                             && !mounted.getLinked().isDumping()) {
-                        shotsLeft = mounted.getLinked().getShotsLeft();
+                        shotsLeft = mounted.getLinked().getUsableShotsLeft();
                     }
 
                     EquipmentType typeUsed = null;
@@ -1421,7 +1421,7 @@ public class MechDisplay extends BufferedPanel {
             if (wtype.getAmmoType() == AmmoType.T_NA) {
                 m_chAmmo.setEnabled(false);
             } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                if (mounted.getLinked().getShotsLeft() == 1) {
+                if (mounted.getLinked().getUsableShotsLeft() == 1) {
                     m_chAmmo.add(formatAmmo(mounted.getLinked()));
                     m_chAmmo.setEnabled(true);
                 } else {
@@ -1748,7 +1748,7 @@ public class MechDisplay extends BufferedPanel {
                     // check for ammo
                     if (bayWType.getAmmoType() != AmmoType.T_NA) {
                         if ((m.getLinked() == null)
-                                || (m.getLinked().getShotsLeft() < 1)) {
+                                || (m.getLinked().getUsableShotsLeft() < 1)) {
                             continue;
                         }
                     }
@@ -2220,7 +2220,7 @@ public class MechDisplay extends BufferedPanel {
                         && !(m.getType().hasInstantModeSwitch())
                         && (IGame.Phase.PHASE_DEPLOYMENT != clientgui
                                 .getClient().game.getPhase())
-                        && (m.getShotsLeft() > 0)
+                        && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
                         && (clientgui.getClient().game.getOptions().intOption(
@@ -2411,7 +2411,7 @@ public class MechDisplay extends BufferedPanel {
                 boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
                         .getOwner());
                 if ((m == null) || !bOwner || !(m.getType() instanceof AmmoType)
-                        || (m.getShotsLeft() <= 0)) {
+                        || (m.getUsableShotsLeft() <= 0)) {
                     return;
                 }
 

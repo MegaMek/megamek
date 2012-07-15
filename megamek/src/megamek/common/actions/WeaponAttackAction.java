@@ -1931,7 +1931,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // got ammo?
-            if (usesAmmo && ((ammo == null) || (ammo.getShotsLeft() == 0) || ammo.isBreached())) {
+            if (usesAmmo && ((ammo == null) || (ammo.getUsableShotsLeft() == 0))) {
                 return "Weapon out of ammo.";
             }
 
@@ -1956,7 +1956,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Are we dumping that ammo?
         if (usesAmmo && ammo.isDumping()) {
             ae.loadWeaponWithSameAmmo(weapon);
-            if ((ammo.getShotsLeft() == 0) || ammo.isDumping()) {
+            if ((ammo.getUsableShotsLeft() == 0) || ammo.isDumping()) {
                 return "Dumping remaining ammo.";
             }
         }
@@ -2164,7 +2164,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
                 if (m.canFire()) {
                     if (bayWUsesAmmo) {
-                        if ((m.getLinked() != null) && (m.getLinked().getShotsLeft() > 0)) {
+                        if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
                             useable = true;
                             break;
                         }

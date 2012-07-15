@@ -285,7 +285,7 @@ public class Dropship extends SmallCraft {
                 // increments
                 // (on dropships and jumpships) - lets take the ratio of shots
                 // to shots left
-                double ratio = mounted.getShotsLeft() / ((AmmoType) etype).getShots();
+                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
                 // since
@@ -310,7 +310,7 @@ public class Dropship extends SmallCraft {
                 // increments
                 // (on dropships and jumpships) - lets take the ratio of shots
                 // to shots left
-                double ratio = mounted.getShotsLeft() / ((AmmoType) etype).getShots();
+                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
                 // since
@@ -623,7 +623,7 @@ public class Dropship extends SmallCraft {
                 // (on dropships and jumpships) - lets take the ratio of shots
                 // to
                 // shots left
-                double ratio = mounted.getShotsLeft() / atype.getShots();
+                double ratio = mounted.getUsableShotsLeft() / atype.getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
                 // since
@@ -633,7 +633,7 @@ public class Dropship extends SmallCraft {
                 }
 
                 // don't count depleted ammo
-                if (mounted.getShotsLeft() == 0) {
+                if (mounted.getUsableShotsLeft() == 0) {
                     continue;
                 }
 

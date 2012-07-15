@@ -991,7 +991,7 @@ public class BattleArmor extends Infantry {
             // if we have ammo left for a body mounted missile launcher,
             // we are burdened
             for (Mounted mounted : getAmmo()) {
-                if (mounted.getShotsLeft() == 0) {
+                if (mounted.getUsableShotsLeft() == 0) {
                     // no shots left, we don't count
                     continue;
                 }

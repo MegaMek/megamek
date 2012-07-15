@@ -249,7 +249,7 @@ public class GunEmplacement extends Tank {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
+            if (mounted.getUsableShotsLeft() == 0) {
                 continue;
             }
 

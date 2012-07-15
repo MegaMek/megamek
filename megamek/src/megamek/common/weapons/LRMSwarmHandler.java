@@ -258,7 +258,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 Weapon w = (Weapon) m.getType();
                 // increase ammo by one, we'll use one that we shouldn't use
                 // in the next line
-                weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
+                weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft()+1);
                 AttackHandler ah = w.fire(newWaa, game, server);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
@@ -326,7 +326,7 @@ public class LRMSwarmHandler extends LRMHandler {
             Weapon w = (Weapon) m.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
-            weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
+            weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft()+1);
             AttackHandler ah = w.fire(newWaa, game, server);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target

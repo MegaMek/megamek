@@ -1113,7 +1113,7 @@ public class Protomech extends Entity {
             AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
-            if (mounted.getShotsLeft() == 0) {
+            if (mounted.getUsableShotsLeft() == 0) {
                 continue;
             }
 
@@ -1153,9 +1153,9 @@ public class Protomech extends Entity {
                 keys.add(key);
             }
             if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getProtoBV(mounted.getShotsLeft()));
+                ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft()));
             } else {
-                ammo.put(key, atype.getProtoBV(mounted.getShotsLeft()) + ammo.get(key));
+                ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft()) + ammo.get(key));
             }
         }
         // excessive ammo rule:

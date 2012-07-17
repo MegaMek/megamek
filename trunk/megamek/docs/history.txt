@@ -17,6 +17,7 @@ v0.35.32-dev (SVN)
 + Bug 3543019: Ammo in blown-off locations still accessible
 + Ammo slots in destroyed locations no longer auto-emptied.
 + Tank verifier tweaks: Armor limits added, lift/dive equipment weight rounds correctly.
++ Flail to-hit modifier changed from +1 to 0 as per TacOps errata.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

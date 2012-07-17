@@ -381,12 +381,12 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 || ((MiscType) club.getType())
                         .hasSubType(MiscType.S_WRECKING_BALL)
                 || ((MiscType) club.getType()).hasSubType(MiscType.S_LANCE)
-                || ((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)
                 || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE)
                 || ((MiscType) club.getType()).hasSubType(MiscType.S_MACE_THB)) {
             base += 1;
         } else if (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
-                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)) {
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL)) {
             base += 0;
         } else if (((MiscType) club.getType()).hasSubType(MiscType.S_HATCHET)
                 || ((MiscType) club.getType())

@@ -45,6 +45,7 @@ public class TestXMLOption implements TestEntityOption {
     public final static String WEAPONS = "weapons";
     public final static String TARGCOMP = "tragcomp";
     public final static String TURRET = "turret";
+    public final static String LIFTING = "lifting";
     public final static String POWERAMP = "poweramp";
     public final static String GYRO = "gyro";
     public final static String PRINTSIZE = "printSize";
@@ -56,6 +57,7 @@ public class TestXMLOption implements TestEntityOption {
     private float ceilWeapons = TestEntity.CEIL_TON;
     private float ceilTargComp = TestEntity.CEIL_TON;
     private float ceilTurret = TestEntity.CEIL_HALFTON;
+    private float ceilLifting = TestEntity.CEIL_HALFTON;
     private float ceilPowerAmp = TestEntity.CEIL_HALFTON;
     private float ceilGyro = TestEntity.CEIL_HALFTON;
 
@@ -166,6 +168,8 @@ public class TestXMLOption implements TestEntityOption {
                 ceilTargComp = 1 / getContentAsFloat(child);
             } else if (name.equals(TURRET)) {
                 ceilTurret = 1 / getContentAsFloat(child);
+            } else if (name.equals(LIFTING)) {
+                ceilLifting = 1 / getContentAsFloat(child);
             } else if (name.equals(POWERAMP)) {
                 ceilPowerAmp = 1 / getContentAsFloat(child);
             } else if (name.equals(GYRO)) {
@@ -206,6 +210,10 @@ public class TestXMLOption implements TestEntityOption {
         return ceilTurret;
     }
 
+    public float getWeightCeilingLifting() {
+        return ceilLifting;
+    }
+    
     public float getWeightCeilingPowerAmp() {
         return ceilPowerAmp;
     }
@@ -294,6 +302,8 @@ public class TestXMLOption implements TestEntityOption {
                 + Float.toString(1 / getWeightCeilingGyro()) + "\n"
                 + "Weight Ceiling Turret: "
                 + Float.toString(1 / getWeightCeilingTurret()) + "\n"
+                + "Weight Ceiling Lifting:"
+                + Float.toString(1 / getWeightCeilingLifting()) + "\n"
                 + "Weight Ceiling PowerAmp: "
                 + Float.toString(1 / getWeightCeilingPowerAmp()) + "\n"
                 + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();

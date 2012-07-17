@@ -53,6 +53,7 @@
       <weapons>1.0</weapons>
       <targcomp>1.0</targcomp>
       <turret>0.5</turret>
+      <lifting>0.5</lifting>
       <poweramp>0.5</poweramp>
     </ceilWeight>
     <showOverweighted>

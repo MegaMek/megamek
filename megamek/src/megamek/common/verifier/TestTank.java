@@ -114,16 +114,16 @@ public class TestTank extends TestEntity {
     }
 
     public float getTankWeightLifting() {
-        if (tank.getMovementMode() == EntityMovementMode.HOVER) {
-            return tank.getWeight() / 10.0f;
-        } else if (tank.getMovementMode() == EntityMovementMode.VTOL) {
-            return tank.getWeight() / 10.0f;
-        } else if (tank.getMovementMode() == EntityMovementMode.HYDROFOIL) {
-            return tank.getWeight() / 10.0f;
-        } else if (tank.getMovementMode() == EntityMovementMode.SUBMARINE) {
-            return tank.getWeight() / 10.0f;
+        switch (tank.getMovementMode()) {
+            case HOVER:
+            case VTOL:
+            case HYDROFOIL:
+            case SUBMARINE:
+                return TestEntity.ceilMaxHalf(tank.getWeight() / 10.0f,
+                        getWeightCeilingLifting());
+            default:
+                return 0f;
         }
-        return 0f;
     }
 
     @Override
@@ -252,7 +252,25 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         if (tank.getFreeSlots() < 0) {
-            buff.append("Not enough itemslots available! Using "+Math.abs(tank.getFreeSlots())+" slots too much\n\n");
+            buff.append("Not enough item slots available! Using ");
+            buff.append(Math.abs(tank.getFreeSlots()));
+            buff.append(" slot(s) too many.\n\n");
+            correct = false;
+        }
+        int armorLimit = (int) (tank.getWeight() * 7 / 2 + 40);
+        if (tank.getTotalOArmor() > armorLimit) {
+            buff.append("Armor exceeds point limit for ");
+            buff.append(tank.getWeight());
+            buff.append("-ton vehicle: ");
+            buff.append(tank.getTotalOArmor());
+            buff.append(" points > ");
+            buff.append(armorLimit);
+            buff.append(".\n\n");
+            correct = false;
+        }
+        if ((tank instanceof VTOL) && (tank.getOArmor(VTOL.LOC_ROTOR) > 2)) {
+            buff.append(tank.getOArmor(VTOL.LOC_ROTOR));
+            buff.append(" points of VTOL rotor armor exceed 2-point limit.\n\n");
             correct = false;
         }
         for (Mounted m : tank.getMisc()) {

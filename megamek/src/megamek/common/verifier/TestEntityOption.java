@@ -39,6 +39,8 @@ public interface TestEntityOption {
     public float getWeightCeilingGyro();
 
     public float getWeightCeilingTurret();
+    
+    public float getWeightCeilingLifting();
 
     public float getWeightCeilingPowerAmp();
 

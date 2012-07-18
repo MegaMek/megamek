@@ -6264,6 +6264,7 @@ public abstract class Mech extends Entity {
      *            the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
+    @Override
     public boolean hasHarJelIn(int loc) {
         if (loc == Mech.LOC_HEAD) {
             return false;

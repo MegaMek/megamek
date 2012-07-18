@@ -4047,6 +4047,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Does this entity have an undamaged HarJel system in this location?
+     * (Type-dependent, defaults to false.)
+     *
+     * @param location
+     *            the <code>int</code> location to check
+     * @return a <code>boolean</code> value indicating a present HarJel system
+     */
+    public boolean hasHarJelIn(int location) {
+        return false;
+    }
+    
+    /**
      * Checks if the entity has a C3 Master.
      *
      * @return true if it has a working C3M computer and has a master.

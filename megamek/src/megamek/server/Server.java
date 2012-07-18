@@ -7127,7 +7127,7 @@ public class Server implements Runnable {
 
         } // End entity-is-jumping
         // update entity's locations' exposure
-        doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
+        vPhaseReport.addAll(doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation()));
 
         // Check the falls_end_movement option to see if it should be able to
         // move on.
@@ -19875,10 +19875,6 @@ public class Server implements Runnable {
             }
 
             if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_HARJEL)) {
-                r = new Report(6254);
-                r.subject = en.getId();
-                r.indent(2);
-                vDesc.add(r);
                 vDesc.addAll(breachLocation(en, loc, null, true));
             }
 
@@ -20667,7 +20663,6 @@ public class Server implements Runnable {
     /**
      * Checks for location breach and returns phase logging.
      * <p/>
-     * Please note that dependent locations ARE NOT considered breached!
      *
      * @param entity
      *            the <code>Entity</code> that needs to be checked.
@@ -20686,7 +20681,6 @@ public class Server implements Runnable {
     /**
      * Checks for location breach and returns phase logging.
      * <p/>
-     * Please note that dependent locations ARE NOT considered breached!
      *
      * @param entity
      *            the <code>Entity</code> that needs to be checked.
@@ -20772,8 +20766,12 @@ public class Server implements Runnable {
                     || !(entity.getArmor(loc) > 0)
                     || (dumping && (!(entity instanceof Mech) || (loc == Mech.LOC_CT) || (loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)))
                     || !(entity instanceof Mech ? entity.getArmor(loc, true) > 0 : true)) {
-                // functional HarJel prevents breach
-                if ((entity instanceof Mech) && ((Mech) entity).hasHarJelIn(loc)) {
+                // Functional HarJel prevents breach as long as armor remains
+                // (and, presumably, as long as you don't open your chassis on
+                // purpose, say to dump ammo...).
+                if ((entity.hasHarJelIn(loc)) && (entity.getArmor(loc) > 0)
+                        && (entity instanceof Mech ? entity.getArmor(loc, true) > 0 : true)
+                        && !dumping) {
                     r = new Report(6342);
                     r.subject = entity.getId();
                     r.indent(3);
@@ -20902,7 +20900,16 @@ public class Server implements Runnable {
                 vDesc.addAll(abandonEntity(entity));
             }
         }
-
+        
+        if (entity instanceof Mech) {
+            if (loc == Mech.LOC_LT) {
+                vDesc.addAll(breachLocation(entity, Mech.LOC_LARM, hex, false));
+            }
+            if (loc == Mech.LOC_RT) {
+                vDesc.addAll(breachLocation(entity, Mech.LOC_RARM, hex, false));
+            }
+        }
+        
         return vDesc;
     }
 

@@ -2195,19 +2195,13 @@ public class Compute {
         } else {
             // Direct fire weapons (and LBX slug rounds) just do a single shot
             // so they don't use the missile hits table
-            fDamage = wt.getDamage();
             if ((attacker.getPosition() != null) && (g.getEntity(waa.getTargetId()).getPosition() != null)) {
-                if (wt.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
-                    fDamage = 25.0f;
-                    int rtt = attacker.getPosition().distance(g.getEntity(waa.getTargetId()).getPosition());
-                    if (rtt > 13) {
-                        fDamage = 10.0f;
-                    } else if (rtt > 6) {
-                        fDamage = 20.0f;
-                    }
-                }
+                // Damage may vary by range for some weapons, so let's see how far
+                // away we actually are and then set the damage accordingly.
+                int rangeToTarget = attacker.getPosition().distance(g.getEntity(waa.getTargetId()).getPosition());
+                fDamage = wt.getDamage(rangeToTarget);
             }
-
+            
             // Infantry follow some special rules, but do fixed amounts of
             // damage
             // Anti-mek attacks are weapon-like in nature, so include them here

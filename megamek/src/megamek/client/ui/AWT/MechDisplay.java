@@ -2211,6 +2211,15 @@ public class MechDisplay extends BufferedPanel {
                                 .getExteriorUnitAt(Mech.LOC_RT, true) != null))) {
                     carryingBAsOnBack = true;
                 }
+                
+                boolean invalidEnvironment = false;
+                if ((en instanceof Mech) && (en.getLocationStatus(Mech.LOC_CT) > ILocationExposureStatus.NORMAL)) {
+                    invalidEnvironment = true;
+                }
+                
+                if ((en instanceof Tank) && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
+                    invalidEnvironment = true;
+                }
 
                 boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
                         .getOwner());
@@ -2220,12 +2229,16 @@ public class MechDisplay extends BufferedPanel {
                         && !(m.getType().hasInstantModeSwitch())
                         && (IGame.Phase.PHASE_DEPLOYMENT != clientgui
                                 .getClient().game.getPhase())
+                        && (IGame.Phase.PHASE_MOVEMENT != clientgui
+                                .getClient().game.getPhase())
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
                         && (clientgui.getClient().game.getOptions().intOption(
                                 "dumping_from_round") <= clientgui.getClient().game
-                                .getRoundCount()) && !carryingBAsOnBack) {
+                                .getRoundCount())
+                        && !carryingBAsOnBack
+                        && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
                     if (clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_hotload")

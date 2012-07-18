@@ -23,6 +23,7 @@ v0.35.32-dev (SVN)
 + Bug: Entering water while dumping ammo would cause the unit to be destroyed silently (no report).
 + Ammo dump button now disabled in water or vacuum.
 + Bug: Expected damage calculation erroneously yields 0 for most variable damage weapons, causing the bot to never use them.
++ Data: RAC Pike mistakenly listed with (overweight) standard armor instead of FF.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

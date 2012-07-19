@@ -24,6 +24,7 @@ v0.35.32-dev (SVN)
 + Ammo dump button now disabled in water or vacuum.
 + Bug: Expected damage calculation erroneously yields 0 for most variable damage weapons, causing the bot to never use them.
 + Data: RAC Pike mistakenly listed with (overweight) standard armor instead of FF.
++ Data: FF armor rounding error fixed for L3 Night Gyr chassis (the LHS-equipped 'fluff' versions).
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

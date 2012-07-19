@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -11088,7 +11089,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return true if there was a masc failure.
      */
     public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc,
-            HashMap<Integer, CriticalSlot> vCriticals) {
+            HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if (md.hasActiveMASC()) {
             boolean bFailure = false;
 
@@ -11118,7 +11119,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     private boolean doMASCCheckFor(Mounted masc, Vector<Report> vDesc,
-            HashMap<Integer, CriticalSlot> vCriticals) {
+            HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if (masc != null) {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
@@ -11185,11 +11186,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         vDesc.addElement(r);
                     }
                     if (this instanceof Mech) {
+                        vCriticals.put(new Integer(Mech.LOC_CT), new LinkedList<CriticalSlot>());
                         for (int i = 0; (i < 12) && (hits > 0); i++) {
                             CriticalSlot cs = getCritical(Mech.LOC_CT, i);
                             if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
-                                    && (cs.getIndex() == Mech.SYSTEM_ENGINE)) {
-                                vCriticals.put(new Integer(Mech.LOC_CT), cs);
+                                    && (cs.getIndex() == Mech.SYSTEM_ENGINE)
+                                    && cs.isHittable()) {
+                                vCriticals.get(new Integer(Mech.LOC_CT)).add(cs);
                                 hits--;
                             }
                         }
@@ -11204,34 +11207,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 .hasModerateMovementDamage();
                         boolean heavyMovementDamage = tank
                                 .hasHeavyMovementDamage();
+                        vCriticals.put(new Integer(Tank.LOC_BODY), new LinkedList<CriticalSlot>());
+                        vCriticals.put(new Integer(-1), new LinkedList<CriticalSlot>());
+                        if (tank instanceof VTOL) {
+                            vCriticals.put(new Integer(VTOL.LOC_ROTOR), new LinkedList<CriticalSlot>());
+                        }
                         for (int i = 0; i < hits; i++) {
                             if (tank instanceof VTOL) {
                                 if (vtolStabilizerHit) {
-                                    vCriticals.put(new Integer(Tank.LOC_BODY),
-                                            new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    Tank.CRIT_ENGINE));
+                                    vCriticals.get(new Integer(Tank.LOC_BODY))
+                                            .add(new CriticalSlot(
+                                                         CriticalSlot.TYPE_SYSTEM,
+                                                         Tank.CRIT_ENGINE));
                                 } else {
-                                    vCriticals
-                                            .put(new Integer(VTOL.LOC_ROTOR),
-                                                    new CriticalSlot(
-                                                            CriticalSlot.TYPE_SYSTEM,
-                                                            VTOL.CRIT_FLIGHT_STABILIZER));
+                                    vCriticals.get(new Integer(VTOL.LOC_ROTOR))
+                                            .add(new CriticalSlot(
+                                                         CriticalSlot.TYPE_SYSTEM,
+                                                         VTOL.CRIT_FLIGHT_STABILIZER));
                                     vtolStabilizerHit = true;
                                 }
                             } else {
                                 if (heavyMovementDamage) {
-                                    vCriticals.put(new Integer(Tank.LOC_BODY),
-                                            new CriticalSlot(
+                                    vCriticals.get(new Integer(Tank.LOC_BODY))
+                                            .add(new CriticalSlot(
                                                     CriticalSlot.TYPE_SYSTEM,
                                                     Tank.CRIT_ENGINE));
                                 } else if (moderateMovementDamage) {
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .put(new Integer(-1),
-                                                    new CriticalSlot(
+                                    vCriticals.get(new Integer(-1))
+                                            .add(new CriticalSlot(
                                                             CriticalSlot.TYPE_SYSTEM,
                                                             3));
                                     heavyMovementDamage = true;
@@ -11239,9 +11245,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .put(new Integer(-1),
-                                                    new CriticalSlot(
+                                    vCriticals.get(new Integer(-1))
+                                            .add(new CriticalSlot(
                                                             CriticalSlot.TYPE_SYSTEM,
                                                             2));
                                     moderateMovementDamage = true;
@@ -11249,9 +11254,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                     // HACK: we abuse the criticalslot item to
                                     // signify the calling function to deal
                                     // movement damage
-                                    vCriticals
-                                            .put(new Integer(-1),
-                                                    new CriticalSlot(
+                                    vCriticals.get(new Integer(-1))
+                                            .add(new CriticalSlot(
                                                             CriticalSlot.TYPE_SYSTEM,
                                                             1));
                                     minorMovementDamage = true;
@@ -11272,7 +11276,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                         .randomInt(getNumberOfCriticals(loc));
                                 slot = getCritical(loc, slotIndex);
                             } while ((slot == null) || !slot.isHittable());
-                            vCriticals.put(new Integer(loc), slot);
+                            vCriticals.put(new Integer(loc), new LinkedList<CriticalSlot>());
+                            vCriticals.get(new Integer(loc)).add(slot);
                         }
                     }
                 }

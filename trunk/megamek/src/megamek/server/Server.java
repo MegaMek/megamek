@@ -5272,7 +5272,7 @@ public class Server implements Runnable {
         EntityMovementType moveType = entity.moved;
         EntityMovementType overallMoveType = entity.moved;
         boolean firstStep;
-        boolean wasProne;
+        boolean wasProne = entity.isProne();
         boolean fellDuringMovement = false;
         boolean crashedDuringMovement = false;
         boolean dropshipStillUnloading = false;
@@ -5365,18 +5365,20 @@ public class Server implements Runnable {
             // check for MASC failure on first step
             // also check Tanks because they can have superchargers that act like MASc
             if (firstStep && ((entity instanceof Mech) || (entity instanceof Tank))) {
-                HashMap<Integer, CriticalSlot> crits = new HashMap<Integer, CriticalSlot>();
+                HashMap<Integer, List<CriticalSlot>> crits = new HashMap<Integer, List<CriticalSlot>>();
                 Vector<Report> vReport = new Vector<Report>();
                 if (entity.checkForMASCFailure(md, vReport, crits)) {
                     addReport(vReport);
                     for (Integer loc : crits.keySet()) {
-                        CriticalSlot cs = crits.get(loc);
-                        // HACK: if loc is -1, we need to deal motive damage to
-                        // the tank, the severity of which is stored in the critslot index
-                        if (loc == -1) {
-                            addReport(vehicleMotiveDamage((Tank)entity, 0, true, cs.getIndex()));
-                        } else {
-                            addReport(applyCriticalHit(entity, loc, cs, true, 0, false));
+                        List<CriticalSlot> lcs = crits.get(loc);
+                        for (CriticalSlot cs : lcs) {
+                            // HACK: if loc is -1, we need to deal motive damage to
+                            // the tank, the severity of which is stored in the critslot index
+                            if (loc == -1) {
+                                addReport(vehicleMotiveDamage((Tank)entity, 0, true, cs.getIndex()));
+                            } else {
+                                addReport(applyCriticalHit(entity, loc, cs, true, 0, false));
+                            }
                         }
                     }
                     // do any PSR immediately
@@ -7131,7 +7133,11 @@ public class Server implements Runnable {
 
         // Check the falls_end_movement option to see if it should be able to
         // move on.
-        if (!(game.getOptions().booleanOption("falls_end_movement") && (entity instanceof Mech)) && fellDuringMovement
+        // Need to check here if the 'Mech actually went from non-prone to prone
+        // here because 'fellDuringMovement' is sometimes abused just to force
+        // another turn and so doesn't reliably tell us.
+        if (!(game.getOptions().booleanOption("falls_end_movement") && (entity instanceof Mech) && !wasProne && entity.isProne())
+                && fellDuringMovement
                 && !turnOver && (entity.mpUsed < entity.getRunMP()) && entity.isSelectableThisTurn()
                 && !entity.isDoomed()) {
             entity.applyDamage();
@@ -26452,37 +26458,39 @@ public class Server implements Runnable {
         r.newlines = 0;
         r.indent(3);
         vDesc.add(r);
-        r = new Report(6310);
-        r.subject = te.getId();
-        r.add(roll);
-        r.newlines = 0;
-        vDesc.add(r);
-        r = new Report(3340);
-        r.add(modifier);
-        r.subject = te.getId();
-        vDesc.add(r);
+        if (!noroll) {
+            r = new Report(6310);
+            r.subject = te.getId();
+            r.add(roll);
+            r.newlines = 0;
+            vDesc.add(r);
+            r = new Report(3340);
+            r.add(modifier);
+            r.subject = te.getId();
+            vDesc.add(r);
+        }
 
-        if (roll <= 5) {
+        if ((noroll && damagetype == 0) || (!noroll && roll <= 5)) {
             // no effect
             r = new Report(6005);
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
-        } else if (roll <= 7) {
+        } else if ((noroll && damagetype == 1) || (!noroll && roll <= 7)) {
             // minor damage
             r = new Report(6470);
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
             te.addMovementDamage(1);
-        } else if (roll <= 9) {
+        } else if ((noroll && damagetype == 2) || (!noroll && roll <= 9)) {
             // moderate damage
             r = new Report(6471);
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
             te.addMovementDamage(2);
-        } else if (roll <= 11) {
+        } else if ((noroll && damagetype == 3) || (!noroll && roll <= 11)) {
             // heavy damage
             r = new Report(6472);
             r.subject = te.getId();

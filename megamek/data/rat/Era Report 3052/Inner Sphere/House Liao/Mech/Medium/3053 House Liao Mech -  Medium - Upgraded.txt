@@ -1,0 +1,12 @@
+3053 House Liao Mech -  Medium - Upgraded
+Vulcan VL-2T,1
+Blackjack BJ-3,2
+Cicada CDA-3M,3
+Hunchback HBK-5M,4
+Vindicator VND-1R,5
+Vindicator VND-3L,6
+Vindicator VND-1R,5
+Hunchback HBK-4G,4
+Vindicator VND-3L,3
+Phoenix Hawk PXH-3M,2
+Clint CLNT-2-3U,1

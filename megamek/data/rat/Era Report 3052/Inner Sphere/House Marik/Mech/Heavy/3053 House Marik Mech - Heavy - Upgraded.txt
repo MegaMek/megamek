@@ -1,0 +1,12 @@
+3053 House Marik Mech - Heavy - Upgraded
+Thunderbolt TDR-7M,1
+Guillotine GLT-5M,2
+Quickdraw QKD-5M,3
+Thunderbolt TDR-7M,4
+Crusader CRD-5M,5
+Orion ON1-M,6
+Warhammer WHM-7M,5
+Marauder MAD-5M,4
+Orion ON1-M,3
+Rifleman RFL-5M,2
+Archer ARC-4M,1

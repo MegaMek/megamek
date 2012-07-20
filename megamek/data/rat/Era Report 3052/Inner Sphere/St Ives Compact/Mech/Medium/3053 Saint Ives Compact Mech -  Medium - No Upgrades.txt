@@ -1,0 +1,12 @@
+3053 Saint Ives Compact Mech -  Medium - No Upgraded
+Vulcan VL-2T,1
+Blackjack BJ-3,2
+Cicada CDA-2A,3
+Hunchback HBK-4P,4
+Vindicator VND-1R,5
+Vindicator VND-1R,6
+Vindicator VND-1R,5
+Hunchback HBK-4G,4
+Vindicator VND-1AA "Avenging Angel",3
+Phoenix Hawk PXH-1,2
+Clint CLNT-2-3T,1

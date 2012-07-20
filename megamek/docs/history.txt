@@ -27,6 +27,10 @@ v0.35.32-dev (SVN)
 + Data: FF armor rounding error fixed for L3 Night Gyr chassis (the LHS-equipped 'fluff' versions).
 + Bug: Supercharger failure applies at most a single hit ever.
 + Bug: Tank supercharger failure rolls for severity instead of applying auto-hits.
++ Data: Replaced "Era Report 3052" RAT files with the corrected ones by the author & ran a batch file
+    conversion on all RAT to create consistent newlines
++ Bug 3543236: RAT ER 3052 wrongly named
++ Bug 3542879: Kyudo
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

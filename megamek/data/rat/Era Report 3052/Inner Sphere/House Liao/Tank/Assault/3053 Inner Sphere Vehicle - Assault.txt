@@ -1,0 +1,12 @@
+3053 Inner Sphere Vehicle - Assault
+Sturmfeur Heavy Tank,1
+Behemoth Heavy Tank,2
+Ontos Heavy Tank,3
+Ontos Heavy Tank,4
+Schrek PPC Carrier,5
+Demolisher Heavy Tank,6
+Partisan Heavy Tank,5
+Partisan Heavy Tank,4
+Demolisher Heavy Tank,3
+Schrek PPC Carrier,2
+Behemoth Heavy Tank,1

@@ -1,0 +1,12 @@
+3053 House Marik Mech - Light - Upgraded
+Hermes HER-1A,1
+Mongoose MON-67,2
+Hermes HER-3S,3
+Stinger STG-5M,4
+Firestarter FS9-S,5
+Hermes HER-3S1,6
+Commando COM-2D,5
+Raven RVN-3L,4
+Locust LCT-3M,3
+Wasp WSP-3M,2
+Spider SDR-7M,1

@@ -1,0 +1,12 @@
+3053 House Kurita Mech - Light- No Upgraded
+Commando COM-2D,1
+Spider SDR-5K,2
+Locust LCT-1V,3
+Panther PNT-9R,4
+Jenner JR7-D,5
+Panther PNT-9R,6
+Jenner JR7-D,5
+Wasp WSP-1A,4
+Spider SDR-5V,3
+Panther PNT-9R,2
+Mongoose MON-68,1

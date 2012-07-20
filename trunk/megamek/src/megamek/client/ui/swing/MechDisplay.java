@@ -2134,6 +2134,15 @@ public class MechDisplay extends JPanel {
             if (event.getSource().equals(weaponList)) {
                 m_chBayWeapon.removeAllItems();
                 displaySelected();
+                
+                // When in the Firing Phase, update the targeting information.
+                // TODO: make this an accessor function instead of a member
+                // access.
+                if (clientgui.curPanel instanceof FiringDisplay) {
+                    ((FiringDisplay) clientgui.curPanel).updateTarget();
+                } else if (clientgui.curPanel instanceof TargetingPhaseDisplay) {
+                    ((TargetingPhaseDisplay) clientgui.curPanel).updateTarget();
+                }
             }
             onResize();
         }

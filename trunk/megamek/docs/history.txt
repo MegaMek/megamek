@@ -32,6 +32,7 @@ v0.35.32-dev (SVN)
 + Bug 3543236: RAT ER 3052 wrongly named
 + Bug 3542879: Kyudo
 + Bug 3517770: Interface bug : Target is blank even if a unit is selected
++ TacOps errata: Thunder-Active, -Augmented, -Inferno, and -Vibrabomb ammo only gets half the number of shots (again).
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

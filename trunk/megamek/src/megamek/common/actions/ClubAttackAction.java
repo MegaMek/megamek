@@ -97,8 +97,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             // Backhoes have constant damage, not variable like most.
             nDamage = 6;
         } else if (mType.hasSubType(MiscType.S_MINING_DRILL)) {
-            // Backhoes have constant damage, not variable like most.
-            nDamage = 3;
+            // Mining drills have constant damage, not variable like most.
+            nDamage = 4;
         } else if (mType.isShield()) {
             nDamage = club.getDamageAbsorption(entity, club.getLocation());
         } else if (mType.hasSubType(MiscType.S_WRECKING_BALL)) {
@@ -140,6 +140,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                         || (mType.isVibroblade() && club.curMode().equals(
                                 "Active"))
                         || mType.hasSubType(MiscType.S_BUZZSAW)
+                        || mType.hasSubType(MiscType.S_MINING_DRILL)
+                        || mType.hasSubType(MiscType.S_ROCK_CUTTER)
+                        || mType.hasSubType(MiscType.S_SPOT_WELDER)
                         || mType.hasSubType(MiscType.S_CHAIN_WHIP) || mType
                             .hasSubType(MiscType.S_COMBINE))
                 && ((Mech) entity).hasTSM()) {
@@ -245,14 +248,18 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         if (hasClaws
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL))
-                || (((MiscType) club.getType())
-                        .hasSubType(MiscType.S_WRECKING_BALL))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_BUZZSAW))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))) {
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_MINING_DRILL))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_PILE_DRIVER))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_ROCK_CUTTER))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_SPOT_WELDER))
+                || (((MiscType) club.getType())
+                        .hasSubType(MiscType.S_WRECKING_BALL))) {
             needsHand = false;
         }
 
@@ -515,6 +522,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
         toHit.setSideTable(Compute.targetSideTable(ae, target));
 
         // done!
+        System.out.print("To-hit for club attack from attacker ID " + attackerId);
+        System.out.println(": " + toHit.getValue() + ".");
         return toHit;
     }
 

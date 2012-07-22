@@ -2265,6 +2265,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[]
             { RATING_C, RATING_D, RATING_D };
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.subType |= S_MINING_DRILL;
         misc.bv = 6;
 
         return misc;

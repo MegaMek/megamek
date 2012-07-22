@@ -522,8 +522,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
         toHit.setSideTable(Compute.targetSideTable(ae, target));
 
         // done!
-        System.out.print("To-hit for club attack from attacker ID " + attackerId);
-        System.out.println(": " + toHit.getValue() + ".");
         return toHit;
     }
 

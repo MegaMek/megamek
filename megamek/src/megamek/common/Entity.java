@@ -6618,6 +6618,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
+        return getUnusedString(false);
+    }
+
+    /**
+     * Return a string that identifies the unused capacity of this transporter.
+     *
+     * @return A <code>String</code> meant for a human.
+     */
+    public String getUnusedString(boolean useBRTag) {
         StringBuffer result = new StringBuffer();
 
         // Walk through this entity's transport components;
@@ -6628,8 +6637,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             result.append(next.getUnusedString());
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
+                if (useBRTag) {
+                    result.append("<br>");
+                } else {
                 result.append("\n");
             }
+        }
         }
 
         // Return the String.

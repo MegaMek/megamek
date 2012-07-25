@@ -214,7 +214,7 @@ public class MechSummaryCache {
                     ms.setLevel(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setCost(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setCanon(s.charAt(nIndex1 + 1) == 'T' ? true : false);
@@ -232,7 +232,7 @@ public class MechSummaryCache {
                     ms.setUnitSubType(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);                    
-                    ms.setUnloadedCost(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setUnloadedCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
                     ms.setAlternateCost(Integer.parseInt(s.substring(nIndex2 + 1)));
 
                     // Verify that this file still exists and is older than
@@ -345,8 +345,8 @@ public class MechSummaryCache {
         }
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
-        ms.setCost((int) e.getCost(false));
-        ms.setUnloadedCost(((int) e.getCost(true)));
+        ms.setCost((long) e.getCost(false));
+        ms.setUnloadedCost(((long) e.getCost(true)));
         ms.setAlternateCost((int) e.getAlternateCost());
         ms.setCanon(e.isCanon());
         ms.setWalkMp(e.getWalkMP(false, false));

@@ -35,6 +35,8 @@ v0.35.32-dev (SVN)
 + TacOps errata: Thunder-Active, -Augmented, -Inferno, and -Vibrabomb ammo only gets half the number of shots (again).
 + Multiple small physical weapon fixes mostly with regard to hand actuator requirements and TSM.
 + Bug: Locations behind partial cover not protected from Narc pod and MG array attacks.
++ Patch 3547368/Bug 3547367: C-Bill cost truncated by int limit
++ Bug 3545927: Freeze at end of every turn
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

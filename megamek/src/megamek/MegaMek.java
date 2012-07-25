@@ -50,7 +50,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.35.32-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.35.32-dev-r8958"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
@@ -606,9 +606,9 @@ public class MegaMek {
                         w.write(",");
                         w.write(Integer.toString(unit.getBV()));
                         w.write(",");
-                        w.write(Integer.toString(unit.getCost()));
+                        w.write(Long.toString(unit.getCost()));
                         w.write(",");
-                        w.write(Integer.toString(unit.getUnloadedCost()));
+                        w.write(Long.toString(unit.getUnloadedCost()));
                         w.write(",");
                         w.write(Integer.toString(unit.getYear()));
                         w.write(",");

@@ -38,6 +38,7 @@ v0.35.32-dev (SVN)
 + Patch 3547368/Bug 3547367: C-Bill cost truncated by int limit
 + Bug 3545927: Freeze at end of every turn
 + Bug: Missed changes to MegaMek.java for the C-Bill cost truncated fix.
++ Bug 3546584: bay display error
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

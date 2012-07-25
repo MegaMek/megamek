@@ -694,7 +694,7 @@ public class MechView {
             sMisc = new StringBuffer();
         }
 
-        String capacity = entity.getUnusedString();
+        String capacity = entity.getUnusedString(true);
         if ((capacity != null) && (capacity.length() > 0)) {
             sMisc.append("<br><b>").append(Messages.getString("MechView.CarringCapacity")).append("</b><br>") //$NON-NLS-1$
                     .append(capacity).append("<br>"); //$NON-NLS-1$

@@ -198,7 +198,7 @@ public class MechSummary implements Serializable {
         this.m_nCost = m_nCost;
     }
 
-    public void setUnloadedCost(int m_nCost) {
+    public void setUnloadedCost(long m_nCost) {
         m_nUnloadedCost = m_nCost;
     }
     

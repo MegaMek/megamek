@@ -531,10 +531,11 @@ public final class Player extends TurnOrdered {
         //a vector of unit ids
         Vector<Integer> units = new Vector<Integer>();
         for(Entity entity : game.getEntitiesVector()) {
-            if (entity.getOwner().equals(this) ) {
-                if((entity.getElevation() > 0) &&
-                        ((entity instanceof VTOL)
-                                || (entity.getMovementMode() == EntityMovementMode.WIGE))) {
+            if (entity.getOwner().equals(this)) {
+                if(((entity instanceof VTOL)
+                                || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
+                                            (!entity.isDestroyed()) &&
+                                            (entity.getElevation() > 0)) {
                     units.add(entity.getId());
                 }
             }

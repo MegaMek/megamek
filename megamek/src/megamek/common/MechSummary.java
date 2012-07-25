@@ -37,8 +37,8 @@ public class MechSummary implements Serializable {
     private int m_nType;
     private float m_nTons;
     private int m_nBV;
-    private int m_nCost;
-    private int m_nUnloadedCost;
+    private long m_nCost;
+    private long m_nUnloadedCost;
     private int m_aCost;
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
@@ -138,11 +138,11 @@ public class MechSummary implements Serializable {
         return (m_nBV);
     }
 
-    public int getCost() {
+    public long getCost() {
         return (m_nCost);
     }
 
-    public int getUnloadedCost() {
+    public long getUnloadedCost() {
         return (m_nUnloadedCost);
     }
     
@@ -194,7 +194,7 @@ public class MechSummary implements Serializable {
         this.m_nTons = m_nTons;
     }
 
-    public void setCost(int m_nCost) {
+    public void setCost(long m_nCost) {
         this.m_nCost = m_nCost;
     }
 
@@ -202,7 +202,7 @@ public class MechSummary implements Serializable {
         m_nUnloadedCost = m_nCost;
     }
     
-    public void setAlternateCost(int m_aCost) {
+    public void setAlternateCost(long m_aCost) {
         this.m_aCost = m_aCost;
     }
 

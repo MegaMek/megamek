@@ -14977,7 +14977,7 @@ public class Server implements Runnable {
             if (entity.hasQuirk("poor_life_support")) {
                 damageHeat += 5;
             }
-            if ((lifeSupportCritCount > 0) && ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat >= 0)))
+            if ((lifeSupportCritCount > 0) && ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0)))
                     && !entity.getCrew().isDead() && !entity.getCrew().isDoomed() && !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;

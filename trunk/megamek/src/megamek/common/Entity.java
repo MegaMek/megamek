@@ -8802,12 +8802,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isCapitalFighter() {
+        return isCapitalFighter(false);
+    }
+
+    public boolean isCapitalFighter(boolean lounge) {
         if (null == game) {
             return false;
         }
 
         // If we're using the unofficial option for single fighters staying standard scale & we're not a member of a squadron... then false.
-        if (isFighter() && game.getOptions().booleanOption("single_no_cap") && !isPartOfFighterSquadron()) {
+        if (!lounge && isFighter() && game.getOptions().booleanOption("single_no_cap") && !isPartOfFighterSquadron()) {
             return false;
         }
 

@@ -3111,7 +3111,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 } else {
                     allUnloaded = false;
                 }
-                if (!en.isCapitalFighter() || (en instanceof FighterSquadron)) {
+                if (!en.isCapitalFighter(true) || (en instanceof FighterSquadron)) {
                     allCapFighter = false;
                 }
                 if (prevOwnerId != -1 && en.getOwnerId() != prevOwnerId) {

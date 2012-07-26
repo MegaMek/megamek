@@ -40,6 +40,7 @@ v0.35.32-dev (SVN)
 + Bug: Missed changes to MegaMek.java for the C-Bill cost truncated fix.
 + Bug 3546584: bay display error
 + Bug: Spurious "heat 1 or greater" messages for 'Mechs with torso-mounted cockpit and damaged life support even at heat 0.
++ Bug 3549321: Can't create squadrons when single fghter nocap is on
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

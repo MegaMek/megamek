@@ -4583,6 +4583,9 @@ public abstract class Mech extends Entity {
         costs[i++] = -omniMultiplier; // negative just marks it as multiplier
 
         double weightMultiplier = 1 + (weight / 100f);
+        if (isIndustrial()) {
+            weightMultiplier = 1 + (weight / 400f);
+        }
         costs[i++] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
         addCostDetails(cost, costs);

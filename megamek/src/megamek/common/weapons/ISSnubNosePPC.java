@@ -56,14 +56,14 @@ public class ISSnubNosePPC extends PPCWeapon {
         tonnage = 6.0f;
         criticals = 2;
         bv = 165;
-        cost = 400000;
+        cost = 300000;
         maxRange = RANGE_MED;
         shortAV = 10;
         medAV = 8;
         // with a capacitor
         explosive = true;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_F};
-        this.introDate = 3067;
+        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_F};
+        introDate = 3067;
     }
 
     @Override

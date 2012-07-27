@@ -52,13 +52,13 @@ public class CLPlasmaCannon extends AmmoWeapon {
         criticals = 1;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE);
         bv = 170;
-        cost = 480000;
+        cost = 320000;
         shortAV = 10;
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        this.introDate = 3069;
+        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        introDate = 3069;
     }
 
     /*

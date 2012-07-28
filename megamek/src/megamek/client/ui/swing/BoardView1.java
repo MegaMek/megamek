@@ -3348,6 +3348,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
                 }
 
+                // If this unit is shutdown, say so.
+                if (entity.isManualShutdown()) {
+                    // draw "SHUTDOWN" for manual
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.SHUTDOWN"), 50, 71); //$NON-NLS-1$
+                    graph.setColor(Color.yellow);
+                    graph.drawString(Messages.getString("BoardView1.SHUTDOWN"), 49, 70); //$NON-NLS-1$
+                } else if (entity.isShutDown()) {
+                    // draw "SHUTDOWN" for manual
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.SHUTDOWN"), 50, 71); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.SHUTDOWN"), 49, 70); //$NON-NLS-1$
+                }
+
                 // If this unit is being swarmed or is swarming another, say so.
                 if (Entity.NONE != entity.getSwarmAttackerId()) {
                     // draw "SWARMED"

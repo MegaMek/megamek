@@ -400,6 +400,9 @@ public class BLKFile {
              if (m.isMechTurretMounted()) {
                  name = name + "(T)";
              }
+             if (m.isPintleTurretMounted()) {
+                 name = name + "(PT)";
+             }
              int loc = m.getLocation();
              if (loc != Entity.LOC_NONE) {
                  eq.get(loc).add(name);

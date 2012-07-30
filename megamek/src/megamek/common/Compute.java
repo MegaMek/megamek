@@ -20,8 +20,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.IHex;
-import megamek.common.Terrains;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
@@ -76,6 +74,10 @@ public class Compute {
     public static final int ARC_TURRET = 25;
     public static final int ARC_SPONSON_TURRET_LEFT = 26;
     public static final int ARC_SPONSON_TURRET_RIGHT = 27;
+    public static final int ARC_PINTLE_TURRET_LEFT = 28;
+    public static final int ARC_PINTLE_TURRET_RIGHT = 29;
+    public static final int ARC_PINTLE_TURRET_FRONT = 30;
+    public static final int ARC_PINTLE_TURRET_REAR = 31;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -1222,7 +1224,7 @@ public class Compute {
 
             // TODO : can units being transported be used for C3 spotting? For now we'll say no.
             if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend)
-                    || !friend.isDeployed() || friend.getTransportId() != Entity.NONE) {
+                    || !friend.isDeployed() || (friend.getTransportId() != Entity.NONE)) {
                 continue; // useless to us...
             }
 
@@ -2201,7 +2203,7 @@ public class Compute {
                 int rangeToTarget = attacker.getPosition().distance(g.getEntity(waa.getTargetId()).getPosition());
                 fDamage = wt.getDamage(rangeToTarget);
             }
-            
+
             // Infantry follow some special rules, but do fixed amounts of
             // damage
             // Anti-mek attacks are weapon-like in nature, so include them here
@@ -2866,12 +2868,24 @@ public class Compute {
                     }
                     break;
                 case ARC_SPONSON_TURRET_LEFT:
+                case ARC_PINTLE_TURRET_LEFT:
                     if ((fa >= 180) || (fa == 0)) {
                         return true;
                     }
                     break;
                 case ARC_SPONSON_TURRET_RIGHT:
+                case ARC_PINTLE_TURRET_RIGHT:
                     if ((fa >= 0) && (fa <= 180)) {
+                        return true;
+                    }
+                    break;
+                case ARC_PINTLE_TURRET_FRONT:
+                    if ((fa >= 270) || (fa <= 90)) {
+                        return true;
+                    }
+                    break;
+                case ARC_PINTLE_TURRET_REAR:
+                    if ((fa >= 90) && (fa <= 270)) {
                         return true;
                     }
                     break;
@@ -5190,7 +5204,7 @@ public class Compute {
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
                 Entity other = entities.nextElement();
-                if ((en.getOwner().equals(other.getOwner()) || en.getOwner().getTeam() == other.getOwner().getTeam()) && !en.equals(other)
+                if ((en.getOwner().equals(other.getOwner()) || (en.getOwner().getTeam() == other.getOwner().getTeam())) && !en.equals(other)
                         && (other instanceof SmallCraft) && other.canLoad(en) && !other.isAirborne()
                         && (Math.abs((hex.surface() + other.getElevation()) - elev) < 3) && !mountable.contains(other)) {
                     mountable.add(other);

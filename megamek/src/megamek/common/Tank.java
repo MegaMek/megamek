@@ -167,13 +167,13 @@ public class Tank extends Entity {
     public void setMotivePenalty(int p) {
         motivePenalty = p;
     }
-    
+
     /** The attack direction modifier for rolls on the motive system hits
      * table for the given side (as defined in {@link ToHitData}). This will return
      * 0 if Tactical Operations vehicle effectiveness rules are in effect or if the
      * side parameter falls outside ToHitData's range of "fixed" side values; in
      * particular, it will return 0 if handed {@link ToHitData#SIDE_RANDOM}.
-     * 
+     *
      * @param side The attack direction as specified above.
      * @return The appropriate directional roll modifier.
      */
@@ -628,6 +628,9 @@ public class Tank extends Entity {
                 // per
                 // http://forums.classicbattletech.com/index.php/topic,9400.0.html
             case LOC_FRONT:
+                if (mounted.isPintleTurretMounted()) {
+                    return Compute.ARC_PINTLE_TURRET_FRONT;
+                }
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_NOSE;
                 }
@@ -642,6 +645,9 @@ public class Tank extends Entity {
                 if (mounted.isSponsonTurretMounted()) {
                     return Compute.ARC_SPONSON_TURRET_RIGHT;
                 }
+                if (mounted.isPintleTurretMounted()) {
+                    return Compute.ARC_PINTLE_TURRET_RIGHT;
+                }
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
@@ -650,11 +656,17 @@ public class Tank extends Entity {
                 if (mounted.isSponsonTurretMounted()) {
                     return Compute.ARC_SPONSON_TURRET_LEFT;
                 }
+                if (mounted.isPintleTurretMounted()) {
+                    return Compute.ARC_PINTLE_TURRET_LEFT;
+                }
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
                 return Compute.ARC_LEFTSIDE;
             case LOC_REAR:
+                if (mounted.isPintleTurretMounted()) {
+                    return Compute.ARC_PINTLE_TURRET_REAR;
+                }
                 if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
                     return Compute.ARC_AFT;
                 }
@@ -2256,7 +2268,7 @@ public class Tank extends Entity {
         if (roll > 12) {
             roll = 12;
         }
-        if (roll < 6 || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
+        if ((roll < 6) || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -2346,7 +2358,7 @@ public class Tank extends Entity {
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
-                            if (!m.isDestroyed() && !m.isHit() && m.getLocation() != Entity.LOC_NONE) {
+                            if (!m.isDestroyed() && !m.isHit() && (m.getLocation() != Entity.LOC_NONE)) {
                                 return CRIT_AMMO;
                             }
                         }
@@ -2389,7 +2401,7 @@ public class Tank extends Entity {
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
-                            if (!m.isDestroyed() && !m.isHit() && m.getLocation() != Entity.LOC_NONE) {
+                            if (!m.isDestroyed() && !m.isHit() && (m.getLocation() != Entity.LOC_NONE)) {
                                 return CRIT_AMMO;
                             }
                         }

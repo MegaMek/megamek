@@ -187,6 +187,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_COMPACT_HEAT_SINK = BigInteger.valueOf(1).shiftLeft(141);
     public static final BigInteger F_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(142);
     public static final BigInteger F_CARGOLIFTER = BigInteger.valueOf(1).shiftLeft(143);
+    public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -370,7 +371,19 @@ public class MiscType extends EquipmentType {
             // round to half ton
             weaponWeight /= 10;
             return (float) (Math.ceil(weaponWeight * 2.0)) / 2.0f;
-        } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
+        } else if (hasFlag(F_PINTLE_TURRET)) {
+            float weaponWeight = 0;
+            // 5% of linked weapons' weight
+            for (Mounted m : entity.getWeaponList()) {
+                if (m.isSponsonTurretMounted() && (m.getLocation() == location)) {
+                    weaponWeight += m.getType().getTonnage(entity);
+                }
+            }
+            // TODO: round to kilogram
+            weaponWeight /= 20;
+            return weaponWeight;
+        }
+        else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             if (TechConstants.isClan(getTechLevel())) {
                 return (float) (entity.getWeight() * 0.1);
             } else {
@@ -558,6 +571,8 @@ public class MiscType extends EquipmentType {
                 costValue = getTonnage(entity) * 10000;
             } else if (hasFlag(F_SPONSON_TURRET)) {
                 costValue = getTonnage(entity) * 4000;
+            } else if (hasFlag(F_PINTLE_TURRET)) {
+                costValue = getTonnage(entity) * 1000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
                 costValue = getTonnage(entity) * 100000;
             } else if (hasFlag(F_JET_BOOSTER)) {
@@ -1023,6 +1038,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISTankCommandConsole());
         EquipmentType.addType(MiscType.createISSponsonTurret());
         EquipmentType.addType(MiscType.createCLSponsonTurret());
+        EquipmentType.addType(MiscType.createPintleTurret());
         EquipmentType.addType(MiscType.createISArmoredMotiveSystem());
         EquipmentType.addType(MiscType.createCLArmoredMotiveSystem());
         EquipmentType.addType(MiscType.createISChaffPod());
@@ -5150,6 +5166,21 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        return misc;
+    }
+
+    public static MiscType createPintleTurret() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Pintle Turret";
+        misc.setInternalName("PintleTurret");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.hittable = false;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_PINTLE_TURRET).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         return misc;
     }

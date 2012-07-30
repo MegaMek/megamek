@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -42,6 +42,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Minefield;
 import megamek.common.Player;
+import megamek.common.ITerrain;
 import megamek.common.Terrains;
 
 class BoardHexModel extends HexModel {
@@ -49,18 +50,18 @@ class BoardHexModel extends HexModel {
     private static final Material normalWater = new Material(C.grey75, C.black, C.grey75, C.white, 128.0f);
     private static final Material night = new Material(C.grey25, C.black, C.grey25, C.black, 1.0f);
     private static final Material dark = new Material(C.grey10, C.black, C.grey10, C.black, 1.0f);
-    
+
     private static final Material side = new Material(C.plain, C.black, C.plain, C.black, 1.0f);
     private static final Material sideWater = new Material(C.water, C.black, C.water, C.black, 1.0f);
 
     private static final int KEEP = 3;
-    
+
     Shape3D floor;
     Shape3D surface;
     IHex hex;
     Material current = normal;
     IGame game;
-    
+
     public static SharedGroup[] mkShared() {
         SharedGroup[] shafts = new SharedGroup[2];
         // sides of hex
@@ -78,12 +79,12 @@ class BoardHexModel extends HexModel {
         sh = new Shape3D(shaft, sapp);
         shafts[1] = new SharedGroup();
         shafts[1].addChild(sh);
-        
+
         return shafts;
     }
-    
 
-    
+
+
     public BoardHexModel(IGame g, Coords c, IHex h, TileTextureManager tileManager, SharedGroup shafts[]) {
         game = g;
         hex = h;
@@ -96,15 +97,17 @@ class BoardHexModel extends HexModel {
         addChild(floor);
 
         addChild(new Link(hex.depth() > 0?shafts[1]:shafts[0]));
-        
+
         setUserData(new Coords(c));
         ypos = 0;
         addText(""+c.getBoardNum(), new Color3f(GUIPreferences.getInstance().getMapTextColor()));
         final Point3d hexLoc = BoardModel.getHexLocation(c, h.floor());
         setTransform(new Transform3D(C.nullRot, new Vector3d(hexLoc), 1.0));
 
+        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT);
+
         // Water surface
-        if (surface == null && hex.depth() > 0) {
+        if (surface == null && hex.depth() > 0 && basement == null) {
             TransformGroup sTrans = new TransformGroup(new Transform3D(C.nullRot, new Vector3d(0.0, 0.0, hex.depth()*BoardModel.HEX_HEIGHT), 1.0));
             surface = new Shape3D(polygon);
             surface.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
@@ -132,7 +135,7 @@ class BoardHexModel extends HexModel {
         int keep = (surface == null?KEEP:KEEP+1);
         for (int i = numChildren()-1; i >= keep; i--) removeChild(i);
 
-        
+
         // mine fields
         if (game.containsMinefield((Coords)getUserData())){
             Coords c = (Coords)getUserData();
@@ -182,7 +185,7 @@ class BoardHexModel extends HexModel {
         for (Shape3D sup : supers) {
             superTrans.addChild(sup);
         }
-        
+
         superTrans.setPickable(false);
         addChild(superTrans);
 
@@ -205,7 +208,7 @@ class BoardHexModel extends HexModel {
 
         if (hex.getElevation() != 0) addText(Messages.getString("BoardView1.LEVEL") + hex.getElevation(), col);
         if (hex.depth() != 0) addText(Messages.getString("BoardView1.DEPTH") + hex.depth(), col);
-        if (ih > 0) addText(Messages.getString("BoardView1.HEIGHT") + ih, 
+        if (ih > 0) addText(Messages.getString("BoardView1.HEIGHT") + ih,
                 new Color3f(GUIPreferences.getInstance().getColor("AdvancedBuildingTextColor")));
 
     }
@@ -227,18 +230,18 @@ class BoardHexModel extends HexModel {
         app.setMaterial(current);
         app.setTextureAttributes(new TextureAttributes(TextureAttributes.MODULATE, new Transform3D(), new Color4f(), TextureAttributes.NICEST));
         floor.setAppearance(app);
-        
+
         if (surface != null) setSurfaceEffect(mat, surface.getAppearance().getTexture());
     }
-    
+
     void setEffect(Material mat) {
         setEffect(mat, floor.getAppearance().getTexture());
     }
-    
+
     public void darken() {
         setEffect(dark);
     }
-    
+
     public void night() {
         setEffect(night);
     }

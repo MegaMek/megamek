@@ -135,7 +135,7 @@ public class Board implements Serializable, IBoard {
         this.data = new IHex[width * height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                this.data[y * width + x] = data[y * width + x];
+                this.data[(y * width) + x] = data[(y * width) + x];
             }
         }
     }
@@ -245,7 +245,7 @@ public class Board implements Serializable, IBoard {
      */
     public IHex getHex(int x, int y) {
         if (contains(x, y)) {
-            return data[y * width + x];
+            return data[(y * width) + x];
         }
         return null;
     }
@@ -467,7 +467,7 @@ public class Board implements Serializable, IBoard {
      * @param hex the hex to be set into position.
      */
     public void setHex(int x, int y, IHex hex) {
-        data[y * width + x] = hex;
+        data[(y * width) + x] = hex;
         initializeAround(x, y);
     }
 
@@ -579,33 +579,33 @@ public class Board implements Serializable, IBoard {
             case START_ANY:
                 return true;
             case START_NW:
-                return ((c.x < minx + nLimit) && (c.x >= minx) && (c.y < height / 2))
-                        || ((c.y < miny + nLimit) && (c.y >= miny) && (c.x < width / 2));
+                return ((c.x < (minx + nLimit)) && (c.x >= minx) && (c.y < (height / 2)))
+                        || ((c.y < (miny + nLimit)) && (c.y >= miny) && (c.x < (width / 2)));
             case START_N:
-                return (c.y < miny + nLimit) && (c.y >= miny);
+                return (c.y < (miny + nLimit)) && (c.y >= miny);
             case START_NE:
-                return ((c.x > (maxx - nLimit)) && (c.x < maxx) && (c.y < height / 2))
-                        || ((c.y < miny + nLimit) && (c.y >= miny) && (c.x > width / 2));
+                return ((c.x > (maxx - nLimit)) && (c.x < maxx) && (c.y < (height / 2)))
+                        || ((c.y < (miny + nLimit)) && (c.y >= miny) && (c.x > (width / 2)));
             case START_E:
                 return (c.x >= (maxx - nLimit)) && (c.x < maxx);
             case START_SE:
-                return ((c.x >= (maxx - nLimit)) && (c.x < maxx) && (c.y > height / 2))
-                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy) && (c.x > width / 2));
+                return ((c.x >= (maxx - nLimit)) && (c.x < maxx) && (c.y > (height / 2)))
+                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy) && (c.x > (width / 2)));
             case START_S:
                 return (c.y >= (maxy - nLimit)) && (c.y < maxy);
             case START_SW:
-                return ((c.x < minx + nLimit) && (c.x >= minx) && (c.y > height / 2))
-                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy) && (c.x < width / 2));
+                return ((c.x < (minx + nLimit)) && (c.x >= minx) && (c.y > (height / 2)))
+                        || ((c.y >= (maxy - nLimit)) && (c.y < maxy) && (c.x < (width / 2)));
             case START_W:
-                return (c.x < minx + nLimit) && (c.x >= minx);
+                return (c.x < (minx + nLimit)) && (c.x >= minx);
             case START_EDGE:
-                return ((c.x < minx + nLimit) && (c.x >= minx))
-                        || ((c.y < miny + nLimit) && (c.y >= miny))
+                return ((c.x < (minx + nLimit)) && (c.x >= minx))
+                        || ((c.y < (miny + nLimit)) && (c.y >= miny))
                         || ((c.x >= (maxx - nLimit)) && (c.x < maxx))
                         || ((c.y >= (maxy - nLimit)) && (c.y < maxy));
             case START_CENTER:
-                return (c.x >= width / 3) && (c.x <= 2 * width / 3)
-                        && (c.y >= height / 3) && (c.y <= 2 * height / 3);
+                return (c.x >= (width / 3)) && (c.x <= ((2 * width) / 3))
+                        && (c.y >= (height / 3)) && (c.y <= ((2 * height) / 3));
             default: // ummm. .
                 return false;
         }
@@ -720,7 +720,7 @@ public class Board implements Serializable, IBoard {
         }
 
         // check data integrity
-        if ((nw > 1) || (nh > 1) || (di == nw * nh)) {
+        if ((nw > 1) || (nh > 1) || (di == (nw * nh))) {
             newData(nw, nh, nd);
         } else {
             System.err.println("board data invalid");
@@ -737,7 +737,7 @@ public class Board implements Serializable, IBoard {
                 - substringDiff)) - 1;
         int y = Integer.parseInt(hexNum.substring(hexNum.length()
                 - substringDiff)) - 1;
-        return y * width + x;
+        return (y * width) + x;
     }
 
     /**
@@ -1051,7 +1051,6 @@ public class Board implements Serializable, IBoard {
      */
     public void collapseBuilding(Coords coords) {
         final IHex curHex = this.getHex(coords);
-        int elevation = curHex.getElevation();
 
         // Remove the building from the building map.
         Building bldg = bldgByCoords.get(coords);
@@ -1087,11 +1086,11 @@ public class Board implements Serializable, IBoard {
                     Terrains.RUBBLE, type));
         }
 
-        // Any basement reduces the hex's elevation.
         if (curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
-            elevation -= curHex.terrainLevel(Terrains.BLDG_BASEMENT);
+            // per TW 176 the basement doesn't change the elevation of the bulding hex
+            // the basement fills in with the rubble of the building
+            // any units in the basement are destroyed
             curHex.removeTerrain(Terrains.BLDG_BASEMENT);
-            curHex.setElevation(elevation);
         }
 
         // Update the hex.
@@ -1363,7 +1362,7 @@ public class Board implements Serializable, IBoard {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int elevation = data[y * width + x].getElevation();
+                int elevation = data[(y * width) + x].getElevation();
                 if(maxElevation < elevation) {
                     maxElevation = elevation;
                 }
@@ -1379,7 +1378,7 @@ public class Board implements Serializable, IBoard {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int elevation = data[y * width + x].getElevation();
+                int elevation = data[(y * width) + x].getElevation();
                 if(minElevation > elevation) {
                     minElevation = elevation;
                 }

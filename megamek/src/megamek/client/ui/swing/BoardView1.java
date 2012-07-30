@@ -93,6 +93,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -1195,7 +1196,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         final Point hexLoc = getHexLocation(c);
 
         int level = hex.getElevation();
-        int depth = hex.depth();
+
+        int depth = hex.depth(false);
+
+        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT);
+        if (basement != null) {
+            depth = 0;
+
+        }
         int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex
                 .terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));

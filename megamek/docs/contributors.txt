@@ -80,6 +80,7 @@
      Gil Hamilton <iarei@users.sourceforge.net>
      Neth <neoneth@users.sourceforge.net>
      GruetzDark <gruetzdark@users.sourceforge.net>
+     Michael rowlett <michael.d.rowlett@gmail.com>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -3,7 +3,7 @@
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -517,9 +517,9 @@ public class FighterSquadron extends Aero {
         }
         getCrew().setPiloting(pilotingTotal / getN0Fighters());
         getCrew().setGunnery(gunneryTotal / getN0Fighters());
-        getCrew().setGunneryL(gunneryTotal / getN0Fighters());
-        getCrew().setGunneryM(gunneryTotal / getN0Fighters());
-        getCrew().setGunneryB(gunneryTotal / getN0Fighters());
+        getCrew().setGunneryL(gunneryLTotal / getN0Fighters());
+        getCrew().setGunneryM(gunneryMTotal / getN0Fighters());
+        getCrew().setGunneryB(gunneryBTotal / getN0Fighters());
     }
 
     @Override
@@ -554,7 +554,7 @@ public class FighterSquadron extends Aero {
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
@@ -578,7 +578,7 @@ public class FighterSquadron extends Aero {
 
     /**
      * Load the given unit.
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be loaded.
      * @exception - If the unit can't be loaded, an
@@ -606,7 +606,7 @@ public class FighterSquadron extends Aero {
 
     /**
      * Unload the given unit. TODO: need to strip out ammo
-     * 
+     *
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
      * @return <code>true</code> if the unit was contained in this space,
@@ -624,7 +624,7 @@ public class FighterSquadron extends Aero {
 
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
-     * 
+     *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
      *         returned <code>List</code> is independant from the under- lying
@@ -639,7 +639,7 @@ public class FighterSquadron extends Aero {
 
     /**
      * Return a string that identifies the unused capacity of this transporter.
-     * 
+     *
      * @return A <code>String</code> meant for a human.
      */
     @Override
@@ -650,7 +650,7 @@ public class FighterSquadron extends Aero {
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     * 
+     *
      * @param loc
      *            - the <code>int</code> location attempting to fire.
      * @param isRear
@@ -670,7 +670,7 @@ public class FighterSquadron extends Aero {
      * suffer damage when the transporter is hit by an attack. Currently, no
      * more than one unit can be at any single location; that same unit can be
      * "spread" over multiple locations.
-     * 
+     *
      * @param loc
      *            - the <code>int</code> location hit by attack.
      * @param isRear

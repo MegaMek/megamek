@@ -119,6 +119,7 @@ public interface IHex extends Cloneable {
      *         surface elevation.
      */
     public abstract int depth();
+    public abstract int depth(boolean hidden);
 
     /**
      * @return true if there is pavement, a road or a bridge in the hex.
@@ -199,7 +200,7 @@ public interface IHex extends Cloneable {
      *
      * @return extra movement cost for entering the hex
      */
-    public abstract int movementCost(Entity e);
+    public abstract int movementCost(Entity entity);
 
     /**
      * @return the modifier to the roll to ignite this hex

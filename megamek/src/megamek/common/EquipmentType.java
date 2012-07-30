@@ -16,10 +16,6 @@
 
 package megamek.common;
 
-import megamek.common.options.GameOptions;
-import megamek.common.util.StringUtil;
-import megamek.server.Server;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -29,13 +25,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.AmmoType;
+import megamek.common.options.GameOptions;
 import megamek.common.weapons.BPodWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.MPodWeapon;
 import megamek.common.weapons.PPCWeapon;
-import megamek.common.weapons.TAGHandler;
-import megamek.common.weapons.Weapon;
+import megamek.server.Server;
 
 /**
  * Represents any type of equipment mounted on a mechs, excluding systems and
@@ -232,7 +227,7 @@ public class EquipmentType {
 
     public boolean isExplosive(Mounted mounted) {
         // Special case: discharged M- and B-pods shouldn't explode.
-        if ((this instanceof MPodWeapon || this instanceof BPodWeapon) && (mounted.getLinked() == null || mounted.getLinked().getUsableShotsLeft() == 0)) {
+        if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) && ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
             return false;
         }
 
@@ -267,7 +262,7 @@ public class EquipmentType {
 
         //special case. HVACs only explode when there's ammo left
         if (mounted.getType() instanceof HVACWeapon) {
-            if (mounted.getEntity() == null || mounted.getLinked() == null || mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0) {
+            if ((mounted.getEntity() == null) || (mounted.getLinked() == null) || (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0)) {
                 return false;
             }
         }
@@ -377,7 +372,7 @@ public class EquipmentType {
      * such as standard LRMs has modes that do not apply to the subtype
      */
     protected void clearModes() {
-        this.modes = null;
+        modes = null;
     }
 
     public void addEndTurnMode(String mode) {

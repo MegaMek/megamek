@@ -52,6 +52,12 @@ public class Building implements Serializable {
     private int type = Building.UNKNOWN;
 
     /**
+     * The Basement type of the building.
+     */
+    private int basement = Building.UNKNOWN;
+
+
+    /**
      * the class of the building
      */
     private int bldgClass =Building.STANDARD;
@@ -75,6 +81,12 @@ public class Building implements Serializable {
      * The current armor of the building hexes.
      */
     private Map<Coords, Integer> armor = new HashMap<Coords, Integer>();
+
+
+    /**
+     * The current state of the basement.
+     */
+	private boolean basementCollapsed = false;
 
     /**
      * The name of the building.
@@ -181,6 +193,18 @@ public class Building implements Serializable {
      * Generic flag for uninitialized values.
      */
     protected static final int UNKNOWN = -1;
+
+/**
+  *  Basement handlers
+  */
+    public static final int NOBASEMENT = 0;
+    public static final int TWO_DEEP_FEET = 1;
+    public static final int ONE_DEEP_FEET = 2;
+    public static final int ONE_DEEP_NORMAL = 3;
+    public static final int ONE_DEEP_NORMALINFONLY = 4;
+    public static final int ONE_DEEP_HEAD = 5;
+    public static final int TWO_DEEP_HEAD = 6;
+
 
     /**
      * Various construction types.
@@ -385,6 +409,23 @@ public class Building implements Serializable {
      */
     public int getBldgClass() {
         return bldgClass;
+    }
+
+    /**
+     * Get the building basement, per TacOps rules.
+     * @return the <code>int</code> code of the buildingbasement type.
+     */
+    public boolean getBasementCollapsed() {
+        return basementCollapsed;
+    }
+
+    public void setBasementCollapsed(boolean state, IHex hex) {
+        if (state && (hex.terrainLevel(Terrains.BLDG_BASEMENT) != 0)) {
+            System.err.println("basement is collapsing, hex:" + hex.getCoords().toString() + " set terrain!");
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASE_COLLAPSED, 1));
+            basementCollapsed = state;
+        }
     }
 
     /**
@@ -668,6 +709,14 @@ public class Building implements Serializable {
           //  return (int) Math.ceil(getPhaseCF(pos));
         //}
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);
+    }
+
+    public int getBasement() {
+        return basement;
+    }
+
+    public void setBasement(int basement) {
+        this.basement = basement;
     }
 
 } // End public class Building implements Serializable

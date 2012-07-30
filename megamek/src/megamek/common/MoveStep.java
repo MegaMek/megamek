@@ -466,7 +466,7 @@ public class MoveStep implements Serializable {
                 + game.getBoard().getHex(entity.getPosition()).surface())
                 - hex.surface();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
-            int depth = -hex.depth();
+            int depth = -hex.depth(true);
             //need to adjust depth for potential ice over water
             if((hex.containsTerrain(Terrains.ICE) && hex.containsTerrain(Terrains.WATER)) ||
                     (entity.getMovementMode() == EntityMovementMode.HOVER)) {
@@ -1268,8 +1268,10 @@ public class MoveStep implements Serializable {
         // Can't be a stacking violation.
         boolean legal = true;
         if (isStackingViolation) {
+			System.err.println("stacking violation in movement");
             legal = false;
         } else if (terrainInvalid) {
+			System.err.println("Invalid terrain in movement");
             // Can't be into invalid terrain.
             legal = false;
         } else if (parent.isJumping() && (distance == 0)) {
@@ -2400,12 +2402,14 @@ public class MoveStep implements Serializable {
         final Entity entity = parent.getEntity();
 
         if (null == dest) {
+			System.err.println("step has no position");
             throw new IllegalStateException("Step has no position.");
         }
         if (src.distance(dest) > 1) {
             StringBuffer buf = new StringBuffer();
             buf.append("Coordinates ").append(src.toString()).append(" and ")
             .append(dest.toString()).append(" are not adjacent.");
+			System.err.println(buf.toString());
             throw new IllegalArgumentException(buf.toString());
         }
 
@@ -2430,16 +2434,20 @@ public class MoveStep implements Serializable {
 
         // super-easy
         if (entity.isImmobile()) {
-            return false;
+            System.err.println("illegal - immobile");
+			return false;
         }
 
         // another easy check
         if (!game.getBoard().contains(dest)) {
-            return false;
+            System.err.println("board doesn't contain destination");
+			return false;
         }
 
         // can't enter impassable hex
         if (destHex.containsTerrain(Terrains.IMPASSABLE)) {
+			System.err.println("can't enter impassable hex");
+
             return false;
         }
 
@@ -2450,6 +2458,7 @@ public class MoveStep implements Serializable {
             // they can only jump onto a building or out of it
             if (src.equals(dest) && (entity instanceof Protomech) &&
                     (getMovementType() == EntityMovementType.MOVE_JUMP)) {
+                System.err.println("no jumping inside buildings to change levels");
                 return false;
             }
             IHex hex = game.getBoard().getHex(getPosition());
@@ -2459,6 +2468,7 @@ public class MoveStep implements Serializable {
 
             if ((bld.getType() == Building.WALL)
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
+                System.err.println("soemthing about walls");
                 return false;
             }
 
@@ -2485,6 +2495,7 @@ public class MoveStep implements Serializable {
                 "tacops_walk_backwards")) || (game.getOptions()
                         .booleanOption("tacops_walk_backwards") && (Math
                                 .abs(destAlt - srcAlt) > 1)))) {
+            System.err.println("Can't back up across an elevation change.");
             return false;
         }
 
@@ -2571,6 +2582,7 @@ public class MoveStep implements Serializable {
                 && (nMove != EntityMovementMode.VTOL)) {
             if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > entity.getMaxElevationDown())) ||
                     (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity.getMaxElevationChange()))) {
+                System.err.println("jump VTOL check failed");
                 return false;
             }
         }
@@ -2661,6 +2673,7 @@ public class MoveStep implements Serializable {
                         + entity.game.getBoard().getHex(entity.getPosition())
                         .getElevation() + entity.getJumpMPWithTerrain() + (type == MoveStepType.DFA ? 1
                                 : 0)))) {
+			System.err.println("can't jump over too-high terrain");
             return false;
         }
 
@@ -2680,6 +2693,7 @@ public class MoveStep implements Serializable {
                 terrainInvalid = true;
             } else {
                 // This is an illegal move.
+			System.err.println("landing in illegal terrain");
                 return false;
             }
         }
@@ -2690,6 +2704,8 @@ public class MoveStep implements Serializable {
                 && (src != entity.getPosition())
                 && (parent.isJumping() || (entity.getMovementMode() == EntityMovementMode.VTOL))
                 && (srcEl < srcHex.terrainLevel(Terrains.BLDG_ELEV))) {
+			System.err.println("jumping into side of building");
+
             return false;
         }
 
@@ -2698,15 +2714,19 @@ public class MoveStep implements Serializable {
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
                 && entity.isHexProhibited(srcHex) && !isPavementStep) {
+			System.err.println("in restriced terrain");
             return false;
         }
         if (type == MoveStepType.UP) {
             if (!(entity.canGoUp(elevation - 1, getPosition()))) {
+				System.err.println("cant go up anymore");
+
                 return false;
             }
         }
         if (type == MoveStepType.DOWN) {
             if (!(entity.canGoDown(elevation + 1, getPosition()))) {
+				System.err.println("cant go down anymore");
                 return false;// We can't intentionally crash.
             }
         }
@@ -2727,7 +2747,8 @@ public class MoveStep implements Serializable {
         if ((entity instanceof VTOL)
                 && ((type == MoveStepType.BACKWARDS) || (type == MoveStepType.FORWARDS))) {
             if (elevation <= (destHex.ceiling() - destHex.surface())) {
-                return false; // can't fly into woods or a cliff face
+                System.err.println("can't fly into woods or a cliff face");
+				return false; // can't fly into woods or a cliff face
             }
         }
 
@@ -2737,6 +2758,7 @@ public class MoveStep implements Serializable {
             if (parent.isJumping()) {
                 terrainInvalid = true;
             } else {
+                System.err.println("isElevationValid failed destHex is " + destHex.getCoords().toString());
                 return false;
             }
         }

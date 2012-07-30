@@ -138,7 +138,7 @@ public abstract class TestEntity implements TestEntityOption {
     public float getWeightCeilingTurret() {
         return options.getWeightCeilingTurret();
     }
-    
+
     public float getWeightCeilingLifting() {
         return options.getWeightCeilingLifting();
     }

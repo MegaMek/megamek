@@ -23,8 +23,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -2467,11 +2467,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             boolean rearMounted, boolean bodyMounted, boolean isArmored,
             boolean isTurreted, boolean isSponsonTurreted)
             throws LocationFullException {
+        return addEquipment(etype, loc, rearMounted, bodyMounted, isArmored,
+                isTurreted, isSponsonTurreted, false);
+    }
+    public Mounted addEquipment(EquipmentType etype, int loc,
+            boolean rearMounted, boolean bodyMounted, boolean isArmored,
+            boolean isTurreted, boolean isSponsonTurreted, boolean isPintleTurreted)
+            throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBodyMounted(bodyMounted);
         mounted.setMechTurretMounted(isTurreted);
         mounted.setSponsonTurretMounted(isSponsonTurreted);
+        mounted.setPintleTurretMounted(isPintleTurreted);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
@@ -4067,7 +4075,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasHarJelIn(int location) {
         return false;
     }
-    
+
     /**
      * Checks if the entity has a C3 Master.
      *

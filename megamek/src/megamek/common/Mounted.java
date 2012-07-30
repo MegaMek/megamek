@@ -53,7 +53,8 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
     private boolean mechTurretMounted = false; // is this mounted in a mechturret
-    private boolean sponsonTurretMounted = false; // is this mounted in a mechturret
+    private boolean sponsonTurretMounted = false; // is this mounted in a sponsonturret
+    private boolean pintleTurretMounted = false; // is this mounted in a pintleturret
     private int facing = -1; // facing for turrets
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
@@ -381,6 +382,9 @@ public class Mounted implements Serializable, RoundUpdated {
         if (sponsonTurretMounted) {
             desc.append(" (ST)");
         }
+        if (pintleTurretMounted) {
+            desc.append(" (PT)");
+        }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
 
             desc.append(" (");
@@ -490,9 +494,9 @@ public class Mounted implements Serializable, RoundUpdated {
      * the unit formerly carrying it. This is the 'general' base value that
      * should be used for display, reporting, entity encoding and salvage
      * purposes.
-     * 
+     *
      * @see #getHittableShotsLeft()
-     * @see #getUsableShotsLeft() 
+     * @see #getUsableShotsLeft()
      * @return The base 'true' number of shots in this slot.
      */
     public int getBaseShotsLeft() {
@@ -503,8 +507,8 @@ public class Mounted implements Serializable, RoundUpdated {
      * in this Mounted that may be affected by a critical hit. This
      * method returns 0 if this Mounted is marked as destroyed or missing and
      * the same value as {@link #getBaseShotsLeft()} otherwise.
-     * 
-     * @see #getBaseShotsLeft() 
+     *
+     * @see #getBaseShotsLeft()
      * @see #getUsableShotsLeft()
      * @return The number of 'hittable' shots in this slot.
      */
@@ -514,14 +518,14 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return shotsLeft;
     }
-    
+
     /** Convenience method returning the number of shots of ammunition
      * in this Mounted that can actually be used <em>as</em> ammunition.
      * This method returns 0 if this Mounted is marked as destroyed, missing,
      * or breached and thus nonfunctional and the same value as
      * {@link #getBaseShotsLeft()} otherwise.
-     * 
-     * @see #getBaseShotsLeft() 
+     *
+     * @see #getBaseShotsLeft()
      * @see #getHittableShotsLeft()
      * @return The number of usable shots in this slot.
      */
@@ -531,7 +535,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return shotsLeft;
     }
-    
+
     public void setShotsLeft(int shotsLeft) {
         if (shotsLeft < 0) {
             shotsLeft = 0;
@@ -1219,7 +1223,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     /**
-     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean options, 
+     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean options,
      * as it will not check game options for quirks. Use Mounted#hasQuirk instead
      * @return
      */
@@ -1228,22 +1232,22 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean hasQuirk(String name) {
-    	if(null == entity || null == entity.getGame() || !entity.getGame().getOptions().booleanOption("stratops_quirks")) {
+    	if((null == entity) || (null == entity.getGame()) || !entity.getGame().getOptions().booleanOption("stratops_quirks")) {
     		return false;
     	}
     	return quirks.booleanOption(name);
     }
-    
+
     /**
      * count all the quirks for this unit, positive and negative
      */
     public int countQuirks() {
         int count = 0;
 
-        if(null == entity || null == entity.game || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+        if((null == entity) || (null == entity.game) || !entity.game.getOptions().booleanOption("stratops_quirks")) {
         	return count;
         }
-        
+
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
@@ -1264,10 +1268,10 @@ public class Mounted implements Serializable, RoundUpdated {
     public String getQuirkList(String sep) {
         StringBuffer qrk = new StringBuffer();
 
-        if(null == entity || null == entity.game || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+        if((null == entity) || (null == entity.game) || !entity.game.getOptions().booleanOption("stratops_quirks")) {
         	return qrk.toString();
         }
-        
+
         if (null == sep) {
             sep = "";
         }
@@ -1323,6 +1327,14 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public boolean isSponsonTurretMounted() {
         return sponsonTurretMounted;
+    }
+
+    public void setPintleTurretMounted(boolean turret) {
+        pintleTurretMounted = turret;
+    }
+
+    public boolean isPintleTurretMounted() {
+        return pintleTurretMounted;
     }
 
     public void setFacing(int facing) {

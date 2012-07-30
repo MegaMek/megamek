@@ -14,18 +14,6 @@
 
 package megamek.common;
 
-import megamek.common.BattleArmor;
-import megamek.common.Tank;
-import megamek.common.GunEmplacement;
-import megamek.common.Dropship;
-import megamek.common.Warship;
-import megamek.common.Jumpship;
-import megamek.common.SmallCraft;
-import megamek.common.Infantry;
-import megamek.common.Aero;
-import megamek.common.Protomech;
-import megamek.common.Mech;
-import megamek.common.Entity;
 
 /**
  * weight class limits and names
@@ -67,7 +55,7 @@ public class EntityWeightClass {
         int i;
 
         if (type.equals("BattleArmor")) {
-            for (i = 0; i < BAWeightLimits.length - 1; i++) {
+            for (i = 0; i < (BAWeightLimits.length - 1); i++) {
                 if (tonnage <= BAWeightLimits[i]) {
                 break;
             }
@@ -75,37 +63,37 @@ public class EntityWeightClass {
         } else if (type.equals("Infantry")) {
             return WEIGHT_LIGHT;
         } else if (type.equals("VTOL") || type.equals("Naval") || type.equals("Tank")) {
-            for (i = WEIGHT_LIGHT; i < ASFWeightLimits.length - 1; i++) { // Started at late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals("Gun Emplacement")) {
-            for (i = WEIGHT_LIGHT; i < GEWeightLimits.length - 1; i++) { // Started at late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (GEWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
                 if (tonnage <= GEWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals("Mek")) {
-            for (i = 0; i < mechWeightLimits.length - 1; i++) {
+            for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals("ProtoMek")) {
-            for (i = WEIGHT_LIGHT; i < protoWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (protoWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= protoWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals("Space Station") || type.equals("Warship") || type.equals("Jumpship")) {
-            for (i = WEIGHT_SMALL_WAR; i < jumpshipWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_SMALL_WAR; i < (jumpshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= jumpshipWeightLimits[i]) {
                     break;
                 }
             }
         } else if (type.equals("Dropship")) {
-            for (i = WEIGHT_SMALL_DROP; i < dropshipWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
                     break;
                 }
@@ -115,13 +103,13 @@ public class EntityWeightClass {
         } else if (type.equals("Conventional Fighter")) {
             return WEIGHT_LIGHT;
         } else if (type.equals("Aero")) {
-            for (i = WEIGHT_LIGHT; i < ASFWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
                 }
             }
         } else {
-            for (i = 0; i < mechWeightLimits.length - 1; i++) {
+            for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
                 }
@@ -136,19 +124,19 @@ public class EntityWeightClass {
 
         // Order of IF statements is important!! Any subclasses must come before their parent class!
         if (en instanceof Mech) {
-            for (i = 0; i < mechWeightLimits.length - 1; i++) {
+            for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof Jumpship) { // Also handles Warships & Space Stations
-            for (i = WEIGHT_SMALL_WAR; i < jumpshipWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_SMALL_WAR; i < (jumpshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= jumpshipWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof Dropship) {
-            for (i = WEIGHT_SMALL_DROP; i < dropshipWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_SMALL_DROP; i < (dropshipWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= dropshipWeightLimits[i]) {
                     break;
                 }
@@ -158,13 +146,13 @@ public class EntityWeightClass {
         } else if (en instanceof SmallCraft) {
             return WEIGHT_SMALL_CRAFT;
         } else if (en instanceof Aero) {
-            for (i = WEIGHT_LIGHT; i < ASFWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof BattleArmor) {
-            for (i = 0; i < BAWeightLimits.length - 1; i++) {
+            for (i = 0; i < (BAWeightLimits.length - 1); i++) {
                 if (tonnage <= BAWeightLimits[i]) {
                     break;
                 }
@@ -172,25 +160,25 @@ public class EntityWeightClass {
         } else if (en instanceof Infantry) { // For now infantry don't have weights, put them all under light?
             return WEIGHT_LIGHT;
         } else if (en instanceof GunEmplacement) {
-            for (i = WEIGHT_LIGHT; i < GEWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (GEWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= GEWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof Tank) {
-            for (i = WEIGHT_LIGHT; i < ASFWeightLimits.length - 1; i++) { // Started late to bypass padding & save a loop execution
+            for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;
                 }
             }
         } else if (en instanceof Protomech) {
-            for (i = 0; i < protoWeightLimits.length - 1; i++) {
+            for (i = 0; i < (protoWeightLimits.length - 1); i++) {
                 if (tonnage <= protoWeightLimits[i]) {
                     break;
                 }
             }
         } else { // And... we'll default to the mech chart.
-            for (i = 0; i < mechWeightLimits.length - 1; i++) {
+            for (i = 0; i < (mechWeightLimits.length - 1); i++) {
                 if (tonnage <= mechWeightLimits[i]) {
                     break;
                 }

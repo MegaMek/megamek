@@ -265,15 +265,28 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#depth()
      */
     public int depth() {
+        return depth(false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.IHex#depth( boolean hidden)
+     */
+    public int depth(boolean hidden) {
         int depth = 0;
         ITerrain water = getTerrain(Terrains.WATER);
         ITerrain basement = getTerrain(Terrains.BLDG_BASEMENT);
+
         if (water != null) {
             depth += water.getLevel();
         }
         if (basement != null) {
-            depth += basement.getLevel();
+            if (hidden) {
+                depth += basement.getLevel();
+            }
         }
+
         return depth;
     }
 
@@ -416,11 +429,11 @@ public class Hex implements IHex, Serializable {
         return rv;
     }
 
-    public int movementCost(Entity e) {
+    public int movementCost(Entity entity) {
         int rv = 0;
         for (int i = 0; i < terrains.length; i++) {
             if (terrains[i] != null) {
-                rv += terrains[i].movementCost(e);
+                rv += terrains[i].movementCost(entity);
             }
         }
         return rv;

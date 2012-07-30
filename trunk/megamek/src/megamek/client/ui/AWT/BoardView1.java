@@ -103,6 +103,7 @@ import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
@@ -1112,11 +1113,19 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         final Point hexLoc = getHexLocation(c);
 
         int level = hex.getElevation();
-        int depth = hex.depth();
+        int depth = 0;
         int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex
                 .terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
+
+        depth = hex.depth(false);
+
+        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT);
+        if (basement != null) {
+            depth = 0;
+
+        }
         // offset drawing point
 
         int drawX = hexLoc.x - boardRect.x;

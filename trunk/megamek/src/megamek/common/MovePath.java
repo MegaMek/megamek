@@ -257,6 +257,12 @@ public class MovePath implements Cloneable, Serializable {
 
     public void removeLastStep() {
         if (steps.size() > 0) {
+            final MoveStep step1 = getStep(steps.size() - 1);
+
+            if(step1.getType() == MovePath.MoveStepType.START_JUMP) {
+                entity.setIsJumpingNow(false);
+            }
+
             steps.removeElementAt(steps.size() - 1);
         }
 

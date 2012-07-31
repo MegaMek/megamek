@@ -13469,7 +13469,7 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(steelroll);
 
-        if (steelroll > 11) {
+        if (steelroll >= 11) {
             r.choose(true);
             addReport(r);
         } else {

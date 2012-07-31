@@ -728,6 +728,7 @@ public class MoveStep implements Serializable {
             }
             break;
         case START_JUMP:
+            entity.setIsJumpingNow(true);
             break;
         case UP:
             if (entity.isAirborne()) {
@@ -1268,10 +1269,8 @@ public class MoveStep implements Serializable {
         // Can't be a stacking violation.
         boolean legal = true;
         if (isStackingViolation) {
-			System.err.println("stacking violation in movement");
             legal = false;
         } else if (terrainInvalid) {
-			System.err.println("Invalid terrain in movement");
             // Can't be into invalid terrain.
             legal = false;
         } else if (parent.isJumping() && (distance == 0)) {
@@ -1440,6 +1439,7 @@ public class MoveStep implements Serializable {
 
     public void setClimbMode(boolean b) {
         climbMode = b;
+        parent.getEntity().setClimbMode(b);
     }
 
     /**

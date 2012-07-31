@@ -92,12 +92,17 @@ public class BLKFile {
             prefix = "IS ";
         }
 
-        boolean isTurreted = false;
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
                 String equipName = saEquip[x].trim();
+                boolean isTurreted = false;
+                boolean isPintleTurreted = false;
                 if (equipName.toUpperCase().endsWith("(ST)")) {
                     isTurreted = true;
+                    equipName = equipName.substring(0, equipName.length() - 4).trim();
+                }
+                if (equipName.toUpperCase().endsWith("(PT)")) {
+                    isPintleTurreted = true;
                     equipName = equipName.substring(0, equipName.length() - 4).trim();
                 }
                 EquipmentType etype = EquipmentType.get(equipName);
@@ -109,7 +114,7 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false, false, false, false, isTurreted);
+                        t.addEquipment(etype, nLoc, false, false, false, false, isTurreted, isPintleTurreted);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }

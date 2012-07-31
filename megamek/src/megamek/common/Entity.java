@@ -167,6 +167,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean[] locationBlownOffThisPhase;
     protected int[] armorType;
     protected int[] armorTechLevel;
+    protected boolean isJumpingNow = false;
 
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -1207,16 +1208,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 int bldcur = Math.max(current.depth(true),
                         current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(next.depth(true), next.terrainLevel(Terrains.BLDG_ELEV));
-
-                if (((assumedElevation == bldcur) && climb && (this instanceof Mech))
+                if (((assumedElevation == bldcur) && (climbMode || isJumpingNow ) && (this instanceof Mech))
                         || (retVal > bldnex)) {
                     retVal = bldnex;
-                } else if ((bldnex + next.surface()) > (bldcur + current
-                        .surface())) {
-                    retVal += current.surface();
-                    retVal -= next.surface();
+                } else if ((bldnex + next.surface()) > (bldcur + current.surface())) {
+                    if(climbMode || isJumpingNow) {
+                        retVal = bldnex + next.surface();
+                    } else {
+                        retVal += current.surface();
+                        retVal -= next.surface();
+                    }
                 } else if (elevation == -(current.depth(true)) ) {
-                    retVal = next.surface();
+                    if(climbMode || isJumpingNow) {
+                        retVal = bldnex + next.surface();
+                    } else {
+                        retVal = next.surface();
+                    }
                 }
             }
             if ((getMovementMode() != EntityMovementMode.NAVAL)
@@ -11581,4 +11588,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setSelfDestructInitiated(boolean tf) {
         selfDestructInitiated = tf;
     }
+
+    public void setIsJumpingNow(boolean jumped) {
+        isJumpingNow = jumped;
+    }
+
+    public boolean getIsJumpingNow() {
+        return isJumpingNow;
+    }
+
 }

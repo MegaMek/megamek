@@ -4487,7 +4487,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[14 + locations()];
+        double[] costs = new double[15 + locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -4556,6 +4556,18 @@ public abstract class Mech extends Entity {
         // cost of sinks
         costs[i++] = sinkCost * (heatSinks() - freeSinks);
         costs[i++] = hasFullHeadEject() ? 1725000 : 0;
+        // armored components
+        int armoredCrits = 0;
+        for (int j = 0; j<locations(); j++) {
+            int numCrits = getNumberOfCriticals(j);
+            for (int k = 0; k < numCrits; k++) {
+                CriticalSlot ccs = getCritical(j, k);
+                if ((ccs != null) && ccs.isArmored()) {
+                    armoredCrits++;
+                }
+            }
+        }
+        costs[i++] = armoredCrits * 150000;
 
         // armor
         if (hasPatchworkArmor()) {

@@ -22866,7 +22866,7 @@ public class Server implements Runnable {
     private void receiveEntityUpdate(Packet c, int connIndex) {
         Entity entity = (Entity) c.getObject(0);
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (oldEntity.getOwner() == getPlayer(connIndex))) {
+        if ((oldEntity != null) && (oldEntity.getOwner() == getPlayer(connIndex) || oldEntity.getOwner().getTeam() == getPlayer(connIndex).getTeam())) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit

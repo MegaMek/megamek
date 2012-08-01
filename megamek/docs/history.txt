@@ -49,6 +49,7 @@ v0.35.32-dev (SVN)
 + Bug: mech cost missing armored component costs
 + Patch 3552390, Bug 3179787: Inability to jump onto occupied building
 + Patch 3552390: Aerospace fighters should attempt to ram on 11 or greater
++ Bug: WiGE lift equipment tonnage/cost and final unit cost multiplier not accounted for.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

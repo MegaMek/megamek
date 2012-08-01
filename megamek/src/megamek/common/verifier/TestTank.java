@@ -119,6 +119,7 @@ public class TestTank extends TestEntity {
             case VTOL:
             case HYDROFOIL:
             case SUBMARINE:
+            case WIGE:
                 return TestEntity.ceilMaxHalf(tank.getWeight() / 10.0f,
                         getWeightCeilingLifting());
             default:

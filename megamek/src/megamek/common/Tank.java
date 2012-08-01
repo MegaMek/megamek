@@ -2074,7 +2074,8 @@ public class Tank extends Entity {
             case HYDROFOIL:
             case VTOL:
             case SUBMARINE:
-                diveTonnage = weight / 10.0;
+            case WIGE:
+                diveTonnage = Math.ceil(weight / 5.0) / 2.0;
                 break;
             default:
                 diveTonnage = 0.0;
@@ -2104,6 +2105,9 @@ public class Tank extends Entity {
                 break;
             case VTOL:
                 multiplier += weight / 30.0;
+                break;
+            case WIGE:
+                multiplier += weight / 25.0;
                 break;
             default:
         }

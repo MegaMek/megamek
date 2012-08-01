@@ -1242,6 +1242,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
@@ -1259,6 +1260,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, TechConstants.T_IS_UNOFFICIAL));
         munitions.add(new MunitionMutator("Copperhead", 1, M_HOMING, TechConstants.T_IS_UNOFFICIAL));
         munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, TechConstants.T_IS_UNOFFICIAL));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, TechConstants.T_IS_UNOFFICIAL));
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, TechConstants.T_IS_UNOFFICIAL));
 
         // Walk through both the base types and the
@@ -1274,6 +1276,7 @@ public class AmmoType extends EquipmentType {
         munitions.clear();
         munitions.add(new MunitionMutator("(Clan) Copperhead", 1, M_HOMING, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the

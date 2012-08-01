@@ -7448,7 +7448,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Delivers a Arrow IV FASCAM shot to the targetted hex area.
+     * Delivers an artillery FASCAM shot to the targetted hex area.
      */
     public void deliverFASCAMMinefield(Coords coords, int playerId, int damage, int entityId) {
         // Only if this is on the board...
@@ -7464,14 +7464,20 @@ public class Server implements Runnable {
                 }
             }
             // Did we find a Thunder minefield in the hex?
-            // N.B. damage of FASCAM minefields is 30
             if (minefield == null) {
-                minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, 30);
+                minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, damage);
+                game.addMinefield(minefield);
+                checkForRevealMinefield(minefield, game.getEntity(entityId));
+            } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
+                // Add to the old one.
+                removeMinefield(minefield);
+                int oldDamage = minefield.getDensity();
+                damage += oldDamage;
+                damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE : damage;
+                minefield.setDensity(damage);
+                game.addMinefield(minefield);
+                checkForRevealMinefield(minefield, game.getEntity(entityId));
             }
-            removeMinefield(minefield);
-            minefield.setDensity(30);
-            game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
         } // End coords-on-board
     }
 

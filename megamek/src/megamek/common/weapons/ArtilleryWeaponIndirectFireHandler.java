@@ -373,7 +373,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), atype.getRackSize(), ae.getId());
+            // Arrow IVs deliver fixed 30-point minefields.
+            int rackSize = (atype.getAmmoType() == AmmoType.T_ARROW_IV) ? 30 : atype.getRackSize();
+            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), rackSize, ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
@@ -382,7 +384,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
             server.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(),
-                    atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
+                    30, waa.getOtherAttackInfo(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {

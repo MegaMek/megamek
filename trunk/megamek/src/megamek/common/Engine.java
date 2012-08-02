@@ -289,10 +289,17 @@ public class Engine implements Serializable {
      * Returns the number of heat sinks which can be built into the engine and
      * therefore don't require a critical slot.
      *
+     * @param compact Whether this engine uses compact heat sinks or not.
+     * 
      * @return the maximum number of heat sinks built into the engine.
      */
-    public int integralHeatSinkCapacity() {
-        return engineRating / 25;
+    public int integralHeatSinkCapacity(boolean compact) {
+        if (compact) {
+            return (engineRating / 25) * 2;
+        }
+        else {
+            return engineRating / 25;
+        }
     }
 
     /**
@@ -612,10 +619,12 @@ public class Engine implements Serializable {
     /**
      * Return the Base Chassies Engine heat Sinks or intergalHeatSinkCapacity which ever is less.
      *
+     * @param compact Whether this engine uses compact heat sinks or not.
+     * 
      * @return
      */
-    public int getBaseChassisHeatSinks() {
-        return Math.min(integralHeatSinkCapacity(), baseChassisHeatSinks);
+    public int getBaseChassisHeatSinks(boolean compact) {
+        return Math.min(integralHeatSinkCapacity(compact), baseChassisHeatSinks);
     }
 
     public int getFlags() {

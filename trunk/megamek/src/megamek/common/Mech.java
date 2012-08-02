@@ -1385,10 +1385,7 @@ public abstract class Mech extends Entity {
             addEngineSinks(totalSinks, clan ? "CLDoubleHeatSink"
                     : "ISDoubleHeatSink");
         } else if (heatSinkFlag == MiscType.F_COMPACT_HEAT_SINK) {
-            addEngineSinks(totalSinks, "IS2 Compact Heat Sinks");
-            if ((totalSinks % 2) == 1) {
-                addEngineSinks(totalSinks, "IS1 Compact Heat Sink");
-            }
+            addEngineSinks(totalSinks, "IS1 Compact Heat Sink");
         } else if (heatSinkFlag == MiscType.F_LASER_HEAT_SINK) {
             addEngineSinks(totalSinks, "CLLaser Heat Sink");
         } else {
@@ -1407,8 +1404,14 @@ public abstract class Mech extends Entity {
      *            add. must be a lookupname of a heatsinktype
      */
     public void addEngineSinks(int totalSinks, String sinkName) {
+        EquipmentType sinkType = EquipmentType.get(sinkName);
+
+        if (sinkType == null) {
+            System.out.println("Mech: can't find heat sink to add to engine");
+        }
+
         int toAllocate = Math.min(totalSinks, getEngine()
-                .integralHeatSinkCapacity());
+                .integralHeatSinkCapacity(sinkType.hasFlag(MiscType.F_COMPACT_HEAT_SINK)));
         addEngineSinks(sinkName, toAllocate);
     }
 
@@ -5662,7 +5665,7 @@ public abstract class Mech extends Entity {
 
         if (isOmni()) {
             sb.append("Base Chassis Heat Sinks:");
-            sb.append(getEngine().getBaseChassisHeatSinks());
+            sb.append(getEngine().getBaseChassisHeatSinks(hasCompactHeatSinks()));
             sb.append(newLine);
         }
 

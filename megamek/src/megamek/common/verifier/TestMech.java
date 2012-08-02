@@ -371,7 +371,7 @@ public class TestMech extends TestEntity {
                 }
             }
         }
-        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity()) || ((countInternalHeatSinks < engine.integralHeatSinkCapacity()) && (countInternalHeatSinks != ((Mech) entity).heatSinks()) && !entity.isOmni())) {
+        if ((countInternalHeatSinks > engine.integralHeatSinkCapacity(mech.hasCompactHeatSinks())) || ((countInternalHeatSinks < engine.integralHeatSinkCapacity(mech.hasCompactHeatSinks())) && (countInternalHeatSinks != ((Mech) entity).heatSinks()) && !entity.isOmni())) {
             heatSinks.addElement(new Integer(countInternalHeatSinks));
         }
     }
@@ -410,7 +410,7 @@ public class TestMech extends TestEntity {
         }
         if (!heatSinks.isEmpty()) {
             int sinks = heatSinks.elements().nextElement().intValue();
-            buff.append(sinks).append(" of ").append(engine.integralHeatSinkCapacity()).append(" possible Internal Heat Sinks!").append("\n");
+            buff.append(sinks).append(" of ").append(engine.integralHeatSinkCapacity(mech.hasCompactHeatSinks())).append(" possible Internal Heat Sinks!").append("\n");
             correct = false;
         }
         if (!checkSystemCriticals(buff)) {
@@ -498,7 +498,7 @@ public class TestMech extends TestEntity {
         }
         if (getCountHeatSinks() < engine.getWeightFreeEngineHeatSinks()) {
             buff.append("Heat Sinks:\n");
-            buff.append(" Engine    " + engine.integralHeatSinkCapacity() + "\n");
+            buff.append(" Engine    " + engine.integralHeatSinkCapacity(mech.hasCompactHeatSinks()) + "\n");
             buff.append(" Total     " + getCountHeatSinks() + "\n");
             buff.append(" Required  " + engine.getWeightFreeEngineHeatSinks() + "\n");
             correct = false;

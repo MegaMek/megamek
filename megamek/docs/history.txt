@@ -51,6 +51,8 @@ v0.35.32-dev (SVN)
 + Patch 3552390: Aerospace fighters should attempt to ram on 11 or greater
 + Bug: WiGE lift equipment tonnage/cost and final unit cost multiplier not accounted for.
 + FASCAM ammo added to tube artillery.
++ Bug: Engine-internal compact heat sinks doubled up on installation (so, 10 specified in file => 20 actually ending up on 'Mech).
++ Bug: Engine capacity for compact heat sinks not doubled.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

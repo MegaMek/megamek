@@ -47,7 +47,8 @@ public class CLHeavyRecoillessRifle extends Weapon {
         longRange = 7;
         extremeRange = 10;
         bv = 22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
+                .or(F_BA_WEAPON).or(F_BURST_FIRE);
         cost = 5000;
     }
 

@@ -51,6 +51,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         tonnage = 0.5f;
         criticals = 1;
         bv = 21;
+        flags = flags.or(F_BURST_FIRE);
         cost = 8500;
         shortAV = 3;
         maxRange = RANGE_SHORT;

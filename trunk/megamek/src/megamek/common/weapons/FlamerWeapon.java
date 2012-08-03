@@ -36,7 +36,7 @@ public abstract class FlamerWeapon extends EnergyWeapon {
 
     public FlamerWeapon() {
         super();
-        flags = flags.or(F_FLAMER);
+        flags = flags.or(F_FLAMER).or(F_BURST_FIRE);
         ammoType = AmmoType.T_NA;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);

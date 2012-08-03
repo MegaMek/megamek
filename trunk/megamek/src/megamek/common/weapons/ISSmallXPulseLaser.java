@@ -57,5 +57,6 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
         maxRange = RANGE_SHORT;
         shortAV = 3;
         cost = 31000;
+        flags = flags.or(F_BURST_FIRE);
     }
 }

@@ -48,7 +48,7 @@ public class ISAutoGrenadeLauncher extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 1;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE);
     }
 
 }

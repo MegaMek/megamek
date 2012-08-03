@@ -48,7 +48,7 @@ public class ISHeavyMortar extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 17;
-        flags = flags.or(F_BALLISTIC);
+        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE);
     }
 
 }

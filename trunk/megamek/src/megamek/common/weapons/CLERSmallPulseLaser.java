@@ -55,5 +55,6 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         criticals = 1;
         bv = 36;
         cost = 30000;
+        flags = flags.or(F_BURST_FIRE);
     }
 }

@@ -17,6 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -38,6 +39,7 @@ public class CLLightMGA extends AmmoWeapon {
         setInternalName("CLLMGA");
         heat = 0;
         damage = 1;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
         rackSize = 1;
         ammoType = AmmoType.T_MG_LIGHT;
         minimumRange = WEAPON_NA;

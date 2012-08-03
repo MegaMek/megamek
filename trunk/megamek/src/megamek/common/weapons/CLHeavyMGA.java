@@ -17,6 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -37,6 +38,7 @@ public class CLHeavyMGA extends AmmoWeapon {
         setInternalName("CLHMGA");
         heat = 0;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_3D6;
         rackSize = 3;
         ammoType = AmmoType.T_MG_HEAVY;
         minimumRange = WEAPON_NA;

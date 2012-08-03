@@ -18,11 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -44,6 +41,7 @@ public class CLMediumRecoillessRifle extends Weapon {
         addLookupName("CLMedium Recoilless Rifle");
         heat = 0;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;
         shortRange = 2;
         mediumRange = 4;
@@ -56,16 +54,4 @@ public class CLMediumRecoillessRifle extends Weapon {
         cost = 3000;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new MediumRecoillessHandler(toHit, waa, game, server);
-    }
 }

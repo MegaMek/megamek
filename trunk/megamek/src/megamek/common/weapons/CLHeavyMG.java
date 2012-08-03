@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -42,6 +43,7 @@ public class CLHeavyMG extends MGWeapon {
         this.addLookupName("Clan Heavy Machine Gun");
         this.heat = 0;
         this.damage = 3;
+        this.infDamageClass = WeaponType.WEAPON_BURST_3D6;
         this.rackSize = 3;
         this.ammoType = AmmoType.T_MG_HEAVY;
         this.shortRange = 1;

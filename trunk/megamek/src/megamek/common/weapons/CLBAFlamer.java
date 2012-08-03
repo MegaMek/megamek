@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -39,6 +40,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         addLookupName("Clan BA Flamer");
         heat = 3;
         damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_3D6;
         shortRange = 1;
         mediumRange = 2;
         longRange = 3;

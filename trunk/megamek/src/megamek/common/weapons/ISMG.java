@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -38,6 +39,7 @@ public class ISMG extends MGWeapon {
         this.addLookupName("ISMachine Gun");
         this.heat = 0;
         this.damage = 2;
+        this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
         this.rackSize = 2;
         this.shortRange = 1;
         this.mediumRange = 2;

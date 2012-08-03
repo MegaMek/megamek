@@ -42,6 +42,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         addLookupName("CLHeavyFlamer");
         heat = 5;
         damage = 4;
+        infDamageClass = WeaponType.WEAPON_BURST_6D6;
         rackSize = 2;
         ammoType = AmmoType.T_HEAVY_FLAMER;
         shortRange = 2;

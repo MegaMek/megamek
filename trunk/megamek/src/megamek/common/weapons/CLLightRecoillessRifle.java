@@ -18,11 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -44,6 +41,7 @@ public class CLLightRecoillessRifle extends Weapon {
         addLookupName("CLLight Recoilless Rifle");
         addLookupName("CLLightRecoillessRifle");
         damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;
         shortRange = 2;
         mediumRange = 4;
@@ -54,16 +52,4 @@ public class CLLightRecoillessRifle extends Weapon {
         cost = 1000;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new LightRecoillessHandler(toHit, waa, game, server);
-    }
 }

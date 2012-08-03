@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -41,6 +42,7 @@ public class ISBAHeavyMG extends BAMGWeapon {
         addLookupName("ISBAHeavyMG");
         heat = 0;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         rackSize = 3;
         shortRange = 1;
         mediumRange = 2;

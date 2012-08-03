@@ -53,6 +53,7 @@ v0.35.32-dev (SVN)
 + FASCAM ammo added to tube artillery.
 + Bug: Engine-internal compact heat sinks doubled up on installation (so, 10 specified in file => 20 actually ending up on 'Mech).
 + Bug: Engine capacity for compact heat sinks not doubled.
++ Streamlined anti-infantry damage ratings for burst-fire weapons, multiple now-obsolete special case handlers deleted.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

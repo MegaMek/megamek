@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -40,6 +41,7 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
         addLookupName("IS Small X-Pulse Laser");
         heat = 3;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         toHitModifier = -2;
         shortRange = 2;
         mediumRange = 4;

@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -39,6 +40,7 @@ public class CLFlamer extends FlamerWeapon {
         this.addLookupName("Clan Flamer");
         this.heat = 3;
         this.damage = 2;
+        this.infDamageClass = WeaponType.WEAPON_BURST_4D6;
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 3;

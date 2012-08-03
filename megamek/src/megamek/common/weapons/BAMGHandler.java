@@ -19,13 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
@@ -60,29 +54,25 @@ public class BAMGHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (weapon.isRapidfire() && !(target instanceof Infantry)) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
-            nDamPerHit = Compute.d6();
-        } else {
-            if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-                switch (wtype.getDamage()) {
-                    case 1:
-                        nDamPerHit = (int) Math.ceil(Compute.d6() / 2);
-                        break;
-                    case 2:
-                        nDamPerHit = Compute.d6();
-                        break;
-                    case 3:
-                        nDamPerHit = Compute.d6(2);
-                        break;
-                }
-                if ( bDirect ) {
-                    nDamPerHit += toHit.getMoS()/3;
-                }
-            } else {
-                nDamPerHit = super.calcDamagePerHit();
+            switch (wtype.getDamage()) {
+            case 1:
+                nDamPerHit = Math.max(1, Compute.d6() - 1);
+                break;
+            case 3:
+                nDamPerHit = Compute.d6() + 1;
+                break;
+            default:
+                nDamPerHit = Compute.d6();
+                break;
             }
-        }
-        if (bGlancing) {
-            nDamPerHit =(int) Math.floor(nDamPerHit / 2.0);
+            if (bDirect) {
+                nDamPerHit = Math.min(nDamPerHit+(toHit.getMoS()/3), nDamPerHit*2);
+            }
+            if (bGlancing) {
+                nDamPerHit =(int) Math.floor(nDamPerHit / 2.0);
+            }
+        } else {
+                nDamPerHit = super.calcDamagePerHit();
         }
         return nDamPerHit;
     }

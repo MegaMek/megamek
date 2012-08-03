@@ -18,11 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -42,6 +39,7 @@ public class CLHeavyGrenadeLauncher extends Weapon {
         addLookupName("CLHeavyGL");
         heat = 0;
         damage = 1;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;
         shortRange = 1;
         mediumRange = 2;
@@ -53,16 +51,4 @@ public class CLHeavyGrenadeLauncher extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new HeavyGrenadeLauncherHandler(toHit, waa, game, server);
-    }
 }

@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -37,6 +38,7 @@ public class ISBAMG extends BAMGWeapon {
         addLookupName("ISBAMachine Gun");
         heat = 0;
         damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
         rackSize = 2;
         shortRange = 1;
         mediumRange = 2;

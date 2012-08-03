@@ -18,11 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -43,6 +40,7 @@ public class ISLightMortar extends Weapon {
         setInternalName(name);
         addLookupName("ISLightMortar");
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;
         minimumRange = 1;
         shortRange = 1;
@@ -53,16 +51,4 @@ public class ISLightMortar extends Weapon {
         flags = flags.or(F_BALLISTIC);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new MortarWeaponHandler(toHit, waa, game, server);
-    }
 }

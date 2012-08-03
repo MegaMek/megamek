@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -41,6 +42,7 @@ public class ISBALightMG extends BAMGWeapon {
         addLookupName("ISBALightMG");
         heat = 0;
         damage = 1;
+        infDamageClass = WeaponType.WEAPON_BURST_HALFD6;
         rackSize = 1;
         shortRange = 2;
         mediumRange = 4;

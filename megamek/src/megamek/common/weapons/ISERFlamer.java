@@ -18,11 +18,12 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISERFlamer extends ERFlamerWeapon {
+public class ISERFlamer extends FlamerWeapon {
     /**
      *
      */
@@ -40,6 +41,7 @@ public class ISERFlamer extends ERFlamerWeapon {
         addLookupName("ISERFlamer");
         heat = 4;
         damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         shortRange = 3;
         mediumRange = 5;
         longRange = 7;

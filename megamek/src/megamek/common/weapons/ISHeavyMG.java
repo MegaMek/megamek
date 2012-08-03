@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -44,6 +45,7 @@ public class ISHeavyMG extends MGWeapon {
         this.ammoType = AmmoType.T_MG_HEAVY;
         this.heat = 0;
         this.damage = 3;
+        this.infDamageClass = WeaponType.WEAPON_BURST_3D6;
         this.rackSize = 3;
         this.shortRange = 1;
         this.mediumRange = 2;

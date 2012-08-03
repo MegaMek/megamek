@@ -36,7 +36,7 @@ public abstract class BAMGWeapon extends Weapon {
     public BAMGWeapon() {
         super();
         ammoType = AmmoType.T_NA;
-        flags = flags.or(F_MG).or(F_BALLISTIC).or(F_BA_WEAPON);
+        flags = flags.or(F_MG).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE);
     }
 
     /*

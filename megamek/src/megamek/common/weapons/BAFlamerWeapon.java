@@ -35,7 +35,7 @@ public abstract class BAFlamerWeapon extends Weapon {
 
     public BAFlamerWeapon() {
         super();
-        flags = flags.or(F_FLAMER).or(F_ENERGY);
+        flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON).or(F_BURST_FIRE);
         ammoType = AmmoType.T_NA;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);

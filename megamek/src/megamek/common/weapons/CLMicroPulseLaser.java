@@ -53,7 +53,7 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
         waterExtremeRange = 4;
         tonnage = 0.5f;
         criticals = 1;
-        flags = flags.or(F_NO_FIRES);
+        flags = flags.or(F_NO_FIRES).or(F_BURST_FIRE);
         bv = 12;
         cost = 12500;
         shortAV = 3;

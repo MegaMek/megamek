@@ -50,7 +50,8 @@ public class ISLightRecoillessRifle extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 12;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON)
+                .or(F_BURST_FIRE);
         cost = 1000;
     }
 

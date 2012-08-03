@@ -51,7 +51,7 @@ public class CLBAAPGaussRifle extends Weapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
-        flags = flags.or(F_BA_WEAPON);
+        flags = flags.or(F_BA_WEAPON).or(F_BURST_FIRE);
     }
 
 }

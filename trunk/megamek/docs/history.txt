@@ -55,6 +55,7 @@ v0.35.32-dev (SVN)
 + Bug: Engine capacity for compact heat sinks not doubled.
 + Streamlined anti-infantry damage ratings for burst-fire weapons, multiple now-obsolete special case handlers deleted.
 + Battle armor burst-fire weapons now roll AI damage per suit as per TW p. 215.
++ Bug: Streak LRMs doing double damage to conventional infantry.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

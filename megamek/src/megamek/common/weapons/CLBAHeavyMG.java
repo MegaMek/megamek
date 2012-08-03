@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -40,6 +41,7 @@ public class CLBAHeavyMG extends BAMGWeapon {
         this.addLookupName("Clan BA Heavy Machine Gun");
         this.heat = 0;
         this.damage = 3;
+        this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
         this.rackSize = 3;
         this.shortRange = 1;
         this.mediumRange = 2;

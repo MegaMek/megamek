@@ -18,11 +18,12 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
  */
-public class CLERFlamer extends ERFlamerWeapon {
+public class CLERFlamer extends FlamerWeapon {
     /**
      *
      */
@@ -39,6 +40,7 @@ public class CLERFlamer extends ERFlamerWeapon {
         addLookupName("CL ER Flamer");
         heat = 4;
         damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         shortRange = 3;
         mediumRange = 5;
         longRange = 7;

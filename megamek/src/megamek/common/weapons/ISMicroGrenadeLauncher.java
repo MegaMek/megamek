@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -39,6 +40,7 @@ public class ISMicroGrenadeLauncher extends Weapon {
         addLookupName("ISMicroGrenadeLauncher");
         heat = 0;
         damage = 1;
+        infDamageClass = WeaponType.WEAPON_BURST_HALFD6;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;

@@ -18,11 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -44,6 +41,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         addLookupName("CLBearhunter Superheavy AC");
         heat = 0;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_3D6;
         ammoType = AmmoType.T_NA;
         toHitModifier = 1;
         shortRange = 0;
@@ -56,16 +54,4 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC).or(F_BA_WEAPON);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new BearHunterHandler(toHit, waa, game, server);
-    }
 }

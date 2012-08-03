@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -42,6 +43,7 @@ public class CLLightMG extends MGWeapon {
         this.addLookupName("Clan Light Machine Gun");
         this.heat = 0;
         this.damage = 1;
+        this.infDamageClass = WeaponType.WEAPON_BURST_1D6;
         this.rackSize = 1;
         this.ammoType = AmmoType.T_MG_LIGHT;
         this.shortRange = 2;

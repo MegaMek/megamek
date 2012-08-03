@@ -19,12 +19,8 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
@@ -46,6 +42,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         addLookupName("Clan AP Gauss Rifle");
         heat = 1;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_APGAUSS;
         shortRange = 3;
         mediumRange = 6;
@@ -58,21 +55,8 @@ public class CLAPGaussRifle extends GaussWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
-        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
         this.introDate = 3069;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new APGaussWeaponHandler(toHit, waa, game, server);
-    }
 }

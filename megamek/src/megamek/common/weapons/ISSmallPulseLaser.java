@@ -17,12 +17,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -45,6 +41,7 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
         this.addLookupName("ISSmall Pulse Laser");
         this.heat = 2;
         this.damage = 3;
+        this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
         this.toHitModifier = -2;
         this.shortRange = 1;
         this.mediumRange = 2;
@@ -65,16 +62,4 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
         this.reintroDate = 3037;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new BurstPulseLaserWeaponHandler(toHit, waa, game, server);
-    }
 }

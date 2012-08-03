@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -40,6 +41,7 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         addLookupName("Clan ER Small Pulse Laser");
         heat = 3;
         damage = 5;
+        infDamageClass = WeaponType.WEAPON_BURST_1D6;
         toHitModifier = -1;
         shortRange = 2;
         mediumRange = 4;

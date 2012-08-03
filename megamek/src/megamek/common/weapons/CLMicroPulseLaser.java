@@ -18,11 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Andrew Hunter
@@ -44,6 +41,7 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
         addLookupName("Clan Micro Pulse Laser");
         heat = 1;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         toHitModifier = -2;
         shortRange = 1;
         mediumRange = 2;
@@ -65,16 +63,4 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
         this.introDate = 3060;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new BurstPulseLaserWeaponHandler(toHit, waa, game, server);
-    }
 }

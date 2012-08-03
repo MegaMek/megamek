@@ -17,11 +17,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.common.WeaponType;
 
 /**
  * @author Sebastian Brocks
@@ -42,6 +39,7 @@ public class CLBAAPGaussRifle extends Weapon {
         setInternalName("CLBAAPGaussRifle");
         heat = 1;
         damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;
@@ -56,16 +54,4 @@ public class CLBAAPGaussRifle extends Weapon {
         flags = flags.or(F_BA_WEAPON);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new BAAPGaussWeaponHandler(toHit, waa, game, server);
-    }
 }

@@ -17,6 +17,7 @@ import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -38,6 +39,7 @@ public class ISMGA extends AmmoWeapon {
         setInternalName("ISMGA");
         heat = 0;
         damage = 2;
+        infDamageClass = WeaponType.WEAPON_BURST_2D6;
         rackSize = 2;
         ammoType = AmmoType.T_MG;
         minimumRange = WEAPON_NA;

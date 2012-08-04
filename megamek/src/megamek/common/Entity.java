@@ -44,6 +44,7 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.NonCombatUnitList;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.ATMWeapon;
@@ -9767,11 +9768,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * returns whether the unit is a military unit (as opposed to a civilian
-     * unit). TODO: for now this just returns true, but at some point the
-     * database should be updated
+     * unit).
      */
     public boolean isMilitary() {
-        return true;
+        return !NonCombatUnitList.isNonCombatUnit(this);
     }
 
     /**

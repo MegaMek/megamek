@@ -3594,6 +3594,11 @@ public class Aero extends Entity {
             return true;
         }
 
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
+            return false;
+        }
+
         boolean noWeapons = true;
         int totalDamage = 0;
         for (Mounted weap : getWeaponList()) {
@@ -3617,6 +3622,11 @@ public class Aero extends Entity {
         }
         if ((getCrew() != null) && (getCrew().getHits() == 3)) {
             return true;
+        }
+
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
+            return false;
         }
 
         int totalWeapons = getTotalWeaponList().size();
@@ -3643,6 +3653,11 @@ public class Aero extends Entity {
             return true;
         }
 
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
+            return false;
+        }
+
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
@@ -3665,6 +3680,11 @@ public class Aero extends Entity {
 
         if ((getCrew() != null) && (getCrew().getHits() == 1)) {
             return true;
+        }
+
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
+            return false;
         }
 
         int totalWeapons = getTotalWeaponList().size();

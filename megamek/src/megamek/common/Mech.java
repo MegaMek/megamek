@@ -7437,8 +7437,8 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        // If this is an Industrial mech, we don't need to check weapon status.
-        if (isIndustrial()) {
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
             return false;
         }
 
@@ -7530,8 +7530,8 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        // If this is an Industrial mech, we don't need to check weapon status.
-        if (isIndustrial()) {
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
             return false;
         }
 
@@ -7563,8 +7563,8 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        // If this is an Industrial mech, we don't need to check weapon status.
-        if (isIndustrial()) {
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
             return false;
         }
 
@@ -7593,8 +7593,8 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        // If this is an Industrial mech, we don't need to check weapon status.
-        if (isIndustrial()) {
+        //If this is not a military unit, we don't care about weapon status.
+        if (!isMilitary()) {
             return false;
         }
 

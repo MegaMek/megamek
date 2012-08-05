@@ -32,9 +32,11 @@ import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
 import megamek.common.MovePath;
+import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
@@ -306,7 +308,7 @@ public class Princess extends BotClient {
                 + entity.getId() + ")");
         precognition.insureUpToDate();
 
-        if (entity.isCrippled()) {
+        if (entity.isCrippled() && forced_withdrawal && !entity.isImmobile()) {
             System.err.println(entity.getDisplayName()
                     + " is crippled and withdrawing");
             sendChat(entity.getDisplayName()
@@ -321,8 +323,16 @@ public class Princess extends BotClient {
             return mp;
         }
 
-        //If this entity is immobile as well as crippled and conscious, eject the pilot.
-        if (entity.isImmobile() && entity.isCrippled() && !entity.getCrew().isUnconscious()) {
+        boolean ejectionPossible = ((entity instanceof Mech) || (entity instanceof Tank))
+                && entity.getCrew().isActive() && !entity.hasQuirk("no_eject");
+        if (entity instanceof Mech) {
+            ejectionPossible &= (((Mech) entity).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED);
+        }
+        if (entity instanceof Tank) {
+            ejectionPossible &= game.getOptions().booleanOption("vehicles_can_eject");
+        }
+        //If this entity is immobile as well as crippled, eject the pilot/crew if possible.
+        if (entity.isImmobile() && entity.isCrippled() && ejectionPossible) {
             String msg = entity.getDisplayName() + " is immobile.  Abandoning unit.";
             System.err.println(msg);
             sendChat(msg);

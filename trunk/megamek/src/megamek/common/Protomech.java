@@ -1542,7 +1542,7 @@ public class Protomech extends Entity {
         }
 
         for (Mounted weap : getWeaponList()) {
-            if (weap.canFire()) {
+            if (!weap.isCrippled()) {
                 return false;
             }
         }
@@ -1562,7 +1562,7 @@ public class Protomech extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -1582,7 +1582,7 @@ public class Protomech extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -1602,7 +1602,7 @@ public class Protomech extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }

@@ -19,6 +19,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import megamek.common.weapons.ATMWeapon;
+import megamek.common.weapons.SRMWeapon;
+import megamek.common.weapons.SRTWeapon;
 
 /**
  * You know what tanks are, silly.
@@ -2966,12 +2969,29 @@ public class Tank extends Entity {
             return false;
         }
 
+        // no weapons can fire anymore, can cause no more than 5 points of
+        // combined weapons damage,
+        // or has no weapons with range greater than 5 hexes
+        boolean noWeapons = true;
+        int totalDamage = 0;
         for (Mounted weap : getWeaponList()) {
-            if (weap.canFire()) {
-                return false;
+            WeaponType wtype = (WeaponType) weap.getType();
+            if (!weap.isCrippled()) {
+                if (((WeaponType)weap.getType()).getLongRange() > 5) {
+                    noWeapons = false;
+                }
+                if (wtype.getDamage() > 0) {
+                    totalDamage += wtype.getDamage();
+                } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                    totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) || (wtype instanceof SRTWeapon)) ? 2
+                            : ((wtype instanceof ATMWeapon) ? 3 : 1)));
+                } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
+                    totalDamage += wtype.getDamage(WeaponType.RANGE_SHORT);
+                }
             }
         }
-        return true;
+
+        return noWeapons && (totalDamage <= 5);
     }
 
     @Override
@@ -2992,7 +3012,7 @@ public class Tank extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -3013,7 +3033,7 @@ public class Tank extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -3039,7 +3059,7 @@ public class Tank extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }

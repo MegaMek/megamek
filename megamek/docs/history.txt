@@ -59,6 +59,8 @@ v0.35.32-dev (SVN)
 + "Burst fire" internal flag added to burst fire weapons for possible later use.
 + Added a new configuration file (non_combat_units_list.conf) that will be used to maintain a list of non-military units.
     This allows the Damage Level flag to be a bit "smarter" and only check the weapon status of military units.
++ Bug: Indicated damage level counting any and all weapons fired this turn as destroyed.
++ Discharged one-shot weapons now marked in display.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

@@ -25,6 +25,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -162,6 +163,9 @@ public class StreakHandler extends MissileWeaponHandler {
         }
         if (roll >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+            if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                weapon.setFired(true);
+            }
             setDone();
         }
     }

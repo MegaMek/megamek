@@ -28,6 +28,8 @@ import java.util.Vector;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.WeaponQuirks;
+import megamek.common.weapons.AmmoBayWeapon;
+import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.GaussWeapon;
 
 /**
@@ -369,7 +371,7 @@ public class Mounted implements Serializable, RoundUpdated {
         } else if (jammed) {
             desc.insert(0, "j ");
         } else if (fired) {
-            desc.insert(0, "x ");
+            desc.insert(0, "- ");
         } else if (isDWPMounted && (getLinkedBy() == null)) {
             desc.insert(0, "x ");
         }
@@ -404,7 +406,8 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isReady() {
-        return !usedThisRound && !destroyed && !missing && !jammed && !useless && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
+        return !usedThisRound && !destroyed && !missing && !jammed && !useless
+                &&!fired && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
 
     public boolean isUsedThisRound() {
@@ -906,6 +909,38 @@ public class Mounted implements Serializable, RoundUpdated {
         return true;
     }
 
+    /** Determines whether this weapon should be considered crippled for
+     * damage level purposes.
+     * 
+     * @return {@code true} if the weapon is at least one of: destroyed, missing,
+     * breached, jammed, a detachable weapon no longer attached to its original
+     * battle armor, or simply out of ammo (includes discharged one-shot weapons),
+     * {@code false} otherwise.
+     */
+    public boolean isCrippled() {
+        /* Have to account for jammed weapons here because we're currently not
+         * distinguishing between potentially temporary and permanent jams, and
+         * a perma-jammed weapon definitely _is_ crippled. Moreover, even a weapon
+         * that could be unjammed again may end up never getting there and isn't
+         * contributing anything in the meantime, so it might as well be considered
+         * "crippled" until the jam clears, if ever.
+         */
+        if (destroyed || jammed || missing || useless || fired) {
+            return true;
+        }
+        if ((type instanceof AmmoWeapon) || (type instanceof AmmoBayWeapon)
+                ) {
+            if (getLinked() == null
+                    || entity.getTotalAmmoOfType(getLinked().getType()) < 1) {
+                return true;
+            }
+        }
+        if (isDWPMounted && (getLinkedBy() != null)) {
+            return true;
+        }
+        return false;
+    }
+    
     /**
      * Returns false if this ammo should not be loaded. Checks if the ammo is
      * already destroyed or missing, is being dumped, has been breached, is already

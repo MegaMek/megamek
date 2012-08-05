@@ -7449,18 +7449,19 @@ public abstract class Mech extends Entity {
         int totalDamage = 0;
         for (Mounted weap : getWeaponList()) {
             WeaponType wtype = (WeaponType) weap.getType();
-            if (weap.canFire() && (wtype.getLongRange() > 5)) {
-                noWeapons = false;
+            if (!weap.isCrippled()) {
+                if (((WeaponType)weap.getType()).getLongRange() > 5) {
+                    noWeapons = false;
+                }
+                if (wtype.getDamage() > 0) {
+                    totalDamage += wtype.getDamage();
+                } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                    totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) || (wtype instanceof SRTWeapon)) ? 2
+                            : ((wtype instanceof ATMWeapon) ? 3 : 1)));
+                } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
+                    totalDamage += wtype.getDamage(WeaponType.RANGE_SHORT);
+                }
             }
-            if (wtype.getDamage() > 0) {
-                totalDamage += wtype.getDamage();
-            } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
-                totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) || (wtype instanceof SRTWeapon)) ? 2
-                        : ((wtype instanceof ATMWeapon) ? 3 : 1)));
-            } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-                totalDamage += wtype.getDamage(WeaponType.RANGE_SHORT);
-            }
-
         }
 
         return noWeapons && (totalDamage <= 5);
@@ -7538,7 +7539,7 @@ public abstract class Mech extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -7571,7 +7572,7 @@ public abstract class Mech extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -7601,7 +7602,7 @@ public abstract class Mech extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }

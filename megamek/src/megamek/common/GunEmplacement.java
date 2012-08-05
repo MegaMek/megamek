@@ -450,7 +450,7 @@ public class GunEmplacement extends Tank {
     @Override
     public boolean isCrippled() {
         for (Mounted weap : getWeaponList()) {
-            if (weap.canFire()) {
+            if (!weap.isCrippled()) {
                 return false;
             }
         }
@@ -462,7 +462,7 @@ public class GunEmplacement extends Tank {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -474,7 +474,7 @@ public class GunEmplacement extends Tank {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -487,7 +487,7 @@ public class GunEmplacement extends Tank {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }

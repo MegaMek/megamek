@@ -3602,10 +3602,12 @@ public class Aero extends Entity {
         boolean noWeapons = true;
         int totalDamage = 0;
         for (Mounted weap : getWeaponList()) {
-            if (weap.canFire() && (((WeaponType)weap.getType()).getLongRange() > 5)) {
-                noWeapons = false;
+            if (!weap.isCrippled()) {
+                if (((WeaponType)weap.getType()).getLongRange() > 5) {
+                    noWeapons = false;
+                }
+                totalDamage += ((WeaponType)weap.getType()).getDamage();
             }
-            totalDamage += ((WeaponType)weap.getType()).getDamage();
         }
 
         return noWeapons && (totalDamage <= 5);
@@ -3632,7 +3634,7 @@ public class Aero extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -3661,7 +3663,7 @@ public class Aero extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }
@@ -3690,7 +3692,7 @@ public class Aero extends Entity {
         int totalWeapons = getTotalWeaponList().size();
         int totalInoperable = 0;
         for (Mounted weap : getTotalWeaponList()) {
-            if (!weap.canFire()) {
+            if (weap.isCrippled()) {
                 totalInoperable++;
             }
         }

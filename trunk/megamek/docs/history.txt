@@ -61,6 +61,8 @@ v0.35.32-dev (SVN)
     This allows the Damage Level flag to be a bit "smarter" and only check the weapon status of military units.
 + Bug: Indicated damage level counting any and all weapons fired this turn as destroyed.
 + Discharged one-shot weapons now marked in display.
++ Bug: Princess ejecting vehicle crews even with option disabled.
++ Princess no longer spams chat with "crippled and withdrawing" messages when forced withdrawal wasn't even checked.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

@@ -858,7 +858,7 @@ public abstract class BotClient extends Client {
             }
             // adjust for previous AMS
             ArrayList<Mounted> vCounters = waa.getCounterEquipment();
-            if (vCounters != null) {
+            if (wt.hasFlag(WeaponType.F_MISSILE) && vCounters != null) {
                 for (int x = 0; x < vCounters.size(); x++) {
                     EquipmentType type = vCounters.get(x).getType();
                     if ((type instanceof WeaponType)

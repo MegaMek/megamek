@@ -97,6 +97,7 @@ import megamek.common.WeaponType;
 import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.RACWeapon;
 import megamek.common.weapons.UACWeapon;
 
@@ -1288,7 +1289,11 @@ public class MechDisplay extends BufferedPanel {
                     .getLocation(), mounted.isRearMounted())));
 
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
-                wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
+                if (wtype instanceof HAGWeapon) {
+                    wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
+                } else {
+                    wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
+                }
             } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
                 wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
             } else if (wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {

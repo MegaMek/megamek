@@ -37,6 +37,7 @@ import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
 
@@ -2033,6 +2034,8 @@ public class Compute {
 
         // Missiles, LBX cluster rounds, and ultra/rotary cannons (when spun up)
         // use the missile hits table
+        // Note: HAGs use the 'missile' damage value as well and so are covered by
+        // this first clause.
         if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
             use_table = true;
         }
@@ -2129,7 +2132,8 @@ public class Compute {
             // good for another 1.20x damage on missile weapons
             if ((!Compute.isAffectedByECM(attacker, attacker.getPosition(), g.getEntity(waa.getTargetId())
                     .getPosition()))
-                    && (wt.getDamage() == WeaponType.DAMAGE_MISSILE)) {
+                    && (wt.getDamage() == WeaponType.DAMAGE_MISSILE)
+                    && (wt.hasFlag(WeaponType.F_MISSILE))) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoType.T_LRM) || (wt.getAmmoType() == AmmoType.T_MML)
                         || (wt.getAmmoType() == AmmoType.T_SRM)) {
@@ -2175,7 +2179,8 @@ public class Compute {
             }
 
             // adjust for previous AMS
-            if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
+            if (wt.getDamage() == WeaponType.DAMAGE_MISSILE
+                    && wt.hasFlag(WeaponType.F_MISSILE)) {
                 ArrayList<Mounted> vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {
                     for (int x = 0; x < vCounters.size(); x++) {
@@ -2184,6 +2189,17 @@ public class Compute {
                             fHits *= 0.6;
                         }
                     }
+                }
+            }
+
+            //* HAGs modify their cluster hits for range.
+            if (wt instanceof HAGWeapon) {
+                Entity target = g.getEntity(waa.getTargetId());
+                int distance = attacker.getPosition().distance(target.getPosition());
+                if (distance <= wt.getShortRange()) {
+                    fHits *= 1.2;
+                } else if (distance > wt.getMediumRange()) {
+                    fHits *= 0.8;
                 }
             }
 

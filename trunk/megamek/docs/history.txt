@@ -63,6 +63,7 @@ v0.35.32-dev (SVN)
 + Discharged one-shot weapons now marked in display.
 + Bug: Princess ejecting vehicle crews even with option disabled.
 + Princess no longer spams chat with "crippled and withdrawing" messages when forced withdrawal wasn't even checked.
++ HAG tweak to fix a couple of subtle bugs (such as the bot never using them...).
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

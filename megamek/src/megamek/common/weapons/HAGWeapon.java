@@ -35,7 +35,13 @@ public abstract class HAGWeapon extends GaussWeapon {
 
     public HAGWeapon() {
         super();
-        damage = DAMAGE_VARIABLE;
+        damage = DAMAGE_MISSILE;
+        /* HACK: HAGs don't actually fire missiles, but for damage calculation
+         * and estimation purposes still act much like they do and don't have an
+         * actual base damage separate from their 'rack size'. Note that this is
+         * a damage *value* constant, not a damage *type* as such; it doesn't
+         * interact with such things as AMS or reactive armor.
+         */
         ammoType = AmmoType.T_HAG;
         flags = flags.or(F_NO_AIM);
         atClass = CLASS_AC;

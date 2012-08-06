@@ -106,6 +106,7 @@ import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -1592,7 +1593,11 @@ public class MechDisplay extends JPanel {
             }
 
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
-                wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
+                if (wtype instanceof HAGWeapon) {
+                    wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
+                } else {
+                    wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
+                }
             } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
                 wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
             } else if (wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {

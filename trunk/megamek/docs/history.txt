@@ -64,6 +64,7 @@ v0.35.32-dev (SVN)
 + Bug: Princess ejecting vehicle crews even with option disabled.
 + Princess no longer spams chat with "crippled and withdrawing" messages when forced withdrawal wasn't even checked.
 + HAG tweak to fix a couple of subtle bugs (such as the bot never using them...).
++ Bug 3555117: "Scorpion Minesweeper" now known as "Scorpion Light Tank (Minesweeper)", fixing its unit picture.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

@@ -2054,7 +2054,7 @@ public class Tank extends Entity {
                 turretWeight += wt.getTonnage(this) / 10.0;
             }
         }
-        paWeight = Math.ceil(paWeight * 10.0) / 10;
+        paWeight = Math.ceil(paWeight * 2) / 2;
         if (engine.isFusion()) {
             paWeight = 0;
         }
@@ -2090,6 +2090,11 @@ public class Tank extends Entity {
             cost += diveTonnage * 40000;
         }
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
+
+        if (isOmni()) { // Omni conversion cost goes here.
+            cost *= 1.25;
+        }
+        
         double multiplier = 1.0;
         switch (movementMode) {
             case HOVER:

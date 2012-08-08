@@ -52,13 +52,13 @@ public class ISPlasmaRifle extends AmmoWeapon {
         criticals = 2;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE);
         bv = 210;
-        cost = 480000;
+        cost = 260000;
         shortAV = 10;
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        this.introDate = 3068;
+        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        introDate = 3068;
 
     }
 

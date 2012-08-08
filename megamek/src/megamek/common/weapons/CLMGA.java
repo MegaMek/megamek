@@ -51,7 +51,7 @@ public class CLMGA extends AmmoWeapon {
         // because it depends on the number of MGs linked to
         // the MGA
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
-        cost = 5000;
+        cost = 1250;
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;

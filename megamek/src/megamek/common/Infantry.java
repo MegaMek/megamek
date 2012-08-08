@@ -604,7 +604,7 @@ public class Infantry extends Entity {
 
         dbv = men * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false)
-        .getValue();
+                .getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
                 true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
@@ -631,13 +631,13 @@ public class Infantry extends Entity {
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
         double speedFactorTableLookup = getRunMP(false, true, true)
-        + Math.round((double) getJumpMP(false) / 2);
+                + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + ((((double) walkMP
                     + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
         } else {
             speedFactor = Math
-            .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
+                    .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         }
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         double wbv = 0;
@@ -760,7 +760,7 @@ public class Infantry extends Entity {
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
         PilotingRollData roll = new PilotingRollData(getId(), 5,
-        "entering boggy terrain");
+                "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
         if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (getMovementMode() != EntityMovementMode.HOVER) && (getMovementMode() != EntityMovementMode.VTOL) && (getMovementMode() != EntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
@@ -808,20 +808,20 @@ public class Infantry extends Entity {
 
         int weaponCost = 0;
         if(null != primaryW) {
-            weaponCost += primaryW.getCost(this, false) * (squadsize - secondn);
+            weaponCost += primaryW.getCost(this, false, -1) * (squadsize - secondn);
         }
         if(null != secondW) {
-            weaponCost += secondW.getCost(this, false) * secondn;
+            weaponCost += secondW.getCost(this, false, -1) * secondn;
         }
         weaponCost = weaponCost / squadsize;
 
         //TODO: add in armor cost - a little tricky because we don't track exact armor
-        
+
         double cost = Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
-                cost += mounted.getType().getCost(this, false);
+                cost += mounted.getType().getCost(this, false, mounted.getLocation());
             }
         }
 
@@ -830,87 +830,87 @@ public class Infantry extends Entity {
 
     @Override
     public double getAlternateCost() {
-    	double cost = 0;
+        double cost = 0;
         if(null != primaryW) {
-            cost += primaryW.getCost(this, false) * (squadsize - secondn);
+            cost += primaryW.getCost(this, false, -1) * (squadsize - secondn);
         }
         if(null != secondW) {
-            cost += secondW.getCost(this, false) * secondn;
+            cost += secondW.getCost(this, false, -1) * secondn;
         }
         cost = cost / squadsize;
         cost *= menStarting;
         //Add in motive type costs
         switch (getMovementMode()){
-	        case INF_UMU:
-	            cost += 17888 * 1 * menStarting;
-	            break;
-	        case INF_LEG:
-	            break;
-	        case INF_MOTORIZED:
-	        	cost += 17888 * 0.6 * menStarting;
-	            break;
-	        case INF_JUMP:
-	        	cost += 17888 * 1.6 * menStarting;
-	            break;
-	        case HOVER:
-	        	cost += 17888 * 2.2 * 5 * Math.ceil(menStarting/5.0);
-	            break;
-	        case WHEELED:
-	        	cost += 17888 * 2.2 * 6 * Math.ceil(menStarting/6.0);
-	            break;
-	        case TRACKED:
-	        	cost += 17888 * 2.2 * 7 * Math.ceil(menStarting/7.0);
-	            break;
-	        default:
-	            break;
+            case INF_UMU:
+                cost += 17888 * 1 * menStarting;
+                break;
+            case INF_LEG:
+                break;
+            case INF_MOTORIZED:
+                cost += 17888 * 0.6 * menStarting;
+                break;
+            case INF_JUMP:
+                cost += 17888 * 1.6 * menStarting;
+                break;
+            case HOVER:
+                cost += 17888 * 2.2 * 5 * Math.ceil(menStarting/5.0);
+                break;
+            case WHEELED:
+                cost += 17888 * 2.2 * 6 * Math.ceil(menStarting/6.0);
+                break;
+            case TRACKED:
+                cost += 17888 * 2.2 * 7 * Math.ceil(menStarting/7.0);
+                break;
+            default:
+                break;
         }
         //add in infantry armor
         long armorprice = 0;
-		if(damageDivisor > 1) {
-			if(isArmorEncumbering()) {
-				armorprice += 1600;
-			} else {
-				armorprice += 4300;
-			}
-		}
-		int nSneak = 0;
-		if(hasSneakCamo()) {
-			nSneak++;
-		}
-		if(hasSneakECM()) {
-			nSneak++;
-		}
-		if(hasSneakIR()) {
-			nSneak++;
-		}
-		
-		if(hasDEST()) {
-			armorprice += 50000;
-		} 
-		else if(nSneak == 1) {
-			armorprice += 7000;
-		}
-		else if(nSneak == 2) {
-			armorprice += 21000;
-		}
-		else if(nSneak == 3) {
-			armorprice += 28000;
-		}
-		
-		if(hasSpaceSuit()) {
-			armorprice += 5000;
-		}
-		cost += armorprice * menStarting;
-        
+        if(damageDivisor > 1) {
+            if(isArmorEncumbering()) {
+                armorprice += 1600;
+            } else {
+                armorprice += 4300;
+            }
+        }
+        int nSneak = 0;
+        if(hasSneakCamo()) {
+            nSneak++;
+        }
+        if(hasSneakECM()) {
+            nSneak++;
+        }
+        if(hasSneakIR()) {
+            nSneak++;
+        }
+
+        if(hasDEST()) {
+            armorprice += 50000;
+        }
+        else if(nSneak == 1) {
+            armorprice += 7000;
+        }
+        else if(nSneak == 2) {
+            armorprice += 21000;
+        }
+        else if(nSneak == 3) {
+            armorprice += 28000;
+        }
+
+        if(hasSpaceSuit()) {
+            armorprice += 5000;
+        }
+        cost += armorprice * menStarting;
+
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
-                cost += mounted.getType().getCost(this, false);
+                cost += mounted.getType().getCost(this, false, mounted.getLocation());
             }
         }
         return cost;
     }
-    
+
     @Override
     public boolean doomedInVacuum() {
         return !hasSpaceSuit();
@@ -1398,7 +1398,7 @@ public class Infantry extends Entity {
 
     @Override
     public int getEngineHits() {
-    	return 0;
+        return 0;
     }
 
     @Override

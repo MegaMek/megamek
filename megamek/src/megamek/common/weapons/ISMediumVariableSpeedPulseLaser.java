@@ -55,7 +55,7 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
         tonnage = 4.0f;
         criticals = 2;
         bv = 56;
-        cost = 20000;
+        cost = 200000;
         shortAV = 7;
         maxRange = RANGE_SHORT;
     }

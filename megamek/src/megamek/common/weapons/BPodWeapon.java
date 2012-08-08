@@ -52,7 +52,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         flags = flags.or(F_ONESHOT).or(F_B_POD).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_TANK_WEAPON);
         explosive = true;
         bv = 2;
-        cost = 6000;
+        cost = 2500;
         explosionDamage = 2;
     }
 

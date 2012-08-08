@@ -8096,7 +8096,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public abstract double getCost(boolean ignoreAmmo);
 
     public int getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        bvText = new StringBuffer();
+        //bvText = new StringBuffer();
         int cost = 0;
 
         NumberFormat commafy = NumberFormat.getInstance();
@@ -8111,11 +8111,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             int itemCost = (int) mounted.getType().getCost(this,
-                    mounted.isArmored());
-            if (itemCost == EquipmentType.COST_VARIABLE) {
-                itemCost = mounted.getType().resolveVariableCost(this,
-                        mounted.isArmored());
-            }
+                    mounted.isArmored(), mounted.getLocation());
+
             cost += itemCost;
             if ((bvText != null) && (itemCost > 0)) {
                 bvText.append(startRow);

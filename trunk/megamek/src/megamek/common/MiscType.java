@@ -553,41 +553,89 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public double getCost(Entity entity, boolean isArmored) {
+    public double getCost(Entity entity, boolean isArmored, int loc) {
         double costValue = cost;
         if (costValue == EquipmentType.COST_VARIABLE) {
             if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
-                costValue = getTonnage(entity) * 10000;
+                costValue = getTonnage(entity, loc) * 10000;
             } else if (hasFlag(F_FLOTATION_HULL) || hasFlag(F_VACUUM_PROTECTION) || hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_OFF_ROAD)) {
                 costValue = 0;
             } else if (hasFlag(F_LIMITED_AMPHIBIOUS) || hasFlag((F_FULLY_AMPHIBIOUS))) {
-                costValue = getTonnage(entity) * 10000;
+                costValue = getTonnage(entity, loc) * 10000;
             } else if (hasFlag(F_DUNE_BUGGY)) {
-                float totalTons = getTonnage(entity);
+                float totalTons = getTonnage(entity, loc);
                 costValue = 10 * totalTons * totalTons;
             } else if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
                 costValue = entity.getRunMP() * 75000;
             } else if (hasFlag(F_HEAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_QUAD_TURRET)) {
-                costValue = getTonnage(entity) * 10000;
+                costValue = getTonnage(entity, loc) * 10000;
             } else if (hasFlag(F_SPONSON_TURRET)) {
-                costValue = getTonnage(entity) * 4000;
+                costValue = getTonnage(entity, loc) * 4000;
             } else if (hasFlag(F_PINTLE_TURRET)) {
-                costValue = getTonnage(entity) * 1000;
+                costValue = getTonnage(entity, loc) * 1000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
-                costValue = getTonnage(entity) * 100000;
+                costValue = getTonnage(entity, loc) * 100000;
             } else if (hasFlag(F_JET_BOOSTER)) {
                 costValue = entity.getEngine().getRating() * 10000;
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
-                costValue = (getTonnage(entity) * 10000) + 5000;
+                costValue = (getTonnage(entity, loc) * 10000) + 5000;
+            } else if (hasFlag(MiscType.F_MASC)) {
+                if (entity instanceof Protomech) {
+                    costValue = Math.round(entity.getEngine().getRating() * 1000 * entity.getWeight() * 0.025f);
+                } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
+                    Engine e = entity.getEngine();
+                    if (e == null) {
+                        costValue = 0;
+                    } else {
+                        costValue = e.getRating() * 10000;
+                    }
+                } else {
+                    int mascTonnage = 0;
+                    if (getInternalName().equals("ISMASC")) {
+                        mascTonnage = Math.round(entity.getWeight() / 20.0f);
+                    } else if (getInternalName().equals("CLMASC")) {
+                        mascTonnage = Math.round(entity.getWeight() / 25.0f);
+                    }
+                    costValue = entity.getEngine().getRating() * mascTonnage * 1000;
+                }
+            } else if (hasFlag(MiscType.F_TARGCOMP)) {
+                int tCompTons = 0;
+                float fTons = 0.0f;
+                for (Mounted mo : entity.getWeaponList()) {
+                    WeaponType wt = (WeaponType) mo.getType();
+                    if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                        fTons += wt.getTonnage(entity);
+                    }
+                }
+                if (getInternalName().equals("ISTargeting Computer")) {
+                    tCompTons = (int) Math.ceil(fTons / 4.0f);
+                } else if (getInternalName().equals("CLTargeting Computer")) {
+                    tCompTons = (int) Math.ceil(fTons / 5.0f);
+                }
+                costValue = tCompTons * 10000;
+            } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_HATCHET) || hasSubType(MiscType.S_MACE_THB))) {
+                int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
+                costValue = hatchetTons * 5000;
+            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_SWORD)) {
+                float swordTons = (float) (Math.ceil((entity.getWeight() / 20.0) * 2.0) / 2.0);
+                costValue = swordTons * 10000;
+            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
+                costValue = (1 + bladeTons) * 10000;
+            } else if (hasFlag(MiscType.F_TRACKS)) {
+                costValue = (int) Math.ceil((500 * entity.getEngine().getRating() * entity.getWeight()) / 75);
+            } else if (hasFlag(MiscType.F_TALON)) {
+                costValue = (int) Math.ceil(getTonnage(entity, loc) * 300);
+            } else if (hasFlag(MiscType.F_SPIKES)) {
+                costValue = (int) Math.ceil(entity.getWeight() * 50);
             }
-        }
+            if (isArmored) {
+                double armoredCost = costValue;
 
-        if (isArmored) {
-            double armoredCost = costValue;
+                armoredCost += 150000 * getCriticals(entity);
 
-            armoredCost += 150000 * getCriticals(entity);
-
-            return armoredCost;
+                return armoredCost;
+            }
         }
         return costValue;
     }
@@ -3199,7 +3247,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Clan Light Active Probe");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.cost = 150000;
+        misc.cost = 50000;
         misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.bv = 7;
 
@@ -4018,7 +4066,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        misc.cost = 90000;
+        misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPIKES).or(F_MECH_EQUIPMENT);
         misc.bv = 4;
 

@@ -4565,7 +4565,7 @@ public abstract class Mech extends Entity {
             int numCrits = getNumberOfCriticals(j);
             for (int k = 0; k < numCrits; k++) {
                 CriticalSlot ccs = getCritical(j, k);
-                if ((ccs != null) && ccs.isArmored()) {
+                if ((ccs != null) && ccs.isArmored() && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     armoredCrits++;
                 }
             }
@@ -4611,7 +4611,7 @@ public abstract class Mech extends Entity {
         bvText = new StringBuffer();
         String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer",
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
-                "Heatsinks", "Full Head Ejection System", "Armor", "Equipment",
+                "Heatsinks", "Full Head Ejection System", "Armored System Components", "Armor", "Equipment",
                 "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
@@ -4627,7 +4627,7 @@ public abstract class Mech extends Entity {
         // find the maximum length of the columns.
         for (int l = 0; l < left.length; l++) {
 
-            if (l == 12) {
+            if (l == 13) {
                 getWeaponsAndEquipmentCost(true);
             } else {
                 bvText.append(startRow);

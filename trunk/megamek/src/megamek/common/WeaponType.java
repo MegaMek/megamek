@@ -1397,7 +1397,7 @@ public class WeaponType extends EquipmentType {
     }
 
     @Override
-    public double getCost(Entity entity, boolean isArmored) {
+    public double getCost(Entity entity, boolean isArmored, int loc) {
         if (isArmored) {
             double armoredCost = cost;
             armoredCost += 150000 * getCriticals(entity);
@@ -1405,7 +1405,7 @@ public class WeaponType extends EquipmentType {
             return armoredCost;
         }
 
-        return super.getCost(entity, isArmored);
+        return super.getCost(entity, isArmored, loc);
     }
 
 }

@@ -67,6 +67,7 @@ v0.35.32-dev (SVN)
 + Bug 3555117: "Scorpion Minesweeper" now known as "Scorpion Light Tank (Minesweeper)", fixing its unit picture.
 + Bug: Vehicle cost formula still rounding power amplifier weight the 'old' way.
 + Bug: OmniVehicle cost not including conversion factor.
++ Cost fixes
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

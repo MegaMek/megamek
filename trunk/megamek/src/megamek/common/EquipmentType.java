@@ -515,7 +515,7 @@ public class EquipmentType {
     /**
      * @return The C-Bill cost of the piece of equipment.
      */
-    public double getCost(Entity entity, boolean isArmored) {
+    public double getCost(Entity entity, boolean armored, int loc) {
         return cost;
     }
 
@@ -601,75 +601,6 @@ public class EquipmentType {
             return POINT_MULTIPLIER_CLAN_FF;
         }
         return armorPointMultipliers[inArmor];
-    }
-
-    /**
-     * stuff like hatchets, which depend on an unknown quality (usually tonnage
-     * of the unit.) entity is whatever has this item
-     */
-    public int resolveVariableCost(Entity entity, boolean isArmored) {
-        int varCost = 0;
-        if (this instanceof MiscType) {
-            if (hasFlag(MiscType.F_MASC)) {
-                if (entity instanceof Protomech) {
-                    varCost = Math.round(entity.getEngine().getRating() * 1000 * entity.getWeight() * 0.025f);
-                } else if (hasSubType(MiscType.S_SUPERCHARGER)) {
-                    Engine e = entity.getEngine();
-                    if (e == null) {
-                        varCost = 0;
-                    } else {
-                        varCost = e.getRating() * 10000;
-                    }
-                } else {
-                    int mascTonnage = 0;
-                    if (getInternalName().equals("ISMASC")) {
-                        mascTonnage = Math.round(entity.getWeight() / 20.0f);
-                    } else if (getInternalName().equals("CLMASC")) {
-                        mascTonnage = Math.round(entity.getWeight() / 25.0f);
-                    }
-                    varCost = entity.getEngine().getRating() * mascTonnage * 1000;
-                }
-            } else if (hasFlag(MiscType.F_TARGCOMP)) {
-                int tCompTons = 0;
-                float fTons = 0.0f;
-                for (Mounted mo : entity.getWeaponList()) {
-                    WeaponType wt = (WeaponType) mo.getType();
-                    if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                        fTons += wt.getTonnage(entity);
-                    }
-                }
-                if (getInternalName().equals("ISTargeting Computer")) {
-                    tCompTons = (int) Math.ceil(fTons / 4.0f);
-                } else if (getInternalName().equals("CLTargeting Computer")) {
-                    tCompTons = (int) Math.ceil(fTons / 5.0f);
-                }
-                varCost = tCompTons * 10000;
-            } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_HATCHET) || hasSubType(MiscType.S_MACE_THB))) {
-                int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
-                varCost = hatchetTons * 5000;
-            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_SWORD)) {
-                int swordTons = (int) Math.ceil(entity.getWeight() / 15.0);
-                varCost = swordTons * 10000;
-            } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
-                varCost = (1 + bladeTons) * 10000;
-            } else if (hasFlag(MiscType.F_TRACKS)) {
-                varCost = (int) Math.ceil((500 * entity.getEngine().getRating() * entity.getWeight()) / 75);
-            } else if (hasFlag(MiscType.F_TALON)) {
-                varCost = (int) Math.ceil(getTonnage(entity) * 300);
-            }
-
-        } else {
-            if (varCost == 0) {
-                // if we don't know what it is...
-                System.out.println("I don't know how much " + name + " costs.");
-            }
-        }
-
-        if (isArmored) {
-            varCost += 150000 * getCriticals(entity);
-        }
-        return varCost;
     }
 
     public boolean equals(EquipmentType e) {
@@ -760,7 +691,7 @@ public class EquipmentType {
                 if (type.cost == EquipmentType.COST_VARIABLE) {
                     w.write("Variable");
                 } else {
-                    w.write(Double.toString(type.getCost(null, false)));
+                    w.write(Double.toString(type.getCost(null, false, -1)));
                 }
                 w.write(",");
                 if (type.bv == EquipmentType.BV_VARIABLE) {

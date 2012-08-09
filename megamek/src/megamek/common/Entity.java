@@ -121,7 +121,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
-    private Pilot crew = new Pilot();
+    private Crew crew = new Crew(1);
 
     private Quirks quirks = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
@@ -848,11 +848,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return (id != other.getId()) && owner.isEnemyOf(other.getOwner());
     }
 
-    public Pilot getCrew() {
+    public Crew getCrew() {
         return crew;
     }
 
-    public void setCrew(Pilot crew) {
+    public void setCrew(Crew crew) {
         this.crew = crew;
     }
 
@@ -5116,7 +5116,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         PilotingRollData roll;
 
-        // Pilot dead?
+        // Crew dead?
         if (getCrew().isDead() || getCrew().isDoomed()
                 || (getCrew().getHits() >= 6)) {
             // Following line switched from impossible to automatic failure

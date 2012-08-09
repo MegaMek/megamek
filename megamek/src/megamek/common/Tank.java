@@ -2987,7 +2987,7 @@ public class Tank extends Entity {
                 }
                 if (wtype.getDamage() > 0) {
                     totalDamage += wtype.getDamage();
-                } else if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                } else if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                     totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) || (wtype instanceof SRTWeapon)) ? 2
                             : ((wtype instanceof ATMWeapon) ? 3 : 1)));
                 } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {

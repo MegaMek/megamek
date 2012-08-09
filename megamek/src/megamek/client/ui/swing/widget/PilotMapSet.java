@@ -29,7 +29,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Entity;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.util.DirectoryItems;
@@ -322,7 +322,7 @@ public class PilotMapSet implements DisplayMapSet {
      *         will be <code>null</code> if no portrait was selected
      *          or if there was an error loading it.
      */
-    public Image getPortrait(Pilot pilot) {
+    public Image getPortrait(Crew pilot) {
 
         String category = pilot.getPortraitCategory();
         String file = pilot.getPortraitFileName();
@@ -332,11 +332,11 @@ public class PilotMapSet implements DisplayMapSet {
             return null;
         }
 
-        if (Pilot.PORTRAIT_NONE.equals(file)) {
+        if (Crew.PORTRAIT_NONE.equals(file)) {
             file = "default.gif"; //$NON-NLS-1$
         }
 
-        if(Pilot.ROOT_PORTRAIT.equals(category)) {
+        if(Crew.ROOT_PORTRAIT.equals(category)) {
             category = "";
         }
 

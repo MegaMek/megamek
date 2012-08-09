@@ -1592,7 +1592,7 @@ public class MechDisplay extends JPanel {
                 }
             }
 
-            if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+            if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 if (wtype instanceof HAGWeapon) {
                     wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
                 } else {

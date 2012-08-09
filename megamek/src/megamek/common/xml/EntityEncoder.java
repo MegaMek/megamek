@@ -36,7 +36,7 @@ import megamek.common.Infantry;
 import megamek.common.InfernoTracker;
 import megamek.common.Mech;
 import megamek.common.Mounted;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
@@ -104,7 +104,7 @@ public class EntityEncoder {
         out.write("\">");
 
         // Add the crew this entity.
-        final Pilot crew = entity.getCrew();
+        final Crew crew = entity.getCrew();
         out.write("<pilot name=\"");
         out.write(crew.getName());
         out.write("\" gunnery=\"");

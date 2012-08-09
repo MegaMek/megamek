@@ -26,7 +26,7 @@ import megamek.common.weapons.infantry.*;
  * for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
-    public static final int DAMAGE_MISSILE = -2;
+    public static final int DAMAGE_BY_CLUSTERTABLE = -2;
     public static final int DAMAGE_VARIABLE = -3;
     public static final int DAMAGE_SPECIAL = -4;
     public static final int DAMAGE_ARTILLERY = -5;

@@ -68,7 +68,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
@@ -822,10 +822,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         if ("specialist".equals(option.getName())) { //$NON-NLS-1$
-            optionComp.addValue(Pilot.SPECIAL_NONE);
-            optionComp.addValue(Pilot.SPECIAL_LASER);
-            optionComp.addValue(Pilot.SPECIAL_BALLISTIC);
-            optionComp.addValue(Pilot.SPECIAL_MISSILE);
+            optionComp.addValue(Crew.SPECIAL_NONE);
+            optionComp.addValue(Crew.SPECIAL_LASER);
+            optionComp.addValue(Crew.SPECIAL_BALLISTIC);
+            optionComp.addValue(Crew.SPECIAL_MISSILE);
             optionComp.setSelected(option.stringValue());
         }
 
@@ -1050,10 +1050,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // change entity
             if (client.game.getOptions().booleanOption("rpg_gunnery")) {
-                entity.setCrew(new Pilot(name, gunneryL, gunneryM, gunneryB,
+                entity.setCrew(new Crew(name, 1, gunneryL, gunneryM, gunneryB,
                         piloting));
             } else {
-                entity.setCrew(new Pilot(name, gunnery, piloting));
+                entity.setCrew(new Crew(name, 1, gunnery, piloting));
             }
             entity.getCrew().setArtillery(artillery);
             entity.getCrew().setFatigue(fatigue);

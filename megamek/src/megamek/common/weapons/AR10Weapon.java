@@ -43,7 +43,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.setInternalName(this.name);
         this.addLookupName("AR10");
         this.heat = 10;
-        this.damage = DAMAGE_MISSILE;
+        this.damage = 2;
         this.ammoType = AmmoType.T_AR10;
         this.shortRange = 20;
         this.mediumRange = 30;

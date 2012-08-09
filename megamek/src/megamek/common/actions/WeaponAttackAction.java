@@ -46,7 +46,7 @@ import megamek.common.MechWarrior;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
@@ -928,7 +928,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //Note that weapon specialist supercedes gunnery specialization, so if you have
             //a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod
             if(wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if(ae.getCrew().getOptions().stringOption("specialist").equals(Pilot.SPECIAL_LASER)) {
+                if(ae.getCrew().getOptions().stringOption("specialist").equals(Crew.SPECIAL_LASER)) {
                     toHit.addModifier(-1, "Laser Specialization");
                 }
                 else {
@@ -936,7 +936,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             else if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if(ae.getCrew().getOptions().stringOption("specialist").equals(Pilot.SPECIAL_BALLISTIC)) {
+                if(ae.getCrew().getOptions().stringOption("specialist").equals(Crew.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, "Ballistic Specialization");
                 }
                 else {
@@ -944,7 +944,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
             else if(wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if(ae.getCrew().getOptions().stringOption("specialist").equals(Pilot.SPECIAL_MISSILE)) {
+                if(ae.getCrew().getOptions().stringOption("specialist").equals(Crew.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, "Missile Specialization");
                 }
                 else {

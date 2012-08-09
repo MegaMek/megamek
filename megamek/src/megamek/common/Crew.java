@@ -22,12 +22,13 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 
-public class Pilot implements Serializable {
+public class Crew implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = -141169182388269619L;
     private String name;
+    private int size;
     private int gunnery;
     private int piloting;
     private int hits; // hits taken
@@ -97,34 +98,37 @@ public class Pilot implements Serializable {
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH = 6;
 
-    public Pilot() {
-        this("Unnamed", 4, 5);
+    /** Creates a nameless P5/G4 crew of the given size.
+     *
+     * @param size the crew size.
+     */
+    public Crew(int size) {
+        this("Unnamed", 1, 4, 5);
     }
 
-    public Pilot(String name, int gunnery, int piloting) {
-        this.name = name;
-        nickname = "";
-        this.gunnery = gunnery;
-        gunneryL = gunnery;
-        gunneryM = gunnery;
-        gunneryB = gunnery;
-        artillery = gunnery;
-        this.piloting = piloting;
-        initBonus = 0;
-        commandBonus = 0;
-        toughness = 0;
-        hits = 0;
-        unconscious = false;
-        dead = false;
-        koThisRound = false;
-        fatigue = 0;
-        fatigueCount = 0;
-
-        options.initialize();
+    /**
+     *
+     * @param name the name of the crew or commander.
+     * @param size the crew size.
+     * @param gunnery the crew's Gunnery skill.
+     * @param piloting the crew's Piloting or Driving skill.
+     */
+    public Crew(String name, int size, int gunnery, int piloting) {
+        this(name, size, gunnery, gunnery, gunnery, piloting);
     }
 
-    public Pilot(String name, int gunneryL, int gunneryM, int gunneryB, int piloting) {
+    /**
+     *
+     * @param name the name of the crew or commander.
+     * @param size the crew size.
+     * @param gunneryL the crew's "laser" Gunnery skill.
+     * @param gunneryM the crew's "missile" Gunnery skill.
+     * @param gunneryB the crew's "ballistic" Gunnery skill.
+     * @param piloting the crew's Piloting or Driving skill.
+     */
+    public Crew(String name, int size, int gunneryL, int gunneryM, int gunneryB, int piloting) {
         this.name = name;
+        this.size = size;
         nickname = "";
         gunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
         this.gunneryL = gunneryL;
@@ -149,6 +153,14 @@ public class Pilot implements Serializable {
 
     public String getNickname() {
         return nickname;
+    }
+    
+    /** The size of this crew.
+     * 
+     * @return the number of crew members.
+     */
+    public int getSize() {
+        return size;
     }
 
     public int getGunnery() {
@@ -195,6 +207,14 @@ public class Pilot implements Serializable {
         nickname = nick;
     }
 
+    /** Accessor method to set the crew size.
+     * 
+     * @param newSize The new size of this crew.
+     */
+    public void setSize(int newSize) {
+        size = newSize;
+    }
+    
     public void setGunnery(int gunnery) {
         this.gunnery = gunnery;
     }

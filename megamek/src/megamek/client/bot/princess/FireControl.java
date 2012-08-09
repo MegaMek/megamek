@@ -280,7 +280,7 @@ public class FireControl {
              * )*((Infantry)shooter).getShootingStrength();
              * expected_damage_on_hit=max_damage/2.0; //ignoring cluster hits }
              * else if(((WeaponType)weapon.getType()).getDamage()==WeaponType.
-             * DAMAGE_MISSILE) {
+             * DAMAGE_BY_CLUSTERTABLE) {
              * max_damage=((WeaponType)weapon.getType()).getRackSize(); //I
              * think this is the right amount
              * expected_damage_on_hit=max_damage/2; //not true. too lazy to

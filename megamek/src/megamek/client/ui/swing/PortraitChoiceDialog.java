@@ -44,7 +44,7 @@ import javax.swing.table.TableCellRenderer;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.util.DirectoryItems;
 
 /**
@@ -106,7 +106,7 @@ public class PortraitChoiceDialog extends JDialog {
        scrPortraits.setViewportView(tablePortrait);
        comboCategories = new JComboBox();
        DefaultComboBoxModel categoryModel = new DefaultComboBoxModel();
-       categoryModel.addElement(Pilot.ROOT_PORTRAIT);
+       categoryModel.addElement(Crew.ROOT_PORTRAIT);
        if (portraits != null) {
            Iterator<String> names = portraits.getCategoryNames();
            while (names.hasNext()) {
@@ -183,7 +183,7 @@ public class PortraitChoiceDialog extends JDialog {
 	   if(tablePortrait.getSelectedRow() != -1) {
 	       filename = (String) portraitModel.getValueAt(tablePortrait.getSelectedRow(), 0);
 	   } else {
-	       filename = Pilot.PORTRAIT_NONE;
+	       filename = Crew.PORTRAIT_NONE;
 	   }
 	   sourceButton.setIcon(generateIcon(category, filename));
 	   setVisible(false);
@@ -203,7 +203,7 @@ public class PortraitChoiceDialog extends JDialog {
        return filename;
    }
    
-   public void setPilot(Pilot pilot) {
+   public void setPilot(Crew pilot) {
        category = pilot.getPortraitCategory();
        filename = pilot.getPortraitFileName();
        sourceButton.setIcon(generateIcon(category, filename));
@@ -224,8 +224,8 @@ public class PortraitChoiceDialog extends JDialog {
        portraitModel.setCategory(category);
        // Translate the "root camo" category name.
        Iterator<String> portraitNames;
-       if (Pilot.ROOT_PORTRAIT.equals(category)) {
-           portraitModel.addPortrait(Pilot.PORTRAIT_NONE);
+       if (Crew.ROOT_PORTRAIT.equals(category)) {
+           portraitModel.addPortrait(Crew.PORTRAIT_NONE);
            portraitNames = portraits.getItemNames(""); //$NON-NLS-1$
        } else {
            portraitNames = portraits.getItemNames(category);
@@ -249,13 +249,13 @@ public class PortraitChoiceDialog extends JDialog {
         }
         
         String actualItem = item;
-        if (Pilot.PORTRAIT_NONE.equals(actualItem)) {
+        if (Crew.PORTRAIT_NONE.equals(actualItem)) {
             actualItem = "default.gif"; //$NON-NLS-1$
         }
         
         String actualCat = cat;
         // Replace the ROOT_PORTRAIT string with "".
-        if (Pilot.ROOT_PORTRAIT.equals(actualCat)) {
+        if (Crew.ROOT_PORTRAIT.equals(actualCat)) {
             actualCat = ""; //$NON-NLS-1$
         }
 
@@ -265,9 +265,9 @@ public class PortraitChoiceDialog extends JDialog {
             Image image = (Image) portraits.getItem(actualCat, actualItem);
             if(null == image) {
                 //the image could not be found so switch to default one
-                category = Pilot.ROOT_PORTRAIT;
+                category = Crew.ROOT_PORTRAIT;
                 actualCat = "";
-                filename = Pilot.PORTRAIT_NONE;
+                filename = Crew.PORTRAIT_NONE;
                 actualItem = "default.gif";
                 image = (Image) portraits.getItem(actualCat, actualItem);
             }
@@ -299,7 +299,7 @@ public class PortraitChoiceDialog extends JDialog {
 
        public PortraitTableModel() {
            columnNames = new String[] {"Portraits"};
-           category = Pilot.ROOT_PORTRAIT;
+           category = Crew.ROOT_PORTRAIT;
            names = new ArrayList<String>();
            images = new ArrayList<Image>();
        }
@@ -313,7 +313,7 @@ public class PortraitChoiceDialog extends JDialog {
        }
 
        public void reset() {
-           category = Pilot.ROOT_PORTRAIT;
+           category = Crew.ROOT_PORTRAIT;
            names = new ArrayList<String>();
            images = new ArrayList<Image>();
        }
@@ -411,7 +411,7 @@ public class PortraitChoiceDialog extends JDialog {
 	            return;
 	        }
 	        
-	        if(name.equals(Pilot.PORTRAIT_NONE)) {
+	        if(name.equals(Crew.PORTRAIT_NONE)) {
 	        	name = "default.gif";
 	        }
 
@@ -419,7 +419,7 @@ public class PortraitChoiceDialog extends JDialog {
 	        try {
 
 	            // Translate the root portrait directory name.
-	            if (Pilot.ROOT_PORTRAIT.equals(category))
+	            if (Crew.ROOT_PORTRAIT.equals(category))
 	                category = ""; //$NON-NLS-1$
 	            Image portrait = (Image) portraits.getItem(category, name);
 	            lblImage.setIcon(new ImageIcon(portrait));

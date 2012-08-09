@@ -42,15 +42,15 @@ public class AttackOption extends ToHitData {
             if (a.target.getKey().intValue() == a1.target.getKey().intValue()) {
                 WeaponType w = (WeaponType) a.weapon.getType();
                 WeaponType w1 = (WeaponType) a1.weapon.getType();
-                if (w.getDamage() == WeaponType.DAMAGE_MISSILE) {
-                    if (w1.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                if (w.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                    if (w1.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                         if (a.expected > a1.expected) {
                             return -1;
                         }
                         return 1;
                     }
                     return 1;
-                } else if (w.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                } else if (w.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                     return -1;
                 } else if (a.expected > a1.expected) {
                     return -1;

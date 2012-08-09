@@ -2032,11 +2032,9 @@ public class Compute {
             }
         }
 
-        // Missiles, LBX cluster rounds, and ultra/rotary cannons (when spun up)
+        // Missiles, HAGs, LBX cluster rounds, and ultra/rotary cannons (when spun up)
         // use the missile hits table
-        // Note: HAGs use the 'missile' damage value as well and so are covered by
-        // this first clause.
-        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
+        if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
             use_table = true;
         }
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX) || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)
@@ -2113,10 +2111,10 @@ public class Compute {
             if (attacker instanceof BattleArmor) {
                 // The number of troopers hitting
                 fHits = expectedHitsByRackSize[ba_attacker.getShootingStrength()];
-                if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
+                if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }
-                if (wt.getDamage() != WeaponType.DAMAGE_MISSILE) {
+                if (wt.getDamage() != WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                     if (wt.getDamage() != WeaponType.DAMAGE_VARIABLE) {
                         fDamage = wt.getDamage();
                     } else {
@@ -2132,7 +2130,7 @@ public class Compute {
             // good for another 1.20x damage on missile weapons
             if ((!Compute.isAffectedByECM(attacker, attacker.getPosition(), g.getEntity(waa.getTargetId())
                     .getPosition()))
-                    && (wt.getDamage() == WeaponType.DAMAGE_MISSILE)
+                    && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
                     && (wt.hasFlag(WeaponType.F_MISSILE))) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoType.T_LRM) || (wt.getAmmoType() == AmmoType.T_MML)
@@ -2179,7 +2177,7 @@ public class Compute {
             }
 
             // adjust for previous AMS
-            if (wt.getDamage() == WeaponType.DAMAGE_MISSILE
+            if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE
                     && wt.hasFlag(WeaponType.F_MISSILE)) {
                 ArrayList<Mounted> vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {

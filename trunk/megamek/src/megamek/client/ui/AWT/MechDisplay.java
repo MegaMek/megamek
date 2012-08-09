@@ -1288,7 +1288,7 @@ public class MechDisplay extends BufferedPanel {
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
                     .getLocation(), mounted.isRearMounted())));
 
-            if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
+            if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 if (wtype instanceof HAGWeapon) {
                     wDamR.setText(Messages.getString("MechDisplay.Variable")); //$NON-NLS-1$
                 } else {

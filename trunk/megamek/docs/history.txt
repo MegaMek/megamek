@@ -68,6 +68,8 @@ v0.35.32-dev (SVN)
 + Bug: Vehicle cost formula still rounding power amplifier weight the 'old' way.
 + Bug: OmniVehicle cost not including conversion factor.
 + Cost fixes
++ Renamed Pilot class to Crew, methods to get and set crew size added.
++ Renamed damage value constant WeaponType.DAMAGE_MISSILE to DAMAGE_BY_CLUSTERTABLE to reduce confusion with the "missile" damage *type*.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

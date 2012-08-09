@@ -89,7 +89,7 @@ import megamek.common.Infantry;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -1277,7 +1277,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butDeleteAll.setEnabled(localUnits);
     }
 
-    public static String formatPilotCompact(Pilot pilot, boolean blindDrop) {
+    public static String formatPilotCompact(Crew pilot, boolean blindDrop) {
 
         String value = "";
         if (blindDrop) {
@@ -1295,7 +1295,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     }
 
-    public static String formatPilotHTML(Pilot pilot, boolean blindDrop) {
+    public static String formatPilotHTML(Crew pilot, boolean blindDrop) {
 
         int crewAdvCount = pilot.countOptions(PilotOptions.LVL3_ADVANTAGES);
         int implants = pilot.countOptions(PilotOptions.MD_ADVANTAGES);
@@ -1323,7 +1323,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     }
 
-    public static String formatPilotTooltip(Pilot pilot, boolean command,
+    public static String formatPilotTooltip(Crew pilot, boolean command,
             boolean init, boolean tough) {
 
         String value = "<html>";
@@ -1870,7 +1870,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (swapper == null) {
             return;
         }
-        Pilot temp = swapper.getCrew();
+        Crew temp = swapper.getCrew();
         swapper.setCrew(swapee.getCrew());
         swapee.setCrew(temp);
         c.sendUpdateEntity(swapee);
@@ -2886,7 +2886,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 return c;
             }
 
-            public void setPortrait(Pilot pilot) {
+            public void setPortrait(Crew pilot) {
 
                 String category = pilot.getPortraitCategory();
                 String file = pilot.getPortraitFileName();
@@ -2896,11 +2896,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     return;
                 }
 
-                if (Pilot.ROOT_PORTRAIT.equals(category)) {
+                if (Crew.ROOT_PORTRAIT.equals(category)) {
                     category = "";
                 }
 
-                if (Pilot.PORTRAIT_NONE.equals(file)) {
+                if (Crew.PORTRAIT_NONE.equals(file)) {
                     file = "default.gif";
                 }
 
@@ -2910,9 +2910,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     portrait = (Image) portraits.getItem(category, file);
                     if (null == portrait) {
                         // the image could not be found so switch to default one
-                        pilot.setPortraitCategory(Pilot.ROOT_PORTRAIT);
+                        pilot.setPortraitCategory(Crew.ROOT_PORTRAIT);
                         category = "";
-                        pilot.setPortraitFileName(Pilot.PORTRAIT_NONE);
+                        pilot.setPortraitFileName(Crew.PORTRAIT_NONE);
                         file = "default.gif";
                         portrait = (Image) portraits.getItem(category, file);
                     }

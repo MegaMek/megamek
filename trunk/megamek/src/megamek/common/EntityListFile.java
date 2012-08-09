@@ -462,7 +462,7 @@ public class EntityListFile {
             output.write(CommonConstants.NL);
 
             // Add the crew this entity.
-            final Pilot crew = entity.getCrew();
+            final Crew crew = entity.getCrew();
             output.write("      <pilot name=\"");
             output.write(crew.getName().replaceAll("\"", "&quot;"));
             output.write("\" nick=\"");
@@ -552,11 +552,11 @@ public class EntityListFile {
                     }
                 }
             }
-            if (!Pilot.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
+            if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
                 output.write("\" portraitCat=\"");
                 output.write(crew.getPortraitCategory());
             }
-            if (!Pilot.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
+            if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
                 output.write("\" portraitFile=\"");
                 output.write(crew.getPortraitFileName());
             }

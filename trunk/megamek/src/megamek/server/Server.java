@@ -110,7 +110,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.PilotingRollData;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
@@ -15025,7 +15025,7 @@ public class Server implements Runnable {
                 addReport(damageCrew(entity, damageToCrew));
             } else if (mtHeat && (entity.heat >= 32) && !entity.getCrew().isDead() && !entity.getCrew().isDoomed()
                     && !entity.getCrew().getOptions().booleanOption("pain_shunt")) {
-                // Pilot may take damage from heat if MaxTech option is set
+                // Crew may take damage from heat if MaxTech option is set
                 int heatroll = Compute.d6(2);
                 int avoidNumber = -1;
                 if (entity.heat >= 47) {
@@ -16116,7 +16116,7 @@ public class Server implements Runnable {
      */
     private Vector<Report> damageCrew(Entity en, int damage) {
         Vector<Report> vDesc = new Vector<Report>();
-        Pilot crew = en.getCrew();
+        Crew crew = en.getCrew();
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.setHits(crew.getHits() + damage);
             Report r = new Report(6025);
@@ -16127,7 +16127,7 @@ public class Server implements Runnable {
             r.add(damage);
             r.newlines = 0;
             vDesc.addElement(r);
-            if (Pilot.DEATH > crew.getHits()) {
+            if (Crew.DEATH > crew.getHits()) {
                 vDesc.addAll(resolveCrewDamage(en, damage));
             } else if (!crew.isDoomed()) {
                 crew.setDoomed(true);
@@ -19801,7 +19801,7 @@ public class Server implements Runnable {
                         }
 
                         // Don't kill a pilot multiple times.
-                        if (Pilot.DEATH > en.getCrew().getHits()) {
+                        if (Crew.DEATH > en.getCrew().getHits()) {
                             // boink!
                             en.getCrew().setDoomed(true);
                             Report.addNewline(vDesc);
@@ -20559,7 +20559,7 @@ public class Server implements Runnable {
                     en.destroyLocation(loc, true);
                     if (((Mech) en).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
                         // Don't kill a pilot multiple times.
-                        if (Pilot.DEATH > en.getCrew().getHits()) {
+                        if (Crew.DEATH > en.getCrew().getHits()) {
                             en.getCrew().setDoomed(true);
                             Report.addNewline(vDesc);
                             vDesc.addAll(destroyEntity(en, "pilot death", true));
@@ -26026,7 +26026,7 @@ public class Server implements Runnable {
                     game.removeEntity(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
-            } // Pilot safely ejects.
+            } // Crew safely ejects.
 
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())

@@ -44,7 +44,7 @@ import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -470,7 +470,7 @@ public class ScenarioLoader {
             System.out.println("Loading " + ms.getName());
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName())
                     .getEntity();
-            e.setCrew(new Pilot(st.nextToken(),
+            e.setCrew(new Crew(st.nextToken(), 1,
                     Integer.parseInt(st.nextToken()), Integer.parseInt(st
                             .nextToken())));
             try {

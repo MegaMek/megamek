@@ -62,7 +62,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
-import megamek.common.Pilot;
+import megamek.common.Crew;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
@@ -1699,10 +1699,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // change entity
             if (client.game.getOptions().booleanOption("rpg_gunnery")) {
-                entity.setCrew(new Pilot(name, gunneryL, gunneryM, gunneryB,
+                entity.setCrew(new Crew(name, 1, gunneryL, gunneryM, gunneryB,
                         piloting));
             } else {
-                entity.setCrew(new Pilot(name, gunnery, piloting));
+                entity.setCrew(new Crew(name, 1, gunnery, piloting));
             }
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);

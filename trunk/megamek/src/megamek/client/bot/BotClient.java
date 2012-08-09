@@ -840,7 +840,7 @@ public abstract class BotClient extends Client {
 
         float fDamage = 0.0f;
         WeaponType wt = (WeaponType) weapon.getType();
-        if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
+        if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
             if (weapon.getLinked() == null) {
                 return 0.0f;
             }

@@ -62,7 +62,7 @@ public class Protomech extends Entity {
 
     // locations
 
-    // Pilot damage caused so far by crits to this location.
+    // Crew damage caused so far by crits to this location.
     // Needed for location destruction pilot damage.
     private int pilotDamageTaken[] =
         { 0, 0, 0, 0, 0, 0 };
@@ -1313,7 +1313,7 @@ public class Protomech extends Entity {
      * Protomechs have no piloting skill (set to 5 for BV purposes)
      */
     @Override
-    public void setCrew(Pilot p) {
+    public void setCrew(Crew p) {
         super.setCrew(p);
         if(null != p) {
         	getCrew().setPiloting(5);

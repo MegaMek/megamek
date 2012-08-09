@@ -54,7 +54,7 @@ public class XMLStreamParser implements XMLResponder {
      * Keep a separate list of pilot/crews parsed becasue dismounted pilots may
      * need to be read separately
      */
-    private Vector<Pilot> pilots = new Vector<Pilot>();
+    private Vector<Crew> pilots = new Vector<Crew>();
 
     /**
      * The parser for this object.
@@ -362,7 +362,7 @@ public class XMLStreamParser implements XMLResponder {
         return entities;
     }
 
-    public Vector<Pilot> getPilots() {
+    public Vector<Crew> getPilots() {
         // ASSUMPTION : it is safe to return a modifiable reference to the
         // vector. If assumption is wrong, clone the vector.
         return pilots;
@@ -525,8 +525,8 @@ public class XMLStreamParser implements XMLResponder {
                         StringTokenizer st = new StringTokenizer(quirks, "::");
                         while (st.hasMoreTokens()) {
                             String quirk = st.nextToken();
-                            String quirkName = Pilot.parseAdvantageName(quirk);
-                            Object value = Pilot.parseAdvantageValue(quirk);
+                            String quirkName = Crew.parseAdvantageName(quirk);
+                            Object value = Crew.parseAdvantageValue(quirk);
 
                             try {
                                 entity.getQuirks().getOption(quirkName)
@@ -785,7 +785,7 @@ public class XMLStreamParser implements XMLResponder {
                         pilotName = "Unnamed";
                     }
 
-                    Pilot crew = new Pilot(pilotName, gunneryLVal, gunneryMVal,
+                    Crew crew = new Crew(pilotName, 1, gunneryLVal, gunneryMVal,
                             gunneryBVal, pilotVal);
 
                     if ((null != pilotNickname) && (pilotNickname.length() > 0)) {
@@ -808,8 +808,8 @@ public class XMLStreamParser implements XMLResponder {
                                 "::");
                         while (st.hasMoreTokens()) {
                             String adv = st.nextToken();
-                            String advName = Pilot.parseAdvantageName(adv);
-                            Object value = Pilot.parseAdvantageValue(adv);
+                            String advName = Crew.parseAdvantageName(adv);
+                            Object value = Crew.parseAdvantageValue(adv);
 
                             try {
                                 crew.getOptions().getOption(advName)
@@ -825,8 +825,8 @@ public class XMLStreamParser implements XMLResponder {
                         StringTokenizer st = new StringTokenizer(edge, "::");
                         while (st.hasMoreTokens()) {
                             String edg = st.nextToken();
-                            String edgeName = Pilot.parseAdvantageName(edg);
-                            Object value = Pilot.parseAdvantageValue(edg);
+                            String edgeName = Crew.parseAdvantageName(edg);
+                            Object value = Crew.parseAdvantageValue(edg);
 
                             try {
                                 crew.getOptions().getOption(edgeName)
@@ -841,9 +841,9 @@ public class XMLStreamParser implements XMLResponder {
                         StringTokenizer st = new StringTokenizer(implants, "::");
                         while (st.hasMoreTokens()) {
                             String implant = st.nextToken();
-                            String implantName = Pilot
+                            String implantName = Crew
                                     .parseAdvantageName(implant);
-                            Object value = Pilot.parseAdvantageValue(implant);
+                            Object value = Crew.parseAdvantageValue(implant);
 
                             try {
                                 crew.getOptions().getOption(implantName)
@@ -1564,9 +1564,9 @@ public class XMLStreamParser implements XMLResponder {
                                     "::");
                             while (st.hasMoreTokens()) {
                                 String quirk = st.nextToken();
-                                String quirkName = Pilot
+                                String quirkName = Crew
                                         .parseAdvantageName(quirk);
-                                Object value = Pilot.parseAdvantageValue(quirk);
+                                Object value = Crew.parseAdvantageValue(quirk);
 
                                 try {
                                     mounted.getQuirks().getOption(quirkName)

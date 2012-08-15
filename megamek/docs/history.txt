@@ -1,4 +1,4 @@
-﻿﻿VERSION HISTORY:
+﻿VERSION HISTORY:
 ----------------
 v0.35.32-dev (SVN)
 + Data 3369808: Historical Brush War RAT's
@@ -70,6 +70,7 @@ v0.35.32-dev (SVN)
 + Cost fixes
 + Renamed Pilot class to Crew, methods to get and set crew size added.
 + Renamed damage value constant WeaponType.DAMAGE_MISSILE to DAMAGE_BY_CLUSTERTABLE to reduce confusion with the "missile" damage *type*.
++ Added cluster ammo to Clan tube artillery, reshuffled artillery ammo name order.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

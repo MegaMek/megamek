@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -2027,10 +2028,75 @@ public class Tank extends Entity {
         }
     }
 
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Engine", "Control Systems", "Internal Structure", "Power Amplifiers",
+                "Heat Sinks", "Turret", "Armor", "Lift Equipment", "Equipment",
+                "Omni Multiplier", "Movement Multiplier", "Flotation Hull/Vacuum Protection/Environmental Sealing multiplier",
+                "Off-Road Multiplier"};
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 8) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
+    }
+
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double cost = 0;
-        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        double[] costs = new double[13+locations()];
+        int i = 0;
+        costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+
         double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
         // should
         // be
@@ -2038,8 +2104,9 @@ public class Tank extends Entity {
         // up to
         // nearest
         // half-ton
-        cost += 10000 * controlWeight;
-        cost += (weight / 10.0) * 10000; // IS has no variations, no Endo etc.
+        costs[i++] = 10000 * controlWeight;
+         // IS has no variations, no Endo etc.
+        costs[i++] = (weight / 10.0) * 10000;
         double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
         int sinks = 0;
         double turretWeight = 0;
@@ -2059,17 +2126,17 @@ public class Tank extends Entity {
             paWeight = 0;
         }
         turretWeight = Math.ceil(turretWeight * 2) / 2;
-        cost += 20000 * paWeight;
-        cost += 2000 * Math.max(0, sinks - freeHeatSinks);
-        cost += turretWeight * 5000;
+        costs[i++] = 20000 * paWeight;
+        costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
+        costs[i++] = turretWeight * 5000;
         // armor
         if (hasPatchworkArmor()) {
             for (int loc = 0; loc < locations(); loc++) {
-                cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
+                costs[i++] = getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
             }
 
         } else {
-            cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
+            costs[i++] = getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
         double diveTonnage;
         switch (movementMode) {
@@ -2085,16 +2152,24 @@ public class Tank extends Entity {
                 break;
         }
         if (movementMode != EntityMovementMode.VTOL) {
-            cost += diveTonnage * 20000;
+            costs[i++] = diveTonnage * 20000;
         } else {
-            cost += diveTonnage * 40000;
+            costs[i++] = diveTonnage * 40000;
         }
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
+        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
+
+        double cost = 0; // calculate the total
+        for (int x = 0; x < i; x++) {
+            cost += costs[x];
+        }
         if (isOmni()) { // Omni conversion cost goes here.
             cost *= 1.25;
+            costs[i++] = -1.25;
+        } else {
+            costs[i++] = 0;
         }
-        
+
         double multiplier = 1.0;
         switch (movementMode) {
             case HOVER:
@@ -2119,14 +2194,20 @@ public class Tank extends Entity {
                 break;
             default:
         }
+        cost *= multiplier;
+        costs[i++] = -multiplier;
 
         if (hasWorkingMisc(MiscType.F_FLOTATION_HULL) || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION) || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
             cost *= 1.25;
+            costs[i++] = -1.25;
+
         }
         if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
             cost *= 1.2;
+            costs[i++] = -1.2;
         }
-        return Math.round(cost * multiplier);
+        addCostDetails(cost, costs);
+        return Math.round(cost);
     }
 
     @Override

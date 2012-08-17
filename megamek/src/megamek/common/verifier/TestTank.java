@@ -94,6 +94,14 @@ public class TestTank extends TestEntity {
     }
 
     public float getTankWeightTurret() {
+        if (tank instanceof VTOL) {
+            /*HACK: Prevents VTOL mast-mounted gear from being also counted as
+             * turret-mounted (courtesy of Tank.LOC_TURRET and VTOL.LOC_ROTOR
+             * both resolving to the same int value of 5). This will have to be
+             * handled differently once we get around to implementing VTOL chin
+             * turrets, however. */
+            return 0.0f;
+        }
         float weight = 0f;
         for (Mounted m : tank.getEquipment()) {
             if ((tank.isSuperHeavy()?m.getLocation() == SuperHeavyTank.LOC_TURRET:m.getLocation() == Tank.LOC_TURRET) && !(m.getType() instanceof AmmoType)) {
@@ -295,10 +303,10 @@ public class TestTank extends TestEntity {
             }
         }
         if (tank instanceof VTOL) {
-            for (Mounted m : tank.getEquipment()) {
-                if (m.getLocation() == VTOL.LOC_ROTOR) {
-                    if (!((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_MAST_MOUNT))) {
-                        buff.append("only mast mount can be mounted in rotor");
+            if (!tank.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+                for (Mounted m : tank.getEquipment()) {
+                    if (m.getLocation() == VTOL.LOC_ROTOR) {
+                        buff.append("rotor equipment must be placed in mast mount");
                         correct = false;
                     }
                 }

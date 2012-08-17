@@ -71,6 +71,8 @@ v0.35.32-dev (SVN)
 + Renamed Pilot class to Crew, methods to get and set crew size added.
 + Renamed damage value constant WeaponType.DAMAGE_MISSILE to DAMAGE_BY_CLUSTERTABLE to reduce confusion with the "missile" damage *type*.
 + Added cluster ammo to Clan tube artillery, reshuffled artillery ammo name order.
++ Bug: Equipment in VTOL mast mounts flagged as invalid *and* treated as turret-mounted for weight purposes at the same time.
++ Data: Donar Assault Helicopter and Donar Recon variant overweight (should have FF armor, were using standard).
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

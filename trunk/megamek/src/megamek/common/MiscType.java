@@ -628,6 +628,15 @@ public class MiscType extends EquipmentType {
                 costValue = (int) Math.ceil(getTonnage(entity, loc) * 300);
             } else if (hasFlag(MiscType.F_SPIKES)) {
                 costValue = (int) Math.ceil(entity.getWeight() * 50);
+            } else if (hasFlag(MiscType.F_PARTIAL_WING)) {
+                costValue = (int) Math.ceil(getTonnage(entity, loc) * 50000);
+            } else if (hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                int multiplier = entity.locationIsLeg(loc) ? 700 : 500;
+                costValue = (int) Math.ceil(entity.getWeight() * multiplier);
+            } else if (hasFlag(MiscType.F_HAND_WEAPON) && (hasSubType(MiscType.S_CLAW))) {
+                costValue = (int) Math.ceil(entity.getWeight() * 200);
+            } else if (hasFlag(MiscType.F_CLUB) && (hasSubType(MiscType.S_LANCE))) {
+                costValue = (int) Math.ceil(entity.getWeight() * 150);
             }
             if (isArmored) {
                 double armoredCost = costValue;

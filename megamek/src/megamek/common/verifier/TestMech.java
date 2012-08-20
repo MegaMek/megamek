@@ -185,10 +185,7 @@ public class TestMech extends TestEntity {
 
     @Override
     public boolean hasDoubleHeatSinks() {
-        if (mech.heatSinks() != mech.getHeatCapacity()) {
-            return true;
-        }
-        return false;
+        return mech.hasDoubleHeatSinks();
     }
 
     @Override
@@ -363,7 +360,9 @@ public class TestMech extends TestEntity {
                     continue;
                 }
                 MiscType mt = (MiscType) m.getType();
-                if (mt.hasFlag(MiscType.F_HEAT_SINK) || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                if (mt.hasFlag(MiscType.F_HEAT_SINK)
+                        || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                        || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                     countInternalHeatSinks++;
                 } else {
                     unallocated.addElement(m);

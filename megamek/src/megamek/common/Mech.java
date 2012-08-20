@@ -1482,10 +1482,12 @@ public abstract class Mech extends Entity {
         for (Mounted mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
             if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                    && etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
                 sinks += 2;
             } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinks++;
             }
         }
@@ -1503,7 +1505,8 @@ public abstract class Mech extends Entity {
                 continue;
             }
             if (etype.hasFlag(MiscType.F_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinks++;
             }
         }
@@ -1523,24 +1526,18 @@ public abstract class Mech extends Entity {
         int activeCount = getActiveSinks();
 
         for (Mounted mounted : getMisc()) {
-            if (activeCount <= 0) {
-                break;
-            }
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if ((activeCount > 0) && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
                 activeCount--;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if ((activeCount > 0) && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
-            }
-        }
-
-        if (includePartialWing) {
-            for (Mounted mount : getMisc()) {
-                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)
+            } else if (mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                capacity += 2;
+            } else if (includePartialWing && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
                         && // unless
                         // all crits
                         // are
@@ -1548,12 +1545,11 @@ public abstract class Mech extends Entity {
                         // we get
                         // the bonus
                         ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                                getEquipmentNum(mount), Mech.LOC_RT) > 0) || (getGoodCriticals(
+                                getEquipmentNum(mounted), Mech.LOC_RT) > 0) || (getGoodCriticals(
                                 CriticalSlot.TYPE_EQUIPMENT,
-                                getEquipmentNum(mount), Mech.LOC_LT) > 0))) {
+                                getEquipmentNum(mounted), Mech.LOC_LT) > 0))) {
                     capacity += getPartialWingHeatBonus();
-                    break;
-                }
+                includePartialWing = false; //Only count the partial wing bonus once.
             }
         }
 
@@ -1600,7 +1596,8 @@ public abstract class Mech extends Entity {
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinksUnderwater += 2;
             }
         }

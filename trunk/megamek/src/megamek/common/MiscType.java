@@ -188,6 +188,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_MANIPULATOR = BigInteger.valueOf(1).shiftLeft(142);
     public static final BigInteger F_CARGOLIFTER = BigInteger.valueOf(1).shiftLeft(143);
     public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
+    public static final BigInteger F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(145);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -908,6 +909,7 @@ public class MiscType extends EquipmentType {
 
         // Start of Level2 stuff
         EquipmentType.addType(MiscType.createISDoubleHeatSink());
+        EquipmentType.addType(MiscType.createISDoubleHeatSinkPrototype());
         EquipmentType.addType(MiscType.createCLDoubleHeatSink());
         EquipmentType.addType(MiscType.createISCASE());
         EquipmentType.addType(MiscType.createCLCASE());
@@ -1123,10 +1125,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLReconCamera());
         EquipmentType.addType(MiscType.createISReconCamera());
         EquipmentType.addType(MiscType.createISCombatVehicleEscapePod());
-        EquipmentType.addType(MiscType.createISSmallNavalCommScannerSuite());
-        EquipmentType.addType(MiscType.createCLSmallNavalCommScannerSuite());
-        EquipmentType.addType(MiscType.createISLargeNavalCommScannerSuite());
-        EquipmentType.addType(MiscType.createCLLargeNavalCommScannerSuite());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -1172,7 +1170,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAMechanicalJumpBooster());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
-        EquipmentType.addType(MiscType.createTrailerModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
@@ -1278,26 +1275,12 @@ public class MiscType extends EquipmentType {
     public static MiscType createTractorModification() {
         MiscType misc = new MiscType();
 
-        misc.name = "Tractor";
+        misc.name = "Tractor Modification";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-        misc.bv = 0;
-
-        return misc;
-    }
-
-    public static MiscType createTrailerModification() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Trailer";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 0;
-        misc.cost = 0;
-        misc.flags = misc.flags.or(F_TRAILER_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
 
         return misc;
@@ -1374,6 +1357,22 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1.0f;
         misc.criticals = 3;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createISDoubleHeatSinkPrototype() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        misc.name = "IS Double Heat Sink Prototype";
+        misc.setInternalName("ISDoubleHeatSinkPrototype");
+        misc.addLookupName("IS Double Heat Sink Prototype");
+        misc.addLookupName("ISDouble Heat Sink Prototype");
+        misc.tonnage = 1.0f;
+        misc.criticals = 3;
+        misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
         misc.bv = 0;
 
         return misc;
@@ -2330,7 +2329,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Mining Drill";
-        misc.setInternalName("MiningDrill");
+        misc.setInternalName("MinigDrill");
         misc.cost = 10000;
         misc.tonnage = 3.0f;
         misc.criticals = 4;
@@ -4698,7 +4697,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(MiscType.F_CHASSIS_MODIFICATION);
         misc.bv = 0;
 
         return misc;
@@ -5553,18 +5552,6 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISSmallNavalCommScannerSuite() {
-        MiscType misc = new MiscType();
-        misc.tonnage = 100;
-        misc.cost = 50000000;
-        misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Small Naval Comm-Scanner Suite";
-        misc.setInternalName("ISSmallNavalCommScannerSuite");
-        misc.techRating = RATING_D;
-        misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
-        misc.flags = misc.flags.or(F_SMALL_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
-        return misc;
-    }
 
     public static MiscType createCLSmallNavalCommScannerSuite() {
         MiscType misc = new MiscType();

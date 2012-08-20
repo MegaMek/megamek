@@ -258,7 +258,13 @@ public abstract class TestEntity implements TestEntityOption {
         float weightSum = 0.0f;
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
-            if (mt.hasFlag(MiscType.F_ENDO_STEEL) || mt.hasFlag(MiscType.F_FERRO_FIBROUS) || mt.hasFlag(MiscType.F_FERRO_LAMELLOR) || mt.hasFlag(MiscType.F_ENDO_COMPOSITE) || mt.hasFlag(MiscType.F_HEAT_SINK) || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            if (mt.hasFlag(MiscType.F_ENDO_STEEL)
+                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
+                    || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(MiscType.F_HEAT_SINK)
+                    || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                    || mt.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 continue;
             }
             weightSum += mt.getTonnage(getEntity(), m.getLocation());

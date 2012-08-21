@@ -21526,7 +21526,12 @@ public class Server implements Runnable {
                 table = ToHitData.SIDE_FRONT;
         }
 
-        int waterDepth = fallHex.terrainLevel(Terrains.WATER);
+        int waterDepth = 0;
+        if (fallHex.containsTerrain(Terrains.WATER)) {
+            // *Only* use this if there actually is water in the hex, otherwise
+            // we get ITerrain.LEVEL_NONE, i.e. Integer.minValue...
+            waterDepth = fallHex.terrainLevel(Terrains.WATER);
+        }
         boolean fallOntoBridge = false;
         // only fall onto the bridge if we were in the hex and on it,
         // or we fell from a hex that the bridge exits to

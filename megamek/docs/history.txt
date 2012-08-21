@@ -75,6 +75,7 @@ v0.35.32-dev (SVN)
 + Data: Donar Assault Helicopter and Donar Recon variant overweight (should have FF armor, were using standard).
 + Bug: Multiple negative unit costs resulting from item costs for AES, Claw, Lance, and Partial Wing being left at fixed default (largest negative int value in Java...) rather than calculated individually.
 + Added IS Prototype Double Heatsink as per the rules in "Era Report 3052" and "Starterbook: Sword & Dragon".  Also updated the appropraite mechs from Starterbook Sword and Dragon.
++ Mining Drill internal name typo fix.
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

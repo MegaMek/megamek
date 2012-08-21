@@ -2329,7 +2329,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
         misc.name = "Mining Drill";
-        misc.setInternalName("MinigDrill");
+        misc.setInternalName("MiningDrill");
         misc.cost = 10000;
         misc.tonnage = 3.0f;
         misc.criticals = 4;

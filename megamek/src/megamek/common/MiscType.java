@@ -1125,6 +1125,10 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLReconCamera());
         EquipmentType.addType(MiscType.createISReconCamera());
         EquipmentType.addType(MiscType.createISCombatVehicleEscapePod());
+        EquipmentType.addType(MiscType.createISSmallNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createCLSmallNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createISLargeNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createCLLargeNavalCommScannerSuite());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -1170,6 +1174,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAMechanicalJumpBooster());
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
+        EquipmentType.addType(MiscType.createTrailerModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
@@ -1275,12 +1280,26 @@ public class MiscType extends EquipmentType {
     public static MiscType createTractorModification() {
         MiscType misc = new MiscType();
 
-        misc.name = "Tractor Modification";
+        misc.name = "Tractor";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+
+        return misc;
+    }
+
+    public static MiscType createTrailerModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Trailer";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_TRAILER_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
 
         return misc;
@@ -4697,7 +4716,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = EquipmentType.COST_VARIABLE;
-        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(MiscType.F_CHASSIS_MODIFICATION);
+        misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 0;
 
         return misc;
@@ -5552,6 +5571,18 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createISSmallNavalCommScannerSuite() {
+        MiscType misc = new MiscType();
+        misc.tonnage = 100;
+        misc.cost = 50000000;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Small Naval Comm-Scanner Suite";
+        misc.setInternalName("ISSmallNavalCommScannerSuite");
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{RATING_D, RATING_E, RATING_E};
+        misc.flags = misc.flags.or(F_SMALL_COMM_SCANNER_SUITE).or(F_AERO_EQUIPMENT);
+        return misc;
+    }
 
     public static MiscType createCLSmallNavalCommScannerSuite() {
         MiscType misc = new MiscType();

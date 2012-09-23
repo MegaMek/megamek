@@ -42,7 +42,7 @@ public class BasicPathRanker extends PathRanker {
 
     FireControl firecontrol;
     PathEnumerator path_enumerator;
-    
+
     double fall_shame; // how many extra damage points will a fall effectively
     // make me lose
     //double blind_optimism; // unmoved units that can do damage to me -might-
@@ -58,9 +58,9 @@ public class BasicPathRanker extends PathRanker {
 
     //Fleeing the board
     double self_preservation; //how closely will I follow the forced withdrawal rules.
-    
+
     static HomeEdge defaultHomeEdge;
-    
+
     TreeMap<Integer, Double> best_damage_by_enemies; // the best damage enemies
     // could expect were I not
     // here. Used to determine
@@ -88,37 +88,39 @@ public class BasicPathRanker extends PathRanker {
         //herd_mentality = Double.valueOf(props.getProperty("herd_mentality"));
 
         best_damage_by_enemies = new TreeMap<Integer, Double>();
-        
+
         self_preservation = Double.valueOf(props.getProperty("self_preservation"));
-        
+
         defaultHomeEdge = HomeEdge.getHomeEdge(Integer.valueOf(props.getProperty("home_edge")));
     }
 
     public static HomeEdge getDefaultHomeEdge() {
         return defaultHomeEdge;
     }
-    
+
     class EntityEvaluationResponse {
         public EntityEvaluationResponse() {
             damage_enemy_can_do=0;
             damage_i_can_do=0;
         }
-        
+
         public double damage_enemy_can_do;
         public double damage_i_can_do;
     };
-    
+
     /**
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy.  Improve for missile attacks, gun skill, and range
      */
-    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity e,MovePath p,IGame game) {        
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity e,MovePath p,IGame game) {
         //some preliminary calculations
         double damage_discount=0.25;
         EntityEvaluationResponse ret=new EntityEvaluationResponse();
         //Aeros always move after other units, and would require an entirely different evaluation
         //TODO (low priority) implement a way to see if I can dodge aero units
-        if(e instanceof Aero) return ret;
+        if(e instanceof Aero) {
+            return ret;
+        }
         Coords mycoords=p.getFinalCoords();
         int myfacing=p.getFinalFacing();
         Coords behind=mycoords.translated((myfacing+3)%6);
@@ -136,17 +138,17 @@ public class BasicPathRanker extends PathRanker {
         if(p.getEntity().canChangeSecondaryFacing()) {
             leftbounds=new HexLine(behind,(myfacing+2)%6);
             rightbounds=new HexLine(behind,(myfacing+4)%6);
-        } else { 
+        } else {
             leftbounds=new HexLine(behind,(myfacing+1)%6);
             rightbounds=new HexLine(behind,(myfacing+5)%6);
-        }                
+        }
         if((leftbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))>0) &&
-           (rightbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))<0)) {                                  
-            ret.damage_i_can_do+=firecontrol.getMaxDamageAtRange(p.getEntity(), range)*damage_discount;        
+           (rightbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))<0)) {
+            ret.damage_i_can_do+=firecontrol.getMaxDamageAtRange(p.getEntity(), range)*damage_discount;
         }
         //in general if an enemy can end its position in range, it can hit me
         ret.damage_enemy_can_do+=firecontrol.getMaxDamageAtRange(e,range)*damage_discount;
-        //It is especially embarassing if the enemy can move behind or flank me and then kick me        
+        //It is especially embarassing if the enemy can move behind or flank me and then kick me
         if(enemy_facing_set!=null) {
         if(enemy_facing_set.contains(new CoordFacingCombo(behind,myfacing))||
            enemy_facing_set.contains(new CoordFacingCombo(behind,(myfacing+1)%6))||
@@ -156,13 +158,15 @@ public class BasicPathRanker extends PathRanker {
            enemy_facing_set.contains(new CoordFacingCombo(leftflank,(myfacing+5)%6))||
            enemy_facing_set.contains(new CoordFacingCombo(rightflank,myfacing))||
            enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+1)%6))||
-           enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+2)%6)))
-            ret.damage_enemy_can_do+=Math.ceil(e.getWeight() / 5.0)*damage_discount;            
-        } else
-            System.err.println("warning, no facing set for "+e.getDisplayName());           
+           enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+2)%6))) {
+            ret.damage_enemy_can_do+=Math.ceil(e.getWeight() / 5.0)*damage_discount;
+        }
+        } else {
+            System.err.println("warning, no facing set for "+e.getDisplayName());
+        }
         return ret;
     }
-    
+
     /**
      * A path ranking
      */
@@ -233,7 +237,7 @@ public class BasicPathRanker extends PathRanker {
                     PhysicalAttackType.RIGHT_KICK, game);
             if (mykick.prob_to_hit > 0.5) {
                 double expected_kick_damage = mykick.expected_damage_on_hit
-                        * mykick.prob_to_hit;             
+                        * mykick.prob_to_hit;
                 if (expected_kick_damage > maximum_physical_damage) {
                     maximum_physical_damage = expected_kick_damage;
                 }
@@ -252,8 +256,9 @@ public class BasicPathRanker extends PathRanker {
             } else { //for units that have moved this round
                 //I would prefer not to have the unit be able to move directly behind or flank me
                 EntityEvaluationResponse resp=evaluateUnmovedEnemy(e,p,game);
-                if(resp.damage_i_can_do>maximum_damage_done)
+                if(resp.damage_i_can_do>maximum_damage_done) {
                     maximum_damage_done=resp.damage_i_can_do;
+                }
                 expected_damage_taken+=resp.damage_enemy_can_do;
             }
         }
@@ -262,8 +267,9 @@ public class BasicPathRanker extends PathRanker {
             Targetable t=botbase.fire_control.additional_targets.get(i);
             FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
             double my_damage_potential = my_firing_plan.utility;
-            if(my_damage_potential>maximum_damage_done)
+            if(my_damage_potential>maximum_damage_done) {
                 maximum_damage_done = my_damage_potential;
+            }
             FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
                     p.getEntity(), new EntityState(p), t, null,
                     PhysicalAttackType.RIGHT_KICK, game);
@@ -273,7 +279,13 @@ public class BasicPathRanker extends PathRanker {
                 maximum_physical_damage = expected_kick_damage;
             }
         }
-        
+
+        //If I cannot kick because I am a clan unit and "No physical attacks for the clans"
+        //is enabled, set maximum physical damage for this path to zero.
+        if (game.getOptions().booleanOption("no_clan_physical") && p.getEntity().isClan()) {
+            maximum_physical_damage = 0;
+        }
+
         // I can kick a different target than I shoot, so add physical to total
         // damage after I've looked at all enemies
         maximum_damage_done += maximum_physical_damage;
@@ -292,12 +304,12 @@ public class BasicPathRanker extends PathRanker {
 //            double dist_to_friend = distanceToClosestFriend(p, game);
   //          utility -= dist_to_friend * herd_mentality;
         }
-        
+
         //Should I be trying to withdraw?
         if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
                 ||(botbase.should_flee)) {
             int distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
-            //TODO this number should not be hard coded, but instead be modifiable, 
+            //TODO this number should not be hard coded, but instead be modifiable,
             //if it's small enough, the unit should do more of a fighting withdrawal
             utility-=self_preservation*distance_to_edge;
         }
@@ -357,18 +369,24 @@ public class BasicPathRanker extends PathRanker {
         }
         return closest.getPosition().distance(position);
     }
-    
+
     /**
      * Gives the distance to the closest edge
-     * 
+     *
      */
     static public int distanceToClosestEdge(Coords position, IGame game) {
         int width=game.getBoard().getWidth();
         int height=game.getBoard().getHeight();
         int minimum=position.x;
-        if(width-position.x<minimum) minimum=width=position.x;
-        if(position.y<minimum) minimum=position.y;
-        if(height-position.y<minimum) minimum=height-position.y;
+        if((width-position.x)<minimum) {
+            minimum=width=position.x;
+        }
+        if(position.y<minimum) {
+            minimum=position.y;
+        }
+        if((height-position.y)<minimum) {
+            minimum=height-position.y;
+        }
         return minimum;
     }
 

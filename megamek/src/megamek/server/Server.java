@@ -9675,7 +9675,7 @@ public class Server implements Runnable {
             game.getBoard().addSpecialHexDisplay(
                     coord,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_AUTOHIT, SpecialHexDisplay.NO_ROUND,
-                            getPlayer(playerId).getName(), "ArtyAutoHit Hex, better text later"));
+                            getPlayer(playerId).getName(), "ArtyAutoHit Hex, for " + getPlayer(playerId).getName()  ));
         }
         endCurrentTurn(null);
     }
@@ -23645,11 +23645,15 @@ public class Server implements Runnable {
         Player player = getPlayer(toPlayer);
         if (player != null) {
             final String playerName = getPlayer(toPlayer).getName();
+			System.err.println("building special update list for: " + playerName + " PlayerNumber " + toPlayer );
 
             for (Coords coord : shdTable.keySet()) {
                 tempList = new LinkedList<SpecialHexDisplay>();
                 for (SpecialHexDisplay shd : shdTable.get(coord)) {
+                    System.err.println("list item: " + shd.getType() + " owner: " + shd.getOwner() + " obscured:" + shd.isObscured());
+
                     if (!shd.isObscured() || shd.isOwner(playerName)) {
+	                    System.err.println("Added");
                         tempList.add(0, shd);
                     }
                 }

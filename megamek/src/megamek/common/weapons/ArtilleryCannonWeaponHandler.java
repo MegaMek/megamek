@@ -154,7 +154,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             game.getBoard().addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(),
-                            "Artilery Hit. Better text later."));
+                            "Artilery cannon Hit. everyone should see this."));
 
         } else {
             targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS())+1)/2);
@@ -167,7 +167,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
-                                "Artillery Scatered Here. Better text later."
+                                "Artillery cannon Scatered Here. everyone should see it."
                         )
                     );
                 } else {

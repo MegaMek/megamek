@@ -2,7 +2,8 @@
 ----------------
 v0.35.32-dev (SVN)
 + Data 3369808: Historical Brush War RAT's
-+ Data 3401148: Era 3062 RAT (placed in another folder as an alternate set to the ones in already)
++ Data 3401148: Era 3062 RAT (placed in another folder as an alternate set to
+    the ones in already)
 + Data 3428031: HTP- Misery RAT
 + Data 3437717: Field Manual Updates Mercenary RAT's
 + Data 3439037: Historical Operation Klondike RAT files
@@ -16,67 +17,98 @@ v0.35.32-dev (SVN)
 + Bug 3543735: dropship bugs
 + Bug 3543019: Ammo in blown-off locations still accessible
 + Ammo slots in destroyed locations no longer auto-emptied.
-+ Tank verifier tweaks: Armor limits added, lift/dive equipment weight rounds correctly.
++ Tank verifier tweaks: Armor limits added, lift/dive equipment weight rounds
+    correctly.
 + Flail to-hit modifier changed from +1 to 0 as per TacOps errata.
 + Bug 3539257: 'Mech arms still functional after side torso breach
 + Bug: HarJel preventing breaches even after armor is gone.
-+ Bug: Entering water while dumping ammo would cause the unit to be destroyed silently (no report).
++ Bug: Entering water while dumping ammo would cause the unit to be destroyed
+    silently (no report).
 + Ammo dump button now disabled in water or vacuum.
-+ Bug: Expected damage calculation erroneously yields 0 for most variable damage weapons, causing the bot to never use them.
-+ Data: RAC Pike mistakenly listed with (overweight) standard armor instead of FF.
-+ Data: FF armor rounding error fixed for L3 Night Gyr chassis (the LHS-equipped 'fluff' versions).
++ Bug: Expected damage calculation erroneously yields 0 for most variable damage
+    weapons, causing the bot to never use them.
++ Data: RAC Pike mistakenly listed with (overweight) standard armor instead of
+    FF.
++ Data: FF armor rounding error fixed for L3 Night Gyr chassis (the LHS-equipped
+    'fluff' versions).
 + Bug: Supercharger failure applies at most a single hit ever.
-+ Bug: Tank supercharger failure rolls for severity instead of applying auto-hits.
-+ Data: Replaced "Era Report 3052" RAT files with the corrected ones by the author & ran a batch file
++ Bug: Tank supercharger failure rolls for severity instead of applying
+    auto-hits.
++ Data: Replaced "Era Report 3052" RAT files with the corrected ones by the
+    author & ran a batch file
     conversion on all RAT to create consistent newlines
 + Bug 3543236: RAT ER 3052 wrongly named
 + Bug 3542879: Kyudo
 + Bug 3517770: Interface bug : Target is blank even if a unit is selected
-+ TacOps errata: Thunder-Active, -Augmented, -Inferno, and -Vibrabomb ammo only gets half the number of shots (again).
-+ Multiple small physical weapon fixes mostly with regard to hand actuator requirements and TSM.
-+ Bug: Locations behind partial cover not protected from Narc pod and MG array attacks.
++ TacOps errata: Thunder-Active, -Augmented, -Inferno, and -Vibrabomb ammo only
+    gets half the number of shots (again).
++ Multiple small physical weapon fixes mostly with regard to hand actuator
+    requirements and TSM.
++ Bug: Locations behind partial cover not protected from Narc pod and MG array
+    attacks.
 + Patch 3547368/Bug 3547367: C-Bill cost truncated by int limit
 + Bug 3545927: Freeze at end of every turn
 + Bug: Missed changes to MegaMek.java for the C-Bill cost truncated fix.
 + Bug 3546584: bay display error
-+ Bug: Spurious "heat 1 or greater" messages for 'Mechs with torso-mounted cockpit and damaged life support even at heat 0.
++ Bug: Spurious "heat 1 or greater" messages for 'Mechs with torso-mounted
+    cockpit and damaged life support even at heat 0.
 + Bug 3549321: Can't create squadrons when single fghter nocap is on
 + Bug: Several cost fixes
-+ RFE: Shutdown indicator. Red for automatic shutdown, Yellow for manual shutdown.
++ RFE: Shutdown indicator. Red for automatic, Yellow for manual shutdown.
 + Patch 3552108: Basements
 + Pintle mounts for small support vees
 + Bug 3552262: Transports not updating if loaded with allied units
 + Bug: mech cost missing armored component costs
 + Patch 3552390, Bug 3179787: Inability to jump onto occupied building
 + Patch 3552390: Aerospace fighters should attempt to ram on 11 or greater
-+ Bug: WiGE lift equipment tonnage/cost and final unit cost multiplier not accounted for.
++ Bug: WiGE lift equipment tonnage/cost and final unit cost multiplier not
+    accounted for.
 + FASCAM ammo added to tube artillery.
-+ Bug: Engine-internal compact heat sinks doubled up on installation (so, 10 specified in file => 20 actually ending up on 'Mech).
++ Bug: Engine-internal compact heat sinks doubled up on installation (so, 10
+    specified in file => 20 actually ending up on 'Mech).
 + Bug: Engine capacity for compact heat sinks not doubled.
-+ Streamlined anti-infantry damage ratings for burst-fire weapons, multiple now-obsolete special case handlers deleted.
++ Streamlined anti-infantry damage ratings for burst-fire weapons, multiple
+    now-obsolete special case handlers deleted.
 + Battle armor burst-fire weapons now roll AI damage per suit as per TW p. 215.
 + Bug: Streak LRMs doing double damage to conventional infantry.
 + "Burst fire" internal flag added to burst fire weapons for possible later use.
-+ Added a new configuration file (non_combat_units_list.conf) that will be used to maintain a list of non-military units.
-    This allows the Damage Level flag to be a bit "smarter" and only check the weapon status of military units.
-+ Bug: Indicated damage level counting any and all weapons fired this turn as destroyed.
++ Added a new configuration file (non_combat_units_list.conf) that will be used
+    to maintain a list of non-military units.
+    This allows the Damage Level flag to be a bit "smarter" and only check the
+        weapon status of military units.
++ Bug: Indicated damage level counting any and all weapons fired this turn as
+   destroyed.
 + Discharged one-shot weapons now marked in display.
 + Bug: Princess ejecting vehicle crews even with option disabled.
-+ Princess no longer spams chat with "crippled and withdrawing" messages when forced withdrawal wasn't even checked.
-+ HAG tweak to fix a couple of subtle bugs (such as the bot never using them...).
-+ Bug 3555117: "Scorpion Minesweeper" now known as "Scorpion Light Tank (Minesweeper)", fixing its unit picture.
++ Princess no longer spams chat with "crippled and withdrawing" messages when
+    forced withdrawal wasn't even checked.
++ HAG tweak to fix a couple of subtle bugs (such as the bot never using them...)
++ Bug 3555117: "Scorpion Minesweeper" now known as "Scorpion Light Tank
+    (Minesweeper)", fixing its unit picture.
 + Bug: Vehicle cost formula still rounding power amplifier weight the 'old' way.
 + Bug: OmniVehicle cost not including conversion factor.
 + Cost fixes
 + Renamed Pilot class to Crew, methods to get and set crew size added.
-+ Renamed damage value constant WeaponType.DAMAGE_MISSILE to DAMAGE_BY_CLUSTERTABLE to reduce confusion with the "missile" damage *type*.
-+ Added cluster ammo to Clan tube artillery, reshuffled artillery ammo name order.
-+ Bug: Equipment in VTOL mast mounts flagged as invalid *and* treated as turret-mounted for weight purposes at the same time.
-+ Data: Donar Assault Helicopter and Donar Recon variant overweight (should have FF armor, were using standard).
-+ Bug: Multiple negative unit costs resulting from item costs for AES, Claw, Lance, and Partial Wing being left at fixed default (largest negative int value in Java...) rather than calculated individually.
-+ Added IS Prototype Double Heatsink as per the rules in "Era Report 3052" and "Starterbook: Sword & Dragon".  Also updated the appropraite mechs from Starterbook Sword and Dragon.
++ Renamed damage value constant WeaponType.DAMAGE_MISSILE to
+    DAMAGE_BY_CLUSTERTABLE to reduce confusion with the "missile" damage *type*.
++ Added cluster ammo to Clan tube artillery, reshuffled artillery ammo name
+    order.
++ Bug: Equipment in VTOL mast mounts flagged as invalid *and* treated as turret-
+   mounted for weight purposes at the same time.
++ Data: Donar Assault Helicopter and Donar Recon variant overweight (should have
+    FF armor, were using standard).
++ Bug: Multiple negative unit costs resulting from item costs for AES, Claw,
+    Lance, and Partial Wing being left at fixed default (largest negative int
+        value in Java...) rather than calculated individually.
++ Added IS Prototype Double Heatsink as per the rules in "Era Report 3052" and
+    "Starterbook: Sword & Dragon".  Also updated the appropraite mechs from
+     Starterbook Sword and Dragon.
 + Mining Drill internal name typo fix.
-+ Bug: Lack of water in a hex causing occasional large *negative* numbers of levels to be reported after a fall.
++ Bug: Lack of water in a hex causing occasional large *negative* numbers of
+    levels to be reported after a fall.
++ Bug 2881155, Patch 3557211: artillery pre-targeted hex display
++ Patch 3568183: Ignore physical damage in path selection for Clan units when
+    using no clan physical attacks game option
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.
@@ -91,48 +123,63 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: TacOps Ammo Explosion wasn't taking affect. Ever.
 + Bug: TacOps Ammo Explosion should not happen when using CASE or CASE II.
 + Bug 3535718: Problem with new SVN
-+ Bug: Vehicles executing or hit by a successful charge attack not rolling for motive system damage as per TW p. 148.
++ Bug: Vehicles executing or hit by a successful charge attack not rolling for
+    motive system damage as per TW p. 148.
 + Bug 3535786: 'Mechs deployed on water hexes deploy to surface, not sea bottom.
-+ New hexset images: cropped_barn.png, orchard.png, pigs1.png, pigs2.png, vineyard.png, soybeans.png...
++ New hexset images: cropped_barn.png, orchard.png, pigs1.png, pigs2.png,
+    vineyard.png, soybeans.png...
         barn: building:1;bldg_elev:2;bldg_cf:*;fluff:11:7
         orchard: woods:1;fluff:12
         pigs (will randomly choose between 1 and 2): fluff:13:00
-            fluff:13 category for any more animals... I plan on doing horses, cattle, and chickens.
+            fluff:13 category for any more animals... I plan on doing horses,
+            cattle, and chickens.
         vineyard: planted_fields:2
         soybeans: planted_fields:3
-+ Bug 3535390: Ammo explosion in limb with Clan CASE causes side torso to "blow off" without destroying components.
-+ Bug: Conditional ejection options active by default even with conditional ejection itself unchecked.
++ Bug 3535390: Ammo explosion in limb with Clan CASE causes side torso to "blow
+    off" without destroying components.
++ Bug: Conditional ejection options active by default even with conditional
+    ejection itself unchecked.
 + Bug: Engine Explosion incorrectly changed by previous commit
 + Bug 3536029: Damage Threshold for VTOLs
 + Bug: Torso-mounted modular armor absorbs hits from both front and rear.
-+ Bug: Airborne/Space battle damage with cluster weapons not correct (again), and... "hopefully" dropship weapon bays doing no damage to fighters in space
-+ Bug: getNextWeapon() not working exactly correct - TAG && Artillery were backwards.
++ Bug: Airborne/Space battle damage with cluster weapons not correct (again),
+    and... "hopefully" dropship weapon bays doing no damage to fighters in space
++ Bug: getNextWeapon() not working exactly correct - TAG && Artillery were
+    backwards.
 + Added skipping of array linked MGs to getFirstWeapon()
 + Bug 3536174: Artillery Units can only fire "one" artillery...
 + Bug: Dropships do no damage
 + Bug 3536170: Beginning the game shutdown with tanks they auto-start...
 + Bug: Missed png for the directory filter fix
-+ Bug 3536356: Princess jump movement undervalued due to mixing for- and backward movement (which normal players can't even do).
++ Bug 3536356: Princess jump movement undervalued due to mixing for- and
+    backward movement (which normal players can't even do).
 + Bug 3537192: Players disconnecting in lounge become permanent ghosts
-+ Feature: Version mismatch reporting. If both the client and server support the version information exchange, then they will report mismatched versions.
-+ Bug: One-shot weapon ammunition on vehicles causing/included in ammo critical hits.
++ Feature: Version mismatch reporting. If both the client and server support the
+    version information exchange, then they will report mismatched versions.
++ Bug: One-shot weapon ammunition on vehicles causing/included in ammo critical
+    hits.
 + Bug 3528477: Update initiative roll when using Tactical Genius
 + Bug: Tactical Genius update above was failing to enable done buttons again.
 + Bug 3537456: Turrets cannot be right click selected during firing
 + Bug 3537472: Princess will target Gun Emplacements & other non-targetable
-+ Feature: Princess will now add any building with a Gun Emplacement to her strategic targets automatically
-+ Bug: Checking Tank for turret Location when your Tank is actually a GunEmplacement drops an error because locations[] is too small.
++ Feature: Princess will now add any building with a Gun Emplacement to her
+    strategic targets automatically
++ Bug: Checking Tank for turret Location when your Tank is actually a
+    GunEmplacement drops an error because locations[] is too small.
 + Bug 3537444: Attempting to "Clear" (Destroy/Damge) a bridge with infantry
 + Bug 3537459: Unjam RAC not usable with tank pavement movement
-+ Bug: Missing IHex hexTarget in new code for infantry checking for woods when attempting to clear.
++ Bug: Missing IHex hexTarget in new code for infantry checking for woods when
+    attempting to clear.
 + string fix for battlearmor bays
 + Bug 3521474: Allow units to load/be loaded by "allied" units.
 + Bug: Compute.getMountableUnits() not checking for allied units.
 + Bug: MechDisplay showing <br> tags since \n should have been used and wasn't.
 + Bug 3537986: Weapon List missing in MechDisplay (Linux)
-+ Bug: UAC with two rolls option inserts extra newline when it misses (normal behavior that should be cancelled for that situation)
-+ New hexset images:chicken_coop.png, cattle1.png, cattle2.png, cattle3.png, chickens1.png, chickens2.png, chickens3.png,
-        bison1.png, horses1.png, horses2.png
++ Bug: UAC with two rolls option inserts extra newline when it misses (normal
+    behavior that should be cancelled for that situation)
++ New hexset images:chicken_coop.png, cattle1.png, cattle2.png, cattle3.png,
+    chickens1.png, chickens2.png, chickens3.png, bison1.png, horses1.png,
+    horses2.png
         chicken coop: building:1;bldg_elev:1;bldg_cf:*;fluff:11:8
         cattle (will randomly choose between 1, 2 and 3): fluff:13:01
         horses (will randomly choose between 1 and 2): fluff:13:02
@@ -142,15 +189,22 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug 3536913: Critical slots in destroyed locations marked off prematurely.
 + Bug: Destruction of the same leg counting twice for PSR purposes.
 + Ontos (Sealed) mislabeled as 3053 Upgrade in data file.
-+ Bug: Plasma cannon/rifle damage not doubled against woods or buildings (TW p. 139).
++ Bug: Plasma cannon/rifle damage not doubled against woods or buildings
+    (TW p. 139).
 + Bug 1424577: GE's not properly sorted by weight class
-+ Bug: Leg being destroyed and blown off at the same time still counted as two events.
-+ Bug: PSR modifier for blown-off leg applied twice the phase it happens (once for the event, once as pre-existing damage).
-+ Bug: Stall check for ICE-powered IndustrialMechs affected by preexisting damage.
-+ Bug: Unstall check for ICE-powered IndustrialMechs possibly successful even if pilot dead/unconscious.
++ Bug: Leg being destroyed and blown off at the same time still counted as two
+    events.
++ Bug: PSR modifier for blown-off leg applied twice the phase it happens (once
+    for the event, once as pre-existing damage).
++ Bug: Stall check for ICE-powered IndustrialMechs affected by preexisting
+    damage.
++ Bug: Unstall check for ICE-powered IndustrialMechs possibly successful even if
+    pilot dead/unconscious.
 + Bug: Stall/unstall checks failing on roll = target number (should be success).
-+ IndustrialMech End Phase checks (including unstalling) moved to after checking for pilot wakeup.
-+ Bug 3423819: c3 units boarding dropships (fixed both Bot NPEs relating to this, however I'm not sure if those were the only NPEs. I didn't get more.)
++ IndustrialMech End Phase checks (including unstalling) moved to after checking
+    for pilot wakeup.
++ Bug 3423819: c3 units boarding dropships (fixed both Bot NPEs relating to
+    this, however I'm not sure if those were the only NPEs. I didn't get more.)
 + Bug 3537029: Princess gets NPE when opponent BA is riding
 + Bug 3539075: Damage clearing ALL armor on location for fighters (on any hit).
 + Bug 3538851: Princess doesn't attempt to unjam weapons...
@@ -160,7 +214,8 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: EntityWeightClass.getClassName(int) needed by MekHQ
 + Bug 3391583: Coolant pods not triggered for Aero units
 + Bug: BA bay weight wrong
-+ Bug: EntityWeightClass.getClassName() returns incorrect for JumpShips, Warships, and DropShips.
++ Bug: EntityWeightClass.getClassName() returns incorrect for JumpShips,
+    Warships, and DropShips.
 + Feature 3537042: Implement Self Destruct Rules
 + Data 2826902: Fuel Tank and Ultra Rubble Tiles
 + Data 3369564: Depth 4 animated water
@@ -170,15 +225,19 @@ v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Data 3369556: Hex art 2
 + Data 3369555: Hex art 1
 + Data 2826895: Railway tile pieces for megamek
-+ Data two new hexsets with "high quality" images (hq_atmospheric and hq_isometric)
++ Data two new hexsets with "high quality" images (hq_atmospheric and
+    hq_isometric)
 + Fixed broken image links to Thor (Summoner) 'Mechs in mechset.txt.
-+ Data 2832395: Lunar/Mars Building and Tunnel Tiles (added under the lunar tileset)
++ Data 2832395: Lunar/Mars Building and Tunnel Tiles (added under the lunar
+    tileset)
 + Data: new "Lunar Sample 16x17.board" to show off the new Lunar/Mars buildings
 + Bug 3007140 / Patch 3534055: In-phase Round Report cannot be scrolled
-+ Bug 3529311 / Patch 3534060: Server browser defaults to check (enabled) but text box not
++ Bug 3529311 / Patch 3534060: Server browser defaults to check (enabled) but
+    text box not
 + Bug 3518300: Princess Bot impossible rolls
 + Bug 3541025: Miscounted destroyed engine criticals
-+ Bug: (Clan) CASE in limbs/head preventing ammo explosions from properly destroying the location.
++ Bug: (Clan) CASE in limbs/head preventing ammo explosions from properly
+    destroying the location.
 
 v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3487451: booby trap weight error
@@ -198,20 +257,27 @@ v0.35.30 (2012-06-07, 18:49 UTC+2)
 + removed extra debug logging for C3/C3i relinking
 + aero Bay stuff for MML
 + some groundwork on support vee weight verification
-+ Broke out the Equipment Panel as a class so that it is exposed for other programs, such as MekHQ
++ Broke out the Equipment Panel as a class so that it is exposed for other
+    programs, such as MekHQ
 + Added serialVersionUID to EquipChoicePanel.java
 + Bug 3524560: No turret/torso twist button in indirect attack phase
-+ hasQuirk method for entity and mounted, use instead of getQuirks().booleanOption, overrides revision 8808
++ hasQuirk method for entity and mounted, use instead of getQuirks()
+   .booleanOption, overrides revision 8808
 + Bug 3517646: Unjamming destroyed RACs
 + Feature 3517532: Unofficial rule option: unjam UAC like RAC
-+ Feature: Unofficial rule option: UACs in Ultra Mode are rolled as two attacks instead of rolled on the 2 column of the hits chart
-+ separated BLKFile.encode into a BLFile.getBlock and BLKFile.encode to allow writing internally to string
++ Feature: Unofficial rule option: UACs in Ultra Mode are rolled as two attacks
+    instead of rolled on the 2 column of the hits chart
++ separated BLKFile.encode into a BLFile.getBlock and BLKFile.encode to allow
+    writing internally to string
 + Bug 3529657: Scaled back weapons hitting airborne targets do full damage
-+ added "Infantry Automatic Rifle" to InfantryRifleAutoRifle lookup names for reverse compatability
++ added "Infantry Automatic Rifle" to InfantryRifleAutoRifle lookup names for
+    reverse compatability
 + Bug 3529656: Turning a Hull Down unit gives a free stand up
-+ fix for negative P/G skills in Pilot#getBVSkillMultiplier (negative values treated as zero)
++ fix for negative P/G skills in Pilot#getBVSkillMultiplier (negative values
+    treated as zero)
 + alternate cost field in MechSummaryCache
-+ Added new clearModes() function to EquipmentModes.java for clearing modes on equipment subtypes that are present on the supertype
++ Added new clearModes() function to EquipmentModes.java for clearing modes on
+    equipment subtypes that are present on the supertype
 + Bug 3528850: Streak LRMs
 + Bug 3529891: critical hits needing colored red
 + Bug 3529773: When switching LRMs back to standard mode msg is truncated
@@ -224,12 +290,14 @@ v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Bug 3524542: Automatically confirm unit is done during firing phase
 + Forgotten Ammo Check added for Bugfix for 3520623.
 + Bug 3521136: Vehicles pushed (charged) into water don't die
-+ Bug Swarm missiles weren't recalculating how many missed when the next entire rack missed.
++ Bug Swarm missiles weren't recalculating how many missed when the next entire
+    rack missed.
 + infantry armor costs for infantry alternate costs
 + null check on Protomech#setCrew
 + null check on "Auto Confirm" from Bugfix 3524542
 + another null check on "Auto Confirm" from Bugfix 3524542
-+ fixing getNextWeapon bug introduced with Bugfix 3524542 (This does the same thing as original code I removed,
++ fixing getNextWeapon bug introduced with Bugfix 3524542 (This does the same
+    thing as original code I removed,
     but in a cleaner more understandable fashion...)
 + Bug 3530570: Fighters in Capital Squadrons damage tracking
 + Bug 3512512: Trying to create fighter squadron for a bot illegal argument
@@ -242,18 +310,24 @@ v0.35.30 (2012-06-07, 18:49 UTC+2)
 + Feature 3530179: (Unofficial) With TacOps CapFi count singles as non-cap
 + Feature 3518889: Unofficial rule : Vehicles and motive damage
 + Feature 3529119: Allow "Load Unit" list button to detect which player...
-+ RAT Bug: Cronus needed fixed, its CNS, not CRS - Also renamed the file in mechs.zip (file itself was already edited)
-+ Organized l10n/megamek/common/options/messages.properties GameOptions to match whats in the GameOptions.java
++ RAT Bug: Cronus needed fixed, its CNS, not CRS - Also renamed the file in
+    mechs.zip (file itself was already edited)
++ Organized l10n/megamek/common/options/messages.properties GameOptions to match
+    whats in the GameOptions.java
     file in order to make everything easier to find
 + Feature 1885975: Begin Shutdown
 + Feature 951044: Manual Shutdown
-+ Bug: When using the unofficial Manual Shutdown option & the skip ineligible during movement option, manually shutdown
++ Bug: When using the unofficial Manual Shutdown option & the skip ineligible
+    during movement option, manually shutdown
     mechs are skipped and can never be restarted.
 + Bug: 'Mechs would remain standing after "leg blown off" critical hit.
-+ Bug 3455841: Artillery from grounded spheroid dropships (Requires use of individual weapons option)
-+ Bug: Bold bleeds when indirect fire misses from a unit outside of LOS while using double blind.
++ Bug 3455841: Artillery from grounded spheroid dropships (Requires use of
+    individual weapons option)
++ Bug: Bold bleeds when indirect fire misses from a unit outside of LOS while
+    using double blind.
 + Bug: Enemy units pick up stranded MW before Allied units do?!
-+ Bug: Some code from an attempt to work on bug 3528477 slipped through in one of the commits on accident.
++ Bug: Some code from an attempt to work on bug 3528477 slipped through in one
+    of the commits on accident.
 
 v0.35.29 (2012-04-02)
 + Patch 3485111: laser inhibiting smoke (work in progress)

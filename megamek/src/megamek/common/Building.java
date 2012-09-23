@@ -55,8 +55,6 @@ public class Building implements Serializable {
      * The Basement type of the building.
      */
     private int basement = Building.UNKNOWN;
-
-
     /**
      * the class of the building
      */
@@ -290,6 +288,37 @@ public class Building implements Serializable {
 
         phaseCF.putAll(currentCF);
 
+        int basementRoll = Compute.d6(2);
+
+        if (basementRoll == 2) {
+            basement  = Building.TWO_DEEP_FEET;
+            startHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 2));
+
+        } else if( basementRoll ==3) {
+            basement  = Building.ONE_DEEP_FEET;
+            startHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 1));
+        } else if( basementRoll ==4) {
+            basement  = Building.ONE_DEEP_NORMAL;
+            startHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 1));
+        } else if( basementRoll ==10) {
+            basement  = Building.ONE_DEEP_NORMAL;
+            startHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 1));
+        } else if( basementRoll ==11) {
+            basement  = Building.ONE_DEEP_HEAD;
+            startHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 1));
+        } else if( basementRoll ==12) {
+            basement  = Building.TWO_DEEP_HEAD;
+            startHex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 2));
+        } else {
+            basement  = Building.NOBASEMENT;
+        }
+
         // Walk through the exit directions and
         // identify all hexes in this building.
         for (int dir = 0; dir < 6; dir++) {
@@ -420,8 +449,51 @@ public class Building implements Serializable {
     }
 
     public void setBasementCollapsed(boolean state, IHex hex) {
-        if (state && (hex.terrainLevel(Terrains.BLDG_BASEMENT) != 0)) {
-            System.err.println("basement is collapsing, hex:" + hex.getCoords().toString() + " set terrain!");
+        if (basement == NOBASEMENT ||
+                basement == ONE_DEEP_NORMALINFONLY) {
+            System.err.println("hex has no basement to collapse");
+            return;
+        } else if (basement == UNKNOWN) {
+            int basementRoll = Compute.d6(2);
+            System.err.println("hex has undefined basement to collapse - roll for a basement was " + basementRoll);
+
+            if (basementRoll == 2) {
+                basement  = Building.TWO_DEEP_FEET;
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 2));
+            } else if( basementRoll ==3) {
+                basement  = Building.ONE_DEEP_FEET;
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 1));
+            } else if( basementRoll ==4) {
+                basement  = Building.ONE_DEEP_NORMAL;
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                        Terrains.BLDG_BASEMENT, 1));
+            } else if( basementRoll ==10) {
+                basement  = Building.ONE_DEEP_NORMAL;
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.BLDG_BASEMENT, 1));
+            } else if( basementRoll ==11) {
+                basement  = Building.ONE_DEEP_HEAD;
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                        Terrains.BLDG_BASEMENT, 1));
+            } else if( basementRoll ==12) {
+                basement  = Building.TWO_DEEP_HEAD;
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                        Terrains.BLDG_BASEMENT, 2));
+            } else {
+                basement  = Building.NOBASEMENT;
+                return;
+            }
+
+        }
+        if (basementCollapsed) {
+            System.err.println("hex has basement that already collapsed");
+            return;
+        }
+        if (state) {
+            System.err.println("basement "+ basement +
+                    "is collapsing, hex:" + hex.getCoords().toString() + " set terrain!");
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.BLDG_BASE_COLLAPSED, 1));
             basementCollapsed = state;

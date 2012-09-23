@@ -24698,19 +24698,22 @@ public class Server implements Runnable {
                 // ASSUMPTION: PSR to avoid pilot damage
                 PilotingRollData psr = entity.getBasePilotingRoll();
                 entity.addPilotingModifierForTerrain(psr, coords);
-                System.err.println (entity.getDisplayName() + " is falling into " + coords.toString() );
-                vPhaseReport.addAll(doEntityFallsInto(entity, coords, coords, psr,true));
 
 
                 //fall into basement
-                if((bldg.getBasement() == Building.TWO_DEEP_HEAD) || (bldg.getBasement() == Building.TWO_DEEP_FEET)) {
+                if ((bldg.getBasement() == Building.TWO_DEEP_HEAD) || (bldg.getBasement() == Building.TWO_DEEP_FEET)) {
+                    System.err.println (entity.getDisplayName() + " is falling 2 floors into " + coords.toString() );
+                    vPhaseReport.addAll(doEntityFallsInto(entity, coords, coords, psr,true));
                     entity.setElevation(floor - 2);
                     runningCFTotal -= CFDamage * 2;
-                } else {
+                } else if (bldg.getBasement() != Building.NOBASEMENT && bldg.getBasement() != Building.ONE_DEEP_NORMALINFONLY ) {
+                    System.err.println (entity.getDisplayName() + " is falling 1 floor into " + coords.toString() );
+                    vPhaseReport.addAll(doEntityFallsInto(entity, coords, coords, psr,true));
                     entity.setElevation(floor - 1);
                     runningCFTotal -= CFDamage;
+                } else {
+                    System.err.println(entity.getDisplayName() + " is not falling into " + coords.toString() );
                 }
-
 
 
                 // Update this entity.

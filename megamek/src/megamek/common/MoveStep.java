@@ -524,18 +524,29 @@ public class MoveStep implements Serializable {
                         return;
                     }
                 } else {
+                    System.err.println(" Entity "+ entity.getDisplayName() +" moving from elevation " +
+                            game.getBoard().getHex(prev.getPosition()) + " to " +
+                            game.getBoard().getHex(getPosition()) + " at assumed elevation " +
+                            elevation + " climb = " + climbMode());
                     setElevation(entity.calcElevation(game.getBoard().getHex(
                             prev.getPosition()), game.getBoard().getHex(
                                     getPosition()), elevation, climbMode(),
                                     (entity.getMovementMode() == EntityMovementMode.WIGE)
                                     && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
+                    System.err.println(" Entity "+ entity.getDisplayName() +" result was " + elevation);
+
                 }
             } else {
+                System.err.println(" Entity "+ entity.getDisplayName() +" moving from elevation " +
+                        game.getBoard().getHex(prev.getPosition()) + " to " +
+                        game.getBoard().getHex(getPosition()) + " at assumed elevation " +
+                        elevation + " climb = " + climbMode());
                 setElevation(entity.calcElevation(game.getBoard().getHex(
                         prev.getPosition()), game.getBoard().getHex(
                                 getPosition()), elevation, climbMode(),
                                 (entity.getMovementMode() == EntityMovementMode.WIGE)
                                 && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
+                System.err.println(" Entity "+ entity.getDisplayName() +" result was " + elevation);
             }
         }
 

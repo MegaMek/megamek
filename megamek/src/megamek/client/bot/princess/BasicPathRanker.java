@@ -195,6 +195,12 @@ public class BasicPathRanker extends PathRanker {
         for (TargetRoll t : targets) {
             success_probability *= Compute.oddsAbove(t.getValue()) / 100.0;
         }
+
+        // Factor the possibility of MASC failure in like a PSR (even though the penalty is
+        // significantly higher).
+        if (p.hasActiveMASC()) {
+            success_probability *= Compute.oddsAbove(p.getEntity().getMASCTarget()) / 100.0;
+        }
         // Lets assume that I will fall if I fail. What's my expected damage
         // (and embarrassment) from that?
         int fall_damage = (int) (p.getEntity().getWeight() / 10);

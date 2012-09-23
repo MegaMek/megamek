@@ -110,6 +110,7 @@ v0.35.32-dev (SVN)
 + Patch 3568183: Ignore physical damage in path selection for Clan units when
     using no clan physical attacks game option
 + Patch 3569325: updated basement patch
++ Patch 3570935: Princess: Consider MASC failure in evaluating Paths
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

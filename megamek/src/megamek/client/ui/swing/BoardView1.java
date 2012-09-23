@@ -1253,7 +1253,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(),localPlayer.getName())) {
                         scaledImage = getScaledImage(shd.getType().getDefaultImage());
                         boardGraph.drawImage(scaledImage, drawX, drawY, this);
                     }

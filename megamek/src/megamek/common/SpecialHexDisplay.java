@@ -114,6 +114,7 @@ public class SpecialHexDisplay implements Serializable {
     public SpecialHexDisplay(Type type) {
         this.type = type;
         round = NO_ROUND;
+        info = "type only constructor";
     }
 
     public SpecialHexDisplay(Type type, String info) {
@@ -211,17 +212,23 @@ public class SpecialHexDisplay implements Serializable {
      * @param curRound
      * @return
      */
-    public boolean drawNow(IGame.Phase phase, int curRound) {
+    public boolean drawNow(IGame.Phase phase, int curRound,String playerChecking) {
         boolean shouldDisplay = thisRound(curRound) ||
             (pastRound(curRound) && type.drawBefore()) ||
             (futureRound(curRound) && type.drawAfter());
+
         if(phase.isBefore(IGame.Phase.PHASE_OFFBOARD) &&
                 ((type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT))) {
-            //hack to display atry targets the round after the hit.
+            System.err.println("//hack to display atry targets the round after the hit.");
             shouldDisplay = shouldDisplay || thisRound(curRound-1);
         }
 
-        //System.err.println("turn: " + round + " Special type: " + type + " drawing: " + shouldDisplay + " details: " + info);
+        if(isObscured() && !isOwner(playerChecking)) {
+	        System.err.println("player " + playerChecking + " on turn: " + round + " Special type: " + type + " NOT drawing: " + shouldDisplay + " details: " + info);
+        	return false;
+		}
+
+        System.err.println("player " + playerChecking + " on turn: " + round + " Special type: " + type + " drawing: " + shouldDisplay + " details: " + info);
 
         return shouldDisplay;
     }
@@ -232,6 +239,8 @@ public class SpecialHexDisplay implements Serializable {
      */
     public boolean isOwner(String toPlayer) {
         if((owner == null) || owner.equals(toPlayer)) {
+			if(owner == null)
+				System.err.println("Owner of special hex " + info + "is null!");
             return true;
         }
 

@@ -1171,7 +1171,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if(shdList != null) {
                 for(SpecialHexDisplay shd : shdList)
                 {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount(),localPlayer.getName())) {
                         scaledImage = getScaledImage(shd.getType().getDefaultImage());
                         if(scaledImage != null) {
                             boardGraph.drawImage(scaledImage, drawX, drawY, this);

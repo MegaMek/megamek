@@ -116,7 +116,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                 SpecialHexDisplay.Type.ARTILLERY_INCOMING,
                                 game.getRoundCount() + aaa.turnsTilHit,
                                 game.getPlayer(aaa.getPlayerId()).getName(),
-                                "Artillery Incoming. Better text later."));
+                                "Artillery Incoming. on round "+(game.getRoundCount() + aaa.turnsTilHit)+" from player "+game.getPlayer(aaa.getPlayerId()).getName()));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -199,7 +199,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                                 SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                                 game.getRoundCount(),
                                 game.getPlayer(aaa.getPlayerId()).getName(),
-                                "Artilery AutoHit. Better text later.",
+                                "Artilery AutoHit. on round "+(game.getRoundCount() + aaa.turnsTilHit)+" from player "+game.getPlayer(aaa.getPlayerId()).getName(),
                                 false
                         )
                  );
@@ -221,7 +221,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                             SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
                             game.getRoundCount(),
                             game.getPlayer(aaa.getPlayerId()).getName(),
-                            "Artilery toHit Adjusted. Better text later.",
+                            "Artilery toHit Adjusted. on round "+(game.getRoundCount() + aaa.turnsTilHit)+" from player "+game.getPlayer(aaa.getPlayerId()).getName(),
                             false
                         )
                 );
@@ -282,7 +282,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_TARGET,
                             game.getRoundCount(),
                             game.getPlayer(aaa.getPlayerId()).getName(),
-                            "Artilery Target. Better text later.",
+                            "Artilery Target. from player "+game.getPlayer(aaa.getPlayerId()).getName(),
                             false
                     )
             );
@@ -311,7 +311,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             game.getBoard().addSpecialHexDisplay(targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(),
-                            "Artillery Hit. Better text later."));
+                            "Artillery Hit. everyone should see this."));
 
         } else {
             // direct fire artillery only scatters by one d6
@@ -331,7 +331,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
-                                "Artillery Scattered Here. Better text later."
+                                "Artillery Scattered Here. everyone should see this."
                         )
                     );
                 } else {

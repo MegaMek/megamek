@@ -109,6 +109,7 @@ v0.35.32-dev (SVN)
 + Bug 2881155, Patch 3557211: artillery pre-targeted hex display
 + Patch 3568183: Ignore physical damage in path selection for Clan units when
     using no clan physical attacks game option
++ Patch 3569325: updated basement patch
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

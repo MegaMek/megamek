@@ -1206,12 +1206,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             if (next.containsTerrain(Terrains.BUILDING)
                     || current.containsTerrain(Terrains.BUILDING)) {
-                int bldcur = Math.max(current.depth(true),
+                int bldcur = Math.max(-current.depth(true),
                         current.terrainLevel(Terrains.BLDG_ELEV));
-                int bldnex = Math.max(next.depth(true), next.terrainLevel(Terrains.BLDG_ELEV));
+                int bldnex = Math.max(-next.depth(true), next.terrainLevel(Terrains.BLDG_ELEV));
                 if (((assumedElevation == bldcur) && (climbMode || isJumpingNow ) && (this instanceof Mech))
                         || (retVal > bldnex)) {
                     retVal = bldnex;
+                    System.err.println(" Entity "+ getDisplayName() +"1 retval=" + retVal);
                 } else if ((bldnex + next.surface()) > (bldcur + current.surface())) {
                     if(climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
@@ -1223,7 +1224,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     if(climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
                     } else {
-                        retVal = next.surface();
+                        retVal += current.surface();
+                        retVal -= next.surface();
                     }
                 }
             }
@@ -1244,6 +1246,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+
         return retVal;
     }
 
@@ -1430,12 +1433,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if ((this instanceof Mech) || (this instanceof Protomech)
                         || (this instanceof Infantry)) {
                      if (hex.containsTerrain(Terrains.BLDG_BASEMENT)) {
-                         if ((assumedAlt >= (hex.floor() - hex.terrainLevel(Terrains.BLDG_BASEMENT)) )
+                         if ((assumedAlt >= (hex.surface() - hex.depth(true)) )
                             && (assumedAlt <= hex.ceiling())) {
                              return true;
                          }
                      }
-                     if ((assumedAlt >= (hex.floor() - hex.depth(true)) )
+                     if ((assumedAlt >= (hex.surface() - hex.depth(true)) )
                             && (assumedAlt <= hex.ceiling())) {
                         return true;
                     }

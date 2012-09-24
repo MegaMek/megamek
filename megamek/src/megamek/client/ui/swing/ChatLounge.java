@@ -1535,17 +1535,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
             } else if (entity.hasC3()) {
                 if (entity.C3MasterIs(entity)) {
-                    c3network += Messages.getString("ChatLounge.C3MM");
-                    if (entity.calculateFreeC3MNodes() > 0) {
-                        c3network += Messages.getString("ChatLounge.C3Nodes",
+                    c3network += Messages.getString("ChatLounge.C3Master");
+                    c3network += Messages.getString("ChatLounge.C3MNodes",
+                                new Object[] { entity.calculateFreeC3MNodes() });
+                    if(entity.hasC3MM()) {
+                    	c3network += Messages.getString("ChatLounge.C3SNodes",
                                 new Object[] { entity.calculateFreeC3Nodes() });
                     }
                 } else if (!entity.hasC3S()) {
                     c3network += Messages.getString("ChatLounge.C3Master");
-                    if (entity.calculateFreeC3Nodes() > 0) {
-                        c3network += Messages.getString("ChatLounge.C3Nodes",
+                    c3network += Messages.getString("ChatLounge.C3SNodes",
                                 new Object[] { entity.calculateFreeC3Nodes() });
-                    }
                     // an independent master might also be a slave to a company
                     // master
                     if (entity.getC3Master() != null) {
@@ -1554,7 +1554,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 } else if (entity.getC3Master() != null) {
                     c3network += Messages.getString("ChatLounge.C3Slave") + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
                 } else {
-                    c3network += " not networked";
+                    c3network += Messages.getString("ChatLounge.C3None");
                 }
             }
 

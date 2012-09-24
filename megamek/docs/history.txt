@@ -111,6 +111,7 @@ v0.35.32-dev (SVN)
     using no clan physical attacks game option
 + Patch 3569325: updated basement patch
 + Patch 3570935: Princess: Consider MASC failure in evaluating Paths
++ better C3 network reporting in chat lounge
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

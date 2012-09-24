@@ -87,7 +87,7 @@ public class EquipmentType {
 
     // Assume for now that prototype is not more expensive
     public static final double[] structureCosts =
-        { 400, 300, 1600, 1600, 6400, 3200, 3200 };
+        { 400, 300, 1600, 1600, 6400, 1600, 3200 };
 
     // Assume for now that prototype is not more expensive
     public static final double[] armorCosts =

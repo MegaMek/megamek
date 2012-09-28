@@ -113,6 +113,7 @@ v0.35.32-dev (SVN)
 + Patch 3570935: Princess: Consider MASC failure in evaluating Paths
 + better C3 network reporting in chat lounge
 + Bug: composite IS costs 1600 * tonnage, not 3200 * tonnage
++ Jumping Jill unofficial pilot advantage (+2 to hit rather than +1 from Jumping Jack)
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

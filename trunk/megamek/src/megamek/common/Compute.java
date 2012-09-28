@@ -1636,6 +1636,8 @@ public class Compute {
         } else if (movement == EntityMovementType.MOVE_JUMP) {
             if(entity.getCrew().getOptions().booleanOption("jumping_jack")) {
                 toHit.addModifier(1, "attacker jumped");
+            } else if(entity.getCrew().getOptions().booleanOption("jumping_jill")) {
+                toHit.addModifier(2, "attacker jumped");
             } else {
                 toHit.addModifier(3, "attacker jumped");
             }

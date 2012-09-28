@@ -92,9 +92,9 @@ public class Infantry extends Entity {
     public static final int LOC_FIELD_GUNS = 1;
 
     /**
-     * Infantry have no critical slot limitations or locations.
+     * Infantry only have critical slots for field gun ammo
      */
-    private static final int[] NUM_OF_SLOTS = { 0, 0 };
+    private static final int[] NUM_OF_SLOTS = { 0, 20 };
     private static final String[] LOCATION_ABBRS = { "MEN", "FGUN" };
     private static final String[] LOCATION_NAMES = { "Men" , "Field Guns"};
 
@@ -1433,5 +1433,19 @@ public class Infantry extends Entity {
             }
         }
         return false;
+    }
+    
+    /**
+     * Mounts the specified equipment in the specified location.
+     */
+    @Override
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) throws LocationFullException {
+        // Implement parent's behavior.
+        super.addEquipment(mounted, loc, rearMounted);
+
+        //we do need to equipment slots for ammo switching of field guns and field artillery
+        // Add the piece equipment to our slots.
+        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
+
     }
 } // End class Infantry

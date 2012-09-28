@@ -114,6 +114,7 @@ v0.35.32-dev (SVN)
 + better C3 network reporting in chat lounge
 + Bug: composite IS costs 1600 * tonnage, not 3200 * tonnage
 + Jumping Jill unofficial pilot advantage (+2 to hit rather than +1 from Jumping Jack)
++ Bug: field gun/artillery munitions not saved to MUL file
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)
 + Bug: StringIndexOutOfBoundsException when loading canon unit list.

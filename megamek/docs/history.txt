@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.32-dev (SVN)
+v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's
 + Data 3401148: Era 3062 RAT (placed in another folder as an alternate set to
     the ones in already)
@@ -113,7 +113,8 @@ v0.35.32-dev (SVN)
 + Patch 3570935: Princess: Consider MASC failure in evaluating Paths
 + better C3 network reporting in chat lounge
 + Bug: composite IS costs 1600 * tonnage, not 3200 * tonnage
-+ Jumping Jill unofficial pilot advantage (+2 to hit rather than +1 from Jumping Jack)
++ Jumping Jill unofficial pilot advantage (+2 to hit rather than +1 from Jumping
+   Jack)
 + Bug: field gun/artillery munitions not saved to MUL file
 
 v0.35.31 (2012-07-11, 19:54 UTC+2)

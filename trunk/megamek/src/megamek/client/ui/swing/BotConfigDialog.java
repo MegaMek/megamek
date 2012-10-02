@@ -68,7 +68,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
     private ButtonGroup selectbot_group = new ButtonGroup();
 
     // Items for princess config here
-    JComboBox princess_verbosity;
+    JComboBox princessVerbosity;
     JTextField princess_target_hex_num_x;
     JButton princess_addtarget_button;
     JList princess_targets_list;
@@ -168,11 +168,10 @@ public class BotConfigDialog extends JDialog implements ActionListener,
 
         //Row 1 Column 2;
         constraints.gridx++;
-        princess_verbosity = new JComboBox(new String[]{"0", "1"});
-        princess_verbosity.setToolTipText("A value of '0' turns verbose logging off.  '1' turns it on.");
-        princess_verbosity.setSelectedIndex(0);
-        layout.setConstraints(princess_verbosity, constraints);
-        panel.add(princess_verbosity);
+        princessVerbosity = new JComboBox(Princess.LogLevel.getLogLevelNames());
+        princessVerbosity.setSelectedIndex(0);
+        layout.setConstraints(princessVerbosity, constraints);
+        panel.add(princessVerbosity);
 
         //Row 2 Column 1.
         constraints.gridy++;
@@ -304,8 +303,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         if (testbot_radiobutton.isSelected()) {
             return new TestBot(getBotName(), host, port);
         } else if (princess_radiobutton.isSelected()) {
-            Princess toreturn = new Princess(getBotName(), host, port);
-            toreturn.verbosity = princess_verbosity.getSelectedIndex();
+            Princess toreturn = new Princess(getBotName(), host, port, Princess.LogLevel.getLogLevel(princessVerbosity.getSelectedIndex()));
             toreturn.aggression = aggression_slidebar.getValue();
             // Add targets, adjusting hexes appropriately
             for (int i = 0; i < princess_targets_list_model.getSize(); i++) {

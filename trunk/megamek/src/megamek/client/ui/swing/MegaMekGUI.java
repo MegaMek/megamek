@@ -639,7 +639,7 @@ public class MegaMekGUI implements IMegaMekGUI {
 
         for (int x = 0; x < pa.length; x++) {
             if (sd.playerTypes[x] == ScenarioDialog.T_OBOT) {
-                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port); //$NON-NLS-1$
+                BotClient c = new Princess(pa[x].getName(), "localhost", hd.port, Princess.LogLevel.ERROR); //$NON-NLS-1$
                 c.game.addGameListener(new BotGUI(c));
                 if (!c.connect()) {
                     // bots should never fail on connect

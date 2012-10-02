@@ -42,6 +42,7 @@ public class BasicPathRanker extends PathRanker {
 
     FireControl firecontrol;
     PathEnumerator path_enumerator;
+    private static Princess owner;
 
     double fall_shame; // how many extra damage points will a fall effectively
     // make me lose
@@ -67,7 +68,8 @@ public class BasicPathRanker extends PathRanker {
     // whether they will target
     // me.
 
-    public BasicPathRanker(Properties props) {
+    public BasicPathRanker(Properties props, Princess owningPrincess) {
+        super(owningPrincess);
         // give some default values for tunable parameters
         fall_shame = 10.0;
 //        blind_optimism = 0.9;
@@ -92,6 +94,7 @@ public class BasicPathRanker extends PathRanker {
         self_preservation = Double.valueOf(props.getProperty("self_preservation"));
 
         defaultHomeEdge = HomeEdge.getHomeEdge(Integer.valueOf(props.getProperty("home_edge")));
+        owner = owningPrincess;
     }
 
     public static HomeEdge getDefaultHomeEdge() {
@@ -106,65 +109,72 @@ public class BasicPathRanker extends PathRanker {
 
         public double damage_enemy_can_do;
         public double damage_i_can_do;
-    };
+    }
 
     /**
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy.  Improve for missile attacks, gun skill, and range
      */
     public EntityEvaluationResponse evaluateUnmovedEnemy(Entity e,MovePath p,IGame game) {
-        //some preliminary calculations
-        double damage_discount=0.25;
-        EntityEvaluationResponse ret=new EntityEvaluationResponse();
-        //Aeros always move after other units, and would require an entirely different evaluation
-        //TODO (low priority) implement a way to see if I can dodge aero units
-        if(e instanceof Aero) {
+        final String METHOD_NAME = "EntityEvaluationResponse evaluateUnmovedEnemy(Entity,MovePath,IGame)";
+        owner.methodBegin(getClass(), METHOD_NAME);
+
+        try {
+            //some preliminary calculations
+            double damage_discount=0.25;
+            EntityEvaluationResponse ret=new EntityEvaluationResponse();
+            //Aeros always move after other units, and would require an entirely different evaluation
+            //TODO (low priority) implement a way to see if I can dodge aero units
+            if(e instanceof Aero) {
+                return ret;
+            }
+            Coords mycoords=p.getFinalCoords();
+            int myfacing=p.getFinalFacing();
+            Coords behind=mycoords.translated((myfacing+3)%6);
+            Coords leftflank=mycoords.translated((myfacing+2)%6);
+            Coords rightflank=mycoords.translated((myfacing+4)%6);
+            HashSet<CoordFacingCombo> enemy_facing_set=path_enumerator.unit_potential_locations.get(e.getId());
+            Coords closest=path_enumerator.unit_movable_areas.get(e.getId()).getClosestCoordsTo(mycoords);
+            int range=closest.distance(mycoords);
+            //I would prefer if the enemy must end its move in my line of fire
+            //if so, I can guess that I may do some damage to it
+            //(cover nonwithstanding.  At the very least, I can force the enemy to take
+            // cover on its move)
+            HexLine leftbounds;
+            HexLine rightbounds;
+            if(p.getEntity().canChangeSecondaryFacing()) {
+                leftbounds=new HexLine(behind,(myfacing+2)%6);
+                rightbounds=new HexLine(behind,(myfacing+4)%6);
+            } else {
+                leftbounds=new HexLine(behind,(myfacing+1)%6);
+                rightbounds=new HexLine(behind,(myfacing+5)%6);
+            }
+            if((leftbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))>0) &&
+               (rightbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))<0)) {
+                ret.damage_i_can_do+=firecontrol.getMaxDamageAtRange(p.getEntity(), range)*damage_discount;
+            }
+            //in general if an enemy can end its position in range, it can hit me
+            ret.damage_enemy_can_do+=firecontrol.getMaxDamageAtRange(e,range)*damage_discount;
+            //It is especially embarassing if the enemy can move behind or flank me and then kick me
+            if(enemy_facing_set!=null) {
+            if(enemy_facing_set.contains(new CoordFacingCombo(behind,myfacing))||
+               enemy_facing_set.contains(new CoordFacingCombo(behind,(myfacing+1)%6))||
+               enemy_facing_set.contains(new CoordFacingCombo(behind,(myfacing+5)%6))||
+               enemy_facing_set.contains(new CoordFacingCombo(leftflank,myfacing))||
+               enemy_facing_set.contains(new CoordFacingCombo(leftflank,(myfacing+4)%6))||
+               enemy_facing_set.contains(new CoordFacingCombo(leftflank,(myfacing+5)%6))||
+               enemy_facing_set.contains(new CoordFacingCombo(rightflank,myfacing))||
+               enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+1)%6))||
+               enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+2)%6))) {
+                ret.damage_enemy_can_do+=Math.ceil(e.getWeight() / 5.0)*damage_discount;
+            }
+            } else {
+                owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING, "warning, no facing set for "+e.getDisplayName());
+            }
             return ret;
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
         }
-        Coords mycoords=p.getFinalCoords();
-        int myfacing=p.getFinalFacing();
-        Coords behind=mycoords.translated((myfacing+3)%6);
-        Coords leftflank=mycoords.translated((myfacing+2)%6);
-        Coords rightflank=mycoords.translated((myfacing+4)%6);
-        HashSet<CoordFacingCombo> enemy_facing_set=path_enumerator.unit_potential_locations.get(e.getId());
-        Coords closest=path_enumerator.unit_movable_areas.get(e.getId()).getClosestCoordsTo(mycoords);
-        int range=closest.distance(mycoords);
-        //I would prefer if the enemy must end its move in my line of fire
-        //if so, I can guess that I may do some damage to it
-        //(cover nonwithstanding.  At the very least, I can force the enemy to take
-        // cover on its move)
-        HexLine leftbounds;
-        HexLine rightbounds;
-        if(p.getEntity().canChangeSecondaryFacing()) {
-            leftbounds=new HexLine(behind,(myfacing+2)%6);
-            rightbounds=new HexLine(behind,(myfacing+4)%6);
-        } else {
-            leftbounds=new HexLine(behind,(myfacing+1)%6);
-            rightbounds=new HexLine(behind,(myfacing+5)%6);
-        }
-        if((leftbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))>0) &&
-           (rightbounds.judgeArea(path_enumerator.unit_movable_areas.get(e.getId()))<0)) {
-            ret.damage_i_can_do+=firecontrol.getMaxDamageAtRange(p.getEntity(), range)*damage_discount;
-        }
-        //in general if an enemy can end its position in range, it can hit me
-        ret.damage_enemy_can_do+=firecontrol.getMaxDamageAtRange(e,range)*damage_discount;
-        //It is especially embarassing if the enemy can move behind or flank me and then kick me
-        if(enemy_facing_set!=null) {
-        if(enemy_facing_set.contains(new CoordFacingCombo(behind,myfacing))||
-           enemy_facing_set.contains(new CoordFacingCombo(behind,(myfacing+1)%6))||
-           enemy_facing_set.contains(new CoordFacingCombo(behind,(myfacing+5)%6))||
-           enemy_facing_set.contains(new CoordFacingCombo(leftflank,myfacing))||
-           enemy_facing_set.contains(new CoordFacingCombo(leftflank,(myfacing+4)%6))||
-           enemy_facing_set.contains(new CoordFacingCombo(leftflank,(myfacing+5)%6))||
-           enemy_facing_set.contains(new CoordFacingCombo(rightflank,myfacing))||
-           enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+1)%6))||
-           enemy_facing_set.contains(new CoordFacingCombo(rightflank,(myfacing+2)%6))) {
-            ret.damage_enemy_can_do+=Math.ceil(e.getWeight() / 5.0)*damage_discount;
-        }
-        } else {
-            System.err.println("warning, no facing set for "+e.getDisplayName());
-        }
-        return ret;
     }
 
     /**
@@ -172,157 +182,164 @@ public class BasicPathRanker extends PathRanker {
      */
     @Override
     public double rankPath(MovePath p, IGame game) {
-        boolean isaero=(p.getEntity() instanceof Aero);
-        if(isaero) {
-            //stalling is bad
-            if(p.getFinalVelocity()==0) {
-                return -1000;
-            }
-            //you know what else is bad?  this
-            if(p.getFinalAltitude()<1) {
-                return -10000;
-            }
-            //flying off board should only be done if necessary, but is better than taking much damage
-            if((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.RETURN)) {
-                return -5;
-            }
-        }
+        final String METHOD_NAME = "rankPath(MovePath, IGame)";
+        owner.methodBegin(getClass(), METHOD_NAME);
 
-        // How likely is it that I will succeed in reaching this path
-        MovePath pcopy=p.clone(); //get psr calls cliptopossible, I may not want to change p
-        List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
-        double success_probability = 1.0;
-        for (TargetRoll t : targets) {
-            success_probability *= Compute.oddsAbove(t.getValue()) / 100.0;
-        }
-
-        // Factor the possibility of MASC failure in like a PSR (even though the penalty is
-        // significantly higher).
-        if (p.hasActiveMASC()) {
-            success_probability *= Compute.oddsAbove(p.getEntity().getMASCTarget()) / 100.0;
-        }
-        // Lets assume that I will fall if I fail. What's my expected damage
-        // (and embarrassment) from that?
-        int fall_damage = (int) (p.getEntity().getWeight() / 10);
-        double expected_fall_damage = (fall_damage + fall_shame)
-                * (1.0 - success_probability);
-
-        // look at all of my enemies
-        ArrayList<Entity> enemies = getEnemies(p.getEntity(), game);
-        double maximum_damage_done = 0;
-        double maximum_physical_damage = 0;
-        double expected_damage_taken = 0;
-        for (Entity e : enemies) {
-            if((!e.isSelectableThisTurn())||e.isImmobile()) { //For units that have already moved
-            // How much damage can they do to me?
-            double their_damage_potential = firecontrol
-                    .guessBestFiringPlanUnderHeatWithTwists(e, null,
-                            p.getEntity(), new EntityState(p),
-                            (e.getHeatCapacity() - e.heat) + 5, game)
-                            .utility;
-            // if they can kick me, and probably hit, they probably will.
-            FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
-                    e, null, p.getEntity(), new EntityState(p),
-                    PhysicalAttackType.RIGHT_KICK, game);
-            if (theirkick.prob_to_hit > 0.5) {
-                their_damage_potential += theirkick.expected_damage_on_hit
-                        * theirkick.prob_to_hit;
+        try {
+            boolean isaero=(p.getEntity() instanceof Aero);
+            if(isaero) {
+                //stalling is bad
+                if(p.getFinalVelocity()==0) {
+                    return -1000;
+                }
+                //you know what else is bad?  this
+                if(p.getFinalAltitude()<1) {
+                    return -10000;
+                }
+                //flying off board should only be done if necessary, but is better than taking much damage
+                if((p.getLastStep()!=null)&&(p.getLastStep().getType()==MoveStepType.RETURN)) {
+                    return -5;
+                }
             }
 
-            // How much damage can I do to them?
-            FiringPlan my_firing_plan=null;
-            if(p.getEntity() instanceof Aero) {
-                my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
-            } else {
-                my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+            // How likely is it that I will succeed in reaching this path
+            MovePath pcopy=p.clone(); //get psr calls cliptopossible, I may not want to change p
+            List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
+            double success_probability = 1.0;
+            for (TargetRoll t : targets) {
+                success_probability *= Compute.oddsAbove(t.getValue()) / 100.0;
             }
-            double my_damage_potential = my_firing_plan.utility;
-            // If I can kick them and probably hit, I probably will
-            FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
-                    p.getEntity(), new EntityState(p), e, null,
-                    PhysicalAttackType.RIGHT_KICK, game);
-            if (mykick.prob_to_hit > 0.5) {
+
+            // Factor the possibility of MASC failure in like a PSR (even though the penalty is
+            // significantly higher).
+            if (p.hasActiveMASC()) {
+                success_probability *= Compute.oddsAbove(p.getEntity().getMASCTarget()) / 100.0;
+            }
+            // Lets assume that I will fall if I fail. What's my expected damage
+            // (and embarrassment) from that?
+            int fall_damage = (int) (p.getEntity().getWeight() / 10);
+            double expected_fall_damage = (fall_damage + fall_shame)
+                    * (1.0 - success_probability);
+
+            // look at all of my enemies
+            ArrayList<Entity> enemies = getEnemies(p.getEntity(), game);
+            double maximum_damage_done = 0;
+            double maximum_physical_damage = 0;
+            double expected_damage_taken = 0;
+            for (Entity e : enemies) {
+                if((!e.isSelectableThisTurn())||e.isImmobile()) { //For units that have already moved
+                // How much damage can they do to me?
+                double their_damage_potential = firecontrol
+                        .guessBestFiringPlanUnderHeatWithTwists(e, null,
+                                p.getEntity(), new EntityState(p),
+                                (e.getHeatCapacity() - e.heat) + 5, game)
+                                .utility;
+                // if they can kick me, and probably hit, they probably will.
+                FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
+                        e, null, p.getEntity(), new EntityState(p),
+                        PhysicalAttackType.RIGHT_KICK, game);
+                if (theirkick.prob_to_hit > 0.5) {
+                    their_damage_potential += theirkick.expected_damage_on_hit
+                            * theirkick.prob_to_hit;
+                }
+
+                // How much damage can I do to them?
+                FiringPlan my_firing_plan;
+                if(p.getEntity() instanceof Aero) {
+                    my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
+                } else {
+                    my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+                }
+                double my_damage_potential = my_firing_plan.utility;
+                // If I can kick them and probably hit, I probably will
+                FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
+                        p.getEntity(), new EntityState(p), e, null,
+                        PhysicalAttackType.RIGHT_KICK, game);
+                if (mykick.prob_to_hit > 0.5) {
+                    double expected_kick_damage = mykick.expected_damage_on_hit
+                            * mykick.prob_to_hit;
+                    if (expected_kick_damage > maximum_physical_damage) {
+                        maximum_physical_damage = expected_kick_damage;
+                    }
+                }
+
+                // If this enemy is likely to fire at me, include that in the damage
+                // I will likely take
+                if (best_damage_by_enemies.get(e.getId()) < their_damage_potential) {
+                    expected_damage_taken += their_damage_potential;
+                }
+                // If this enemy is likely my target, use my damage to them as the
+                // maximum damage I can do
+                if (my_damage_potential >= maximum_damage_done) {
+                    maximum_damage_done = my_damage_potential;
+                }
+                } else { //for units that have moved this round
+                    //I would prefer not to have the unit be able to move directly behind or flank me
+                    EntityEvaluationResponse resp=evaluateUnmovedEnemy(e,p,game);
+                    if(resp.damage_i_can_do>maximum_damage_done) {
+                        maximum_damage_done=resp.damage_i_can_do;
+                    }
+                    expected_damage_taken+=resp.damage_enemy_can_do;
+                }
+            }
+            // Include damage I can do to strategic targets
+            for(int i=0;i<botbase.fire_control.additional_targets.size();i++) {
+                Targetable t=botbase.fire_control.additional_targets.get(i);
+                FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
+                double my_damage_potential = my_firing_plan.utility;
+                if(my_damage_potential>maximum_damage_done) {
+                    maximum_damage_done = my_damage_potential;
+                }
+                FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
+                        p.getEntity(), new EntityState(p), t, null,
+                        PhysicalAttackType.RIGHT_KICK, game);
                 double expected_kick_damage = mykick.expected_damage_on_hit
-                        * mykick.prob_to_hit;
+                * mykick.prob_to_hit;
                 if (expected_kick_damage > maximum_physical_damage) {
                     maximum_physical_damage = expected_kick_damage;
                 }
             }
 
-            // If this enemy is likely to fire at me, include that in the damage
-            // I will likely take
-            if (best_damage_by_enemies.get(e.getId()) < their_damage_potential) {
-                expected_damage_taken += their_damage_potential;
+            //If I cannot kick because I am a clan unit and "No physical attacks for the clans"
+            //is enabled, set maximum physical damage for this path to zero.
+            if (game.getOptions().booleanOption("no_clan_physical") && p.getEntity().isClan()) {
+                maximum_physical_damage = 0;
             }
-            // If this enemy is likely my target, use my damage to them as the
-            // maximum damage I can do
-            if (my_damage_potential >= maximum_damage_done) {
-                maximum_damage_done = my_damage_potential;
-            }
-            } else { //for units that have moved this round
-                //I would prefer not to have the unit be able to move directly behind or flank me
-                EntityEvaluationResponse resp=evaluateUnmovedEnemy(e,p,game);
-                if(resp.damage_i_can_do>maximum_damage_done) {
-                    maximum_damage_done=resp.damage_i_can_do;
-                }
-                expected_damage_taken+=resp.damage_enemy_can_do;
-            }
-        }
-        // Include damage I can do to strategic targets
-        for(int i=0;i<botbase.fire_control.additional_targets.size();i++) {
-            Targetable t=botbase.fire_control.additional_targets.get(i);
-            FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
-            double my_damage_potential = my_firing_plan.utility;
-            if(my_damage_potential>maximum_damage_done) {
-                maximum_damage_done = my_damage_potential;
-            }
-            FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
-                    p.getEntity(), new EntityState(p), t, null,
-                    PhysicalAttackType.RIGHT_KICK, game);
-            double expected_kick_damage = mykick.expected_damage_on_hit
-            * mykick.prob_to_hit;
-            if (expected_kick_damage > maximum_physical_damage) {
-                maximum_physical_damage = expected_kick_damage;
-            }
-        }
 
-        //If I cannot kick because I am a clan unit and "No physical attacks for the clans"
-        //is enabled, set maximum physical damage for this path to zero.
-        if (game.getOptions().booleanOption("no_clan_physical") && p.getEntity().isClan()) {
-            maximum_physical_damage = 0;
+            // I can kick a different target than I shoot, so add physical to total
+            // damage after I've looked at all enemies
+            maximum_damage_done += maximum_physical_damage;
+
+            double utility = (success_probability
+                    * ((maximum_damage_done * foolish_bravery) - expected_damage_taken))
+                    - expected_fall_damage;
+
+            if(p.getEntity() instanceof Aero) {
+
+            } else {
+                //ground unit specific things
+                double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
+                utility -= dist_to_enemy * hyper_aggression;
+
+    //            double dist_to_friend = distanceToClosestFriend(p, game);
+      //          utility -= dist_to_friend * herd_mentality;
+            }
+
+            //Should I be trying to withdraw?
+            if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
+                    ||(botbase.should_flee)) {
+                int distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
+                //TODO this number should not be hard coded, but instead be modifiable,
+                //if it's small enough, the unit should do more of a fighting withdrawal
+                utility-=self_preservation*distance_to_edge;
+            }
+
+            return utility;
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
         }
 
-        // I can kick a different target than I shoot, so add physical to total
-        // damage after I've looked at all enemies
-        maximum_damage_done += maximum_physical_damage;
-
-        double utility = (success_probability
-                * ((maximum_damage_done * foolish_bravery) - expected_damage_taken))
-                - expected_fall_damage;
-
-        if(p.getEntity() instanceof Aero) {
-
-        } else {
-            //ground unit specific things
-            double dist_to_enemy = distanceToClosestEnemy(p.getEntity(),p.getFinalCoords(), game);
-            utility -= dist_to_enemy * hyper_aggression;
-
-//            double dist_to_friend = distanceToClosestFriend(p, game);
-  //          utility -= dist_to_friend * herd_mentality;
-        }
-
-        //Should I be trying to withdraw?
-        if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
-                ||(botbase.should_flee)) {
-            int distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
-            //TODO this number should not be hard coded, but instead be modifiable,
-            //if it's small enough, the unit should do more of a fighting withdrawal
-            utility-=self_preservation*distance_to_edge;
-        }
-
-        return utility;
-
-    };
+    }
 
 
     /**
@@ -330,22 +347,29 @@ public class BasicPathRanker extends PathRanker {
      */
     @Override
     public void initUnitTurn(Entity unit, IGame game) {
-        best_damage_by_enemies.clear();
-        ArrayList<Entity> enemies = getEnemies(unit, game);
-        ArrayList<Entity> friends = getFriends(unit, game);
-        for (Entity e : enemies) {
-            double max_damage = 0;
-            for (Entity f : friends) {
-                double damage = firecontrol
-                        .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
-                                null, (e.getHeatCapacity() - e.heat) + 5, game)
-                                .getExpectedDamage();
-                if (damage > max_damage) {
-                    max_damage = damage;
-                }
+        final String METHOD_NAME = "initUnitTurn(Entity, IGame)";
+        owner.methodBegin(getClass(), METHOD_NAME);
 
+        try {
+            best_damage_by_enemies.clear();
+            ArrayList<Entity> enemies = getEnemies(unit, game);
+            ArrayList<Entity> friends = getFriends(unit, game);
+            for (Entity e : enemies) {
+                double max_damage = 0;
+                for (Entity f : friends) {
+                    double damage = firecontrol
+                            .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
+                                    null, (e.getHeatCapacity() - e.heat) + 5, game)
+                                    .getExpectedDamage();
+                    if (damage > max_damage) {
+                        max_damage = damage;
+                    }
+
+                }
+                best_damage_by_enemies.put(e.getId(), max_damage);
             }
-            best_damage_by_enemies.put(e.getId(), max_damage);
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -353,12 +377,18 @@ public class BasicPathRanker extends PathRanker {
      * Gives the distance to the closest friendly unit, or zero if none exist
      */
     public double distanceToClosestFriend(MovePath p, IGame game) {
-        Entity closest = findClosestFriend(p, game);
-        if (closest == null) {
-            return 0;
-        }
-        return closest.getPosition().distance(p.getFinalCoords());
+        final String METHOD_NAME = "distanceToClosestFriend(MovePath, IGame)";
+        owner.methodBegin(getClass(), METHOD_NAME);
 
+        try {
+            Entity closest = findClosestFriend(p, game);
+            if (closest == null) {
+                return 0;
+            }
+            return closest.getPosition().distance(p.getFinalCoords());
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
+        }
     }
 
     /**
@@ -369,11 +399,18 @@ public class BasicPathRanker extends PathRanker {
      * @param game IGame that we're playing
      */
     static public double distanceToClosestEnemy(Entity me,Coords position, IGame game) {
-        Entity closest = findClosestEnemy(me,position, game);
-        if (closest == null) {
-            return 0;
+        final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
+        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+
+        try {
+            Entity closest = findClosestEnemy(me,position, game);
+            if (closest == null) {
+                return 0;
+            }
+            return closest.getPosition().distance(position);
+        } finally {
+            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
-        return closest.getPosition().distance(position);
     }
 
     /**
@@ -381,19 +418,26 @@ public class BasicPathRanker extends PathRanker {
      *
      */
     static public int distanceToClosestEdge(Coords position, IGame game) {
-        int width=game.getBoard().getWidth();
-        int height=game.getBoard().getHeight();
-        int minimum=position.x;
-        if((width-position.x)<minimum) {
-            minimum=width=position.x;
+        final String METHOD_NAME = "distanceToClosestEdge(Coords, IGame)";
+        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+
+        try {
+            int width=game.getBoard().getWidth();
+            int height=game.getBoard().getHeight();
+            int minimum=position.x;
+            if((width-position.x)<minimum) {
+                minimum=position.x;
+            }
+            if(position.y<minimum) {
+                minimum=position.y;
+            }
+            if((height-position.y)<minimum) {
+                minimum=height-position.y;
+            }
+            return minimum;
+        } finally {
+            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
-        if(position.y<minimum) {
-            minimum=position.y;
-        }
-        if((height-position.y)<minimum) {
-            minimum=height-position.y;
-        }
-        return minimum;
     }
 
     /**
@@ -406,30 +450,37 @@ public class BasicPathRanker extends PathRanker {
      * @return The distance to the unit's home edge.
      */
     public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
-        Coords edgeCoords;
-        int boardHeight = game.getBoard().getHeight();
-        int boardWidth = game.getBoard().getWidth();
-        String msg = "Getting distance to home edge: ";
-        if (HomeEdge.NORTH.equals(homeEdge)) {
-            msg += "North";
-            edgeCoords = new Coords(boardWidth/2, 0);
-        } else if (HomeEdge.SOUTH.equals(homeEdge)) {
-            msg += "South";
-            edgeCoords = new Coords(boardWidth/2, boardHeight);
-        } else if (HomeEdge.WEST.equals(homeEdge)) {
-            msg += "West";
-            edgeCoords = new Coords(0, boardHeight/2);
-        } else if (HomeEdge.EAST.equals(homeEdge)) {
-            msg += "East";
-            edgeCoords = new Coords(boardWidth, boardHeight/2);
-        } else {
-            msg += "Default";
-            System.err.println("Invalid home edge.  Defaulting to NORTH.");
-            edgeCoords = new Coords(boardWidth/2, 0);
-        }
+        final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
+        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
 
-        System.err.println(msg);
-        return edgeCoords.distance(position);
+        try {
+            Coords edgeCoords;
+            int boardHeight = game.getBoard().getHeight();
+            int boardWidth = game.getBoard().getWidth();
+            String msg = "Getting distance to home edge: ";
+            if (HomeEdge.NORTH.equals(homeEdge)) {
+                msg += "North";
+                edgeCoords = new Coords(boardWidth/2, 0);
+            } else if (HomeEdge.SOUTH.equals(homeEdge)) {
+                msg += "South";
+                edgeCoords = new Coords(boardWidth/2, boardHeight);
+            } else if (HomeEdge.WEST.equals(homeEdge)) {
+                msg += "West";
+                edgeCoords = new Coords(0, boardHeight/2);
+            } else if (HomeEdge.EAST.equals(homeEdge)) {
+                msg += "East";
+                edgeCoords = new Coords(boardWidth, boardHeight/2);
+            } else {
+                msg += "Default";
+                owner.log(BasicPathRanker.class, METHOD_NAME, Princess.LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+                edgeCoords = new Coords(boardWidth/2, 0);
+            }
+
+            owner.log(BasicPathRanker.class, METHOD_NAME, msg);
+            return edgeCoords.distance(position);
+        } finally {
+            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+        }
     }
 
     /**

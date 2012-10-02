@@ -14,7 +14,6 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 
@@ -26,12 +25,12 @@ import megamek.common.MovePath;
 public class PathRanker {       
 
     Princess botbase;
+    private static Princess owner;
 
     class RankedPath implements Comparable<RankedPath>{
         public MovePath path;
         public double rank;
 
-        public RankedPath() {};
         public RankedPath(double r,MovePath p) {
             rank=r;
             path=p;
@@ -51,10 +50,12 @@ public class PathRanker {
             }
             return 0;
         }
-    };
+    }
 
-    public PathRanker() {
-    };
+    public PathRanker(Princess princess) {
+        botbase = princess;
+        owner = princess;
+    }
 
     /**
      * Gives the "utility" of a path; a number representing how good it is.
@@ -62,39 +63,52 @@ public class PathRanker {
      */
     public double rankPath(MovePath p, IGame game) {
         return 0;
-    };
+    }
 
     public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> ps,IGame game) {
-        ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
-        for(MovePath p:ps) {
-            ret.add(new RankedPath(rankPath(p,game),p));
+        final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
+        owner.methodBegin(getClass(), METHOD_NAME);
+
+        try {
+            ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
+            for(MovePath p:ps) {
+                ret.add(new RankedPath(rankPath(p,game),p));
+            }
+            return ret;
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
         }
-        return ret;
     }
 
     public static ArrayList<RankedPath> filterPathsLessThan(ArrayList<RankedPath> ps,double lessthan) {
-        ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
-        for(RankedPath p:ps) {
-            if(p.rank>lessthan) {
-                ret.add(p);
+        final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
+        owner.methodBegin(PathRanker.class, METHOD_NAME);
+
+        try {
+            ArrayList<RankedPath> ret=new ArrayList<RankedPath>();
+            for(RankedPath p:ps) {
+                if(p.rank>lessthan) {
+                    ret.add(p);
+                }
             }
+            return ret;
+        } finally {
+            owner.methodEnd(PathRanker.class, METHOD_NAME);
         }
-        return ret;
     }
 
     public static RankedPath getBestPath(ArrayList<RankedPath> ps) {
-        if(ps.size()==0) {
-            return null;
+        final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
+        owner.methodBegin(PathRanker.class, METHOD_NAME);
+
+        try {
+            if(ps.size()==0) {
+                return null;
+            }
+            return Collections.max(ps);
+        } finally {
+            owner.methodEnd(PathRanker.class, METHOD_NAME);
         }
-        return Collections.max(ps);
-        
-//        RankedPath best=ps.get(0);
-//        for(RankedPath p:ps) {
-//            if(p.rank>best.rank) {
-//                best=p;
-//            }
-//        }
-//        return best;
     }
 
 
@@ -104,69 +118,97 @@ public class PathRanker {
      * function
      */
     public void initUnitTurn(Entity unit, IGame game) {
-    };
+    }
 
     /**
      * Find the closest enemy to a unit with a path
      */
     static Entity findClosestEnemy(Entity me,Coords position, IGame game) {
-        int range = 9999;
-        Entity closest = null;
-        ArrayList<Entity> enemies = getEnemies(me, game);
-        for (Entity e : enemies) {
-            if (position.distance(e.getPosition()) < range) {
-                range = position.distance(e.getPosition());
-                closest = e;
+        final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
+        owner.methodBegin(PathRanker.class, METHOD_NAME);
+
+        try {
+            int range = 9999;
+            Entity closest = null;
+            ArrayList<Entity> enemies = getEnemies(me, game);
+            for (Entity e : enemies) {
+                if (position.distance(e.getPosition()) < range) {
+                    range = position.distance(e.getPosition());
+                    closest = e;
+                }
             }
+            return closest;
+        } finally {
+            owner.methodEnd(PathRanker.class, METHOD_NAME);
         }
-        return closest;
     }
 
     /**
      * Find the closest friend to a unit with a path
      */
     Entity findClosestFriend(MovePath p, IGame game) {
-        int range = 9999;
-        Entity closest = null;
-        ArrayList<Entity> friends = getFriends(p.getEntity(), game);
-        for (Entity e : friends) {
-            if (p.getFinalCoords().distance(e.getPosition()) < range) {
-                range = p.getFinalCoords().distance(e.getPosition());
-                closest = e;
+        final String METHOD_NAME = "findClosestFriend(MovePath, IGame";
+        owner.methodBegin(getClass(), METHOD_NAME);
+
+        try {
+            int range = 9999;
+            Entity closest = null;
+            ArrayList<Entity> friends = getFriends(p.getEntity(), game);
+            for (Entity e : friends) {
+                if (p.getFinalCoords().distance(e.getPosition()) < range) {
+                    range = p.getFinalCoords().distance(e.getPosition());
+                    closest = e;
+                }
             }
+            return closest;
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
         }
-        return closest;
     }
 
     /**
      * Get all the enemies of a unit
      */
     static ArrayList<Entity> getEnemies(Entity myunit, IGame game) {
-        ArrayList<Entity> enemies = new ArrayList<Entity>();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = i.nextElement();
-            if (entity.getOwner().isEnemyOf(myunit.getOwner())
-                    && (entity.getPosition() != null) && !entity.isOffBoard()) {
-                enemies.add(entity);
+        final String METHOD_NAME = "getEnemies(Entity, IGame)";
+        owner.methodBegin(PathRanker.class, METHOD_NAME);
+
+        try {
+            ArrayList<Entity> enemies = new ArrayList<Entity>();
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                Entity entity = i.nextElement();
+                if (entity.getOwner().isEnemyOf(myunit.getOwner())
+                        && (entity.getPosition() != null) && !entity.isOffBoard()) {
+                    enemies.add(entity);
+                }
             }
+            return enemies;
+        } finally {
+            owner.methodEnd(PathRanker.class, METHOD_NAME);
         }
-        return enemies;
     }
 
     /**
      * Get all the friends of a unit
      */
     ArrayList<Entity> getFriends(Entity myunit, IGame game) {
-        ArrayList<Entity> friends = new ArrayList<Entity>();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = i.nextElement();
-            if (!entity.getOwner().isEnemyOf(myunit.getOwner())
-                    && (entity.getPosition() != null) && !entity.isOffBoard()
-                    && (entity != myunit)) {
-                friends.add(entity);
+        final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
+        owner.methodBegin(getClass(), METHOD_NAME);
+
+        try {
+            ArrayList<Entity> friends = new ArrayList<Entity>();
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                Entity entity = i.nextElement();
+                if (!entity.getOwner().isEnemyOf(myunit.getOwner())
+                        && (entity.getPosition() != null) && !entity.isOffBoard()
+                        && (!entity.equals(myunit))) {
+                    friends.add(entity);
+                }
             }
+            return friends;
+        } finally {
+            owner.methodEnd(getClass(), METHOD_NAME);
         }
-        return friends;
     }
 
 }

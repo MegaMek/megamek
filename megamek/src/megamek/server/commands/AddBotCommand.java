@@ -69,7 +69,7 @@ public class AddBotCommand extends ServerCommand {
         if (target.isGhost()) {
             BotClient c = null;
             if ("Princess".equalsIgnoreCase(botName)) {
-                c = new Princess(target.getName(), server.getHost(), server.getPort());
+                c = new Princess(target.getName(), server.getHost(), server.getPort(), Princess.LogLevel.ERROR);
             } else if ("TestBot".equalsIgnoreCase(botName)) {
                 c = new TestBot(target.getName(), server.getHost(), server.getPort());
             } else {

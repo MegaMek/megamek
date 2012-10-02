@@ -1,6 +1,9 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.33-dev (SVN)
++ Added additional logging to Princess in order to make it a bit easier to track down the runtime problems she has.
++ The Princess portion of the Bot Config Dialog now has 3 levels of verbosity: ERROR, WARNING and DEBUG.  DEBUG gets pretty verbose and shouldn't be used unless you're looking for something specific.
++ I believe I have finally fixed the issue with Princess getting stuck in the Precognition.wait_for_unpause logic because the events_to_process list was never clearing out.
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

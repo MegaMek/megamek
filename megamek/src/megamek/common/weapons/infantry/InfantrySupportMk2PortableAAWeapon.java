@@ -32,7 +32,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 
     public InfantrySupportMk2PortableAAWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Mk 2 Man-Portable AA Weapon";
         setInternalName(name);
         addLookupName("InfantryMk2PortableAA");

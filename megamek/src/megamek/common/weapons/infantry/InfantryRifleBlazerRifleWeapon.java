@@ -32,7 +32,7 @@ public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
 
     public InfantryRifleBlazerRifleWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Blazer Rifle";
         setInternalName(name);
         addLookupName("InfantryBlazerRifle");

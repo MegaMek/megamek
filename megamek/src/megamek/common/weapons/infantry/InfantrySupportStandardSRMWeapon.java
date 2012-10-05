@@ -32,7 +32,7 @@ public class InfantrySupportStandardSRMWeapon extends InfantryWeapon {
 
     public InfantrySupportStandardSRMWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Two-Shot SRM Launcher";
         setInternalName(name);
         addLookupName("InfantryStandardSRM");

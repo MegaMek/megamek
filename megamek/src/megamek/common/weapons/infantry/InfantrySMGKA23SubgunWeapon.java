@@ -32,7 +32,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 
     public InfantrySMGKA23SubgunWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "KA-23 Subgun";
         setInternalName(name);
         addLookupName("InfantryKA23");

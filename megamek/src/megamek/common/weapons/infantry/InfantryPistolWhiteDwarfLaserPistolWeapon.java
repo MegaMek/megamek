@@ -32,7 +32,7 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolWhiteDwarfLaserPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "White Dwarf Holdout Laser Pistol";
         setInternalName(name);
         addLookupName("InfantryNambuAutopistol");

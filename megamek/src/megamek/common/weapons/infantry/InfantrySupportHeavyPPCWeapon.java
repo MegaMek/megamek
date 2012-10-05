@@ -32,7 +32,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyPPCWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Support PPC";
         setInternalName(name);
         addLookupName("InfantrySupportPPC");

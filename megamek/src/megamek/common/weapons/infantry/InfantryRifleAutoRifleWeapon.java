@@ -32,7 +32,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
 
     public InfantryRifleAutoRifleWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Auto Rifle";
         setInternalName(name);
         addLookupName("InfantryAssaultRifle");

@@ -676,9 +676,6 @@ public class BattleArmor extends Infantry {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
 
-        // Add the piece equipment to our slots.
-        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mounted), true, mounted));
-
         // Is the item a stealth equipment?
         // TODO: what's the *real* extreme range modifier?
         String name = mounted.getType().getInternalName();

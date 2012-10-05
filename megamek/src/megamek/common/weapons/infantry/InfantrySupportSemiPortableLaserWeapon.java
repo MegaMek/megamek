@@ -32,7 +32,7 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
 
     public InfantrySupportSemiPortableLaserWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Semi-Portable Laser";
         setInternalName(name);
         addLookupName("InfantrySemiPortableLaser");

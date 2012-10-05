@@ -32,7 +32,7 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
 
     public InfantryRifleMagnaLaserWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Magna Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryMagnaLaser");

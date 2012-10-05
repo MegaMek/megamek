@@ -32,7 +32,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 
     public InfantrySMGGuntherMP20Weapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Gunther MP-20";
         setInternalName(name);
         addLookupName("InfantryGuntherMP20");

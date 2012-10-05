@@ -205,6 +205,7 @@ import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
+import megamek.server.commands.ListEntitiesCommand;
 import megamek.server.commands.ListSavesCommand;
 import megamek.server.commands.LoadGameCommand;
 import megamek.server.commands.LocalLoadGameCommand;
@@ -221,6 +222,7 @@ import megamek.server.commands.ShowTileCommand;
 import megamek.server.commands.ShowValidTargetsCommand;
 import megamek.server.commands.SkipCommand;
 import megamek.server.commands.TeamCommand;
+import megamek.server.commands.TraitorCommand;
 import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
@@ -405,6 +407,8 @@ public class Server implements Runnable {
         registerCommand(new AddBotCommand(this));
         registerCommand(new CheckBVCommand(this));
         registerCommand(new NukeCommand(this));
+        registerCommand(new TraitorCommand(this));
+        registerCommand(new ListEntitiesCommand(this));
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -1287,7 +1291,7 @@ public class Server implements Runnable {
         // do some housekeeping on all the remaining
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = e.nextElement();
-
+            
             entity.applyDamage();
 
             entity.reloadEmptyWeapons();
@@ -1309,7 +1313,7 @@ public class Server implements Runnable {
             } else {
                 entity.setDone(false);
             }
-
+            
             // reset spotlights
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
@@ -1923,6 +1927,7 @@ public class Server implements Runnable {
                     addReport(resolveBlowingSandDamage());
                 }
                 addReport(resolveControlRolls());
+                addReport(checkForTraitors());
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
                 checkForSuffocation();
@@ -15917,6 +15922,34 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
+    private Vector<Report> checkForTraitors() {
+        Vector<Report> vFullReport = new Vector<Report>();
+    	//check for traitors
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
+            if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
+                continue;
+            }
+            if(entity.getTraitorId() != -1  && entity.getOwnerId() != entity.getTraitorId()) {
+            	Player p = game.getPlayer(entity.getTraitorId());
+            	if(null != p) {            		
+            		Report r = new Report(7305);
+                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName());
+                    r.add(p.getName());
+                    entity.setOwner(p);
+            		entityUpdate(entity.getId());
+                    vFullReport.add(r);
+            	}
+            	entity.setTraitorId(-1);
+            }
+        }
+        if(!vFullReport.isEmpty()) {
+        	vFullReport.add(0, new Report(7300));
+        }
+        return vFullReport;
+    }
+    
     /**
      * Resolves all built up control rolls. Used only during end phase
      */

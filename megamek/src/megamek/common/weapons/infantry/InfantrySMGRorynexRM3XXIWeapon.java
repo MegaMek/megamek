@@ -32,7 +32,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 
     public InfantrySMGRorynexRM3XXIWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Rorynex RM-3/XXI";
         setInternalName(name);
         addLookupName("InfantryRorynexRM3XXI");

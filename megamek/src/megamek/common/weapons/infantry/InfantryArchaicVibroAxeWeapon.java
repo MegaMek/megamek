@@ -32,7 +32,7 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
 
     public InfantryArchaicVibroAxeWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Vibro Axe";
         setInternalName(name);
         addLookupName("InfantryVibroAxe");

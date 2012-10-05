@@ -32,7 +32,7 @@ public class InfantrySupportHeavyMachineGunWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyMachineGunWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Infantry Heavy Machine Gun";
         setInternalName(name);
         addLookupName("InfantryHMG");

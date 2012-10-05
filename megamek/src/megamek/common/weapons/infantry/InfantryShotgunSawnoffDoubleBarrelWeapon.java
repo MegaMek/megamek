@@ -32,7 +32,7 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
 
     public InfantryShotgunSawnoffDoubleBarrelWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Double Barrel Sawed-off Shotgun";
         setInternalName(name);
         addLookupName("InfantryDoubleSawnOff");

@@ -32,7 +32,7 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
 
     public InfantryRifleIntekLaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Intek Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryIntekLaser");

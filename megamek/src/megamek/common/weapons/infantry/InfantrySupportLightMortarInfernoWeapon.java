@@ -32,7 +32,7 @@ public class InfantrySupportLightMortarInfernoWeapon extends InfantryWeapon {
 
     public InfantrySupportLightMortarInfernoWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Light Inferno Mortar";
         setInternalName(name);
         addLookupName("InfantryLightMortarInferno");

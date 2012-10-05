@@ -32,7 +32,7 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
 
     public InfantryRifleFederatedLongWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Federated Long Rifle";
         setInternalName(name);
         addLookupName("InfantryFederatedLongRifle");

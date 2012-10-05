@@ -32,7 +32,7 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
 
     public InfantryArchaicCarbonReinforcedNailsWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Carbon Reinforced Fingernails";
         setInternalName(name);
         addLookupName("InfantryCarbonFingernails");

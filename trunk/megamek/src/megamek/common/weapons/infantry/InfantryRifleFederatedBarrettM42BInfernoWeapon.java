@@ -32,7 +32,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
 
     public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Federated Barrett M42B Inferno";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM42BInferno");

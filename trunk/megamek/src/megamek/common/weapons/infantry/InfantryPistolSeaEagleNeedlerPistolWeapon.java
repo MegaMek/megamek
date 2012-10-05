@@ -32,7 +32,7 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSeaEagleNeedlerPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Sea Eagle Needler Pistol";
         setInternalName(name);
         addLookupName("InfantrySeaEagleNeedler");

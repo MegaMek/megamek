@@ -32,7 +32,7 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSunbeamLaserPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Sunbeam Laser Pistol";
         setInternalName(name);
         addLookupName("InfantrySunbeamLaserpistol");

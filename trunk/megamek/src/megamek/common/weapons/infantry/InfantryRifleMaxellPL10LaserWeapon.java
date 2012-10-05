@@ -32,7 +32,7 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
 
     public InfantryRifleMaxellPL10LaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Maxell PL10 Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryMaxellPL10Laser");

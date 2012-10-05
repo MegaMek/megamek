@@ -94,7 +94,7 @@ public class Infantry extends Entity {
     /**
      * Infantry only have critical slots for field gun ammo
      */
-    private static final int[] NUM_OF_SLOTS = { 0, 20 };
+    private static final int[] NUM_OF_SLOTS = { 20, 20 };
     private static final String[] LOCATION_ABBRS = { "MEN", "FGUN" };
     private static final String[] LOCATION_NAMES = { "Men" , "Field Guns"};
 
@@ -1242,6 +1242,7 @@ public class Infantry extends Entity {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp
         if (!(this instanceof BattleArmor)) {
+        	setOriginalJumpMP(0);
             switch (getMovementMode()) {
                 case INF_MOTORIZED:
                     setOriginalWalkMP(3);

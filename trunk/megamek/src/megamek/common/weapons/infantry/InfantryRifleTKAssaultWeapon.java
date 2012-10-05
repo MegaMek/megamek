@@ -32,7 +32,7 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 
     public InfantryRifleTKAssaultWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "TK Assault Rifle";
         setInternalName(name);
         addLookupName("InfantryTKAssaultRifle");

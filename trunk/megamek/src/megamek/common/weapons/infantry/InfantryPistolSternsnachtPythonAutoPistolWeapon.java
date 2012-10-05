@@ -32,7 +32,7 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
 
     public InfantryPistolSternsnachtPythonAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Sternsnacht Python AutoPistol";
         setInternalName(name);
         addLookupName("InfantrySternsnachtPython");

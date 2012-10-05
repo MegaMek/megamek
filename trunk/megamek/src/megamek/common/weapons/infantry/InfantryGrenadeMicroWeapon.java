@@ -32,7 +32,7 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
 
     public InfantryGrenadeMicroWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Micro Grenades";
         setInternalName(name);
         addLookupName("InfantryMicroGrenade");

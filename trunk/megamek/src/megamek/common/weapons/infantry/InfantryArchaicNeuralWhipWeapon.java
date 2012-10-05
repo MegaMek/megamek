@@ -32,7 +32,7 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
 
     public InfantryArchaicNeuralWhipWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Neural Whip";
         setInternalName(name);
         addLookupName("InfantryNeuralWhip");

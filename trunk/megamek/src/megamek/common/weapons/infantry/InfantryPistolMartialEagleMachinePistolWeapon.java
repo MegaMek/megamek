@@ -32,7 +32,7 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
 
     public InfantryPistolMartialEagleMachinePistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Martial Eagle Machine Pistol";
         setInternalName(name);
         addLookupName("InfantryMartialEaglepistol");

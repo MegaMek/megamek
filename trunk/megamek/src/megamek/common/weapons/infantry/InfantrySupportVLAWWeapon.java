@@ -32,7 +32,7 @@ public class InfantrySupportVLAWWeapon extends InfantryWeapon {
 
     public InfantrySupportVLAWWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry V-LAW";
         setInternalName(name);
         addLookupName("InfantryVeryLightAntitankWeapon");

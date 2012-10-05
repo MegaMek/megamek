@@ -32,7 +32,7 @@ public class InfantrySupportGrenadeLauncherWeapon extends InfantryWeapon {
 
     public InfantrySupportGrenadeLauncherWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Grenade Launcher";
         setInternalName(name);
         addLookupName("InfantryGrenadeLauncher");

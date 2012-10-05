@@ -32,7 +32,7 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 
     public InfantryRifleMGFlechetteNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "M&G Flechette Rifle";
         setInternalName(name);
         addLookupName("InfantryMGFlechette");

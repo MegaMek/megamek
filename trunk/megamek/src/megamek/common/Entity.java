@@ -115,6 +115,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected transient Player owner;
     protected int ownerId;
+    protected int traitorId = -1;
 
     private int startingPos = Board.START_NONE;
 
@@ -11595,6 +11596,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean getIsJumpingNow() {
         return isJumpingNow;
+    }
+    
+    public void setTraitorId(int id) {
+    	traitorId = id;
+    }
+    
+    public int getTraitorId() {
+    	return traitorId;
     }
 
 }

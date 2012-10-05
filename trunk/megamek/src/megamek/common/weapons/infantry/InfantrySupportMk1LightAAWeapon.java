@@ -32,7 +32,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 
     public InfantrySupportMk1LightAAWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Mk 1 Light AA Weapon";
         setInternalName(name);
         addLookupName("InfantryMk1LightAA");

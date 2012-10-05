@@ -32,7 +32,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSternsnachtPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Sternsnacht Heavy Pistol";
         setInternalName(name);
         addLookupName("InfantrySternsnachtpistol");

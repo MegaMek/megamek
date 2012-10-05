@@ -32,7 +32,7 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
 
     public InfantryPistolCoventryHandrocketGyrojetPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Coventry Handrocket";
         setInternalName(name);
         addLookupName("InfantryCoventryHandrocketGyrojetpistol");

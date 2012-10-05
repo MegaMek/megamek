@@ -32,7 +32,7 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
 
     public InfantrySupportSemiPortableMachineGunWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Semi Portable Machine Gun";
         setInternalName(name);
         addLookupName("InfantryMMG");

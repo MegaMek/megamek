@@ -32,7 +32,7 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
 
     public InfantrySMGImperator2894A1Weapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Imperator 2894A1 SMG";
         setInternalName(name);
         addLookupName("InfantryImperator2894A1");

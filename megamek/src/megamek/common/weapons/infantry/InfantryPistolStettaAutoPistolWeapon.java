@@ -32,7 +32,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolStettaAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Stetta AutoPistol";
         setInternalName(name);
         addLookupName("InfantryStettaAutopistol");

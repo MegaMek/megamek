@@ -32,7 +32,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 
     public InfantrySupportPortableAutocannonWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Semi Portable Autocannon";
         setInternalName(name);
         addLookupName("InfantryPortableAutocannon");

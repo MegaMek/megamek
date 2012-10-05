@@ -32,7 +32,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
 
     public InfantryRifleFederatedBarrettM61ALaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Federated Barrett M61A";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM61A");

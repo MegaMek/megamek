@@ -32,7 +32,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 
     public InfantryRifleShredderHeavyNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Shredder Heavy Needler";
         setInternalName(name);
         addLookupName("InfantryShredder");

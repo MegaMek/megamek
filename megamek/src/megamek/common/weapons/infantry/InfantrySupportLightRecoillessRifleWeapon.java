@@ -32,7 +32,7 @@ public class InfantrySupportLightRecoillessRifleWeapon extends InfantryWeapon {
 
     public InfantrySupportLightRecoillessRifleWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Light Recoilless Rifle";
         setInternalName(name);
         addLookupName("InfantryLRR");

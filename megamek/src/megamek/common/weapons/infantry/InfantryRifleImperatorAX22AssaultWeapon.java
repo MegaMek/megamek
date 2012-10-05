@@ -32,7 +32,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 
     public InfantryRifleImperatorAX22AssaultWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Imperator AX-22 Assault Rifle";
         setInternalName(name);
         addLookupName("InfantryImperatorAX22");

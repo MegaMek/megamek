@@ -32,7 +32,7 @@ public class InfantryPistolPulseLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolPulseLaserPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Pulse Laser Pistol";
         setInternalName(name);
         addLookupName("InfantryPulseLaserpistol");

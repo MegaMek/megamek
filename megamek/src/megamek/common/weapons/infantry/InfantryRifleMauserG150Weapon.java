@@ -32,7 +32,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 
     public InfantryRifleMauserG150Weapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Mauser and Grey G-150";
         setInternalName(name);
         addLookupName("InfantryM&GG150");

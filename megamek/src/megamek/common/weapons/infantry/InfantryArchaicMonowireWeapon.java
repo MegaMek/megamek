@@ -32,7 +32,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
 
     public InfantryArchaicMonowireWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Monowire";
         setInternalName(name);
         addLookupName("InfantryMonowire");

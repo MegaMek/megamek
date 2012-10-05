@@ -32,7 +32,7 @@ public class InfantryPistolMakeshiftPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolMakeshiftPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Makeshift Pistol";
         setInternalName(name);
         addLookupName("InfantryMakeshiftpistol");

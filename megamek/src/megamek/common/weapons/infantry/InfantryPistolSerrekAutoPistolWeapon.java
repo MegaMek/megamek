@@ -32,7 +32,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSerrekAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Serrek 7875D AutoPistol";
         setInternalName(name);
         addLookupName("InfantrySerrekAutopistol");

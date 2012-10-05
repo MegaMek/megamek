@@ -32,7 +32,7 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
 
     public InfantryShotgunCeresCrowdbusterWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Ceres Arms Crowdbuster";
         setInternalName(name);
         addLookupName("InfantryCeresCrowdbuster");

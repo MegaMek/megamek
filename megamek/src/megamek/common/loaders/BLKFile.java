@@ -338,7 +338,9 @@ public class BLKFile {
              blk.writeBlockData("transporters", tran.toString());
          }
 
-         blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+         if(!(t instanceof Infantry && !(t instanceof BattleArmor))) {
+        	 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
+         }
 
          if (!(t instanceof Infantry)) {
 
@@ -414,7 +416,9 @@ public class BLKFile {
              }
          }
          for (int i = 0; i < t.locations(); i++) {
-             blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+        	 if(!((t instanceof Infantry && !(t instanceof BattleArmor)) && i == Infantry.LOC_INFANTRY)) {
+        		 blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+        	 }
          }
          if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
              blk.writeBlockData("barrating", t.getBARRating(1));
@@ -447,7 +451,43 @@ public class BLKFile {
              blk.writeBlockData("armor", new int[]{ba.getArmor(1)});
              blk.writeBlockData("Trooper Count", (int)t.getWeight());
              blk.writeBlockData("weightclass", ba.getWeightClass());
-         } else {
+         } 
+         else if(t instanceof Infantry) {
+        	 Infantry infantry = (Infantry)t;
+             blk.writeBlockData("squad_size", infantry.getSquadSize());
+             blk.writeBlockData("squadn", infantry.getSquadN());
+        	 if(infantry.getSecondaryN() > 0) {
+                 blk.writeBlockData("secondn", infantry.getSecondaryN());
+        	 }
+        	 if(null != infantry.getPrimaryWeapon()) {
+                 blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
+        	 }
+        	 if(null != infantry.getSecondaryWeapon()) {
+                 blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
+        	 }
+        	 if(infantry.getDamageDivisor() != 1) {
+                 blk.writeBlockData("armordivisor", Double.toString(infantry.getDamageDivisor()));
+        	 }
+        	 if(infantry.isArmorEncumbering()) {
+                 blk.writeBlockData("encumberingarmor", "true");
+        	 }
+        	 if(infantry.hasSpaceSuit()) {
+                 blk.writeBlockData("spacesuit", "true");
+        	 }
+        	 if(infantry.hasDEST()) {
+                 blk.writeBlockData("dest", "true");
+        	 }
+        	 if(infantry.hasSneakCamo()) {
+                 blk.writeBlockData("sneakcamo", "true");
+        	 }
+        	 if(infantry.hasSneakIR()) {
+                 blk.writeBlockData("sneakir", "true");
+        	 }
+        	 if(infantry.hasSneakECM()) {
+                 blk.writeBlockData("sneakecm", "true");
+        	 }
+         }
+         else {
              blk.writeBlockData("tonnage", t.getWeight());
          }
 

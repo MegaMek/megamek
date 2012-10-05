@@ -32,7 +32,7 @@ public class InfantrySMGWeapon extends InfantryWeapon {
 
     public InfantrySMGWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Submachinegun";
         setInternalName(name);
         addLookupName("InfantrySMG");

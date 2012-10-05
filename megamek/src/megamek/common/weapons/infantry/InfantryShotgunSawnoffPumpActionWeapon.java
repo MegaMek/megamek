@@ -32,7 +32,7 @@ public class InfantryShotgunSawnoffPumpActionWeapon extends InfantryWeapon {
 
     public InfantryShotgunSawnoffPumpActionWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Pump Action Sawed-Off Shotgun";
         setInternalName(name);
         addLookupName("InfantryPumpSawnOff");

@@ -32,7 +32,7 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
 
     public InfantrySMGRuganWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Rugan SMG";
         setInternalName(name);
         addLookupName("InfantryRuganSMG");

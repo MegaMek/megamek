@@ -32,7 +32,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 
     public InfantryShotgunBuccaneerGelGunWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Buccaneer Gel Gun";
         setInternalName(name);
         addLookupName("InfantryBuccaneerGelGun");

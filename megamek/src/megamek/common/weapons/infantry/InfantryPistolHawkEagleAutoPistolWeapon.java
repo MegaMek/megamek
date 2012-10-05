@@ -32,7 +32,7 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHawkEagleAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Hawk Eagle Auto Pistol";
         setInternalName(name);
         addLookupName("InfantryHawkEagleAutopistol");

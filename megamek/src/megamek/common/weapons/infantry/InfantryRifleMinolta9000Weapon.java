@@ -32,7 +32,7 @@ public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
 
     public InfantryRifleMinolta9000Weapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_ALL;
+        techLevel = TechConstants.T_IS_TW_NON_BOX;
         name = "Minolta 9000 Advanced Sniper System";
         setInternalName(name);
         addLookupName("InfantryMinolta9000");

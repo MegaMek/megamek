@@ -32,7 +32,7 @@ public class InfantrySupportHeavyMortarWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyMortarWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Infantry Heavy Mortar";
         setInternalName(name);
         addLookupName("InfantryHeavyMortar");

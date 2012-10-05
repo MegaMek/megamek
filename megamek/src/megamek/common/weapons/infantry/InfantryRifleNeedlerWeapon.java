@@ -32,7 +32,7 @@ public class InfantryRifleNeedlerWeapon extends InfantryWeapon {
 
     public InfantryRifleNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_TW_ALL;
+        techLevel = TechConstants.T_ALLOWED_ALL;
         name = "Needler Rifle";
         setInternalName(name);
         addLookupName("InfantryNeedlerRifle");

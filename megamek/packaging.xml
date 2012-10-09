@@ -10,8 +10,6 @@
 <!-- 2) Reduce the amount of folders and files in each release to make it -->
 <!--    more intuitive for the user                                       -->
     
-<!-- This is all experimental, don't use it yet! -->    
-
 <project default="release" name="MegaMek" basedir=".">
 
 	<!-- Global properties for this build -->
@@ -138,15 +136,28 @@
 		<mkdir dir="${osxdist}" />
 		<copy todir="${osxdist}">
 			<fileset dir="${svndir}" >
+				<include name="${jarfile}" />
 				<include name="${docdir}/" />
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="${logdir}/" />
+				<include name="${libdir}/*.jar" />
 			    <include name="${datadir}/" />
 			    <include name="${confdir}/" />
 			</fileset>
 		</copy>
-	    <jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">
+		<mkdir dir="${osxdist}/MegaMek.app" />
+		<copy todir="${osxdist}/MegaMek.app">
+			<fileset dir="${util}/MegaMek.app" >
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<copy file="${util}/JavaApplicationStub" todir="${osxdist}/MegaMek.app/Contents/MacOS/"/>
+		<move file="${osxdist}/MegaMek.jar" todir="${osxdist}/MegaMek.app/Contents/Resources/Java/" />
+	    <!-- We are no longer going to use jarbundler directly, but rather a static app that 
+	         we can copy new jars into. We are also moving the lib outside the app
+	         so that it is consistent with MekHQ
+		<jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">
 	   		<jarfileset dir="${svndir}">
 	     	 	<include name="**/*.jar" />
 	   			<exclude name="${util}/" />
@@ -154,7 +165,7 @@
 	      	<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
 	      	<javaproperty name="apple.awt.brushMetal" value="true" />
 	   	</jarbundler>
-		
+		-->
 	</target>
 	
 	<!-- I think this will only work on OS X systems -->
@@ -164,28 +175,22 @@
 		</exec>
 	</target>
 	
-	<target name="mac-tar" depends="mac-tar-unix,mac-tar-win" description="Create a compressed tar file of the OS X distribution"/>
-
-	<target name="mac-tar-unix" if="isOsUnixLike">
+	<target name="mac-stub" if="isOsMac" description="Replace stubs if on OSX">
 		<delete file="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
 		<exec executable="ln">
 			<arg line="-s /System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub" />
 			<arg value="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
 		</exec>
-		<exec executable="tar">
-	    	<arg value="cfvj"/>
-	        <arg value="${osxdist}.tar.bz2"/>
-	        <arg value="${osxdist}"/>
-		</exec>
 	</target>
 
-	<target name="mac-tar-win" if="isOsWindows">
-		<echo message="Warning: You are building a Mac Os X Java Application Bundle containing a Copy Java Application Stub. Creating a bundle with the current copy of Java Launching Stub could lead to a future situation where the JavaApplicationStub file could become incompatible with a future OS X update. To avoid this, use a unix like system ... "/>
-	    <tar destfile="${osxdist}.tar.bz2" compression="bzip2">
-	    	<tarfileset dir="${osxdist}" mode="755" followsymlinks="false" />
-	    </tar>
+	<target name="mac-zip">
+		<tar destfile="${osxdist}.tar.bz2" compression="bzip2" longfile="gnu">
+			<tarfileset dir="${osxdist}" mode="755" />
+		</tar>
 	</target>
-	
+		
+	<target name="mac-tar" depends="mac-stub,mac-zip" description="Create a compressed tar file of the OS X distribution"/>
+		
 	<target name="mac-clean">
 		<delete dir="${osxdist}" />
 	</target>
@@ -210,7 +215,7 @@
 	</target>
 	
 	<target name="nix-tar" description="Create a compressed tar file of the unix distribution">
-		<tar destfile="${nixdist}.tar.gz" basedir="${nixdist}" compression="gzip" />
+		<tar destfile="${nixdist}.tar.gz" basedir="${nixdist}" compression="gzip"  longfile="gnu"/>
 	</target>
 	
 	<target name="nix-clean">
@@ -253,7 +258,7 @@
 	<target name="win-package" depends="win-bundle, win-zip, win-clean" description="Package a Windows distribution of the project built from SVN"/>
 	
 	<target name="source-package" description="Package a source-only distribution of the project built from SVN">
-		<tar destfile="${project.name}-${version}-source.tar.gz" basedir="${svndir}" compression="gzip">
+		<tar destfile="${project.name}-${version}-source.tar.gz" basedir="${svndir}" compression="gzip"  longfile="gnu">
 			<exclude name="${builddir}/**"/>
 			<exclude name="MegaMek.jar"/>
 		</tar>

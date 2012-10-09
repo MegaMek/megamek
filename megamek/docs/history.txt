@@ -9,6 +9,7 @@ v0.35.33-dev (SVN)
 + additions for InfantryLab in MML
 + traitor command for units switching sides 
 + new windres and Id binaries in launch4j that will run on OSX Lion
++ updated OSX packaging to keep lib outside of app folder, for consistency with MHQ
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

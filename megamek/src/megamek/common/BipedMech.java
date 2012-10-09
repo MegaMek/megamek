@@ -400,8 +400,12 @@ public class BipedMech extends Mech {
             }
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
-            }
+            }           
             Mounted m = this.getEquipment(cs.getIndex());
+            //sometimes this mounted is null in MML - causing problems so check
+            if(null == m) {
+            	continue;
+            }
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isVibroblade()) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
@@ -455,6 +459,10 @@ public class BipedMech extends Mech {
                 continue;
             }
             Mounted m = this.getEquipment(cs.getIndex());
+          //sometimes this mounted is null in MML - causing problems so check
+            if(null == m) {
+            	continue;
+            }
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && ((MiscType) type).isVibroblade() && (m.curMode().equals("Active") || ignoreMode) && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
                 MiscType blade = (MiscType) type;

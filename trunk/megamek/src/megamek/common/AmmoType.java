@@ -292,9 +292,6 @@ public class AmmoType extends EquipmentType {
     // ratio for capital ammo
     private double ammoRatio;
 
-    // Short name of Ammo or RS Printing
-    protected String shortName = "";
-
     public AmmoType() {
         criticals = 1;
         tankslots = 0;
@@ -9000,14 +8997,6 @@ public class AmmoType extends EquipmentType {
      */
     public double getBABV() {
         return ((kgPerShot * shots) / 1000) * bv;
-    }
-
-    public String getShortName() {
-        if (shortName.trim().length() < 1) {
-            return getName();
-        }
-
-        return shortName;
     }
 
 }

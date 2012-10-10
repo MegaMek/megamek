@@ -117,6 +117,9 @@ public class EquipmentType {
 
     protected String name = null;
 
+    // Short name for RS Printing
+    protected String shortName = "";
+
     protected String internalName = null;
 
     private Vector<String> namesVector = new Vector<String>();
@@ -721,5 +724,13 @@ public class EquipmentType {
             return null;
         }
         return Server.getServerInstance().getGame().getOptions();
+    }
+
+    public String getShortName() {
+        if (shortName.trim().length() < 1) {
+            return getName();
+        }
+
+        return shortName;
     }
 }

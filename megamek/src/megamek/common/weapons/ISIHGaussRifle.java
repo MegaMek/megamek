@@ -40,6 +40,7 @@ public class ISIHGaussRifle extends GaussWeapon {
         super();
         techLevel = TechConstants.T_IS_EXPERIMENTAL;
         name = "Improved Heavy Gauss Rifle";
+        shortName = "Imp. Heavy Gauss Rifle";
         setInternalName("ISImprovedHeavyGaussRifle");
         addLookupName("IS Improved Heavy Gauss Rifle");
         heat = 2;

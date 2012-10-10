@@ -35,6 +35,7 @@ public class CLImprovedHeavySmallLaser extends LaserWeapon {
         super();
         techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
         name = "Improved Heavy Small Laser";
+        shortName = "Imp. Heavy Medium Laser";
         setInternalName("CLImprovedSmallHeavyLaser");
         addLookupName("CLImprovedHeavySmallLaser");
         addLookupName("Clan Improved Small Heavy Laser");

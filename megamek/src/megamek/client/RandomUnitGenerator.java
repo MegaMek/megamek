@@ -248,6 +248,8 @@ public class RandomUnitGenerator implements Serializable {
     public void clear() {
         rats = null;
         ratTree = null;
+        initialized = false;
+        initializing = false;
     }
 
     public static synchronized RandomUnitGenerator getInstance() {

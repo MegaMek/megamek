@@ -348,13 +348,17 @@ public class RandomNameGenerator implements Serializable {
         last = null;
         factionFirst = null;
         factionLast = null;
+        initialized = false;
+        initializing = false;
     }
 
     public static void initialize() {
         if((rng != null) && (rng.last != null)) {
             return;
         }
-        rng = new RandomNameGenerator();
+        if(null == rng) {
+        	rng = new RandomNameGenerator();
+        }
         if (!rng.initialized && !rng.initializing) {
             rng.loader = new Thread(new Runnable() {
                 public void run() {

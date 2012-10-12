@@ -536,6 +536,17 @@ public class EquipmentType {
     public String getTechRatingName() {
         return EquipmentType.getRatingName(getTechRating());
     }
+    
+    public String getFullRatingName() {
+    	String rating = getTechRatingName();
+    	rating += "/";
+    	rating += getAvailabilityName(ERA_SL);
+    	rating += "-";
+    	rating += getAvailabilityName(ERA_SW);
+    	rating += "-";
+    	rating += getAvailabilityName(ERA_CLAN);
+    	return rating;
+    }
 
     public int getAvailability(int era) {
         if ((era < 0) || (era > ERA_CLAN)) {
@@ -559,6 +570,15 @@ public class EquipmentType {
 
     public int getReintruductionDate() {
         return reintroDate;
+    }
+    
+    public static String getEquipDateAsString(int date) {
+    	if(date == DATE_NONE) {
+    		return "NA";
+    	} else {
+    		return Integer.toString(date);
+    	}
+    	
     }
 
     public boolean isAvailableIn(int year) {
@@ -662,7 +682,7 @@ public class EquipmentType {
             w.write("This file can be regenerated with java -jar MegaMek.jar -eqedb ");
             w.write(f.toString());
             w.newLine();
-            w.write("Type,Tech Base,Rules,Name,Tonnage,Crits,Cost,BV");
+            w.write("Type,Name,Tech Base,Rules,Tech Rating,Introduction Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV");
             w.newLine();
             for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
                 EquipmentType type = e.nextElement();
@@ -673,11 +693,19 @@ public class EquipmentType {
                 } else {
                     w.write("M,");
                 }
+                w.write(type.getName());
+                w.write(",");
                 w.write(TechConstants.getTechName(type.getTechLevel()));
                 w.write(",");
                 w.write(TechConstants.getLevelName(type.getTechLevel()));
                 w.write(",");
-                w.write(type.getName());
+                w.write(type.getFullRatingName());
+                w.write(",");
+                w.write(getEquipDateAsString(type.getIntroductionDate()));
+                w.write(",");
+                w.write(getEquipDateAsString(type.getExtinctionDate()));
+                w.write(","); 
+                w.write(getEquipDateAsString(type.getReintruductionDate()));
                 w.write(",");
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");

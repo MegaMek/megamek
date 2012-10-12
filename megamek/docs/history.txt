@@ -13,6 +13,7 @@ v0.35.33-dev (SVN)
 + check for null mounted on BipedMech#hasVibroBladeInLocation (still don't know why a null mounted was there though)
 + Bug: RAT files not reloading when the game is reset
 + Bug: random name generator losing preferences when game reset
++ added tech rating, availability codes, and dates to extended equipment database
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

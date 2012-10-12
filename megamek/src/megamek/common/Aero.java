@@ -3761,4 +3761,12 @@ public class Aero extends Entity {
             damage -= damPerHit;
         }
     }
+    
+    public int getNCrew() {
+        return 1;
+    }
+
+    public int getNPassenger() {
+        return 0;
+    }
 }

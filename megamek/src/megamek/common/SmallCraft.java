@@ -55,10 +55,12 @@ public class SmallCraft extends Aero {
         nOtherPassenger = other;
     }
 
+    @Override
     public int getNCrew() {
         return nCrew;
     }
 
+    @Override
     public int getNPassenger() {
         return nPassenger;
     }

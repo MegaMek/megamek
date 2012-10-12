@@ -148,10 +148,12 @@ public class Jumpship extends Aero {
         nPassenger = pass;
     }
 
+    @Override
     public int getNCrew() {
         return nCrew;
     }
 
+    @Override
     public int getNPassenger() {
         return nPassenger;
     }

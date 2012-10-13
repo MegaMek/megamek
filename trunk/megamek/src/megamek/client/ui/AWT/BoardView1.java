@@ -4403,8 +4403,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             entityM = m;
             entityId = e.getId();
             masterId = m.getId();
-            spriteColor = PlayerColors.getColor(e.getOwner()
-                    .getColorIndex());
+            netId = Integer.parseInt(e.getC3NetId().replace("C3", "").replace("i", "").replace(".", ""));
+            spriteColor = PlayerColors.getAdvColor(netId, e.getOwner().getColorIndex());
 
             if ((e.getPosition() == null) || (m.getPosition() == null)) {
                 C3Poly = new Polygon();

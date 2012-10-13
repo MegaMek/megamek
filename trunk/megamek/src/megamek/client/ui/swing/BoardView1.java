@@ -4169,6 +4169,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
 
         protected Entity entityM;
 
+        private int netId;
+
         Color spriteColor;
 
         public C3Sprite(final Entity e, final Entity m) {
@@ -4176,7 +4178,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             entityM = m;
             entityId = e.getId();
             masterId = m.getId();
-            spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
+            netId = Integer.parseInt(e.getC3NetId().replace("C3", "").replace("i", "").replace(".", ""));
+            spriteColor = PlayerColors.getAdvColor(netId, e.getOwner().getColorIndex());
 
             if ((e.getPosition() == null) || (m.getPosition() == null)) {
                 c3Poly = new Polygon();

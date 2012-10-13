@@ -15,6 +15,7 @@ v0.35.33-dev (SVN)
 + Bug: random name generator losing preferences when game reset
 + added tech rating, availability codes, and dates to extended equipment database
 + base getNCrew and getNPassenger methods in Aero
++ Feature 1115: Each C3/Cei Network gets a different color.
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

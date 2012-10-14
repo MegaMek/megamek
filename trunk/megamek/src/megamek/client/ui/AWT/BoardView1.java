@@ -87,6 +87,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -103,7 +104,6 @@ import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
@@ -155,7 +155,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     // the dimensions of megamek's hex images
     private static final int HEX_W = 84;
     private static final int HEX_H = 72;
-    private static final int HEX_WC = HEX_W - HEX_W / 4;
+    private static final int HEX_WC = HEX_W - (HEX_W / 4);
 
     // The list of valid zoom factors. Other values cause map aliasing,
     // I can't be bothered figuring out why. - Ben
@@ -509,13 +509,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         if (null != vScrollbar) {
             vScrollbar.setVisibleAmount(size.height);
             vScrollbar.setBlockIncrement(size.height);
-            vScrollbar.setUnitIncrement((int) (scale * HEX_H / 2.0));
+            vScrollbar.setUnitIncrement((int) ((scale * HEX_H) / 2.0));
             vScrollbar.setMaximum(boardSize.height);
         }
         if (null != hScrollbar) {
             hScrollbar.setVisibleAmount(size.width);
             hScrollbar.setBlockIncrement(size.width);
-            hScrollbar.setUnitIncrement((int) (scale * HEX_W / 2.0));
+            hScrollbar.setUnitIncrement((int) ((scale * HEX_W) / 2.0));
             hScrollbar.setMaximum(boardSize.width);
         }
 
@@ -646,10 +646,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Updates the boardSize variable with the proper values for this board.
      */
     private void updateBoardSize() {
-        int width = game.getBoard().getWidth() * (int) (HEX_WC * scale)
-                + (int) (HEX_W / 4 * scale);
-        int height = game.getBoard().getHeight() * (int) (HEX_H * scale)
-                + (int) (HEX_H / 2 * scale);
+        int width = (game.getBoard().getWidth() * (int) (HEX_WC * scale))
+                + (int) ((HEX_W / 4) * scale);
+        int height = (game.getBoard().getHeight() * (int) (HEX_H * scale))
+                + (int) ((HEX_H / 2) * scale);
         boardSize = new Dimension(width, height);
     }
 
@@ -682,7 +682,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private void repaintBounds(Rectangle bounds) {
         if (view != null) {
-            repaint(bounds.x - view.x + offset.x, bounds.y - view.y + offset.y,
+            repaint((bounds.x - view.x) + offset.x, (bounds.y - view.y) + offset.y,
                     bounds.width, bounds.height);
         }
     }
@@ -773,11 +773,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private void drawDeployment() {
         // only update visible hexes
-        int drawX = view.x / (int) (HEX_WC * scale) - 1;
-        int drawY = view.y / (int) (HEX_H * scale) - 1;
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
-        int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
-        int drawHeight = view.height / (int) (HEX_H * scale) + 3;
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
         IBoard board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
@@ -845,11 +845,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private void drawMinefields() {
         // only update visible hexes
-        int drawX = view.x / (int) (HEX_WC * scale) - 1;
-        int drawY = view.y / (int) (HEX_H * scale) - 1;
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
-        int drawWidth = view.width / (int) (HEX_WC * scale) + 3;
-        int drawHeight = view.height / (int) (HEX_H * scale) + 3;
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         IBoard board = game.getBoard();
         // loop through the hexes
@@ -1065,11 +1065,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             boardGraph.clearRect(rect.x - boardRect.x, rect.y - boardRect.y,
                     rect.width, (int) (36 * scale) - rect.y);
         }
-        if (rect.x > boardSize.width - view.width - (21 * scale)) {
+        if (rect.x > (boardSize.width - view.width - (21 * scale))) {
             boardGraph.clearRect(boardRect.width - (int) (21 * scale), rect.y
                     - boardRect.y, (int) (21 * scale), rect.height);
         }
-        if (rect.y > boardSize.height - view.height - (int) (36 * scale)) {
+        if (rect.y > (boardSize.height - view.height - (int) (36 * scale))) {
             boardGraph.clearRect(rect.x - boardRect.x, boardRect.height
                     - (int) (36 * scale), rect.width, (int) (36 * scale));
         }
@@ -1275,7 +1275,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         if (GUIPreferences.getInstance().getShowMapsheets()) {
             boardGraph.setColor(GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_MAPSHEET_COLOR));
-            if (c.x % 16 == 0) {
+            if ((c.x % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
                 boardGraph
                 .drawLine(drawX + (int) (21 * scale), drawY
@@ -1283,7 +1283,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         + (int) (36 * scale));
                 boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
                         + (int) (21 * scale), drawY);
-            } else if (c.x % 16 == 15) {
+            } else if ((c.x % 16) == 15) {
                 // right edge of sheet (edge 1 & 2)
                 boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
                         + (int) (83 * scale), drawY + (int) (35 * scale));
@@ -1291,23 +1291,23 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         + (int) (36 * scale), drawX + (int) (62 * scale), drawY
                         + (int) (71 * scale));
             }
-            if (c.y % 17 == 0) {
+            if ((c.y % 17) == 0) {
                 // top edge of sheet (edge 0 and possible 1 & 5)
                 boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX
                         + (int) (62 * scale), drawY);
-                if (c.x % 2 == 0) {
+                if ((c.x % 2) == 0) {
                     boardGraph.drawLine(drawX + (int) (62 * scale), drawY,
                             drawX + (int) (83 * scale), drawY
                             + (int) (35 * scale));
                     boardGraph.drawLine(drawX, drawY + (int) (35 * scale),
                             drawX + (int) (21 * scale), drawY);
                 }
-            } else if (c.y % 17 == 16) {
+            } else if ((c.y % 17) == 16) {
                 // bottom edge of sheet (edge 3 and possible 2 & 4)
                 boardGraph.drawLine(drawX + (int) (62 * scale), drawY
                         + (int) (71 * scale), drawX + (int) (21 * scale), drawY
                         + (int) (71 * scale));
-                if (c.x % 2 == 1) {
+                if ((c.x % 2) == 1) {
                     boardGraph.drawLine(drawX + (int) (83 * scale), drawY
                             + (int) (36 * scale), drawX + (int) (62 * scale),
                             drawY + (int) (71 * scale));
@@ -1337,8 +1337,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * graphic
      */
     private Point getHexLocation(int x, int y) {
-        return new Point(x * (int) (HEX_WC * scale), y * (int) (HEX_H * scale)
-                + ((x & 1) == 1 ? (int) (HEX_H / 2 * scale) : 0));
+        return new Point(x * (int) (HEX_WC * scale), (y * (int) (HEX_H * scale))
+                + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0));
     }
 
     Point getHexLocation(Coords c) {
@@ -1350,8 +1350,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     private Point getCentreHexLocation(int x, int y) {
         Point p = getHexLocation(x, y);
-        p.x += (HEX_W / 2 * scale);
-        p.y += (HEX_H / 2 * scale);
+        p.x += ((HEX_W / 2) * scale);
+        p.y += ((HEX_H / 2) * scale);
         return p;
     }
 
@@ -1363,8 +1363,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Returns the coords at the specified point
      */
     Coords getCoordsAt(Point p) {
-        final int x = (p.x + scroll.x - offset.x) / (int) (HEX_WC * scale);
-        final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? (int) (HEX_H / 2 * scale)
+        final int x = ((p.x + scroll.x) - offset.x) / (int) (HEX_WC * scale);
+        final int y = (((p.y + scroll.y) - offset.y) - ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale)
                 : 0))
                 / (int) (HEX_H * scale);
         return new Coords(x, y);
@@ -1391,11 +1391,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // adjust horizontal location for the tipWindow if it goes off the
             // frame
-            if (getLocationOnScreen().x + this.getSize().width < tipLoc.x
-                    + tipWindow.getSize().width + 10) {
+            if ((getLocationOnScreen().x + this.getSize().width) < (tipLoc.x
+                    + tipWindow.getSize().width + 10)) {
                 if (this.getSize().width > tipWindow.getSize().width) {
                     // bound it by the right edge of the frame
-                    tipLoc.x -= tipLoc.x + tipWindow.getSize().width + 10
+                    tipLoc.x -= (tipLoc.x + tipWindow.getSize().width + 10)
                     - this.getSize().width - this.getLocation().x;
                 } else {
                     // too big to fit, left justify to the frame (roughly).
@@ -1694,7 +1694,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 hideTooltip();
             }
         } else if (isTipPossible
-                && (System.currentTimeMillis() - lastIdle > GUIPreferences
+                && ((System.currentTimeMillis() - lastIdle) > GUIPreferences
                 .getInstance().getTooltipDelay())) {
             showTooltip();
         }
@@ -2760,7 +2760,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Increases zoomIndex and refreshes the map.
      */
     public void zoomIn() {
-        if (zoomIndex == ZOOM_FACTORS.length - 1) {
+        if (zoomIndex == (ZOOM_FACTORS.length - 1)) {
             return;
         }
         zoomIndex++;
@@ -2797,7 +2797,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     private void checkZoomIndex() {
-        if (zoomIndex > ZOOM_FACTORS.length - 1) {
+        if (zoomIndex > (ZOOM_FACTORS.length - 1)) {
             zoomIndex = ZOOM_FACTORS.length - 1;
         }
         if (zoomIndex < 0) {
@@ -2889,7 +2889,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     width = fm.stringWidth(tipString);
                 }
             }
-            size = new Dimension(width + 5, fm.getAscent() * tipStrings.length
+            size = new Dimension(width + 5, (fm.getAscent() * tipStrings.length)
                     + 4);
             setSize(size);
         }
@@ -3271,8 +3271,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
                     tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, tempRect.y
-                    + tempRect.height - 1);
+            graph.drawString(shortName, tempRect.x + 1, (tempRect.y
+                    + tempRect.height) - 1);
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {
@@ -3420,8 +3420,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
                     tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, tempRect.y
-                    + tempRect.height - 1);
+            graph.drawString(shortName, tempRect.x + 1, (tempRect.y
+                    + tempRect.height) - 1);
 
             // draw facing
             graph.setColor(Color.white);
@@ -3794,8 +3794,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          */
         @Override
         public boolean isInside(Point point) {
-            return entityRect.contains(point.x + view.x - offset.x, point.y
-                    + view.y - offset.y);
+            return entityRect.contains((point.x + view.x) - offset.x, (point.y
+                    + view.y) - offset.y);
         }
 
         @Override
@@ -4054,8 +4054,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climbX = stepPos.x
-                + 42
+                int climbX = (stepPos.x
+                + 42)
                 - (graph.getFontMetrics(graph.getFont())
                         .stringWidth(climb) / 2);
                 graph.setColor(Color.darkGray);
@@ -4075,8 +4075,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int climboffX = stepPos.x
-                + 42
+                int climboffX = (stepPos.x
+                + 42)
                 - (graph.getFontMetrics(graph.getFont())
                         .stringWidth(climboff) / 2);
                 graph.setColor(Color.darkGray);
@@ -4110,8 +4110,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int loadX = stepPos.x
-                + 42
+                int loadX = (stepPos.x
+                + 42)
                 - (graph.getFontMetrics(graph.getFont())
                         .stringWidth(load) / 2);
                 graph.setColor(Color.darkGray);
@@ -4126,7 +4126,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int launchX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
+                int launchX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
                 int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(launch, launchX, launchY + 1);
@@ -4140,7 +4140,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int recoverX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
+                int recoverX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
                 int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(recover, recoverX, recoverY + 1);
@@ -4154,7 +4154,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     launch = "(" + join + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int joinX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
+                int joinX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(join) / 2);
                 int joinY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(join, joinX, joinY + 1);
@@ -4168,8 +4168,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int unloadX = stepPos.x
-                + 42
+                int unloadX = (stepPos.x
+                + 42)
                 - (graph.getFontMetrics(graph.getFont())
                         .stringWidth(unload) / 2);
                 int unloadY = stepPos.y + 38
@@ -4186,7 +4186,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int hoverX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
+                int hoverX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
                 int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
                 graph.setColor(Color.darkGray);
                 graph.drawString(hover, hoverX, hoverY + 1);
@@ -4220,7 +4220,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if(step.isEvading()) {
                 String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int evadeX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
+                int evadeX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(evade, evadeX, stepPos.y + 64);
                 graph.setColor(col);
@@ -4231,7 +4231,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 //Announce roll
                 String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int rollX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
+                int rollX = (stepPos.x + 42) - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(roll, rollX, stepPos.y + 18);
                 graph.setColor(col);
@@ -4259,7 +4259,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setColor(Color.darkGray);
                 graph.drawString(active, activeXpos[i] + stepPos.x, activeYpos[i] + stepPos.y);
                 graph.setColor(Color.red);
-                graph.drawString(active, activeXpos[i] + stepPos.x - 1, activeYpos[i] + stepPos.y - 1);
+                graph.drawString(active, (activeXpos[i] + stepPos.x) - 1, (activeYpos[i] + stepPos.y) - 1);
 
             }
 
@@ -4403,7 +4403,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             entityM = m;
             entityId = e.getId();
             masterId = m.getId();
-            netId = Integer.parseInt(e.getC3NetId().replace("C3", "").replace("i", "").replace(".", ""));
+            int netId = Integer.parseInt(e.getC3NetId().replace("C3", "").replace("i", "").replace(".", ""));
             spriteColor = PlayerColors.getAdvColor(netId, e.getOwner().getColorIndex());
 
             if ((e.getPosition() == null) || (m.getPosition() == null)) {
@@ -4450,31 +4450,31 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             C3Poly = new Polygon();
             C3Poly.addPoint(a.x
-                    + (int) (scale * (HEX_W / 2) - (int) Math.round(Math
+                    + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math
                             .sin(an)
                             * lw)), a.y
-                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math
+                            + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math
                                     .cos(an)
                                     * lw)));
             C3Poly.addPoint(a.x
-                    + (int) (scale * (HEX_W / 2) + (int) Math.round(Math
+                    + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math
                             .sin(an)
                             * lw)), a.y
-                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math
+                            + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math
                                     .cos(an)
                                     * lw)));
             C3Poly.addPoint(t.x
-                    + (int) (scale * (HEX_W / 2) + (int) Math.round(Math
+                    + (int) ((scale * (HEX_W / 2)) + (int) Math.round(Math
                             .sin(an)
                             * lw)), t.y
-                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math
+                            + (int) ((scale * (HEX_H / 2)) - (int) Math.round(Math
                                     .cos(an)
                                     * lw)));
             C3Poly.addPoint(t.x
-                    + (int) (scale * (HEX_W / 2) - (int) Math.round(Math
+                    + (int) ((scale * (HEX_W / 2)) - (int) Math.round(Math
                             .sin(an)
                             * lw)), t.y
-                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math
+                            + (int) ((scale * (HEX_H / 2)) + (int) Math.round(Math
                                     .cos(an)
                                     * lw)));
         }
@@ -4518,8 +4518,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          */
         @Override
         public boolean isInside(Point point) {
-            return C3Poly.contains(point.x + view.x - bounds.x - offset.x,
-                    point.y + view.y - bounds.y - offset.y);
+            return C3Poly.contains((point.x + view.x) - bounds.x - offset.x,
+                    (point.y + view.y) - bounds.y - offset.y);
         }
 
     }
@@ -4616,13 +4616,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // directly
             // in the centes of hex and hiding mek under.
 
-            a.x = a.x + (int) (HEX_W / 2 * scale)
+            a.x = a.x + (int) ((HEX_W / 2) * scale)
             + (int) Math.round(Math.cos(an) * (int) (18 * scale));
-            t.x = t.x + (int) (HEX_W / 2 * scale)
+            t.x = (t.x + (int) ((HEX_W / 2) * scale))
             - (int) Math.round(Math.cos(an) * (int) (18 * scale));
-            a.y = a.y + (int) (HEX_H / 2 * scale)
+            a.y = a.y + (int) ((HEX_H / 2) * scale)
             + (int) Math.round(Math.sin(an) * (int) (18 * scale));
-            t.y = t.y + (int) (HEX_H / 2 * scale)
+            t.y = (t.y + (int) ((HEX_H / 2) * scale))
             - (int) Math.round(Math.sin(an) * (int) (18 * scale));
 
             // Checking if given attack is mutual. In this case we building
@@ -4706,8 +4706,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          */
         @Override
         public boolean isInside(Point point) {
-            return attackPoly.contains(point.x + view.x - bounds.x - offset.x,
-                    point.y + view.y - bounds.y - offset.y);
+            return attackPoly.contains((point.x + view.x) - bounds.x - offset.x,
+                    (point.y + view.y) - bounds.y - offset.y);
         }
 
         public int getEntityId() {
@@ -4964,10 +4964,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             // 18 - is actually 36/2 - we do not want arrows to start and end directly
             // in the centes of hex and hiding mek under.
 
-            a.x = a.x + (int)(HEX_W/2*scale) + (int)Math.round(Math.cos(an) * (int)(18*scale));
-            t.x = t.x + (int)(HEX_W/2*scale) - (int)Math.round(Math.cos(an) * (int)(18*scale));
-            a.y = a.y + (int)(HEX_H/2*scale) + (int)Math.round(Math.sin(an) * (int)(18*scale));
-            t.y = t.y + (int)(HEX_H/2*scale) - (int)Math.round(Math.sin(an) * (int)(18*scale));
+            a.x = a.x + (int)((HEX_W/2)*scale) + (int)Math.round(Math.cos(an) * (int)(18*scale));
+            t.x = (t.x + (int)((HEX_W/2)*scale)) - (int)Math.round(Math.cos(an) * (int)(18*scale));
+            a.y = a.y + (int)((HEX_H/2)*scale) + (int)Math.round(Math.sin(an) * (int)(18*scale));
+            t.y = (t.y + (int)((HEX_H/2)*scale)) - (int)Math.round(Math.sin(an) * (int)(18*scale));
             movePoly = new StraightArrowPolygon(a, t, (int)(4*scale), (int)(8*scale), false);
         }
 
@@ -5017,8 +5017,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
          */
         @Override
         public boolean isInside(Point point) {
-            return movePoly.contains(point.x + view.x - bounds.x - offset.x,
-                    point.y + view.y - bounds.y - offset.y);
+            return movePoly.contains((point.x + view.x) - bounds.x - offset.x,
+                    (point.y + view.y) - bounds.y - offset.y);
         }
 
         /*
@@ -5637,7 +5637,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
         p.x += (int)(HEX_WC*scale)-view.x;
-        p.y += (int)(HEX_H*scale/2)-view.y;
+        p.y += (int)((HEX_H*scale)/2)-view.y;
         if (((PopupMenu)popup).getParent() == null) {
             add((PopupMenu)popup);
         }

@@ -2568,6 +2568,23 @@ public class Tank extends Entity {
         }
     }
 
+    // Set whether a non-omni should have BA Grab Bars.
+    public void setBAGrabBars() {
+        if (isOmni()) {
+            return;
+        }
+        if (game.getOptions().booleanOption("ba_grab_bars") && !hasBattleArmorHandles()) {
+            addTransporter(new BattleArmorHandlesTank());
+        } else {
+            Vector<Transporter> et = new Vector<Transporter>(getTransports());
+            for (Transporter t : et) {
+                if (t instanceof BattleArmorHandlesTank) {
+                    removeTransporter(t);
+                }
+            }
+        }
+    }
+
     /**
      * Tanks can't spot when stunned.
      */

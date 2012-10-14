@@ -1133,6 +1133,12 @@ public class Game implements Serializable, IGame {
 
     public void addEntity(int id, Entity entity) {
         entity.setGame(this);
+        if (entity instanceof Mech) {
+            ((Mech) entity).setBAGrabBars();
+        }
+        if (entity instanceof Tank) {
+            ((Tank) entity).setBAGrabBars();
+        }
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) { // We don't want to be
                                                   // resetting a UUID that
@@ -1956,9 +1962,9 @@ public class Game implements Serializable, IGame {
                 if (Boolean.TRUE.equals(playerFlags.get(player))) {
 
                     // Add the appropriate transporter to the unit.
-                    if (!unit.isOmni() && (unit instanceof Mech)) {
+                    if (!unit.isOmni() && !unit.hasBattleArmorHandles() && (unit instanceof Mech)) {
                         unit.addTransporter(new ClampMountMech());
-                    } else if ((unit instanceof Tank)
+                    } else if (!unit.isOmni() && !unit.hasBattleArmorHandles() && (unit instanceof Tank)
                             && !(unit instanceof VTOL)) {
                         unit.addTransporter(new ClampMountTank());
                     }

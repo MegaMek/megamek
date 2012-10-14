@@ -4396,6 +4396,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         protected Entity entityE;
         protected Entity entityM;
 
+        protected int netId;
+
         Color spriteColor;
 
         public C3Sprite(Entity e, Entity m) {

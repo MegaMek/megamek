@@ -445,6 +445,12 @@ public class Server implements Runnable {
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             ent.setGame(game);
+            if (ent instanceof Mech) {
+                ((Mech) ent).setBAGrabBars();
+            }
+            if (ent instanceof Tank) {
+                ((Tank) ent).setBAGrabBars();
+            }
         }
         game.setOutOfGameEntitiesVector(game.getOutOfGameEntitiesVector());
         for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {

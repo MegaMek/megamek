@@ -6063,6 +6063,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         transports.add(component);
     }
 
+    public void removeTransporter(Transporter t) {
+        transports.remove(t);
+    }
+
     /**
      * Remove all transportation components from this Entity. Should probably
      * only be called during construction.

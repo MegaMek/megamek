@@ -63,8 +63,8 @@ public class EntityWeightClass {
         } else if (type.equals("Infantry")) {
             return WEIGHT_LIGHT;
         } else if (type.equals("VTOL") || type.equals("Naval") || type.equals("Tank")) {
-            for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
-                if (tonnage <= ASFWeightLimits[i]) {
+            for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started at late to bypass padding & save a loop execution
+                if (tonnage <= vehicleWeightLimits[i]) {
                     break;
                 }
             }
@@ -166,8 +166,8 @@ public class EntityWeightClass {
                 }
             }
         } else if (en instanceof Tank) {
-            for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
-                if (tonnage <= ASFWeightLimits[i]) {
+            for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
+                if (tonnage <= vehicleWeightLimits[i]) {
                     break;
                 }
             }

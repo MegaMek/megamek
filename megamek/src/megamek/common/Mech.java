@@ -401,6 +401,23 @@ public abstract class Mech extends Entity {
         }
     }
 
+    // Set whether a non-omni should have BA Grab Bars.
+    public void setBAGrabBars() {
+        if (isOmni()) {
+            return;
+        }
+        if (game.getOptions().booleanOption("ba_grab_bars") && !hasBattleArmorHandles()) {
+            addTransporter(new BattleArmorHandles());System.out.println("Log Testing Add: Entity ID #"+getId());
+        } else if (hasBattleArmorHandles()) {
+            Vector<Transporter> et = new Vector<Transporter>(getTransports());
+            for (Transporter t : et) {
+                if (t instanceof BattleArmorHandles) {
+                    removeTransporter(t);System.out.println("Log Testing Remove: Entity ID #"+getId());
+                }
+            }
+        }
+    }
+
     /**
      * Returns the number of locations in the entity
      */

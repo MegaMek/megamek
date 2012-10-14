@@ -43,6 +43,9 @@ import java.util.Vector;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.common.Entity;
+import megamek.common.Mech;
+import megamek.common.Tank;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -567,6 +570,17 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 if ("begin_shutdown".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setState(false);
+                }
+            }
+        }
+        if (option.getName().equals("ba_grab_bars")) {
+            for (Enumeration<Entity> e = client.getClient().game.getEntities(); e.hasMoreElements();) {
+                Entity ent = e.nextElement();
+                if (ent instanceof Mech) {
+                    ((Mech) ent).setBAGrabBars();
+                }
+                if (ent instanceof Tank) {
+                    ((Tank) ent).setBAGrabBars();
                 }
             }
         }

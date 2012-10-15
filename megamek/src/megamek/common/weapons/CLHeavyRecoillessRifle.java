@@ -37,7 +37,7 @@ public class CLHeavyRecoillessRifle extends Weapon {
         super();
         techLevel = TechConstants.T_CLAN_TW;
         name = "Heavy Recoilless Rifle";
-        setInternalName(name);
+        setInternalName("CLHeavy Recoilless Rifle");
         addLookupName("CLHeavy Recoilless Rifle");
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

@@ -37,7 +37,7 @@ public class CLMediumRecoillessRifle extends Weapon {
         super();
         techLevel = TechConstants.T_CLAN_TW;
         name = "Medium Recoilless Rifle";
-        setInternalName(name);
+        setInternalName("CLMedium Recoilless Rifle");
         addLookupName("CLMedium Recoilless Rifle");
         heat = 0;
         damage = 3;

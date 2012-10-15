@@ -37,7 +37,7 @@ public class CLLightRecoillessRifle extends Weapon {
         super();
         techLevel = TechConstants.T_CLAN_TW;
         name = "Light Recoilless Rifle";
-        setInternalName(name);
+        setInternalName("CLLight Recoilless Rifle");
         addLookupName("CLLight Recoilless Rifle");
         addLookupName("CLLightRecoillessRifle");
         damage = 2;

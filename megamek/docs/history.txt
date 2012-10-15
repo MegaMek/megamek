@@ -24,8 +24,10 @@ v0.35.33-dev (SVN)
     database
 + base getNCrew and getNPassenger methods in Aero
 + Feature 1115: Each C3/C3i Network gets a different color.
-+ Bug 3572: Tanks are being treated like ASF for weight classes  (Was: Tank weightclass sorting wrong in MechSelectorDialog)
++ Bug 3572: Tanks are being treated like ASF for weight classes  (Was: Tank
+    weightclass sorting wrong in MechSelectorDialog)
 + WIP Feature 1121: Unofficial Option: All mechs carry Battle Armor
++ Bug: Clan Recoilless Rifles have wrong internal name
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

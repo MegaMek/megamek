@@ -28,6 +28,7 @@ v0.35.33-dev (SVN)
     weightclass sorting wrong in MechSelectorDialog)
 + WIP Feature 1121: Unofficial Option: All mechs carry Battle Armor
 + Bug: Clan Recoilless Rifles have wrong internal name
++ Bug 3142: Flamer infantry attacks with rifles
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

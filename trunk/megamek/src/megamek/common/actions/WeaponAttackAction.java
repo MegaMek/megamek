@@ -65,6 +65,7 @@ import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISHGaussRifle;
+import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.LRTWeapon;
 import megamek.common.weapons.MekMortarWeapon;
 import megamek.common.weapons.SRTWeapon;
@@ -958,14 +959,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, "VDNI");
         }
 
-        // check for pl-masc
-        if (ae.getCrew().getOptions().booleanOption("pl_masc") && (ae.getMovementMode() == EntityMovementMode.INF_LEG)) {
-            toHit.addModifier(+1, "PL-MASC");
-        }
-
-        // check for cyber eye laser sighting
-        if (ae.getCrew().getOptions().booleanOption("cyber_eye_tele")) {
-            toHit.addModifier(-1, "MD laser-sighting");
+        if(ae instanceof Infantry && !(ae instanceof BattleArmor)) {
+	        // check for pl-masc
+	        //the rules are a bit vague, but assume that if the infantry didn't move or jumped, then they shouldn't get the penalty
+	        if (ae.getCrew().getOptions().booleanOption("pl_masc") 
+	        		&& (ae.moved == EntityMovementType.MOVE_WALK || ae.moved == EntityMovementType.MOVE_RUN)) {
+	            toHit.addModifier(+1, "PL-MASC");
+	        }
+	
+	        // check for cyber eye laser sighting on ranged attacks
+	        if (ae.getCrew().getOptions().booleanOption("cyber_eye_tele") && !(wtype instanceof InfantryAttack)) {
+	            toHit.addModifier(-1, "MD laser-sighting");
+	        }
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three

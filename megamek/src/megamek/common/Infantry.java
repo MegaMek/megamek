@@ -219,10 +219,16 @@ public class Infantry extends Entity {
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
+        if((null != getCrew()) 
+        		&& getCrew().getOptions().booleanOption("pl_masc") 
+        		&& (getMovementMode() == EntityMovementMode.INF_LEG 
+        			|| getMovementMode() == EntityMovementMode.INF_JUMP)) {
+        	mp += 1;
+        }
         if(hasActiveFieldArtillery()) {
             //mp of 1 at the most
             mp = Math.min(mp, 1);
-        }
+        }   
         if(null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if(weatherMod != 0) {

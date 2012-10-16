@@ -2128,12 +2128,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "Can not target infantry with TAG.";
         }
 
-        // Can't raise the heat of infantry or tanks.
-        if (wtype.hasFlag(WeaponType.F_FLAMER) && wtype.hasModes() && weapon.curMode().equals("Heat")
-                && !(te instanceof Mech)) {
-            return "Can only raise the heat level of Meks.";
-        }
-
         // capital fighters cannot use more heat than they have heat sinks to
         // dissipate
         if (ae.isCapitalFighter()) {

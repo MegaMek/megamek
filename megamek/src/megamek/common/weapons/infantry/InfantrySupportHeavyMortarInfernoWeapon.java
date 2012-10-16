@@ -40,6 +40,8 @@ public class InfantrySupportHeavyMortarInfernoWeapon extends InfantryWeapon {
         cost = 5000;
         bv = 2.06;
         flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         infantryDamage = 0.27;
         infantryRange = 3;
         crew = 3;

@@ -40,6 +40,8 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
         cost = 1500;
         bv = 2.41;
         flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         infantryDamage = 0.55;
         infantryRange = 1;
         crew = 1;

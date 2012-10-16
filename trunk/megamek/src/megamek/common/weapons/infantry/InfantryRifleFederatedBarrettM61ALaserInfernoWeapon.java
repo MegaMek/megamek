@@ -40,6 +40,8 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         cost = 2150;
         bv = 1.17;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         infantryDamage = 0.55;
         infantryRange = 2;
     }

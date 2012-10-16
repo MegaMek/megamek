@@ -40,6 +40,8 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
         cost = 16;
         bv = 0.22;
         flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         infantryDamage = 0.15;
         infantryRange = 0;
     }

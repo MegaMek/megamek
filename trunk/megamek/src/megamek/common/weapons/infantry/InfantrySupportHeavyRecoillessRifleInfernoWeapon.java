@@ -41,6 +41,8 @@ public class InfantrySupportHeavyRecoillessRifleInfernoWeapon extends InfantryWe
         cost = 3000;
         bv = 1.42;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         infantryDamage = 0.27;
         infantryRange = 2;
         crew = 3;

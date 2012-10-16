@@ -160,7 +160,7 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (fighters.size() < 1) {
             return 0;
         }
@@ -174,7 +174,7 @@ public class FighterSquadron extends Aero {
         }
         return mp;
     }
-
+    
     @Override
     public int getFuel() {
         if (fighters.size() < 1) {

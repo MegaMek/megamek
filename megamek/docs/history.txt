@@ -32,6 +32,7 @@ v0.35.33-dev (SVN)
 + Bug 3187: Infantry Flamers special ability
 + Bug 2764: Manei Domini and P/L MASC
 + Bug 3327: Some MD enhancement quirks
++ Bug 3359: Fighter Squadrons have 0 overthrust
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

@@ -41,6 +41,8 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
         cost = 7500;
         bv = 6.6;
         flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
         infantryDamage = 1.58;
         infantryRange = 2;
         crew = 1;

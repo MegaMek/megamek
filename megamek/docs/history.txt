@@ -37,6 +37,7 @@ v0.35.33-dev (SVN)
 + Bug: some cluster weapons not doing aero damage correctly
 + Bug: squadron base weapon damage not based on attack value
 + some fixes to InfantryHeatWeaponHandler.java
++ Bug 3063: (Aero) Ultra cluster damage
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

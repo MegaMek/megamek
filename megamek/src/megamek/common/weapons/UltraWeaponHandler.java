@@ -22,6 +22,7 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
@@ -224,4 +225,12 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         return !game.getOptions().booleanOption("uac_tworolls");
     }
 
+    protected int calcnClusterAero(Entity entityTarget) {
+    	if(usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
+    		return (int)Math.ceil(attackValue / 2.0);
+    	} else {
+    		return 1;
+    	}
+    }
+    
 }

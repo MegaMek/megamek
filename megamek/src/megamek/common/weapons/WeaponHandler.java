@@ -392,7 +392,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         r.add(" ");
                         vPhaseReport.add(r);
                     }
-                    nDamPerHit = nDamPerHit * nhit;
+                    nDamPerHit = attackValue * nhit;
                     hits = 1;
                     nCluster = 1;
                 } else if(usesClusterTable() && (entityTarget != null) && !entityTarget.isCapitalScale()) {

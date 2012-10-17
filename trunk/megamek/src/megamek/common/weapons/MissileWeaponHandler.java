@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
@@ -633,33 +634,37 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         int nCluster = calcnCluster();
 
-        //Now I need to adjust this for aero based attack because they use attack value
-        if(target.isAirborne()) {
-            //this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
-            if(ae.isCapitalFighter()) {
-                bSalvo = true;
-                int nhit = 1;
-                if(nweapons > 1) {
-                    nhit = Compute.missilesHit(nweapons);
-                    r = new Report(3325);
-                    r.subject = subjectId;
-                    r.add(nhit);
-                    r.add(" weapon(s) ");
-                    r.add(" ");
-                    vPhaseReport.add(r);
-                }
-                nDamPerHit = attackValue * nhit;
-                hits = 1;
-                nCluster = 1;
-            } else if(usesClusterTable() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
-                bSalvo = true;
+      //Now I need to adjust this for attacks on aeros because they use attack values and different rules
+        if(target.isAirborne() || game.getBoard().inSpace()) {
+        	//this will work differently for cluster and non-cluster weapons, and differently for capital fighter/fighter squadrons
+            nCluster = calcnClusterAero(entityTarget);
+            if(nCluster > 1) {
+            	bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
-                nCluster = 5;
             } else {
-                nDamPerHit = attackValue;
-                hits = 1;
-                nCluster = 1;
+                if(ae.isCapitalFighter()) {
+                    bSalvo = true;
+                    int nhit = 1;
+                    if(nweapons > 1) {
+                        nhit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
+                        r = new Report(3325);
+                        r.subject = subjectId;
+                        r.add(nhit);
+                        r.add(" weapon(s) ");
+                        r.add(" ");
+                        r.newlines = 0;
+                        vPhaseReport.add(r);
+                    }
+                    nDamPerHit = attackValue * nhit;
+                    hits = 1;
+                    nCluster = 1;
+                } else {
+                    bSalvo = false;
+                    nDamPerHit = attackValue;
+                    hits = 1;
+                    nCluster = 1;
+                }
             }
         }
 

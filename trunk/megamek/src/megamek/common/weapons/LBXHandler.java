@@ -75,8 +75,12 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        // basically 60% of racksize
-        return (int) Math.floor(0.6 * wtype.getRackSize());
+    	int av = super.calcAttackValue();
+    	if(usesClusterTable()) {
+    		// basically 60% of normal
+    		return (int) Math.floor(0.6 * av);
+    	} 
+    	return av;
     }
 
     /*
@@ -131,7 +135,6 @@ public class LBXHandler extends AmmoWeaponHandler {
 
             shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, game.getPlanetaryConditions().hasEMI());
         }
-
 
         Report r = new Report(3325);
         r.subject = subjectId;

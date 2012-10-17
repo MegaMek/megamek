@@ -18,12 +18,8 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AttackHandler;
-import megamek.server.Server;
+
 
 /**
  * @author Sebastian Brocks
@@ -47,10 +43,7 @@ public class InfantryInfernoSRMWeapon extends InfantryWeapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE);
         infantryDamage = 0.41;
         infantryRange = 2;
-    }
-    
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        return new InfantryInfernoSRMHandler(toHit, waa, game, server);
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
     }
 }

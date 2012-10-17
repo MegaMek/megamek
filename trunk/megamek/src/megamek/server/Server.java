@@ -17393,7 +17393,7 @@ public class Server implements Runnable {
                     // send the report
                     r = new Report(1210);
                     r.subject = te_n;
-                    r.newlines = 0;
+                    r.newlines = 1;
                     if (!ammoExplosion) {
                         r.messageId = 9005;
                     } else {
@@ -19213,7 +19213,6 @@ public class Server implements Runnable {
                     // Fire control system
                     r = new Report(9105);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.setFCSHits(a.getFCSHits() + 1);
                     break;
@@ -19221,7 +19220,6 @@ public class Server implements Runnable {
                     // sensors
                     r = new Report(6620);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.setSensorHits(a.getSensorHits() + 1);
                     break;
@@ -19229,7 +19227,6 @@ public class Server implements Runnable {
                     // avionics
                     r = new Report(9110);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.setAvionicsHits(a.getAvionicsHits() + 1);
                     if (a.isPartOfFighterSquadron()) {
@@ -19244,7 +19241,6 @@ public class Server implements Runnable {
                     // force control roll
                     r = new Report(9115);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     if (a.isPartOfFighterSquadron()) {
                         game.addControlRoll(new PilotingRollData(a.getTransportId(), 1, "critical hit"));
@@ -19258,7 +19254,6 @@ public class Server implements Runnable {
                     // fuel tank
                     r = new Report(9120);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     int boomTarget = 9;
                     if (a.hasQuirk("fragile_fuel")) {
                         boomTarget = 7;
@@ -19300,12 +19295,10 @@ public class Server implements Runnable {
                         a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
                         r = new Report(9198);
                         r.subject = a.getId();
-                        r.newlines = 1;
                         vDesc.add(r);
                         break;
                     }
                     r.subject = a.getId();
-                    r.newlines = 1;
                     vDesc.add(r);
                     vDesc.addAll(damageCrew(a, 1));
                     // The pilot may have just expired.
@@ -19317,7 +19310,6 @@ public class Server implements Runnable {
                     // landing gear
                     r = new Report(9125);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.setGearHit(true);
                     break;
@@ -19336,13 +19328,11 @@ public class Server implements Runnable {
                         hitbomb.setDestroyed(true);
                         r = new Report(9130);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         r.add(hitbomb.getDesc());
                         vDesc.add(r);
                     } else {
                         r = new Report(9131);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         vDesc.add(r);
                     }
                     break;
@@ -19354,7 +19344,6 @@ public class Server implements Runnable {
                     }
                     r = new Report(9135);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     r.add(sinksLost);
                     vDesc.add(r);
                     a.setHeatSinks(Math.max(0, a.getHeatSinks() - sinksLost));
@@ -19398,14 +19387,12 @@ public class Server implements Runnable {
                         }
                         r = new Report(9152);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         r.add(a.getLocationName(loc));
                         vDesc.add(r);
                         break;
                     }
                     r = new Report(9150);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     ArrayList<Mounted> weapons = new ArrayList<Mounted>();
                     for (Mounted weap : a.getWeaponList()) {
                         if ((weap.getLocation() == loc) && !weap.isDestroyed() && weap.getType().isHittable()) {
@@ -19450,7 +19437,6 @@ public class Server implements Runnable {
                     } else {
                         r = new Report(9155);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         vDesc.add(r);
                     }
                     break;
@@ -19458,7 +19444,6 @@ public class Server implements Runnable {
                     // engine hit
                     r = new Report(9140);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.engineHitsThisPhase++;
                     boolean engineExploded = checkEngineExplosion(a, vDesc, 1);
@@ -19474,7 +19459,6 @@ public class Server implements Runnable {
                     // thruster hit
                     r = new Report(9160);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.setLeftThrustHits(a.getLeftThrustHits() + 1);
                     break;
@@ -19482,7 +19466,6 @@ public class Server implements Runnable {
                     // thruster hit
                     r = new Report(9160);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     a.setRightThrustHits(a.getRightThrustHits() + 1);
                     break;
@@ -19504,7 +19487,6 @@ public class Server implements Runnable {
                         // just report; no game effect
                         r = new Report(9165);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         r.add((int) (percentDestroyed * 100));
                         vDesc.add(r);
                     } else {
@@ -19514,7 +19496,6 @@ public class Server implements Runnable {
                         int unitsDestroyed = (int) Math.ceil(percentDestroyed * passengers.size());
                         r = new Report(9166);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         r.add(unitsDestroyed);
                         vDesc.add(r);
                         while (unitsDestroyed > 0) {
@@ -19537,12 +19518,10 @@ public class Server implements Runnable {
                         r = new Report(9170);
                         r.subject = a.getId();
                         r.add(bayType);
-                        r.newlines = 0;
                         vDesc.add(r);
                     } else {
                         r = new Report(9171);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         vDesc.add(r);
                     }
                     break;
@@ -19554,7 +19533,6 @@ public class Server implements Runnable {
                         ds.setDamageDockCollar(true);
                         r = new Report(9175);
                         r.subject = a.getId();
-                        r.newlines = 0;
                         vDesc.add(r);
                     }
                     if (en instanceof Jumpship) {
@@ -19562,12 +19540,10 @@ public class Server implements Runnable {
                         if (en.damageDockCollar()) {
                             r = new Report(9176);
                             r.subject = a.getId();
-                            r.newlines = 0;
                             vDesc.add(r);
                         } else {
                             r = new Report(9177);
                             r.subject = a.getId();
-                            r.newlines = 0;
                             vDesc.add(r);
                         }
                     }
@@ -19577,7 +19553,6 @@ public class Server implements Runnable {
                     // no real effect yet
                     r = new Report(9180);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     break;
                 case Aero.CRIT_CIC:
@@ -19587,7 +19562,6 @@ public class Server implements Runnable {
                     // CIC hit
                     r = new Report(9185);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     js.setCICHits(js.getCICHits() + 1);
                     break;
@@ -19598,7 +19572,6 @@ public class Server implements Runnable {
                     // KF Drive hit
                     r = new Report(9190);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     js.setKFIntegrity(js.getKFIntegrity() - 1);
                     break;
@@ -19609,7 +19582,6 @@ public class Server implements Runnable {
                     // Grave Deck hit
                     r = new Report(9195);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     break;
                 case Aero.CRIT_LIFE_SUPPORT:
@@ -19617,7 +19589,6 @@ public class Server implements Runnable {
                     a.setLifeSupport(false);
                     r = new Report(9196);
                     r.subject = a.getId();
-                    r.newlines = 0;
                     vDesc.add(r);
                     break;
             }
@@ -20353,7 +20324,6 @@ public class Server implements Runnable {
             int nukeroll = Compute.d6(2);
             r = new Report(9145);
             r.subject = a.getId();
-            r.newlines = 0;
             r.indent(3);
             r.add(capitalMissile);
             r.add(nukeroll);
@@ -20382,24 +20352,20 @@ public class Server implements Runnable {
 
         // apply crits
         if (hit.rolledBoxCars()) {
-            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit", 8, damage_orig, isCapital));
         }
         // ammo explosions shouldn't affect threshold because they
         // go right to SI
         if (critThresh && !ammoExplosion) {
-            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded", 8,
                     damage_orig, isCapital));
         }
         if (critSI && !ammoExplosion) {
-            Report.addNewline(vDesc);
             vDesc
             .addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged", 8, damage_orig,
                     isCapital));
         }
         if ((capitalMissile > 0) && !nukeS2S) {
-            Report.addNewline(vDesc);
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile", capitalMissile,
                     damage_orig, isCapital));
         }

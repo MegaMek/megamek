@@ -20,6 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -56,27 +57,38 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
         bSalvo = true;
     }
     
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
-     *      java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if (!missed && (entityTarget instanceof Mech)) {
+        if ((entityTarget instanceof Mech)
+                && game.getOptions().booleanOption("flamer_heat")) {
+            // heat
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(), waa
+                            .getAimingMode());
+
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
+                // Weapon strikes Partial Cover.
+                Report r = new Report(3460);
+                r.subject = subjectId;
+                r.add(entityTarget.getShortName());
+                r.add(entityTarget.getLocationAbbr(hit));
+                r.indent(2);
+                vPhaseReport.addElement(r);
+                missed = true;
+                return;
+            }
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            int extraHeat = Compute.d6();
-            r.add(extraHeat);
+            r.add(nDamPerHit);
             r.choose(true);
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += extraHeat;
+            entityTarget.heatFromExternal += nDamPerHit;
         } else {
-        	super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
         }
     }

@@ -66,6 +66,7 @@ import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Engine;
@@ -110,7 +111,6 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
-import megamek.common.Crew;
 import megamek.common.PilotingRollData;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
@@ -1297,7 +1297,7 @@ public class Server implements Runnable {
         // do some housekeeping on all the remaining
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = e.nextElement();
-            
+
             entity.applyDamage();
 
             entity.reloadEmptyWeapons();
@@ -1319,7 +1319,7 @@ public class Server implements Runnable {
             } else {
                 entity.setDone(false);
             }
-            
+
             // reset spotlights
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
@@ -15936,9 +15936,9 @@ public class Server implements Runnable {
             if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard() || !entity.isDeployed()) {
                 continue;
             }
-            if(entity.getTraitorId() != -1  && entity.getOwnerId() != entity.getTraitorId()) {
+            if((entity.getTraitorId() != -1)  && (entity.getOwnerId() != entity.getTraitorId())) {
             	Player p = game.getPlayer(entity.getTraitorId());
-            	if(null != p) {            		
+            	if(null != p) {
             		Report r = new Report(7305);
                     r.subject = entity.getId();
                     r.add(entity.getDisplayName());
@@ -15955,7 +15955,7 @@ public class Server implements Runnable {
         }
         return vFullReport;
     }
-    
+
     /**
      * Resolves all built up control rolls. Used only during end phase
      */
@@ -20341,7 +20341,7 @@ public class Server implements Runnable {
 
         boolean isCapital = hit.isCapital();
         // get any capital missile critical mods
-        int CapitalMissile = hit.getCapMisCritMod();
+        int capitalMissile = hit.getCapMisCritMod();
 
         // check for nuclear critical
         if (nukeS2S) {
@@ -20355,16 +20355,15 @@ public class Server implements Runnable {
             r.subject = a.getId();
             r.newlines = 0;
             r.indent(3);
-            r.add(CapitalMissile);
+            r.add(capitalMissile);
             r.add(nukeroll);
             vDesc.add(r);
-            if (nukeroll >= CapitalMissile) {
+            if (nukeroll >= capitalMissile) {
                 int nukeDamage = damage_orig;
                 a.setSI(a.getSI() - nukeDamage);
                 a.damageThisPhase += nukeDamage;
                 r = new Report(9146);
                 r.subject = a.getId();
-                r.newlines = 0;
                 r.add(nukeDamage);
                 r.add(Math.max(a.getSI(), 0));
                 vDesc.addElement(r);
@@ -20377,7 +20376,6 @@ public class Server implements Runnable {
             } else {
                 r = new Report(9147);
                 r.subject = a.getId();
-                r.newlines = 0;
                 vDesc.addElement(r);
             }
         }
@@ -20400,9 +20398,9 @@ public class Server implements Runnable {
             .addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged", 8, damage_orig,
                     isCapital));
         }
-        if ((CapitalMissile > 0) && !nukeS2S) {
+        if ((capitalMissile > 0) && !nukeS2S) {
             Report.addNewline(vDesc);
-            vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile", CapitalMissile,
+            vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile", capitalMissile,
                     damage_orig, isCapital));
         }
     }
@@ -22916,7 +22914,7 @@ public class Server implements Runnable {
     private void receiveEntityUpdate(Packet c, int connIndex) {
         Entity entity = (Entity) c.getObject(0);
         Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (oldEntity.getOwner() == getPlayer(connIndex) || oldEntity.getOwner().getTeam() == getPlayer(connIndex).getTeam())) {
+        if ((oldEntity != null) && ((oldEntity.getOwner() == getPlayer(connIndex)) || (oldEntity.getOwner().getTeam() == getPlayer(connIndex).getTeam()))) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit
@@ -24745,7 +24743,7 @@ public class Server implements Runnable {
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords, coords, psr,true));
                     entity.setElevation(floor - 2);
                     runningCFTotal -= CFDamage * 2;
-                } else if (bldg.getBasement() != Building.NOBASEMENT && bldg.getBasement() != Building.ONE_DEEP_NORMALINFONLY ) {
+                } else if ((bldg.getBasement() != Building.NOBASEMENT) && (bldg.getBasement() != Building.ONE_DEEP_NORMALINFONLY) ) {
                     System.err.println (entity.getDisplayName() + " is falling 1 floor into " + coords.toString() );
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords, coords, psr,true));
                     entity.setElevation(floor - 1);

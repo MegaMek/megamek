@@ -1896,6 +1896,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
             c.sendUpdateEntity(entity);
         }
+        //unload this unit from any other units it might be loaded onto
+        if(entity.getTransportId() != Entity.NONE) {
+        	Entity loader = clientgui.getClient().game.getEntity(entity.getTransportId());
+        	if(null != loader) {
+        		loader.unload(entity);
+        		entity.setTransportId(Entity.NONE);
+        		c.sendUpdateEntity(loader);
+        		c.sendUpdateEntity(entity);
+        	}
+        }
         c.sendDeleteEntity(entity.getId());
     }
 
@@ -2996,6 +3006,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             c.sendUpdateEntity(loaded);
                         }
                         c.sendUpdateEntity(e);
+                    }
+                    //unload this unit from any other units it might be loaded onto
+                    if(entity.getTransportId() != Entity.NONE) {
+                    	Entity loader = clientgui.getClient().game.getEntity(entity.getTransportId());
+                    	if(null != loader) {
+                    		loader.unload(entity);
+                    		entity.setTransportId(Entity.NONE);
+                    		c.sendUpdateEntity(loader);
+                    		c.sendUpdateEntity(entity);
+                    	}
                     }
                     c.sendDeleteEntity(e.getId());
                 }

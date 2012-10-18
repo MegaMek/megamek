@@ -32,7 +32,7 @@ import megamek.common.Tank;
  */
 public class FluffImageHelper {
     
-    public static String fluffPath = "./data/images/fluff/";
+    public static String fluffPath = "data/images/fluff/";
 
     public static String imageMech = "mech";
     public static String imageAero = "aero";
@@ -71,20 +71,20 @@ public class FluffImageHelper {
         Image fluff = null;
 
         String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".png";
-        if (new File(fluffFile.toLowerCase()).exists()) {
+        if (new File(fluffFile).isFile()) {
             fluff = new ImageIcon(fluffFile).getImage();
         }
 
         if (fluff == null) {
             fluffFile = path + unit.getModel() + ".png";
-            if (new File(fluffFile.toLowerCase()).exists()) {
+            if (new File(fluffFile).isFile()) {
                 fluff = new ImageIcon(fluffFile).getImage();
             }
         }
 
         if (fluff == null) {
             fluffFile = path + unit.getChassis() + ".png";
-            if (new File(fluffFile.toLowerCase()).exists()) {
+            if (new File(fluffFile).isFile()) {
                 fluff = new ImageIcon(fluffFile).getImage();
             }
         }
@@ -96,20 +96,20 @@ public class FluffImageHelper {
         Image fluff = null;
 
         String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".jpg";
-        if (new File(fluffFile.toLowerCase()).exists()) {
+        if (new File(fluffFile).isFile()) {
             fluff = new ImageIcon(fluffFile).getImage();
         }
 
         if (fluff == null) {
             fluffFile = path + unit.getModel() + ".jpg";
-            if (new File(fluffFile.toLowerCase()).exists()) {
+            if (new File(fluffFile).isFile()) {
                 fluff = new ImageIcon(fluffFile).getImage();
             }
         }
 
         if (fluff == null) {
             fluffFile = path + unit.getChassis() + ".jpg";
-            if (new File(fluffFile.toLowerCase()).exists()) {
+            if (new File(fluffFile).isFile()) {
                 fluff = new ImageIcon(fluffFile).getImage();
             }
         }
@@ -121,20 +121,20 @@ public class FluffImageHelper {
         Image fluff = null;
 
         String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".gif";
-        if (new File(fluffFile.toLowerCase()).exists()) {
+        if (new File(fluffFile).isFile()) {
             fluff = new ImageIcon(fluffFile).getImage();
         }
 
         if (fluff == null) {
             fluffFile = path + unit.getModel() + ".gif";
-            if (new File(fluffFile.toLowerCase()).exists()) {
+            if (new File(fluffFile).isFile()) {
                 fluff = new ImageIcon(fluffFile).getImage();
             }
         }
 
         if (fluff == null) {
             fluffFile = path + unit.getChassis() + ".gif";
-            if (new File(fluffFile.toLowerCase()).exists()) {
+            if (new File(fluffFile).isFile()) {
                 fluff = new ImageIcon(fluffFile).getImage();
             }
         }

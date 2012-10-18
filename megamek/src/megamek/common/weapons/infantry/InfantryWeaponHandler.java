@@ -84,8 +84,14 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if (bGlancing) {
             nHitMod -= 4;
         }
-        int troopersHit = Compute.missilesHit(((Infantry) ae)
+        int troopersHit = 0;
+        //when swarming all troopers hit
+        if (ae.getSwarmTargetId() == target.getTargetId()) {
+            troopersHit = ((Infantry)ae).getShootingStrength();
+        } else {
+        	troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod, bGlancing);
+        }
         double damage = ((InfantryWeapon)wtype).getInfantryDamage();
         if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
             //for conventional infantry, we have to calculate primary and secondary weapons

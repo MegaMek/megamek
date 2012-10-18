@@ -44,6 +44,7 @@ v0.35.33-dev (SVN)
 		but see http://bg.battletech.com/forums/index.php/topic,23928.0.html
 + Bug: Images from data/images/fluff/* not displaying in Linux AND FluffImageHelper.java
         using File.exists() instead of File.isFile() allowing directories to be incorrectly matched
++ Bug 3062: 0 MP infantry cannot climb stairs
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

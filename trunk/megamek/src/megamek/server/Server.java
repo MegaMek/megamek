@@ -9592,7 +9592,7 @@ public class Server implements Runnable {
         entity.setSecondaryFacing(nFacing);
         IHex hex = game.getBoard().getHex(coords);
         if (assaultDrop) {
-            entity.setElevation((hex.ceiling() - hex.surface()) + 100); // falling
+            entity.setAltitude(1);
             // from
             // the
             // sky!

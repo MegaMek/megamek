@@ -4993,7 +4993,9 @@ public class Compute {
                 break;
         }
         damage = Math.ceil(damage);
-        if (isNonInfantryAgainstMechanized) {
+        
+        
+        if (isNonInfantryAgainstMechanized && damageType < WeaponType.WEAPON_BURST_HALFD6) {
             damage *= 2;
         }
         return (int) damage;

@@ -43,6 +43,7 @@ public class PilotMapSet implements DisplayMapSet {
     private static final String IMAGE_DIR = "data/images/widgets";
 
     private static String STAR3 = "***"; //$NON-NLS-1$
+    private static int N_ADV = 24;
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMPicArea portraitArea;
@@ -160,7 +161,7 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(gunneryBR);
 
         getNewYCoord();
-        advantagesR = new PMSimpleLabel[24];
+        advantagesR = new PMSimpleLabel[N_ADV];
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i] = createLabel(new Integer(i).toString(), fm, 10, getNewYCoord());
             content.addArea(advantagesR[i]);
@@ -236,11 +237,19 @@ public class PilotMapSet implements DisplayMapSet {
         }
         int i = 0;
         for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups.hasMoreElements();) {
-            IOptionGroup advGroup = advGroups.nextElement();
+        	if(i >= (N_ADV-1)) {
+        		advantagesR[i++].setString(Messages.getString("PilotMapSet.more"));
+        		break;
+        	}
+        	IOptionGroup advGroup = advGroups.nextElement();
             if(en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
-                    IOption adv = advs.nextElement();
+                	if(i >= (N_ADV-1)) {
+                		advantagesR[i++].setString("  " + Messages.getString("PilotMapSet.more"));
+                		break;
+                	}
+                	IOption adv = advs.nextElement();
                     if(adv.booleanValue()) {
                         advantagesR[i++].setString("  " + adv.getDisplayableNameWithValue());
                     }

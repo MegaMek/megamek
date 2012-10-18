@@ -39,6 +39,7 @@ v0.35.33-dev (SVN)
 + some fixes to InfantryHeatWeaponHandler.java
 + Bug 3063: (Aero) Ultra cluster damage
 + improvements to damage reporting for aeros
++ Bug 3254: NPE in PilotMapSet
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

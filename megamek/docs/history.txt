@@ -46,6 +46,7 @@ v0.35.33-dev (SVN)
         using File.exists() instead of File.isFile() allowing directories to be incorrectly matched
 + Bug 3062: 0 MP infantry cannot climb stairs
 + Bug 3326: Swarm w/ Conventional Infantry
++ Bug 3112: Sylph getting stuck with combat drop
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

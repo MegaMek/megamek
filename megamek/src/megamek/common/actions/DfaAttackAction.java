@@ -130,6 +130,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "D.F.A. must involve jumping");
         }
+        
+        //can't target airborne units
+        if((te != null) && te.isAirborne()) {
+        	 return new ToHitData(TargetRoll.IMPOSSIBLE,
+                     "Cannot D.F.A. an airborne target.");
+        }
 
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {

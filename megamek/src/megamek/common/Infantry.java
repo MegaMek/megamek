@@ -814,16 +814,15 @@ public class Infantry extends Entity {
 
         int weaponCost = 0;
         if(null != primaryW) {
-            weaponCost += primaryW.getCost(this, false, -1) * (squadsize - secondn);
+        weaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * (squadsize - secondn) * squadn;
         }
         if(null != secondW) {
-            weaponCost += secondW.getCost(this, false, -1) * secondn;
+        weaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * secondn * squadn;
         }
-        weaponCost = weaponCost / squadsize;
 
         //TODO: add in armor cost - a little tricky because we don't track exact armor
 
-        double cost = Math.round(2000 * Math.sqrt(weaponCost) * multiplier * menStarting);
+        double cost = 2000 * weaponCost * multiplier;
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {

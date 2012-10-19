@@ -2751,34 +2751,17 @@ public class Aero extends Entity {
      * Used to determine net velocity of ramming attack
      *
      */
+    @Override
     public int sideTableRam(Coords src) {
-
-        int side = sideTableRam(src, facing);
-        // if using advanced movement, then I need heading, but
-        // in cases of ties, I use the least damaging option
-        if (game.useVectorMove()) {
+    	int side = super.sideTableRam(src);
+        if (game.useVectorMove() && game.getBoard().inSpace()) {
             int newside = chooseSideRam(src);
             if (newside != -1) {
                 side = newside;
             }
         }
-
         return side;
 
-    }
-
-    public int sideTableRam(Coords src, int face) {
-
-        int fa = (getPosition().degree(src) + ((6 - face) * 60)) % 360;
-        if (((fa > 30) && (fa <= 90)) || ((fa < 330) && (fa >= 270))) {
-            return Aero.RAM_TOWARD_OBL;
-        } else if ((fa > 150) && (fa < 210)) {
-            return Aero.RAM_AWAY_DIR;
-        } else if (((fa > 90) && (fa <= 150)) || ((fa < 270) && (fa >= 210))) {
-            return Aero.RAM_AWAY_OBL;
-        } else {
-            return Aero.RAM_TOWARD_DIR;
-        }
     }
 
     public int chooseSideRam(Coords src) {

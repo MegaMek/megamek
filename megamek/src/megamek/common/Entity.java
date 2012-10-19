@@ -11609,5 +11609,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getTraitorId() {
     	return traitorId;
     }
+    
+    /**
+     * Used to determine net velocity of ramming attack
+     *
+     */
+    public int sideTableRam(Coords src) {
+    	return sideTableRam(src, facing);
+    }
+    
+    public int sideTableRam(Coords src, int facing) {
+        int fa = (getPosition().degree(src) + ((6 - facing) * 60)) % 360;
+        if (((fa > 30) && (fa <= 90)) || ((fa < 330) && (fa >= 270))) {
+            return Aero.RAM_TOWARD_OBL;
+        } else if ((fa > 150) && (fa < 210)) {
+            return Aero.RAM_AWAY_DIR;
+        } else if (((fa > 90) && (fa <= 150)) || ((fa < 270) && (fa >= 210))) {
+            return Aero.RAM_AWAY_OBL;
+        } else {
+            return Aero.RAM_TOWARD_DIR;
+        }
+    }
 
 }

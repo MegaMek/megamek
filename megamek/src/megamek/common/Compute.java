@@ -4909,7 +4909,7 @@ public class Compute {
     /**
      * Get the net velocity of two aeros for ramming attacks
      */
-    public static int getNetVelocity(Coords src, Aero te, int avel, int tvel) {
+    public static int getNetVelocity(Coords src, Entity te, int avel, int tvel) {
         int angle = te.sideTableRam(src);
 
         switch (angle) {

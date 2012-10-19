@@ -272,13 +272,16 @@ public class RamAttackAction extends AbstractAttackAction {
      * Damage that an Aero does on a successful ramming attack
      * 
      */
-   public static int getDamageFor(Aero entity, Aero target) {
+   public static int getDamageFor(Aero entity, Entity target) {
        int avel = entity.getCurrentVelocity();
-       int tvel = target.getCurrentVelocity();
+       int tvel = 0;
+       if(target instanceof Aero) {
+    	   tvel = ((Aero)target).getCurrentVelocity();
+       }
        return getDamageFor(entity, target, entity.getPriorPosition(), avel, tvel);
    }
    
-   public static int getDamageFor(Aero entity, Aero target, Coords atthex, int avel, int tvel) {
+   public static int getDamageFor(Aero entity, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(
                (entity.getWeight() / 10.0) * netv);
@@ -287,13 +290,16 @@ public class RamAttackAction extends AbstractAttackAction {
    /**
     * Damage that an Aero suffers after a successful charge.
     */
-   public static int getDamageTakenBy(Aero entity, Aero target) {
+   public static int getDamageTakenBy(Aero entity, Entity target) {
        int avel = entity.getCurrentVelocity();
-       int tvel = target.getCurrentVelocity();
+       int tvel = 0;
+       if(target instanceof Aero) {
+    	   tvel = ((Aero)target).getCurrentVelocity();
+       }
        return getDamageTakenBy(entity, target, entity.getPriorPosition(), avel, tvel);
    }
    
-   public static int getDamageTakenBy(Aero entity, Aero target, Coords atthex, int avel, int tvel) {
+   public static int getDamageTakenBy(Aero entity, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(
                (target.getWeight() / 10.0) * netv);

@@ -4766,12 +4766,12 @@ public class Server implements Runnable {
         addReport(r);
         int partialroll = Compute.d6(1);
         boolean partial = (partialroll == 6);
-        // has the target moved yet this round?
-        Aero ta = (Aero) target;
-        if ((target.mpUsed < target.getRunMPwithoutMASC()) && !ta.isOutControlTotal() && !target.isImmobile()) {
+        //if aero chance to avoid
+        if (target instanceof Aero && (target.mpUsed < target.getRunMPwithoutMASC()) && !((Aero)target).isOutControlTotal() && !target.isImmobile()) {
             // give them a control roll to avoid the collision
             // TODO: I should make this voluntary really
-            PilotingRollData psr = target.getBasePilotingRoll();
+        	Aero ta = (Aero)target;
+        	PilotingRollData psr = target.getBasePilotingRoll();
             psr.addModifier(0, "avoiding collision");
             int ctrlroll = Compute.d6(2);
             r = new Report(9045);
@@ -4832,7 +4832,7 @@ public class Server implements Runnable {
         // if we are still here, then collide
         ToHitData toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Its a collision");
         toHit.setSideTable(target.sideTable(src));
-        resolveRamDamage((Aero) entity, (Aero) target, toHit, partial, false);
+        resolveRamDamage((Aero) entity, target, toHit, partial, false);
 
         // Has the target been destroyed?
         if (target.isDoomed()) {
@@ -5530,6 +5530,10 @@ public class Server implements Runnable {
                             while (targets.hasMoreElements()) {
                                 int id = targets.nextElement().getId();
                                 Entity ce = game.getEntity(id);
+                                //if we are in atmo and not the same altitude then skip
+                                if(!game.getBoard().inSpace() && ce.getAltitude() != curAltitude) {
+                                	continue;
+                                }
                                 // you can't collide with yourself
                                 if (ce.equals(a)) {
                                     continue;
@@ -5545,6 +5549,8 @@ public class Server implements Runnable {
                                 } else if (ce instanceof SmallCraft) {
                                     potentialSmallCraft.addElement(id);
                                 } else {
+                                	//ASF can actually include anything, because we might
+                                	//have combat dropping troops
                                     potentialASF.addElement(id);
                                 }
                             }
@@ -13543,7 +13549,7 @@ public class Server implements Runnable {
     /**
      * Handle a ramming attack's damage
      */
-    private void resolveRamDamage(Aero ae, Aero te, ToHitData toHit, boolean glancing, boolean throughFront) {
+    private void resolveRamDamage(Aero ae, Entity te, ToHitData toHit, boolean glancing, boolean throughFront) {
 
         int damage = RamAttackAction.getDamageFor(ae, te);
         int damageTaken = RamAttackAction.getDamageTakenBy(ae, te);

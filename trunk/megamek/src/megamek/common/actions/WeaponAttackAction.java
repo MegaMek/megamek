@@ -2557,9 +2557,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return "target not along flight path";
                 }
             }
-            if (ae.isNOE()) {
-                return "attacker is flying NOE";
-            }
 
 
             // can only make a strike attack against a single target

@@ -53,6 +53,7 @@ v0.35.33-dev (SVN)
 + Bug 3372: Plasma rifles don't add heat to ASFs
 + Bug: fighter squadron plasma rifles don't add heat for all weapons that hit
 + Bug 3565: Infantry Costs
++ Bug 2672: (aero) NPE when ramming with Kraken-T missiles
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

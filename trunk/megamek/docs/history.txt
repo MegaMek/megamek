@@ -49,6 +49,7 @@ v0.35.33-dev (SVN)
 + Bug 3112: Sylph getting stuck with combat drop
 + Bug 3288: Aero return flyover deploys along wrong edge
 + Bug 3389: Altitude Bombing not working at NOE
++ Bug 3471: DFA on an Aerospace unit causes ridiculous fall
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

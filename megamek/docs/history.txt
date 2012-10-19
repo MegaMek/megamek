@@ -51,6 +51,7 @@ v0.35.33-dev (SVN)
 + Bug 3389: Altitude Bombing not working at NOE
 + Bug 3471: DFA on an Aerospace unit causes ridiculous fall
 + Bug 3372: Plasma rifles don't add heat to ASFs
++ Bug: fighter squadron plasma rifles don't add heat for all weapons that hit
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

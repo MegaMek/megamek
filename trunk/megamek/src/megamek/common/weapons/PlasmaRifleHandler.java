@@ -66,7 +66,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            int extraHeat = Compute.d6();
+            int extraHeat = 0;
+            //if this is a fighter squadron, we need to account for number of weapons
+            //should default to one for non squadrons
+            for(int i = 0; i < nweaponsHit; i++) {
+            	extraHeat += Compute.d6();
+            }
             r.add(extraHeat);
             r.choose(true);
             vPhaseReport.addElement(r);

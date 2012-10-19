@@ -645,18 +645,17 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             } else {
                 if(ae.isCapitalFighter()) {
                     bSalvo = true;
-                    int nhit = 1;
                     if(nweapons > 1) {
-                        nhit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
+                        nweaponsHit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
                         r = new Report(3325);
                         r.subject = subjectId;
-                        r.add(nhit);
+                        r.add(nweaponsHit);
                         r.add(" weapon(s) ");
                         r.add(" ");
                         r.newlines = 0;
                         vPhaseReport.add(r);
                     }
-                    nDamPerHit = attackValue * nhit;
+                    nDamPerHit = attackValue * nweaponsHit;
                     hits = 1;
                     nCluster = 1;
                 } else {

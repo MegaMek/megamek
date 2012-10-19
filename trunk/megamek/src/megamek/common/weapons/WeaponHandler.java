@@ -79,6 +79,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int generalDamageType = HitData.DAMAGE_NONE;
     protected Vector<Integer> insertedAttacks = new Vector<Integer>();
     protected int nweapons; //for capital fighters/fighter squadrons
+    protected int nweaponsHit; //for capital fighters/fighter squadrons
     protected boolean secondShot = false;
 
 
@@ -391,18 +392,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 } else {
 	                if(ae.isCapitalFighter()) {
 	                    bSalvo = true;
-	                    int nhit = 1;
 	                    if(nweapons > 1) {
-	                        nhit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
+	                        nweaponsHit = Compute.missilesHit(nweapons, ((Aero)ae).getClusterMods());
 	                        r = new Report(3325);
 	                        r.subject = subjectId;
-	                        r.add(nhit);
+	                        r.add(nweaponsHit);
 	                        r.add(" weapon(s) ");
 	                        r.add(" ");
 	                        r.newlines = 0;
 	                        vPhaseReport.add(r);
 	                    }
-	                    nDamPerHit = attackValue * nhit;
+	                    nDamPerHit = attackValue * nweaponsHit;
 	                    hits = 1;
 	                    nCluster = 1;
 	                } else {
@@ -817,6 +817,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             roll = Compute.d6(2);
         }
         nweapons = getNumberWeapons();
+        nweaponsHit = 1;
         // use ammo when creating this, so it works when shooting the last shot
         // a unit has and we fire multiple weapons of the same type
         //TODO: need to adjust this for cases where not all the ammo is available

@@ -14273,6 +14273,13 @@ public class Server implements Runnable {
                     entity.heatBuildup -= reduce;
                 }
 
+                //Add heat from external sources to the heat buildup
+                entity.heatBuildup += Math.min(15, entity.heatFromExternal);
+                entity.heatFromExternal = 0;
+                // remove heat we cooled down
+                entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
+                entity.coolFromExternal = 0;
+                
                 // add the heat we've built up so far.
                 entity.heat += entity.heatBuildup;
 

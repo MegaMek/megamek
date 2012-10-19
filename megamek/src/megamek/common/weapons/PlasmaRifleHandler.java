@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -61,7 +62,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        if (!missed && (entityTarget instanceof Mech)) {
+        if (!missed && (entityTarget instanceof Mech || entityTarget instanceof Aero)) {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
@@ -80,7 +81,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Mech) {
+        if (target instanceof Mech || target instanceof Aero) {
             int toReturn = 10;
             if (bGlancing) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
@@ -101,7 +102,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcnCluster() {
-        if (target instanceof Mech) {
+        if (target instanceof Mech || target instanceof Aero) {
             bSalvo = false;
             return 1;
         }
@@ -128,7 +129,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
         // against mechs, 1 hit with 10 damage, plus heat
-        if (target instanceof Mech) {
+        if (target instanceof Mech || target instanceof Aero) {
             toReturn = 1;
             // otherwise, 10+2d6 damage
             // but fireresistant BA armor gets no damage from heat, and half the

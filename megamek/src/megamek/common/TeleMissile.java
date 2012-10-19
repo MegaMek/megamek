@@ -197,5 +197,10 @@ public class TeleMissile extends Aero {
     public int locations() {
         return 1;
     }
+    
+    @Override
+    public boolean canRam() {
+        return false;
+    }
 
 }

@@ -16,33 +16,35 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
-public class PlasmaCannonHandler extends AmmoWeaponHandler {
+public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
+ 
     /**
-     *
-     */
-    private static final long serialVersionUID = 2304364403526293671L;
+	 * 
+	 */
+	private static final long serialVersionUID = -4718048077136686433L;
 
-    /**
+	/**
      * @param toHit
      * @param waa
      * @param g
      */
-    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, IGame g, Server s) {
+    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+            Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -54,109 +56,36 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     @Override
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster, int bldgAbsorbs) {
-
-        if (entityTarget instanceof Mech || entityTarget instanceof Aero) {
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-            hit.setGeneralDamageType(generalDamageType);
-            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), Compute.targetSideTable(ae, entityTarget,
-                    weapon.getCalledShot().getCall()))) {
-                // Weapon strikes Partial Cover.
-                Report r = new Report(3460);
-                r.subject = subjectId;
-                r.add(entityTarget.getShortName());
-                r.add(entityTarget.getLocationAbbr(hit));
-                r.indent(2);
-                vPhaseReport.addElement(r);
-                missed = true;
-                return;
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs) {
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                nCluster, bldgAbsorbs);
+        if (!missed && (entityTarget instanceof Mech || entityTarget instanceof Aero)) {
+            int extraHeat = 0;
+            for(int wId: weapon.getBayWeapons()) {
+                Mounted m = ae.getEquipment(wId);
+                if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                    WeaponType bayWType = ((WeaponType)m.getType());
+                    if(bayWType instanceof ISPlasmaRifle) {
+                    	extraHeat += Compute.d6();
+                    } 
+                    else if(bayWType instanceof CLPlasmaCannon) {
+                    	extraHeat += Compute.d6(2);
+                    }
+                }
             }
-            if (!bSalvo) {
-                // Each hit in the salvo get's its own hit location.
-                Report r = new Report(3405);
-                r.subject = subjectId;
-                r.add(toHit.getTableDesc());
-                r.add(entityTarget.getLocationAbbr(hit));
-                vPhaseReport.addElement(r);
+            if(extraHeat > 0) { 
+	        	Report r = new Report(3400);
+	            r.subject = subjectId;
+	            r.indent(2);
+	            r.add(extraHeat);
+	            r.choose(true);
+	            vPhaseReport.addElement(r);
+	            entityTarget.heatFromExternal += extraHeat;
             }
-            Report r = new Report(3400);
-            r.subject = subjectId;
-            r.indent(2);
-            int extraHeat = Compute.d6(2);
-            r.add(extraHeat);
-            r.choose(true);
-            vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += extraHeat;
-        } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    @Override
-    protected int calcDamagePerHit() {
-        if (target instanceof Mech || target instanceof Aero) {
-            return 0;
-        }
-        int toReturn = 1;
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.d6(3);
-            // pain shunted infantry get half damage
-            if (bDirect) {
-                toReturn += toHit.getMoS()/3;
-            }
-            if (((Entity) target).getCrew().getOptions().booleanOption("pain_shunt")) {
-                toReturn = Math.max(toReturn / 2, 1);
-            }
-        } else if (bDirect){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
-        }
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-        return toReturn;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
-    @Override
-    protected int calcnCluster() {
-        if (target instanceof Mech || target instanceof Aero) {
-            bSalvo = false;
-            return 1;
-        }
-        bSalvo = true;
-        return 5;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
-    @Override
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs can't mount Plasma Cannons
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            return 1;
-        }
-        if (target instanceof Mech || target instanceof Aero) {
-            return 1;
-        }
-        if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
-            return 0;
-        }
-        return Compute.d6(3);
-    }
-
 
     /**
      * @return a <code>boolean</code> value indicating wether or not this

@@ -1456,8 +1456,9 @@ public class Game implements Serializable, IGame {
     public Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<Entity>();
         if (board.contains(c)) {
-            for (Entity entity : entities) {
-                if (c.equals(entity.getPosition()) && entity.isTargetable()
+        	for (Enumeration<Entity> e = getEntities(c); e.hasMoreElements();) {
+                Entity entity = e.nextElement();
+                if (entity.isTargetable()
                         && (entity.getElevation() == 0)
                         && (entity.getAltitude() == 0)
                         && !(entity instanceof Infantry) && (entity != ignore)) {

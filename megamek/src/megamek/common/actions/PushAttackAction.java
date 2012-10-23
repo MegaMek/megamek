@@ -18,6 +18,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
@@ -224,6 +225,12 @@ public class PushAttackAction extends DisplacementAttackAction {
                 && (te.findTargetedDisplacement().getEntityId() != ae.getId())) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is the target of another push/charge/DFA");
+        }
+        
+        //can't push airborne targets
+        if(te.isAirborne()) {
+        	 return new ToHitData(TargetRoll.IMPOSSIBLE,
+                     "Cannot push an airborne target.");
         }
 
         // check facing

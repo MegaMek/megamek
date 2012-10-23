@@ -27,6 +27,7 @@ import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
@@ -135,6 +136,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if((te != null) && te.isAirborne()) {
         	 return new ToHitData(TargetRoll.IMPOSSIBLE,
                      "Cannot D.F.A. an airborne target.");
+        }
+        
+        //can't target dropships
+        if((te != null) && te instanceof Dropship) {
+        	 return new ToHitData(TargetRoll.IMPOSSIBLE,
+                     "Cannot D.F.A. a dropship.");
         }
 
         // Can't target a transported entity.

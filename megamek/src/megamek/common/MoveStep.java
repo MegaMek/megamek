@@ -2666,6 +2666,7 @@ public class MoveStep implements Serializable {
             }
 
             //cant move through a hex with a LargeSupportTank or a grounded Dropship unless infantry
+            //or a VTOL at high enough elevation
             if(!(entity instanceof Infantry)) {
                 for (Enumeration<Entity> i = game.getEntities(src); i.hasMoreElements();) {
                     final Entity inHex = i.nextElement();
@@ -2673,7 +2674,9 @@ public class MoveStep implements Serializable {
                         continue;
                     }
                     if((inHex instanceof LargeSupportTank) || ((inHex instanceof Dropship) && !inHex.isAirborne() && !inHex.isSpaceborne())) {
-                        return false;
+                    	if(getElevation() <= inHex.height()) {
+                        		return false;
+                    	}
                     }
                 }
             }

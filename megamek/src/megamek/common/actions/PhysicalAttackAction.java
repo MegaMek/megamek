@@ -18,10 +18,12 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.Player;
 import megamek.common.RangeType;
@@ -73,7 +75,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         }
 
         // check range
-        if (ae.getPosition().distance(target.getPosition()) > 1) {
+        if (Compute.effectiveDistance(game, ae, target) > 1) {
             return "Target not in range";
         }
 
@@ -208,6 +210,14 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 toHit.addModifier(-2, "target prone and adjacent");
             }
 
+            if(te instanceof LargeSupportTank) {
+                toHit.addModifier(-2, "target is large support tank");
+            }
+            
+            if(te instanceof Dropship) {
+                toHit.addModifier(-2, "target is dropship");
+            }
+            
             IHex targHex = game.getBoard().getHex(te.getPosition());
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)

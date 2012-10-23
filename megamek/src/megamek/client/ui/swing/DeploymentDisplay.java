@@ -434,7 +434,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         } else if (Compute.stackingViolation(clientgui.getClient().game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
-            return;
+           return;
         } else {
             //check for buildings and if found ask what level they want to deploy at
             Building bldg = clientgui.getClient().game.getBoard().getBuildingAt(moveto);

@@ -4185,6 +4185,15 @@ public class Server implements Runnable {
                     crashedIntoTerrain = false;
                 }
             }
+            
+            Entity crashDropship = null;
+            for (Enumeration<Entity> e = game.getEntities(nextPos); e.hasMoreElements();) {
+                Entity en = e.nextElement();
+                if (en instanceof Dropship && !en.isAirborne()
+                		&& nextAltitude <= (en.absHeight())) {
+                	crashDropship = en;
+                }
+            }
 
             if (crashedIntoTerrain) {
 
@@ -4276,6 +4285,52 @@ public class Server implements Runnable {
                 break;
             }
 
+            //did we hit a dropship. Oww!
+            //Taharqa: The rules on how to handle this are completely missing, so I am assuming
+            //we assign damage as per an accidental charge, but do not displace the dropship and
+            //end the skid
+            else if(null != crashDropship) {
+            	r = new Report(2050);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(crashDropship.getShortName(), true);
+                r.add(nextPos.getBoardNum(), true);
+                addReport(r);
+            	ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), crashDropship.getTargetType(), crashDropship
+                        .getTargetId(), crashDropship.getPosition());
+                ToHitData toHit = caa.toHit(game, true);
+            	resolveChargeDamage(entity, crashDropship, toHit, direction);
+                if ((entity.getMovementMode() == EntityMovementMode.WIGE)
+                        || (entity.getMovementMode() == EntityMovementMode.VTOL)) {
+                    int hitSide = (step.getFacing() - direction) + 6;
+                    hitSide %= 6;
+                    int table = 0;
+                    switch (hitSide) {// quite hackish...I think it ought to
+                        // work, though.
+                        case 0:// can this happen?
+                            table = ToHitData.SIDE_FRONT;
+                            break;
+                        case 1:
+                        case 2:
+                            table = ToHitData.SIDE_LEFT;
+                            break;
+                        case 3:
+                            table = ToHitData.SIDE_REAR;
+                            break;
+                        case 4:
+                        case 5:
+                            table = ToHitData.SIDE_RIGHT;
+                            break;
+                    }
+                    elevation = nextElevation;
+                    addReport(crashVTOLorWiGE((VTOL) entity, true, distance, curPos, elevation, table));
+                    break;
+                }
+            	if (!crashDropship.isDoomed() && !crashDropship.isDestroyed() && !game.isOutOfGame(crashDropship)) {
+                    break;
+                }
+            }
+            
             // Have skidding units suffer falls (off a cliff).
             else if (curAltitude > (nextAltitude + entity.getMaxElevationChange())) {
                 // WIGE can avoid this too, if they have 2MP to spend
@@ -4353,7 +4408,7 @@ public class Server implements Runnable {
 
                     // Mechs and vehicles get charged,
                     // but need to make a to-hit roll
-                    if ((target instanceof Mech) || (target instanceof Tank)) {
+                    if ((target instanceof Mech) || (target instanceof Tank) || (target instanceof Aero)) {
                         ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target
                                 .getTargetId(), target.getPosition());
                         ToHitData toHit = caa.toHit(game, true);
@@ -4888,6 +4943,7 @@ public class Server implements Runnable {
 
         int orig_crash_damage = Compute.d6(2) * 10 * vel;
         int crash_damage = orig_crash_damage;
+        int direction = entity.getFacing();
         // first check for buildings
         Building bldg = game.getBoard().getBuildingAt(c);
         if ((null != bldg) && (bldg.getType() == Building.HARDENED)) {
@@ -4951,6 +5007,7 @@ public class Server implements Runnable {
             if ((entity instanceof Dropship) && !(victim instanceof Mech)) {
                 vReport.addAll(destroyEntity(victim, "hit by crashing dropship"));
             } else {
+                crash_damage = orig_crash_damage / 2;
                 // roll dice to see if they got hit
                 int target = 2;
                 if (victim instanceof Infantry) {
@@ -4961,7 +5018,7 @@ public class Server implements Runnable {
                 r.indent();
                 r.addDesc(victim);
                 r.add(target);
-                r.add(orig_crash_damage);
+                r.add(crash_damage);
                 r.add(roll);
                 r.newlines = 0;
                 if (roll > target) {
@@ -4969,7 +5026,6 @@ public class Server implements Runnable {
                     vReport.add(r);
                     // apply half the crash damage in 5 point clusters (check
                     // hit tables)
-                    crash_damage = orig_crash_damage;
                     while (crash_damage > 0) {
                         HitData hit = victim.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                         if (victim instanceof Mech) {
@@ -4991,11 +5047,14 @@ public class Server implements Runnable {
 
             if (!victim.isDoomed() && !victim.isDestroyed()) {
                 // entity displacement
-                // TODO: it is unclear in what direction the entities should be
-                // displaced, until answered lets make it random
-                // http://www.classicbattletech.com/forums/index.php/topic,53909.new.html#new
-                doEntityDisplacement(victim, c, c.translated(Compute.d6() - 1), new PilotingRollData(victim.getId(), 0,
-                        "crash"));
+            	Coords dest = Compute.getValidDisplacement(game, victim.getId(), c, direction);
+            	if(null != dest) {
+	            	doEntityDisplacement(victim, c,dest, new PilotingRollData(victim.getId(), 0,
+	                        "crash"));
+            	} else if (!(victim instanceof Dropship)) {
+            		//destroy entity - but not dropships which are immovable
+                    addReport(destroyEntity(victim, "impossible displacement", victim instanceof Mech, victim instanceof Mech));
+            	}
             }
 
         }
@@ -5034,6 +5093,21 @@ public class Server implements Runnable {
             }
         }
         sendChangedHex(c);
+        
+        //check for a stacking violation - which should only happen in the case of 
+        //grounded dropships, because they are not moveable
+        if(null != Compute.stackingViolation(game, entity.getId(), c)) {
+        	Coords dest = Compute.getValidDisplacement(game, entity.getId(), c, Compute.d6()-1);
+        	if(null != dest) {
+        		doEntityDisplacement(entity, c,dest, null);
+        	} else {
+        		// ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                vPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
+                		entity instanceof Mech, entity instanceof Mech));
+        	}
+        }
 
         return vReport;
     }
@@ -9232,7 +9306,7 @@ public class Server implements Runnable {
 
             // determine to-hit number
             ToHitData toHit = new ToHitData(7, "base");
-            if (affaTarget instanceof Tank) {
+            if (affaTarget instanceof Tank || affaTarget instanceof Dropship) {
                 toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Target is a Tank");
             } else {
                 toHit.append(Compute.getTargetMovementModifier(game, affaTarget.getId()));
@@ -9283,18 +9357,22 @@ public class Server implements Runnable {
                     // stacking violation
                     Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
                     if (violation != null) {
+                    	PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
+                    	if(violation instanceof Dropship) {
+                    		violation = entity;
+                    		prd = null;
+                    	}
                         Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
                         if (targetDest != null) {
-                            vPhaseReport.addAll(doEntityDisplacement(affaTarget, dest, targetDest,
-                                    new PilotingRollData(violation.getId(), 2, "fallen on")));
+                            vPhaseReport.addAll(doEntityDisplacement(violation, dest, targetDest, prd));
                             // Update the violating entity's postion on the
                             // client.
-                            entityUpdate(affaTarget.getId());
+                            entityUpdate(violation.getId());
                         } else {
                             // ack! automatic death! Tanks
                             // suffer an ammo/power plant hit.
                             // TODO : a Mech suffers a Head Blown Off crit.
-                            vPhaseReport.addAll(destroyEntity(affaTarget, "impossible displacement",
+                            vPhaseReport.addAll(destroyEntity(violation, "impossible displacement",
                                     violation instanceof Mech, violation instanceof Mech));
                         }
                     }
@@ -9326,10 +9404,14 @@ public class Server implements Runnable {
             vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, roll));
             Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
             if (violation != null) {
+            	PilotingRollData prd = new PilotingRollData(violation.getId(), 0, "domino effect");
+            	if(violation instanceof Dropship) {
+            		violation = entity;
+            		prd = null;
+            	}
                 // target gets displaced, because of low elevation
                 Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
-                vPhaseReport.addAll(doEntityDisplacement(violation, dest, targetDest, new PilotingRollData(violation
-                        .getId(), 0, "domino effect")));
+                vPhaseReport.addAll(doEntityDisplacement(violation, dest, targetDest, prd));
                 // Update the violating entity's position on the client.
                 if (!game.getOutOfGameEntitiesVector().contains(violation)) {
                     entityUpdate(violation.getId());
@@ -26891,16 +26973,22 @@ public class Server implements Runnable {
         if (violated != null) {
             //StratOps explicitly says that this is not treated as an accident fall from above
             //so we just need to displace the violating unit
-            r = new Report(2390);
-            r.subject = entity.getId();
-            r.add(entity.getDisplayName(), true);
-            r.add(violated.getDisplayName(), true);
-            addReport(r);
+        	//check to see if the violatoing unit is a dropship and if so, then displace
+        	//the unit dropping instead
+            if(violated instanceof Dropship) {
+            	violated = entity;
+            }
             Coords targetDest = Compute.getValidDisplacement(game, violated.getId(), violated.getPosition(), Compute.d6()-1);
-            addReport(doEntityDisplacement(violated, violated.getPosition(), targetDest, new PilotingRollData(violated
-                    .getId(), 0, "assault drop")));
-            // Update the violating entity's postion on the client.
-            entityUpdate(violated.getId());
+            if(null != targetDest) {
+            	doEntityDisplacement(violated, violated.getPosition(), targetDest, null);
+                entityUpdate(violated.getId());
+        	} else {
+        		// ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mech suffers a Head Blown Off crit.
+                vPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
+                		entity instanceof Mech, entity instanceof Mech));
+        	}
         }
     }
 

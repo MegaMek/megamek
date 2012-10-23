@@ -61,6 +61,7 @@ v0.35.33-dev (SVN)
 + Bug 3600: Physical attacks on grounded dropships impossible
 + Bug 3524: Physicals permitted (but fail) for a srpinted unit.
 + Bug 3397: falling during combat drop
++ Bug 3601: Can't jump or VTOL fly over grounded dropships
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

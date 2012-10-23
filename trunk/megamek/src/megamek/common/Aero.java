@@ -2183,7 +2183,16 @@ public class Aero extends Entity {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+    	return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+    }
+    
+    @Override
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    	//if aeros are on the ground, they can only move at cruising speed
+    	if (!isAirborne()) {
+            return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+    	return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override

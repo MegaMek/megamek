@@ -1320,4 +1320,92 @@ public class Dropship extends SmallCraft {
         }
         return !game.getOptions().booleanOption("ind_weapons_grounded_dropper") || (isAirborne() || isSpaceborne());
     }
+    
+    @Override
+    public HitData rollHitLocation(int table, int side) {
+    	if(table == ToHitData.HIT_KICK || table == ToHitData.HIT_PUNCH) {
+    		//we don't really have any good rules on how to apply this,
+    		// I have a rules question posted about it:
+    		// http://bg.battletech.com/forums/index.php/topic,24077.new.html#new
+    		//in the meantime lets make up our own hit table (fun!)
+            int roll = Compute.d6(2);
+            if (side == ToHitData.SIDE_LEFT) {
+                // normal left-side hits
+                switch (roll) {
+                	case 2:
+                		setPotCrit(CRIT_GEAR);
+                		return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 3:
+                        setPotCrit(CRIT_LIFE_SUPPORT);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 4:
+                    	setPotCrit(CRIT_DOCK_COLLAR);
+                    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 5:
+                        setPotCrit(CRIT_LEFT_THRUSTER);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 6:
+                        setPotCrit(CRIT_CARGO);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 7:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 8:
+                        setPotCrit(CRIT_DOOR);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 9:
+                        setPotCrit(CRIT_LEFT_THRUSTER);
+                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                    case 10:
+                        setPotCrit(CRIT_AVIONICS);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 11:
+                        setPotCrit(CRIT_ENGINE);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 12:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                }
+            } else {
+                switch (roll) {
+                	case 2:
+                		setPotCrit(CRIT_GEAR);
+            			return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                	case 3:
+                		setPotCrit(CRIT_LIFE_SUPPORT);
+                		return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                	case 4:
+                		setPotCrit(CRIT_DOCK_COLLAR);
+                		return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                	case 5:
+                		setPotCrit(CRIT_RIGHT_THRUSTER);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 6:
+                        setPotCrit(CRIT_CARGO);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 7:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 8:
+                        setPotCrit(CRIT_DOOR);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 9:
+                        setPotCrit(CRIT_RIGHT_THRUSTER);
+                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 10:
+                        setPotCrit(CRIT_AVIONICS);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 11:
+                        setPotCrit(CRIT_ENGINE);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 12:
+                        setPotCrit(CRIT_WEAPON);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                }
+            }
+            return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+    	} else {
+    		return super.rollHitLocation(table, side);
+    	}
+    }
 }

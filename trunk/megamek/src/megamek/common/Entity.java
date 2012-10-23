@@ -7582,10 +7582,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // No physical attack works at distances > 1.
-            if ((target.getPosition() == null)
-                    || (getPosition().distance(target.getPosition()) > 1)) {
-                continue;
-            }
+            if (target.getPosition() != null && Compute.effectiveDistance(game, this, target) > 1) {
+            	continue;
+            }            
 
             canHit |= Compute.canPhysicalTarget(game, getId(), target);
             // check if we can dodge and target can attack us,

@@ -420,6 +420,14 @@ public class Compute {
             throw new IllegalArgumentException("Entity invalid.");
         }
 
+        //dropships should never be displaceable
+        //this should also take care of the situation of displacing another entity
+        //into a grounded droppers hex, because of the stacking violation check
+        //below
+        if(entity instanceof Dropship) {
+        	return false;
+        }
+        
         // an easy check
         if (!game.getBoard().contains(dest)) {
             if (game.getOptions().booleanOption("push_off_board")) {
@@ -468,10 +476,26 @@ public class Compute {
     public static Coords getValidDisplacement(IGame game, int entityId, Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
+        int range = 1;
+        //check for a central dropship hex and if so, then displace to a two hex radius 
+        Enumeration<Entity> entities = game.getEntities(src);
+        while(entities.hasMoreElements()) {
+            Entity en = entities.nextElement();
+            if(en instanceof Dropship && !en.isAirborne() && en.getPosition().equals(src)) {
+            	range = 2;
+            }
+        }        
         for (int offset : offsets) {
-            Coords dest = src.translated((direction + offset) % 6);
+            Coords dest = src.translated((direction + offset) % 6, range);
             if (Compute.isValidDisplacement(game, entityId, src, dest)) {
                 return dest;
+            }
+            //code here borrowed from Compute.coordsAtRange
+            for(int count = 1; count < range; count++) {
+            	dest = dest.translated((direction +offset + 2) % 6);
+            	if (Compute.isValidDisplacement(game, entityId, src, dest)) {
+                    return dest;
+                }
             }
         }
         // have fun being insta-killed!

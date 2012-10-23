@@ -26,6 +26,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.EntityWeightClass;
@@ -144,7 +145,22 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // check range
         if (src.distance(target.getPosition()) > 1) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
+        	if(null != te && null != te.getSecondaryPositions()) {
+        		boolean inSecondaryRange = false;
+        		for(int i : te.getSecondaryPositions().keySet()) {
+        			if(null != te.getSecondaryPositions().get(i)) {
+        				if(src.distance(te.getSecondaryPositions().get(i)) < 2) {
+        					inSecondaryRange = true;
+        					break;
+        				}
+        			}
+        		}
+        		if(!inSecondaryRange) {
+            		return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
+        		}
+        	} else {
+        		return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
+        	}
         }
 
         // mechs can only charge standing mechs
@@ -280,6 +296,18 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             toHit.setHitTable(ToHitData.HIT_NORMAL);
         }
 
+        //What to do with grounded dropships? Awaiting rules clarification, but 
+        //until then, we will assume that if the attacker height is less than half
+        //the target elevation, then use HIT_PUNCH, otherwise HIT_NORMAL
+        //See Dropship.rollHitLocation to see how HIT_PUNCH is handled
+        if(target instanceof Dropship) {
+        	if((attackerHeight - targetElevation) > (target.getHeight()/2)) {
+        		toHit.setHitTable(ToHitData.HIT_NORMAL);
+        	} else {
+        		toHit.setHitTable(ToHitData.HIT_PUNCH);
+        	}
+        }
+        
         //Attacking Weight Class Modifier.
         if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
             if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {
@@ -343,9 +371,24 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // need to reach target
-        if ((chargeStep == null) || !target.getPosition().equals(chargeStep.getPosition())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Could not reach target with movement");
+    	boolean isReachable = false;
+        if ((chargeStep != null)) {
+        	isReachable = target.getPosition().equals(chargeStep.getPosition());
+        	if(!isReachable && target instanceof Entity && null != ((Entity)target).getSecondaryPositions()) {
+        		for(int i : ((Entity)target).getSecondaryPositions().keySet()) {
+        			if(null != ((Entity)target).getSecondaryPositions().get(i)) {
+        				isReachable = ((Entity)target).getSecondaryPositions().get(i).equals(chargeStep.getPosition());
+        				if(isReachable) {
+        					break;
+        				}
+        			}
+        		}
+        	}     	
         }
+        if(!isReachable) {
+    		return new ToHitData(TargetRoll.IMPOSSIBLE, "Could not reach target with movement");
+    	}
+        
         if (!md.getSecondLastStep().isLegalEndPos()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Violation of stacking limit in second last step");
         }

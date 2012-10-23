@@ -16,6 +16,7 @@ package megamek.common.actions;
 
 import megamek.common.BipedMech;
 import megamek.common.Compute;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
@@ -274,7 +275,19 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
             }
         }
-
+        
+        //What to do with grounded dropships? Awaiting rules clarification, but 
+        //until then, we will assume that if the attacker height is less than half
+        //the target elevation, then use HIT_PUNCH, otherwise HIT_NORMAL
+        //See Dropship.rollHitLocation to see how HIT_PUNCH is handled
+        if(target instanceof Dropship) {
+        	if((attackerHeight - targetElevation) > (target.getHeight()/2)) {
+        		toHit.setHitTable(ToHitData.HIT_NORMAL);
+        	} else {
+        		toHit.setHitTable(ToHitData.HIT_PUNCH);
+        	}
+        }
+        
         // factor in target side
         toHit.setSideTable(Compute.targetSideTable(ae, target));
 

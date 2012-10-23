@@ -57,6 +57,7 @@ v0.35.33-dev (SVN)
 + Bug 3591: Fighters on ground maps - "Random"
 + Bug 3516: Collision with a dropship
 + Bug 3351: Wrong Damage of AI weapons vs. MechInf
++ Bug 3599: No flank speed for grounded aeros
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

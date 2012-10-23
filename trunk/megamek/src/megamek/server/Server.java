@@ -15432,6 +15432,10 @@ public class Server implements Runnable {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             if (entity instanceof Mech) {
+            	if(entity.isAirborne()) {
+            		//you can't fall over when you are combat dropping because you are already falling!
+            		continue;
+            	}
                 // if this mech has 20+ damage, add another roll to the list.
                 if (entity.damageThisPhase >= 20) {
                     if (game.getOptions().booleanOption("tacops_taking_damage")) {

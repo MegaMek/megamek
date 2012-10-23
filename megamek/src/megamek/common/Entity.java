@@ -7559,6 +7559,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!isActive()) {
             return false;
         }
+        
+        //sprinted?
+        if(moved == EntityMovementType.MOVE_SPRINT) {
+        	return false;
+        }
 
         if (getPosition() == null) {
             return false; // not on board?

@@ -10311,7 +10311,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     armorMod = .75;
                     break;
             }
-            armorPoints += Math.ceil(getTotalArmor() * armorMod);
+            armorPoints += Math.ceil(getArmor(loc) * armorMod);
 
         }
         if (this.hasModularArmor()) {

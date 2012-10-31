@@ -1495,16 +1495,24 @@ public abstract class Mech extends Entity {
      * Returns the number of heat sinks, functional or not.
      */
     public int heatSinks() {
+        return heatSinks(true);
+    }
+
+    /**
+     * Returns the number of heat sinks, functional or not.
+     * @param countPrototypes Set TRUE to include Prototype Heat Sinks in the total.
+     */
+    public int heatSinks(boolean countPrototypes) {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
             if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
                     && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE))) {
+                    || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
                 sinks += 2;
             } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
                     || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                    || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes)) {
                 sinks++;
             }
         }

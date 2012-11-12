@@ -189,6 +189,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_CARGOLIFTER = BigInteger.valueOf(1).shiftLeft(143);
     public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
     public static final BigInteger F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(145);
+    public static final BigInteger F_NAVAL_TUG_ADAPTOR = BigInteger.valueOf(1).shiftLeft(146);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -548,6 +549,8 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             // 10% of the weight, plus 0.5 tons for the extra sensors
             return (entity.getWeight() / 10) + 0.5f;
+        } else if (hasFlag(MiscType.F_NAVAL_TUG_ADAPTOR)) {
+            return (100 + (entity.getWeight() / 10.0f));
         }
         // okay, I'm out of ideas
         return 1.0f;
@@ -1129,6 +1132,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLSmallNavalCommScannerSuite());
         EquipmentType.addType(MiscType.createISLargeNavalCommScannerSuite());
         EquipmentType.addType(MiscType.createCLLargeNavalCommScannerSuite());
+        EquipmentType.addType(MiscType.createCLNavalTugAdaptor());
+        EquipmentType.addType(MiscType.createISNavalTugAdaptor());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -5727,6 +5732,32 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_C;
         misc.availRating = new int[]{RATING_C, RATING_D, RATING_C};
         misc.flags = misc.flags.or(F_MANIPULATOR).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        return misc;
+    }
+
+    public static MiscType createISNavalTugAdaptor() {
+        MiscType misc = new MiscType();
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = 100000;
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Naval Tug Adaptor";
+        misc.setInternalName("ISNavalTugAdaptor");
+        misc.techRating = RATING_C;
+        misc.availRating = new int[]{RATING_C, RATING_C, RATING_C};
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_NAVAL_TUG_ADAPTOR);
+        return misc;
+    }
+
+    public static MiscType createCLNavalTugAdaptor() {
+        MiscType misc = new MiscType();
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = 100000;
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Naval Tug Adaptor";
+        misc.setInternalName("CLNavalTugAdaptor");
+        misc.techRating = RATING_C;
+        misc.availRating = new int[]{RATING_C, RATING_C, RATING_C};
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_NAVAL_TUG_ADAPTOR);
         return misc;
     }
 

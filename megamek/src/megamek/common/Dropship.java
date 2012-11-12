@@ -150,10 +150,12 @@ public class Dropship extends SmallCraft {
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
+            if ((next instanceof MechBay) || (next instanceof ASFBay)
+                    || (next instanceof SmallCraftBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
-            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
+            if ((next instanceof LightVehicleBay)
+                    || (next instanceof HeavyVehicleBay)) {
                 bayCost += 10000 * next.totalSpace;
             }
         }
@@ -185,7 +187,8 @@ public class Dropship extends SmallCraft {
             return manualBV;
         }
 
-        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
+        bvText = new StringBuffer(
+                "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
         bvText.append(getChassis());
         bvText.append(" ");
@@ -201,8 +204,10 @@ public class Dropship extends SmallCraft {
 
         int modularArmor = 0;
         for (Mounted mounted : getEquipment()) {
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
+            if ((mounted.getType() instanceof MiscType)
+                    && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
+                modularArmor += mounted.getBaseDamageCapacity()
+                        - mounted.getDamageTaken();
             }
         }
 
@@ -267,7 +272,8 @@ public class Dropship extends SmallCraft {
             if (etype instanceof BayWeapon) {
                 continue;
             }
-            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
+            if (((etype instanceof WeaponType) && (etype
+                    .hasFlag(WeaponType.F_AMS)))) {
                 amsBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -280,12 +286,14 @@ public class Dropship extends SmallCraft {
                 bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-            } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
+            } else if ((etype instanceof AmmoType)
+                    && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
                 // we need to deal with cases where ammo is loaded in multi-ton
                 // increments
                 // (on dropships and jumpships) - lets take the ratio of shots
                 // to shots left
-                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
+                double ratio = mounted.getUsableShotsLeft()
+                        / ((AmmoType) etype).getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
                 // since
@@ -305,12 +313,14 @@ public class Dropship extends SmallCraft {
                 bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-            } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
+            } else if ((etype instanceof AmmoType)
+                    && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
                 // we need to deal with cases where ammo is loaded in multi-ton
                 // increments
                 // (on dropships and jumpships) - lets take the ratio of shots
                 // to shots left
-                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
+                double ratio = mounted.getUsableShotsLeft()
+                        / ((AmmoType) etype).getShots();
 
                 // if the ratio is less than one, we will treat as a full ton
                 // since
@@ -330,7 +340,8 @@ public class Dropship extends SmallCraft {
                 bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-            } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
+            } else if ((etype instanceof WeaponType)
+                    && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -528,7 +539,8 @@ public class Dropship extends SmallCraft {
                     continue;
                 }
                 // only count non-damaged equipment
-                if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
+                if (mounted.isMissing() || mounted.isHit()
+                        || mounted.isDestroyed() || mounted.isBreached()) {
                     continue;
                 }
                 WeaponType wtype = (WeaponType) mounted.getType();
@@ -547,7 +559,8 @@ public class Dropship extends SmallCraft {
                     continue;
                 }
                 // double heat for ultras
-                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                     weaponHeat *= 2;
                 }
                 // Six times heat for RAC
@@ -558,7 +571,9 @@ public class Dropship extends SmallCraft {
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
                     double mgaBV = 0;
                     for (Mounted possibleMG : getTotalWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG) && (possibleMG.getLocation() == mounted.getLocation())) {
+                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                                && (possibleMG.getLocation() == mounted
+                                        .getLocation())) {
                             mgaBV += possibleMG.getType().getBV(this);
                         }
                     }
@@ -573,24 +588,33 @@ public class Dropship extends SmallCraft {
                 // artemis bumps up the value
                 if (mounted.getLinkedBy() != null) {
                     Mounted mLinker = mounted.getLinkedBy();
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    if ((mLinker.getType() instanceof MiscType)
+                            && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         dBV *= 1.2;
                     }
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    if ((mLinker.getType() instanceof MiscType)
+                            && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                         dBV *= 1.3;
                     }
-                    if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    if ((mLinker.getType() instanceof MiscType)
+                            && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                         dBV *= 1.15;
                     }
                 }
                 // add up BV of ammo-using weapons for each type of weapon,
                 // to compare with ammo BV later for excessive ammo BV rule
-                if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA)) || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype.getAmmoType() == AmmoType.T_NA))) {
-                    String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
+                if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype
+                        .getAmmoType() == AmmoType.T_PLASMA))
+                        || wtype.hasFlag(WeaponType.F_ONESHOT)
+                        || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
+                            .getAmmoType() == AmmoType.T_NA))) {
+                    String key = wtype.getAmmoType() + ":"
+                            + wtype.getRackSize();
                     if (!weaponsForExcessiveAmmo.containsKey(key)) {
                         weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
                     } else {
-                        weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
+                        weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
+                                + weaponsForExcessiveAmmo.get(key));
                     }
                 }
                 bvText.append(startRow);
@@ -676,7 +700,8 @@ public class Dropship extends SmallCraft {
                 bvText.append(startColumn);
                 if (weaponsForExcessiveAmmo.get(key) != null) {
                     if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
-                        bvText.append("+" + weaponsForExcessiveAmmo.get(key) + "*");
+                        bvText.append("+" + weaponsForExcessiveAmmo.get(key)
+                                + "*");
                         arcAmmoBV += weaponsForExcessiveAmmo.get(key);
                     } else {
                         bvText.append("+" + ammo.get(key));
@@ -691,7 +716,8 @@ public class Dropship extends SmallCraft {
             }
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append("<b>" + getLocationName(l) + rear + " Weapon Totals</b>");
+            bvText.append("<b>" + getLocationName(l) + rear
+                    + " Weapon Totals</b>");
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append("<b>" + arcBV + "</b>");
@@ -702,7 +728,8 @@ public class Dropship extends SmallCraft {
             bvText.append(endRow);
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append("<b>" + getLocationName(l) + rear + " Ammo Totals</b>");
+            bvText.append("<b>" + getLocationName(l) + rear
+                    + " Ammo Totals</b>");
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append("<b>" + arcAmmoBV + "</b>");
@@ -797,7 +824,8 @@ public class Dropship extends SmallCraft {
             // ok now add the BV from this arc and reset to zero
             bvText.append(startRow);
             bvText.append(startColumn);
-            bvText.append("Highest BV Arc (" + getArcName(highArc) + ")" + arcBVs[highArc] + "*1.0");
+            bvText.append("Highest BV Arc (" + getArcName(highArc) + ")"
+                    + arcBVs[highArc] + "*1.0");
             bvText.append(endColumn);
             bvText.append(startColumn);
             bvText.append("+" + arcBVs[highArc]);
@@ -813,7 +841,8 @@ public class Dropship extends SmallCraft {
             if (adjArcH > Integer.MIN_VALUE) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Adjacent High BV Arc (" + getArcName(adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult);
+                bvText.append("Adjacent High BV Arc (" + getArcName(adjArcH)
+                        + ") " + arcBVs[adjArcH] + "*" + adjArcHMult);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+" + (arcBVs[adjArcH] * adjArcHMult));
@@ -835,7 +864,8 @@ public class Dropship extends SmallCraft {
             if (adjArcL > Integer.MIN_VALUE) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append("Adjacent Low BV Arc (" + getArcName(adjArcL) + ") " + arcBVs[adjArcL] + "*" + adjArcLMult);
+                bvText.append("Adjacent Low BV Arc (" + getArcName(adjArcL)
+                        + ") " + arcBVs[adjArcL] + "*" + adjArcLMult);
                 bvText.append(endColumn);
                 bvText.append(startColumn);
                 bvText.append("+" + (adjArcLMult * arcBVs[adjArcL]));
@@ -930,7 +960,8 @@ public class Dropship extends SmallCraft {
         // adjust
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
+        double speedFactor = Math
+                .pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         bvText.append(startRow);
@@ -1054,7 +1085,9 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT) && (atype.getAmmoType() == wtype.getAmmoType()) && (atype.getRackSize() == wtype.getRackSize())) {
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+                && (atype.getAmmoType() == wtype.getAmmoType())
+                && (atype.getRackSize() == wtype.getRackSize())) {
             mounted.setLinked(mountedAmmo);
             success = true;
         }
@@ -1063,6 +1096,7 @@ public class Dropship extends SmallCraft {
 
     /*
      * (non-Javadoc)
+     *
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
@@ -1215,7 +1249,8 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption("stratops_ecm")
+                || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() > Entity.NONE;
@@ -1229,7 +1264,8 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption("stratops_ecm")
+                || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -1257,24 +1293,32 @@ public class Dropship extends SmallCraft {
 
     /*
      * (non-Javadoc)
+     *
      * @see megamek.common.Entity#setPosition(megamek.common.Coords)
      */
     @Override
     public void setPosition(Coords position) {
         super.setPosition(position);
-        if ((getAltitude() == 0) && !game.getBoard().inSpace() && (position != null)) {
+        if ((getAltitude() == 0) && !game.getBoard().inSpace()
+                && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));
-            secondaryPositions.put(2, position.translated((getFacing() + 1) % 6));
-            secondaryPositions.put(3, position.translated((getFacing() + 2) % 6));
-            secondaryPositions.put(4, position.translated((getFacing() + 3) % 6));
-            secondaryPositions.put(5, position.translated((getFacing() + 4) % 6));
-            secondaryPositions.put(6, position.translated((getFacing() + 5) % 6));
+            secondaryPositions.put(2,
+                    position.translated((getFacing() + 1) % 6));
+            secondaryPositions.put(3,
+                    position.translated((getFacing() + 2) % 6));
+            secondaryPositions.put(4,
+                    position.translated((getFacing() + 3) % 6));
+            secondaryPositions.put(5,
+                    position.translated((getFacing() + 4) % 6));
+            secondaryPositions.put(6,
+                    position.translated((getFacing() + 5) % 6));
         }
     }
 
     /*
      * (non-Javadoc)
+     *
      * @see megamek.common.Entity#setFacing(int)
      */
     @Override
@@ -1318,44 +1362,50 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return !game.getOptions().booleanOption("ind_weapons_grounded_dropper") || (isAirborne() || isSpaceborne());
+        return !game.getOptions().booleanOption("ind_weapons_grounded_dropper")
+                || (isAirborne() || isSpaceborne());
     }
-    
+
     @Override
     public HitData rollHitLocation(int table, int side) {
-    	if(table == ToHitData.HIT_KICK || table == ToHitData.HIT_PUNCH) {
-    		//we don't really have any good rules on how to apply this,
-    		// I have a rules question posted about it:
-    		// http://bg.battletech.com/forums/index.php/topic,24077.new.html#new
-    		//in the meantime lets make up our own hit table (fun!)
+        if ((table == ToHitData.HIT_KICK) || (table == ToHitData.HIT_PUNCH)) {
+            // we don't really have any good rules on how to apply this,
+            // I have a rules question posted about it:
+            // http://bg.battletech.com/forums/index.php/topic,24077.new.html#new
+            // in the meantime lets make up our own hit table (fun!)
             int roll = Compute.d6(2);
             if (side == ToHitData.SIDE_LEFT) {
                 // normal left-side hits
                 switch (roll) {
-                	case 2:
-                		setPotCrit(CRIT_GEAR);
-                		return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 2:
+                        setPotCrit(CRIT_GEAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                     case 3:
                         setPotCrit(CRIT_LIFE_SUPPORT);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                     case 4:
-                    	setPotCrit(CRIT_DOCK_COLLAR);
-                    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                        setPotCrit(CRIT_DOCK_COLLAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
                     case 5:
                         setPotCrit(CRIT_LEFT_THRUSTER);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LWING, false,
+                                HitData.EFFECT_NONE);
                     case 6:
                         setPotCrit(CRIT_CARGO);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LWING, false,
+                                HitData.EFFECT_NONE);
                     case 7:
                         setPotCrit(CRIT_WEAPON);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LWING, false,
+                                HitData.EFFECT_NONE);
                     case 8:
                         setPotCrit(CRIT_DOOR);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LWING, false,
+                                HitData.EFFECT_NONE);
                     case 9:
                         setPotCrit(CRIT_LEFT_THRUSTER);
-                        return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_LWING, false,
+                                HitData.EFFECT_NONE);
                     case 10:
                         setPotCrit(CRIT_AVIONICS);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -1368,30 +1418,35 @@ public class Dropship extends SmallCraft {
                 }
             } else {
                 switch (roll) {
-                	case 2:
-                		setPotCrit(CRIT_GEAR);
-            			return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                	case 3:
-                		setPotCrit(CRIT_LIFE_SUPPORT);
-                		return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                	case 4:
-                		setPotCrit(CRIT_DOCK_COLLAR);
-                		return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-                	case 5:
-                		setPotCrit(CRIT_RIGHT_THRUSTER);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                    case 2:
+                        setPotCrit(CRIT_GEAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 3:
+                        setPotCrit(CRIT_LIFE_SUPPORT);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 4:
+                        setPotCrit(CRIT_DOCK_COLLAR);
+                        return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                    case 5:
+                        setPotCrit(CRIT_RIGHT_THRUSTER);
+                        return new HitData(LOC_RWING, false,
+                                HitData.EFFECT_NONE);
                     case 6:
                         setPotCrit(CRIT_CARGO);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RWING, false,
+                                HitData.EFFECT_NONE);
                     case 7:
                         setPotCrit(CRIT_WEAPON);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RWING, false,
+                                HitData.EFFECT_NONE);
                     case 8:
                         setPotCrit(CRIT_DOOR);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RWING, false,
+                                HitData.EFFECT_NONE);
                     case 9:
                         setPotCrit(CRIT_RIGHT_THRUSTER);
-                        return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                        return new HitData(LOC_RWING, false,
+                                HitData.EFFECT_NONE);
                     case 10:
                         setPotCrit(CRIT_AVIONICS);
                         return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
@@ -1404,8 +1459,14 @@ public class Dropship extends SmallCraft {
                 }
             }
             return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	} else {
-    		return super.rollHitLocation(table, side);
-    	}
+        } else {
+            return super.rollHitLocation(table, side);
+        }
     }
+
+    @Override
+    public boolean isPrimitive() {
+        return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE;
+    }
+
 }

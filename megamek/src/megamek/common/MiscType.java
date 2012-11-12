@@ -3170,7 +3170,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.ISIMPROVED);
-        misc.addLookupName("BAP (2 Hex)");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT);
@@ -3184,7 +3183,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel = TechConstants.T_CLAN_TW;
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.CLIMPROVED);
-        misc.addLookupName("BAP (3 Hex)");
         misc.tonnage = 0.0f;
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT);

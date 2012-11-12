@@ -67,6 +67,8 @@ v0.35.33-dev (SVN)
         prototypes.
 + Bug: Fixed UAC5 and UAC5 Prototype Aero ranges and damage
 + Bug: add support for C*/WoB BA Bays 
++ Added naval tug adaptor construction data
++ Bug: transport bays not properly encoding when writing BLK files
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

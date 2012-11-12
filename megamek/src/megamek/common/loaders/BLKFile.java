@@ -648,6 +648,8 @@ public class BLKFile {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         // if no bay number is specified, we default to 1
+                    } catch (NumberFormatException ex) {
+                        // if not a number, check for c* bay
                         if (temp[2].equalsIgnoreCase("c*")) {
                             comstar = true;
                         }

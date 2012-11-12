@@ -104,6 +104,6 @@ public final class LightVehicleBay extends Bay {
 
     @Override
     public String toString() {
-        return "lightvehiclebay:" + totalSpace + ":" + doors;
+        return "lightvehiclebay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 } // End package class TroopSpace implements Transporter

@@ -97,7 +97,7 @@ public final class LivestockCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "livestockcargobay:" + totalSpace + ":" + doors;
+        return "livestockcargobay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
 }

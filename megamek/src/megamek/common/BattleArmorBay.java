@@ -27,6 +27,7 @@ public final class BattleArmorBay extends Bay {
     private static final long serialVersionUID = 7091227399812361916L;
 
     private boolean isClan = false;
+    private boolean isComStar = false;
 
     /**
      * The default constructor is only for serialization.
@@ -47,13 +48,14 @@ public final class BattleArmorBay extends Bay {
      *            - The weight of troops (in tons) this space can carry.
      * @param bayNumber
      */
-    public BattleArmorBay(double space, int doors, int bayNumber, boolean isClan) {
+    public BattleArmorBay(double space, int doors, int bayNumber, boolean isClan, boolean isComStar) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
         this.isClan = isClan;
+        this.isComStar = isComStar;
     }
 
     /**
@@ -92,7 +94,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getUnusedString() {
-        return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? isClan?" Points":" Squads" : isClan?" Point":" Squad");
+        return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? isClan?" Points":isComStar?" Level I":" Squads" : isClan?" Point":isComStar?" Level I":" Squad");
     }
 
     @Override
@@ -102,12 +104,12 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public float getWeight() {
-        return (float) totalSpace * 2 * (isClan?5:4);
+        return (float) totalSpace * 2 * (isClan?5:isComStar?6:4);
     }
 
     @Override
     public String toString() {
-        return "battlearmorbay:" + totalSpace + ":" + doors;
+        return "battlearmorbay:" + totalSpace + ":" + doors + ":"+bayNumber+(isComStar?":C*":"");
     }
 
 }

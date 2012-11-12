@@ -101,7 +101,7 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String toString() {
-        return "infantrybay:" + totalSpace + ":" + doors;
+        return "infantrybay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
 } // End package class TroopSpace implements Transporter

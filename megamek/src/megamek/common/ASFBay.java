@@ -242,6 +242,6 @@ public final class ASFBay extends Bay {
 
     @Override
     public String toString() {
-        return "asfbay:" + totalSpace + ":" + doors;
+        return "asfbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 }

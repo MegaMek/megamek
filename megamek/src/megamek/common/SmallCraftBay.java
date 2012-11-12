@@ -240,7 +240,7 @@ public final class SmallCraftBay extends Bay {
 
     @Override
     public String toString() {
-        return "smallcraftbay:" + totalSpace + ":" + doors;
+        return "smallcraftbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
 } // End package class TroopSpace implements Transporter

@@ -104,7 +104,7 @@ public final class ProtomechBay extends Bay {
 
     @Override
     public String toString() {
-        return "protomechbay:" + totalSpace + ":" + doors;
+        return "protomechbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
 } // End package class TroopSpace implements Transporter

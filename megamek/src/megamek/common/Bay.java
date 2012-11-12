@@ -345,7 +345,7 @@ public class Bay implements Transporter {
 
     @Override
     public String toString() {
-        return "bay:" + totalSpace + ":" + doors;
+        return "bay:" + totalSpace + ":" + doors + ":"+ bayNumber;
     }
 
     public double getCapacity() {

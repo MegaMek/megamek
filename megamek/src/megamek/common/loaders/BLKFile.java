@@ -338,7 +338,7 @@ public class BLKFile {
              blk.writeBlockData("transporters", tran.toString());
          }
 
-         if(!(t instanceof Infantry && !(t instanceof BattleArmor))) {
+         if(!((t instanceof Infantry) && !(t instanceof BattleArmor))) {
         	 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
          }
 
@@ -416,7 +416,7 @@ public class BLKFile {
              }
          }
          for (int i = 0; i < t.locations(); i++) {
-        	 if(!((t instanceof Infantry && !(t instanceof BattleArmor)) && i == Infantry.LOC_INFANTRY)) {
+        	 if(!(((t instanceof Infantry) && !(t instanceof BattleArmor)) && (i == Infantry.LOC_INFANTRY))) {
         		 blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         	 }
          }
@@ -451,7 +451,7 @@ public class BLKFile {
              blk.writeBlockData("armor", new int[]{ba.getArmor(1)});
              blk.writeBlockData("Trooper Count", (int)t.getWeight());
              blk.writeBlockData("weightclass", ba.getWeightClass());
-         } 
+         }
          else if(t instanceof Infantry) {
         	 Infantry infantry = (Infantry)t;
              blk.writeBlockData("squad_size", infantry.getSquadSize());
@@ -498,7 +498,7 @@ public class BLKFile {
     }
 
     public static void encode(String fileName, Entity t) {
-    	BuildingBlock blk = BLKFile.getBlock(t);
+        BuildingBlock blk = BLKFile.getBlock(t);
         blk.writeBlockFile(fileName);
     }
 
@@ -643,12 +643,21 @@ public class BLKFile {
                     String temp[] = numbers.split(":");
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
+                    boolean comstar = false;
                     try {
                         bayNumber = Integer.parseInt(temp[2]);
                     } catch (ArrayIndexOutOfBoundsException ex) {
-                        // if no bay nunber is specified, we default to 1
+                        // if no bay number is specified, we default to 1
+                        if (temp[2].equalsIgnoreCase("c*")) {
+                            comstar = true;
+                        }
                     }
-                    e.addTransporter(new BattleArmorBay(size, doors, bayNumber, e.isClan()));
+                    if (temp.length == 4) {
+                        if (temp[4].equalsIgnoreCase("c*")) {
+                            comstar = true;
+                        }
+                    }
+                    e.addTransporter(new BattleArmorBay(size, doors, bayNumber, e.isClan(), comstar));
                 } else if (transporter.startsWith("bay:", 0)) {
                     String numbers = transporter.substring(4);
                     String temp[] = numbers.split(":");

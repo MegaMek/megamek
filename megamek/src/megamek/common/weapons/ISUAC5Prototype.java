@@ -56,6 +56,10 @@ public class ISUAC5Prototype extends UACWeapon {
         bv = 112;
         cost = 200000;
         explosionDamage = damage;
+        shortAV = 7;
+        medAV = 7;
+        longAV = 7;
+        maxRange = RANGE_LONG;
     }
 
     /*

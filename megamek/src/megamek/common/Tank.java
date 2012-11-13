@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.SRMWeapon;
 import megamek.common.weapons.SRTWeapon;
@@ -227,7 +228,7 @@ public class Tank extends Entity {
         if (!ignoremodulararmor && hasModularArmor()) {
             j--;
         }
-        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY) && (game != null)) {
             j--;
         }
 

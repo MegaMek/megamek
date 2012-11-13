@@ -41,9 +41,9 @@ v0.35.33-dev (SVN)
 + improvements to damage reporting for aeros
 + Bug 3254: NPE in PilotMapSet
 + Bug 3351: Wrong Damage of AI weapons vs. MechInf
-		but see http://bg.battletech.com/forums/index.php/topic,23928.0.html
+    but see http://bg.battletech.com/forums/index.php/topic,23928.0.html
 + Bug: Images from data/images/fluff/* not displaying in Linux AND FluffImageHelper.java
-        using File.exists() instead of File.isFile() allowing directories to be incorrectly matched
+    using File.exists() instead of File.isFile() allowing directories to be incorrectly matched
 + Bug 3062: 0 MP infantry cannot climb stairs
 + Bug 3326: Swarm w/ Conventional Infantry
 + Bug 3112: Sylph getting stuck with combat drop
@@ -69,6 +69,8 @@ v0.35.33-dev (SVN)
 + Bug: add support for C*/WoB BA Bays 
 + Added naval tug adaptor construction data
 + Bug: transport bays not properly encoding when writing BLK files
++ Bug with bays
++ Dune Buggy MP reduction not shown outside of games, to match TROs
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

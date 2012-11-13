@@ -655,7 +655,7 @@ public class BLKFile {
                         }
                     }
                     if (temp.length == 4) {
-                        if (temp[4].equalsIgnoreCase("c*")) {
+                        if (temp[3].equalsIgnoreCase("c*")) {
                             comstar = true;
                         }
                     }

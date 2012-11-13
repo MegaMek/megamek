@@ -261,8 +261,12 @@ public class Bay implements Transporter {
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString() {
+    public String getUnusedString(boolean showrecovery) {
         return " - " + currentSpace + (currentSpace > 1 ? " units" : " unit");
+    }
+
+    public String getUnusedString() {
+        return getUnusedString(true);
     }
 
     /**

@@ -71,7 +71,8 @@ public final class ASFBay extends Bay {
         boolean result = false;
 
         // Only ASFs
-        if ((unit instanceof Aero) && !(unit instanceof FighterSquadron) && !(unit instanceof SmallCraft) && !(unit instanceof Jumpship)) {
+        if ((unit instanceof Aero) && !(unit instanceof FighterSquadron)
+                && !(unit instanceof SmallCraft) && !(unit instanceof Jumpship)) {
             result = true;
         }
 
@@ -103,7 +104,8 @@ public final class ASFBay extends Bay {
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not load "
+                    + unit.getShortName() + " into this bay. " + currentSpace);
         }
 
         currentSpace -= 1;
@@ -117,7 +119,8 @@ public final class ASFBay extends Bay {
     public void recover(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
-            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + currentSpace);
+            throw new IllegalArgumentException("Can not recover "
+                    + unit.getShortName() + " into this bay. " + currentSpace);
         }
 
         currentSpace -= 1;
@@ -130,10 +133,14 @@ public final class ASFBay extends Bay {
     }
 
     @Override
-    public String getUnusedString() {
-        // "Aerospace Fighter - " + String.format("%1$,.0f", currentSpace) +
-        // " units (" + getRecoverySlots() + " recovery open)";
-        return String.format("Aerospace Fighter Bay - %1$,.0f", currentSpace) + (currentSpace > 1 ? " units" : " unit");
+    public String getUnusedString(boolean showrecovery) {
+        if (showrecovery) {
+            return "Aerospace Fighter - "
+                    + String.format("%1$,.0f", currentSpace) + " units ("
+                    + getRecoverySlots() + " recovery open)";
+        }
+        return String.format("Aerospace Fighter Bay - %1$,.0f", currentSpace)
+                + (currentSpace > 1 ? " units" : " unit");
     }
 
     @Override
@@ -242,6 +249,6 @@ public final class ASFBay extends Bay {
 
     @Override
     public String toString() {
-        return "asfbay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        return "asfbay:" + totalSpace + ":" + doors + ":" + bayNumber;
     }
 }

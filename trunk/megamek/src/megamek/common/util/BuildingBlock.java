@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BuildingBlock.java
- * 
+ *
  * Created on April 2, 2002, 1:57 PM
  */
 
 /**
- * 
+ *
  * @author Nate Rowden
  * @version 1
  */
@@ -31,10 +31,12 @@ package megamek.common.util; // add to this package so BLKMechFile can read
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Vector;
 
 /**
@@ -58,7 +60,7 @@ public class BuildingBlock {
     /**
      * Creates a new buildingBlock and fills it with the data in the String[]
      * array.
-     * 
+     *
      * @param data
      *            This is most usefull for storing one block file inside
      *            another...but <I>data</I> can be an array of anything...such
@@ -72,7 +74,7 @@ public class BuildingBlock {
 
     /**
      * Creates a new buildingBlock and fills it with the Vector.
-     * 
+     *
      * @param data
      *            The Vector can be filled with anything.
      */
@@ -90,41 +92,46 @@ public class BuildingBlock {
         String data;
         BufferedReader in;
 
-        in = new BufferedReader(new InputStreamReader(is));
-
-        // empty the rawData holder...
-        rawData.clear();
-
         try {
+            in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            // empty the rawData holder...
+            rawData.clear();
 
-            // read the file till can't read no more...
-            while (in.ready()) {
+            try {
 
-                data = in.readLine();
-                if (data == null) {
-                    continue;
+                // read the file till can't read no more...
+                while (in.ready()) {
+
+                    data = in.readLine();
+                    if (data == null) {
+                        continue;
+                    }
+                    data = data.trim();
+
+                    // check for blank lines & comment lines...
+                    // don't add them to the rawData if they are
+                    if ((data.length() > 0) && !data.startsWith("" + BuildingBlock.comment)) {
+                        rawData.add(data);
+                    }
                 }
-                data = data.trim();
-
-                // check for blank lines & comment lines...
-                // don't add them to the rawData if they are
-                if ((data.length() > 0) && !data.startsWith("" + BuildingBlock.comment)) {
-                    rawData.add(data);
-                }
+                in.close();
+            } catch (IOException e) {
+                System.err.println("An IO Exception occured while attempting to read a BuildingBlock stream."); //$NON-NLS-1$
+                return false;
             }
-            in.close();
-        } catch (IOException e) {
-            System.err.println("An IO Exception occured while attempting to read a BuildingBlock stream."); //$NON-NLS-1$
+            return true;
+        } catch (UnsupportedEncodingException e1) {
+            System.err.println("An UnsupportedEncodingException occured while attempting to read a BuildingBlock stream."); //$NON-NLS-1$
             return false;
         }
-        return true;
+
     }
 
     /**
      * Finds the starting index of a block. This is used by the class to locate
      * data, but is a public function that can be useful if you know what you
      * want to do with the <CODE>rawData</CODE> Vector.
-     * 
+     *
      * @param blockName
      *            The name of the data block to locate.
      * @return Returns the start index of the block data. Or -1 if not found.
@@ -174,7 +181,7 @@ public class BuildingBlock {
      * Finds the starting index of a block. This is used by the class to locate
      * data, but is a public function that can be useful if you know what you
      * want to do with the <CODE>rawData</CODE> Vector.
-     * 
+     *
      * @param blockName
      *            The name of the data block to locate.
      * @return Returns the end index of the block data. Or -1 if not found.
@@ -220,7 +227,7 @@ public class BuildingBlock {
 
     /**
      * Gets data from inside a block.
-     * 
+     *
      * @param blockName
      *            The name of the block to grab the data from.
      * @return Returns an array of data.
@@ -384,7 +391,7 @@ public class BuildingBlock {
 
     /**
      * Gets data from a block.
-     * 
+     *
      * @param blockName
      *            Name of the block to get data from.
      * @return Returns the data as a Vector.
@@ -422,7 +429,7 @@ public class BuildingBlock {
     /**
      * Clears the <CODE>rawData</CODE> Vector and inserts a default comment and
      * <I>BlockVersion</I> information.
-     * 
+     *
      * @return Returns true on success.
      */
     public boolean createNewBlock() {
@@ -518,7 +525,7 @@ public class BuildingBlock {
 
     /**
      * Writes a data block to the <CODE>rawData</CODE> vector.
-     * 
+     *
      * @param blockName
      *            Name of the block to be created.
      * @param blockData
@@ -542,7 +549,7 @@ public class BuildingBlock {
 
     /**
      * Writes a comment.
-     * 
+     *
      * @param theComment
      *            The comment to be written.
      * @return Returns true on success.
@@ -556,7 +563,7 @@ public class BuildingBlock {
 
     /**
      * Writes the buildingBlock data to a file.
-     * 
+     *
      * @param fileName
      *            File to write. Overwrites existing files.
      * @return Returns true on success.
@@ -575,9 +582,7 @@ public class BuildingBlock {
 
         try {
 
-            // file.createNewFile();
-
-            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
 
             for (int c = 0; c < rawData.size(); c++) {
 
@@ -608,7 +613,7 @@ public class BuildingBlock {
 
     /**
      * Gets the size of the <CODE>rawData</CODE> Vector.
-     * 
+     *
      * @return Returns <CODE>rawData.size()</CODE>
      */
     public int dataSize() {
@@ -619,7 +624,7 @@ public class BuildingBlock {
 
     /**
      * Converts a String array into a Vector.
-     * 
+     *
      * @param stringArray
      *            The String array to convert.
      * @return Returns the Vector created by the String[]
@@ -653,7 +658,7 @@ public class BuildingBlock {
 
     /**
      * Useful if you want to copy one buildingBlock into another.
-     * 
+     *
      * @return Returns the <CODE>rawData</CODE> Vector.
      */
     public Vector<String> getVector() {
@@ -664,7 +669,7 @@ public class BuildingBlock {
 
     /**
      * Gets all the data inside the <CODE>rawData</CODE> Vector.
-     * 
+     *
      * @return Returns the data as a String array
      */
     public String[] getAllDataAsString() {
@@ -683,7 +688,7 @@ public class BuildingBlock {
 
     /**
      * Just about the same as the <CODE>getVector()</CODE> command.
-     * 
+     *
      * @see getVector ()
      * @return Returns the <CODE>rawData</CODE> Vector.
      */
@@ -698,7 +703,7 @@ public class BuildingBlock {
     /**
      * Tells you the size of an array this thing returned by giving you the
      * number in the [0] position.
-     * 
+     *
      * @param array
      *            The array to get the size of.
      * @return Returns the number in the [0] position.
@@ -753,7 +758,7 @@ public class BuildingBlock {
 
     /**
      * Counts the size of an array.
-     * 
+     *
      * @param array
      *            The array to count.
      * @return Returns the array's size.

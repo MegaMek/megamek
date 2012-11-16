@@ -40,6 +40,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
     public Entity getEntity() throws EntityLoadingException {
 
+        boolean superheavy = false;
+
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
@@ -56,23 +58,27 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             case HOVER:
                 if (weight > 50) {
                     t = new SuperHeavyTank();
+                    superheavy = true;
                 }
                 break;
             case NAVAL:
             case SUBMARINE:
                 if (weight > 300) {
                     t = new SuperHeavyTank();
+                    superheavy = true;
                 }
                 break;
             case TRACKED:
                 if (weight > 100) {
                     t = new SuperHeavyTank();
+                    superheavy = true;
                 }
                 break;
             case WHEELED:
             case WIGE:
                 if (weight > 80) {
                     t = new SuperHeavyTank();
+                    superheavy = true;
                 }
                 break;
         }
@@ -178,18 +184,38 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
 
-        loadEquipment(t, "Front", Tank.LOC_FRONT);
-        loadEquipment(t, "Right", Tank.LOC_RIGHT);
-        loadEquipment(t, "Left", Tank.LOC_LEFT);
-        loadEquipment(t, "Rear", Tank.LOC_REAR);
-        if (t.hasNoDualTurret()) {
-            if (!t.hasNoTurret()) {
-                loadEquipment(t, "Turret", Tank.LOC_TURRET);
+        if (superheavy) {
+            loadEquipment(t, "Front", Tank.LOC_FRONT);
+            loadEquipment(t, "Front Right", SuperHeavyTank.LOC_FRONTRIGHT);
+            loadEquipment(t, "Front Left", SuperHeavyTank.LOC_FRONTLEFT);
+            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REARLEFT);
+            loadEquipment(t, "Rear Left", SuperHeavyTank.LOC_REARRIGHT);
+            loadEquipment(t, "Rear", SuperHeavyTank.LOC_REAR);
+            if (t.hasNoDualTurret()) {
+                if (!t.hasNoTurret()) {
+                    loadEquipment(t, "Turret", SuperHeavyTank.LOC_TURRET);
+                }
+            } else {
+                loadEquipment(t, "Rear Turret", SuperHeavyTank.LOC_TURRET);
+                loadEquipment(t, "Front Turret", SuperHeavyTank.LOC_TURRET_2);
             }
+
         } else {
-            loadEquipment(t, "Rear Turret", Tank.LOC_TURRET);
-            loadEquipment(t, "Front Turret", Tank.LOC_TURRET_2);
+            loadEquipment(t, "Front", Tank.LOC_FRONT);
+            loadEquipment(t, "Right", Tank.LOC_RIGHT);
+            loadEquipment(t, "Left", Tank.LOC_LEFT);
+            loadEquipment(t, "Rear", Tank.LOC_REAR);
+            if (t.hasNoDualTurret()) {
+                if (!t.hasNoTurret()) {
+                    loadEquipment(t, "Turret", Tank.LOC_TURRET);
+                }
+            } else {
+                loadEquipment(t, "Rear Turret", Tank.LOC_TURRET);
+                loadEquipment(t, "Front Turret", Tank.LOC_TURRET_2);
+            }
         }
+
+
 
         loadEquipment(t, "Body", Tank.LOC_BODY);
 

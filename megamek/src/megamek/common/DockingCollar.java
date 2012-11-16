@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -25,9 +25,9 @@ import java.util.Vector;
 public class DockingCollar implements Transporter {
 
     // Private attributes and helper functions.
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4699786673513410716L;
 
@@ -37,7 +37,7 @@ public class DockingCollar implements Transporter {
     /* package */ Vector<Entity> troops = new Vector<Entity>();
 
     private boolean damaged = false;
-    
+
     /**
      * The total amount of space available for troops.
      */
@@ -85,12 +85,12 @@ public class DockingCollar implements Transporter {
     /**
      * The default constructor is only for serialization.
      */
-   
+
     protected DockingCollar() {
-        this.totalSpace = 0;
-        this.currentSpace = 0;
+        totalSpace = 0;
+        currentSpace = 0;
     }
-   
+
 
     // Public constructors and methods.
 
@@ -102,8 +102,8 @@ public class DockingCollar implements Transporter {
      * @param   space - The weight of troops (in tons) this space can carry.
      */
     public DockingCollar( int docks ) {
-        this.totalSpace = 1;
-        this.currentSpace = 1;
+        totalSpace = 1;
+        currentSpace = 1;
     }
 
 
@@ -124,7 +124,7 @@ public class DockingCollar implements Transporter {
         if(unit instanceof Dropship) {
             Dropship ds = (Dropship)unit;
             result = true;
-            if(ds.isDockCollarDamaged()) 
+            if(ds.isDockCollarDamaged())
                 result = false;
         }
 
@@ -134,13 +134,13 @@ public class DockingCollar implements Transporter {
             result = false;
         }
         */
-        
+
         // Return our result.
         return result;
     }
 
     /**
-     * Load the given unit.  
+     * Load the given unit.
      *
      * @param   unit - the <code>Entity</code> to be loaded.
      * @exception - If the unit can't be loaded, an
@@ -148,7 +148,7 @@ public class DockingCollar implements Transporter {
      */
     public void load( Entity unit ) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
-        if ( !this.canLoad(unit) ) {
+        if ( !canLoad(unit) ) {
             throw new IllegalArgumentException( "Can not load " +
                         unit.getShortName() +
                         " into this bay." );
@@ -156,10 +156,10 @@ public class DockingCollar implements Transporter {
 
         // Decrement the available space.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        this.currentSpace -= 1;
+        currentSpace -= 1;
 
         // Add the unit to our list of troops.
-        this.troops.addElement( unit );
+        troops.addElement( unit );
     }
 
     /**
@@ -173,7 +173,7 @@ public class DockingCollar implements Transporter {
     @SuppressWarnings("unchecked")
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
-        return (Vector<Entity>)this.troops.clone();
+        return (Vector<Entity>)troops.clone();
     }
 
     /**
@@ -184,19 +184,19 @@ public class DockingCollar implements Transporter {
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-        
+
         //can we unload?
         if( isDamaged() ) {
             return false;
         }
-        
+
         // Remove the unit if we are carrying it.
-        boolean retval = this.troops.removeElement( unit );
-        
+        boolean retval = troops.removeElement( unit );
+
 
         // If we removed it, restore our space.
         if ( retval ) {
-            this.currentSpace += 1;
+            currentSpace += 1;
         }
 
         // Return our status
@@ -209,7 +209,7 @@ public class DockingCollar implements Transporter {
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-        return "Dropship - " + this.currentSpace + " units";
+        return "Dropship - " + currentSpace + " units";
     }
 
     /**
@@ -220,7 +220,7 @@ public class DockingCollar implements Transporter {
      * @param   isRear - a <code>boolean</code> value stating if the given
      *          location is rear facing; if <code>false</code>, the location
      *          is front facing.
-     * @return  <code>true</code> if a transported unit is in the way, 
+     * @return  <code>true</code> if a transported unit is in the way,
      *          <code>false</code> if the weapon can fire.
      */
     public boolean isWeaponBlockedAt( int loc, boolean isRear ) {return false;}
@@ -249,12 +249,12 @@ public class DockingCollar implements Transporter {
     public int getCargoMpReduction() {
         return 0;
     }
-    
+
     public boolean isDamaged() {
         return damaged;
     }
-    
+
     public void setDamaged(boolean b) {
-        this.damaged = b;
+        damaged = b;
     }
 } // End package class TroopSpace implements Transporter

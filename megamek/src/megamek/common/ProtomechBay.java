@@ -88,7 +88,7 @@ public final class ProtomechBay extends Bay {
     }
 
     @Override
-    public String getUnusedString() {
+    public String getUnusedString(boolean showrecovery) {
         return "Protomech - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " units" : " unit");
     }
 

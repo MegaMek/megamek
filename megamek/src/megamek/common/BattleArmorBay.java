@@ -93,7 +93,7 @@ public final class BattleArmorBay extends Bay {
     }
 
     @Override
-    public String getUnusedString() {
+    public String getUnusedString(boolean showrecovery) {
         return "Battle Armor Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? isClan?" Points":isComStar?" Level I":" Squads" : isClan?" Point":isComStar?" Level I":" Squad");
     }
 

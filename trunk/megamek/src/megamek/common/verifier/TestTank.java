@@ -20,6 +20,7 @@
 package megamek.common.verifier;
 
 import megamek.common.AmmoType;
+import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
@@ -266,7 +267,7 @@ public class TestTank extends TestEntity {
             buff.append(" slot(s) too many.\n\n");
             correct = false;
         }
-        int armorLimit = (int) (tank.getWeight() * 7 / 2 + 40);
+        int armorLimit = (int) (((tank.getWeight() * 7) / 2) + 40);
         if (tank.getTotalOArmor() > armorLimit) {
             buff.append("Armor exceeds point limit for ");
             buff.append(tank.getWeight());
@@ -354,7 +355,7 @@ public class TestTank extends TestEntity {
 
     @Override
     public float getWeightPowerAmp() {
-        if (!engine.isFusion()) {
+        if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
             int weight = 0;
             for (Mounted m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();

@@ -73,6 +73,8 @@ v0.35.33-dev (SVN)
 + Dune Buggy MP reduction not shown outside of games, to match TROs
 + Bug: superheavy tanks loading equipment into wrong location
 + Support UTF-8 unit names
++ Bug: Tank fission engines need engine shielding
++ Bug: Tank fission engines don't need power amps
 
 v0.35.32 (2012-09-30, 22:09 UTC+2)
 + Data 3369808: Historical Brush War RAT's

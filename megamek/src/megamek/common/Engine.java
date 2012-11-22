@@ -257,7 +257,7 @@ public class Engine implements Serializable {
         }
         weight = TestEntity.ceilMaxHalf(weight, roundWeight);
 
-        if (hasFlag(TANK_ENGINE) && isFusion()) {
+        if (hasFlag(TANK_ENGINE) && (isFusion() || (engineType == FISSION))) {
             weight *= 1.5f;
         }
         float toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
@@ -290,7 +290,7 @@ public class Engine implements Serializable {
      * therefore don't require a critical slot.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
-     * 
+     *
      * @return the maximum number of heat sinks built into the engine.
      */
     public int integralHeatSinkCapacity(boolean compact) {
@@ -376,7 +376,7 @@ public class Engine implements Serializable {
                 sb.append(" Fuel Cell"); //$NON-NLS-1$
                 break;
             case FISSION:
-                sb.append(" FISSION"); //$NON-NLS-1$
+                sb.append(" Fission"); //$NON-NLS-1$
                 break;
             case NONE:
                 sb.append(" NONE"); //$NON-NLS-1$
@@ -620,7 +620,7 @@ public class Engine implements Serializable {
      * Return the Base Chassies Engine heat Sinks or intergalHeatSinkCapacity which ever is less.
      *
      * @param compact Whether this engine uses compact heat sinks or not.
-     * 
+     *
      * @return
      */
     public int getBaseChassisHeatSinks(boolean compact) {

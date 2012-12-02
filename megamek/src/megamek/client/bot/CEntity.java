@@ -83,48 +83,48 @@ public class CEntity {
 
     // Tank armor is either the side hit or the turret
     final static double TANK_ARMOR[][] = { { 0, 1.0, 0, 0, 0 },
-        { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
+            { 0, 0, 0, 0, 1.0 }, { 0, 0, 0, 1.0, 0 }, { 0, 0, 1.0, 0, 0 } };
     final static double TANK_WT_ARMOR[][] = {
-        { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
-        { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
-        { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
-        { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
+            { 0, 31.0 / 36, 0, 0, 0, 5.0 / 36 },
+            { 0, 0, 0, 0, 31.0 / 36, 5.0 / 36 },
+            { 0, 0, 0, 31.0 / 36, 0, 5.0 / 36 },
+            { 0, 0, 31.0 / 36, 0, 0, 5.0 / 36 } };
 
     // Infantry don't have a facing. In fact, they don't have armor...
     final static double INFANTRY_ARMOR[][] = { { 1.0 }, { 1.0 }, { 1.0 },
-        { 1.0 } };
+            { 1.0 } };
 
     // Battle armor units have multiple suits
     final static double ISBA_ARMOR[][] = { { 0.25, 0.25, 0.25, 0.25 },
-        { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
-        { 0.25, 0.25, 0.25, 0.25 } };
+            { 0.25, 0.25, 0.25, 0.25 }, { 0.25, 0.25, 0.25, 0.25 },
+            { 0.25, 0.25, 0.25, 0.25 } };
     final static double CLBA_ARMOR[][] = { { 0.2, 0.2, 0.2, 0.2, 0.2 },
-        { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
-        { 0.2, 0.2, 0.2, 0.2, 0.2 } };
+            { 0.2, 0.2, 0.2, 0.2, 0.2 }, { 0.2, 0.2, 0.2, 0.2, 0.2 },
+            { 0.2, 0.2, 0.2, 0.2, 0.2 } };
     final static double PROTOMECH_ARMOR[][] = {
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
-        { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 },
+            { 1.0 / 31, 16.0 / 31, 3.0 / 31, 3.0 / 31, 8.0 / 31 } };
     final static double PROTOMECH_MG_ARMOR[][] = {
-        { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
-        { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
-        { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
-        { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
+            { 1.0 / 32, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
+            { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
+            { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 },
+            { 1.0 / 31, 16.0 / 32, 3.0 / 32, 3.0 / 32, 8.0 / 32, 1.0 / 32 } };
     final static double MECH_ARMOR[][] = {
-        { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
-            4.0 / 36, 4.0 / 36 },
-        { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
-            4.0 / 36, 4.0 / 36 },
-        { 1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36,
-            2.0 / 36, 8.0 / 36 },
-        { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
-            8.0 / 36, 2.0 / 36 } };
+            { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
+                    4.0 / 36, 4.0 / 36 },
+            { 1.0 / 36, 7.0 / 36, 6.0 / 36, 6.0 / 36, 4.0 / 36, 4.0 / 36,
+                    4.0 / 36, 4.0 / 36 },
+            { 1.0 / 36, 6.0 / 36, 4.0 / 36, 7.0 / 36, 2.0 / 36, 6.0 / 36,
+                    2.0 / 36, 8.0 / 36 },
+            { 1.0 / 36, 6.0 / 36, 7.0 / 36, 4.0 / 36, 6.0 / 36, 2.0 / 36,
+                    8.0 / 36, 2.0 / 36 } };
     final static double GUN_EMPLACEMENT_ARMOR[][] = { { 1.0 / 4, 0, 0, 0 },
-        { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
+            { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 }, { 1.0 / 4, 0, 0, 0 } };
     final static double GUN_EMPLACEMENT_TURRET_ARMOR[][] = {
-        { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
-        { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
+            { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 },
+            { 1.0 / 3, 0, 0, 0, 5.0 / 36 }, { 1.0 / 3, 0, 0, 0, 5.0 / 36 } };
 
     public static final int MAX_RANGE = 36; // Updated to reflect longer ranges
     // of level 2 equipment
@@ -148,13 +148,12 @@ public class CEntity {
     public static final int LEFT_LEG = 0;
     public static final int RIGHT_LEG = 1;
 
-    // Weighted averages of the cluster hits table.  Note the actual
+    // Weighted averages of the cluster hits table. Note the actual
     // table does skip entries from 31 through 39.
-    private static final double[] hits_by_racksize = {
-        0.0, 1.0, 1.58, 2.0, 2.63, 3.17, 4.0, 4.49, 4.98, 5.47, 6.31,
-        7.23, 8.14, 8.59, 9.04, 9.5, 10.1, 10.8, 11.42, 12.1, 12.7,
-        13.6, 14.4, 15.7, 16.3, 16.6, 17.4, 17.6, 17.9, 18.7, 19.0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 25.4 };
+    private static final double[] hits_by_racksize = { 0.0, 1.0, 1.58, 2.0,
+            2.63, 3.17, 4.0, 4.49, 4.98, 5.47, 6.31, 7.23, 8.14, 8.59, 9.04,
+            9.5, 10.1, 10.8, 11.42, 12.1, 12.7, 13.6, 14.4, 15.7, 16.3, 16.6,
+            17.4, 17.6, 17.9, 18.7, 19.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25.4 };
 
     Entity entity;
     MoveOption current;
@@ -238,7 +237,7 @@ public class CEntity {
     public boolean canMove() {
         return (entity.isSelectableThisTurn()
                 && !(entity.isProne() && (base_psr_odds < .2)) && !entity
-                .isImmobile());
+                    .isImmobile());
     }
 
     public boolean justMoved() {
@@ -277,8 +276,8 @@ public class CEntity {
 
     /**
      * Simplifies the many game stats into something that can be quickly
-     * calculated into a units combat effectiveness.  The concept is similar
-     * to creating BattleForce stats.
+     * calculated into a units combat effectiveness. The concept is similar to
+     * creating BattleForce stats.
      */
 
     public void characterize() {
@@ -291,8 +290,7 @@ public class CEntity {
         runMP = entity.getRunMP();
         if (entity instanceof Mech) {
             if (((Mech) entity).hasMASC()) {
-                if (((Mech) entity).getMASCTarget() <= 5 +
-                        Compute.randomInt(6)) {
+                if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
                     masc_threat = false;
                 } else {
                     masc_threat = true;
@@ -302,7 +300,7 @@ public class CEntity {
 
                 // If this is a Mech equipped with TSM, push for the sweet
                 // spot at 9 heat
-                if (((Mech)entity).hasTSM()){
+                if (((Mech) entity).hasTSM()) {
                     tsm_offset = true;
                 }
 
@@ -320,8 +318,7 @@ public class CEntity {
         if (entity instanceof Mech) {
 
             // Include heat from active stealth armor systems
-            if (entity.isStealthActive()
-                    || entity.isNullSigActive()
+            if (entity.isStealthActive() || entity.isNullSigActive()
                     || entity.isVoidSigActive()) {
                 heat += 10;
             }
@@ -339,15 +336,17 @@ public class CEntity {
             if (entity.getPosition() != null) {
                 if (tb.game.getBoard().getHex(entity.getPosition()) != null) {
                     if (tb.game.getBoard().getHex(entity.getPosition())
-                            .containsTerrain(Terrains.FIRE) &&
-                            (tb.game.getBoard().getHex(entity.getPosition()).getFireTurn() > 0)) {
+                            .containsTerrain(Terrains.FIRE)
+                            && (tb.game.getBoard().getHex(entity.getPosition())
+                                    .getFireTurn() > 0)) {
                         heat += 5;
                     }
                 }
             }
 
             // Include heat from ambient temperature
-            heat += tb.game.getPlanetaryConditions().getTemperatureDifference(50,-30);
+            heat += tb.game.getPlanetaryConditions().getTemperatureDifference(
+                    50, -30);
         }
 
         // Offensive characterisation - damage potentials
@@ -365,7 +364,7 @@ public class CEntity {
         // Mainly for BA and conventional infantry support
         int number_of_shooters = 1;
 
-        boolean ammo_ranges[] = {false, false, false};
+        boolean ammo_ranges[] = { false, false, false };
 
         int gunnery = entity.getCrew().getGunnery();
         if (entity.getTaserFeedBackRounds() > 0) {
@@ -373,41 +372,37 @@ public class CEntity {
         }
 
         // Most units, including BA, are equipped with conventional weapons
-        if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)){
+        if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
 
-            if (entity instanceof BattleArmor){
-                number_of_shooters =
-                    ((BattleArmor) entity).getShootingStrength();
+            if (entity instanceof BattleArmor) {
+                number_of_shooters = ((BattleArmor) entity)
+                        .getShootingStrength();
             }
 
             // Physical attacks - punch and/or kicking for Mechs
-            if (entity instanceof Mech){
+            if (entity instanceof Mech) {
 
                 // Base damage, adjusted for odds of hitting
-                cur_weapon_damage[1] = (tsm_offset ? 1.0 : 0.5) *
-                (entity.getWeight() / 10) *
-                (Compute.oddsAbove(entity.getCrew().getPiloting()) / 100);
+                cur_weapon_damage[1] = (tsm_offset ? 1.0 : 0.5)
+                        * (entity.getWeight() / 10)
+                        * (Compute.oddsAbove(entity.getCrew().getPiloting()) / 100);
 
                 // Either a kick or double-punch to the front
-                overall_damage[Compute.ARC_FORWARD][1] = 2.0 *
-                cur_weapon_damage[1];
+                overall_damage[Compute.ARC_FORWARD][1] = 2.0 * cur_weapon_damage[1];
 
                 // If the Mech can flip arms, don't consider arm arcs
-                if (!((Mech)entity).canFlipArms()){
-                    overall_damage[Compute.ARC_LEFTARM][1] =
-                        cur_weapon_damage[1];
-                    overall_damage[Compute.ARC_RIGHTARM][1] =
-                        cur_weapon_damage[1];
+                if (!((Mech) entity).canFlipArms()) {
+                    overall_damage[Compute.ARC_LEFTARM][1] = cur_weapon_damage[1];
+                    overall_damage[Compute.ARC_RIGHTARM][1] = cur_weapon_damage[1];
                 }
             }
 
             // Physical attacks - vibroclaws for BA
-            if (entity instanceof BattleArmor){
+            if (entity instanceof BattleArmor) {
 
-                overall_damage[Compute.ARC_360][0] =
-                    hits_by_racksize[number_of_shooters] *
-                    ((BattleArmor)entity).getVibroClaws() *
-                    Compute.oddsAbove(gunnery)/100.0;
+                overall_damage[Compute.ARC_360][0] = (hits_by_racksize[number_of_shooters]
+                        * ((BattleArmor) entity).getVibroClaws()
+                        * Compute.oddsAbove(gunnery)) / 100.0;
             }
 
             // Iterate over each weapon, calculating average damage
@@ -419,20 +414,20 @@ public class CEntity {
 
                 // Don't count weapons that are destroyed/jammed or are out
                 // of ammo
-                if (!cur_weapon.canFire() ||
-                        cur_weapon.isJammed() ||
-                        ((cur_weapon.getLinked() == null) &&
-                                (weapon.getAmmoType() != AmmoType.T_NA))) {
+                if (!cur_weapon.canFire()
+                        || cur_weapon.isJammed()
+                        || ((cur_weapon.getLinked() == null) && (weapon
+                                .getAmmoType() != AmmoType.T_NA))) {
                     continue;
                 }
 
                 // Anti-Mech attacks are difficult to set up and have bad
-                // odds most of the time.  This means they have little
+                // odds most of the time. This means they have little
                 // strategic impact.
-                if ((weapon.getInternalName() == Infantry.SWARM_MEK) ||
-                        (weapon.getInternalName() == Infantry.LEG_ATTACK) ||
-                        (weapon.getInternalName() == Infantry.SWARM_MEK) ||
-                        (weapon.getInternalName() == Infantry.STOP_SWARM)) {
+                if ((weapon.getInternalName() == Infantry.SWARM_MEK)
+                        || (weapon.getInternalName() == Infantry.LEG_ATTACK)
+                        || (weapon.getInternalName() == Infantry.SWARM_MEK)
+                        || (weapon.getInternalName() == Infantry.STOP_SWARM)) {
                     continue;
                 }
 
@@ -453,18 +448,18 @@ public class CEntity {
 
                 // If the heat generated by the weapon is a significant
                 // portion of the Mechs remaining heatsink capacity, it needs
-                // to do some significant damage before being counted.  Under
+                // to do some significant damage before being counted. Under
                 // most circumstances this will only happen if the Mech is
                 // seriously overheating.
 
-                if (entity instanceof Mech){
+                if (entity instanceof Mech) {
 
-                    int overheat = cur_weapon_heat + heat - (heat_capacity +
-                            (tsm_offset ? 9 : 4));
-                    if (overheat > 0){
+                    int overheat = (cur_weapon_heat + heat)
+                            - (heat_capacity + (tsm_offset ? 9 : 4));
+                    if (overheat > 0) {
 
-                        for (int i=0; i < cur_weapon_damage.length; i++){
-                            if (cur_weapon_damage[i] < overheat){
+                        for (int i = 0; i < cur_weapon_damage.length; i++) {
+                            if (cur_weapon_damage[i] < overheat) {
                                 cur_weapon_damage[i] = 0.0;
                             }
                         }
@@ -474,14 +469,14 @@ public class CEntity {
                 }
 
                 // Only BA can fire into their own hex
-                if (!(entity instanceof BattleArmor)){
+                if (!(entity instanceof BattleArmor)) {
                     cur_weapon_damage[0] = 0.0;
                 }
 
                 // Increment the total weapons count if the weapon was
-                // allocated to the forward arc.  No point counting weapons
+                // allocated to the forward arc. No point counting weapons
                 // that don't get used much.
-                if (cur_weapon_arcs.contains(Compute.ARC_FORWARD)){
+                if (cur_weapon_arcs.contains(Compute.ARC_FORWARD)) {
                     weapons_count++;
                 }
 
@@ -489,42 +484,41 @@ public class CEntity {
 
                 // Add the final damage and heat values into the overall damage
                 // array for the appropriate arcs
-                for (int i=0; i < cur_weapon_damage.length; i++){
+                for (int i = 0; i < cur_weapon_damage.length; i++) {
 
                     // Skip any range where no damage is done
-                    if (cur_weapon_damage[i] == 0.0){
+                    if (cur_weapon_damage[i] == 0.0) {
                         continue;
                     }
 
-                    // Adjust weapon damage by the number of shooters.  This
+                    // Adjust weapon damage by the number of shooters. This
                     // normally applies only to Battle Armor.
-                    if (number_of_shooters > 1){
-                        cur_weapon_damage[i] *=
-                            hits_by_racksize[number_of_shooters];
+                    if (number_of_shooters > 1) {
+                        cur_weapon_damage[i] *= hits_by_racksize[number_of_shooters];
                     }
 
-                    for( int firing_arc : cur_weapon_arcs){
+                    for (int firing_arc : cur_weapon_arcs) {
 
                         // Some error control to catch non-standard arcs
-                        if (firing_arc > LAST_ARC){
+                        if (firing_arc > LAST_ARC) {
                             continue;
                         }
 
                         overall_damage[firing_arc][i] += cur_weapon_damage[i];
 
-                        // Only Mechs need track heat.  The heat values will
+                        // Only Mechs need track heat. The heat values will
                         // be used to derate damage at each hex of range.
-                        if ((entity instanceof Mech) &&
-                                (overall_damage[firing_arc][i] > 0)){
+                        if ((entity instanceof Mech)
+                                && (overall_damage[firing_arc][i] > 0)) {
                             overall_heat[firing_arc][i] += cur_weapon_heat;
                         }
 
                         // Track minimum range modifiers for weapons that
                         // fire into the forward arc
-                        if ((firing_arc == Compute.ARC_FORWARD) &&
-                                (i <= weapon_min_range) &&
-                                (i < minRangeMods.length)){
-                            minRangeMods[i] += 1 + weapon_min_range - i;
+                        if ((firing_arc == Compute.ARC_FORWARD)
+                                && (i <= weapon_min_range)
+                                && (i < minRangeMods.length)) {
+                            minRangeMods[i] += (1 + weapon_min_range) - i;
                         }
 
                     }
@@ -539,16 +533,15 @@ public class CEntity {
             // Conventional infantry use infantry weapons, which require
             // special handling
 
-            number_of_shooters = ((Infantry)entity).getShootingStrength();
+            number_of_shooters = ((Infantry) entity).getShootingStrength();
 
-            cur_weapon_damage = getExpectedDamage((Infantry)entity, gunnery);
+            cur_weapon_damage = getExpectedDamage((Infantry) entity, gunnery);
 
             // Add the current damage values into the overall damage array for
-            // the 360 degree arc.  Adjust for number of troopers hitting.
-            for (int i=0; i < cur_weapon_damage.length; i++){
+            // the 360 degree arc. Adjust for number of troopers hitting.
+            for (int i = 0; i < cur_weapon_damage.length; i++) {
                 overall_damage[Compute.ARC_360][i] += cur_weapon_damage[i];
-                overall_damage[Compute.ARC_360][i] *=
-                    hits_by_racksize[number_of_shooters];
+                overall_damage[Compute.ARC_360][i] *= hits_by_racksize[number_of_shooters];
             }
 
             // Check for field guns
@@ -556,16 +549,16 @@ public class CEntity {
 
                 WeaponType weapon = (WeaponType) cur_weapon.getType();
 
-                if (cur_weapon.getLocation() != Infantry.LOC_FIELD_GUNS){
+                if (cur_weapon.getLocation() != Infantry.LOC_FIELD_GUNS) {
                     continue;
                 }
 
                 // Don't count weapons that are destroyed/jammed or are out
                 // of ammo
-                if (!cur_weapon.canFire() ||
-                        cur_weapon.isJammed() ||
-                        ((cur_weapon.getLinked() == null) &&
-                                (weapon.getAmmoType() != AmmoType.T_NA))) {
+                if (!cur_weapon.canFire()
+                        || cur_weapon.isJammed()
+                        || ((cur_weapon.getLinked() == null) && (weapon
+                                .getAmmoType() != AmmoType.T_NA))) {
                     continue;
                 }
 
@@ -574,10 +567,10 @@ public class CEntity {
                         cur_weapon_damage, ammo_ranges);
 
                 // Push the field gun damages into the overall damage array
-                for (int i=0; i < cur_weapon_damage.length; i++){
+                for (int i = 0; i < cur_weapon_damage.length; i++) {
 
                     // Skip 0-damage entries
-                    if (cur_weapon_damage[i] == 0){
+                    if (cur_weapon_damage[i] == 0) {
                         continue;
                     }
 
@@ -586,37 +579,35 @@ public class CEntity {
             }
 
             // Copy the total damage into each arc
-            for (int cur_arc = FIRST_ARC+1; cur_arc <= LAST_ARC; cur_arc++){
+            for (int cur_arc = FIRST_ARC + 1; cur_arc <= LAST_ARC; cur_arc++) {
                 overall_damage[cur_arc] = overall_damage[Compute.ARC_360];
             }
 
         }
 
         // Push the accumulated damages into the CEntity array
-        for (int cur_arc = FIRST_ARC; cur_arc <= LAST_ARC; cur_arc++){
+        for (int cur_arc = FIRST_ARC; cur_arc <= LAST_ARC; cur_arc++) {
 
             // For each hex
-            for (int cur_range=0; cur_range < MAX_RANGE; cur_range++){
+            for (int cur_range = 0; cur_range < MAX_RANGE; cur_range++) {
 
                 // If no damage, then skip the calculations
-                if (overall_damage[cur_arc][cur_range] == 0.0){
+                if (overall_damage[cur_arc][cur_range] == 0.0) {
                     continue;
                 }
 
                 // If the weapons heat and the miscellaneous heat is more than
                 // the Mech can sink, lower the damage proportionally e.g.
                 // (sink capacity + buffer) / (weapon heat + base heat)
-                if ((entity instanceof Mech) &&
-                        ((overall_heat[cur_arc][cur_range] + heat) >
-                        heat_capacity + (tsm_offset ? 9 : 4))){
-                    overall_damage[cur_arc][cur_range] *=
-                        (heat_capacity + (tsm_offset ? 9 : 4));
-                    overall_damage[cur_arc][cur_range] /=
-                        (overall_heat[cur_arc][cur_range] + heat);
+                if ((entity instanceof Mech)
+                        && ((overall_heat[cur_arc][cur_range] + heat) > (heat_capacity
+                                + (tsm_offset ? 9 : 4)))) {
+                    overall_damage[cur_arc][cur_range] *= (heat_capacity + (tsm_offset ? 9
+                            : 4));
+                    overall_damage[cur_arc][cur_range] /= (overall_heat[cur_arc][cur_range] + heat);
                 }
 
-                damages[cur_arc][cur_range] =
-                    overall_damage[cur_arc][cur_range];
+                damages[cur_arc][cur_range] = overall_damage[cur_arc][cur_range];
 
                 // Next hex
             }
@@ -628,18 +619,18 @@ public class CEntity {
         for (int cur_range = 1; cur_range < minRangeMods.length; cur_range++) {
             if (weapons_count > 0) {
                 minRangeMods[cur_range] = (int) Math
-                .round(((double) minRangeMods[cur_range])
-                        / (double) weapons_count);
+                        .round(((double) minRangeMods[cur_range])
+                                / (double) weapons_count);
             }
         }
 
         // Change the damage from a per-hex array to a single "weapon"
-        // with short/medium/long ranges.  For now, just do the forward
+        // with short/medium/long ranges. For now, just do the forward
         // arc.
         computeRange(Compute.ARC_FORWARD, overall_heat);
 
         // Overheating will be based on the optimum firing range
-        heat = heat + heat_at_range - heat_capacity;
+        heat = (heat + heat_at_range) - heat_capacity;
 
         if (heat <= 4) {
             overheat = OVERHEAT_NONE;
@@ -702,7 +693,7 @@ public class CEntity {
             // for each sub-entity type (Mech, Tank, etc)
             for (int i = 0; i < armor[arc].length; i++) {
                 armor_health[arc] += armor[arc][i]
-                                                * getArmorValue(i, arc == ToHitData.SIDE_REAR);
+                        * getArmorValue(i, arc == ToHitData.SIDE_REAR);
             }
 
             // ProtoMechs have a "near miss" location that isn't accounted for
@@ -728,16 +719,15 @@ public class CEntity {
 
         if (entity instanceof Infantry) {
             avg_iarmor = entity instanceof BattleArmor ? ((BattleArmor) entity)
-                    .getShootingStrength()
-                    : 1.0;
+                    .getShootingStrength() : 1.0;
         }
         if (entity instanceof Tank) {
             avg_iarmor = entity.getTotalInternal()
-            / (((Tank) entity).hasNoTurret() ? 4.0 : 5.0);
+                    / (((Tank) entity).hasNoTurret() ? 4.0 : 5.0);
         }
         if (entity instanceof Protomech) {
             avg_iarmor = entity.getTotalInternal()
-            / (((Protomech) entity).hasMainGun() ? 5.0 : 6.0);
+                    / (((Protomech) entity).hasMainGun() ? 5.0 : 6.0);
         }
         if (entity instanceof GunEmplacement) {
             avg_iarmor = 1.0;
@@ -745,24 +735,26 @@ public class CEntity {
 
     }
 
-
     /**
-     * Weapons mounted in one arc can be applied over several depending
-     * on the type of unit due to torso or turret twisting
-     * @param mounted_arc arc for weapon
-     * @param is_secondary true if weapon can fire into another arc
+     * Weapons mounted in one arc can be applied over several depending on the
+     * type of unit due to torso or turret twisting
+     *
+     * @param mounted_arc
+     *            arc for weapon
+     * @param is_secondary
+     *            true if weapon can fire into another arc
      * @return ArrayList of Compute.ARC_XXX integers
      */
     private ArrayList<Integer> getWeaponArcs(int mounted_arc,
-            boolean is_secondary){
+            boolean is_secondary) {
 
         ArrayList<Integer> arc_list = new ArrayList<Integer>(1);
 
         // Weapons which can fire in any direction
-        if ((mounted_arc == Compute.ARC_360) ||
-                (mounted_arc == Compute.ARC_MAINGUN) ||
-                (mounted_arc == Compute.ARC_TURRET)){
-            for(int i = FIRST_ARC; i <= LAST_ARC; i++){
+        if ((mounted_arc == Compute.ARC_360)
+                || (mounted_arc == Compute.ARC_MAINGUN)
+                || (mounted_arc == Compute.ARC_TURRET)) {
+            for (int i = FIRST_ARC; i <= LAST_ARC; i++) {
                 arc_list.add(i);
             }
         } else {
@@ -771,29 +763,29 @@ public class CEntity {
 
             // If the weapon can be applied to a secondary arc, add it there
             // as well
-            if (is_secondary){
+            if (is_secondary) {
 
-                if (mounted_arc == Compute.ARC_FORWARD){
+                if (mounted_arc == Compute.ARC_FORWARD) {
 
                     // Mech torso twist
                     arc_list.add(Compute.ARC_LEFTARM);
                     arc_list.add(Compute.ARC_RIGHTARM);
 
                     // Vehicle turrets
-                    if (entity instanceof Tank){
+                    if (entity instanceof Tank) {
                         arc_list.add(Compute.ARC_360);
                     }
 
                 }
 
                 // Left arm fires into the front and left side,
-                // right arm to the front and right.  If the arms
+                // right arm to the front and right. If the arms
                 // can flip, they both go to the rear as well.
-                if ((mounted_arc == Compute.ARC_LEFTARM) ||
-                        (mounted_arc == Compute.ARC_RIGHTARM)){
+                if ((mounted_arc == Compute.ARC_LEFTARM)
+                        || (mounted_arc == Compute.ARC_RIGHTARM)) {
 
                     arc_list.add(Compute.ARC_FORWARD);
-                    if ((entity instanceof Mech) && entity.canFlipArms()){
+                    if ((entity instanceof Mech) && entity.canFlipArms()) {
                         arc_list.add(Compute.ARC_REAR);
                     }
 
@@ -806,27 +798,28 @@ public class CEntity {
         return arc_list;
     }
 
-
-
     /**
-     * Fills the CEntity damage and range brackets, plus the preferred range
-     * and the heat for that range.
-     * @param arc Compute.ARC index for main damage array
-     * @param est_heat Estimated heat of unit for each hex of range
+     * Fills the CEntity damage and range brackets, plus the preferred range and
+     * the heat for that range.
+     *
+     * @param arc
+     *            Compute.ARC index for main damage array
+     * @param est_heat
+     *            Estimated heat of unit for each hex of range
      */
-    private void computeRange(int arc, int[][] est_heat){
+    private void computeRange(int arc, int[][] est_heat) {
 
-        double damage_by_bracket[] = {0.0, 0.0, 0.0, 0.0};
-        double heat_by_bracket[] = {0, 0, 0, 0};
+        double damage_by_bracket[] = { 0.0, 0.0, 0.0, 0.0 };
+        double heat_by_bracket[] = { 0, 0, 0, 0 };
 
-        long_range = MAX_RANGE-1;
+        long_range = MAX_RANGE - 1;
         int bracket_start, bracket_end;
 
         // Get the longest range and use it to calculate an average range
-        // bracket.  Extreme range is used when estimating damage but only
+        // bracket. Extreme range is used when estimating damage but only
         // the official "long" range is kept.
         // TODO: add some math to account for non-linear brackets
-        while ((damages[arc][long_range] == 0.0) && (long_range >= 4)){
+        while ((damages[arc][long_range] == 0.0) && (long_range >= 4)) {
             long_range--;
         }
 
@@ -836,13 +829,11 @@ public class CEntity {
         bracket_end = rd_bracket;
 
         // For each range bracket
-        for (int cur_bracket = RANGE_SHORT;
-        cur_bracket <= RANGE_LONG;
-        cur_bracket++){
+        for (int cur_bracket = RANGE_SHORT; cur_bracket <= RANGE_LONG; cur_bracket++) {
 
-            // Get the start and end ranges.  Allocate any leftover hexes to
+            // Get the start and end ranges. Allocate any leftover hexes to
             // to the end of the long range bracket.
-            switch (cur_bracket){
+            switch (cur_bracket) {
                 case RANGE_SHORT:
                     bracket_start = (entity instanceof Infantry ? 0 : 1);
                     bracket_end = rd_bracket;
@@ -853,14 +844,12 @@ public class CEntity {
                     break;
                 case RANGE_LONG:
                     bracket_start = (2 * rd_bracket) + 1;
-                    bracket_end = Math.min(long_range, MAX_RANGE-1);
+                    bracket_end = Math.min(long_range, MAX_RANGE - 1);
                     break;
             }
 
             // For each hex in the current bracket
-            for (int cur_range = bracket_start;
-            cur_range <= bracket_end;
-            cur_range++){
+            for (int cur_range = bracket_start; cur_range <= bracket_end; cur_range++) {
 
                 // Add up the damage and heat estimates
                 damage_by_bracket[cur_bracket] += damages[arc][cur_range];
@@ -877,10 +866,8 @@ public class CEntity {
 
         // Average out the damage and heat value totals over the number of
         // hexes for the range bracket
-        for (int cur_range = RANGE_SHORT;
-        cur_range <= RANGE_LONG;
-        cur_range++){
-            if ((damages[arc][0] != 0.0) && (cur_range == RANGE_SHORT)){
+        for (int cur_range = RANGE_SHORT; cur_range <= RANGE_LONG; cur_range++) {
+            if ((damages[arc][0] != 0.0) && (cur_range == RANGE_SHORT)) {
                 damage_by_bracket[cur_range] /= (rd_bracket + 1);
                 heat_by_bracket[cur_range] /= (rd_bracket + 1);
             } else {
@@ -894,19 +881,15 @@ public class CEntity {
 
         // Push the average damage and heat values to the CEntity arrays
         range_damages = damage_by_bracket;
-        for (int cur_bracket = RANGE_SHORT;
-        cur_bracket <= RANGE_ALL;
-        cur_bracket++){
+        for (int cur_bracket = RANGE_SHORT; cur_bracket <= RANGE_ALL; cur_bracket++) {
             heat_estimates[cur_bracket] = (int) heat_by_bracket[cur_bracket];
         }
 
         // Pick the best range, which will likely be "short" due to short
         // range secondary weapons and better to-hit modifiers
         range = RANGE_SHORT;
-        for(int cur_bracket = RANGE_SHORT;
-        cur_bracket <= RANGE_ALL;
-        cur_bracket++){
-            if (range_damages[cur_bracket] > range_damages[range]){
+        for (int cur_bracket = RANGE_SHORT; cur_bracket <= RANGE_ALL; cur_bracket++) {
+            if (range_damages[cur_bracket] > range_damages[range]) {
                 range = cur_bracket;
             }
         }
@@ -915,8 +898,6 @@ public class CEntity {
         heat_at_range = heat_estimates[range];
 
     }
-
-
 
     /**
      * Fills range damage values for short, medium, long, and all, plus sets the
@@ -938,16 +919,13 @@ public class CEntity {
                 optimizer[RANGE_SHORT] += damages[arc][range_walk];
                 range_damages[RANGE_SHORT] += damages[arc][range_walk];
             }
-            if ((range_walk > rd_bracket)
-                    & (range_walk <= 2 * rd_bracket)) {
-                optimizer[RANGE_MEDIUM] += getModifiedDamage(arc,
-                        range_walk, -2);
+            if ((range_walk > rd_bracket) & (range_walk <= (2 * rd_bracket))) {
+                optimizer[RANGE_MEDIUM] += getModifiedDamage(arc, range_walk,
+                        -2);
                 range_damages[RANGE_MEDIUM] += damages[arc][range_walk];
             }
-            if ((range_walk > 2 * rd_bracket)
-                    & (range_walk <= 3 * rd_bracket)) {
-                optimizer[RANGE_LONG] += getModifiedDamage(arc,
-                        range_walk, -4);
+            if ((range_walk > (2 * rd_bracket)) & (range_walk <= (3 * rd_bracket))) {
+                optimizer[RANGE_LONG] += getModifiedDamage(arc, range_walk, -4);
                 range_damages[RANGE_LONG] += damages[arc][range_walk];
             }
             range_damages[RANGE_ALL] += damages[arc][range_walk];
@@ -1034,14 +1012,14 @@ public class CEntity {
         t1 *= strategy.target;
 
         // absolute bonus for damage that is likely to do critical
-        if (t2 + expected_damage[arc] > armor_health[arc]) {
+        if ((t2 + expected_damage[arc]) > armor_health[arc]) {
 
             // expected_damage[] is set on the fly; it tracks damage
             // the entity expects to take
-            if (((t2 + expected_damage[0] + expected_damage[1]
-                                                            + expected_damage[2] + expected_damage[3] > 3 * (avg_armor + avg_iarmor)) || (entity
-                                                                    .isProne()
-                                                                    && (base_psr_odds < .1) && !entity.isImmobile()))) { // If I
+            if ((((t2 + expected_damage[0] + expected_damage[1]
+                    + expected_damage[2] + expected_damage[3]) > (3 * (avg_armor + avg_iarmor))) || (entity
+                    .isProne() && (base_psr_odds < .1) && !entity.isImmobile()))) { // If
+                                                                                    // I
                 // have
                 // more
                 // friends,
@@ -1086,8 +1064,9 @@ public class CEntity {
      * From the current state, explore based upon an implementation of
      * Dijkstra's algorithm.
      */
-    protected MoveOption.Table calculateMoveOptions(MoveOption base, Client client) {
-        //New array of movement options
+    protected MoveOption.Table calculateMoveOptions(MoveOption base,
+            Client client) {
+        // New array of movement options
         ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
         MoveOption.Table discovered = new MoveOption.Table();
 
@@ -1108,9 +1087,16 @@ public class CEntity {
             // arraylist
             MoveOption min = possible.remove(0);
             Iterator<MovePath> adjacent = min.getNextMoves(true, true)
-            .iterator();
+                    .iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();
+                if ((entity instanceof Mech) && (((Mech) entity).countBadLegs() >= 1)
+                        && (((Mech) entity).isLocationBad(Mech.LOC_LARM) && ((Mech) entity)
+                                .isLocationBad(Mech.LOC_RARM))) {
+                    MoveOption eject = next.clone();
+                    eject.addStep(MoveStepType.EJECT);
+                    discovered.put(eject.clone());
+                }
                 if (next.changeToPhysical() && next.isMoveLegal()) {
                     discovered.put(next);
                 } else if (next.isMoveLegal()) {
@@ -1146,36 +1132,36 @@ public class CEntity {
         }
         // Final check for illegal and extra weighting for heat
         for (Iterator<MoveOption> i = discovered.values().iterator(); i
-        .hasNext();) {
+                .hasNext();) {
             MoveOption next = i.next();
             next.clipToPossible();
             if (!next.isMoveLegal()) {
                 i.remove();
             }
             if (entity.heat > 4) {
-                next.movement_threat += bv / 1000
-                * next.getMovementheatBuildup();
+                next.movement_threat += (bv / 1000)
+                        * next.getMovementheatBuildup();
                 if (entity.heat > 7) {
-                    next.movement_threat += bv / 500
-                    * next.getMovementheatBuildup();
+                    next.movement_threat += (bv / 500)
+                            * next.getMovementheatBuildup();
                 }
                 if (tsm_offset) {
                     if (entity.heat == 9) {
-                        next.movement_threat -= bv / 100
-                        * next.getMovementheatBuildup();
+                        next.movement_threat -= (bv / 100)
+                                * next.getMovementheatBuildup();
                     }
                     if ((entity.heat < 12) && (entity.heat > 9)) {
-                        next.movement_threat -= bv / 500
-                        * next.getMovementheatBuildup();
+                        next.movement_threat -= (bv / 500)
+                                * next.getMovementheatBuildup();
                     }
                 }
                 if (entity.heat > 12) {
-                    next.movement_threat += bv / 100
-                    * next.getMovementheatBuildup();
+                    next.movement_threat += (bv / 100)
+                            * next.getMovementheatBuildup();
                 }
             }
             String pilotChecks = SharedUtility.doPSRCheck(next);
-            if (pilotChecks.length()>0) {
+            if (pilotChecks.length() > 0) {
                 next.inDanger = true;
             }
         }
@@ -1199,8 +1185,6 @@ public class CEntity {
         return result;
     }
 
-
-
     /**
      * Returns an estimate of damage given the range to the target and a
      * modifier to the to-hit number. An approximation of the original to-hit
@@ -1209,8 +1193,7 @@ public class CEntity {
      * on the units gunnery skill and the modifier and factored back into the
      * returned damage value.
      */
-    public double getModifiedDamage(int arc, int a_range, int modifier)
-    {
+    public double getModifiedDamage(int arc, int a_range, int modifier) {
         if (a_range >= MAX_RANGE) {
             return 0.0;
         }
@@ -1238,21 +1221,21 @@ public class CEntity {
         }
 
         // Long range is another +2 (i.e. +4)
-        if (a_range > 2 * range_bracket) {
+        if (a_range > (2 * range_bracket)) {
             dist_mod += 2;
         }
 
         // Anything past 3 "range brackets" is extreme range +8,
         // or +4 on top of previous modifiers
-        if (a_range > 3 * range_bracket) {
+        if (a_range > (3 * range_bracket)) {
             dist_mod += 4;
         }
 
-        if ((base + dist_mod + modifier > tb.ignore)
-                | (base + dist_mod + modifier > 12)) {
+        if (((base + dist_mod + modifier) > tb.ignore)
+                | ((base + dist_mod + modifier) > 12)) {
             return 0.0;
         }
-        if (base + dist_mod + modifier == tb.ignore) {
+        if ((base + dist_mod + modifier) == tb.ignore) {
             damage *= 0.5;
         }
 
@@ -1261,30 +1244,29 @@ public class CEntity {
         double old_odds = Compute.oddsAbove(base + dist_mod) / 100;
         double new_odds = Compute.oddsAbove(dist_mod + modifier + base) / 100;
 
-        return new_odds * damage / old_odds;
+        return (new_odds * damage) / old_odds;
     }
 
-
-
     /**
-     * Generates an approximation of damage done at each of the major
-     * range brackets, including minimum range.  Also handles weapons
-     * with damage and range that varies by ammo type.  Adds line to
-     * debug log for any variable damage weapons that aren't handled.
+     * Generates an approximation of damage done at each of the major range
+     * brackets, including minimum range. Also handles weapons with damage and
+     * range that varies by ammo type. Adds line to debug log for any variable
+     * damage weapons that aren't handled.
+     *
      * @param weapon
-     * @param applicable_ranges only counts for MMLs and ATMs
+     * @param applicable_ranges
+     *            only counts for MMLs and ATMs
      * @return 4-element array with min/short/medium/long range damage
      */
 
-    private static double[] getRawDamage (Mounted weapon,
-            boolean[] applicable_ranges)
-    {
+    private static double[] getRawDamage(Mounted weapon,
+            boolean[] applicable_ranges) {
         WeaponType wt = (WeaponType) weapon.getType();
         Mounted linked_guidance;
 
         double damage_value = wt.getDamage();
-        double[] raw_damage_array = {damage_value,
-                damage_value, damage_value, damage_value};
+        double[] raw_damage_array = { damage_value, damage_value, damage_value,
+                damage_value };
 
         int rack_size = 1;
 
@@ -1297,24 +1279,23 @@ public class CEntity {
         // - HAGs
 
         if (wt.hasFlag(WeaponType.F_MISSILE)
-                && ((wt.getAmmoType() != AmmoType.T_TBOLT_5) ||
-                        (wt.getAmmoType() != AmmoType.T_TBOLT_10) ||
-                        (wt.getAmmoType() != AmmoType.T_TBOLT_15) ||
-                        (wt.getAmmoType() != AmmoType.T_TBOLT_20))
-        ) {
+                && ((wt.getAmmoType() != AmmoType.T_TBOLT_5)
+                        || (wt.getAmmoType() != AmmoType.T_TBOLT_10)
+                        || (wt.getAmmoType() != AmmoType.T_TBOLT_15) || (wt
+                        .getAmmoType() != AmmoType.T_TBOLT_20))) {
             use_table = true;
             rack_size = wt.getRackSize();
         }
 
-        if ((wt.getAmmoType() == AmmoType.T_AC_LBX) ||
-                (wt.getAmmoType() == AmmoType.T_AC_LBX_THB) ||
-                (wt.getAmmoType() == AmmoType.T_HAG)) {
+        if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
+                || (wt.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                || (wt.getAmmoType() == AmmoType.T_HAG)) {
             use_table = true;
             rack_size = wt.getRackSize();
         }
 
-        if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA) ||
-                (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+        if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
+                || (wt.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
             use_table = true;
             rack_size = 2;
         }
@@ -1332,44 +1313,44 @@ public class CEntity {
             // which is going to require some serious gymnastics
 
             // ATMs, which include built-in Artemis
-            if (linked_ammo == AmmoType.T_ATM){
+            if (linked_ammo == AmmoType.T_ATM) {
 
                 damage_value = hits_by_racksize[rack_size] * 1.2;
 
                 // Use ER ammo damage as a default
-                for (int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
                 // All three types: use ER ranges, with HE for "short" range,
                 // std for "medium" range, and ER for "long" range damages
-                if (applicable_ranges[0] && applicable_ranges[1] &&
-                        applicable_ranges[2]){
+                if (applicable_ranges[0] && applicable_ranges[1]
+                        && applicable_ranges[2]) {
                     raw_damage_array[0] *= 3.0;
                     raw_damage_array[1] *= 3.0;
                     raw_damage_array[2] *= 2.0;
                 }
 
                 // HE only
-                if (applicable_ranges[0] && !applicable_ranges[1] &&
-                        !applicable_ranges[2]){
-                    for (int i=0; i<raw_damage_array.length; i++){
+                if (applicable_ranges[0] && !applicable_ranges[1]
+                        && !applicable_ranges[2]) {
+                    for (int i = 0; i < raw_damage_array.length; i++) {
                         raw_damage_array[i] *= 3.0;
                     }
                 }
 
                 // Standard only
-                if (!applicable_ranges[0] && applicable_ranges[1] &&
-                        !applicable_ranges[2]){
-                    for (int i=0; i<raw_damage_array.length; i++){
+                if (!applicable_ranges[0] && applicable_ranges[1]
+                        && !applicable_ranges[2]) {
+                    for (int i = 0; i < raw_damage_array.length; i++) {
                         raw_damage_array[i] *= 2.0;
                     }
                 }
 
                 // HE and standard only: use std ranges, with HE for the
                 // "short" range damage
-                if (applicable_ranges[0] && applicable_ranges[1] &&
-                        !applicable_ranges[2]){
+                if (applicable_ranges[0] && applicable_ranges[1]
+                        && !applicable_ranges[2]) {
 
                     raw_damage_array[0] *= 3.0;
                     raw_damage_array[1] *= 3.0;
@@ -1380,8 +1361,8 @@ public class CEntity {
 
                 // HE and ER only: use ER ranges, with HE for the
                 // "short" range damage
-                if (applicable_ranges[0] && !applicable_ranges[1] &&
-                        applicable_ranges[2]){
+                if (applicable_ranges[0] && !applicable_ranges[1]
+                        && applicable_ranges[2]) {
 
                     raw_damage_array[0] *= 3.0;
                     raw_damage_array[1] *= 3.0;
@@ -1392,8 +1373,8 @@ public class CEntity {
 
                 // Standard and ER only: use ER ranges, with std for "short"
                 // and "medium" range damage
-                if (!applicable_ranges[0] && applicable_ranges[1] &&
-                        applicable_ranges[2]){
+                if (!applicable_ranges[0] && applicable_ranges[1]
+                        && applicable_ranges[2]) {
 
                     raw_damage_array[0] *= 2.0;
                     raw_damage_array[1] *= 2.0;
@@ -1405,37 +1386,35 @@ public class CEntity {
             }
 
             // MMLs, which may have Artemis
-            if (linked_ammo == AmmoType.T_MML){
+            if (linked_ammo == AmmoType.T_MML) {
 
                 damage_value = hits_by_racksize[rack_size];
                 linked_guidance = weapon.getLinkedBy();
-                if ((linked_guidance != null) &&
-                        !linked_guidance.isDestroyed() &&
-                        !linked_guidance.isMissing() &&
-                        !linked_guidance.isBreached() &&
-                        (linked_guidance.getType() instanceof MiscType)
-                ){
+                if ((linked_guidance != null) && !linked_guidance.isDestroyed()
+                        && !linked_guidance.isMissing()
+                        && !linked_guidance.isBreached()
+                        && (linked_guidance.getType() instanceof MiscType)) {
 
-                    if (linked_guidance.getType().hasFlag(MiscType.F_ARTEMIS)){
+                    if (linked_guidance.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         damage_value *= 1.2;
                     }
 
                 }
 
                 // Use LRM damage as a default
-                for (int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
                 // If SRM ammo is available, use it for short and medium range
-                if (applicable_ranges[0]){
+                if (applicable_ranges[0]) {
 
                     raw_damage_array[0] *= 2.0;
                     raw_damage_array[1] *= 2.0;
                     raw_damage_array[2] *= 2.0;
 
                     // If LRM ammo is not available, use SRM for long range too
-                    if (!applicable_ranges[2]){
+                    if (!applicable_ranges[2]) {
                         raw_damage_array[3] *= 2.0;
                     }
 
@@ -1444,78 +1423,75 @@ public class CEntity {
             }
 
             // LRMs, SRMs, which may have Artemis
-            if ((linked_ammo == AmmoType.T_SRM) ||
-                    (linked_ammo == AmmoType.T_LRM)){
+            if ((linked_ammo == AmmoType.T_SRM)
+                    || (linked_ammo == AmmoType.T_LRM)) {
 
                 damage_value = hits_by_racksize[rack_size];
                 linked_guidance = weapon.getLinkedBy();
-                if ((linked_guidance != null) &&
-                        !linked_guidance.isDestroyed() &&
-                        !linked_guidance.isMissing() &&
-                        !linked_guidance.isBreached() &&
-                        (linked_guidance.getType() instanceof MiscType)
-                ){
+                if ((linked_guidance != null) && !linked_guidance.isDestroyed()
+                        && !linked_guidance.isMissing()
+                        && !linked_guidance.isBreached()
+                        && (linked_guidance.getType() instanceof MiscType)) {
 
-                    if (linked_guidance.getType().hasFlag(MiscType.F_ARTEMIS)){
+                    if (linked_guidance.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         damage_value *= 1.2;
                     } else {
-                        if (linked_guidance.getType().hasFlag(MiscType.F_ARTEMIS_V)){
+                        if (linked_guidance.getType().hasFlag(
+                                MiscType.F_ARTEMIS_V)) {
                             damage_value *= 1.4;
                         }
                     }
 
                 }
 
-                if (linked_ammo == AmmoType.T_SRM){
+                if (linked_ammo == AmmoType.T_SRM) {
                     damage_value *= 2.0;
                 }
 
-                for (int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
             }
 
             // MRMs, which may have Apollo
-            if (linked_ammo == AmmoType.T_MRM){
+            if (linked_ammo == AmmoType.T_MRM) {
 
                 damage_value = hits_by_racksize[rack_size];
                 linked_guidance = weapon.getLinkedBy();
-                if ((linked_guidance != null) &&
-                        !linked_guidance.isDestroyed() &&
-                        !linked_guidance.isMissing() &&
-                        !linked_guidance.isBreached() &&
-                        (linked_guidance.getType() instanceof MiscType)
-                ){
+                if ((linked_guidance != null) && !linked_guidance.isDestroyed()
+                        && !linked_guidance.isMissing()
+                        && !linked_guidance.isBreached()
+                        && (linked_guidance.getType() instanceof MiscType)) {
                     damage_value *= 0.9;
                 }
 
-                for(int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
             }
 
             // Streak SRMs and LRMs use full rack size
-            if (linked_ammo == AmmoType.T_SRM_STREAK){
+            if (linked_ammo == AmmoType.T_SRM_STREAK) {
 
                 damage_value = rack_size * 2.0;
 
-                for(int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
             }
-            if (linked_ammo == AmmoType.T_LRM_STREAK){
+            if (linked_ammo == AmmoType.T_LRM_STREAK) {
                 damage_value = rack_size;
 
-                for(int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
             }
 
             // HAGs get a bonus at short range and a penalty at long range
-            if (linked_ammo == AmmoType.T_HAG){
+            if (linked_ammo == AmmoType.T_HAG) {
                 damage_value = hits_by_racksize[rack_size];
                 raw_damage_array[0] = damage_value * 1.2;
                 raw_damage_array[1] = damage_value * 1.2;
@@ -1525,74 +1501,72 @@ public class CEntity {
 
             // LBX cannons are assumed to be firing cluster rounds.
             // TODO: extend ammo bin check from MMLs & ATMs
-            if ((linked_ammo == AmmoType.T_AC_LBX) ||
-                    (linked_ammo == AmmoType.T_AC_LBX_THB)){
+            if ((linked_ammo == AmmoType.T_AC_LBX)
+                    || (linked_ammo == AmmoType.T_AC_LBX_THB)) {
                 damage_value = hits_by_racksize[rack_size];
 
-                for (int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
             }
 
             // Ultra and rotary cannons return damage values properly
 
-            if ((linked_ammo == AmmoType.T_AC_ULTRA) ||
-                    (linked_ammo == AmmoType.T_AC_ULTRA_THB) ||
-                    (linked_ammo == AmmoType.T_AC_ROTARY)){
+            if ((linked_ammo == AmmoType.T_AC_ULTRA)
+                    || (linked_ammo == AmmoType.T_AC_ULTRA_THB)
+                    || (linked_ammo == AmmoType.T_AC_ROTARY)) {
 
                 damage_value *= hits_by_racksize[rack_size];
 
-                for (int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
             }
-
 
         } else {
 
             // Heavy Gauss, Snubnose PPC, variable speed lasers change
             // damage with range
-            if ((wt instanceof ISIHGaussRifle) ||
-                    (wt instanceof ISSnubNosePPC) ||
-                    (wt instanceof VariableSpeedPulseLaserWeapon)){
-                raw_damage_array[0]=wt.getDamage(wt.getShortRange());
-                raw_damage_array[1]=wt.getDamage(wt.getShortRange());
-                raw_damage_array[2]=wt.getDamage(wt.getMediumRange());
-                raw_damage_array[3]=wt.getDamage(wt.getLongRange());
+            if ((wt instanceof ISIHGaussRifle) || (wt instanceof ISSnubNosePPC)
+                    || (wt instanceof VariableSpeedPulseLaserWeapon)) {
+                raw_damage_array[0] = wt.getDamage(wt.getShortRange());
+                raw_damage_array[1] = wt.getDamage(wt.getShortRange());
+                raw_damage_array[2] = wt.getDamage(wt.getMediumRange());
+                raw_damage_array[3] = wt.getDamage(wt.getLongRange());
             }
 
             // IS plasma rifle
-            if (wt.getInternalName() == "ISPlasmaRifle"){
+            if (wt.getInternalName() == "ISPlasmaRifle") {
 
                 damage_value = 12.0;
 
-                for (int i=0;i<raw_damage_array.length;i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
             }
 
             // Clan plasma cannon
-            if (wt.getInternalName() == "CLPlasmaCannon"){
+            if (wt.getInternalName() == "CLPlasmaCannon") {
 
                 damage_value = 10.5;
 
-                for (int i=0; i<raw_damage_array.length; i++){
+                for (int i = 0; i < raw_damage_array.length; i++) {
                     raw_damage_array[i] = damage_value;
                 }
 
             }
 
             // Thunderbolt missiles are half damage inside minimum range
-            if ((wt.getAmmoType() == AmmoType.T_TBOLT_5) ||
-                    (wt.getAmmoType() == AmmoType.T_TBOLT_10) ||
-                    (wt.getAmmoType() == AmmoType.T_TBOLT_15) ||
-                    (wt.getAmmoType() == AmmoType.T_TBOLT_20)){
+            if ((wt.getAmmoType() == AmmoType.T_TBOLT_5)
+                    || (wt.getAmmoType() == AmmoType.T_TBOLT_10)
+                    || (wt.getAmmoType() == AmmoType.T_TBOLT_15)
+                    || (wt.getAmmoType() == AmmoType.T_TBOLT_20)) {
 
-                for (int i=0;i<raw_damage_array.length;i++){
-                    raw_damage_array[i]=damage_value;
+                for (int i = 0; i < raw_damage_array.length; i++) {
+                    raw_damage_array[i] = damage_value;
                 }
-                raw_damage_array[0]=damage_value/2.0;
+                raw_damage_array[0] = damage_value / 2.0;
 
             }
 
@@ -1600,18 +1574,15 @@ public class CEntity {
 
         // Zero damage is acceptable, but negative damage means
         // something is wrong (typically a variable damage weapon
-        // hasn't been handled).  Push a line to the log file
+        // hasn't been handled). Push a line to the log file
         // to help developers and reset the damage value.
 
-        if ((raw_damage_array[0] < 0) ||
-                (raw_damage_array[1] < 0) ||
-                (raw_damage_array[2] < 0) ||
-                (raw_damage_array[3] < 0)) {
+        if ((raw_damage_array[0] < 0) || (raw_damage_array[1] < 0)
+                || (raw_damage_array[2] < 0) || (raw_damage_array[3] < 0)) {
 
-            System.out.println(
-                    "Weapons characterization: negative damage for weapon " +
-                    weapon.getName() +
-            ".");
+            System.out
+                    .println("Weapons characterization: negative damage for weapon "
+                            + weapon.getName() + ".");
 
             raw_damage_array[0] = 1.0;
             raw_damage_array[1] = 1.0;
@@ -1624,61 +1595,60 @@ public class CEntity {
     }
 
     /**
-     * Certain weapons, mostly ATMs and MMLs, can change both range and
-     * damage based on what ammo is selected.  This will go through the
-     * ammo bins that are applicable to the specified weapon and set flags
-     * based on whether the ammo is short, medium, or long range.  ATMs
-     * can set all three; MMLs can only set short and long range flags.
-     * @param weapon weapon being checked
-     * @param ammo_list ArrayList of Mounted returned by Entity.getAmmo()
+     * Certain weapons, mostly ATMs and MMLs, can change both range and damage
+     * based on what ammo is selected. This will go through the ammo bins that
+     * are applicable to the specified weapon and set flags based on whether the
+     * ammo is short, medium, or long range. ATMs can set all three; MMLs can
+     * only set short and long range flags.
+     *
+     * @param weapon
+     *            weapon being checked
+     * @param ammo_list
+     *            ArrayList of Mounted returned by Entity.getAmmo()
      * @return 3-element array indicating short/medium/long ranges available
      */
 
-    private static boolean[] getAmmoRanges (WeaponType weapon,
-            ArrayList<Mounted> ammo_list)
-    {
+    private static boolean[] getAmmoRanges(WeaponType weapon,
+            ArrayList<Mounted> ammo_list) {
 
         AmmoType bin_type = new AmmoType();
         int ammo_filter = weapon.getAmmoType();
 
         // Short, medium, and long range, respectively
-        boolean[] range_flags = {false, false, false};
+        boolean[] range_flags = { false, false, false };
 
-        // Filter for ATM and MML only.  Add more weapons as needed.
-        if ((ammo_filter != AmmoType.T_ATM) && (ammo_filter != AmmoType.T_MML)){
+        // Filter for ATM and MML only. Add more weapons as needed.
+        if ((ammo_filter != AmmoType.T_ATM) && (ammo_filter != AmmoType.T_MML)) {
             return range_flags;
         }
 
         // For each ammo bin
-        for (Mounted ammo_bin : ammo_list){
+        for (Mounted ammo_bin : ammo_list) {
 
             // If all types are accounted for, no point in checking anything
             // else
-            if (((ammo_filter == AmmoType.T_MML) && range_flags[0] &&
-                    range_flags[2]) ||
-                    ((ammo_filter == AmmoType.T_ATM) && range_flags[0] &&
-                            range_flags[1] && range_flags[2])){
+            if (((ammo_filter == AmmoType.T_MML) && range_flags[0] && range_flags[2])
+                    || ((ammo_filter == AmmoType.T_ATM) && range_flags[0]
+                            && range_flags[1] && range_flags[2])) {
                 return range_flags;
             }
 
             // If the bin isn't empty, isn't destroyed, and isn't breached
-            if (ammo_bin.isAmmoUsable()){
+            if (ammo_bin.isAmmoUsable()) {
 
                 // If the bin is the correct type for the weapon, and has the
                 // proper rack size
                 bin_type = (AmmoType) ammo_bin.getType();
-                if ((bin_type.getAmmoType() == ammo_filter) &&
-                        (bin_type.getRackSize() == weapon.getRackSize())){
+                if ((bin_type.getAmmoType() == ammo_filter)
+                        && (bin_type.getRackSize() == weapon.getRackSize())) {
 
                     // If the weapon is an ATM
-                    if (ammo_filter == AmmoType.T_ATM){
+                    if (ammo_filter == AmmoType.T_ATM) {
 
-                        if (bin_type.getMunitionType() ==
-                            AmmoType.M_HIGH_EXPLOSIVE){
+                        if (bin_type.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                             range_flags[0] = true;
                         } else {
-                            if (bin_type.getMunitionType() ==
-                                AmmoType.M_EXTENDED_RANGE){
+                            if (bin_type.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                                 range_flags[2] = true;
                             } else {
                                 range_flags[1] = true;
@@ -1688,15 +1658,15 @@ public class CEntity {
                     }
 
                     // If the weapon is an MML
-                    if (ammo_filter == AmmoType.T_MML){
+                    if (ammo_filter == AmmoType.T_MML) {
 
                         // Really hate to depend on string comparisons but
                         // nothing else is available
-                        if (bin_type.getShortName().contains("SRM")){
+                        if (bin_type.getShortName().contains("SRM")) {
                             range_flags[0] = true;
                         } else {
-                            if (bin_type.getShortName().contains("LRM") &&
-                                    !AmmoType.canDeliverMinefield(bin_type)){
+                            if (bin_type.getShortName().contains("LRM")
+                                    && !AmmoType.canDeliverMinefield(bin_type)) {
                                 range_flags[2] = true;
                             }
                         }
@@ -1713,19 +1683,23 @@ public class CEntity {
         return range_flags;
     }
 
-
     /**
      * Applies to-hit odds for a weapon at each range to raw damage numbers.
      * This provides an estimate of damage under average circumstances.
-     * @param weapon weapon being checked
-     * @param gunskill Gunnery skill of attacker
-     * @param raw_damage damage for min/short/medium/long range
-     * @param ammo_ranges flags for short/medium/long range ammo available
+     *
+     * @param weapon
+     *            weapon being checked
+     * @param gunskill
+     *            Gunnery skill of attacker
+     * @param raw_damage
+     *            damage for min/short/medium/long range
+     * @param ammo_ranges
+     *            flags for short/medium/long range ammo available
      * @return array with the estimated damage values at each range
      */
 
-    private static double[] getExpectedDamage (WeaponType weapon, int gunskill,
-            double[] raw_damage, boolean[] ammo_ranges){
+    private static double[] getExpectedDamage(WeaponType weapon, int gunskill,
+            double[] raw_damage, boolean[] ammo_ranges) {
 
         // Preset the modified damages
         double[] modified_damages = new double[MAX_RANGE];
@@ -1738,11 +1712,11 @@ public class CEntity {
         range_brackets[3] = weapon.getExtremeRange();
         range_brackets[4] = weapon.getMinimumRange();
 
-        // ATM ranges depend on ammo types available.  Use the longest range
+        // ATM ranges depend on ammo types available. Use the longest range
         // ammo available.
         // TODO: figure out how to get ranges directly from ATM ammo
-        if (weapon.getAmmoType() == AmmoType.T_ATM){
-            if (ammo_ranges[2]){
+        if (weapon.getAmmoType() == AmmoType.T_ATM) {
+            if (ammo_ranges[2]) {
 
                 range_brackets[RANGE_SHORT] = 9;
                 range_brackets[RANGE_MEDIUM] = 18;
@@ -1751,7 +1725,7 @@ public class CEntity {
                 range_brackets[4] = ammo_ranges[0] ? -1 : 4;
 
             } else {
-                if (ammo_ranges[1]){
+                if (ammo_ranges[1]) {
 
                     range_brackets[RANGE_SHORT] = 5;
                     range_brackets[RANGE_MEDIUM] = 10;
@@ -1773,10 +1747,10 @@ public class CEntity {
 
         // MML ranges depend on ammo types available
         // TODO: figure out how to get ranges directly from MML ammo
-        if (weapon.getAmmoType() == AmmoType.T_MML){
-            if (ammo_ranges[2]){
+        if (weapon.getAmmoType() == AmmoType.T_MML) {
+            if (ammo_ranges[2]) {
 
-                // If LRM ammo is available, use LRM ranges.  If SRM ammo
+                // If LRM ammo is available, use LRM ranges. If SRM ammo
                 // is also available it will be used at short range.
                 range_brackets[RANGE_SHORT] = 7;
                 range_brackets[RANGE_MEDIUM] = 14;
@@ -1785,7 +1759,7 @@ public class CEntity {
                 range_brackets[4] = ammo_ranges[0] ? -1 : 6;
 
             } else {
-                if (ammo_ranges[0]){
+                if (ammo_ranges[0]) {
 
                     // If only SRM ammo is available, use SRM ranges
                     range_brackets[RANGE_SHORT] = 3;
@@ -1802,56 +1776,56 @@ public class CEntity {
         int weapon_mod = weapon.getToHitModifier();
 
         // Consider LBX cannons to always be firing cluster rounds
-        if ((weapon.getAmmoType() == AmmoType.T_AC_LBX) ||
-                (weapon.getAmmoType() == AmmoType.T_AC_LBX_THB)){
+        if ((weapon.getAmmoType() == AmmoType.T_AC_LBX)
+                || (weapon.getAmmoType() == AmmoType.T_AC_LBX_THB)) {
             weapon_mod = -1;
         }
 
         // For each hex of range out to extreme range or the extent of the
         // range array
-        for (int cur_range=0; (cur_range < MAX_RANGE) &&
-        (cur_range <= range_brackets[3]); cur_range++){
+        for (int cur_range = 0; (cur_range < MAX_RANGE)
+                && (cur_range <= range_brackets[3]); cur_range++) {
 
             // Calculate the total to-hit modifier using the units
             // gunnery skill, the current range, and any weapon-specific
             // modifiers
             total_mod = gunskill + weapon_mod;
-            if (cur_range > range_brackets[4]){
+            if (cur_range > range_brackets[4]) {
 
-                if (cur_range > range_brackets[RANGE_SHORT]){
+                if (cur_range > range_brackets[RANGE_SHORT]) {
                     total_mod += 2;
                 }
-                if (cur_range > range_brackets[RANGE_MEDIUM]){
+                if (cur_range > range_brackets[RANGE_MEDIUM]) {
                     total_mod += 2;
                 }
-                if (cur_range > range_brackets[RANGE_LONG]){
+                if (cur_range > range_brackets[RANGE_LONG]) {
                     total_mod += 4;
                 }
 
             } else {
 
                 // Inside minimum range
-                total_mod += 1 + range_brackets[4] - cur_range;
+                total_mod += (1 + range_brackets[4]) - cur_range;
             }
 
             // Find the odds of hitting a target and apply them to the raw
             // damage
-            if (cur_range <= range_brackets[RANGE_SHORT]){
-                if (cur_range > range_brackets[4]){
-                    modified_damages[cur_range] = raw_damage[1] *
-                    Compute.oddsAbove(total_mod) / 100;
+            if (cur_range <= range_brackets[RANGE_SHORT]) {
+                if (cur_range > range_brackets[4]) {
+                    modified_damages[cur_range] = (raw_damage[1]
+                            * Compute.oddsAbove(total_mod)) / 100;
                 } else {
-                    modified_damages[cur_range] = raw_damage[0] *
-                    Compute.oddsAbove(total_mod) / 100;
+                    modified_damages[cur_range] = (raw_damage[0]
+                            * Compute.oddsAbove(total_mod)) / 100;
                 }
             }
-            if (cur_range > range_brackets[RANGE_SHORT]){
-                modified_damages[cur_range] = raw_damage[2] *
-                Compute.oddsAbove(total_mod) / 100;
+            if (cur_range > range_brackets[RANGE_SHORT]) {
+                modified_damages[cur_range] = (raw_damage[2]
+                        * Compute.oddsAbove(total_mod)) / 100;
             }
-            if (cur_range > range_brackets[RANGE_MEDIUM]){
-                modified_damages[cur_range] = raw_damage[3] *
-                Compute.oddsAbove(total_mod) / 100;
+            if (cur_range > range_brackets[RANGE_MEDIUM]) {
+                modified_damages[cur_range] = (raw_damage[3]
+                        * Compute.oddsAbove(total_mod)) / 100;
             }
 
         }
@@ -1859,18 +1833,17 @@ public class CEntity {
         return modified_damages;
     }
 
-
-
     /**
-     * Applies to-hit odds for a conventional infantry unit at each range
-     * to raw damage numbers.  This provides an estimate of damage under
-     * average circumstances.
-     * @param attacker Infantry unit
+     * Applies to-hit odds for a conventional infantry unit at each range to raw
+     * damage numbers. This provides an estimate of damage under average
+     * circumstances.
+     *
+     * @param attacker
+     *            Infantry unit
      * @param gunskill
      * @return
      */
-    private static double[] getExpectedDamage(Infantry attacker, int gunskill)
-    {
+    private static double[] getExpectedDamage(Infantry attacker, int gunskill) {
 
         InfantryWeapon primary_weapon = attacker.getPrimaryWeapon();
         InfantryWeapon secondary_weapon = attacker.getSecondaryWeapon();
@@ -1884,61 +1857,56 @@ public class CEntity {
         int total_mod;
 
         // Unarmed infantry unit doesn't do any damage
-        if (null == primary_weapon){
+        if (null == primary_weapon) {
             return modified_damages;
         }
 
-        // Base damage for a single trooper.  Number of troopers will be
+        // Base damage for a single trooper. Number of troopers will be
         // accounted for later.
         raw_damage = attacker.getDamagePerTrooper();
 
         // If there are two secondary weapons per squad then use that weapons
-        // range.  Otherwise use the primary weapons range.
-        if ((null != secondary_weapon) &&  (attacker.getSecondaryN() >= 2)){
+        // range. Otherwise use the primary weapons range.
+        if ((null != secondary_weapon) && (attacker.getSecondaryN() >= 2)) {
             base_range = secondary_weapon.getInfantryRange();
         } else {
             base_range = primary_weapon.getInfantryRange();
         }
-        for (int cur_range=0;
-        (cur_range < MAX_RANGE) && (cur_range <= base_range * 4);
-        cur_range++){
+        for (int cur_range = 0; (cur_range < MAX_RANGE)
+                && (cur_range <= (base_range * 4)); cur_range++) {
 
-            // Range modifiers are a little screwey.  This is just a rough
+            // Range modifiers are a little screwey. This is just a rough
             // estimate.
             total_mod = gunskill;
-            if (cur_range == 0){
-                if ((base_range > 0) && (base_range <= 4)){
+            if (cur_range == 0) {
+                if ((base_range > 0) && (base_range <= 4)) {
                     total_mod -= 2;
                 }
-                if ((base_range > 0) && (base_range > 4)){
+                if ((base_range > 0) && (base_range > 4)) {
                     total_mod -= 1;
                 }
             }
-            if (cur_range > base_range){
+            if (cur_range > base_range) {
                 total_mod += 2;
             }
-            if (cur_range > base_range * 2){
+            if (cur_range > (base_range * 2)) {
                 total_mod += 2;
             }
-            if (cur_range > base_range * 3){
+            if (cur_range > (base_range * 3)) {
                 total_mod += 4;
             }
 
-            modified_damages[cur_range] = raw_damage *
-            Compute.oddsAbove(total_mod) / 100.0;
+            modified_damages[cur_range] = (raw_damage
+                    * Compute.oddsAbove(total_mod)) / 100.0;
 
         }
 
         return modified_damages;
     }
 
-
-
-
-
     public static int getFiringAngle(final Coords dest, int dest_facing,
             final Coords src) {
-        int fa = dest.degree(src) - (dest_facing % 6) * 60;
+        int fa = dest.degree(src) - ((dest_facing % 6) * 60);
         if (fa < 0) {
             fa += 360;
         } else if (fa >= 360) {

@@ -1122,7 +1122,7 @@ public class Compute {
         int distance = Integer.MAX_VALUE;
         for(Coords apos : attackPos) {
             for(Coords tpos : targetPos) {
-                if(apos.distance(tpos) < distance) {
+                if (tpos != null && (apos.distance(tpos) < distance)) {
                     distance = apos.distance(tpos);
                 }
             }

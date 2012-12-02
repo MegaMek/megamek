@@ -7458,6 +7458,10 @@ public abstract class Mech extends Entity {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
             return true;
         }
+        
+        if (isPermanentlyImmobilized()) {
+        	return true;
+        }
 
         //If this is not a military unit, we don't care about weapon status.
         if (!isMilitary()) {

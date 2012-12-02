@@ -208,6 +208,8 @@ public class XMLStreamParser implements XMLResponder {
     public static final String CHASSIS = "chassis";
     public static final String MODEL = "model";
     public static final String NAME = "name";
+    public static final String CAMO_CATEGORY = "camoCategory";
+    public static final String CAMO_FILENAME = "camoFileName";
     public static final String EXT_ID = "externalId";
     public static final String NICK = "nick";
     public static final String CAT_PORTRAIT = "portraitCat";
@@ -511,6 +513,10 @@ public class XMLStreamParser implements XMLResponder {
                     } catch (Exception e) {
                         entity.setDeployRound(0);
                     }
+                    
+                    // Camo
+                    entity.setCamoCategory((String) attr.get(CAMO_CATEGORY));
+                    entity.setCamoFileName((String) attr.get(CAMO_FILENAME));
 
                     // external id
                     String extId = (String) attr.get(EXT_ID);

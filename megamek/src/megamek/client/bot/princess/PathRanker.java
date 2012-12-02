@@ -16,11 +16,15 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
+import megamek.client.ui.SharedUtility;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
+import megamek.common.TargetRoll;
 
 public class PathRanker {       
 
@@ -209,6 +213,19 @@ public class PathRanker {
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    /**
+     * Returns the probability of success of a movepath
+     */
+    public static double getMovePathSuccessProbability(MovePath mp) {
+    	MovePath pcopy=mp.clone();
+        List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
+        double success_probability = 1.0;
+        for (TargetRoll t : targets) {
+            success_probability *= Compute.oddsAbove(t.getValue()) / 100;
+        }
+        return success_probability;
     }
 
 }

@@ -19,6 +19,8 @@ import java.awt.Button;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,9 +85,9 @@ public class CommonHelpDialog extends Dialog {
         this.add(butClose, BorderLayout.SOUTH);
 
         // Make the window half the screensize by default.
-        Dimension screenSize = frame.getToolkit().getScreenSize();
-        Dimension windowSize = new Dimension(screenSize.width / 2,
-                screenSize.height / 2);
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        Dimension windowSize = new Dimension(gd.getDisplayMode().getWidth() / 2,
+                gd.getDisplayMode().getHeight() / 2);
         pack();
         this.setSize(windowSize);
 

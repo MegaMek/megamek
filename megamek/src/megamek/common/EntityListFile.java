@@ -458,6 +458,14 @@ public class EntityListFile {
                 output.write("\" c3UUID=\"");
                 output.write(entity.getC3UUIDAsString());
             }
+            if (null != entity.getCamoCategory()) {
+                output.write("\" camoCategory=\"");
+                output.write(entity.getCamoCategory());
+            }
+            if (null != entity.getCamoFileName()) {
+                output.write("\" camoFileName=\"");
+                output.write(entity.getCamoFileName());
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 

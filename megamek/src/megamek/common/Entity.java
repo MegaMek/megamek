@@ -1028,6 +1028,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isImmobile() {
         return isShutDown() || crew.isUnconscious();
     }
+    
+    /**
+     * This method returns true if a unit is permanently immobilized either because its crew is dead/gone or because of damage
+     * 
+     * @return true if unit is permanently immobile
+     */
+    public boolean isPermanentlyImmobilized () {
+    	if (getCrew() == null || getCrew().isDead()) {
+    		return true;
+    	} else if ((getOriginalWalkMP() > 0 || getOriginalRunMP() > 0 || getOriginalJumpMP() > 0) && (getWalkMP() == 0 && getRunMP() == 0 && getJumpMP() == 0)) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
 
     public boolean isCharging() {
         return displacementAttack instanceof ChargeAttackAction;

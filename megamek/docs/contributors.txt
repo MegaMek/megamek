@@ -81,6 +81,8 @@
      Neth <neoneth@users.sourceforge.net>
      GruetzDark <gruetzdark@users.sourceforge.net>
      Michael rowlett <michael.d.rowlett@gmail.com>
+     Gil Hamilton <iarei@users.sourceforge.net>
+     Nathan Erwin <nderwin@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

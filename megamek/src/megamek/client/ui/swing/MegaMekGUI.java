@@ -17,7 +17,6 @@ package megamek.client.ui.swing;
 import static megamek.common.Compute.d6;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -131,11 +130,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         showMainMenu();
 
         // set visible on middle of screen
-        Dimension screenSize = frame.getToolkit().getScreenSize();
         frame.pack();
-        frame.setLocation((screenSize.width / 2) - (frame.getSize().width / 2),
-                (screenSize.height / 2) - (frame.getSize().height / 2));
-
+        frame.setLocationRelativeTo(null);
         // init the cache
         MechSummaryCache.getInstance();
 

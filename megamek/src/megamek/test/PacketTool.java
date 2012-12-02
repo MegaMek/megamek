@@ -15,7 +15,6 @@
 package megamek.test;
 
 import java.awt.Button;
-import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.GridLayout;
@@ -106,10 +105,8 @@ public class PacketTool extends Frame implements Runnable {
         Frame frame = new PacketTool();
 
         // set visible on middle of screen
-        Dimension screenSize = frame.getToolkit().getScreenSize();
         frame.pack();
-        frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2,
-                screenSize.height / 2 - frame.getSize().height / 2);
+        frame.setLocationRelativeTo(null);
 
         // Show the window.
         frame.setVisible(true);

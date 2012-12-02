@@ -120,6 +120,14 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(te.getPosition());
+        
+        if  (attHex == null) {
+        	return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + ae.getId() + " does not know its position.");
+        }
+        if  (targHex == null) {
+        	return new ToHitData(TargetRoll.IMPOSSIBLE, "Entity #" + te.getId() + " does not know its position.");
+        }
+        
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();

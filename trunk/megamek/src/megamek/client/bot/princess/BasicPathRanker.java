@@ -59,6 +59,8 @@ public class BasicPathRanker extends PathRanker {
 
     //Fleeing the board
     double self_preservation; //how closely will I follow the forced withdrawal rules.
+    
+    Properties properties = null;
 
     static HomeEdge defaultHomeEdge;
 
@@ -70,6 +72,8 @@ public class BasicPathRanker extends PathRanker {
 
     public BasicPathRanker(Properties props, Princess owningPrincess) {
         super(owningPrincess);
+        // Replaced by call to resetParametersFromProperties()
+        /*
         // give some default values for tunable parameters
         fall_shame = 10.0;
 //        blind_optimism = 0.9;
@@ -89,16 +93,64 @@ public class BasicPathRanker extends PathRanker {
 //                .valueOf(props.getProperty("hyper_aggression"));
         //herd_mentality = Double.valueOf(props.getProperty("herd_mentality"));
 
-        best_damage_by_enemies = new TreeMap<Integer, Double>();
-
         self_preservation = Double.valueOf(props.getProperty("self_preservation"));
+        */
+        best_damage_by_enemies = new TreeMap<Integer, Double>();
 
         defaultHomeEdge = HomeEdge.getHomeEdge(Integer.valueOf(props.getProperty("home_edge")));
         owner = owningPrincess;
+        this.properties = props;
+        
+        resetParametersFromProperties();
     }
 
-    public static HomeEdge getDefaultHomeEdge() {
+    public double getFall_shame() {
+		return fall_shame;
+	}
+
+	public void setFall_shame(double fall_shame) {
+		this.fall_shame = fall_shame;
+	}
+
+	public double getFoolish_bravery() {
+		return foolish_bravery;
+	}
+
+	public void setFoolish_bravery(double foolish_bravery) {
+		this.foolish_bravery = foolish_bravery;
+	}
+
+	public double getHyper_aggression() {
+		return hyper_aggression;
+	}
+
+	public void setHyper_aggression(double hyper_aggression) {
+		this.hyper_aggression = hyper_aggression;
+	}
+
+	public double getSelf_preservation() {
+		return self_preservation;
+	}
+
+	public void setSelf_preservation(double self_preservation) {
+		this.self_preservation = self_preservation;
+	}
+
+	public static HomeEdge getDefaultHomeEdge() {
         return defaultHomeEdge;
+    }
+	
+	public void resetParametersFromProperties () {
+    	// give some default values for tunable parameters
+        fall_shame = 10.0;
+        foolish_bravery = 3.0;
+        hyper_aggression = 10.0;
+        self_preservation = 30.0;
+
+        fall_shame = Double.valueOf(properties.getProperty("fall_shame"));
+        foolish_bravery = Double.valueOf(properties.getProperty("foolish_bravery"));
+        hyper_aggression = Double.valueOf(properties.getProperty("hyper_aggression"));
+        self_preservation = Double.valueOf(properties.getProperty("self_preservation"));
     }
 
     class EntityEvaluationResponse {
@@ -328,10 +380,16 @@ public class BasicPathRanker extends PathRanker {
             //Should I be trying to withdraw?
             if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
                     ||(botbase.should_flee)) {
-                int distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
-                //TODO this number should not be hard coded, but instead be modifiable,
-                //if it's small enough, the unit should do more of a fighting withdrawal
-                utility-=self_preservation*distance_to_edge;
+                int new_distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
+                int current_distance_to_edge = distanceToHomeEdge(p.getEntity().getPosition(), botbase.homeEdge, game);
+                int delta_distance_to_edge = current_distance_to_edge - new_distance_to_edge;
+                
+                if (delta_distance_to_edge > 0) {
+                	//if it's small enough, the unit should do more of a fighting withdrawal
+                	utility+=self_preservation*delta_distance_to_edge;
+                } else {
+                	utility-=(self_preservation*100);
+                }
             }
 
             return utility;
@@ -440,7 +498,8 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    /**
+    
+    /*
      * Returns distance to the unit's home edge.
      * Gives the distance to the closest edge
      *
@@ -449,6 +508,7 @@ public class BasicPathRanker extends PathRanker {
      * @param game
      * @return The distance to the unit's home edge.
      */
+    /*
     public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
@@ -478,6 +538,58 @@ public class BasicPathRanker extends PathRanker {
 
             owner.log(BasicPathRanker.class, METHOD_NAME, msg);
             return edgeCoords.distance(position);
+        } finally {
+            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+        }
+    }
+    */
+    
+    /**
+     * Returns distance to the unit's home edge.
+     * Gives the distance to the closest edge
+     *
+     * @param position Final coordinates of the proposed move.
+     * @param homeEdge Unit's home edge.
+     * @param game
+     * @return The distance to the unit's home edge.
+     */
+    public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
+    	final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
+        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        
+        try {
+        	String msg = "Getting distance to home edge: " + homeEdge.toString();
+	        
+	        int width=game.getBoard().getWidth();
+	        int height=game.getBoard().getHeight();
+	        
+	        int distance = 9999;
+	        switch (homeEdge) {
+	        	case NORTH : {
+	        		distance = position.y;
+	        		break;
+	        	}
+	        	case SOUTH : {
+	        		distance = height - position.y - 1;
+	        		break;
+	        	}
+	        	case WEST : {
+	        		distance = position.x;
+	        		break;
+	        	}
+	        	case EAST : {
+	        		distance = width - position.x - 1;
+	        		break;
+	        	}
+	        	default : {
+	        		owner.log(BasicPathRanker.class, METHOD_NAME, Princess.LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+	        		distance = position.y;
+	        	}
+	        }
+	        
+	        msg += " -> " + distance;
+	        owner.log(BasicPathRanker.class, METHOD_NAME, msg);
+	        return distance;
         } finally {
             owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }

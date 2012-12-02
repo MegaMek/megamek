@@ -331,15 +331,17 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             precognition.insureUpToDate();
 
-            if (entity.isCrippled() && forced_withdrawal && !entity.isImmobile()) {
-                String msg = entity.getDisplayName() + " is crippled and withdrawing";
+            if (((entity.isCrippled() && forced_withdrawal) || should_flee)
+            	&& !entity.isImmobile()) {
+                String msg = entity.getDisplayName() + (should_flee ? " is retreating" : " is crippled and withdrawing");
                 log(getClass(), METHOD_NAME, msg);
                 sendChat(msg);
             }
 
              //If this entity must withdraw, is on its home edge and is able to flee the board, do so.
-             if (entity.canFlee() && entity.isCrippled() && (forced_withdrawal || should_flee) &&
-                (BasicPathRanker.distanceToHomeEdge(entity.getPosition(), homeEdge, game) <= 0)) {
+             if (((entity.isCrippled() && forced_withdrawal) || should_flee)
+            	 && entity.canFlee()
+            	 && (BasicPathRanker.distanceToHomeEdge(entity.getPosition(), homeEdge, game) <= 0)) {
                 MovePath mp = new MovePath(game, entity);
                 mp.addStep(MovePath.MoveStepType.FLEE);
                 return mp;
@@ -353,8 +355,17 @@ public class Princess extends BotClient {
             if (entity instanceof Tank) {
                 ejectionPossible &= game.getOptions().booleanOption("vehicles_can_eject");
             }
+            
             //If this entity is immobile as well as crippled, eject the pilot/crew if possible.
-            if (entity.isImmobile() && entity.isCrippled() && ejectionPossible) {
+            //Do the same if entity's chance to get up is 0
+            //Do the same if forced withdrawal is activated and this entity's chance to get up is < 15%
+            MovePath getUpMovePath = new MovePath(game, entity);
+            MovePath.MoveStepType getUpStepType = game.getOptions().booleanOption("tacops_careful_stand") ? MovePath.MoveStepType.CAREFUL_STAND : MovePath.MoveStepType.GET_UP;
+            getUpMovePath.addStep(getUpStepType);
+            if ((entity.isImmobile() || entity.isPermanentlyImmobilized() 
+            			|| (entity.isProne() && (PathRanker.getMovePathSuccessProbability(getUpMovePath) <= 0.025))
+            			|| (entity.isProne() && forced_withdrawal && (PathRanker.getMovePathSuccessProbability(getUpMovePath) <= 0.15)))
+            		&& entity.isCrippled() && ejectionPossible) {
                 String msg = entity.getDisplayName() + " is immobile.  Abandoning unit.";
                 log(getClass(), METHOD_NAME, msg);
                 sendChat(msg);
@@ -528,15 +539,61 @@ public class Princess extends BotClient {
             String msg = "Received message: \"" + ge.getMessage() + "\".\tMessage type: " + ge.getEventName();
             log(getClass(), METHOD_NAME, msg);
 
+//            StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
+//            String message = st.nextToken();
+//            if (message == null) {
+//                return;
+//            }
+//            if (message.contains("flee")) {
+//                log(getClass(), METHOD_NAME, "Received flee order!");
+//                sendChat("Run Away!");
+//                should_flee = true;
+//            }
+            
             StringTokenizer st = new StringTokenizer(ge.getMessage(), ":"); //$NON-NLS-1$
-            String message = st.nextToken();
-            if (message == null) {
-                return;
+            String nameFrom = st.nextToken();
+            String secondToken = null;
+            String nameTo = null;
+            String message = null;
+            
+            if (st.hasMoreTokens()) {
+            	secondToken = st.nextToken().trim();
+            	
+            	if ("help".equalsIgnoreCase(secondToken)) {
+            		
+            		sendChat("Available commands :");
+            		String [] commands = {"[help]", "[botname]:flee","[botname]:reset (Resets bot parameters from file)"};
+            		for (String command : commands) {
+                        sendChat(command);
+					}
+            		
+            		chatp.processChat(ge, this);
+            		return ;
+            	} else {
+            		nameTo = secondToken;
+            	}
             }
-            if (message.contains("flee")) {
-                log(getClass(), METHOD_NAME, "Received flee order!");
-                sendChat("Run Away!");
-                should_flee = true;
+            
+            if (st.hasMoreTokens()) {
+            	message = st.nextToken().trim();
+            }
+            
+            if (nameTo == null || message == null || getLocalPlayer() == null) {
+            	chatp.processChat(ge, this);
+            	return;
+            }
+            
+            if (nameTo.equalsIgnoreCase(getLocalPlayer().getName())) {
+            	if (message.equalsIgnoreCase("flee")) {
+            		log(getClass(), METHOD_NAME, " received flee order. Running away to " + homeEdge + " edge !");
+                    sendChat(getLocalPlayer().getName() + " received flee order. Running away to " + homeEdge + " edge !");
+                    should_flee = true;
+                } else if (message.equalsIgnoreCase("reset")) {
+                	log(getClass(), METHOD_NAME, " reseting parameters from properties file");
+                    sendChat(getLocalPlayer().getName() + " reseting parameters from properties file");
+                	path_ranker.resetParametersFromProperties();
+                	should_flee = false;
+                }
             }
 
             chatp.processChat(ge, this);

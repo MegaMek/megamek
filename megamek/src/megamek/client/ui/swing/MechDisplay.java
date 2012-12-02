@@ -2139,7 +2139,7 @@ public class MechDisplay extends JPanel {
             if (event.getSource().equals(weaponList)) {
                 m_chBayWeapon.removeAllItems();
                 displaySelected();
-                
+
                 // When in the Firing Phase, update the targeting information.
                 // TODO: make this an accessor function instead of a member
                 // access.
@@ -2640,7 +2640,7 @@ public class MechDisplay extends JPanel {
                 if ((m == null) || !bOwner
                         || ((!(m.getType() instanceof AmmoType)
                                 || (m.getUsableShotsLeft() <= 0)) && !m.isDWPMounted())
-                        || (m.isDWPMounted() && (m.getLinkedBy() == null))) {
+                        || (m.isDWPMounted() && (m.isMissing() == true))) {
                     return;
                 }
 
@@ -2772,7 +2772,7 @@ public class MechDisplay extends JPanel {
                 if ((en instanceof Mech) && (en.getLocationStatus(Mech.LOC_CT) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
-                
+
                 if ((en instanceof Tank) && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }
@@ -2796,7 +2796,7 @@ public class MechDisplay extends JPanel {
                 } else if ((m != null)
                         && bOwner
                         && (m.getType() instanceof WeaponType)
-                        && (m.getLinkedBy() != null)
+                        && !m.isMissing()
                         && m.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner && m.getType().hasModes()) {

@@ -50,13 +50,17 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff.
     private boolean rapidfire = false; // MGs in rapid-fire mode
-    private boolean kindRapidFire = false; // Reduced jam chance for rapid fired ACs.
+    private boolean kindRapidFire = false; // Reduced jam chance for rapid fired
+                                           // ACs.
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean mechTurretMounted = false; // is this mounted in a mechturret
-    private boolean sponsonTurretMounted = false; // is this mounted in a sponsonturret
-    private boolean pintleTurretMounted = false; // is this mounted in a pintleturret
+    private boolean mechTurretMounted = false; // is this mounted in a
+                                               // mechturret
+    private boolean sponsonTurretMounted = false; // is this mounted in a
+                                                  // sponsonturret
+    private boolean pintleTurretMounted = false; // is this mounted in a
+                                                 // pintleturret
     private int facing = -1; // facing for turrets
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
@@ -155,10 +159,13 @@ public class Mounted implements Serializable, RoundUpdated {
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
         }
-        if ((type instanceof MiscType) && type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
+        if ((type instanceof MiscType)
+                && type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {
             setShotsLeft(30);
         }
-        if ((type instanceof MiscType) && ((((MiscType) type).isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR)))) {
+        if ((type instanceof MiscType)
+                && ((((MiscType) type).isShield() || type
+                        .hasFlag(MiscType.F_MODULAR_ARMOR)))) {
             MiscType shield = (MiscType) type;
             baseDamageAbsorptionRate = shield.baseDamageAbsorptionRate;
             baseDamageCapacity = shield.baseDamageCapacity;
@@ -199,7 +206,9 @@ public class Mounted implements Serializable, RoundUpdated {
         }
 
         if (type == null) {
-            System.err.println("Mounted.restore: could not restore equipment type \"" + typeName + "\"");
+            System.err
+                    .println("Mounted.restore: could not restore equipment type \""
+                            + typeName + "\"");
         }
     }
 
@@ -291,9 +300,11 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         // all communicationsequipment mounteds need to have the same mode at
         // all times
-        if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+        if ((getType() instanceof MiscType)
+                && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
             for (Mounted m : entity.getMisc()) {
-                if (!m.equals(this) && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                if (!m.equals(this)
+                        && m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
                     m.setMode(newMode);
                 }
             }
@@ -311,7 +322,9 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean canInstantSwitch(int newMode) {
         String newModeName = type.getMode(newMode).getName();
         String curModeName = curMode().getName();
-        return getType().hasInstantModeSwitch() && !type.isNextTurnModeSwitch(newModeName) && !type.isNextTurnModeSwitch(curModeName);
+        return getType().hasInstantModeSwitch()
+                && !type.isNextTurnModeSwitch(newModeName)
+                && !type.isNextTurnModeSwitch(curModeName);
     }
 
     public void newRound(int roundNumber) {
@@ -335,19 +348,24 @@ public class Mounted implements Serializable, RoundUpdated {
         StringBuffer desc;
         switch (getMineType()) {
             case MINE_CONVENTIONAL:
-                desc = new StringBuffer(Messages.getString("Mounted.ConventionalMine"));
+                desc = new StringBuffer(
+                        Messages.getString("Mounted.ConventionalMine"));
                 break;
             case MINE_VIBRABOMB:
-                desc = new StringBuffer(Messages.getString("Mounted.VibraBombMine"));
+                desc = new StringBuffer(
+                        Messages.getString("Mounted.VibraBombMine"));
                 break;
             case MINE_COMMAND_DETONATED:
-                desc = new StringBuffer(Messages.getString("Mounted.CommandDetonatedMine"));
+                desc = new StringBuffer(
+                        Messages.getString("Mounted.CommandDetonatedMine"));
                 break;
             case MINE_ACTIVE:
-                desc = new StringBuffer(Messages.getString("Mounted.ActiveMine"));
+                desc = new StringBuffer(
+                        Messages.getString("Mounted.ActiveMine"));
                 break;
             case MINE_INFERNO:
-                desc = new StringBuffer(Messages.getString("Mounted.InfernoMine"));
+                desc = new StringBuffer(
+                        Messages.getString("Mounted.InfernoMine"));
                 break;
             case -1:
             default:
@@ -357,13 +375,13 @@ public class Mounted implements Serializable, RoundUpdated {
             desc.append(" (").append(getNWeapons()).append(")");
         }
         if (destroyed) {
-        	if(!repairable) {
-        		desc.insert(0, "**");
-        	} else {
-        		desc.insert(0, "*");
-        	}
-        } else if(missing) {
-        	desc.insert(0, "x ");
+            if (!repairable) {
+                desc.insert(0, "**");
+            } else {
+                desc.insert(0, "*");
+            }
+        } else if (missing) {
+            desc.insert(0, "x ");
         } else if (useless) {
             desc.insert(0, "x ");
         } else if (usedThisRound) {
@@ -372,8 +390,6 @@ public class Mounted implements Serializable, RoundUpdated {
             desc.insert(0, "j ");
         } else if (fired) {
             desc.insert(0, "- ");
-        } else if (isDWPMounted && (getLinkedBy() == null)) {
-            desc.insert(0, "x ");
         }
         if (rearMounted) {
             desc.append(" (R)");
@@ -407,7 +423,8 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public boolean isReady() {
         return !usedThisRound && !destroyed && !missing && !jammed && !useless
-                &&!fired && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
+                && !fired
+                && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
 
     public boolean isUsedThisRound() {
@@ -490,13 +507,13 @@ public class Mounted implements Serializable, RoundUpdated {
         jammedThisTurn = j;
     }
 
-    /** The number of shots of ammunition currently stored in this
-     * Mounted irregardless of its operational status. Or in other words,
-     * the straight value last set by {@link #setShotsLeft(int)}, even if this
-     * ammo slot is no longer functional or indeed notionally no longer part of
-     * the unit formerly carrying it. This is the 'general' base value that
-     * should be used for display, reporting, entity encoding and salvage
-     * purposes.
+    /**
+     * The number of shots of ammunition currently stored in this Mounted
+     * irregardless of its operational status. Or in other words, the straight
+     * value last set by {@link #setShotsLeft(int)}, even if this ammo slot is
+     * no longer functional or indeed notionally no longer part of the unit
+     * formerly carrying it. This is the 'general' base value that should be
+     * used for display, reporting, entity encoding and salvage purposes.
      *
      * @see #getHittableShotsLeft()
      * @see #getUsableShotsLeft()
@@ -506,10 +523,11 @@ public class Mounted implements Serializable, RoundUpdated {
         return shotsLeft;
     }
 
-    /** Convenience method returning the number of shots of ammunition
-     * in this Mounted that may be affected by a critical hit. This
-     * method returns 0 if this Mounted is marked as destroyed or missing and
-     * the same value as {@link #getBaseShotsLeft()} otherwise.
+    /**
+     * Convenience method returning the number of shots of ammunition in this
+     * Mounted that may be affected by a critical hit. This method returns 0 if
+     * this Mounted is marked as destroyed or missing and the same value as
+     * {@link #getBaseShotsLeft()} otherwise.
      *
      * @see #getBaseShotsLeft()
      * @see #getUsableShotsLeft()
@@ -522,11 +540,12 @@ public class Mounted implements Serializable, RoundUpdated {
         return shotsLeft;
     }
 
-    /** Convenience method returning the number of shots of ammunition
-     * in this Mounted that can actually be used <em>as</em> ammunition.
-     * This method returns 0 if this Mounted is marked as destroyed, missing,
-     * or breached and thus nonfunctional and the same value as
-     * {@link #getBaseShotsLeft()} otherwise.
+    /**
+     * Convenience method returning the number of shots of ammunition in this
+     * Mounted that can actually be used <em>as</em> ammunition. This method
+     * returns 0 if this Mounted is marked as destroyed, missing, or breached
+     * and thus nonfunctional and the same value as {@link #getBaseShotsLeft()}
+     * otherwise.
      *
      * @see #getBaseShotsLeft()
      * @see #getHittableShotsLeft()
@@ -553,13 +572,19 @@ public class Mounted implements Serializable, RoundUpdated {
         final WeaponType wtype = (WeaponType) getType();
         int nShots = 1;
         // figure out # of shots for variable-shot weapons
-        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) && curMode().equals("Ultra")) {
+        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
+                .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                && curMode().equals("Ultra")) {
             nShots = 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC) || (wtype.getAmmoType() == AmmoType.T_LAC)) && wtype.hasModes() && curMode().equals("Rapid")) {
+        else if (((wtype.getAmmoType() == AmmoType.T_AC) || (wtype
+                .getAmmoType() == AmmoType.T_LAC))
+                && wtype.hasModes()
+                && curMode().equals("Rapid")) {
             nShots = 2;
-        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY) || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
+        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
+                || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (curMode().equals("2-shot")) {
                 nShots = 2;
             } else if (curMode().equals("3-shot")) {
@@ -576,7 +601,12 @@ public class Mounted implements Serializable, RoundUpdated {
         else if (wtype.hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
             for (Mounted m : entity.getWeaponList()) {
-                if ((m.getLocation() == getLocation()) && !m.isDestroyed() && !m.isBreached() && m.getType().hasFlag(WeaponType.F_MG) && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType()).getRackSize())) {
+                if ((m.getLocation() == getLocation())
+                        && !m.isDestroyed()
+                        && !m.isBreached()
+                        && m.getType().hasFlag(WeaponType.F_MG)
+                        && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) getType())
+                                .getRackSize())) {
                     nShots++;
                 }
             }
@@ -632,7 +662,8 @@ public class Mounted implements Serializable, RoundUpdated {
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during
             // combat.
-            if (!isHotLoaded && link.getType().hasModes() && link.curMode().equals("HotLoad")) {
+            if (!isHotLoaded && link.getType().hasModes()
+                    && link.curMode().equals("HotLoad")) {
                 isHotLoaded = true;
             }
 
@@ -649,7 +680,8 @@ public class Mounted implements Serializable, RoundUpdated {
             // Check to see if the ammo has its mode set to hotloaded.
             // This is for vehicles that can change hotload status during
             // combat.
-            if (!isHotLoaded && getType().hasModes() && curMode().equals("HotLoad")) {
+            if (!isHotLoaded && getType().hasModes()
+                    && curMode().equals("HotLoad")) {
                 isHotLoaded = true;
             }
 
@@ -689,23 +721,30 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public int hasChargedCapacitor() {
 
-        if ((getCrossLinkedBy() != null) && (getCrossLinkedBy().getType() instanceof MiscType) && !getCrossLinkedBy().isDestroyed()) {
+        if ((getCrossLinkedBy() != null)
+                && (getCrossLinkedBy().getType() instanceof MiscType)
+                && !getCrossLinkedBy().isDestroyed()) {
 
             MiscType cap = (MiscType) getCrossLinkedBy().getType();
-            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR) && getCrossLinkedBy().curMode().equals("Charge")) {
+            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && getCrossLinkedBy().curMode().equals("Charge")) {
                 return 2;
             }
         }
 
-        if ((getLinkedBy() != null) && (getLinkedBy().getType() instanceof MiscType) && !getLinkedBy().isDestroyed()) {
+        if ((getLinkedBy() != null)
+                && (getLinkedBy().getType() instanceof MiscType)
+                && !getLinkedBy().isDestroyed()) {
 
             MiscType cap = (MiscType) getLinkedBy().getType();
-            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR) && getLinkedBy().curMode().equals("Charge")) {
+            if (cap.hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && getLinkedBy().curMode().equals("Charge")) {
                 return 1;
             }
         }
         return 0;
     }
+
     public int getLocation() {
         return location;
     }
@@ -793,7 +832,9 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isSplitable() {
-        return (((getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_SPLITABLE)) || ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_SPLITABLE)));
+        return (((getType() instanceof WeaponType) && getType().hasFlag(
+                WeaponType.F_SPLITABLE)) || ((getType() instanceof MiscType) && getType()
+                .hasFlag(MiscType.F_SPLITABLE)));
     }
 
     public void setSplit(boolean b) {
@@ -809,7 +850,8 @@ public class Mounted implements Serializable, RoundUpdated {
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
             // Dead-Fire LRM's do 2 points of damage per shot when critted.
-            if ((atype.getMunitionType() == AmmoType.M_DEAD_FIRE) || (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE)) {
+            if ((atype.getMunitionType() == AmmoType.M_DEAD_FIRE)
+                    || (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE)) {
                 damagePerShot++;
             } else if (atype.getAmmoType() == AmmoType.T_TASER) {
                 damagePerShot = 6;
@@ -821,7 +863,8 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof WeaponType) {
             WeaponType wtype = (WeaponType) type;
             // TacOps Gauss Weapon rule p. 102
-            if ((type instanceof GaussWeapon) && type.hasModes() && curMode().equals("Powered Down")) {
+            if ((type instanceof GaussWeapon) && type.hasModes()
+                    && curMode().equals("Powered Down")) {
                 return 0;
             }
             if (isHotLoaded() && (getLinked().getUsableShotsLeft() > 0)) {
@@ -862,7 +905,8 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof MiscType) {
             MiscType mtype = (MiscType) type;
             if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                if (curMode().equals("Charge") && (linked != null) && !linked.isFired()) {
+                if (curMode().equals("Charge") && (linked != null)
+                        && !linked.isFired()) {
                     return 15;
                 }
             }
@@ -875,7 +919,8 @@ public class Mounted implements Serializable, RoundUpdated {
             return 0;
         }
         // um, otherwise, I'm not sure
-        System.err.println("mounted: unable to determine explosion damage for " + getName());
+        System.err.println("mounted: unable to determine explosion damage for "
+                + getName());
         return 0;
     }
 
@@ -901,7 +946,8 @@ public class Mounted implements Serializable, RoundUpdated {
         }
 
         // Is the entity even active?
-        if (entity.isShutDown() || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
+        if (entity.isShutDown()
+                || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
             return false;
         }
 
@@ -909,29 +955,30 @@ public class Mounted implements Serializable, RoundUpdated {
         return true;
     }
 
-    /** Determines whether this weapon should be considered crippled for
-     * damage level purposes.
-     * 
-     * @return {@code true} if the weapon is at least one of: destroyed, missing,
-     * breached, jammed, a detachable weapon no longer attached to its original
-     * battle armor, or simply out of ammo (includes discharged one-shot weapons),
-     * {@code false} otherwise.
+    /**
+     * Determines whether this weapon should be considered crippled for damage
+     * level purposes.
+     *
+     * @return {@code true} if the weapon is at least one of: destroyed,
+     *         missing, breached, jammed, a detachable weapon no longer attached
+     *         to its original battle armor, or simply out of ammo (includes
+     *         discharged one-shot weapons), {@code false} otherwise.
      */
     public boolean isCrippled() {
-        /* Have to account for jammed weapons here because we're currently not
+        /*
+         * Have to account for jammed weapons here because we're currently not
          * distinguishing between potentially temporary and permanent jams, and
-         * a perma-jammed weapon definitely _is_ crippled. Moreover, even a weapon
-         * that could be unjammed again may end up never getting there and isn't
-         * contributing anything in the meantime, so it might as well be considered
-         * "crippled" until the jam clears, if ever.
+         * a perma-jammed weapon definitely _is_ crippled. Moreover, even a
+         * weapon that could be unjammed again may end up never getting there
+         * and isn't contributing anything in the meantime, so it might as well
+         * be considered "crippled" until the jam clears, if ever.
          */
         if (destroyed || jammed || missing || useless || fired) {
             return true;
         }
-        if ((type instanceof AmmoWeapon) || (type instanceof AmmoBayWeapon)
-                ) {
-            if (getLinked() == null
-                    || entity.getTotalAmmoOfType(getLinked().getType()) < 1) {
+        if ((type instanceof AmmoWeapon) || (type instanceof AmmoBayWeapon)) {
+            if ((getLinked() == null)
+                    || (entity.getTotalAmmoOfType(getLinked().getType()) < 1)) {
                 return true;
             }
         }
@@ -940,14 +987,15 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return false;
     }
-    
+
     /**
      * Returns false if this ammo should not be loaded. Checks if the ammo is
-     * already destroyed or missing, is being dumped, has been breached, is already
-     * used up, or is locationless (oneshot ammo).
+     * already destroyed or missing, is being dumped, has been breached, is
+     * already used up, or is locationless (oneshot ammo).
      */
     public boolean isAmmoUsable() {
-        if (destroyed || missing || m_bDumping || useless || (shotsLeft <= 0) || (location == Entity.LOC_NONE)) {
+        if (destroyed || missing || m_bDumping || useless || (shotsLeft <= 0)
+                || (location == Entity.LOC_NONE)) {
             return false;
         }
         return true;
@@ -1045,14 +1093,17 @@ public class Mounted implements Serializable, RoundUpdated {
 
         // Only damaged Actuators should effect the shields absorption rate
         // Not missing ones.
-        if (entity.hasSystem(Mech.ACTUATOR_SHOULDER, location) && !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location)) {
+        if (entity.hasSystem(Mech.ACTUATOR_SHOULDER, location)
+                && !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, location)) {
             base -= 2;
         }
 
-        if (entity.hasSystem(Mech.ACTUATOR_LOWER_ARM, location) && !entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location)) {
+        if (entity.hasSystem(Mech.ACTUATOR_LOWER_ARM, location)
+                && !entity.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, location)) {
             base--;
         }
-        if (entity.hasSystem(Mech.ACTUATOR_UPPER_ARM, location) && !entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location)) {
+        if (entity.hasSystem(Mech.ACTUATOR_UPPER_ARM, location)
+                && !entity.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, location)) {
             base--;
         }
 
@@ -1176,7 +1227,11 @@ public class Mounted implements Serializable, RoundUpdated {
             if (hasChargedCapacitor() == 1) {
                 heat += 5;
             }
-            if ((getLinkedBy() != null) && !getLinkedBy().isInoperable() && (getLinkedBy().getType() instanceof MiscType) && getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+            if ((getLinkedBy() != null)
+                    && !getLinkedBy().isInoperable()
+                    && (getLinkedBy().getType() instanceof MiscType)
+                    && getLinkedBy().getType().hasFlag(
+                            MiscType.F_LASER_INSULATOR)) {
                 heat -= 1;
                 if (heat == 0) {
                     heat++;
@@ -1240,9 +1295,14 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setArmored(boolean armored) {
         // Ammobins cannot be armored.
-        if ((getType() instanceof AmmoType) && (((AmmoType) getType()).getAmmoType() != AmmoType.T_COOLANT_POD)) {
+        if ((getType() instanceof AmmoType)
+                && (((AmmoType) getType()).getAmmoType() != AmmoType.T_COOLANT_POD)) {
             armoredComponent = false;
-        } else if ((getType() instanceof MiscType) && (getType().hasFlag(MiscType.F_SPIKES) || getType().hasFlag(MiscType.F_REACTIVE) || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType()).isShield())) {
+        } else if ((getType() instanceof MiscType)
+                && (getType().hasFlag(MiscType.F_SPIKES)
+                        || getType().hasFlag(MiscType.F_REACTIVE)
+                        || getType().hasFlag(MiscType.F_MODULAR_ARMOR) || ((MiscType) getType())
+                            .isShield())) {
             armoredComponent = false;
         } else {
             armoredComponent = armored;
@@ -1258,8 +1318,10 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     /**
-     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean options,
-     * as it will not check game options for quirks. Use Mounted#hasQuirk instead
+     * Retrieves the quirks object for mounted. DO NOT USE this to check boolean
+     * options, as it will not check game options for quirks. Use
+     * Mounted#hasQuirk instead
+     *
      * @return
      */
     public WeaponQuirks getQuirks() {
@@ -1267,10 +1329,13 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean hasQuirk(String name) {
-    	if((null == entity) || (null == entity.getGame()) || !entity.getGame().getOptions().booleanOption("stratops_quirks")) {
-    		return false;
-    	}
-    	return quirks.booleanOption(name);
+        if ((null == entity)
+                || (null == entity.getGame())
+                || !entity.getGame().getOptions()
+                        .booleanOption("stratops_quirks")) {
+            return false;
+        }
+        return quirks.booleanOption(name);
     }
 
     /**
@@ -1279,13 +1344,16 @@ public class Mounted implements Serializable, RoundUpdated {
     public int countQuirks() {
         int count = 0;
 
-        if((null == entity) || (null == entity.game) || !entity.game.getOptions().booleanOption("stratops_quirks")) {
-        	return count;
+        if ((null == entity) || (null == entity.game)
+                || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+            return count;
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
                 IOption quirk = j.nextElement();
                 if (quirk.booleanValue()) {
                     count++;
@@ -1303,24 +1371,29 @@ public class Mounted implements Serializable, RoundUpdated {
     public String getQuirkList(String sep) {
         StringBuffer qrk = new StringBuffer();
 
-        if((null == entity) || (null == entity.game) || !entity.game.getOptions().booleanOption("stratops_quirks")) {
-        	return qrk.toString();
+        if ((null == entity) || (null == entity.game)
+                || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+            return qrk.toString();
         }
 
         if (null == sep) {
             sep = "";
         }
 
-        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> i = quirks.getGroups(); i
+                .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); j
+                    .hasMoreElements();) {
                 IOption quirk = j.nextElement();
                 if (quirk.booleanValue()) {
                     if (qrk.length() > 0) {
                         qrk.append(sep);
                     }
                     qrk.append(quirk.getName());
-                    if ((quirk.getType() == IOption.STRING) || (quirk.getType() == IOption.CHOICE) || (quirk.getType() == IOption.INTEGER)) {
+                    if ((quirk.getType() == IOption.STRING)
+                            || (quirk.getType() == IOption.CHOICE)
+                            || (quirk.getType() == IOption.INTEGER)) {
                         qrk.append(" ").append(quirk.stringValue());
                     }
                 }

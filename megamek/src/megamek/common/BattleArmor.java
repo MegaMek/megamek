@@ -1015,8 +1015,12 @@ public class BattleArmor extends Infantry {
      */
     public boolean hasDWP() {
         for (Mounted mounted : getWeaponList()) {
-            if (mounted.isDWPMounted() && (mounted.getLinked() != null)) {
-                return true;
+            if (mounted.isDWPMounted()) {
+                if (mounted.isMissing()) {
+                    continue;
+                } else if ((mounted.getLinked() != null) && (mounted.getLinked().getUsableShotsLeft() > 0)) {
+                    return true;
+                }
             }
         }
         return false;

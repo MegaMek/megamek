@@ -146,6 +146,9 @@ public class MechView {
         if (isBA && ((BattleArmor) entity).isBurdened()) {
             sBasic.append("<br><i>(").append(Messages.getString("MechView.Burdened")).append(")</i>"); //$NON-NLS-1$
         }
+        if (isBA && ((BattleArmor) entity).hasDWP()) {
+            sBasic.append("<br><i>(").append(Messages.getString("MechView.DWPBurdened")).append(")</i>"); //$NON-NLS-1$
+        }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
                     .append(Messages

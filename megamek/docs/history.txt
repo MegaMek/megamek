@@ -8,6 +8,7 @@ v0.35.34-dev (SVN)
 + Patch 437: Patch for storing individual camo in the <entity> tag
 + Patch 429: Adds Camo Parsing to Scenario Loader
 + Patch 422: center windows on screen
++ Patch 435: Princess: Begin a Game in Withdrawal
 
 v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Added additional logging to Princess in order to make it a bit easier to track

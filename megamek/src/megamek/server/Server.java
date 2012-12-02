@@ -4185,12 +4185,12 @@ public class Server implements Runnable {
                     crashedIntoTerrain = false;
                 }
             }
-            
+
             Entity crashDropship = null;
             for (Enumeration<Entity> e = game.getEntities(nextPos); e.hasMoreElements();) {
                 Entity en = e.nextElement();
-                if (en instanceof Dropship && !en.isAirborne()
-                		&& nextAltitude <= (en.absHeight())) {
+                if ((en instanceof Dropship) && !en.isAirborne()
+                		&& (nextAltitude <= (en.absHeight()))) {
                 	crashDropship = en;
                 }
             }
@@ -4330,7 +4330,7 @@ public class Server implements Runnable {
                     break;
                 }
             }
-            
+
             // Have skidding units suffer falls (off a cliff).
             else if (curAltitude > (nextAltitude + entity.getMaxElevationChange())) {
                 // WIGE can avoid this too, if they have 2MP to spend
@@ -4822,7 +4822,7 @@ public class Server implements Runnable {
         int partialroll = Compute.d6(1);
         boolean partial = (partialroll == 6);
         //if aero chance to avoid
-        if (target instanceof Aero && (target.mpUsed < target.getRunMPwithoutMASC()) && !((Aero)target).isOutControlTotal() && !target.isImmobile()) {
+        if ((target instanceof Aero) && (target.mpUsed < target.getRunMPwithoutMASC()) && !((Aero)target).isOutControlTotal() && !target.isImmobile()) {
             // give them a control roll to avoid the collision
             // TODO: I should make this voluntary really
         	Aero ta = (Aero)target;
@@ -5093,8 +5093,8 @@ public class Server implements Runnable {
             }
         }
         sendChangedHex(c);
-        
-        //check for a stacking violation - which should only happen in the case of 
+
+        //check for a stacking violation - which should only happen in the case of
         //grounded dropships, because they are not moveable
         if(null != Compute.stackingViolation(game, entity.getId(), c)) {
         	Coords dest = Compute.getValidDisplacement(game, entity.getId(), c, Compute.d6()-1);
@@ -5605,7 +5605,7 @@ public class Server implements Runnable {
                                 int id = targets.nextElement().getId();
                                 Entity ce = game.getEntity(id);
                                 //if we are in atmo and not the same altitude then skip
-                                if(!game.getBoard().inSpace() && ce.getAltitude() != curAltitude) {
+                                if(!game.getBoard().inSpace() && (ce.getAltitude() != curAltitude)) {
                                 	continue;
                                 }
                                 // you can't collide with yourself
@@ -9306,7 +9306,7 @@ public class Server implements Runnable {
 
             // determine to-hit number
             ToHitData toHit = new ToHitData(7, "base");
-            if (affaTarget instanceof Tank || affaTarget instanceof Dropship) {
+            if ((affaTarget instanceof Tank) || (affaTarget instanceof Dropship)) {
                 toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Target is a Tank");
             } else {
                 toHit.append(Compute.getTargetMovementModifier(game, affaTarget.getId()));
@@ -14367,7 +14367,7 @@ public class Server implements Runnable {
                 // remove heat we cooled down
                 entity.heatBuildup -= Math.min(9, entity.coolFromExternal);
                 entity.coolFromExternal = 0;
-                
+
                 // add the heat we've built up so far.
                 entity.heat += entity.heatBuildup;
 
@@ -22039,7 +22039,7 @@ public class Server implements Runnable {
             if (entity instanceof BattleArmor) {
                 for (Mounted m : entity.getWeaponList()) {
                     if (m.isDWPMounted() && m.isPendingDump()) {
-                        m.setLinkedBy(null);
+                        m.setMissing(true);
                         r = new Report(5116);
                         r.subject = entity.getId();
                         r.addDesc(entity);
@@ -23034,7 +23034,7 @@ public class Server implements Runnable {
             // a mode change for ammo means dumping or hotloading
             if ((m.getType() instanceof AmmoType) && !m.getType().hasInstantModeSwitch() && (mode <= 0)) {
                 m.setPendingDump(mode == -1);
-            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (m.getLinkedBy() != null) && (mode <= 0)) {
+            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted() && (mode <= 0)) {
                 m.setPendingDump(mode == -1);
             } else {
                 if (!m.setMode(mode)) {

@@ -74,6 +74,8 @@ public class BotConfigDialog extends JDialog implements ActionListener,
     JList princess_targets_list;
     DefaultListModel princess_targets_list_model = new DefaultListModel();
     JCheckBox princess_forcedwithdrawal;
+    JCheckBox princess_shouldflee;
+    JCheckBox princess_mustflee;
     JComboBox princess_homeedge; //The board edge to be used in a forced withdrawal.
     JSlider aggression_slidebar;
 
@@ -176,23 +178,47 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         //Row 2 Column 1.
         constraints.gridy++;
         constraints.gridx = 0;
-
+        
         //Span 2 columns.
-        constraints.gridwidth = 2;
+        constraints.gridwidth = 2;        
         princess_forcedwithdrawal = new JCheckBox("Forced Withdrawal");
         princess_forcedwithdrawal.setToolTipText("Makes Princess follow the Forced Withdrawal rules.");
         layout.setConstraints(princess_forcedwithdrawal, constraints);
         panel.add(princess_forcedwithdrawal);
-
+        
         //Row 3 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+        constraints.gridwidth = 1;
+        constraints.insets = new Insets(0,2,0,2);
+
+        princess_shouldflee = new JCheckBox("Immediate Withdrawal");
+        princess_shouldflee.setToolTipText("Princess will Withdraw to Home Edge, but will not Flee unless Crippled.");
+        princess_shouldflee.addActionListener(this);
+        layout.setConstraints(princess_shouldflee, constraints);
+        panel.add(princess_shouldflee);
+        
+        //Row 4 Column 1.
+        constraints.gridy++;
+        constraints.gridx = 0;
+        constraints.gridwidth = 1;
+        constraints.insets = new Insets(0,10,2,2);
+        princess_mustflee = new JCheckBox("Must Flee");
+        princess_mustflee.setToolTipText("Princess will Flee even if not crippled.");
+        princess_mustflee.setEnabled(false);
+        layout.setConstraints(princess_mustflee, constraints);
+        panel.add(princess_mustflee);
+        
+        //Row 5 Column 1.
         constraints.gridy++;
         constraints.gridx=0;
         constraints.gridwidth = 1;
+        constraints.insets = new Insets(2,2,2,2);
         JLabel homeEdgeLabel = new JLabel("Home Edge:");
         layout.setConstraints(homeEdgeLabel, constraints);
         panel.add(homeEdgeLabel);
 
-        //Row 3 Column 2.
+        //Row 5 Column 2.
         constraints.gridx++;
         princess_homeedge = new JComboBox(new String[]{"North", "South", "West", "East"});
         princess_homeedge.setToolTipText("Sets the board edge Princess will retreat units to when following Forced Withdrawal.");
@@ -200,7 +226,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         layout.setConstraints(princess_homeedge, constraints);
         panel.add(princess_homeedge);
 
-        //Row 3.5
+        //Row 5.5
         constraints.gridy++;
         constraints.gridx=0;
         JLabel aggressionlabel=new JLabel("Aggression");
@@ -217,14 +243,14 @@ public class BotConfigDialog extends JDialog implements ActionListener,
 
 
 
-        //Row 4 Column 1.
+        //Row 6 Column 1.
         constraints.gridy++;
         constraints.gridx = 0;
         JLabel targetsLabel = new JLabel("Strategic Targets:");
         layout.setConstraints(targetsLabel, constraints);
         panel.add(targetsLabel);
 
-        //Row 4 Column 2.
+        //Row 6 Column 2.
         constraints.gridx++;
         princess_target_hex_num_x = new JTextField();
         princess_target_hex_num_x.setToolTipText("Enter the hex number of the target.");
@@ -232,7 +258,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         layout.setConstraints(princess_target_hex_num_x, constraints);
         panel.add(princess_target_hex_num_x);
 
-        //Row 5 Column 1.
+        //Row 7 Column 1.
         constraints.gridy++;
         constraints.gridx = 0;
 
@@ -244,7 +270,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         layout.setConstraints(princess_addtarget_button, constraints);
         panel.add(princess_addtarget_button);
 
-        //Row 6 Column 1.
+        //Row 8 Column 1.
         constraints.gridy++;
         princess_targets_list = new JList(princess_targets_list_model);
         princess_targets_list.setToolTipText("List of target hexes Princess will attempt to attack if a building is present.");
@@ -279,7 +305,10 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         } else if (e.getSource() == princess_addtarget_button) {
             princess_targets_list_model.addElement(princess_target_hex_num_x
                     .getText());
+        } else if (e.getSource() == princess_shouldflee) {
+        	princess_mustflee.setEnabled(princess_shouldflee.isSelected());
         }
+        
     }
 
     public void keyTyped(KeyEvent e) {
@@ -319,6 +348,10 @@ public class BotConfigDialog extends JDialog implements ActionListener,
             }
             // do forced withdrawal?
             toreturn.forced_withdrawal = princess_forcedwithdrawal.isSelected();
+            toreturn.should_flee = princess_shouldflee.isSelected();
+            if (princess_shouldflee.isSelected()) {
+            	toreturn.must_flee = princess_mustflee.isSelected();
+            }
             toreturn.homeEdge = BasicPathRanker.HomeEdge.getHomeEdge(princess_homeedge.getSelectedIndex());
             return toreturn;
         }

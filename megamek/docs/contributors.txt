@@ -83,6 +83,7 @@
      Michael rowlett <michael.d.rowlett@gmail.com>
      Gil Hamilton <iarei@users.sourceforge.net>
      Nathan Erwin <nderwin@users.sourceforge.net>
+     David Armendariz <darm88@users.sourceforg.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -158,10 +158,8 @@ public class CommonAboutDialog extends JDialog {
         getContentPane().add(butClose, c);
 
         // Place this dialog on middle of screen.
-        Dimension screenSize = frame.getToolkit().getScreenSize();
         pack();
-        setLocation(screenSize.width / 2 - getSize().width / 2,
-                screenSize.height / 2 - getSize().height / 2);
+        setLocationRelativeTo(frame);
 
         // Stop allowing resizing.
         setResizable(false);

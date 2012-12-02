@@ -346,7 +346,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
 
-        Dimension screenSize = frame.getToolkit().getScreenSize();
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int x, y, h, w;
 
         mechW = new Dialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
@@ -354,13 +354,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
         w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if ((x + w) > screenSize.width) {
+        if ((x + w) > gd.getDisplayMode().getWidth()) {
             x = 0;
-            w = Math.min(w, screenSize.width);
+            w = Math.min(w, gd.getDisplayMode().getWidth());
         }
-        if ((y + h) > screenSize.height) {
+        if ((y + h) > gd.getDisplayMode().getHeight()) {
             y = 0;
-            h = Math.min(h, screenSize.height);
+            h = Math.min(h, gd.getDisplayMode().getHeight());
         }
         mechW.setLocation(x, y);
         mechW.setSize(w, h);
@@ -378,13 +378,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         y = GUIPreferences.getInstance().getRulerPosY();
         h = GUIPreferences.getInstance().getRulerSizeHeight();
         w = GUIPreferences.getInstance().getRulerSizeWidth();
-        if ((x + w) > screenSize.width) {
+        if ((x + w) > gd.getDisplayMode().getWidth()) {
             x = 0;
-            w = Math.min(w, screenSize.width);
+            w = Math.min(w, gd.getDisplayMode().getWidth());
         }
-        if ((y + h) > screenSize.height) {
+        if ((y + h) > gd.getDisplayMode().getHeight()) {
             y = 0;
-            h = Math.min(h, screenSize.height);
+            h = Math.min(h, gd.getDisplayMode().getHeight());
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
@@ -403,11 +403,11 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
         h = minimap.getSize().height;
         w = minimap.getSize().width;
-        if (((x + 10) >= screenSize.width) || ((x + w) < 10)) {
-            x = screenSize.width - w;
+        if (((x + 10) >= gd.getDisplayMode().getWidth()) || ((x + w) < 10)) {
+            x = gd.getDisplayMode().getWidth() - w;
         }
-        if (((y + 10) > screenSize.height) || ((y + h) < 10)) {
-            y = screenSize.height - h;
+        if (((y + 10) > gd.getDisplayMode().getHeight()) || ((y + h) < 10)) {
+            y = gd.getDisplayMode().getHeight() - h;
         }
         minimapW.setLocation(x, y);
         minimapW.addWindowListener(this);

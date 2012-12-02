@@ -19,7 +19,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JDialog;
@@ -70,9 +69,7 @@ public class UnitLoadingDialog extends JDialog {
 
         setSize(250, 130);
         // move to middle of screen
-        Dimension screenSize = frame.getToolkit().getScreenSize();
-        setLocation((screenSize.width / 2) - (getSize().width / 2),
-                (screenSize.height / 2) - (getSize().height / 2));
+        setLocationRelativeTo(frame);
 
         Runnable r = new Runnable() {
             public void run() {

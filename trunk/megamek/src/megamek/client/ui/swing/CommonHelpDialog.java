@@ -16,6 +16,8 @@ package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -103,15 +105,14 @@ public class CommonHelpDialog extends JDialog {
         getContentPane().add(butClose, BorderLayout.SOUTH);
 
         // Make the window half the screensize by default.
-        Dimension screenSize = frame.getToolkit().getScreenSize();
-        Dimension windowSize = new Dimension(screenSize.width / 2,
-                screenSize.height / 2);
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        Dimension windowSize = new Dimension(gd.getDisplayMode().getWidth() / 2,
+                gd.getDisplayMode().getHeight() / 2);
         pack();
         setSize(windowSize);
 
         // Place this dialog on middle of screen.
-        setLocation(screenSize.width / 2 - windowSize.width / 2,
-                screenSize.height / 2 - windowSize.height / 2);
+        setLocationRelativeTo(frame);
 
         setFile(helpfile);
     }

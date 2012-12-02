@@ -20,7 +20,6 @@
 package megamek.client.ui.AWT;
 
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -69,9 +68,7 @@ public class UnitLoadingDialog extends Dialog {
 
         setSize(250, 130);
         // move to middle of screen
-        Dimension screenSize = frame.getToolkit().getScreenSize();
-        setLocation(screenSize.width / 2 - getSize().width / 2,
-                screenSize.height / 2 - getSize().height / 2);
+        setLocationRelativeTo(frame);
 
         Runnable r = new Runnable() {
             public void run() {

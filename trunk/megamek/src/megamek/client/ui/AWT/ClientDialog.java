@@ -17,6 +17,8 @@ package megamek.client.ui.AWT;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 
 /**
  * A MegaMek Dialog box.
@@ -69,9 +71,10 @@ public class ClientDialog extends Dialog {
      *            not get it)
      */
     protected void setLocationAndSize(Dimension desiredDimension) {
-        int yLoc, xLoc, height, width;
+        int height, width;
 
-        Dimension screenSize = owner.getToolkit().getScreenSize();
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        Dimension screenSize = new Dimension(gd.getDisplayMode().getWidth(), gd.getDisplayMode().getHeight());
 
         width = Math.min(desiredDimension.width + CONTAINER_BUFFER,
                 screenSize.width);
@@ -91,28 +94,8 @@ public class ClientDialog extends Dialog {
         if (width == screenSize.width)
             width = screenSize.width - 2 * screenBorder;
 
-        Dimension ownerCenter = getOwnersCenter();
-        yLoc = ownerCenter.height - height / 2;
-        xLoc = ownerCenter.width - width / 2;
-
-        if (yLoc < screenBorder
-                || yLoc + height > screenSize.height - screenBorder)
-            yLoc = screenBorder;
-        if (xLoc < screenBorder
-                || xLoc + width > screenSize.width - screenBorder)
-            xLoc = screenBorder;
-
         setSize(width, height);
-        setLocation(xLoc, yLoc);
+        setLocationRelativeTo(owner);
     }
 
-    private Dimension getOwnersCenter() {
-        Dimension center = new Dimension();
-        center.height = this.owner.getLocation().y
-                + this.owner.getSize().height / 2;
-        center.width = this.owner.getLocation().x + this.owner.getSize().width
-                / 2;
-        return center;
     }
-
-}

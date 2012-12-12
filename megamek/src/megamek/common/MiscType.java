@@ -4435,7 +4435,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.015f;
         misc.criticals = 0;
         misc.cost = 1000;
-        misc.flags = misc.flags.or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SPRAYER);
         misc.techLevel = TechConstants.T_ALLOWED_ALL;
 
         return misc;

@@ -3151,6 +3151,9 @@ public abstract class Mech extends Entity {
             toSubtract *= etype.getCriticals(this);
             ammoPenalty += toSubtract;
         }
+        if (getJumpType() == JUMP_PROTOTYPE) {
+            ammoPenalty += this.getJumpMP(false, true);
+        }
         // special case for blueshield, need to check each non-head location
         // seperately for CASE
         if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
@@ -7458,7 +7461,7 @@ public abstract class Mech extends Entity {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
             return true;
         }
-        
+
         if (isPermanentlyImmobilized()) {
         	return true;
         }

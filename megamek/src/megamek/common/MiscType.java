@@ -1235,7 +1235,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        misc.name = "Prototype Jump Jet";
+        misc.name = "Prototype Improved Jump Jet";
         misc.setInternalName("ISPrototypeJumpJet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;

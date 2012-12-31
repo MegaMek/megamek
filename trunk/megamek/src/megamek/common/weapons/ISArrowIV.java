@@ -52,6 +52,12 @@ public class ISArrowIV extends ArtilleryWeapon {
         criticals = 15;
         bv = 240;
         cost = 450000;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_E, RATING_F, RATING_E};
+        introDate = 2600;
+        extinctDate = 2830;
+        reintroDate = 3044;
+
     }
 
 }

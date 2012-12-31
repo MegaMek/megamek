@@ -42,5 +42,8 @@ public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.26;
         infantryRange = 3;
+        introDate = 2690;
+        availRating = new int[]{RATING_D,RATING_E,RATING_D};
+        techRating = RATING_D;
     }
 }

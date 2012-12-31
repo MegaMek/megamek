@@ -51,5 +51,7 @@ public class ISLRM10OS extends LRMWeapon {
         this.introDate = 2676;
         this.extinctDate = 2800;
         this.reintroDate = 3030;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

@@ -54,5 +54,8 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         bv = 15;
         cost = 11250;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON).or(WeaponType.F_TANK_WEAPON);
+        techRating = RATING_C;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3067;
     }
 }

@@ -45,5 +45,8 @@ public class InfantryInfernoSRMWeapon extends InfantryWeapon {
         infantryRange = 2;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
+        introDate = 2370;
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_C;
     }
 }

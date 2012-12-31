@@ -43,5 +43,8 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.09;
         infantryRange = 0;
+        introDate = 2885;
+        availRating = new int[]{RATING_X,RATING_E,RATING_D};
+        techRating = RATING_C;
     }
 }

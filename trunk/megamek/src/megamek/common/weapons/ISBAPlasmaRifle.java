@@ -46,5 +46,8 @@ public class ISBAPlasmaRifle extends Weapon {
         extremeRange = 8;
         bv = 12;
         flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PLASMA);
+        introDate = 3065;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

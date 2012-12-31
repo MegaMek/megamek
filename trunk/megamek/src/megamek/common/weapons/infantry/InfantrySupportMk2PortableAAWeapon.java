@@ -49,5 +49,10 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
+        introDate = 2510;
+        extinctDate = 2790;
+        reintroDate = 3058;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_D;
     }
 }

@@ -47,5 +47,10 @@ public class ISTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
+        introDate = 2600;
+        extinctDate = 2835;
+        reintroDate = 3033;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

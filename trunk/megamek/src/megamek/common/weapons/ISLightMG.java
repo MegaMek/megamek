@@ -57,9 +57,10 @@ public class ISLightMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 1;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_C};
         this.introDate = 3068;
         this.atClass = CLASS_AC;
+        techRating = RATING_B;
     }
 
 }

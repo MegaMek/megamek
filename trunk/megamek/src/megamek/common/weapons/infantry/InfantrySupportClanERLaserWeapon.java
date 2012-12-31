@@ -44,5 +44,8 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
         infantryDamage = 1.05;
         infantryRange = 4;
         crew = 2;
+        introDate = 2825;
+        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        techRating = RATING_F;
     }
 }

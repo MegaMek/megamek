@@ -57,5 +57,8 @@ public class CLImprovedHeavyMediumLaser extends LaserWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 5;
         explosive = true;
-    }
+        techRating = RATING_F;	
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};	
+        introDate = 3069;
+        }
 }

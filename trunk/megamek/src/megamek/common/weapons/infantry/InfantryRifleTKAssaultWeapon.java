@@ -42,5 +42,8 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.44;
         infantryRange = 1;
+        introDate = 2870;
+        availRating = new int[]{RATING_X,RATING_C,RATING_A};
+        techRating = RATING_C;
     }
 }

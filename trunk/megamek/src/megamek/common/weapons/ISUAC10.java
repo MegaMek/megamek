@@ -52,5 +52,8 @@ public class ISUAC10 extends UACWeapon {
         this.medAV = 15;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
+        introDate = 3057;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

@@ -50,5 +50,8 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techRating = RATING_C;
     }
 }

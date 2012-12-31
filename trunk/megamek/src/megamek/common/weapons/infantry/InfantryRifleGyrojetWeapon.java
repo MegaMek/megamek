@@ -42,5 +42,8 @@ public class InfantryRifleGyrojetWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.35;
         infantryRange = 1;
+        introDate = 2530;
+        availRating = new int[]{RATING_B,RATING_C,RATING_C};
+        techRating = RATING_D;
     }
 }

@@ -46,5 +46,8 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 2;
         crew = 1;
+        introDate = 3065;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

@@ -58,6 +58,9 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
+        introDate = 3056;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_F;
     }
     
     /*

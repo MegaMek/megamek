@@ -47,5 +47,8 @@ public class ISDavidLightGaussRifle extends Weapon {
         bv = 7;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         cost = 22500;
+        introDate = 3063;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

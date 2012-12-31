@@ -47,5 +47,8 @@ public class CLLightTAG extends TAGWeapon {
         extremeRange = 12;
         bv = 0;
         cost = 40000;
+        introDate = 3054;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
     }
 }

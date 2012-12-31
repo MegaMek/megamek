@@ -50,5 +50,8 @@ public class CLLargeChemicalLaser extends CLChemicalLaserWeapon {
         shortAV = 8;
         medAV = 8;
         maxRange = RANGE_MED;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3059;
     }
 }

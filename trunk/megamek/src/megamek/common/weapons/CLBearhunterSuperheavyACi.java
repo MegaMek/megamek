@@ -54,6 +54,7 @@ public class CLBearhunterSuperheavyACi extends Weapon {
         bv = 9;
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE);
+      
     }
 
 }

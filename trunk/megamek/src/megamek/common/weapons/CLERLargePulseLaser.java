@@ -54,7 +54,8 @@ public class CLERLargePulseLaser extends PulseLaserWeapon {
         criticals = 3;
         bv = 272;
         cost = 400000;
-        this.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
-        this.introDate = 2620;
+        techRating = RATING_F;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3057;
     }
 }

@@ -55,7 +55,8 @@ public class ISERMediumLaser extends LaserWeapon {
         this.shortAV = 5;
         this.medAV = 5;
         this.maxRange = RANGE_MED;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
-        this.introDate = 3058;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

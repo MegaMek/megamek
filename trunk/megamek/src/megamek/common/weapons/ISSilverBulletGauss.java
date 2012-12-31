@@ -63,6 +63,9 @@ public class ISSilverBulletGauss extends GaussWeapon {
         flags = flags.or(F_NO_AIM);
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3051;
    }
 
     /*

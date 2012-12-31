@@ -42,5 +42,8 @@ public class ISBAMagshotGaussRifle extends Weapon {
         bv = 15;
         cost = 10500;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_BA_WEAPON);
+        introDate = 3059;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

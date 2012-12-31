@@ -42,5 +42,8 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
         infantryDamage = 0.62;
         infantryRange = 3;
+        introDate = 3015;
+        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        techRating = RATING_F;
     }
 }

@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+
 public class BombType extends AmmoType {
 
     public static final int B_HE      = 0;
@@ -149,6 +150,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -168,6 +170,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -187,6 +190,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_C;
 
         return bomb;
     }
@@ -205,6 +209,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_E;
 
         return bomb;
     }
@@ -222,6 +227,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -239,6 +245,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -256,6 +263,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -273,6 +281,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_C;
 
         return bomb;
     }
@@ -292,6 +301,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_E;
 
         return bomb;
     }
@@ -312,6 +322,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -331,6 +342,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_C;
 
         return bomb;
     }
@@ -348,6 +360,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -367,6 +380,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -385,6 +399,7 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.techRating = RATING_C;
 
         return bomb;
     }

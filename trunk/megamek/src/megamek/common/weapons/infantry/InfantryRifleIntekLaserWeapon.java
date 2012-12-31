@@ -42,5 +42,8 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.21;
         infantryRange = 3;
+        introDate = 2880;
+        availRating = new int[]{RATING_X,RATING_D,RATING_D};
+        techRating = RATING_D;
     }
 }

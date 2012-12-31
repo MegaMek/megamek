@@ -64,8 +64,9 @@ public class ISHGaussRifle extends GaussWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = 25;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        this.introDate = 3061;
+        introDate = 3061;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 
     @Override

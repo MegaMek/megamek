@@ -44,5 +44,8 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
         infantryDamage = 0.55;
         infantryRange = 2;
         crew = 2;
+        introDate = 3059;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
     }
 }

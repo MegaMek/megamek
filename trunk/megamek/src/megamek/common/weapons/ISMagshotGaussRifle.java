@@ -49,5 +49,11 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         bv = 15;
         cost = 8500;
         explosionDamage = 3;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_D};
+        introDate = 3072;
+        introDate = 3059;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

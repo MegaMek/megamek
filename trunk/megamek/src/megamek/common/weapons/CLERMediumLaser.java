@@ -57,5 +57,6 @@ public class CLERMediumLaser extends LaserWeapon {
         this.maxRange = RANGE_MED;
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
         this.introDate = 2824;
+        techRating = RATING_F;
     }
 }

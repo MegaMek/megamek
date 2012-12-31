@@ -42,5 +42,8 @@ public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.21;
         infantryRange = 0;
+        introDate = 2540;
+        availRating = new int[]{RATING_B,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

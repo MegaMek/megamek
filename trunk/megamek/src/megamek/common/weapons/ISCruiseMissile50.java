@@ -49,6 +49,9 @@ public class ISCruiseMissile50 extends ArtilleryWeapon {
         this.criticals = 55;
         this.bv = 601;
         this.cost = 900000;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3065;
     }
 
 }

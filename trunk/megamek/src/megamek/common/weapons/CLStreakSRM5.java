@@ -41,5 +41,8 @@ public class CLStreakSRM5 extends StreakSRMWeapon {
         this.tonnage = 2.5f;
         this.criticals = 0;
         this.bv = 99;
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
     }
 }

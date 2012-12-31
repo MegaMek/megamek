@@ -54,6 +54,9 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_MED;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_F, RATING_E};
+        introDate = 3012;
     }
 
 }

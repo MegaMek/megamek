@@ -48,5 +48,8 @@ public class CLSupportPPC extends PPCWeapon {
         setModes(new String[] { "Field Inhibitor ON",
                 "Field Inhibitor OFF" });
         cost = 14000;
+        introDate = 2470;
+        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        techRating = RATING_D;
     }
 }

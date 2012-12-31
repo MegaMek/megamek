@@ -42,5 +42,8 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techRating = RATING_A;
     }
 }

@@ -55,5 +55,9 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         this.shortAV = 16;
         this.medAV = 16;
         this.maxRange = RANGE_MED;
+        this.techRating = RATING_D;	
+        this.availRating = new int[]{RATING_X, RATING_E, RATING_E};	
+        this.introDate = 2812;
+
     }
 }

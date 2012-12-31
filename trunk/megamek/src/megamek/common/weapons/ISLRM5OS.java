@@ -49,7 +49,7 @@ public class ISLRM5OS extends LRMWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         this.introDate = 2676;
-        this.extinctDate = 2800;
-        this.reintroDate = 3030;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

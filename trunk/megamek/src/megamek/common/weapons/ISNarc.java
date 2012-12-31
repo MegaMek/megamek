@@ -45,5 +45,10 @@ public class ISNarc extends NarcWeapon {
         this.criticals = 2;
         this.bv = 30;
         this.cost = 100000;
+        introDate = 2587;
+        extinctDate = 2795;
+        reintroDate = 3035;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

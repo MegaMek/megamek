@@ -58,6 +58,9 @@ public class ISMineLauncher extends Weapon {
             { "Single", "2-shot", "3-shot", "4-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
+        introDate = 3062;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_D;
     }
 
     /*

@@ -50,5 +50,8 @@ public class ISC3MBS extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3073;
     }
 }

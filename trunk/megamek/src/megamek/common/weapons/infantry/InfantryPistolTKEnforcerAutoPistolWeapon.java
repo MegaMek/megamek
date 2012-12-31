@@ -42,5 +42,8 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.20;
         infantryRange = 0;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        techRating = RATING_C;
     }
 }

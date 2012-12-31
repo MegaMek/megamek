@@ -44,5 +44,8 @@ public class ISMML5 extends MMLWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

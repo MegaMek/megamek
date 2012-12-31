@@ -56,6 +56,9 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
         this.longAV = 10;
         this.extAV =10;
         this.maxRange = RANGE_EXT;
+        introDate = 3057;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_F;
     }
     
     /*

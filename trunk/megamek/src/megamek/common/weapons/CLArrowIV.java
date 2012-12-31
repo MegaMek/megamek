@@ -52,6 +52,10 @@ public class CLArrowIV extends ArtilleryWeapon {
         criticals = 12;
         bv = 240;
         cost = 450000;
+        techRating = RATING_F;
+        availRating = new int[]{RATING_E, RATING_F, RATING_E};
+        introDate = 2850;
+
     }
 
 }

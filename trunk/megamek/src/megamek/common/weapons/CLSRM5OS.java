@@ -40,5 +40,8 @@ public class CLSRM5OS extends SRMWeapon {
         extremeRange = 12;
         bv = 9;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
     }
 }

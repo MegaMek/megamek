@@ -49,9 +49,10 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         cost = 15000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
-        this.introDate = 2647;
-        this.extinctDate = 2845;
-        this.reintroDate = 3035;
+        introDate = 2647;
+        extinctDate = 2845;
+        reintroDate = 3035;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

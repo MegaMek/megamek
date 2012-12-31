@@ -42,5 +42,8 @@ public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_A;
     }
 }

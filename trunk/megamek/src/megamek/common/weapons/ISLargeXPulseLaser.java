@@ -56,5 +56,8 @@ public class ISLargeXPulseLaser extends PulseLaserWeapon {
         maxRange = RANGE_MED;
         shortAV = 9;
         medAV = 9;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3057;
     }
 }

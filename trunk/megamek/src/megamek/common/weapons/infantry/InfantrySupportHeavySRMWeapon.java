@@ -42,5 +42,8 @@ public class InfantrySupportHeavySRMWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.41;
         infantryRange = 2;
+        introDate = 2370;
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_C;
     }
 }

@@ -57,10 +57,10 @@ public class ISPlasmaRifle extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
         introDate = 3068;
-
-    }
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
+        }
 
     /*
      * (non-Javadoc)

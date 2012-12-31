@@ -44,5 +44,8 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
         infantryDamage = 0.77;
         infantryRange = 1;
         crew = 2;
+        introDate = 2255;
+        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        techRating = RATING_C;
     }
 }

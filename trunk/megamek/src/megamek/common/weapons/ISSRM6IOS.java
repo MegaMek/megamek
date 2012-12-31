@@ -49,5 +49,8 @@ public class ISSRM6IOS extends SRMWeapon {
         cost = 64000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3056;
     }
 }

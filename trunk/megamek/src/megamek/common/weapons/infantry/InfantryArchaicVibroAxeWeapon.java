@@ -42,5 +42,8 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.35;
         infantryRange = 0;
+        introDate = 2445;
+        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        techRating = RATING_E;
     }
 }

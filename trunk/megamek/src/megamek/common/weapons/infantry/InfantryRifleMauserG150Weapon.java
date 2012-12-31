@@ -42,5 +42,8 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.32;
         infantryRange = 2;
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_C;
     }
 }

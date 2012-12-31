@@ -49,5 +49,8 @@ public class ISRL20 extends RLWeapon {
         this.shortAV = 12;
         this.medAV = 12;
         this.maxRange = RANGE_MED;
+        introDate = 3064;
+        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        techRating = RATING_B;
     }
 }

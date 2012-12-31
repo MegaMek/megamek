@@ -43,5 +43,8 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.45;
         infantryRange = 1;
+        introDate = 3055;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

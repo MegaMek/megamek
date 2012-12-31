@@ -42,5 +42,8 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
         infantryDamage = 0.01;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        techRating = RATING_A;
     }
 }

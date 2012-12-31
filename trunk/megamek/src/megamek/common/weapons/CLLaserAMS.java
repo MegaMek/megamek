@@ -51,5 +51,8 @@ public class CLLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
+        techRating = RATING_F;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3048;
     }
 }

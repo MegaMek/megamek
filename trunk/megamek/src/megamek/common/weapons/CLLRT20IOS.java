@@ -48,5 +48,8 @@ public class CLLRT20IOS extends LRTWeapon {
         bv = 44;
         flags = flags.or(F_ONESHOT);
         cost = 200000;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3058;
     }
 }

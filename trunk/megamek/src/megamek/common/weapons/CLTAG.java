@@ -47,5 +47,8 @@ public class CLTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
+        introDate = 2600;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_E;
     }
 }

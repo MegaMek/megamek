@@ -43,5 +43,8 @@ public class InfantrySupportLightMortarWeapon extends InfantryWeapon {
         infantryDamage = 0.30;
         infantryRange = 1;
         crew = 2;
+        introDate = 1950;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_B;
     }
 }

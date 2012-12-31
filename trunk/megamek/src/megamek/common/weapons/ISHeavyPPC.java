@@ -61,7 +61,8 @@ public class ISHeavyPPC extends PPCWeapon {
         cost = 250000;
         // with a capacitor
         explosive = true;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        this.introDate = 3067;
+        introDate = 3067;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

@@ -48,5 +48,8 @@ public class ISSRM6 extends SRMWeapon {
         this.cost = 80000;
         this.shortAV = 8;
         this.maxRange = RANGE_SHORT;
+        introDate = 2370;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

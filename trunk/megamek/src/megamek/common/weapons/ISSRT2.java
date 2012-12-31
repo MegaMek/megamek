@@ -47,5 +47,8 @@ public class ISSRT2 extends SRTWeapon {
         bv = 21;
         flags = flags.or(F_NO_FIRES);
         cost = 10000;
+        introDate = 2380;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

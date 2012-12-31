@@ -54,5 +54,8 @@ public class CLERMediumPulseLaser extends PulseLaserWeapon {
         criticals = 2;
         bv = 117;
         cost = 150000;
-    }
+        techRating = RATING_F;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3057;
+        }
 }

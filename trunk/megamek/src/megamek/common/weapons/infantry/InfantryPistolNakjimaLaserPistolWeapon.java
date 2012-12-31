@@ -42,5 +42,8 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.18;
         infantryRange = 1;
+        introDate = 2880;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_D;
     }
 }

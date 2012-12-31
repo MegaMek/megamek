@@ -50,6 +50,8 @@ public class NAC25Weapon extends NavalACWeapon {
         this.medAV = 25;
         this.longAV = 25;
         this.maxRange = RANGE_LONG;
-    
+        techRating = RATING_D;
+        availRating = new int[]{RATING_E, RATING_X, RATING_E};
+        introDate = 2200;
     }
 }

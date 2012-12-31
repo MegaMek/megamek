@@ -43,5 +43,8 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
         infantryDamage = 0.38;
         infantryRange = 1;
+        introDate = 3065;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_C;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.21;
         infantryRange = 2;
+        introDate = 3063;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_F;
     }
 }

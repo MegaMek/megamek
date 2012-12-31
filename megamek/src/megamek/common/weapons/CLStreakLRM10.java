@@ -49,5 +49,8 @@ public class CLStreakLRM10 extends StreakLRMWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_LONG;
+        techRating = RATING_F;	
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};	
+        introDate = 3057;
     }
 }

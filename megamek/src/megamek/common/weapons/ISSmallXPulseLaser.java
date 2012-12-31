@@ -58,5 +58,8 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
         shortAV = 3;
         cost = 31000;
         flags = flags.or(F_BURST_FIRE);
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3057;
     }
 }

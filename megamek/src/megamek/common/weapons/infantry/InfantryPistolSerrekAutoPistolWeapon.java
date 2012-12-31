@@ -42,5 +42,8 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.16;
         infantryRange = 0;
+        introDate = 2810;
+        availRating = new int[]{RATING_X,RATING_C,RATING_B};
+        techRating = RATING_C;
     }
 }

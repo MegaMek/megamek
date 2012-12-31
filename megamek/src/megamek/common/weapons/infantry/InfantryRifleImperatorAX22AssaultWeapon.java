@@ -42,5 +42,8 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.52;
         infantryRange = 1;
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        techRating = RATING_C;
     }
 }

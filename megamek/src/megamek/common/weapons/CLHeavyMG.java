@@ -58,6 +58,7 @@ public class CLHeavyMG extends MGWeapon {
         this.maxRange = RANGE_SHORT;
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_C};
         this.introDate = 3059;
+        techRating = RATING_C;
     }
 
 }

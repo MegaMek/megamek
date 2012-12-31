@@ -44,5 +44,8 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
         infantryDamage = 0.49;
         infantryRange = 3;
         crew = 1;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

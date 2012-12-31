@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import megamek.common.TechConstants;
 
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
@@ -291,6 +292,9 @@ public class AmmoType extends EquipmentType {
     private double kgPerShot = -1;
     // ratio for capital ammo
     private double ammoRatio;
+
+    // Short name of Ammo or RS Printing
+    protected String shortName = "";
 
     public AmmoType() {
         criticals = 1;
@@ -1378,6 +1382,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_D, EquipmentType.RATING_D};
+        ammo.introDate = 2300;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1416,6 +1423,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 9;
         ammo.cost = 4500;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_D};
+        ammo.introDate = 2250;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1454,6 +1464,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 15;
         ammo.cost = 6000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_D, EquipmentType.RATING_D};
+        ammo.introDate = 2460;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1473,6 +1486,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 22;
         ammo.cost = 8500;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1492,6 +1506,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 22;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_E, EquipmentType.RATING_D};
+        ammo.introDate = 2500;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1530,6 +1547,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 1;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A, EquipmentType.RATING_B};
+        ammo.introDate = 1950;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1550,6 +1570,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A, EquipmentType.RATING_B};
+        ammo.introDate = 1950;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1572,6 +1595,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
         ammo.cost = 500;
+        ammo.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A, EquipmentType.RATING_B};
+        ammo.introDate = 1950;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1592,6 +1618,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_C};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1613,6 +1642,9 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
         ammo.cost = 500;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_C};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1633,6 +1665,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_C};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1654,6 +1689,9 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
         ammo.cost = 250;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_C};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -1676,6 +1714,9 @@ public class AmmoType extends EquipmentType {
             { "", "HotLoad" });
         ammo.bv = 6;
         ammo.cost = 30000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2300;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1697,7 +1738,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
-
         ammo.cost = 30000;
 
         return ammo;
@@ -1720,6 +1760,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2300;
+        ammo.techRating = RATING_C;
 
         ammo.cost = 30000;
 
@@ -1728,7 +1771,6 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createISLRM10pAmmo() {
         AmmoType ammo = new AmmoType();
-
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "LRM 10p Ammo";
         ammo.shortName = "LRM 10p";
@@ -1743,7 +1785,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
-
         ammo.cost = 30000;
 
         return ammo;
@@ -1751,7 +1792,6 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createISLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-
         ammo.techLevel = TechConstants.T_INTRO_BOXSET;
         ammo.name = "LRM 15 Ammo";
         ammo.shortName = "LRM 15";
@@ -1767,6 +1807,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2300;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1788,7 +1831,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
-
         ammo.cost = 30000;
 
         return ammo;
@@ -1812,6 +1854,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2300;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1833,7 +1878,6 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
-
         ammo.cost = 30000;
 
         return ammo;
@@ -1854,13 +1898,15 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
 
     private static AmmoType createISSRM2pAmmo() {
         AmmoType ammo = new AmmoType();
-
         ammo.techLevel = TechConstants.T_IS_UNOFFICIAL;
         ammo.name = "SRM 2p Ammo";
         ammo.shortName = "SRM 2p";
@@ -1892,7 +1938,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
-
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_C;
         return ammo;
     }
 
@@ -1930,7 +1978,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
-
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_C;
         return ammo;
     }
 
@@ -1972,6 +2022,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2380;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -1995,6 +2048,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2380;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2018,6 +2074,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2380;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2041,6 +2100,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2380;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2061,6 +2123,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2081,6 +2146,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2101,6 +2169,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2312,6 +2383,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.cost = 2000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3058;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2332,6 +2406,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.cost = 9000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3058;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2352,6 +2429,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 12000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_E, EquipmentType.RATING_D};
+        ammo.introDate = 2595;
+        ammo.extinctDate = 2840;
+        ammo.reintroDate = 3035;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2372,6 +2454,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3058;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2395,6 +2480,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.cost = 3300;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3058;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2418,6 +2506,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.cost = 15000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3058;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2441,6 +2532,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_E, EquipmentType.RATING_D};
+        ammo.introDate = 2595;
+        ammo.extinctDate = 2840;
+        ammo.reintroDate = 3035;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2464,6 +2560,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 34000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3058;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2612,6 +2711,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 7;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3057;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2631,6 +2733,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 9000;
+        ammo.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        ammo.introDate = 2640;
+        ammo.extinctDate = 2915;
+        ammo.reintroDate = 3035;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2650,6 +2757,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 12000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3057;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2669,6 +2779,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 35;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3060;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2744,6 +2857,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 15;
         ammo.cost = 3000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2762,6 +2878,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 31;
         ammo.cost = 12000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2780,6 +2899,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 37;
         ammo.cost = 30000;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2798,6 +2918,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 59;
         ammo.cost = 80000;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2818,6 +2939,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 40;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        ammo.introDate = 2590;
+        ammo.extinctDate = 2865;
+        ammo.reintroDate = 3040;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2837,6 +2963,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 16;
         ammo.bv = 20;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3056;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2855,6 +2984,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 43;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3061;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -2892,6 +3024,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 4;
         ammo.cost = 54000;
+        ammo.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        ammo.introDate = 2647;
+        ammo.extinctDate = 2845;
+        ammo.reintroDate = 3035;
 
         return ammo;
     }
@@ -2911,6 +3047,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 7;
         ammo.cost = 54000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3058;
 
         return ammo;
     }
@@ -2930,6 +3068,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 11;
         ammo.cost = 54000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3058;
 
         return ammo;
     }
@@ -2948,6 +3088,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.cost = 5000;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2966,6 +3109,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.cost = 5000;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -2984,6 +3130,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.cost = 5000;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -3002,6 +3151,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 28;
         ammo.cost = 5000;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -3018,6 +3170,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.introDate = 3064;
+        ammo.techRating = RATING_B;
 
         return ammo;
     }
@@ -3034,6 +3189,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1500;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.introDate = 3064;
+        ammo.techRating = RATING_B;
 
         return ammo;
     }
@@ -3049,8 +3207,10 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.cost = 2000;
-
+        ammo.cost = 2000;        
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.introDate = 3064;
+        ammo.techRating = RATING_B;
         return ammo;
     }
 
@@ -3066,6 +3226,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1000;
+        
 
         return ammo;
     }
@@ -3082,7 +3243,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1500;
-
+        
         return ammo;
     }
 
@@ -3097,8 +3258,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.cost = 2000;
-
+        ammo.cost = 2000;        
+        
         return ammo;
     }
 
@@ -3117,6 +3278,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.cost = 2000;
+        ammo.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        ammo.introDate = 2617;
+        ammo.extinctDate = 2796;
+        ammo.reintroDate = 3040;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3135,6 +3301,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.cost = 6000;
+        ammo.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        ammo.introDate = 2587;
+        ammo.extinctDate = 2795;
+        ammo.reintroDate = 3035;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3152,6 +3323,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.cost = 1500;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3060;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3171,6 +3345,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 7500;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3189,6 +3366,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 1500;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3207,6 +3387,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 15000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3225,6 +3408,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3243,6 +3429,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3062;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3296,6 +3485,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 40;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_C, EquipmentType.RATING_B};
+        ammo.introDate = 2590;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3317,7 +3509,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.cost = 2000;
         ammo.kgPerShot = 20;
-
+        ammo.introDate = 2826;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -3338,7 +3532,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 12;
         ammo.cost = 9000;
         ammo.kgPerShot = 50;
-
+        ammo.introDate = 2825;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -3358,6 +3555,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 12000;
+        ammo.introDate = 2595;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3378,6 +3578,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 20000;
+        ammo.introDate = 2826;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3401,7 +3604,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 6;
         ammo.cost = 3300;
-
+        ammo.introDate = 2826;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -3424,7 +3630,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 12;
         ammo.cost = 15000;
-
+        ammo.introDate = 2825;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -3447,6 +3656,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 20000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2595;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3470,6 +3682,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 34000;
+        ammo.introDate = 2826;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3489,6 +3704,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 1;
         ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A, EquipmentType.RATING_A};
+        ammo.introDate = 1950;
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -3510,6 +3728,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.kgPerShot = 10;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 3059;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
 
         return ammo;
     }
@@ -3532,6 +3753,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.cost = 500;
         ammo.kgPerShot = 10;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 3059;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
 
         return ammo;
     }
@@ -3554,6 +3778,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.kgPerShot = 5;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -3577,6 +3804,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.cost = 500;
         ammo.kgPerShot = 5;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -3598,6 +3828,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 500;
         ammo.kgPerShot = 5;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
 
         return ammo;
     }
@@ -3620,6 +3853,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.cost = 250;
         ammo.kgPerShot = 5;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
 
         return ammo;
     }
@@ -3640,7 +3876,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 8;
         ammo.cost = 1000;
         ammo.kgPerShot = 20;
-
+        ammo.introDate = 2827;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -3660,7 +3899,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 15;
         ammo.cost = 9000;
         ammo.kgPerShot = 50;
-
+        ammo.introDate = 2640;
+        ammo.availRating = new int[]{RATING_X,RATING_C,RATING_B};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -3679,6 +3921,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 12000;
+        ammo.introDate = 2825;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -3698,7 +3943,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 42;
         ammo.cost = 20000;
-
+        ammo.introDate = 2825;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -3793,6 +4041,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3812,6 +4063,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3831,6 +4085,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3850,6 +4107,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3871,6 +4131,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -3890,6 +4153,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 9;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3909,6 +4175,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 10;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3928,6 +4197,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 11;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3947,6 +4219,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 12;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -3968,6 +4243,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 14;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_B};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -3987,6 +4265,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4006,6 +4287,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4025,6 +4309,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 20;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4044,6 +4331,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 21;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4065,6 +4355,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_B};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4084,6 +4377,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4103,6 +4399,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4122,6 +4421,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4141,6 +4443,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4162,6 +4467,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_B};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4181,7 +4489,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
+        
         return ammo;
     }
 
@@ -4201,7 +4512,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.cost = 27000;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 2370;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        ammo.techRating = RATING_C;
+        
         return ammo;
     }
 
@@ -4220,7 +4534,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 4;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
+        
         return ammo;
     }
 
@@ -4240,6 +4557,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 27000;
         ammo.kgPerShot = 10;
+        ammo.introDate = 2370;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4259,6 +4579,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 10;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
 
         return ammo;
     }
@@ -4279,6 +4602,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.cost = 27000;
         ammo.kgPerShot = 10;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 2370;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -4298,6 +4624,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4317,6 +4646,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4336,6 +4668,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4355,6 +4690,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4375,6 +4713,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
 
         return ammo;
     }
@@ -4394,6 +4735,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 9;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4413,6 +4757,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 10;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4432,6 +4779,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 11;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4451,6 +4801,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 12;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4471,6 +4824,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 14;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
 
         return ammo;
     }
@@ -4490,6 +4846,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4509,6 +4868,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4528,6 +4890,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 20;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4547,6 +4912,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 21;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4567,6 +4935,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
 
         return ammo;
     }
@@ -4586,6 +4957,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4605,6 +4979,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4624,6 +5001,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4643,6 +5023,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
         return ammo;
 
     }
@@ -4663,6 +5046,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
 
         return ammo;
     }
@@ -4681,7 +5067,10 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 2;
-
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
+        
         return ammo;
     }
 
@@ -4701,6 +5090,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4719,6 +5111,9 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 4;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4739,6 +5134,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4757,6 +5155,9 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 6;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4777,6 +5178,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -4795,7 +5199,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -4815,7 +5221,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 54000;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 2647;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -4833,6 +5242,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 7;
         ammo.kgPerShot = 10;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -4853,7 +5265,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 10;
         ammo.cost = 54000;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 2826;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -4871,6 +5286,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 13;
         ammo.kgPerShot = 10;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -4891,7 +5309,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 15;
         ammo.cost = 54000;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 2826;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        ammo.techRating = RATING_E;
+        
         return ammo;
     }
 
@@ -4911,7 +5332,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 22;
         ammo.cost = 2000;
         ammo.kgPerShot = 40;
-
+        ammo.introDate = 2617;
+        ammo.availRating = new int[]{RATING_X,RATING_C,RATING_C};
+        ammo.techRating = RATING_F;
+        
         return ammo;
     }
 
@@ -4930,6 +5354,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 6000;
         ammo.kgPerShot = 150;
+        ammo.introDate = 2617;
+        ammo.extinctDate = 2795;
+        ammo.availRating = new int[]{RATING_X,RATING_F,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -4948,7 +5376,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 1500;
         ammo.kgPerShot = 150;
-
+       
         return ammo;
     }
 
@@ -5018,7 +5446,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]
             { "", "HotLoad" });
-
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -5037,6 +5467,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 33;
         ammo.bv = 4;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5059,6 +5492,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5078,6 +5514,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 6;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5100,6 +5539,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5119,6 +5561,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 14;
         ammo.bv = 8;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5141,6 +5586,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.introDate = 2300;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5160,6 +5608,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 11;
         ammo.bv = 11;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2370;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5182,6 +5633,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5205,6 +5659,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5225,6 +5682,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5247,6 +5707,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5270,6 +5733,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5290,6 +5756,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5312,6 +5781,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5335,6 +5807,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5355,6 +5830,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5377,6 +5855,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5400,6 +5881,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5420,6 +5904,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5517,6 +6004,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;
+        ammo.introDate = 2868;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5535,6 +6025,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.techRating = RATING_E;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
 
         return ammo;
     }
@@ -5554,6 +6047,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.cost = 30000;
+        ammo.techRating = RATING_C;
+        ammo.introDate = 2380;
+        ammo.availRating = new int[]{RATING_X,RATING_B,RATING_A};
 
         return ammo;
     }
@@ -5574,6 +6070,9 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.bv = 0;
         ammo.kgPerShot = 10;
+        ammo.techRating = RATING_E;
+        ammo.introDate = 2825;
+        ammo.availRating = new int[]{RATING_X,RATING_D,RATING_C};
 
         return ammo;
     }
@@ -5592,6 +6091,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.introDate = 3062;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};        
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5613,7 +6115,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 100;
         ammo.bv = 1;
-
+        ammo.introDate = 3059;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
         return ammo;
     }
 
@@ -5632,13 +6135,15 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
 
     private static AmmoType createCLPROLightMGAmmo() {
         AmmoType ammo = new AmmoType();
-
         ammo.techLevel = TechConstants.T_CLAN_TW;
         ammo.name = "Light Machine Gun Ammo";
         ammo.shortName = "Light Machine Gun";
@@ -5651,7 +6156,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_MG).or(F_PROTOMECH);
         ammo.shots = 200;
         ammo.bv = 1;
-
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_A;
         return ammo;
     }
 
@@ -5834,6 +6341,9 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]
             { "", "HotLoad" });
         ammo.kgPerShot = 8.3;
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5857,6 +6367,9 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]
             { "", "HotLoad" });
         ammo.kgPerShot = 16.6;
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5880,6 +6393,9 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]
             { "", "HotLoad" });
         ammo.kgPerShot = 25;
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5903,6 +6419,9 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]
             { "", "HotLoad" });
         ammo.kgPerShot = 33.3;
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -5925,6 +6444,10 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]
             { "", "HotLoad" });
         ammo.kgPerShot = 41.5;
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
+        
 
         return ammo;
     }
@@ -5945,6 +6468,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 8.3;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5965,6 +6491,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 16.6;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -5985,6 +6514,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 25;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_F;
+        
 
         return ammo;
     }
@@ -6005,6 +6538,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 33.3;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6025,6 +6561,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 41.5;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6045,7 +6584,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 60;
-
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -6065,7 +6606,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 50;
-
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -6085,7 +6628,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 40;
-
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -6105,7 +6650,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 30;
-
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -6125,7 +6672,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
-
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -6144,6 +6693,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 1;
         ammo.kgPerShot = 5;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6163,6 +6715,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6182,6 +6737,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 15;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6201,6 +6759,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 20;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6220,6 +6781,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 25;
+        ammo.introDate = 3060;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6232,12 +6796,16 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("BARL1 Ammo");
         ammo.addLookupName("LAW Launcher Ammo");
         ammo.addLookupName("IS Ammo LAW Launcher");
-        ammo.damagePerShot = 1;
+        ammo.damagePerShot = 1; 
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.techRating = RATING_B;
+        
 
         return ammo;
     }
@@ -6255,6 +6823,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -6291,6 +6860,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.techRating = RATING_B;
 
         return ammo;
     }
@@ -6309,6 +6881,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.techRating = RATING_B;
 
         return ammo;
     }
@@ -6327,6 +6902,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.techRating = RATING_B;
 
         return ammo;
     }
@@ -6345,6 +6923,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
+        ammo.introDate = 3050;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        ammo.techRating = RATING_B;
+      
 
         return ammo;
     }
@@ -6365,6 +6947,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6386,6 +6971,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 4;
         ammo.kgPerShot = 20;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6406,6 +6994,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 30;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6426,6 +7017,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 8;
         ammo.kgPerShot = 40;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6446,6 +7040,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 10;
         ammo.kgPerShot = 50;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6466,6 +7063,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 12;
         ammo.kgPerShot = 60;
+        ammo.introDate = 3058;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6486,6 +7086,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 4;
         ammo.cost = 2000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6506,6 +7109,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 8;
         ammo.cost = 5000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6526,6 +7132,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 9;
         ammo.cost = 10000;
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6546,6 +7153,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 15;
         ammo.cost = 20000;
+        ammo.techRating = RATING_D;
 
         return ammo;
     }
@@ -6716,6 +7324,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -6740,6 +7349,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -6764,6 +7374,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6788,6 +7401,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6811,6 +7427,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6834,6 +7453,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6857,6 +7479,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6880,6 +7505,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6898,6 +7526,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 51;
         ammo.cost = 20000;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        ammo.techRating = RATING_A;
 
         return ammo;
     }
@@ -6916,6 +7547,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 2;
         ammo.cost = 1000;
+        ammo.introDate = 3059;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -6935,6 +7569,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.cost = 1000;
         ammo.kgPerShot = 40;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3069;
+        ammo.techRating = RATING_F;
         return ammo;
     }
 
@@ -6955,6 +7592,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6976,6 +7616,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3054;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -6997,6 +7640,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2400;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -7018,6 +7664,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]
             { "", "HotLoad" });
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        ammo.introDate = 2400;
+        ammo.techRating = RATING_C;
 
         return ammo;
     }
@@ -7090,6 +7739,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 11;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3058;
 
         return ammo;
     }
@@ -7108,6 +7759,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 22;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3058;
 
         return ammo;
     }
@@ -7126,6 +7779,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 33;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3058;
 
         return ammo;
     }
@@ -7144,6 +7799,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 44;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3058;
 
         return ammo;
     }
@@ -7164,6 +7821,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7184,6 +7842,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7227,6 +7886,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 33;
         ammo.cost = 30000;
         ammo.explosive = false;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -7247,6 +7909,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 50;
         ammo.cost = 30000;
         ammo.explosive = false;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -7267,6 +7932,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 67;
         ammo.cost = 30000;
         ammo.explosive = false;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3069;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -7286,6 +7954,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.cost = 30000;
         ammo.explosive = false;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_D};
+        ammo.introDate = 3069;
+        ammo.techRating = RATING_F;
 
         return ammo;
     }
@@ -7305,6 +7976,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 26;
         ammo.cost = 30000;
         ammo.explosive = false;
+        ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 3068;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7499,7 +8173,9 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 55000;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
-
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -7517,6 +8193,9 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 55000;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
+        ammo.introDate = 3057;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7535,6 +8214,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 2050;
+        ammo.extinctDate = 2855;
+        ammo.reintroDate = 3051;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7554,6 +8238,9 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
         ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
+        ammo.introDate = 3056;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7592,6 +8279,11 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.ammoRatio = 40;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 2050;
+        ammo.extinctDate = 2854;
+        ammo.reintroDate = 3051;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7611,6 +8303,9 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
         ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
+        ammo.introDate = 3056;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7630,6 +8325,11 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -2;
         ammo.capital = true;
         ammo.flags = ammo.flags.or(F_CAP_MISSILE);
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 2050;
+        ammo.extinctDate = 2854;
+        ammo.reintroDate = 3051;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7650,6 +8350,9 @@ public class AmmoType extends EquipmentType {
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
         ammo.flags = ammo.flags.or(F_TELE_MISSILE).or(F_CAP_MISSILE);
+        ammo.introDate = 3056;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7669,6 +8372,11 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_AR10_BARRACUDA).or(F_CAP_MISSILE);
         ammo.toHitModifier = -2;
         ammo.capital = true;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_F, EquipmentType.RATING_D};
+        ammo.introDate = 2050;
+        ammo.extinctDate = 2855;
+        ammo.reintroDate = 3051;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7687,6 +8395,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_CAP_MISSILE);
         ammo.capital = true;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 2050;
+        ammo.extinctDate = 2855;
+        ammo.reintroDate = 3051;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7724,6 +8437,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 14000;
         ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_CAP_MISSILE);
         ammo.capital = true;
+        ammo.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        ammo.introDate = 2050;
+        ammo.extinctDate = 2855;
+        ammo.reintroDate = 3051;
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7744,6 +8462,9 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -2;
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
+        ammo.introDate = 3056;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7763,6 +8484,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_AR10_KILLER_WHALE).or(F_TELE_MISSILE).or(F_CAP_MISSILE);
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
+        ammo.introDate = 3056;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -7782,7 +8506,9 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_AR10_WHITE_SHARK).or(F_TELE_MISSILE).or(F_CAP_MISSILE);
         ammo.capital = true;
         ammo.munitionType = AmmoType.M_TELE;
-
+        ammo.introDate = 3056;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -7798,7 +8524,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 20;
         ammo.cost = 10000;
-
+        ammo.introDate = 3055;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        ammo.techRating = RATING_E;
         return ammo;
     }
 
@@ -8190,6 +8918,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+        ammo.introDate = 3069;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -8207,6 +8938,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+        ammo.introDate = 3068;
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -8227,6 +8961,9 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 300;
         ammo.tonnage = 1f;
         ammo.explosive = false;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_A,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -8246,6 +8983,9 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.cost = 150;
         ammo.explosive = false;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_A,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -8266,6 +9006,9 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 300;
         ammo.tonnage = 1f;
         ammo.explosive = false;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -8285,6 +9028,9 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.cost = 150;
         ammo.explosive = false;
+        ammo.techRating = RATING_A;
+        ammo.introDate = 1950;
+        ammo.availRating = new int[]{RATING_X,RATING_A,RATING_A};
 
         return ammo;
     }
@@ -8997,6 +9743,14 @@ public class AmmoType extends EquipmentType {
      */
     public double getBABV() {
         return ((kgPerShot * shots) / 1000) * bv;
+    }
+
+    public String getShortName() {
+        if (shortName.trim().length() < 1) {
+            return getName();
+        }
+
+        return shortName;
     }
 
 }

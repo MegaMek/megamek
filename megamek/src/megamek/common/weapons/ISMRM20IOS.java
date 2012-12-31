@@ -50,5 +50,8 @@ public class ISMRM20IOS extends MRMWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3056;
     }
 }

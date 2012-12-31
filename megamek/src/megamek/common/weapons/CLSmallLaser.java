@@ -51,5 +51,8 @@ public class CLSmallLaser extends LaserWeapon {
         bv = 9;
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
+        introDate = 2400;
+        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        techRating = RATING_E;
     }
 }

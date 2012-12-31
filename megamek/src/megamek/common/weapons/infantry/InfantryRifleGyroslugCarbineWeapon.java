@@ -42,5 +42,8 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.28;
         infantryRange = 1;
+        introDate = 2580;
+        availRating = new int[]{RATING_C,RATING_D,RATING_C};
+        techRating = RATING_D;
     }
 }

@@ -47,5 +47,10 @@ public class CLLRM15IOS extends LRMWeapon {
         medAV = 9;
         longAV = 9;
         maxRange = RANGE_LONG;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3058;
+        introDate = 2300;
+        availRating = new int[]{RATING_X,RATING_B,RATING_A};
     }
 }

@@ -52,6 +52,8 @@ public class CLThumper extends ArtilleryWeapon {
         criticals = 15;
         bv = 43;
         cost = 187500;
-    }
+        techRating = RATING_B;
+        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+	}
 
 }

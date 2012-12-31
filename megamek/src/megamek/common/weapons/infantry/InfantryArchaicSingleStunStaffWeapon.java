@@ -42,5 +42,8 @@ public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.07;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_C,RATING_A};
+        techRating = RATING_C;
     }
 }

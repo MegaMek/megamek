@@ -56,6 +56,9 @@ public class KillerWhaleTWeapon extends CapitalMissileWeapon {
         this.longAV = 4;
         this.extAV =4;
         this.maxRange = RANGE_EXT;
+        introDate = 3056;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_F;
     }
     
     /*

@@ -50,5 +50,8 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 24;
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

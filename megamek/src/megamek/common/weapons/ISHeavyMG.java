@@ -57,8 +57,9 @@ public class ISHeavyMG extends MGWeapon {
         this.cost = 7500;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_C};
-        this.introDate = 3068;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_B;
     }
 
 }

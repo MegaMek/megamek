@@ -51,6 +51,9 @@ public class ISLongTom extends ArtilleryWeapon {
         criticals = 30;
         bv = 368;
         cost = 450000;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+
     }
 
 }

@@ -48,5 +48,8 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
+        introDate = 3063;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

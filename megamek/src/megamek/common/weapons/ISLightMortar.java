@@ -49,6 +49,9 @@ public class ISLightMortar extends Weapon {
         extremeRange = 4;
         bv = 9;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE);
+        introDate = 1950;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_B;
     }
 
 }

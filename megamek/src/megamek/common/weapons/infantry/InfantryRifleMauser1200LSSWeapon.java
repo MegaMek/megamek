@@ -42,5 +42,8 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.65;
         infantryRange = 2;
+        introDate = 3055;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

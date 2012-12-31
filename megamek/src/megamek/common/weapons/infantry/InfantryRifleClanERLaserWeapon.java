@@ -42,5 +42,8 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.28;
         infantryRange = 3;
+        introDate = 2845;
+        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        techRating = RATING_F;
     }
 }

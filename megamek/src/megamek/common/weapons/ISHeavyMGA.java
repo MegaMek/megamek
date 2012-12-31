@@ -57,6 +57,9 @@ public class ISHeavyMGA extends AmmoWeapon {
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_E;
     }
 
     /*

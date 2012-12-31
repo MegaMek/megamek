@@ -42,5 +42,8 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.14;
         infantryRange = 0;
+        introDate = 2320;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_D;
     }
 }

@@ -50,7 +50,9 @@ public class CLAMS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-
+        introDate = 2617;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_F;
         atClass = CLASS_POINT_DEFENSE;
     }
 }

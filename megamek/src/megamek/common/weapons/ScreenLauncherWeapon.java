@@ -55,6 +55,9 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.maxRange = RANGE_SHORT;
         this.capital = false;
         this.atClass = CLASS_SCREEN;
+        introDate = 3055;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_F;
     }
     
     /*

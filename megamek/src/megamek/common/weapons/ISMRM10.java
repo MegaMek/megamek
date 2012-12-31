@@ -49,5 +49,8 @@ public class ISMRM10 extends MRMWeapon {
         this.shortAV = 6;
         this.medAV = 6;
         this.maxRange = RANGE_MED;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_C;
     }
 }

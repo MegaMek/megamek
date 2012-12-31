@@ -58,5 +58,7 @@ public class CLHeavyLargeLaser extends LaserWeapon {
         this.maxRange = RANGE_MED;
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
         this.introDate = 3059;
+        techRating = RATING_F;
+       
     }
 }

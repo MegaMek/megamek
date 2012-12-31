@@ -58,8 +58,11 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
-        this.extinctDate = 2950;
-        this.reintroDate = 3037;
+        introDate = 2609;
+        extinctDate = 2950;
+        reintroDate = 3037;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
         this.flags = flags.or(F_BURST_FIRE);
     }
 

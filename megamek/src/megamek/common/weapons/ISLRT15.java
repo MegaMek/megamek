@@ -48,5 +48,8 @@ public class ISLRT15 extends LRTWeapon {
         criticals = 3;
         bv = 136;
         cost = 175000;
+        introDate = 2380;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

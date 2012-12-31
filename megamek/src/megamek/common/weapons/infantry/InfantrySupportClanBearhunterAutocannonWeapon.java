@@ -44,5 +44,8 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         infantryDamage = 2.33;
         infantryRange = 0;
         crew = 2;
+        introDate = 3062;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_D;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryArchaicNunchakuWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_A;
     }
 }

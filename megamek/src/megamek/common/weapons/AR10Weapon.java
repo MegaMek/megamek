@@ -59,6 +59,10 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
+        introDate = 2100;
+        extinctDate = 2850;
+        reintroDate = 3051;
+        availRating = new int[]{RATING_E,RATING_X,RATING_E};
     }
     
     /*

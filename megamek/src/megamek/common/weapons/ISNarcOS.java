@@ -45,6 +45,10 @@ public class ISNarcOS extends NarcWeapon {
         criticals = 2;
         flags = flags.or(F_ONESHOT);
         bv = 6;
-        cost = 100000;
+        cost = 100000;introDate = 2587;
+        extinctDate = 2795;
+        reintroDate = 3035;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

@@ -51,6 +51,9 @@ public class CLBAMG extends BAMGWeapon {
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;
+        introDate = 1950;
+        availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        techRating = RATING_C;
     }
 
 }

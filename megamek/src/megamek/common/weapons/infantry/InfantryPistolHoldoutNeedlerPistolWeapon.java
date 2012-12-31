@@ -42,5 +42,8 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
         infantryDamage = 0.06;
         infantryRange = 0;
+        introDate = 2515;
+        availRating = new int[]{RATING_C,RATING_B,RATING_B};
+        techRating = RATING_D;
     }
 }

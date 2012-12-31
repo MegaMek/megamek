@@ -47,5 +47,8 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
         medAV = 3;
         longAV = 3;
         extAV = 3;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3054;
     }
 }

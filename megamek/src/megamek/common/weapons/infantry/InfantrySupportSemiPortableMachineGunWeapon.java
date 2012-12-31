@@ -45,5 +45,8 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
         infantryDamage = 0.75;
         infantryRange = 1;
         crew = 2;
+        introDate = 1950;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

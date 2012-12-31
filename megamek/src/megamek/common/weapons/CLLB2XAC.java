@@ -56,7 +56,8 @@ public class CLLB2XAC extends LBXACWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.techRating = RATING_F;
-        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
         introDate = 2826;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        
     }
 }

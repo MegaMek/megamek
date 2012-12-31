@@ -42,5 +42,8 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.03;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_B};
+        techRating = RATING_D;
     }
 }

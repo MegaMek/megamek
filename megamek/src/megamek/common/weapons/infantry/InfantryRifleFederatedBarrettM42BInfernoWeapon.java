@@ -42,5 +42,8 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.82;
         infantryRange = 1;
+        introDate = 3064;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_C;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.27;
         infantryRange = 0;
+        introDate = 3035;
+        availRating = new int[]{RATING_X,RATING_F,RATING_C};
+        techRating = RATING_C;
     }
 }

@@ -43,5 +43,8 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         setModes(new String[] { "", "Indirect" });
         infantryDamage = 0.19;
         infantryRange = 3;
+        introDate = 3057;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_D;
     }
 }

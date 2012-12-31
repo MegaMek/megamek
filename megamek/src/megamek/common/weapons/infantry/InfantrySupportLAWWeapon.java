@@ -44,5 +44,8 @@ public class InfantrySupportLAWWeapon extends InfantryWeapon {
         infantryDamage = 0.23;
         infantryRange = 2;
         crew = 1;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

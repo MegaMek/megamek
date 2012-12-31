@@ -60,6 +60,9 @@ public class ISLargeVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
         shortAV = 10;
         medAV = 7;
         maxRange = RANGE_MED;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3070;
     }
 
 }

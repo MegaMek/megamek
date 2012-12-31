@@ -53,6 +53,7 @@ public class ISMediumLaser extends LaserWeapon {
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
         this.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B,EquipmentType.RATING_B};
-        this.introDate = 2400;
+        this.introDate = 2300;
+        techRating = RATING_C;
     }
 }

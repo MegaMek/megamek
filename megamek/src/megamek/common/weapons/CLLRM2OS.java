@@ -40,5 +40,8 @@ public class CLLRM2OS extends LRMWeapon {
         criticals = 0;
         bv = 5;
         flags = flags.or(F_ONESHOT);
+        introDate = 2300;
+        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        techRating = RATING_F;
     }
 }

@@ -54,6 +54,7 @@ public class CLRAC5 extends RACWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};	
+        introDate = 3073;
     }
 }

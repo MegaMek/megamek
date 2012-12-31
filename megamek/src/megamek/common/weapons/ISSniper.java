@@ -52,6 +52,9 @@ public class ISSniper extends ArtilleryWeapon {
         criticals = 20;
         bv = 85;
         cost = 300000;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+
     }
 
 }

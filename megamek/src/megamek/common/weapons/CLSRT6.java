@@ -47,5 +47,8 @@ public class CLSRT6 extends SRTWeapon {
         bv = 59;
         flags = flags.or(F_NO_FIRES);
         cost = 80000;
+        introDate = 2380;
+        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        techRating = RATING_F;
     }
 }

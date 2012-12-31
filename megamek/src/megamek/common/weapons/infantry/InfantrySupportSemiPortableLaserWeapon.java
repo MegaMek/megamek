@@ -43,5 +43,8 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.61;
         infantryRange = 3;
         crew = 2;
+        introDate = 2400;
+        availRating = new int[]{RATING_C,RATING_D,RATING_C};
+        techRating = RATING_D;
     }
 }

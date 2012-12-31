@@ -44,5 +44,8 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
         infantryDamage = 0.63;
         infantryRange = 0;
         crew = 2;
+        introDate = 2100;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.25;
         infantryRange = 0;
+        introDate = 3045;
+        availRating = new int[]{RATING_X,RATING_F,RATING_D};
+        techRating = RATING_D;
     }
 }

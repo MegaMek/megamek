@@ -42,5 +42,8 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.09;
         infantryRange = 0;
+        introDate = 3030;
+        availRating = new int[]{RATING_X,RATING_F,RATING_D};
+        techRating = RATING_D;
     }
 }

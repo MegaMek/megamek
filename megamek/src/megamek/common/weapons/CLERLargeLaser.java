@@ -56,5 +56,8 @@ public class CLERLargeLaser extends LaserWeapon {
         this.longAV = 10;
         this.extAV = 10;
         this.maxRange = RANGE_EXT;
+        introDate = 2620;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_F;
     }
 }

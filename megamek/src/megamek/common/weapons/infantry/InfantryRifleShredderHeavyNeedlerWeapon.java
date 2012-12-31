@@ -42,5 +42,8 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
         infantryDamage = 0.23;
         infantryRange = 0;
+        introDate = 3054;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_D;
     }
 }

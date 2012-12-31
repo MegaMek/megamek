@@ -50,7 +50,9 @@ public class ISStreakSRM2OS extends StreakSRMWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         this.introDate = 2676;
-        this.extinctDate = 2800;
-        this.reintroDate = 3035;
+        extinctDate = 2845;
+        reintroDate = 3035;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

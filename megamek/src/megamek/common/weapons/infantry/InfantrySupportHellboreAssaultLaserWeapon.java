@@ -44,5 +44,8 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

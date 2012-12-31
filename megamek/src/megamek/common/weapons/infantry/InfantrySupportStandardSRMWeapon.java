@@ -44,5 +44,8 @@ public class InfantrySupportStandardSRMWeapon extends InfantryWeapon {
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
+        introDate = 2370;
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_C;
     }
 }

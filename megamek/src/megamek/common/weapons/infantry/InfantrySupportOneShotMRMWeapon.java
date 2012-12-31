@@ -44,5 +44,8 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
         infantryDamage = 0.30;
         infantryRange = 2;
         crew = 1;
+        introDate = 3065;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_D;
     }
 }

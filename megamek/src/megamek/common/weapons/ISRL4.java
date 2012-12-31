@@ -42,5 +42,8 @@ public class ISRL4 extends RLWeapon {
         this.longRange = 12;
         this.extremeRange = 14;
         this.bv = 5;
+        introDate = 3064;
+        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        techRating = RATING_B;
     }
 }

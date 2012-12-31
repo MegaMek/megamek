@@ -54,5 +54,7 @@ public class ISUAC20 extends UACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

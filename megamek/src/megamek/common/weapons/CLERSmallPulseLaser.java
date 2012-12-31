@@ -56,5 +56,8 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         bv = 36;
         cost = 30000;
         flags = flags.or(F_BURST_FIRE);
+        techRating = RATING_F;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3057;
     }
 }

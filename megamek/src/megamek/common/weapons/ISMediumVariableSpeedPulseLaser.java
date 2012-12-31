@@ -58,6 +58,9 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
         cost = 200000;
         shortAV = 7;
         maxRange = RANGE_SHORT;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3070;
     }
 
 }

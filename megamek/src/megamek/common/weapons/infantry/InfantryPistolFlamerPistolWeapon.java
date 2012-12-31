@@ -42,5 +42,8 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.27;
         infantryRange = 0;
+        introDate = 2100;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

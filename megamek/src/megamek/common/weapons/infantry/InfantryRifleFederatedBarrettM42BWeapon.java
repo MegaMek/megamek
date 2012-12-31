@@ -42,5 +42,8 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 1.11;
         infantryRange = 1;
+        introDate = 3064;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_C;
     }
 }

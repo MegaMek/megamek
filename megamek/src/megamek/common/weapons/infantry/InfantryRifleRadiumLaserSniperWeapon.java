@@ -42,5 +42,10 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.42;
         infantryRange = 3;
+        introDate = 2583;
+        extinctDate = 2607;
+        reintroDate = 3062;
+        availRating = new int[]{RATING_F,RATING_X,RATING_F};
+        techRating = RATING_E;
     }
 }

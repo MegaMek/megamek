@@ -42,5 +42,8 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.02;
         infantryRange = 0;
+        introDate = 3052;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

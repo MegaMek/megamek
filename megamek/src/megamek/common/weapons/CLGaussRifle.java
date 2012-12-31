@@ -60,8 +60,9 @@ public class CLGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        this.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_F,EquipmentType.RATING_D};
+        availRating = new int[]{RATING_X,RATING_C,RATING_B};
         this.introDate = 2590;
+        techRating = RATING_F;
     }
 
     /*

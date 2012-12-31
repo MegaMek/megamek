@@ -58,6 +58,9 @@ public class ISBombastLaser extends LaserWeapon {
         medAV = 12;
         maxRange = RANGE_MED;
         flags = flags.or(F_BOMBAST_LASER);
+        techRating = RATING_E;	
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};	
+        introDate = 3064;
     }
 
     /*

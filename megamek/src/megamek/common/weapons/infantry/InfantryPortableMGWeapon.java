@@ -48,5 +48,8 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
+        introDate = 1950;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryRifleBoltActionSniperWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.18;
         infantryRange = 2;
+        introDate = 1950;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_B;
     }
 }

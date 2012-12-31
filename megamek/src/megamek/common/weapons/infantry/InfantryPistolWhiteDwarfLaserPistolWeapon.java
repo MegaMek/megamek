@@ -42,5 +42,8 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.02;
         infantryRange = 0;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_D;
     }
 }

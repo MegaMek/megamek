@@ -48,5 +48,8 @@ public class ISImprovedNarcOS extends NarcWeapon {
         bv = 15;
         flags = flags.or(F_ONESHOT);
         cost = 250000;
+        introDate = 3062;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

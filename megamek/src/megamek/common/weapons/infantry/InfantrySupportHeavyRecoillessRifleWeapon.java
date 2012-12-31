@@ -44,5 +44,8 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.34;
         infantryRange = 2;
         crew = 3;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techRating = RATING_C;
     }
 }

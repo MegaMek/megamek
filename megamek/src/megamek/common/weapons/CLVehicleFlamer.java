@@ -52,5 +52,8 @@ public class CLVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
+        introDate = 1950;
+        availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        techRating = RATING_B;
     }
 }

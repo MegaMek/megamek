@@ -44,5 +44,8 @@ public class InfantrySupportLightMachineGunWeapon extends InfantryWeapon {
         infantryDamage = 0.49;
         infantryRange = 1;
         crew = 1;
+        introDate = 1950;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

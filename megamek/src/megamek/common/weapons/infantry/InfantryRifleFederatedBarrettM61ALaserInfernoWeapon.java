@@ -44,5 +44,8 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         setModes(modeStrings);
         infantryDamage = 0.55;
         infantryRange = 2;
+        introDate = 3062;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_C;
     }
 }

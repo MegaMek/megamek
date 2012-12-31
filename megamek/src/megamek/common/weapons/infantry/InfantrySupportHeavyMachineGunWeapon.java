@@ -50,5 +50,8 @@ public class InfantrySupportHeavyMachineGunWeapon extends InfantryWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
+        introDate = 1950;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

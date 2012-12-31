@@ -45,5 +45,8 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
         infantryDamage = 0.55;
         infantryRange = 1;
         crew = 1;
+        introDate = 3050;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_C;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
+        introDate = 2990;
+        availRating = new int[]{RATING_X,RATING_D,RATING_D};
+        techRating = RATING_D;
     }
 }

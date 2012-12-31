@@ -37,5 +37,9 @@ public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
         techLevel = TechConstants.T_IS_ADVANCED;
         name = "Vehicular Grenade Launcher";
         setInternalName("ISVehicularGrenadeLauncher");
+        techRating = RATING_C;	
+        availRating = new int[]{RATING_D, RATING_E, RATING_F};
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_B,RATING_B};
     }
 }

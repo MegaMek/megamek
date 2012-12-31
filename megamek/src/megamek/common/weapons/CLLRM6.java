@@ -39,5 +39,9 @@ public class CLLRM6 extends LRMWeapon {
         tonnage = 1.2f;
         criticals = 0;
         bv = 69;
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
+        
     }
 }

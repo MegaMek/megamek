@@ -62,8 +62,9 @@ public class ISPPC extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        this.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C,EquipmentType.RATING_C};
-        this.introDate = 2460;
+        introDate = 2460;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_D;
     }
 
 }

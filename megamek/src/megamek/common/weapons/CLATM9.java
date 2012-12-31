@@ -48,5 +48,8 @@ public class CLATM9 extends ATMWeapon {
         this.shortAV = 14;
         this.medAV = 14;
         this.maxRange = RANGE_MED;
+        introDate = 3054;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
     }
 }

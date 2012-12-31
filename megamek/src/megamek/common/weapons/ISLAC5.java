@@ -48,5 +48,8 @@ public class ISLAC5 extends LACWeapon {
         maxRange = RANGE_MED;
         shortAV = 5;
         medAV = 5;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_D;
     }
 }

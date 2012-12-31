@@ -49,6 +49,9 @@ public class ISAutoGrenadeLauncher extends Weapon {
         criticals = 0;
         bv = 1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE);
+        introDate = 2100;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 
 }

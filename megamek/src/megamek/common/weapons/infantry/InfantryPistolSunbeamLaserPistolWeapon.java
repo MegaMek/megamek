@@ -42,5 +42,8 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.28;
         infantryRange = 1;
+        introDate = 3020;
+        availRating = new int[]{RATING_X,RATING_F,RATING_D};
+        techRating = RATING_D;
     }
 }

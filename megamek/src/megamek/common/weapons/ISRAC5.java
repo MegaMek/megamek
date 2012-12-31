@@ -52,5 +52,8 @@ public class ISRAC5 extends RACWeapon {
         this.medAV = 20;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
+        introDate = 3062;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

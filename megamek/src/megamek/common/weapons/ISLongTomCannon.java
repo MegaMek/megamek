@@ -53,6 +53,9 @@ public class ISLongTomCannon extends ArtilleryCannonWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_F, RATING_E};
+        introDate = 3012;
     }
 
 }

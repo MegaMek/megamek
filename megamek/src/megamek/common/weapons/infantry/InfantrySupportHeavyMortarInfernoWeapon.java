@@ -45,5 +45,8 @@ public class InfantrySupportHeavyMortarInfernoWeapon extends InfantryWeapon {
         infantryDamage = 0.27;
         infantryRange = 3;
         crew = 3;
+        introDate = 1950;
+        availRating = new int[]{RATING_B,RATING_C,RATING_B};
+        techRating = RATING_B;
     }
 }

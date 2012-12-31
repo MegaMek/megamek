@@ -48,5 +48,8 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
         infantryDamage = 0.91;
         infantryRange = 1;
         crew = 2;
+        introDate = 3061;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_D;
     }
 }

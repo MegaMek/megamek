@@ -42,5 +42,8 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.20;
         infantryRange = 0;
+        introDate = 2660;
+        availRating = new int[]{RATING_C,RATING_B,RATING_C};
+        techRating = RATING_D;
     }
 }

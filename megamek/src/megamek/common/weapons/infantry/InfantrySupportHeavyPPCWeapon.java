@@ -44,5 +44,8 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 3;
         crew = 5;
+        introDate = 2470;
+        availRating = new int[]{RATING_C,RATING_D,RATING_C};
+        techRating = RATING_E;
     }
 }

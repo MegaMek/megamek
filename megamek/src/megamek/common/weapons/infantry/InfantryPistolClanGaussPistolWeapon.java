@@ -42,5 +42,8 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.14;
         infantryRange = 0;
+        introDate = 2850;
+        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        techRating = RATING_F;
     }
 }

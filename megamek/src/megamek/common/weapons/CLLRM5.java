@@ -46,5 +46,8 @@ public class CLLRM5 extends LRMWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
+        introDate = 2300;
+        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        techRating = RATING_F;
     }
 }

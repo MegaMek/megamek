@@ -38,5 +38,8 @@ public class CLBPod extends BPodWeapon {
         this.name = "B-Pod";
         this.setInternalName("CLBPod");
         this.addLookupName("CLB-Pod");
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

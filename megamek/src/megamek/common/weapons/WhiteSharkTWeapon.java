@@ -56,6 +56,9 @@ public class WhiteSharkTWeapon extends CapitalMissileWeapon {
         this.longAV = 3;
         this.extAV = 3;
         this.maxRange = RANGE_EXT;
+        introDate = 3056;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_F;
     }
     
     /*

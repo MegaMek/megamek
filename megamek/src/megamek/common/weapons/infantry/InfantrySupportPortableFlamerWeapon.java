@@ -50,5 +50,8 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
         infantryDamage = 0.45;
         infantryRange = 0;
         crew = 1;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techRating = RATING_C;
     }
 }

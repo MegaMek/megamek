@@ -42,5 +42,8 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.35;
         infantryRange = 2;
+        introDate = 2700;
+        availRating = new int[]{RATING_C,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

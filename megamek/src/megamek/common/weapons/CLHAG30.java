@@ -51,6 +51,9 @@ public class CLHAG30 extends HAGWeapon {
         longAV = 18;
         maxRange = RANGE_LONG;
         explosionDamage = rackSize/2;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
 
     }
 

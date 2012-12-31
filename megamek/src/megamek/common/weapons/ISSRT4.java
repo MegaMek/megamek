@@ -46,5 +46,8 @@ public class ISSRT4 extends SRTWeapon {
         this.criticals = 1;
         this.bv = 39;
         this.cost = 60000;
+        introDate = 2380;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

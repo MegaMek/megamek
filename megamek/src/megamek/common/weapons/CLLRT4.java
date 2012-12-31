@@ -44,5 +44,8 @@ public class CLLRT4 extends LRTWeapon {
         this.tonnage = 0.8f;
         this.criticals = 0;
         this.bv = 46;
+        introDate = 3060;
+        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        techRating = RATING_C;
     }
 }

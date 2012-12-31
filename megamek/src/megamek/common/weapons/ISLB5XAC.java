@@ -54,7 +54,8 @@ public class ISLB5XAC extends LBXACWeapon {
         this.medAV = 5;
         this.longAV = 5;
         this.maxRange = RANGE_LONG;
-        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
         introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

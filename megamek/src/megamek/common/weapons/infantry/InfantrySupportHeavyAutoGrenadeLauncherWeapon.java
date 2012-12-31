@@ -43,5 +43,8 @@ public class InfantrySupportHeavyAutoGrenadeLauncherWeapon extends InfantryWeapo
         infantryDamage = 1.16;
         infantryRange = 1;
         crew = 1;
+        introDate = 2900;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_D;
     }
 }

@@ -58,5 +58,7 @@ public class ISLightRifle extends RifleWeapon {
         extAV = 8;
         maxRange = RANGE_MED;
         explosionDamage = 0;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_C, RATING_F, RATING_X};
     }
 }

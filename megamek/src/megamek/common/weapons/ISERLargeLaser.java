@@ -56,10 +56,11 @@ public class ISERLargeLaser extends LaserWeapon {
         this.medAV = 8;
         this.longAV = 8;
         this.maxRange = RANGE_LONG;
-        this.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
-        this.introDate = 2620;
-        this.extinctDate = 2950;
-        this.reintroDate = 3037;
+        introDate = 2620;
+        extinctDate = 2950;
+        reintroDate = 3037;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 
     @Override

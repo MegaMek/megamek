@@ -65,6 +65,9 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.04;
         infantryRange = 0;
+        introDate = 2630;
+        availRating = new int[]{RATING_D,RATING_D,RATING_C};
+        techRating = RATING_D;
     }
 }
 

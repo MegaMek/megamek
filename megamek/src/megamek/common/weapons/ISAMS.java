@@ -50,7 +50,11 @@ public class ISAMS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-
+        introDate = 2617;
+        extinctDate = 2796;
+        reintroDate = 3040;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
         atClass = CLASS_POINT_DEFENSE;
     }
 }

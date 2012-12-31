@@ -50,5 +50,8 @@ public class ISMicroGrenadeLauncher extends Weapon {
         criticals = 0;
         bv = 0;
         flags = flags.or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE);
+        introDate = 2100;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_B;
     }
 }

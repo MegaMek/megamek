@@ -42,5 +42,8 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;
+        introDate = 2495;
+        availRating = new int[]{RATING_C,RATING_B,RATING_C};
+        techRating = RATING_C;
     }
 }

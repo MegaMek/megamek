@@ -56,7 +56,11 @@ public class ISMediumPulseLaser extends PulseLaserWeapon {
         this.cost = 60000;
         this.shortAV = 6;
         this.maxRange = RANGE_SHORT;
-        this.extinctDate = 2950;
-        this.reintroDate = 3037;
+        introDate = 2609;
+        extinctDate = 2950;
+        reintroDate = 3037;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
+        
     }
 }

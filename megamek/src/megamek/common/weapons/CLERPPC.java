@@ -55,6 +55,9 @@ public class CLERPPC extends PPCWeapon {
         this.medAV = 15;
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
+        introDate = 2760;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_F;
 
     }
 }

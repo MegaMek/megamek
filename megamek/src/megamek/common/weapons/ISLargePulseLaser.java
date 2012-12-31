@@ -57,7 +57,9 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        this.extinctDate = 2950;
-        this.reintroDate = 3037;
+        introDate = 2609;
+        extinctDate = 2950;
+        reintroDate = 3037;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
     }
 }

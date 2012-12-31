@@ -55,5 +55,8 @@ public class ISMediumXPulseLaser extends PulseLaserWeapon {
         criticals = 1;
         bv = 71;
         cost = 110000;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3057;
     }
 }

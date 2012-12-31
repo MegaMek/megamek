@@ -46,5 +46,8 @@ public class InfantrySupportMediumRecoillessRifleInfernoWeapon extends InfantryW
         infantryDamage = 0.21;
         infantryRange = 2;
         crew = 2;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techRating = RATING_C;
     }
 }

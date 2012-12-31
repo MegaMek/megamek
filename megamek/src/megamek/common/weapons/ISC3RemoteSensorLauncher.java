@@ -56,6 +56,7 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         availRating = new int[]
             { RATING_X, RATING_X, RATING_F };
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON);
+        introDate = 3072;
         // suppveeslots = 3;
     }
 

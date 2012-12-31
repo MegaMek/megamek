@@ -42,5 +42,8 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
         infantryDamage = 0.10;
         infantryRange = 0;
+        introDate = 1950;
+        availRating = new int[]{RATING_B,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

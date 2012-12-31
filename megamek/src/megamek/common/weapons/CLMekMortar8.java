@@ -46,5 +46,8 @@ public class CLMekMortar8 extends MekMortarWeapon{
         criticals = 3;
         tonnage = 5;
         cost = 70000;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_D, RATING_F, RATING_E};
+        introDate = 2840;
     }
 }

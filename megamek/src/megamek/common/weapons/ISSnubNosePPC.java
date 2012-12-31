@@ -62,8 +62,9 @@ public class ISSnubNosePPC extends PPCWeapon {
         medAV = 8;
         // with a capacitor
         explosive = true;
-        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_F};
         introDate = 3067;
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_E;
     }
 
     @Override

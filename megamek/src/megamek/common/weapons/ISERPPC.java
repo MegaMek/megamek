@@ -58,9 +58,10 @@ public class ISERPPC extends PPCWeapon {
         maxRange = RANGE_LONG;
         // with a capacitor
         explosive = true;
-        this.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
-        this.introDate = 2760;
-        this.extinctDate = 2860;
-        this.reintroDate = 3037;
+        introDate = 2760;
+        extinctDate = 2860;
+        reintroDate = 3037;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_E;
     }
 }

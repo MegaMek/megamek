@@ -52,6 +52,9 @@ public class ISBAHeavyMG extends BAMGWeapon {
         criticals = 1;
         bv = 6;
         cost = 7500;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_C;
     }
 
 }

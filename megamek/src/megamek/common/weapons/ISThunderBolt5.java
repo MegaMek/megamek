@@ -48,5 +48,8 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         this.criticals = 1;
         this.bv = 64;
         this.cost = 50000;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3072;
     }
 }

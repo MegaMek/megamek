@@ -48,8 +48,8 @@ public class ISLRT5OS extends LRTWeapon {
         bv = 9;
         flags = flags.or(F_ONESHOT);
         cost = 15000;
-        this.introDate = 2676;
-        this.extinctDate = 2800;
-        this.reintroDate = 3030;
+        introDate = 2380;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

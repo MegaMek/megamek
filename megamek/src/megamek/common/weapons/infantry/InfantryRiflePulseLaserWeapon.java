@@ -42,5 +42,8 @@ public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.25;
         infantryRange = 1;
+        introDate = 2680;
+        availRating = new int[]{RATING_D,RATING_E,RATING_C};
+        techRating = RATING_D;
     }
 }

@@ -49,5 +49,8 @@ public class CLMediumChemicalLaser extends CLChemicalLaserWeapon {
         cost = 30000;
         shortAV = 5;
         maxRange = RANGE_SHORT;
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3059;
     }
 }

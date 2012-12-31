@@ -44,5 +44,8 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.98;
         infantryRange = 4;
         crew = 4;
+        introDate = 2615;
+        availRating = new int[]{RATING_E,RATING_F,RATING_E};
+        techRating = RATING_E;
     }
 }

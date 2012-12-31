@@ -46,5 +46,10 @@ public class ISMekMortar1 extends MekMortarWeapon{
         this.criticals = 1;
         this.tonnage = 2;
         this.cost = 7000;
+        this.techRating = RATING_B;
+        this.availRating = new int[]{RATING_D, RATING_F, RATING_E};
+        this.introDate = 2531;	
+        this.extinctDate = 2819;	
+        this.reintroDate = 3043;
     }
 }

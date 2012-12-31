@@ -58,6 +58,9 @@ public class CLSmallPulseLaser extends PulseLaserWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.flags = flags.or(F_BURST_FIRE);
+        introDate = 2609;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_F;
     }
 
 }

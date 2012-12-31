@@ -44,5 +44,8 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
         infantryDamage = 0.68;
         infantryRange = 3;
         crew = 2;
+        introDate = 3063;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

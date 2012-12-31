@@ -44,5 +44,8 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
         infantryDamage = 1.05;
         infantryRange = 3;
         crew = 3;
+        introDate = 3061;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_F;
     }
 }

@@ -60,10 +60,12 @@ public class ISGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        this.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_F,EquipmentType.RATING_D};
-        this.introDate = 2590;
-        this.extinctDate = 2865;
-        this.reintroDate = 3040;
+        introDate = 2590;
+        extinctDate = 2865;
+        reintroDate = 3040;
+        availRating = new int[]{RATING_D,RATING_F,RATING_D};
+        techRating = RATING_E;
+    
     }
     
     /*

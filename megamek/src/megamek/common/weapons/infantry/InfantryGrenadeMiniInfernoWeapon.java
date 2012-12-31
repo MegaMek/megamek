@@ -44,5 +44,7 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
         setModes(modeStrings);
         infantryDamage = 0.09;
         infantryRange = 0;
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techRating = RATING_C;
     }
 }

@@ -42,5 +42,8 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.07;
         infantryRange = 0;
+        introDate = 2375;
+        availRating = new int[]{RATING_B,RATING_C,RATING_B};
+        techRating = RATING_D;
     }
 }

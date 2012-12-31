@@ -56,8 +56,9 @@ public class CLAPGaussRifle extends GaussWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
         this.introDate = 3069;
+        techRating = RATING_F;
     }
 
 }

@@ -61,6 +61,9 @@ public class ISIHGaussRifle extends GaussWeapon {
         longAV = 22;
         maxRange = RANGE_LONG;
         explosionDamage = 30;
+        techRating = RATING_E;	
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};	
+        introDate = 3065;
     }
 
     /*

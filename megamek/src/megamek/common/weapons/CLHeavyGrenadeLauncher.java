@@ -49,6 +49,9 @@ public class CLHeavyGrenadeLauncher extends Weapon {
         criticals = 0;
         bv = 1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE);
+        introDate = 2900;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_C;
     }
 
 }

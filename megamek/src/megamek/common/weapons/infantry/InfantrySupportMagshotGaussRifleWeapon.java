@@ -44,5 +44,8 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.74;
         infantryRange = 2;
         crew = 2;
+        introDate = 3059;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

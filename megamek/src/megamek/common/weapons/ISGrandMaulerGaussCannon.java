@@ -49,5 +49,9 @@ public class ISGrandMaulerGaussCannon extends Weapon {
         criticals = 0;
         bv = 6;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        introDate = 3059;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
+      
     }
 }

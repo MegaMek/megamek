@@ -42,5 +42,8 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.35;
         infantryRange = 0;
+        introDate = 2200;
+        availRating = new int[]{RATING_E,RATING_F,RATING_E};
+        techRating = RATING_E;
     }
 }

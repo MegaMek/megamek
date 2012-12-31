@@ -52,6 +52,9 @@ public class ISBALightMG extends BAMGWeapon {
         criticals = 1;
         bv = 5;
         cost = 5000;
+        introDate = 3068;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_C;
     }
 
 }

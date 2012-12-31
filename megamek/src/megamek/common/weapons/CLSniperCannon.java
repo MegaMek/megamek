@@ -53,6 +53,9 @@ public class CLSniperCannon extends ArtilleryCannonWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_MED;
+        techRating = RATING_B;
+        availRating = new int[]{RATING_X, RATING_F, RATING_E};
+        introDate = 3032;
     }
 
 }

@@ -57,5 +57,6 @@ public class CLHeavySmallLaser extends LaserWeapon {
         this.maxRange = RANGE_SHORT;
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
         this.introDate = 3059;
+        techRating = RATING_F;
     }
 }

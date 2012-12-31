@@ -42,5 +42,8 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.0;
         infantryRange = 0;
+        introDate = 3059;
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techRating = RATING_C;
     }
 }

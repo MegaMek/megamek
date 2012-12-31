@@ -53,5 +53,8 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
+        introDate = 1950;
+        availRating = new int[]{RATING_A,RATING_A,RATING_B};
+        techRating = RATING_B;
     }
 }

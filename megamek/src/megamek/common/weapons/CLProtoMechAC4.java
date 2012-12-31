@@ -55,5 +55,7 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         techRating = RATING_F;
-    }
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};	
+        introDate = 3073;
+        }
 }

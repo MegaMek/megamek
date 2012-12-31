@@ -42,5 +42,8 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.20;
         infantryRange = 1;
+        introDate = 2840;
+        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        techRating = RATING_F;
     }
 }

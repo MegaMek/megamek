@@ -63,5 +63,6 @@ public class ISAC2 extends ACWeapon {
         explosionDamage = damage;
         availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_D,EquipmentType.RATING_D};
         introDate = 2300;
+        techRating = RATING_C;
     }
 }

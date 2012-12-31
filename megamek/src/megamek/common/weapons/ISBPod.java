@@ -38,5 +38,8 @@ public class ISBPod extends BPodWeapon {
         this.name = "B-Pod";
         this.setInternalName("ISBPod");
         this.addLookupName("ISB-Pod");
+        introDate = 3069;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

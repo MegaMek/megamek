@@ -51,5 +51,8 @@ public class CLERFlamer extends FlamerWeapon {
         cost = 15000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
+        techRating = RATING_D;
+        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        introDate = 3067;
     }
 }

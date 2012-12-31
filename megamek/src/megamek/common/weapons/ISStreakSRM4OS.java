@@ -49,5 +49,8 @@ public class ISStreakSRM4OS extends StreakSRMWeapon {
         cost = 45000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
+        introDate = 3058;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

@@ -43,5 +43,10 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 1;
         crew = 1;
+        introDate = 2500;
+        extinctDate = 2790;
+        reintroDate = 3056;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techRating = RATING_D;
     }
 }

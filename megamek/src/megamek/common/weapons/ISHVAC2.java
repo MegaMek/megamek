@@ -50,5 +50,8 @@ public class ISHVAC2 extends HVACWeapon {
         longAV = 2;
         extAV = 2;
         maxRange = RANGE_EXT;
+        techRating = RATING_D;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        introDate = 3059;
     }
 }

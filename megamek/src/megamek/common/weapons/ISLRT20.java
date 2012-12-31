@@ -48,5 +48,8 @@ public class ISLRT20 extends LRTWeapon {
         this.criticals = 5;
         this.bv = 181;
         this.cost = 250000;
+        introDate = 2380;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 }

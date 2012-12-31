@@ -48,6 +48,8 @@ public class CLStreakSRM6OS extends StreakSRMWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
-        this.introDate = 2826;
+        introDate = 2826;
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techRating = RATING_F;
     }
 }

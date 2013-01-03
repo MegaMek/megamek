@@ -29,6 +29,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.ManeuverType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
@@ -513,7 +514,11 @@ public class PathEnumerator {
                     return ret;
                 }
                 // if I'm out of movement points, ignore
-                if (start.getMpUsed() >= start.getEntity().getRunMP()) {
+                int maxMP = start.getEntity().getRunMP();
+                if ((maxMP == 0) && (start.getEntity() instanceof Infantry)) {
+                    maxMP = 1; //Infantry are a special case.
+                }
+                if (start.getMpUsed() >= maxMP) {
                     return ret;
                 }
                 // some useful variables

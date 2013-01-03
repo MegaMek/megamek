@@ -2318,7 +2318,9 @@ public class Compute {
             }
 
             // Cap damage to prevent run-away values
-            fDamage = Math.min(inf_attacker.getShootingStrength(), fDamage);
+            if (inf_attacker.getShootingStrength() > 0) {
+                fDamage = Math.min(inf_attacker.getShootingStrength(), fDamage);
+            }
         }
         return fDamage;
     }

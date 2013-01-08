@@ -574,7 +574,7 @@ public class EquipmentType {
     
     public static String getEquipDateAsString(int date) {
     	if(date == DATE_NONE) {
-    		return "NA";
+    		return "-";
     	} else {
     		return Integer.toString(date);
     	}

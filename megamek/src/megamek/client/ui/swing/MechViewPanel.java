@@ -52,10 +52,14 @@ public class MechViewPanel extends JPanel {
     private JScrollPane scrMek;
     private Icon icon;
     
-    public final static int WIDTH = 350;
-    public final static int HEIGHT = 600;
+    public final static int DEFAULT_WIDTH = 350;
+    public final static int DEFAULT_HEIGHT = 600;
     
     public MechViewPanel() {
+    	this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+    
+    public MechViewPanel(int width, int height) {
  
         setBackground(Color.WHITE);
         
@@ -66,15 +70,15 @@ public class MechViewPanel extends JPanel {
         txtMek.setText("");
         txtMek.setEditable(false);
         txtMek.setBorder(null);
-        txtMek.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        txtMek.setPreferredSize(new Dimension(width, height));
         lblMek = new JLabel();
         lblMek.setText("");
         lblMek.setVerticalAlignment(SwingConstants.TOP);
         scrMek = new JScrollPane(txtMek);
         scrMek.setBorder(null);
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        scrMek.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        scrMek.setMinimumSize(new Dimension(WIDTH, HEIGHT));
+        scrMek.setPreferredSize(new Dimension(width, height));
+        scrMek.setMinimumSize(new Dimension(width, height));
         GridBagConstraints c;
         GridBagLayout gridbag = new GridBagLayout();
         setLayout(gridbag);

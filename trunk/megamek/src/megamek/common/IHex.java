@@ -171,7 +171,7 @@ public interface IHex extends Cloneable {
     public abstract void removeTerrain(int type);
 
     /**
-     * Removes all Terreains from the hex.
+     * Removes all Terrains from the hex.
      */
     public abstract void removeAllTerrains();
 
@@ -186,7 +186,7 @@ public interface IHex extends Cloneable {
     public abstract int terrainsPresent();
 
     /**
-     * @return new hex wich is equals to this
+     * @return new hex which is equal to this
      */
     public abstract IHex duplicate();
 

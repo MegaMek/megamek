@@ -16,7 +16,7 @@
 /**
  * MiscType.java
  *
- * Created on April 2, 2002, 12:15 PM 
+ * Created on April 2, 2002, 12:15 PM
  */
 
 package megamek.common;
@@ -341,6 +341,9 @@ public class MiscType extends EquipmentType {
             if (entity instanceof Protomech) {
                 return entity.getWeight() * 0.025f;
             } else {
+                if (hasSubType(S_JETBOOSTER)) {
+                    return entity.getEngine().getWeightEngine(entity) / 10;
+                }
                 if (hasSubType(S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
                     if (e == null) {
@@ -537,11 +540,11 @@ public class MiscType extends EquipmentType {
             // vees, but we don't support them yet
             return (float) (Math.ceil(weaponWeight / 20) * 2.0);
         } else if (hasFlag(F_BOOBY_TRAP)) {
-                // 10% of unit weight
-                // round to half ton TODO: round to kilograms for small support
-                // vees, but we don't support them yet
-                float weight = entity.getWeight() / 10;
-                return (float) (Math.ceil(weight * 2.0)) / 2.0f;
+            // 10% of unit weight
+            // round to half ton TODO: round to kilograms for small support
+            // vees, but we don't support them yet
+            float weight = entity.getWeight() / 10;
+            return (float) (Math.ceil(weight * 2.0)) / 2.0f;
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -550,8 +553,6 @@ public class MiscType extends EquipmentType {
                 }
             }
             return weight;
-        } else if (hasFlag(MiscType.F_JET_BOOSTER)) {
-            return entity.getEngine().getWeightEngine(entity) / 10;
         } else if (hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             // 10% of the weight, plus 0.5 tons for the extra sensors
             return (entity.getWeight() / 10) + 0.5f;
@@ -1422,7 +1423,7 @@ public class MiscType extends EquipmentType {
         misc.extinctDate = 2865;
         misc.reintroDate = 3040;
         misc.techRating = RATING_E;
-        
+
         return misc;
     }
 
@@ -1501,7 +1502,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_B, EquipmentType.RATING_B};
         misc.introDate = 2595;
         misc.techRating = RATING_D;
-        
+
         return misc;
     }
 
@@ -1584,7 +1585,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_C, EquipmentType.RATING_C};
         misc.introDate = 2740;
         misc.techRating = RATING_F;
-        
+
         return misc;
     }
 
@@ -1836,7 +1837,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
         misc.introDate = 2598;
         misc.extinctDate = 2855;
-        misc.reintroDate = 3035; 
+        misc.reintroDate = 3035;
         misc.techRating = RATING_E;
         return misc;
     }
@@ -1855,7 +1856,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_D, EquipmentType.RATING_C};
         misc.introDate = 2598;
         misc.techRating = RATING_F;
-        
+
         return misc;
     }
 
@@ -2254,7 +2255,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.availRating = new int[]{RATING_D,RATING_D,RATING_D};
         misc.techRating = RATING_B;
-        
+
         return misc;
     }
 
@@ -2357,7 +2358,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3062;
         misc.techRating = RATING_E;
         misc.availRating = new int[]{RATING_X,RATING_X,RATING_E};
-        
+
         return misc;
     }
 
@@ -2381,7 +2382,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2860;
         misc.techRating = RATING_F;
         misc.availRating = new int[]{RATING_X,RATING_D,RATING_C};
-        
+
         return misc;
     }
 
@@ -2400,7 +2401,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3058;
         misc.techRating = RATING_E;
         misc.availRating = new int[]{RATING_X,RATING_X,RATING_F};
-        
+
         return misc;
     }
 
@@ -2455,7 +2456,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3057;
         misc.techRating = RATING_E;
         misc.availRating = new int[]{RATING_X,RATING_X,RATING_F};
-      
+
         return misc;
     }
 
@@ -2472,7 +2473,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techRating = RATING_C;
         misc.availRating = new int[]{RATING_E,RATING_E,RATING_D};
-       
+
 
         return misc;
     }
@@ -2529,7 +2530,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techRating = RATING_B;
         misc.availRating = new int[]{ RATING_C, RATING_D, RATING_D };
-       
+
         return misc;
     }
 
@@ -2569,7 +2570,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3062;
         misc.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         misc.techRating = RATING_C;
-        
+
         return misc;
     }
 
@@ -3465,7 +3466,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3051;
         misc.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         misc.techRating = RATING_E;
-        
+
         return misc;
     }
 
@@ -3695,7 +3696,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BA_SEARCHLIGHT).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
-        
+
 
         return misc;
     }
@@ -3714,7 +3715,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.availRating = new int[]{RATING_D,RATING_D,RATING_D};
         misc.techRating = RATING_C;
-        
+
         return misc;
     }
 
@@ -3987,7 +3988,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_MECH_EQUIPMENT);
         misc.spreadable = true;
-        
+
         return misc;
     }
 
@@ -4258,7 +4259,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_UMU).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
-        
+
         return misc;
     }
 
@@ -4714,7 +4715,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
         misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-        
+
 
         return misc;
     }
@@ -6039,7 +6040,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         misc.introDate = 3053;
-        
+
         return misc;
     }
 

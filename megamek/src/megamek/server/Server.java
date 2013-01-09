@@ -26057,7 +26057,6 @@ public class Server implements Runnable {
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
             r.indent();
-            r.newlines = 0;
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setDeployed(true);

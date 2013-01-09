@@ -21704,9 +21704,6 @@ public class Server implements Runnable {
                     damageTable = ToHitData.HIT_NORMAL;
                 }
             }
-            if (damageHeight == 0) {
-                return vPhaseReport;
-            }
 
 
         }

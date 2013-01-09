@@ -107,7 +107,7 @@ public class MiniMap extends JPanel {
 
     private final static int SCROLL_PANE_WIDTH = 160;
     private final static int SCROLL_PANE_HEIGHT = 200;
-    
+
     private Image m_mapImage;
     private IBoardView m_bview;
     private IGame m_game;
@@ -246,6 +246,7 @@ public class MiniMap extends JPanel {
         SMOKE_AND_FIRE = new Color(153, 0, 0);
         m_terrainColors[Terrains.SWAMP] = new Color(49, 136, 74);
         m_terrainColors[Terrains.BUILDING] = new Color(204, 204, 204);
+        m_terrainColors[Terrains.FUEL_TANK] = new Color(255, 204, 204);
         m_terrainColors[Terrains.BRIDGE] = new Color(109, 55, 25);
         m_terrainColors[Terrains.ICE] = new Color(204, 204, 255);
         m_terrainColors[Terrains.MAGMA] = new Color(200, 0, 0);
@@ -377,13 +378,13 @@ public class MiniMap extends JPanel {
         int currentHexSideBySin30 = hexSideBySin30[zoom];
         topMargin = margin;
         leftMargin = margin;
-        requiredWidth = m_board.getWidth()
-                * (currentHexSide + currentHexSideBySin30)
-                + currentHexSideBySin30 + 2 * margin;
-        requiredHeight = (2 * m_board.getHeight() + 1)
-                * currentHexSideByCos30 + 2 * margin + buttonHeight;
+        requiredWidth = (m_board.getWidth()
+                * (currentHexSide + currentHexSideBySin30))
+                + currentHexSideBySin30 + (2 * margin);
+        requiredHeight = (((2 * m_board.getHeight()) + 1)
+                * currentHexSideByCos30) + (2 * margin) + buttonHeight;
 
-        dirty = new boolean[m_board.getWidth() / 10 + 1][m_board.getHeight() / 10 + 1];
+        dirty = new boolean[(m_board.getWidth() / 10) + 1][(m_board.getHeight() / 10) + 1];
         dirtyMap = true;
 
         // ensure its on screen
@@ -405,21 +406,21 @@ public class MiniMap extends JPanel {
             currentHexSide = hexSide[zoom];
             currentHexSideByCos30 = hexSideByCos30[zoom];
             currentHexSideBySin30 = hexSideBySin30[zoom];
-            requiredWidth = m_board.getWidth()
-                    * (currentHexSide + currentHexSideBySin30)
-                    + currentHexSideBySin30 + 2 * margin;
-            requiredHeight = (2 * m_board.getHeight() + 1)
-                    * currentHexSideByCos30 + 2 * margin + buttonHeight;
+            requiredWidth = (m_board.getWidth()
+                    * (currentHexSide + currentHexSideBySin30))
+                    + currentHexSideBySin30 + (2 * margin);
+            requiredHeight = (((2 * m_board.getHeight()) + 1)
+                    * currentHexSideByCos30) + (2 * margin) + buttonHeight;
         }
         int x = getParent().getLocation().x;
         int y = getParent().getLocation().y;
-        if (x + requiredWidth > virtualBounds.getMaxX()) {
+        if ((x + requiredWidth) > virtualBounds.getMaxX()) {
             x = (int) (virtualBounds.getMaxX() - requiredWidth);
         }
         if (x < virtualBounds.getMinX()) {
             x = (int) (virtualBounds.getMinX());
         }
-        if (y + requiredHeight > virtualBounds.getMaxY()) {
+        if ((y + requiredHeight) > virtualBounds.getMaxY()) {
             y = (int) (virtualBounds.getMaxY() - requiredHeight);
         }
         if (y < virtualBounds.getMinY()) {
@@ -428,18 +429,21 @@ public class MiniMap extends JPanel {
         getParent().setLocation(x, y);
         int xTemp = requiredWidth;
         int yTemp = requiredHeight;
-        
+
         if (m_dialog instanceof JScrollPane) {
             //For the scrollPane, enforce the minimum size.
-            if (requiredWidth < SCROLL_PANE_WIDTH)
+            if (requiredWidth < SCROLL_PANE_WIDTH) {
                 xTemp = SCROLL_PANE_WIDTH;
-            if (requiredHeight < SCROLL_PANE_HEIGHT)
+            }
+            if (requiredHeight < SCROLL_PANE_HEIGHT) {
                 yTemp = SCROLL_PANE_HEIGHT;
+            }
         }
         setSize(xTemp, yTemp);
         setPreferredSize(new Dimension(xTemp, yTemp));
-        if(m_dialog instanceof JDialog)
+        if(m_dialog instanceof JDialog) {
             ((JDialog)m_dialog).pack();
+        }
         // m_dialog.setVisible(true);
         m_mapImage = createImage(getSize().width, getSize().height);
 
@@ -598,8 +602,9 @@ public class MiniMap extends JPanel {
             }
         }
 
-        if(this.m_dialog instanceof JDialog)
+        if(m_dialog instanceof JDialog) {
             drawBtn(g);
+        }
 
         repaint();
     }
@@ -608,18 +613,18 @@ public class MiniMap extends JPanel {
      * Draws a red crosshair for artillery autohit hexes (predesignated only).
      */
     private void drawAutoHit(Graphics g, Coords hex) {
-        int baseX = hex.x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+        int baseX = (hex.x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
                 + hexSide[zoom];
-        int baseY = (2 * hex.y + 1 + hex.x % 2) * hexSideByCos30[zoom]
+        int baseY = (((2 * hex.y) + 1 + (hex.x % 2)) * hexSideByCos30[zoom])
                 + topMargin;
         Color alt = g.getColor();
         g.setColor(Color.RED);
         g.drawOval(baseX - (unitSize - 1), baseY - (unitSize - 1),
-                2 * unitSize - 2, 2 * unitSize - 2);
-        g.drawLine(baseX - unitSize - 1, baseY, baseX - unitSize + 3, baseY);
-        g.drawLine(baseX + unitSize + 1, baseY, baseX + unitSize - 3, baseY);
-        g.drawLine(baseX, baseY - unitSize - 1, baseX, baseY - unitSize + 3);
-        g.drawLine(baseX, baseY + unitSize + 1, baseX, baseY + unitSize - 3);
+                (2 * unitSize) - 2, (2 * unitSize) - 2);
+        g.drawLine(baseX - unitSize - 1, baseY, (baseX - unitSize) + 3, baseY);
+        g.drawLine(baseX + unitSize + 1, baseY, (baseX + unitSize) - 3, baseY);
+        g.drawLine(baseX, baseY - unitSize - 1, baseX, (baseY - unitSize) + 3);
+        g.drawLine(baseX, baseY + unitSize + 1, baseX, (baseY + unitSize) - 3);
         g.setColor(alt);
     }
 
@@ -675,15 +680,15 @@ public class MiniMap extends JPanel {
             } else {
                 g.setColor(Color.yellow);
             }
-            g.fillRect(3, getSize().height - 14 + 6, 8, 2);
+            g.fillRect(3, (getSize().height - 14) + 6, 8, 2);
             if (zoom == (hexSide.length - 1)) {
                 g.setColor(Color.gray.brighter());
             } else {
                 g.setColor(Color.yellow);
             }
-            g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8,
+            g.fillRect((getSize().width - 14) + 3, (getSize().height - 14) + 6, 8,
                     2);
-            g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2,
+            g.fillRect((getSize().width - 14) + 6, (getSize().height - 14) + 3, 2,
                     8);
 
             if (zoom > 2) {
@@ -711,7 +716,7 @@ public class MiniMap extends JPanel {
                 default:
                     label = ""; //$NON-NLS-1$
                 }
-                g.drawString(label, 17, getSize().height - 14 + 12);
+                g.drawString(label, 17, (getSize().height - 14) + 12);
             }
         }
 
@@ -724,8 +729,8 @@ public class MiniMap extends JPanel {
             return;
         }
         if (zoom > 2) {
-            int baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-            int baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
+            int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+            int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
             g.setColor(Color.white);
             int height = 0;
             if ((h.getTerrain(Terrains.BUILDING) != null)
@@ -745,8 +750,8 @@ public class MiniMap extends JPanel {
     }
 
     private void paintSingleCoordBorder(Graphics g, int x, int y, Color c) {
-        int baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-        int baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
+        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
         int[] xPoints = new int[6];
         int[] yPoints = new int[6];
         xPoints[0] = baseX;
@@ -766,8 +771,8 @@ public class MiniMap extends JPanel {
     }
 
     private void paintCoord(Graphics g, int x, int y, boolean border) {
-        int baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
-        int baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
+        int baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin;
+        int baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
         int[] xPoints = new int[6];
         int[] yPoints = new int[6];
         xPoints[0] = baseX;
@@ -821,16 +826,16 @@ public class MiniMap extends JPanel {
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
 
-        xPoints[0] = source.getPosition().x
-                * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
-                + (int) 1.5 * hexSide[zoom] - 2;
-        yPoints[0] = (2 * source.getPosition().y + 1 + source.getPosition().x % 2)
-                * hexSideByCos30[zoom] + topMargin;
-        xPoints[1] = target.getPosition().x
-                * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
-                + (int) 1.5 * hexSide[zoom] - 2;
-        yPoints[1] = (2 * target.getPosition().y + 1 + target.getPosition().x % 2)
-                * hexSideByCos30[zoom] + topMargin;
+        xPoints[0] = ((source.getPosition().x
+                * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
+                + ((int) 1.5 * hexSide[zoom])) - 2;
+        yPoints[0] = (((2 * source.getPosition().y) + 1 + (source.getPosition().x % 2))
+                * hexSideByCos30[zoom]) + topMargin;
+        xPoints[1] = ((target.getPosition().x
+                * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
+                + ((int) 1.5 * hexSide[zoom])) - 2;
+        yPoints[1] = (((2 * target.getPosition().y) + 1 + (target.getPosition().x % 2))
+                * hexSideByCos30[zoom]) + topMargin;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
         if (((source.getPosition().x > target.getPosition().x) && (source
@@ -891,11 +896,11 @@ public class MiniMap extends JPanel {
     }
 
     private void paintUnit(Graphics g, Entity entity, boolean border) {
-        int baseX = entity.getPosition().x
-                * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+        int baseX = (entity.getPosition().x
+                * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
                 + hexSide[zoom];
-        int baseY = (2 * entity.getPosition().y + 1 + entity.getPosition().x % 2)
-                * hexSideByCos30[zoom] + topMargin;
+        int baseY = (((2 * entity.getPosition().y) + 1 + (entity.getPosition().x % 2))
+                * hexSideByCos30[zoom]) + topMargin;
         int[] xPoints;
         int[] yPoints;
 
@@ -905,54 +910,54 @@ public class MiniMap extends JPanel {
             xPoints[0] = baseX;
             yPoints[0] = baseY - unitSize;
             xPoints[1] = baseX - unitSize;
-            yPoints[1] = baseY + unitSize / 2;
+            yPoints[1] = baseY + (unitSize / 2);
             xPoints[2] = baseX + unitSize;
-            yPoints[2] = baseY + unitSize / 2;
+            yPoints[2] = baseY + (unitSize / 2);
         } else if (entity instanceof VTOL) {
             xPoints = new int[8];
             yPoints = new int[8];
             xPoints[0] = baseX - unitSize;
-            xPoints[1] = baseX - unitSize / 3;
+            xPoints[1] = baseX - (unitSize / 3);
             xPoints[2] = baseX;
-            xPoints[3] = baseX + unitSize / 3;
+            xPoints[3] = baseX + (unitSize / 3);
             xPoints[4] = baseX + unitSize;
             xPoints[5] = xPoints[3];
             xPoints[6] = xPoints[2];
             xPoints[7] = xPoints[1];
             yPoints[0] = baseY;
-            yPoints[1] = baseY - unitSize / 3;
+            yPoints[1] = baseY - (unitSize / 3);
             yPoints[2] = baseY - unitSize;
-            yPoints[3] = baseY - unitSize / 3;
+            yPoints[3] = baseY - (unitSize / 3);
             yPoints[4] = baseY;
-            yPoints[5] = baseY + unitSize / 3;
+            yPoints[5] = baseY + (unitSize / 3);
             yPoints[6] = baseY + unitSize;
-            yPoints[7] = baseY + unitSize / 3;
+            yPoints[7] = baseY + (unitSize / 3);
         } else if (entity instanceof Tank) {
             xPoints = new int[4];
             yPoints = new int[4];
-            xPoints[0] = baseX - unitSize * 2 / 3;
-            yPoints[0] = baseY - unitSize * 2 / 3;
-            xPoints[1] = baseX - unitSize * 2 / 3;
-            yPoints[1] = baseY + unitSize * 2 / 3;
-            xPoints[2] = baseX + unitSize * 2 / 3;
-            yPoints[2] = baseY + unitSize * 2 / 3;
-            xPoints[3] = baseX + unitSize * 2 / 3;
-            yPoints[3] = baseY - unitSize * 2 / 3;
+            xPoints[0] = baseX - ((unitSize * 2) / 3);
+            yPoints[0] = baseY - ((unitSize * 2) / 3);
+            xPoints[1] = baseX - ((unitSize * 2) / 3);
+            yPoints[1] = baseY + ((unitSize * 2) / 3);
+            xPoints[2] = baseX + ((unitSize * 2) / 3);
+            yPoints[2] = baseY + ((unitSize * 2) / 3);
+            xPoints[3] = baseX + ((unitSize * 2) / 3);
+            yPoints[3] = baseY - ((unitSize * 2) / 3);
         } else if (entity instanceof Protomech) {
             xPoints = new int[3];
             yPoints = new int[3];
             xPoints[0] = baseX;
             yPoints[0] = baseY + unitSize;
             xPoints[1] = baseX + unitSize;
-            yPoints[1] = baseY - unitSize / 2;
+            yPoints[1] = baseY - (unitSize / 2);
             xPoints[2] = baseX - unitSize;
-            yPoints[2] = baseY - unitSize / 2;
+            yPoints[2] = baseY - (unitSize / 2);
         } else if (entity instanceof GunEmplacement) {
-            int twip = unitSize * 2 / 3;
+            int twip = (unitSize * 2) / 3;
             xPoints = new int[8];
             yPoints = new int[8];
             xPoints[0] = baseX - (twip / 2);
-            yPoints[0] = baseY - (twip * 3 / 2);
+            yPoints[0] = baseY - ((twip * 3) / 2);
             xPoints[1] = xPoints[0] - twip;
             yPoints[1] = yPoints[0] + twip;
             xPoints[2] = xPoints[1];
@@ -1018,9 +1023,9 @@ public class MiniMap extends JPanel {
             int[] hex = iter.nextElement();
             x = hex[0];
             y = hex[1];
-            baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+            baseX = (x * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
                     + hexSide[zoom];
-            baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
+            baseY = (((2 * y) + 1 + (x % 2)) * hexSideByCos30[zoom]) + topMargin;
             exits = hex[2];
             // Is there a North exit?
             if (0 != (exits & 0x0001)) {
@@ -1039,12 +1044,12 @@ public class MiniMap extends JPanel {
             if (0 != (exits & 0x0002)) {
                 xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX + 3 * hexSide[zoom] / 4
+                xPoints[1] = Math.round((baseX + ((3 * hexSide[zoom]) / 4))
                         - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom] / 2
+                yPoints[1] = Math.round(baseY - (hexSideByCos30[zoom] / 2)
                         - halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] + 2 * halfRoadWidthBySin30[zoom];
-                yPoints[2] = yPoints[1] + 2 * halfRoadWidthByCos30[zoom];
+                xPoints[2] = xPoints[1] + (2 * halfRoadWidthBySin30[zoom]);
+                yPoints[2] = yPoints[1] + (2 * halfRoadWidthByCos30[zoom]);
                 xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[3] = baseY + halfRoadWidthByCos30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
@@ -1054,12 +1059,12 @@ public class MiniMap extends JPanel {
             if (0 != (exits & 0x0004)) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX + 3 * hexSide[zoom] / 4
+                xPoints[1] = Math.round(baseX + ((3 * hexSide[zoom]) / 4)
                         + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom] / 2
+                yPoints[1] = Math.round((baseY + (hexSideByCos30[zoom] / 2))
                         - halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] - 2 * halfRoadWidthBySin30[zoom];
-                yPoints[2] = yPoints[1] + 2 * halfRoadWidthByCos30[zoom];
+                xPoints[2] = xPoints[1] - (2 * halfRoadWidthBySin30[zoom]);
+                yPoints[2] = yPoints[1] + (2 * halfRoadWidthByCos30[zoom]);
                 xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[3] = baseY + halfRoadWidthByCos30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
@@ -1082,12 +1087,12 @@ public class MiniMap extends JPanel {
             if (0 != (exits & 0x0010)) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX - 3 * hexSide[zoom] / 4
+                xPoints[1] = Math.round((baseX - ((3 * hexSide[zoom]) / 4))
                         + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom] / 2
+                yPoints[1] = Math.round(baseY + (hexSideByCos30[zoom] / 2)
                         + halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] - 2 * halfRoadWidthBySin30[zoom];
-                yPoints[2] = yPoints[1] - 2 * halfRoadWidthByCos30[zoom];
+                xPoints[2] = xPoints[1] - (2 * halfRoadWidthBySin30[zoom]);
+                yPoints[2] = yPoints[1] - (2 * halfRoadWidthByCos30[zoom]);
                 xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[3] = baseY - halfRoadWidthByCos30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
@@ -1097,12 +1102,12 @@ public class MiniMap extends JPanel {
             if (0 != (exits & 0x0020)) {
                 xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX - 3 * hexSide[zoom] / 4
+                xPoints[1] = Math.round(baseX - ((3 * hexSide[zoom]) / 4)
                         - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom] / 2
+                yPoints[1] = Math.round((baseY - (hexSideByCos30[zoom] / 2))
                         + halfRoadWidthByCos30[zoom]);
-                xPoints[2] = xPoints[1] + 2 * halfRoadWidthBySin30[zoom];
-                yPoints[2] = yPoints[1] - 2 * halfRoadWidthByCos30[zoom];
+                xPoints[2] = xPoints[1] + (2 * halfRoadWidthBySin30[zoom]);
+                yPoints[2] = yPoints[1] - (2 * halfRoadWidthByCos30[zoom]);
                 xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[3] = baseY - halfRoadWidthByCos30[zoom];
                 g.drawPolygon(xPoints, yPoints, 4);
@@ -1176,9 +1181,9 @@ public class MiniMap extends JPanel {
             if (level > 10) {
                 level = 10;
             }
-            r = terrColor.getRed() - level * 15;
-            g = terrColor.getGreen() - level * 15;
-            b = terrColor.getBlue() - level * 15;
+            r = terrColor.getRed() - (level * 15);
+            g = terrColor.getGreen() - (level * 15);
+            b = terrColor.getBlue() - (level * 15);
             if (r < 0) {
                 r = 0;
             }
@@ -1197,9 +1202,9 @@ public class MiniMap extends JPanel {
             if (level > 10) {
                 level = 10;
             }
-            r = terrColor.getRed() - level * 15;
-            g = terrColor.getGreen() - level * 15;
-            b = terrColor.getBlue() - level * 15;
+            r = terrColor.getRed() - (level * 15);
+            g = terrColor.getGreen() - (level * 15);
+            b = terrColor.getBlue() - (level * 15);
             if (r < 0) {
                 r = 0;
             }
@@ -1233,13 +1238,13 @@ public class MiniMap extends JPanel {
 
         if (restY < hexSideByCos30[zoom]) {
             if (evenColumn) {
-                if (restX < ((restY - hexSideByCos30[zoom])
-                        * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
+                if (restX < ((((restY - hexSideByCos30[zoom])
+                        * hexSideBySin30[zoom]) / hexSideByCos30[zoom]) * -1)) {
                     gridX--;
                     gridY--;
                 }
             } else {
-                if (restX < (restY * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
+                if (restX < ((restY * hexSideBySin30[zoom]) / hexSideByCos30[zoom])) {
                     gridX--;
                 } else {
                     gridY--;
@@ -1247,13 +1252,13 @@ public class MiniMap extends JPanel {
             }
         } else {
             if (evenColumn) {
-                if (restX < ((restY - hexSideByCos30[zoom])
-                        * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
+                if (restX < (((restY - hexSideByCos30[zoom])
+                        * hexSideBySin30[zoom]) / hexSideByCos30[zoom])) {
                     gridX--;
                 }
             } else {
-                if (restX < ((restY - 2 * hexSideByCos30[zoom])
-                        * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
+                if (restX < ((((restY - (2 * hexSideByCos30[zoom]))
+                        * hexSideBySin30[zoom]) / hexSideByCos30[zoom]) * -1)) {
                     gridX--;
                 }
             }
@@ -1313,8 +1318,9 @@ public class MiniMap extends JPanel {
                     // m_dialog.setResizable(false);
                 }
                 minimized = !minimized;
-                if(m_dialog instanceof JDialog) 
+                if(m_dialog instanceof JDialog) {
                     ((JDialog) m_dialog).pack();
+                }
                 drawMap();
             }
         } else if (m_bview != null) {
@@ -1336,7 +1342,7 @@ public class MiniMap extends JPanel {
     public int getZoom() {
         return zoom;
     }
-    
+
     public void setZoom(int z) {
         zoom = z;
     }
@@ -1440,8 +1446,9 @@ public class MiniMap extends JPanel {
         @Override
         public void mousePressed(MouseEvent me) {
             // center main map on clicked area
-            if(m_dialog instanceof JDialog)
+            if(m_dialog instanceof JDialog) {
                 processMouseClick(me.getX(), me.getY(), me);
+            }
         }
     };
 

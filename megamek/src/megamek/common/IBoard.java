@@ -28,7 +28,7 @@ import megamek.common.event.BoardListener;
 public interface IBoard {
 
     /**
-     * @return Map widht in hexes
+     * @return Map width in hexes
      */
     public abstract int getWidth();
 

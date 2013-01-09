@@ -51,8 +51,10 @@ public class HexTileset {
 
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
+    private ArrayList<HexEntry> ortho = new ArrayList<HexEntry>();
     private ImageCache<IHex, Image> hexToImageCache = new ImageCache<IHex, Image>();
     private ImageCache<IHex, List<Image>> hexToImageListCache = new ImageCache<IHex, List<Image>>();
+    private ImageCache<IHex, List<Image>> OrthoListCache = new ImageCache<IHex, List<Image>>();
 
     /**
      * Creates new HexTileset
@@ -76,10 +78,12 @@ public class HexTileset {
     public synchronized Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
         List<Image> supers = supersFor(hexCopy, comp);
+        List<Image> ortho = orthoFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
-        Object[] pair = new Object[] { base, supers };
+        Object[] pair = new Object[] { base, supers, ortho };
         hexToImageCache.put(hex, base);
         hexToImageListCache.put(hex, supers);
+        OrthoListCache.put(hex, ortho);
         return pair;
     }
 
@@ -102,6 +106,43 @@ public class HexTileset {
         return l;
     }
 
+    @SuppressWarnings("unchecked")
+    public synchronized List<Image> getOrtho(IHex hex, Component comp) {
+        List<Image> o = OrthoListCache.get(hex);
+        if (o == null) {
+            Object[] pair = assignMatch(hex, comp);
+            return (List<Image>) pair[2];
+        }
+        return o;
+    }    
+
+    /**
+     * Returns a list of orthographic images to be tiled above the hex. As noted above,
+     * all matches must be 1.0, and if such a match is achieved, all terrain
+     * elements from the tileset hex are removed from the hex. Thus you want to
+     * pass a copy of the original to this function.
+     */
+    private List<Image> orthoFor(IHex hex, Component comp) {
+        ArrayList<Image> matches = new ArrayList<Image>();
+
+        // find orthographic image matches
+        for (Iterator<HexEntry> i = ortho.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
+            if (orthoMatch(hex, entry.getHex()) >= 1.0) {
+                matches.add(entry.getImage(comp));
+                // remove involved terrain from consideration
+                for (int j = 0; j < Terrains.SIZE; j++) {
+                    if (entry.getHex().containsTerrain(j)) {
+                        hex.removeTerrain(j);
+                    }
+                }
+            }
+        }
+
+        // assign null, or the matching images to the hex
+        return matches.size() > 0 ? matches : null;
+    }
+    
     /**
      * Returns a list of images to be superimposed on the hex. As noted above,
      * all matches must be 1.0, and if such a match is achieved, all terrain
@@ -164,7 +205,7 @@ public class HexTileset {
     // all but elevation & theme
 
     public void loadFromFile(String filename) throws IOException {
-        // make inpustream for board
+        // make input stream for board
         Reader r = new BufferedReader(new FileReader(
                 "data/images/hexes/" + filename)); //$NON-NLS-1$
         // read board, looking for "size"
@@ -178,9 +219,10 @@ public class HexTileset {
             String terrain = null;
             String theme = null;
             String imageName = null;
-            if (st.ttype == StreamTokenizer.TT_WORD
-                    && (st.sval.equals("base") || st.sval.equals("super"))) { //$NON-NLS-1$ //$NON-NLS-2$
-                boolean base = st.sval.equals("base"); //$NON-NLS-1$
+            if (st.ttype == StreamTokenizer.TT_WORD && (st.sval.equals("base") || st.sval.equals("super")|| st.sval.equals("ortho"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                boolean bas = st.sval.equals("base"); //$NON-NLS-1$
+                boolean sup = st.sval.equals("super"); //$NON-NLS-1$
+                boolean ort = st.sval.equals("ortho"); //$NON-NLS-1$
 
                 if (st.nextToken() == StreamTokenizer.TT_NUMBER) {
                     elevation = (int) st.nval;
@@ -194,21 +236,22 @@ public class HexTileset {
                 st.nextToken();
                 imageName = st.sval;
                 // add to list
-                if (base) {
-                    bases.add(new HexEntry(new Hex(elevation, terrain, theme),
-                            imageName));
-                } else {
-                    supers.add(new HexEntry(new Hex(elevation, terrain, theme),
-                            imageName));
+                if (bas) {
+                    bases.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
                 }
+                if (sup) {
+                    supers.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
+                }
+                if (ort) {
+                    ortho.add(new HexEntry(new Hex(elevation, terrain, theme), imageName));
+              }
             }
-        }
+          }
         r.close();
 
-        System.out
-                .println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out
-                .println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
+        System.out.println("hexTileset: loaded " + ortho.size() + " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -229,6 +272,13 @@ public class HexTileset {
             }
             tracker.addImage(entry.getImage(), 1);
         }
+        for (Iterator<HexEntry> i = ortho.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
+            if (entry.getImage() == null) {
+                entry.loadImage(comp);
+            }
+            tracker.addImage(entry.getImage(), 1);
+        }
     }
 
     /**
@@ -238,12 +288,18 @@ public class HexTileset {
 
         Image base = hexToImageCache.get(hex);
         List<Image> superImgs = hexToImageListCache.get(hex);
+        List<Image> orthoImgs = OrthoListCache.get(hex);
 
         // add base
         tracker.addImage(base, 1);
         // add superImgs
         if (superImgs != null) {
             for (Iterator<Image> i = superImgs.iterator(); i.hasNext();) {
+                tracker.addImage(i.next(), 1);
+            }
+        }
+        if (orthoImgs != null) {
+            for (Iterator<Image> i = orthoImgs.iterator(); i.hasNext();) {
                 tracker.addImage(i.next(), 1);
             }
         }
@@ -259,6 +315,40 @@ public class HexTileset {
     public synchronized void reset() {
         hexToImageCache = new ImageCache<IHex, Image>();
         hexToImageListCache = new ImageCache<IHex, List<Image>>();
+        OrthoListCache = new ImageCache<IHex, List<Image>>();
+    }
+
+    /**
+     * Match the two hexes using the "ortho" super* formula. All matches must be exact,
+     * however the match only depends on the original hex matching all the
+     * elements of the comparison, not vice versa.
+     * <p/>
+     * EXCEPTION: a themed original matches any unthemed comparison.
+     */
+    private double orthoMatch(IHex org, IHex com) {
+        // check elevation
+        if ((com.getElevation() != ITerrain.WILDCARD) && 
+        	(org.getElevation() != com.getElevation())) {
+            return 0;
+        }
+        // check terrain
+        for (int i = 0; i < Terrains.SIZE; i++) {
+            ITerrain cTerr = com.getTerrain(i);
+            ITerrain oTerr = org.getTerrain(i);
+            if (cTerr == null) {
+                continue;
+            } else if ((oTerr == null) || ((cTerr.getLevel() != ITerrain.WILDCARD) && 
+            		   (oTerr.getLevel() != cTerr.getLevel())) || (cTerr.hasExitsSpecified() && 
+            		   (oTerr.getExits() != cTerr.getExits()))) {
+                return 0;
+            }
+        }
+        // A themed original matches any unthemed comparason.
+        if ((com.getTheme() != null) && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
+            return 0.0;
+        }
+
+        return 1.0;
     }
 
     /**
@@ -269,8 +359,8 @@ public class HexTileset {
      */
     private double superMatch(IHex org, IHex com) {
         // check elevation
-        if (com.getElevation() != ITerrain.WILDCARD
-                && org.getElevation() != com.getElevation()) {
+        if ((com.getElevation() != ITerrain.WILDCARD) && 
+        	(org.getElevation() != com.getElevation())) {
             return 0;
         }
         // check terrain
@@ -279,17 +369,14 @@ public class HexTileset {
             ITerrain oTerr = org.getTerrain(i);
             if (cTerr == null) {
                 continue;
-            } else if (oTerr == null
-                    || (cTerr.getLevel() != ITerrain.WILDCARD && oTerr
-                            .getLevel() != cTerr.getLevel())
-                    || (cTerr.hasExitsSpecified() && oTerr.getExits() != cTerr
-                            .getExits())) {
+            } else if ((oTerr == null) || ((cTerr.getLevel() != ITerrain.WILDCARD) && 
+            		  (oTerr.getLevel() != cTerr.getLevel())) || (cTerr.hasExitsSpecified() && 
+            		  (oTerr.getExits() != cTerr.getExits()))) {
                 return 0;
             }
         }
         // A themed original matches any unthemed comparason.
-        if (com.getTheme() != null
-                && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
+        if ((com.getTheme() != null) && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
             return 0.0;
         }
 

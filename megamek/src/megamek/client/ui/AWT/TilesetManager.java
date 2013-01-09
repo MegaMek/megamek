@@ -223,6 +223,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public List<Image> supersFor(IHex hex) {
         return hexTileset.getSupers(hex, comp);
     }
+    
+    /**
+     * Return a list of orthographic images for the hex
+     */
+    public List<Image> orthoFor(IHex hex) {
+        return hexTileset.getOrtho(hex, comp);
+    }
 
     public Image getMinefieldSign() {
         return minefieldSign;
@@ -635,8 +642,73 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("# suggested hex tileset");
             p.println("#");
             p.println("# format is:");
-            p.println("# base/super <elevation> <terrains> <theme> <image>");
+            p.println("# base/super/ortho <elevation> <terrains> <theme> <image>");
             p.println("#");
+            p.println("");
+            p.println("ortho * \"bridge:*:00;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_00.gif\"");
+            p.println("ortho * \"bridge:*:01;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_01.gif\"");
+            p.println("ortho * \"bridge:*:02;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_02.gif\"");
+            p.println("ortho * \"bridge:*:03;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_03.gif\"");
+            p.println("ortho * \"bridge:*:04;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_04.gif\"");
+            p.println("ortho * \"bridge:*:05;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_05.gif\"");
+            p.println("ortho * \"bridge:*:06;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_06.gif\"");
+            p.println("ortho * \"bridge:*:07;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_07.gif\"");
+            p.println("ortho * \"bridge:*:08;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_08.gif\"");
+            p.println("ortho * \"bridge:*:09;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_09.gif\"");
+            p.println("ortho * \"bridge:*:10;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_10.gif\"");
+            p.println("ortho * \"bridge:*:11;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_11.gif\"");
+            p.println("ortho * \"bridge:*:12;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_12.gif\"");
+            p.println("ortho * \"bridge:*:13;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_13.gif\"");
+            p.println("ortho * \"bridge:*:14;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_14.gif\"");
+            p.println("ortho * \"bridge:*:15;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_15.gif\"");
+            p.println("ortho * \"bridge:*:16;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_16.gif\"");
+            p.println("ortho * \"bridge:*:17;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_17.gif\"");
+            p.println("ortho * \"bridge:*:18;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_18.gif\"");
+            p.println("ortho * \"bridge:*:19;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_19.gif\"");
+            p.println("ortho * \"bridge:*:20;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_20.gif\"");
+            p.println("ortho * \"bridge:*:21;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_21.gif\"");
+            p.println("ortho * \"bridge:*:22;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_22.gif\"");
+            p.println("ortho * \"bridge:*:23;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_23.gif\"");
+            p.println("ortho * \"bridge:*:24;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_24.gif\"");
+            p.println("ortho * \"bridge:*:25;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_25.gif\"");
+            p.println("ortho * \"bridge:*:26;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_26.gif\"");
+            p.println("ortho * \"bridge:*:27;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_27.gif\"");
+            p.println("ortho * \"bridge:*:28;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_28.gif\"");
+            p.println("ortho * \"bridge:*:29;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_29.gif\"");
+            p.println("ortho * \"bridge:*:30;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_30.gif\"");
+            p.println("ortho * \"bridge:*:31;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_31.gif\"");
+            p.println("ortho * \"bridge:*:32;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_32.gif\"");
+            p.println("ortho * \"bridge:*:33;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_33.gif\"");
+            p.println("ortho * \"bridge:*:34;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_34.gif\"");
+            p.println("ortho * \"bridge:*:35;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_35.gif\"");
+            p.println("ortho * \"bridge:*:36;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_36.gif\"");
+            p.println("ortho * \"bridge:*:37;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_37.gif\"");
+            p.println("ortho * \"bridge:*:38;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_38.gif\"");
+            p.println("ortho * \"bridge:*:39;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_39.gif\"");
+            p.println("ortho * \"bridge:*:40;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_40.gif\"");
+            p.println("ortho * \"bridge:*:41;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_41.gif\"");
+            p.println("ortho * \"bridge:*:42;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_42.gif\"");
+            p.println("ortho * \"bridge:*:43;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_43.gif\"");
+            p.println("ortho * \"bridge:*:44;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_44.gif\"");
+            p.println("ortho * \"bridge:*:45;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_45.gif\"");
+            p.println("ortho * \"bridge:*:46;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_46.gif\"");
+            p.println("ortho * \"bridge:*:47;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_47.gif\"");
+            p.println("ortho * \"bridge:*:48;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_48.gif\"");
+            p.println("ortho * \"bridge:*:49;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_49.gif\"");
+            p.println("ortho * \"bridge:*:50;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_50.gif\"");
+            p.println("ortho * \"bridge:*:51;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_51.gif\"");
+            p.println("ortho * \"bridge:*:52;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_52.gif\"");
+            p.println("ortho * \"bridge:*:53;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_53.gif\"");
+            p.println("ortho * \"bridge:*:54;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_54.gif\"");
+            p.println("ortho * \"bridge:*:55;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_55.gif\"");
+            p.println("ortho * \"bridge:*:56;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_56.gif\"");
+            p.println("ortho * \"bridge:*:57;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_57.gif\"");
+            p.println("ortho * \"bridge:*:58;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_58.gif\"");
+            p.println("ortho * \"bridge:*:59;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_59.gif\"");
+            p.println("ortho * \"bridge:*:60;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_60.gif\"");
+            p.println("ortho * \"bridge:*:61;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_61.gif\"");
+            p.println("ortho * \"bridge:*:62;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_62.gif\"");
+            p.println("ortho * \"bridge:*:63;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_63.gif\"");
             p.println("");
             p.println("super * \"elevator:10\" \"\" \"boring/elevator1.gif\"");
             p.println("super * \"elevator:2\" \"\" \"boring/elevator2.gif\"");

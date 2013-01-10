@@ -454,6 +454,8 @@ public class MtfFile implements IMechLoader {
             mech.getFluff().setHistory(history);
             mech.getFluff().setMMLImagePath(imagePath);
 
+            mech.setArmorTonnage(mech.getArmorWeight());
+            
             if (bv != 0) {
                 mech.setUseManualBV(true);
                 mech.setManualBV(bv);

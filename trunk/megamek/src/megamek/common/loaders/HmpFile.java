@@ -546,6 +546,8 @@ implements IMechLoader
                 mech.addClanCase();
             }
 
+            mech.setArmorTonnage(mech.getArmorWeight());
+
             // add any heat sinks not allocated
             BigInteger heatSinkFlag;
             if (heatSinkType ==  HeatSinkType.DOUBLE) {

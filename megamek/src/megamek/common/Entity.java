@@ -505,7 +505,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     // Entity fluff object for use with MegaMekLab
     protected EntityFluff fluff;
-    
+
     //a settable armor tonnage for use with MML - this is not what
     //is calculated by getArmorTonnage
     protected double armorTonnage;
@@ -1032,16 +1032,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isImmobile() {
         return isShutDown() || crew.isUnconscious();
     }
-    
+
     /**
      * This method returns true if a unit is permanently immobilized either because its crew is dead/gone or because of damage
-     * 
+     *
      * @return true if unit is permanently immobile
      */
     public boolean isPermanentlyImmobilized () {
-    	if (getCrew() == null || getCrew().isDead()) {
+    	if ((getCrew() == null) || getCrew().isDead()) {
     		return true;
-    	} else if ((getOriginalWalkMP() > 0 || getOriginalRunMP() > 0 || getOriginalJumpMP() > 0) && (getWalkMP() == 0 && getRunMP() == 0 && getJumpMP() == 0)) {
+    	} else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0)) && ((getWalkMP() == 0) && (getRunMP() == 0) && (getJumpMP() == 0))) {
     		return true;
     	} else {
     		return false;
@@ -7578,7 +7578,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!isActive()) {
             return false;
         }
-        
+
         //sprinted?
         if(moved == EntityMovementType.MOVE_SPRINT) {
         	return false;
@@ -7605,10 +7605,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
 
+            if (!target.isDeployed()) {
+                continue;
+            }
             // No physical attack works at distances > 1.
-            if (target.getPosition() != null && Compute.effectiveDistance(game, this, target) > 1) {
-            	continue;
-            }            
+            if ((target.getPosition() != null) && (Compute.effectiveDistance(game, this, target) > 1)) {
+                continue;
+            }
 
             canHit |= Compute.canPhysicalTarget(game, getId(), target);
             // check if we can dodge and target can attack us,
@@ -11624,15 +11627,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean getIsJumpingNow() {
         return isJumpingNow;
     }
-    
+
     public void setTraitorId(int id) {
     	traitorId = id;
     }
-    
+
     public int getTraitorId() {
     	return traitorId;
     }
-    
+
     /**
      * Used to determine net velocity of ramming attack
      *
@@ -11640,7 +11643,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int sideTableRam(Coords src) {
     	return sideTableRam(src, facing);
     }
-    
+
     public int sideTableRam(Coords src, int facing) {
         int fa = (getPosition().degree(src) + ((6 - facing) * 60)) % 360;
         if (((fa > 30) && (fa <= 90)) || ((fa < 330) && (fa >= 270))) {
@@ -11653,11 +11656,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return Aero.RAM_TOWARD_DIR;
         }
     }
-    
+
     public void setArmorTonnage(double ton) {
     	armorTonnage = ton;
     }
-    
+
     public double getLabArmorTonnage() {
     	return armorTonnage;
     }
@@ -11670,5 +11673,5 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 	    }
 	    return (int)Math.floor(armorPerTon * armorTonnage);
     }
-    
+
 }

@@ -57,9 +57,9 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * faster, but inaccurate
  */
 public class FireControl {
-    
+
     private static Princess owner;
-    
+
     public FireControl(Princess owningPrincess) {
         owner = owningPrincess;
     }
@@ -826,10 +826,11 @@ public class FireControl {
 
             if ((!isShooterInfantry) && (target instanceof BattleArmor)) {
                 tohit.addModifier(1, " battle armor target");
-            } else if ((!isShooterInfantry) && (target instanceof MechWarrior)) {
-                tohit.addModifier(2, " ejected mechwarrior target");
             } else if ((!isShooterInfantry) && ((target instanceof Infantry))) {
                 tohit.addModifier(1, " infantry target");
+            }
+            if ((!isShooterInfantry) && (target instanceof MechWarrior)) {
+                tohit.addModifier(2, " ejected mechwarrior target");
             }
 
             return tohit;

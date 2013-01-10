@@ -160,11 +160,11 @@ public abstract class Mech extends Entity {
 
     public static final int JUMP_IMPROVED = 2;
 
-    public static final int JUMP_BOOSTER = 3;
+    public static final int JUMP_PROTOTYPE = 3;
 
-    public static final int JUMP_DISPOSABLE = 4;
+    public static final int JUMP_BOOSTER = 4;
 
-    public static final int JUMP_PROTOTYPE = 5;
+    public static final int JUMP_DISPOSABLE = 5;
 
     // Some "has" items only need be determined once
     public static final int HAS_FALSE = -1;

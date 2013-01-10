@@ -322,6 +322,8 @@ public class MepFile implements IMechLoader {
                 mech.addClanCase();
             }
 
+            mech.setArmorTonnage(mech.getArmorWeight());
+
             return mech;
         } catch (NumberFormatException ex) {
             throw new EntityLoadingException(

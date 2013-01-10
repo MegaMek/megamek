@@ -458,6 +458,15 @@ public class TestMech extends TestEntity {
             }
         }
 
+        if(getEntity().getLabTotalArmorPoints() > getEntity().getTotalOArmor()) {
+        	correct = false;
+        	buff.append("Some armor points unallocated");
+        }
+        if(getEntity().getLabTotalArmorPoints() < getEntity().getTotalOArmor()) {
+        	correct = false;
+        	buff.append("Too many armor points allocated");
+        }
+        
         return correct;
     }
 

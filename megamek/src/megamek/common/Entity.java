@@ -505,6 +505,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     // Entity fluff object for use with MegaMekLab
     protected EntityFluff fluff;
+    
+    //a settable armor tonnage for use with MML - this is not what
+    //is calculated by getArmorTonnage
+    protected double armorTonnage;
 
     protected static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
 
@@ -11649,5 +11653,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return Aero.RAM_TOWARD_DIR;
         }
     }
+    
+    public void setArmorTonnage(double ton) {
+    	armorTonnage = ton;
+    }
+    
+    public double getLabArmorTonnage() {
+    	return armorTonnage;
+    }
 
+    public int getLabTotalArmorPoints() {
+	    double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
+	            armorType[0], armorTechLevel[0]);
+	    if (armorType[0] == EquipmentType.T_ARMOR_HARDENED) {
+	        armorPerTon = 8.0;
+	    }
+	    return (int)Math.floor(armorPerTon * armorTonnage);
+    }
+    
 }

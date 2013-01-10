@@ -20,6 +20,7 @@ v0.35.34-dev (SVN)
 + Bug 3615: VTOL Jet Booster too heavy
 + Patch 441: Orthographics for Bridges and Submersables
 + Bug 3611: Minimap does not show fuel tanks
++ armorTonnage double in entity for tracking total armor tonnage in MML
 
 v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Added additional logging to Princess in order to make it a bit easier to track

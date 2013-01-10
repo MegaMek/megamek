@@ -532,6 +532,8 @@ public class TdbFile implements IMechLoader {
                 mech.addClanCase();
             }
 
+            mech.setArmorTonnage(mech.getArmorWeight());
+
             // add any heat sinks not allocated
             mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks?MiscType.F_DOUBLE_HEAT_SINK:MiscType.F_HEAT_SINK);
 

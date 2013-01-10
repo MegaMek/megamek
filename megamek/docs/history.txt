@@ -23,6 +23,7 @@ v0.35.34-dev (SVN)
 + armorTonnage double in entity for tracking total armor tonnage in MML
 + fix NPE when determining physical phase eligibility
 + fix Princess to-hit guess against ejected MechWarriors
++ re-organized static JUMP_* ints in Mech.java for MML purposes
 
 v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Added additional logging to Princess in order to make it a bit easier to track

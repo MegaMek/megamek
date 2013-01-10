@@ -325,6 +325,8 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("omni")) {
             mech.setOmni(true);
         }
+        
+        mech.setArmorTonnage(mech.getArmorWeight());
 
         return mech;
 

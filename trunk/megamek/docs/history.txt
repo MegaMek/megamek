@@ -21,6 +21,8 @@ v0.35.34-dev (SVN)
 + Patch 441: Orthographics for Bridges and Submersables
 + Bug 3611: Minimap does not show fuel tanks
 + armorTonnage double in entity for tracking total armor tonnage in MML
++ fix NPE when determining physical phase eligibility
++ fix Princess to-hit guess against ejected MechWarriors
 
 v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Added additional logging to Princess in order to make it a bit easier to track

@@ -40,6 +40,15 @@ public class FluffImageHelper {
     public static String imageVehicle = "vehicle";
 
     public static Image getFluffImage(Entity unit) {
+        String path = unit.getFluff().getMMLImagePath();
+        Image fluff = null;
+        if (new File(path).isFile()) {
+            fluff = new ImageIcon(path).getImage();
+        }
+        if(null != fluff) {
+            return fluff;
+        }
+        
         String dir = imageMech;
         if(unit instanceof Aero) {
             dir = imageAero;
@@ -51,10 +60,7 @@ public class FluffImageHelper {
             dir = imageVehicle;
         }
         
-        
-        Image fluff = null;
-
-        String path = new File(fluffPath).getAbsolutePath() + File.separatorChar + dir + File.separatorChar;
+        path = new File(fluffPath).getAbsolutePath() + File.separatorChar + dir + File.separatorChar;
         fluff = getFluffPNG(unit, path);
 
         if (fluff == null) {

@@ -432,6 +432,9 @@ public class MechSummaryCache {
                 if (f.getName().toLowerCase().endsWith(".svn-work")) {
                     continue;
                 }
+                if (f.getName().toLowerCase().endsWith(".ds_store")) {
+                    continue;
+                }
                 if (f.getName().equals("UnitVerifierOptions.xml")) {
                     continue;
                 }

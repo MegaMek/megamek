@@ -27,6 +27,7 @@ v0.35.34-dev (SVN)
 + ignore .DS_Store when loading units
 + use MML fluff image if one is provided
 + Bug: 3630 Duplicate defaultQuirks Entries Prevent Cache Refresh
++ a few infantry corrections for MML
 
 v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Added additional logging to Princess in order to make it a bit easier to track

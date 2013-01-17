@@ -1,4 +1,6 @@
-<defaultQuirks>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<defaultQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="defaultQuirksSchema.xsl">
     <unit>
         <chassis>Atlas</chassis>
         <model>AS7-C</model>
@@ -592,7 +594,7 @@
     </unit>
     <unit>
         <chassis>Cygnus</chassis>
-        <model></model>
+        <model/>
         <weaponQuirk>
             <weaponQuirkName>exposed_linkage</weaponQuirkName>
             <location>LA</location>
@@ -1104,11 +1106,6 @@
         <quirk>low_profile</quirk>
     </unit>
     <unit>
-        <chassis>Lancelot</chassis>
-        <model>LNC25-07</model>
-        <quirk>low_profile</quirk>
-    </unit>
-    <unit>
         <chassis>Locust</chassis>
         <model>LCT-1E</model>
         <quirk>no_arms</quirk>
@@ -1151,11 +1148,6 @@
     <unit>
         <chassis>Locust</chassis>
         <model>LCT-3M</model>
-        <quirk>no_arms</quirk>
-    </unit>
-    <unit>
-        <chassis>Locust</chassis>
-        <model>LCT-3S</model>
         <quirk>no_arms</quirk>
     </unit>
     <unit>
@@ -1865,11 +1857,6 @@
     </unit>
     <unit>
         <chassis>Warhammer</chassis>
-        <model>WHM-6K</model>
-        <quirk>searchlight</quirk>
-    </unit>
-    <unit>
-        <chassis>Warhammer</chassis>
         <model>WHM-6L</model>
         <quirk>searchlight</quirk>
     </unit>
@@ -2024,7 +2011,7 @@
     </unit>
     <unit>
         <chassis>Balac Strike VTOL</chassis>
-        <model></model>
+        <model/>
         <quirk>vtol_rotor</quirk>
     </unit>
     <unit>
@@ -2039,13 +2026,13 @@
     </unit>
     <unit>
         <chassis>Estevez AA</chassis>
-        <model></model>
+        <model/>
         <quirk>gas_hog</quirk>
         <quirk>obsolete</quirk>
     </unit>
     <unit>
         <chassis>Estevez MBT</chassis>
-        <model></model>
+        <model/>
         <quirk>gas_hog</quirk>
         <quirk>obsolete</quirk>
     </unit>
@@ -2066,7 +2053,7 @@
     </unit>
     <unit>
         <chassis>Karnov UR Transport</chassis>
-        <model></model>
+        <model/>
         <quirk>vtol_rotor</quirk>
     </unit>
     <unit>

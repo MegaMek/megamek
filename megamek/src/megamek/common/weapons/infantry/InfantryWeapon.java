@@ -66,7 +66,7 @@ public abstract class InfantryWeapon extends Weapon {
         return infantryRange;
     }
 
-    public double getCrew() {
+    public int getCrew() {
         return crew;
     }
 

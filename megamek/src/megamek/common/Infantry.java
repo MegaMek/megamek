@@ -1191,7 +1191,11 @@ public class Infantry extends Entity {
 
     public void setSecondaryWeapon(InfantryWeapon w) {
         secondW = w;
-        secondName = w.getName();
+        if(null == w) {
+            secondName = null;
+        } else {
+            secondName = w.getName();
+        }
     }
 
     public InfantryWeapon getSecondaryWeapon() {

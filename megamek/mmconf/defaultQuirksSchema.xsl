@@ -29,16 +29,17 @@
             <xs:selector xpath="weaponQuirk"/>
             <xs:field xpath="weaponQuirkName"/>
             <xs:field xpath="location"/>
+            <xs:field xpath="slot"/>
         </xs:unique>
     </xs:element>
     <xs:element name="weaponQuirk">
         <xs:complexType>
-            <xs:sequence>
+            <xs:all>
                 <xs:element ref="weaponQuirkName"/>
                 <xs:element ref="location"/>
                 <xs:element ref="slot"/>
                 <xs:element ref="weaponName"/>
-            </xs:sequence>
+            </xs:all>
         </xs:complexType>
     </xs:element>
     <xs:element name="chassis" type="xs:string"/>

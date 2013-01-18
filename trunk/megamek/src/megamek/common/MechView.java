@@ -18,33 +18,13 @@
  * Created on January 20, 2003 by Ryan McConnell
  */
 
-package megamek.client.ui.swing;
+package megamek.common;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
-import megamek.common.GunEmplacement;
-import megamek.common.IArmorState;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LargeSupportTank;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.SmallCraft;
-import megamek.common.SpaceStation;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.Warship;
-import megamek.common.WeaponType;
 import megamek.common.weapons.BayWeapon;
 
 /**

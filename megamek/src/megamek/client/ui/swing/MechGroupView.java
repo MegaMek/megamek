@@ -34,6 +34,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
+import megamek.common.MechView;
 
 /**
  * This class displays a window that displays the forces currently selected in

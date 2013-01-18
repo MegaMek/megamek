@@ -28,13 +28,13 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
-import megamek.client.ui.swing.MechView;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.MechView;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.preference.PreferenceManager;

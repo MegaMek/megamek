@@ -38,6 +38,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.common.Entity;
+import megamek.common.MechView;
 
 
 public class MechViewPanel extends JPanel {
@@ -106,6 +107,7 @@ public class MechViewPanel extends JPanel {
     
     public void setMech(Entity entity) {
         reset();
+        //MechView mechView = new MechView(entity, false);
         MechView mechView = new MechView(entity, false);
         txtMek.setText(mechView.getMechReadout());
         txtMek.setCaretPosition(0);

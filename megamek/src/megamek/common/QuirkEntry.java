@@ -31,6 +31,8 @@ class QuirkEntry {
     private int slot;          //The weapon's critical slot.
     private String weaponName; //The weapon's name.
 
+    private QuirkEntry() {}
+
     /**
      * Use this constructor for building unit quirks.
      *
@@ -42,10 +44,10 @@ class QuirkEntry {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
         }
 
-        this.quirk = quirk;
-        this.location = null;
-        this.slot = -1;
-        this.weaponName = null;
+        setQuirk(quirk);
+        setLocation(null);
+        setSlot(-1);
+        setWeaponName(null);
     }
 
     /**
@@ -71,10 +73,10 @@ class QuirkEntry {
             throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + quirk + " : " + unitId);
         }
 
-        this.quirk = quirk;
-        this.location = location;
-        this.slot = slot;
-        this.weaponName = weaponName;
+        setQuirk(quirk);
+        setLocation(location);
+        setSlot(slot);
+        setWeaponName(weaponName);
     }
 
     /**
@@ -87,12 +89,20 @@ class QuirkEntry {
         return location;
     }
 
+    private void setLocation(String location) {
+        this.location = location;
+    }
+
     /**
      * Returns the name of the quirk.
      * @return
      */
     public String getQuirk() {
         return quirk;
+    }
+
+    private void setQuirk(String quirk) {
+        this.quirk = quirk;
     }
 
     /**
@@ -104,6 +114,10 @@ class QuirkEntry {
         return slot;
     }
 
+    private void setSlot(int slot) {
+        this.slot = slot;
+    }
+
     /**
      * Returns the name of the weapon to which this quirk belongs.  If this is a unit quirk, this value will be null.
      *
@@ -111,6 +125,10 @@ class QuirkEntry {
      */
     public String getWeaponName() {
         return weaponName;
+    }
+
+    private void setWeaponName(String weaponName) {
+        this.weaponName = weaponName;
     }
 
     /**
@@ -124,5 +142,46 @@ class QuirkEntry {
             return out;
 
         return out + "\t" + getLocation() + "\t" + getSlot() + "\t" + getWeaponName();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof QuirkEntry) && equals((QuirkEntry)obj);
+    }
+
+    public boolean equals(QuirkEntry quirk) {
+        if (!getQuirk().equalsIgnoreCase(quirk.getQuirk())) {
+            return false;
+        } else if (StringUtil.isNullOrEmpty(getLocation()) && !StringUtil.isNullOrEmpty(quirk.getLocation())) {
+            return false;
+        } else if (!StringUtil.isNullOrEmpty(getLocation()) && StringUtil.isNullOrEmpty(quirk.getLocation())) {
+            return false;
+        } else if (!StringUtil.isNullOrEmpty(getLocation()) && !getLocation().equals(quirk.getLocation())) {
+            return false;
+        } else if (StringUtil.isNullOrEmpty(getWeaponName()) && !StringUtil.isNullOrEmpty(quirk.getWeaponName())) {
+            return false;
+        } else if (!StringUtil.isNullOrEmpty(getWeaponName()) && StringUtil.isNullOrEmpty(quirk.getWeaponName())) {
+            return false;
+        } else if (!StringUtil.isNullOrEmpty(getWeaponName()) && !getLocation().equals(quirk.getWeaponName())) {
+            return false;
+        } else if (getSlot() != quirk.getSlot()) {
+            return false;
+        }
+        return true;
+    }
+
+    public QuirkEntry copy() {
+        QuirkEntry copy = new QuirkEntry();
+        copy.setQuirk(String.copyValueOf(getQuirk().toCharArray()));
+
+        // If location is empty, then this is not a weapon quirk.
+        if (StringUtil.isNullOrEmpty(getLocation())) {
+            return copy;
+        }
+
+        copy.setWeaponName(String.copyValueOf(getWeaponName().toCharArray()));
+        copy.setSlot(getSlot());
+        copy.setLocation(String.copyValueOf(getLocation().toCharArray()));
+        return copy;
     }
 }

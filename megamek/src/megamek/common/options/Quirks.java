@@ -39,7 +39,7 @@ public class Quirks extends AbstractOptions {
     public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
 
     @Override
-    public void initialize() {
+    public synchronized void initialize() {
         //positive quirks
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
         addOption(posQuirk, "anti_air", false); //$NON-NLS-1$

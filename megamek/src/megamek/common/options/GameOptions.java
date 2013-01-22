@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.CommonConstants;
+import megamek.common.MechSummaryCache;
 
 /**
  * Contains the options determining play in the current game.
@@ -47,7 +48,7 @@ public class GameOptions extends AbstractOptions {
     }
 
     @Override
-    public void initialize() {
+    public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic"); //$NON-NLS-1$
         addOption(base, "friendly_fire", false); //$NON-NLS-1$
         addOption(base, "skip_ineligable_movement", false); //$NON-NLS-1$
@@ -275,7 +276,7 @@ public class GameOptions extends AbstractOptions {
         return loadOptions(new File(GAME_OPTIONS_FILE_NAME));
     }
 
-    public Vector<IOption> loadOptions(File file) {
+    public synchronized Vector<IOption> loadOptions(File file) {
         ParsedXML root = null;
         InputStream is = null;
         Vector<IOption> changedOptions = new Vector<IOption>(1, 1);

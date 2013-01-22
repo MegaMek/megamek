@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -43,6 +44,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.NonCombatUnitList;
 import megamek.common.util.StringUtil;
@@ -9959,7 +9961,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return source;
     }
 
-    public void setQuirks(Quirks quirks) {
+    public synchronized void setQuirks(Quirks quirks) {
         this.quirks = quirks;
     }
 
@@ -9968,7 +9970,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * as it will not check game options for quirks. Use entity#hasQuirk instead
      * @return
      */
-    public Quirks getQuirks() {
+    public synchronized Quirks getQuirks() {
         return quirks;
     }
 
@@ -11674,4 +11676,88 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 	    return (int)Math.floor(armorPerTon * armorTonnage);
     }
 
+    public synchronized boolean loadDefaultQuirks() {
+
+        // Get a list of quirks for this entity.
+        List<QuirkEntry> quirks = null;
+        try {
+            quirks = DefaultQuirksHandler.getQuirks(getChassis(), getModel());
+        } catch (Exception e) {
+            System.out.println(e);
+            return false;
+        }
+
+        // If this unit has no quirks, we do not need to proceed further.
+        if ((quirks == null) || quirks.isEmpty()) {
+            return true;
+        }
+
+        System.out.println("Loading quirks for " + getChassis() + " " + getModel());
+
+        //Load all the unit's quirks.
+        for (QuirkEntry q : quirks) {
+
+            System.out.print("  " + q.toLog() + "... ");
+
+            //If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
+            if (StringUtil.isNullOrEmpty(q.getLocation())) {
+
+                //Activate the unit quirk.
+                if (getQuirks().getOption(q.getQuirk()) == null) {
+                    System.out.println("Failed - Invalid quirk!");
+                    continue;
+                }
+                getQuirks().getOption(q.getQuirk()).setValue(true);
+                System.out.println("Loaded.");
+                continue;
+            }
+
+            //Get the weapon in the indicated location and slot.
+            System.out.print("Getting CriticalSlot... ");
+            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
+            if (cs == null) {
+                System.out.println("Failed - Critical slot (" + q.getLocation() + "-" + q.getSlot() + ") did not load!");
+                continue;
+            }
+            Mounted m = cs.getMount();
+            if (m == null) {
+                System.out.println("Failed - Critical slot (" + q.getLocation() + "-" + q.getSlot() + ") is empty!");
+                continue;
+            }
+
+            //Make sure this is a weapon.
+            System.out.print("Getting WeaponType... ");
+            if (!(m.getType() instanceof WeaponType)) {
+                System.out.println("Failed - " + m.getName() + " is not a weapon!");
+                continue;
+            }
+
+            //Make sure it is the weapon we expect.
+            System.out.print("Matching weapon... ");
+            boolean matchFound = false;
+            Enumeration<String> typeNames = m.getType().getNames();
+            while (typeNames.hasMoreElements()) {
+                String typeName = typeNames.nextElement();
+                System.out.print(typeName + "... ");
+                if (typeName.equals(q.getWeaponName())) {
+                    matchFound = true;
+                    break;
+                }
+            }
+            if (!matchFound) {
+                System.out.println("Failed - " + m.getType().getName() + " != " + q.getWeaponName());
+                continue;
+            }
+
+            //Activate the weapon quirk.
+            System.out.print("Activating quirk... ");
+            if (m.getQuirks().getOption(q.getQuirk()) == null) {
+                System.out.println("Failed - Invalid quirk!");
+                continue;
+            }
+            m.getQuirks().getOption(q.getQuirk()).setValue(true);
+            System.out.println("Loaded.");
+        }
+        return true;
+    }
 }

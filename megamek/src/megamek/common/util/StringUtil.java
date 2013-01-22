@@ -23,6 +23,13 @@ import megamek.common.preference.PreferenceManager;
 
 public class StringUtil {
 
+    // XML Escape Strings.
+    private static final String ESC_QUOTE = "&quote;";
+    private static final String ESC_APOSTROPHE = "&apos;";
+    private static final String ESC_AMPERSAND = "&amp;";
+    private static final String ESC_LESS_THAN = "&lt;";
+    private static final String ESC_GREATER_THAN = "&gt;";
+
     public static Vector<String> splitString(String s, String divider) {
         if (s == null || s.equals("")) { //$NON-NLS-1$
             return new Vector<String>();
@@ -138,4 +145,24 @@ public class StringUtil {
         return (text == null) || (text.trim().isEmpty());
     }
 
+    /**
+     * Takes in a string, and replaces all XML special characters with the approprate
+     * escape strings.
+     *
+     * @param text The text to be made XML safe.
+     * @return
+     */
+    public static String makeXmlSafe(String text) {
+        if (StringUtil.isNullOrEmpty(text)) return "";
+
+        text = text.replace(ESC_AMPERSAND, "&");
+        text = text.replace("\"", ESC_QUOTE);
+        text = text.replace("&", ESC_AMPERSAND);
+        text = text.replace("'", ESC_APOSTROPHE);
+        text = text.replace("<", ESC_LESS_THAN);
+        text = text.replace(">", ESC_GREATER_THAN);
+        text = text.replace("\u0000", " ");
+
+        return text;
+    } //public static String makeXmlSafe(String text)
 }

@@ -56,6 +56,7 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
         addOption(wpnQuirk, "em_interference", false); //$NON-NLS-1$
         addOption(wpnQuirk, "jettison_capable", false); //$NON-NLS-1$
+        addOption(wpnQuirk, "fast_reload", false);
     }
     //unimplemented
     //ammo feed problem

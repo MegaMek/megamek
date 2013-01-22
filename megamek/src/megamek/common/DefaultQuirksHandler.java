@@ -45,7 +45,7 @@ public class DefaultQuirksHandler {
     private static final String WEAPON_NAME = "weaponName";
     private static final String WEAPON_QUIRK_NAME = "weaponQuirkName";
 
-    private static Map<String, List<QuirkEntry>> defaultQuirkMap = new HashMap<String, List<QuirkEntry>>();
+    private static Map<String, List<QuirkEntry>> defaultQuirkMap;
     private static boolean initialized = false;
 
     /**
@@ -78,14 +78,14 @@ public class DefaultQuirksHandler {
             NodeList listOfUnits = doc.getElementsByTagName("unit");
             int totalUnits = listOfUnits.getLength();
             System.out.println("Total number of units with default quirks: " + totalUnits);
+            defaultQuirkMap = new HashMap<String, List<QuirkEntry>>(totalUnits);
             for (int unitCount = 0; unitCount < totalUnits; unitCount++) {
-                List<QuirkEntry> quirkList = new ArrayList<QuirkEntry>();
 
                 //Get the first element of this node.
-                Element firstUnitElement = (Element)listOfUnits.item(unitCount);
+                Element unitList = (Element)listOfUnits.item(unitCount);
 
                 //Get the chassis
-                Element chassisElement = (Element)firstUnitElement.getElementsByTagName(CHASSIS).item(0);
+                Element chassisElement = (Element)unitList.getElementsByTagName(CHASSIS).item(0);
                 if (chassisElement == null) {
                     System.err.println("Missing <chassis> element #" + unitCount);
                     continue;
@@ -93,7 +93,7 @@ public class DefaultQuirksHandler {
                 String chassis = chassisElement.getTextContent();
 
                 //Get the model.
-                Element modelElement = (Element)firstUnitElement.getElementsByTagName(MODEL).item(0);
+                Element modelElement = (Element)unitList.getElementsByTagName(MODEL).item(0);
                 if (modelElement == null) {
                     continue;
                 }
@@ -105,8 +105,12 @@ public class DefaultQuirksHandler {
                     unitId += " " + model;
                 }
 
-                //Get the unit quirks.
-                NodeList quirkNodes = firstUnitElement.getElementsByTagName(QUIRK);
+                //Get the quirks.
+                NodeList quirkNodes = unitList.getElementsByTagName(QUIRK);
+                NodeList weapQuirkNodes = unitList.getElementsByTagName(WEAPON_QUIRK);
+                List<QuirkEntry> quirkList = new ArrayList<QuirkEntry>(quirkNodes.getLength() + weapQuirkNodes.getLength());
+
+                //Add the quirks.
                 for (int quirkCount = 0; quirkCount < quirkNodes.getLength(); quirkCount++) {
 
                     //Create the quirk entry and add it to the list.
@@ -118,8 +122,7 @@ public class DefaultQuirksHandler {
                     quirkList.add(quirkEntry);
                 }
 
-                //Get the weapon quirks.
-                NodeList weapQuirkNodes = firstUnitElement.getElementsByTagName(WEAPON_QUIRK);
+                //Add the weapon quirks.
                 for (int quirkCount = 0; quirkCount < weapQuirkNodes.getLength(); quirkCount++) {
                     Element quirkElement = (Element)weapQuirkNodes.item(quirkCount);
 
@@ -179,7 +182,7 @@ public class DefaultQuirksHandler {
      *         in the list, a NULL value is returned.
      * @throws java.io.IOException
      */
-    public List<QuirkEntry> getQuirks(String chassis, String model) throws IOException {
+    public static synchronized List<QuirkEntry> getQuirks(String chassis, String model) throws IOException {
         if (!initialized) {
             initQuirksList();
         }

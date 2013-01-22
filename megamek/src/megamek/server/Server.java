@@ -24125,9 +24125,13 @@ public class Server implements Runnable {
 
             }
             /* update all connections */
+            // Changed method to using clones of the connections & connectionsPending in order to avoid
+            // ConcurrentModificationExceptions.
             toUpdate.clear();
-            toUpdate.addAll(connections);
-            toUpdate.addAll(connectionsPending);
+            Vector<IConnection> connectionsClone = (Vector<IConnection>)connections.clone();
+            toUpdate.addAll(connectionsClone);
+            connectionsClone = (Vector<IConnection>)connectionsPending.clone();
+            toUpdate.addAll(connectionsClone);
             /* process stuff */
             Iterator<IConnection> it = toUpdate.iterator();
             while (it.hasNext()) {

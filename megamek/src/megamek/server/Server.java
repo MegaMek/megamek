@@ -26297,7 +26297,7 @@ public class Server implements Runnable {
             // Check for owner entities first...
             while (pickupEntities.hasMoreElements()) {
                 Entity pe = pickupEntities.nextElement();
-                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne() || (pe.getOwnerId() != e.getOwnerId())) {
+                if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious() || pe.isAirborne() || ((pe.getOwnerId() != e.getOwnerId()) || (pe.getElevation() != e.getElevation()))) {
                     continue;
                 }
                 if (!pickedUp && (pe.getId() != e.getId())) {

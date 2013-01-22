@@ -1469,4 +1469,13 @@ public class Dropship extends SmallCraft {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE;
     }
 
+    @Override
+    public String getLocationAbbr(int loc) {
+        if (loc == Entity.LOC_NONE) {
+            return "System Wide";
+        } else {
+            return super.getLocationAbbr(loc);
+        }
+    }
+
 }

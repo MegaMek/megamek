@@ -15,7 +15,6 @@
 
 package megamek.common;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.NumberFormat;
@@ -44,7 +43,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.NonCombatUnitList;
 import megamek.common.util.StringUtil;
@@ -2033,7 +2031,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "";
         }
         if (loc == Entity.LOC_NONE) {
-            return "System Wide";
+            return "None";
         }
         return locationAbbrs[loc];
     }

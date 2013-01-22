@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <!-- unit elements -->
+    <xs:element name="chassis" type="xs:string"/>
+    <xs:element name="model" type="xs:string"/>
+    <xs:element name="quirk" type="xs:string"/>
+    <!-- /unit elements -->
+    
+    <!-- weaponQuirk elements -->
+    <xs:element name="weaponQuirkName" type="xs:string"/>
+    <xs:element name="location" type="xs:string"/>
+    <xs:element name="slot" type="xs:int"/>
+    <xs:element name="weaponName" type="xs:string"/>
+    <!-- /weaponQuirk elements -->
+
     <xs:element name="defaultQuirks">
         <xs:complexType>
             <xs:sequence>
@@ -12,6 +26,7 @@
             <xs:field xpath="model"/>
         </xs:unique>
     </xs:element>
+
     <xs:element name="unit">
         <xs:complexType>
             <xs:sequence>
@@ -32,6 +47,7 @@
             <xs:field xpath="slot"/>
         </xs:unique>
     </xs:element>
+
     <xs:element name="weaponQuirk">
         <xs:complexType>
             <xs:all>
@@ -42,11 +58,4 @@
             </xs:all>
         </xs:complexType>
     </xs:element>
-    <xs:element name="chassis" type="xs:string"/>
-    <xs:element name="model" type="xs:string"/>
-    <xs:element name="quirk" type="xs:string"/>
-    <xs:element name="weaponQuirkName" type="xs:string"/>
-    <xs:element name="location" type="xs:string"/>
-    <xs:element name="slot" type="xs:int"/>
-    <xs:element name="weaponName" type="xs:string"/>
 </xs:schema>

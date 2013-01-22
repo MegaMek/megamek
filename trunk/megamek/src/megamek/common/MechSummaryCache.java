@@ -44,6 +44,8 @@ import megamek.common.verifier.TestTank;
  */
 public class MechSummaryCache {
 
+    private boolean cancelDefaultQuirkLoad = false; // Should only be set true in the event of an error.
+
     public static interface Listener {
         void doneLoading();
     }
@@ -448,6 +450,9 @@ public class MechSummaryCache {
                 try {
                     MechFileParser mfp = new MechFileParser(f);
                     Entity e = mfp.getEntity();
+                    if (!cancelDefaultQuirkLoad) {
+                        cancelDefaultQuirkLoad = !e.loadDefaultQuirks();
+                    }
                     MechSummary ms = getSummary(e, f, null);
                     vMechs.addElement(ms);
                     sKnownFiles.add(f.toString());
@@ -518,6 +523,9 @@ public class MechSummaryCache {
             try {
                 MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
+                if (!cancelDefaultQuirkLoad) {
+                    cancelDefaultQuirkLoad = !e.loadDefaultQuirks();
+                }
                 MechSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMechs.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
@@ -567,5 +575,4 @@ public class MechSummaryCache {
     public int getZipCount() {
         return zipCount;
     }
-
 }

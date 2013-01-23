@@ -136,12 +136,10 @@
 		<mkdir dir="${osxdist}" />
 		<copy todir="${osxdist}">
 			<fileset dir="${svndir}" >
-				<include name="${jarfile}" />
 				<include name="${docdir}/" />
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="${logdir}/" />
-				<include name="${libdir}/*.jar" />
 			    <include name="${datadir}/" />
 			    <include name="${confdir}/" />
 			</fileset>
@@ -153,8 +151,13 @@
 			</fileset>
 		</copy>
 		<copy file="${util}/JavaApplicationStub" todir="${osxdist}/MegaMek.app/Contents/MacOS/"/>
-		<move file="${osxdist}/MegaMek.jar" todir="${osxdist}/MegaMek.app/Contents/Resources/Java/" />
-	    <!-- We are no longer going to use jarbundler directly, but rather a static app that 
+		<copy todir="${osxdist}/MegaMek.app/Contents/Resources/Java/">
+			<fileset dir="${svndir}" >
+				<include name="${libdir}/*.jar" />
+				<include name="${jarfile}" />
+			</fileset>
+		</copy>
+		<!-- We are no longer going to use jarbundler directly, but rather a static app that 
 	         we can copy new jars into. We are also moving the lib outside the app
 	         so that it is consistent with MekHQ
 		<jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">

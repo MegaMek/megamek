@@ -868,10 +868,6 @@ public abstract class TestEntity implements TestEntityOption {
                     illegal = true;
                     buff.append("head turret requires torso mounted cockpit\n");
                 }
-                if (mounted.getType().hasFlag(MiscType.F_HEAD_TURRET) && (mech instanceof QuadMech)) {
-                    illegal = true;
-                    buff.append("quad mechs can't mount head turrets\n");
-                }
                 if (mounted.getType().hasFlag(MiscType.F_SHOULDER_TURRET) && (mech instanceof QuadMech)) {
                     illegal = true;
                     buff.append("quad mechs can't mount shoulder turrets\n");

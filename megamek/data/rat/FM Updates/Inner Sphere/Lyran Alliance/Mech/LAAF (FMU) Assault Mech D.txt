@@ -1,6 +1,6 @@
 LAAF Assault Mechs D 3067 (FMU)
 Highlander HGN-732,1
-Battlemaster BLR-3S,2
+BattleMaster BLR-3S,2
 Charger CGR-SA5,3
 Victor VTR-9B,4
 Awesome AWS-8Q,5

@@ -2,7 +2,7 @@ LAAF Heavy Mechs D 3067 (FMU)
 Catapult CPLT-C4,1
 Warhammer WHM-7S,2
 Grasshopper GHR-5J,3
-Galloglas GAL-1GLS,4
+Gallowglas GAL-1GLS,4
 Orion ON1-K,5
 Caesar CES-3R,6
 Marauder MAD-5S,5

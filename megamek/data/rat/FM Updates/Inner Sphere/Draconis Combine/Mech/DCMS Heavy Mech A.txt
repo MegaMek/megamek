@@ -8,5 +8,5 @@ Grand Dragon DGR-5K,6
 Avatar AV1-O,5
 No-Dachi NDA-1K,4
 Maelstrom MTR-5K,3
-No-Dachi NDA-1KO,2
+No-Dachi NDA-2KO,2
 Ninja-To NJT-2,1

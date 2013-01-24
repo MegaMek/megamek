@@ -11690,71 +11690,71 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
 
-        System.out.println("Loading quirks for " + getChassis() + " " + getModel());
+        //System.out.println("Loading quirks for " + getChassis() + " " + getModel());
 
         //Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
 
-            System.out.print("  " + q.toLog() + "... ");
+            //System.out.print("  " + q.toLog() + "... ");
 
             //If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtil.isNullOrEmpty(q.getLocation())) {
 
                 //Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {
-                    System.out.println("Failed - Invalid quirk!");
+                    System.out.println(q.toLog()+" failed for "+getChassis()+" "+getModel()+ " - Invalid quirk!");
                     continue;
                 }
                 getQuirks().getOption(q.getQuirk()).setValue(true);
-                System.out.println("Loaded.");
+                //System.out.println("Loaded.");
                 continue;
             }
 
             //Get the weapon in the indicated location and slot.
-            System.out.print("Getting CriticalSlot... ");
+            //System.out.print("Getting CriticalSlot... ");
             CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
             if (cs == null) {
-                System.out.println("Failed - Critical slot (" + q.getLocation() + "-" + q.getSlot() + ") did not load!");
+                System.out.println(q.toLog()+" failed for "+getChassis()+" "+getModel()+" - Critical slot (" + q.getLocation() + "-" + q.getSlot() + ") did not load!");
                 continue;
             }
             Mounted m = cs.getMount();
             if (m == null) {
-                System.out.println("Failed - Critical slot (" + q.getLocation() + "-" + q.getSlot() + ") is empty!");
+                System.out.println(q.toLog()+" failed for "+getChassis()+" "+getModel()+" - Critical slot (" + q.getLocation() + "-" + q.getSlot() + ") is empty!");
                 continue;
             }
 
             //Make sure this is a weapon.
-            System.out.print("Getting WeaponType... ");
+            //System.out.print("Getting WeaponType... ");
             if (!(m.getType() instanceof WeaponType)) {
-                System.out.println("Failed - " + m.getName() + " is not a weapon!");
+                System.out.println(q.toLog()+" failed for "+getChassis()+" "+getModel()+" - " + m.getName() + " is not a weapon!");
                 continue;
             }
 
             //Make sure it is the weapon we expect.
-            System.out.print("Matching weapon... ");
+            //System.out.print("Matching weapon... ");
             boolean matchFound = false;
             Enumeration<String> typeNames = m.getType().getNames();
             while (typeNames.hasMoreElements()) {
                 String typeName = typeNames.nextElement();
-                System.out.print(typeName + "... ");
+                //System.out.print(typeName + "... ");
                 if (typeName.equals(q.getWeaponName())) {
                     matchFound = true;
                     break;
                 }
             }
             if (!matchFound) {
-                System.out.println("Failed - " + m.getType().getName() + " != " + q.getWeaponName());
+                System.out.println(q.toLog()+" failed for "+getChassis()+" "+getModel()+" - " + m.getType().getName() + " != " + q.getWeaponName());
                 continue;
             }
 
             //Activate the weapon quirk.
-            System.out.print("Activating quirk... ");
+            //System.out.print("Activating quirk... ");
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
-                System.out.println("Failed - Invalid quirk!");
+                System.out.println(q.toLog()+" failed for "+getChassis()+" "+getModel()+" - Invalid quirk!");
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
-            System.out.println("Loaded.");
+            //System.out.println("Loaded.");
         }
         return true;
     }

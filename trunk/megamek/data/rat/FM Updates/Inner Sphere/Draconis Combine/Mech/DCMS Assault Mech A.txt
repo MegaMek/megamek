@@ -8,5 +8,5 @@ Hatamoto-Chi HTM-27T,6
 Sunder SD1-O,5
 BattleMaster BLR-K3,4
 Akuma AKU-1X,3
-Tai-Sho TSH-7S,2
+Tai-sho TSH-7S,2
 Daishi (Dire Wolf) Prime,1

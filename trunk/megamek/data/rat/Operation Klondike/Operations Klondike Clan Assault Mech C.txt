@@ -1,7 +1,7 @@
 2821 Operations Klondike Clan Assault Mech C
-Imp IMP1-C,1
+Imp IMP-1C,1
 Stalker STK-3Fb,2
-Thug THE-11,3
+Thug THG-11E,3
 Atlas AS7-D,4
 BattleMaster BLR-1Gb,5
 Highlander HGN-732b,6

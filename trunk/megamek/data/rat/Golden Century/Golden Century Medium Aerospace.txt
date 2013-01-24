@@ -6,7 +6,7 @@ Hellcat II HCT-213C,4
 Ironsides IRN-SD1,5
 Gotha GTHA-500b,6
 Ironsides IRN-SD1b,5
-Lightning LTG-G15b,4
+Lightning LTN-G15b,4
 Stingray F-90,3
 Gotha GTHA-500b,2
 Hellcat II HCT-213B,1

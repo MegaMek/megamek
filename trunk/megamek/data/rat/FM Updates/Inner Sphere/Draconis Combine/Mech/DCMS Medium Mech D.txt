@@ -1,5 +1,5 @@
 DCMS Medium Mechs D 3067 FM-U
-Scorpion SCP-10,1
+Scorpion SCP-1O,1
 Trebuchet TBT-5N,2
 Chameleon CLN-7V,3
 Assassin ASN-21,4

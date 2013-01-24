@@ -8,5 +8,5 @@ Locust LCT-1Vb,6
 Night Hawk NTK-2Q,5
 Firefly FFL-3SLE,4
 Javelin JVN-10P,3
-Panther PTN-9R,2
+Panther PNT-9R,2
 Stinger STG-3Gb,1

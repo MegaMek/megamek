@@ -44,6 +44,7 @@ v0.35.34-dev (SVN)
 + Bug 3632: head turret should be legal on quad mech
 + Fixed a few RAT errors
 + Bug 3595: Crashed dropship leads to NPE
++ Bug 3597: Incorrect names on movement options 
 
 v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Added additional logging to Princess in order to make it a bit easier to track

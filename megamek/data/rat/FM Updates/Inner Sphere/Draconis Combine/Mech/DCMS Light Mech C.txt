@@ -9,4 +9,4 @@ Jenner JR7-K,5
 Jenner JR7-K,4
 Spider SDR-7M,3
 Wasp WSP-1K,2
-Raptor RTX-O,1
+Raptor RTX1-O,1

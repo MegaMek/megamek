@@ -1,7 +1,7 @@
 Hanseatic League Medium Mechs 3067 FM-U
 Assassin ASN-23,1
 Wolverine WVR-6R,2
-Vulcan VL-5S,3
+Vulcan VT-5S,3
 Trebuchet TBT-5S,4
 Hunchback HBK-4G,5
 Clint CLNT-2-3T,6

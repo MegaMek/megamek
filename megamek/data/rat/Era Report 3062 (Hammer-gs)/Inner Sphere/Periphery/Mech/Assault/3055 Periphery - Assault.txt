@@ -10,4 +10,3 @@ Charger CGR-1A9,4
 Black Watch BKW-7R,3
 Awesome AWS-8Q,2
 Grand Titan T-IT-N10M,1
-

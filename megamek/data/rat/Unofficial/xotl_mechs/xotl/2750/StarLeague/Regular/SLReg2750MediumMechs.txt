@@ -45,5 +45,5 @@ Kintaro KTO-19,114
 Crab CRB-27,6
 Hoplite HOP-4C,57
 Griffin GRF-1N,23
-Kyudo KY2-D02,40
+Kyudo KY2-D-02,40
 Griffin GRF-2N,114

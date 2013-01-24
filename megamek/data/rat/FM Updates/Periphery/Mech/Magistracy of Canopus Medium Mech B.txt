@@ -7,6 +7,6 @@ Vindicator VND-1R,5
 Hunchback HBK-4P,6
 Vindicator VND-3L,5
 Trebuchet TBT-7M,4
-Watchman WCT-4M,3
+Watchman WTC-4M,3
 Cicada CDA-3M,2
 Trebuchet TBT-7M,1

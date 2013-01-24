@@ -9,4 +9,4 @@ War Dog WR-DG-02FC,5
 Axman AXM-1N,4
 Crusader CRD-8S,3
 Maelstrom MTR-5K,2
-Dragonfire DRF-4F,1
+Dragon Fire DGR-4F,1

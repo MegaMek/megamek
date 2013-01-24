@@ -8,5 +8,5 @@ Marauder IIC,6
 Behemoth (Stone Rhino),5
 Supernova,4
 Highlander IIC,3
-Pulverizer,2
+Pulverizer PUL-2V,2
 Kingfisher Prime,1

@@ -4190,8 +4190,8 @@ public class Server implements Runnable {
             for (Enumeration<Entity> e = game.getEntities(nextPos); e.hasMoreElements();) {
                 Entity en = e.nextElement();
                 if ((en instanceof Dropship) && !en.isAirborne()
-                		&& (nextAltitude <= (en.absHeight()))) {
-                	crashDropship = en;
+                        && (nextAltitude <= (en.absHeight()))) {
+                    crashDropship = en;
                 }
             }
 
@@ -4288,25 +4288,27 @@ public class Server implements Runnable {
             //did we hit a dropship. Oww!
             //Taharqa: The rules on how to handle this are completely missing, so I am assuming
             //we assign damage as per an accidental charge, but do not displace the dropship and
-            //end the skid
-            else if(null != crashDropship) {
-            	r = new Report(2050);
+            // end the skid
+            else if (null != crashDropship) {
+                r = new Report(2050);
                 r.subject = entity.getId();
                 r.indent();
                 r.add(crashDropship.getShortName(), true);
                 r.add(nextPos.getBoardNum(), true);
                 addReport(r);
-            	ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), crashDropship.getTargetType(), crashDropship
-                        .getTargetId(), crashDropship.getPosition());
+                ChargeAttackAction caa = new ChargeAttackAction(entity.getId(),
+                        crashDropship.getTargetType(),
+                        crashDropship.getTargetId(),
+                        crashDropship.getPosition());
                 ToHitData toHit = caa.toHit(game, true);
-            	resolveChargeDamage(entity, crashDropship, toHit, direction);
+                resolveChargeDamage(entity, crashDropship, toHit, direction);
                 if ((entity.getMovementMode() == EntityMovementMode.WIGE)
                         || (entity.getMovementMode() == EntityMovementMode.VTOL)) {
                     int hitSide = (step.getFacing() - direction) + 6;
                     hitSide %= 6;
                     int table = 0;
                     switch (hitSide) {// quite hackish...I think it ought to
-                        // work, though.
+                    // work, though.
                         case 0:// can this happen?
                             table = ToHitData.SIDE_FRONT;
                             break;
@@ -4326,7 +4328,7 @@ public class Server implements Runnable {
                     addReport(crashVTOLorWiGE((VTOL) entity, true, distance, curPos, elevation, table));
                     break;
                 }
-            	if (!crashDropship.isDoomed() && !crashDropship.isDestroyed() && !game.isOutOfGame(crashDropship)) {
+                if (!crashDropship.isDoomed() && !crashDropship.isDestroyed() && !game.isOutOfGame(crashDropship)) {
                     break;
                 }
             }
@@ -4937,176 +4939,185 @@ public class Server implements Runnable {
         Vector<Report> vReport = new Vector<Report>();
         Report r;
 
+        // we might hit multiple hexes, if we're a dropship, so we do some
+        // checks for all of them
+        ArrayList<Coords> coords = new ArrayList<Coords>();
+        coords.add(c);
+        if (entity instanceof Dropship) {
+            for (int i = 0; i<6; i++) {
+                coords.add(c.translated(i));
+            }
+        }
         if (vel < 1) {
             vel = 1;
         }
 
-        int orig_crash_damage = Compute.d6(2) * 10 * vel;
-        int crash_damage = orig_crash_damage;
-        int direction = entity.getFacing();
-        // first check for buildings
-        Building bldg = game.getBoard().getBuildingAt(c);
-        if ((null != bldg) && (bldg.getType() == Building.HARDENED)) {
-            crash_damage *= 2;
-        }
-        if (null != bldg) {
-            vReport.addAll(damageBuilding(bldg, orig_crash_damage, c));
-        }
-        r = new Report(9700, Report.PUBLIC);
-        r.indent();
-        r.addDesc(entity);
-        r.add(crash_damage);
-        r.newlines = 0;
-        vReport.add(r);
-        while (crash_damage > 0) {
-            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            if (entity.getMovementMode() == EntityMovementMode.SPHEROID) {
-                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
+        // deal crash damage only once
+        boolean damageDealt = false;
+        for (Coords hitCoords : coords) {
+            int orig_crash_damage = Compute.d6(2) * 10 * vel;
+            int crash_damage = orig_crash_damage;
+            int direction = entity.getFacing();
+            // first check for buildings
+            Building bldg = game.getBoard().getBuildingAt(hitCoords);
+            if ((null != bldg) && (bldg.getType() == Building.HARDENED)) {
+                crash_damage *= 2;
             }
-
-            if (crash_damage > 10) {
-                vReport.addAll(damageEntity(entity, hit, 10));
-            } else {
-                vReport.addAll(damageEntity(entity, hit, crash_damage));
+            if (null != bldg) {
+                collapseBuilding(bldg, game.getPositionMap(), hitCoords, true, vReport);
+                //vReport.addAll(damageBuilding(bldg, orig_crash_damage, hitCoords));
             }
-            crash_damage -= 10;
-        }
-
-        // if the entity survived they are useless anyway because we have no
-        // ground map yet so remove them
-        if (!entity.isDoomed() && !entity.isDestroyed()) {
-            if (game.getBoard().inAtmosphere()) {
-                r = new Report(9393, Report.PUBLIC);
+            if (!damageDealt) {
+                r = new Report(9700, Report.PUBLIC);
                 r.indent();
                 r.addDesc(entity);
-                vReport.add(r);
-                entity.setDoomed(true);
-            } else {
-                ((Aero) entity).land();
-            }
-
-        }
-
-        // TODO: check for watery death
-
-        // ok, now lets cycle through the entities in this spot and potentially
-        // damage them
-        // TODO: dropships should hurt adjacent hexes and displace further
-        // different for dropships and everybody else
-        for (Enumeration<Entity> e = game.getEntities(c); e.hasMoreElements();) {
-            Entity victim = e.nextElement();
-            if (victim.getId() == entity.getId()) {
-                continue;
-            }
-            if ((victim.getElevation() > 0) || (victim.getAltitude() > 0)) {
-                continue;
-            }
-            // if the crasher is a dropship and the victim is not a mech, then
-            // it is automatically
-            // destroyed
-            if ((entity instanceof Dropship) && !(victim instanceof Mech)) {
-                vReport.addAll(destroyEntity(victim, "hit by crashing dropship"));
-            } else {
-                crash_damage = orig_crash_damage / 2;
-                // roll dice to see if they got hit
-                int target = 2;
-                if (victim instanceof Infantry) {
-                    target = 3;
-                }
-                int roll = Compute.d6();
-                r = new Report(9705, Report.PUBLIC);
-                r.indent();
-                r.addDesc(victim);
-                r.add(target);
                 r.add(crash_damage);
-                r.add(roll);
-                r.newlines = 0;
-                if (roll > target) {
-                    r.choose(true);
-                    vReport.add(r);
-                    // apply half the crash damage in 5 point clusters (check
-                    // hit tables)
-                    while (crash_damage > 0) {
-                        HitData hit = victim.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        if (victim instanceof Mech) {
-                            hit = victim.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                        }
-                        if (crash_damage > 5) {
-                            vReport.addAll(damageEntity(victim, hit, 5));
-                        } else {
-                            vReport.addAll(damageEntity(victim, hit, crash_damage));
-                        }
-                        crash_damage -= 5;
+                vReport.add(r);
+                while (crash_damage > 0) {
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    if (entity.getMovementMode() == EntityMovementMode.SPHEROID) {
+                        hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
                     }
 
-                } else {
-                    r.choose(false);
-                    vReport.add(r);
+                    if (crash_damage > 10) {
+                        vReport.addAll(damageEntity(entity, hit, 10));
+                    } else {
+                        vReport.addAll(damageEntity(entity, hit, crash_damage));
+                    }
+                    crash_damage -= 10;
                 }
+                damageDealt = true;
             }
 
-            if (!victim.isDoomed() && !victim.isDestroyed()) {
-                // entity displacement
-            	Coords dest = Compute.getValidDisplacement(game, victim.getId(), c, direction);
-            	if(null != dest) {
-	            	doEntityDisplacement(victim, c,dest, new PilotingRollData(victim.getId(), 0,
-	                        "crash"));
-            	} else if (!(victim instanceof Dropship)) {
-            		//destroy entity - but not dropships which are immovable
-                    addReport(destroyEntity(victim, "impossible displacement", victim instanceof Mech, victim instanceof Mech));
-            	}
-            }
 
-        }
-
-        // reduce woods
-        IHex h = game.getBoard().getHex(c);
-        if (h.containsTerrain(Terrains.WOODS)) {
-            if (entity instanceof Dropship) {
-                h.removeTerrain(Terrains.WOODS);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
-            } else {
-                int level = h.terrainLevel(Terrains.WOODS) - 1;
-                if (level > 0) {
-                    h.removeTerrain(Terrains.WOODS);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, level));
+            // ok, now lets cycle through the entities in this spot and potentially
+            // damage them
+            // TODO: check for watery death
+            for (Enumeration<Entity> e = game.getEntities(hitCoords); e.hasMoreElements();) {
+                Entity victim = e.nextElement();
+                if (victim.getId() == entity.getId()) {
+                    continue;
+                }
+                if (((victim.getElevation() > 0) && victim.isAirborneVTOLorWIGE()) || (victim.getAltitude() > 0)) {
+                    continue;
+                }
+                // if the crasher is a dropship and the victim is not a mech, then
+                // it is automatically
+                // destroyed
+                if ((entity instanceof Dropship) && !(victim instanceof Mech)) {
+                    vReport.addAll(destroyEntity(victim, "hit by crashing dropship"));
                 } else {
+                    crash_damage = orig_crash_damage / 2;
+                    // roll dice to see if they got hit
+                    int target = 2;
+                    if (victim instanceof Infantry) {
+                        target = 3;
+                    }
+                    int roll = Compute.d6();
+                    r = new Report(9705, Report.PUBLIC);
+                    r.indent();
+                    r.addDesc(victim);
+                    r.add(target);
+                    r.add(crash_damage);
+                    r.add(roll);
+                    if (roll > target) {
+                        r.choose(true);
+                        vReport.add(r);
+                        // apply half the crash damage in 5 point clusters (check
+                        // hit tables)
+                        while (crash_damage > 0) {
+                            HitData hit = victim.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                            if (victim instanceof Mech) {
+                                hit = victim.rollHitLocation(ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
+                            }
+                            if (crash_damage > 5) {
+                                vReport.addAll(damageEntity(victim, hit, 5));
+                            } else {
+                                vReport.addAll(damageEntity(victim, hit, crash_damage));
+                            }
+                            crash_damage -= 5;
+                        }
+
+                    } else {
+                        r.choose(false);
+                        vReport.add(r);
+                    }
+                }
+
+                if (!victim.isDoomed() && !victim.isDestroyed()) {
+                    // entity displacement
+                    Coords dest = Compute.getValidDisplacement(game,
+                            victim.getId(), hitCoords, direction);
+                    if (null != dest) {
+                        doEntityDisplacement(victim, hitCoords, dest, new PilotingRollData(
+                                victim.getId(), 0, "crash"));
+                    } else if (!(victim instanceof Dropship)) {
+                        // destroy entity - but not dropships which are immovable
+                        addReport(destroyEntity(victim, "impossible displacement",
+                                victim instanceof Mech, victim instanceof Mech));
+                    }
+                }
+
+            }
+
+            // reduce woods
+            IHex h = game.getBoard().getHex(hitCoords);
+            if (h.containsTerrain(Terrains.WOODS)) {
+                if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.WOODS);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                } else {
+                    int level = h.terrainLevel(Terrains.WOODS) - 1;
+                    if (level > 0) {
+                        h.removeTerrain(Terrains.WOODS);
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, level));
+                    } else {
+                        h.removeTerrain(Terrains.WOODS);
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                    }
                 }
             }
-        }
-        // do the same for jungles
-        if (h.containsTerrain(Terrains.JUNGLE)) {
-            if (entity instanceof Dropship) {
-                h.removeTerrain(Terrains.JUNGLE);
-                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
-            } else {
-                int level = h.terrainLevel(Terrains.JUNGLE) - 1;
-                if (level > 0) {
-                    h.removeTerrain(Terrains.JUNGLE);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, level));
-                } else {
+            // do the same for jungles
+            if (h.containsTerrain(Terrains.JUNGLE)) {
+                if (entity instanceof Dropship) {
                     h.removeTerrain(Terrains.JUNGLE);
                     h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                } else {
+                    int level = h.terrainLevel(Terrains.JUNGLE) - 1;
+                    if (level > 0) {
+                        h.removeTerrain(Terrains.JUNGLE);
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, level));
+                    } else {
+                        h.removeTerrain(Terrains.JUNGLE);
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                    }
+                }
+            }
+            sendChangedHex(hitCoords);
+
+            //check for a stacking violation - which should only happen in the case of
+            //grounded dropships, because they are not moveable
+            if (null != Compute.stackingViolation(game, entity.getId(), hitCoords)) {
+                Coords dest = Compute.getValidDisplacement(game, entity.getId(), hitCoords, Compute.d6()-1);
+                if (null != dest) {
+                    doEntityDisplacement(entity, hitCoords, dest, null);
+                } else {
+                    // ack! automatic death! Tanks
+                    // suffer an ammo/power plant hit.
+                    // TODO : a Mech suffers a Head Blown Off crit.
+                    vPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
+                            entity instanceof Mech, entity instanceof Mech));
                 }
             }
         }
-        sendChangedHex(c);
-
-        //check for a stacking violation - which should only happen in the case of
-        //grounded dropships, because they are not moveable
-        if(null != Compute.stackingViolation(game, entity.getId(), c)) {
-        	Coords dest = Compute.getValidDisplacement(game, entity.getId(), c, Compute.d6()-1);
-        	if(null != dest) {
-        		doEntityDisplacement(entity, c,dest, null);
-        	} else {
-        		// ack! automatic death! Tanks
-                // suffer an ammo/power plant hit.
-                // TODO : a Mech suffers a Head Blown Off crit.
-                vPhaseReport.addAll(destroyEntity(entity, "impossible displacement",
-                		entity instanceof Mech, entity instanceof Mech));
-        	}
+        if (game.getBoard().inAtmosphere()) {
+            r = new Report(9393, Report.PUBLIC);
+            r.indent();
+            r.addDesc(entity);
+            vReport.add(r);
+            entity.setDoomed(true);
+        } else {
+            ((Aero) entity).land();
         }
 
         return vReport;
@@ -6890,7 +6901,6 @@ public class Server implements Runnable {
                     r = new Report(9391);
                     r.subject = entity.getId();
                     r.addDesc(entity);
-                    r.newlines = 0;
                     addReport(r);
                     game.addControlRoll(new PilotingRollData(entity.getId(), 0, "stalled out"));
                     a.setAltitude(a.getAltitude() - 1);
@@ -6906,7 +6916,6 @@ public class Server implements Runnable {
                     r = new Report(9392);
                     r.subject = entity.getId();
                     r.addDesc(entity);
-                    r.newlines = 0;
                     addReport(r);
                     a.setAltitude(a.getAltitude() - 1);
                     // check for crash
@@ -9288,13 +9297,16 @@ public class Server implements Runnable {
         r.addDesc(entity);
         r.add(fallElevation);
         r.add(dest.getBoardNum(), true);
-        vPhaseReport.add(r);
+        r.newlines = 0;
 
         // if hex was empty, deal damage and we're done
         if (affaTarget == null) {
+            r.newlines = 1;
+            vPhaseReport.add(r);
             vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, roll));
             return vPhaseReport;
         }
+        vPhaseReport.add(r);
 
         // hmmm... somebody there... problems.
         if ((fallElevation >= 2) && causeAffa) {

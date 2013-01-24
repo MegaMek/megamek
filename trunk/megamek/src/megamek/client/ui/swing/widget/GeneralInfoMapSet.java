@@ -50,10 +50,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
             weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-            movementTypeL, ejectL, elevationL, fuelL, curSensorsL, visualRangeL;
-    private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0,
-            mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
-            elevationR, fuelR, curSensorsR, visualRangeR;
+            movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
+            visualRangeL;
+    private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0, mpR1,
+            mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR, elevationR,
+            fuelR, curSensorsR, visualRangeR;
     private PMSimpleLabel[] quirksR;
     private PMSimpleLabel[] partRepsR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
@@ -75,7 +76,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     // These two methods are used to vertically position new labels on the
     // display.
     private int getYCoord() {
-        return yCoord * 15 - 5;
+        return (yCoord * 15) - 5;
     }
 
     private int getNewYCoord() {
@@ -86,8 +87,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private void setAreas() {
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
 
-        mechTypeL0 = createLabel(Messages
-                .getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
+        mechTypeL0 = createLabel(
+                Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
         mechTypeL0.setColor(Color.yellow);
         content.addArea(mechTypeL0);
 
@@ -182,10 +183,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, getYCoord());
         content.addArea(heatR);
 
-        fuelL = createLabel( Messages.getString("GeneralInfoMapSet.fuelL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
-        content.addArea( fuelL );
+        fuelL = createLabel(
+                Messages.getString("GeneralInfoMapSet.fuelL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea(fuelL);
         fuelR = createLabel(STAR3, fm, fuelL.getSize().width + 10, getYCoord());
-        content.addArea( fuelR );
+        content.addArea(fuelR);
 
         movementTypeL = createLabel(
                 Messages.getString("GeneralInfoMapSet.movementTypeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
@@ -218,22 +220,23 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         visualRangeL = createLabel(
                 Messages.getString("GeneralInfoMapSet.visualRangeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(visualRangeL);
-        visualRangeR = createLabel(STAR3, fm, visualRangeL.getSize().width + 10,
-                getYCoord());
+        visualRangeR = createLabel(STAR3, fm,
+                visualRangeL.getSize().width + 10, getYCoord());
         content.addArea(visualRangeR);
 
         quirksR = new PMSimpleLabel[40];
         for (int i = 0; i < quirksR.length; i++) {
-            quirksR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
+            quirksR[i] = createLabel(new Integer(i).toString(), fm, 0,
+                    getNewYCoord());
             content.addArea(quirksR[i]);
         }
-        
+
         partRepsR = new PMSimpleLabel[20];
         for (int i = 0; i < partRepsR.length; i++) {
-            partRepsR[i] = createLabel(new Integer(i).toString(), fm, 0, getNewYCoord());
+            partRepsR[i] = createLabel(new Integer(i).toString(), fm, 0,
+                    getNewYCoord());
             content.addArea(partRepsR[i]);
         }
-
 
     }
 
@@ -268,17 +271,15 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mechTypeL1.setVisible(true);
         }
 
-        statusR
-                .setString(en.isProne() ? Messages
-                        .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
+        statusR.setString(en.isProne() ? Messages
+                .getString("GeneralInfoMapSet.prone") : Messages.getString("GeneralInfoMapSet.normal")); //$NON-NLS-1$ //$NON-NLS-2$
         playerR.setString(en.getOwner().getName());
         if (en.getOwner().getTeam() == 0) {
             teamL.setVisible(false);
             teamR.setVisible(false);
         } else {
             teamL.setVisible(true);
-            teamR
-                    .setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
+            teamR.setString(Messages.getString("GeneralInfoMapSet.Team") + en.getOwner().getTeam()); //$NON-NLS-1$
             teamR.setVisible(true);
         }
         if (en instanceof Infantry) {
@@ -297,49 +298,58 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                         .getString("GeneralInfoMapSet.Disabled")); //$NON-NLS-1$
             }
         }
-        elevationR.setString(Messages.getString("GeneralInfoMapSet.NA")); //$NON-NLS-1$
         elevationR.setString(Integer.toString(en.getElevation()));
-        if(en.isAirborne()) {
-            elevationL.setString(Messages.getString("GeneralInfoMapSet.altitudeL"));
+        if (en.isAirborne()) {
+            elevationL.setString(Messages
+                    .getString("GeneralInfoMapSet.altitudeL"));
             elevationR.setString(Integer.toString(en.getAltitude()));
+        } else {
+            elevationL.setString(Messages
+                    .getString("GeneralInfoMapSet.elevationL"));
         }
 
-        for(PMSimpleLabel element: quirksR) {
+        for (PMSimpleLabel element : quirksR) {
             element.setString(""); //$NON-NLS-1$
         }
-        for(PMSimpleLabel element: partRepsR) {
+        for (PMSimpleLabel element : partRepsR) {
             element.setString(""); //$NON-NLS-1$
         }
-        
+
         int i = 0;
-        if(null != en.getGame() && en.getGame().getOptions().booleanOption("stratops_quirks")) {
-	        for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups.hasMoreElements();) {
-	            IOptionGroup qGroup = qGroups.nextElement();
-	            if(en.countQuirks(qGroup.getKey()) > 0) {
-	                quirksR[i++].setString(qGroup.getDisplayableName());
-	                for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks.hasMoreElements();) {
-	                    IOption quirk = quirks.nextElement();
-	                    if(quirk.booleanValue()) {
-	                        quirksR[i++].setString("  " + quirk.getDisplayableNameWithValue());
-	                    }
-	                }
-	            }
-	        }
+        if ((null != en.getGame())
+                && en.getGame().getOptions().booleanOption("stratops_quirks")) {
+            for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups
+                    .hasMoreElements();) {
+                IOptionGroup qGroup = qGroups.nextElement();
+                if (en.countQuirks(qGroup.getKey()) > 0) {
+                    quirksR[i++].setString(qGroup.getDisplayableName());
+                    for (Enumeration<IOption> quirks = qGroup.getOptions(); quirks
+                            .hasMoreElements();) {
+                        IOption quirk = quirks.nextElement();
+                        if (quirk.booleanValue()) {
+                            quirksR[i++].setString("  "
+                                    + quirk.getDisplayableNameWithValue());
+                        }
+                    }
+                }
+            }
         }
-        for (Enumeration<IOptionGroup> repGroups = en.getPartialRepairs().getGroups(); repGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> repGroups = en.getPartialRepairs()
+                .getGroups(); repGroups.hasMoreElements();) {
             IOptionGroup repGroup = repGroups.nextElement();
-            if(en.countPartialRepairs() > 0) {
+            if (en.countPartialRepairs() > 0) {
                 partRepsR[i++].setString(repGroup.getDisplayableName());
-                for (Enumeration<IOption> partreps = repGroup.getOptions(); partreps.hasMoreElements();) {
+                for (Enumeration<IOption> partreps = repGroup.getOptions(); partreps
+                        .hasMoreElements();) {
                     IOption partrep = partreps.nextElement();
-                    if(partrep.booleanValue()) {
-                        partRepsR[i++].setString("  " + partrep.getDisplayableNameWithValue());
+                    if (partrep.booleanValue()) {
+                        partRepsR[i++].setString("  "
+                                + partrep.getDisplayableNameWithValue());
                     }
                 }
             }
         }
 
-        
         if (en.mpUsed > 0) {
             mpR0.setString("(" + en.mpUsed + " used)"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
@@ -348,8 +358,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         mpR1.setString(Integer.toString(en.getWalkMP()));
         mpR2.setString(en.getRunMPasString());
 
-        if((en instanceof Jumpship) && !(en instanceof Warship)) {
-            mpR2.setString(en.getRunMPasString() + " (" + Double.toString(((Jumpship)en).getAccumulatedThrust()) + ")");
+        if ((en instanceof Jumpship) && !(en instanceof Warship)) {
+            mpR2.setString(en.getRunMPasString() + " ("
+                    + Double.toString(((Jumpship) en).getAccumulatedThrust())
+                    + ")");
         }
 
         if (en.hasUMU()) {
@@ -358,12 +370,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
         }
 
-        if(en instanceof Aero) {
-            Aero a = (Aero)en;
+        if (en instanceof Aero) {
+            Aero a = (Aero) en;
             curMoveR.setString(Integer.toString(a.getCurrentVelocity()));
             fuelR.setString(Integer.toString(a.getFuel()));
         } else {
-            curMoveR.setString(en.getMovementString(en.moved) + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
+            curMoveR.setString(en.getMovementString(en.moved)
+                    + (en.moved == EntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         int heatCap = en.getHeatCapacity();
@@ -374,9 +387,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             heatCapacityStr = heatCap + " [" + heatCapWater + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        heatR
-                .setString(Integer.toString(en.heat)
-                        + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        heatR.setString(Integer.toString(en.heat)
+                + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
         if (en instanceof Mech) {
             heatL.setVisible(true);
@@ -388,20 +400,22 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         if (en instanceof Tank) {
             movementTypeL.setVisible(true);
-            movementTypeR.setString(Messages.getString("MovementType."+en.getMovementModeAsString()));
+            movementTypeR.setString(Messages.getString("MovementType."
+                    + en.getMovementModeAsString()));
             movementTypeR.setVisible(true);
         } else {
             movementTypeL.setVisible(false);
             movementTypeR.setVisible(false);
         }
 
-        if(en.getGame().getOptions().booleanOption("double_blind")) {
+        if (en.getGame().getOptions().booleanOption("double_blind")) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);
             visualRangeL.setVisible(true);
             curSensorsR.setString(en.getSensorDesc());
-            visualRangeR.setString(Integer.toString(en.getGame().getPlanetaryConditions().getVisualRange(en, false)));
+            visualRangeR.setString(Integer.toString(en.getGame()
+                    .getPlanetaryConditions().getVisualRange(en, false)));
         } else {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);
@@ -446,15 +460,18 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curMoveR.setVisible(true);
             fuelL.setVisible(true);
             fuelR.setVisible(true);
-            //TODO: there must be a better way to do this
+            // TODO: there must be a better way to do this
             mpL0.setString(Messages.getString("GeneralInfoMapSet.thrust"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
         } else {
+            mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
+            mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));
+            mpL2.setString(Messages.getString("GeneralInfoMapSet.mpL2"));
             fuelL.setVisible(false);
             fuelR.setVisible(false);
         }
-        if(en.getGame().getBoard().inSpace()) {
+        if (en.getGame().getBoard().inSpace()) {
             elevationL.setVisible(false);
             elevationR.setVisible(false);
         }

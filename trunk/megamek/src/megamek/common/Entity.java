@@ -10870,10 +10870,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return 4;
     }
 
-    /**
-     * End of Battle Force Conversion Methods
-     */
-
     public Map<Integer, Coords> getSecondaryPositions() {
         return secondaryPositions;
     }

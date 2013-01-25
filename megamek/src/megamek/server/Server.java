@@ -26958,7 +26958,7 @@ public class Server implements Runnable {
             r = new Report(2385);
             r.subject = entity.getId();
             r.add(distance);
-            r.indent(3);
+            r.indent();
             r.newlines = 0;
             addReport(r);
             if (!game.getBoard().contains(c)) {
@@ -26966,6 +26966,10 @@ public class Server implements Runnable {
                 addReport(r);
                 game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 return;
+            } else {
+                r = new Report(2387);
+                r.add(c.getBoardNum());
+                addReport(r);
             }
             entity.setPosition(c);
 

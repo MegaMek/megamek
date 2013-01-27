@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.34-dev (SVN)
+v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working
 + Patch 440: Princess patch : forced withdrawal, ejection and fleeing changes
 + Patch 439: isometric draw order and tooltip refresh bug fix

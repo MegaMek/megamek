@@ -881,7 +881,6 @@ Scout JumpShip|
 Star Lord JumpShip|
 Tramp JumpShip (Lithium-Fusion)|
 Tramp JumpShip|
-Exterminator EXT-4A|
 Archer ARC-2K|
 Archer ARC-2R|
 Archer ARC-2S|
@@ -1110,6 +1109,7 @@ Zeus ZEU-5S|
 Zeus ZEU-5T|
 Zeus ZEU-6S|
 Zeus ZEU-6T|
+Exterminator EXT-4A|
 Annihilator ANH-1A|
 Annihilator ANH-2A|
 Annihilator ANH-3A|
@@ -1258,10 +1258,10 @@ Flashman FLS-8K|
 Flashman FLS-9B|
 Flashman FLS-9M|
 Flashman FLS-C|
+Flea Fire Ant|
 Flea FLE-17|
 Flea FLE-19|
 Flea FLE-20|
-Flea Fire Ant|
 Gladiator (Executioner) A|
 Gladiator (Executioner) B|
 Gladiator (Executioner) C|
@@ -1407,7 +1407,7 @@ Mercury MCY-104|
 Mercury MCY-97|
 Mercury MCY-99|
 Mongoose MON-66|
-Mongoose MON-68|
+Mongoose MON-69|
 Mongoose MON-70|
 Mongoose MON-76|
 Orion ON1-M|
@@ -2840,6 +2840,7 @@ Archer ARC-9M|
 Archer ARC-9W|
 Archer C|
 Archer Wolf|
+BattleMaster BLR-10S|
 BattleMaster BLR-10S2|
 BattleMaster BLR-2C|
 BattleMaster BLR-3M|
@@ -2853,7 +2854,6 @@ BattleMaster BLR-K3|
 BattleMaster BLR-K4|
 BattleMaster BLR-M3|
 BattleMaster C|
-Battlemaster BLR-10S|
 Crusader CRD-3R Crael|
 Crusader CRD-4BR|
 Crusader CRD-4D|
@@ -3155,10 +3155,10 @@ Rock Hound ProspectorMech AM-PRM-RH7 "Rock Possum"|
 Rock Hound ProspectorMech AM-PRM-RH7|
 Rock Hound ProspectorMech AM-PRM-RH7A "Rock Otter"|
 Space Hound ProspectorMech AM-PRM-SH1|
-Mad Cat (Timber Wolf) Bounty Hunter|
 Rampage RMP-2G|
 Rampage RMP-4G|
 Rampage RMP-5G|
+Mad Cat (Timber Wolf) Bounty Hunter|
 Archangel C-ANG-O Caelestis|
 Dervish DV-1S|
 Deva C-DVA-O Caelestis|
@@ -3226,6 +3226,8 @@ Stinger STG-3Gb|
 Thorn THE-Nb|
 Thunderbolt TDR-5Sb|
 Warhammer WHM-7A|
+Hoplite HOP-4B|
+Hoplite HOP-4C|
 Assassin ASN-30 (Alice)|
 Bandersnatch BNDR-01A (Horus)|
 Daikyu DAI-01 (Tabitha)|
@@ -3242,8 +3244,6 @@ Stealth STH-1D (Anna)|
 Thanatos THS-4S (Felix)|
 Wolf Trap (Tora) WFT-1 (Daitama)|
 Grasshopper GHR-5N|
-Hoplite HOP-4B|
-Hoplite HOP-4C|
 Black Knight BL-6-KNT Ian|
 Cataphract CTF-2X George|
 Enforcer ENF-4R Daniel|

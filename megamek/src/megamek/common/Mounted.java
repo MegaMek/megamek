@@ -792,7 +792,9 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void setLinked(Mounted linked) {
         this.linked = linked;
-        linked.setLinkedBy(this);
+        if (linked != null) {
+            linked.setLinkedBy(this);
+        }
     }
 
     public void setCrossLinked(Mounted linked) {

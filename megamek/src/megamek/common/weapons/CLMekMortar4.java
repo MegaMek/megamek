@@ -35,7 +35,7 @@ public class CLMekMortar4 extends MekMortarWeapon{
         setInternalName("Clan Mech Mortar-4");
         addLookupName("CLMekMortar4");
         addLookupName("Clan Mek Mortar 4");
-        rackSize = 1;
+        rackSize = 4;
         minimumRange = 6;
         shortRange = 7;
         mediumRange = 14;

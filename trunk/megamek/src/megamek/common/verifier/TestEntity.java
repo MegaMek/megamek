@@ -712,7 +712,7 @@ public abstract class TestEntity implements TestEntityOption {
                         }
                     }
                     if (!foundEngine) {
-                        buff.append("supercharge in location without engine\n");
+                        buff.append("supercharger in location without engine\n");
                         illegal = true;
                     }
                 }

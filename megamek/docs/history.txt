@@ -2,6 +2,7 @@
 ----------------
 v0.35.35-dev (SVN)
 + CL Mech Mortars have wrong racksize
++ added getRawCost to equipmentType
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

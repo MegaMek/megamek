@@ -521,6 +521,10 @@ public class EquipmentType {
     public double getCost(Entity entity, boolean armored, int loc) {
         return cost;
     }
+    
+    public double getRawCost() {
+        return cost;
+    }
 
     public static String getRatingName(int rating) {
         if ((rating < 0) || (rating > ratingNames.length)) {

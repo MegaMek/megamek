@@ -201,6 +201,12 @@ public class MechFileParser {
      */
     public static void postLoadInit(Entity ent) throws EntityLoadingException {
 
+        try {
+            ent.loadDefaultQuirks();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
         // add any sensors to the entity's vector of sensors
         if (ent instanceof Mech) {
             // all meks get the four basic sensors
@@ -227,7 +233,7 @@ public class MechFileParser {
                 ent.setNextSensor(ent.getSensors().lastElement());
             }
         }
-
+        
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
 

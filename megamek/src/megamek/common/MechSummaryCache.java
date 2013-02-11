@@ -44,8 +44,6 @@ import megamek.common.verifier.TestTank;
  */
 public class MechSummaryCache {
 
-    private boolean cancelDefaultQuirkLoad = false; // Should only be set true in the event of an error.
-
     public static interface Listener {
         void doneLoading();
     }
@@ -177,74 +175,25 @@ public class MechSummaryCache {
                         done();
                         return;
                     }
-                    MechSummary ms = new MechSummary();
-                    // manually do a string tokenizer. Much faster
-                    int nIndex1 = s.indexOf(SEPARATOR);
-                    ms.setName(s.substring(0, nIndex1));
-                    int nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setChassis(s.substring(nIndex1 + 1, nIndex2));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setModel(s.substring(nIndex1 + 1, nIndex2));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setUnitType(s.substring(nIndex1 + 1, nIndex2));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
-                    // have to translate "null" to null
-                    if (ms.getEntryName().equals("null")) {
-                        ms.setEntryName(null);
-                    }
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setType(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setTons(Float.parseFloat(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setBV(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setLevel(s.substring(nIndex1 + 1, nIndex2));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setCanon(s.charAt(nIndex1 + 1) == 'T' ? true : false);
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setWalkMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setRunMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setJumpMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setUnitSubType(s.substring(nIndex1 + 1, nIndex2));
-                    nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);                    
-                    ms.setUnloadedCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
-                    ms.setAlternateCost(Integer.parseInt(s.substring(nIndex2 + 1)));
-
-                    // Verify that this file still exists and is older than
-                    // the cache.
-                    File fSource = ms.getSourceFile();
-                    if (fSource.exists() && (fSource.lastModified() < lLastCheck)) {
-                        vMechs.addElement(ms);
-                        sKnownFiles.add(fSource.toString());
-                        cacheCount++;
-                    }
+                    
+                    try {
+                        MechSummary ms = parseMechCacheLine(s);
+                        // Verify that this file still exists and is older than
+                        // the cache.
+                        File fSource = ms.getSourceFile();
+                        if (fSource.exists()) {
+                            vMechs.addElement(ms);
+                            if(null == ms.getEntryName()) {
+                                sKnownFiles.add(fSource.toString());
+                            } else {
+                                sKnownFiles.add(ms.getEntryName());
+                            }                        
+                            cacheCount++;
+                        }
+                    } catch(StringIndexOutOfBoundsException e) {
+                        loadReport.append("  The following line in the mech cache could not be read in:\n   ").append(s).append("\n");
+                        continue;
+                    }                   
                 }
             }
         } catch (Exception e) {
@@ -411,7 +360,7 @@ public class MechSummaryCache {
                         // Mechs in this directory are ignored because
                         // they have features not implemented in MM yet.
                         continue;
-                    } else if (f.getName().toLowerCase().equals("_svn")) {
+                    } else if (f.getName().toLowerCase().equals("_svn") || f.getName().toLowerCase().equals(".svn")) {
                         // This is a Subversion work directory. Lets ignore it.
                         continue;
                     }
@@ -450,9 +399,6 @@ public class MechSummaryCache {
                 try {
                     MechFileParser mfp = new MechFileParser(f);
                     Entity e = mfp.getEntity();
-                    if (!cancelDefaultQuirkLoad) {
-                        cancelDefaultQuirkLoad = !e.loadDefaultQuirks();
-                    }
                     MechSummary ms = getSummary(e, f, null);
                     vMechs.addElement(ms);
                     sKnownFiles.add(f.toString());
@@ -499,7 +445,7 @@ public class MechSummaryCache {
             return false;
         }
         loadReport.append("  Looking in zip file ").append(fZipFile.getPath()).append("...\n");
-
+        
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
             if (Thread.interrupted()) {
                 done();
@@ -516,16 +462,13 @@ public class MechSummaryCache {
             if (zEntry.getName().toLowerCase().endsWith(".txt")) {
                 continue;
             }
-            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck) && sKnownFiles.contains(fZipFile.toString())) {
+            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck) && sKnownFiles.contains(zEntry.getName())) {
                 continue;
             }
 
             try {
                 MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
-                if (!cancelDefaultQuirkLoad) {
-                    cancelDefaultQuirkLoad = !e.loadDefaultQuirks();
-                }
                 MechSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMechs.addElement(ms);
                 sKnownFiles.add(zEntry.getName());
@@ -574,5 +517,68 @@ public class MechSummaryCache {
 
     public int getZipCount() {
         return zipCount;
+    }
+    
+    private static MechSummary parseMechCacheLine(String s) throws StringIndexOutOfBoundsException {
+        MechSummary ms = new MechSummary();
+        // manually do a string tokenizer. Much faster
+        int nIndex1 = s.indexOf(SEPARATOR);
+        ms.setName(s.substring(0, nIndex1));
+        int nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setChassis(s.substring(nIndex1 + 1, nIndex2));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setModel(s.substring(nIndex1 + 1, nIndex2));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setUnitType(s.substring(nIndex1 + 1, nIndex2));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
+        // have to translate "null" to null
+        if (ms.getEntryName().equals("null")) {
+            ms.setEntryName(null);
+        }
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setType(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setTons(Float.parseFloat(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setBV(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setLevel(s.substring(nIndex1 + 1, nIndex2));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setCanon(s.charAt(nIndex1 + 1) == 'T' ? true : false);
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setWalkMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setRunMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setJumpMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+        ms.setUnitSubType(s.substring(nIndex1 + 1, nIndex2));
+        nIndex1 = nIndex2;
+        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);                    
+        ms.setUnloadedCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
+        ms.setAlternateCost(Integer.parseInt(s.substring(nIndex2 + 1)));
+        return ms;
     }
 }

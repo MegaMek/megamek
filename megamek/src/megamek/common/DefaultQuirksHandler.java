@@ -53,7 +53,7 @@ public class DefaultQuirksHandler {
      *
      * @throws IOException
      */
-    private static void initQuirksList() throws IOException {
+    public static void initQuirksList() throws IOException {
 
         //Get the path to the defaultQuirks.xml file.
         String filePath = System.getProperty("user.dir");
@@ -182,9 +182,9 @@ public class DefaultQuirksHandler {
      *         in the list, a NULL value is returned.
      * @throws java.io.IOException
      */
-    public static synchronized List<QuirkEntry> getQuirks(String chassis, String model) throws IOException {
-        if (!initialized) {
-            initQuirksList();
+    public static List<QuirkEntry> getQuirks(String chassis, String model) {
+        if (!initialized || null == defaultQuirkMap) {
+            return null;
         }
 
         //Build the unit ID from the chassis and model.

@@ -3,6 +3,8 @@
 v0.35.35-dev (SVN)
 + CL Mech Mortars have wrong racksize
 + added getRawCost to equipmentType
++ Bug 3630: Duplicate defaultQuirks Entries Prevent Cache Refresh
++ Made changes to MechSummaryCache so that it continues to load units (even in zip files) when the units.cache is truncated
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

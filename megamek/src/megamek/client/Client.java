@@ -50,6 +50,7 @@ import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Coords;
+import megamek.common.DefaultQuirksHandler;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.FighterSquadron;
@@ -427,6 +428,11 @@ public class Client implements IClientCommandHandler {
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
         case PHASE_LOUNGE:
+            try {
+                DefaultQuirksHandler.initQuirksList();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
             RandomNameGenerator.initialize();
             MechSummaryCache.getInstance().addListener(new MechSummaryCache.Listener() {
                 public void doneLoading() {

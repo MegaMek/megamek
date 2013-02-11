@@ -11670,20 +11670,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 	    return (int)Math.floor(armorPerTon * armorTonnage);
     }
 
-    public synchronized boolean loadDefaultQuirks() {
+    public void loadDefaultQuirks() {
 
         // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks = null;
-        try {
-            quirks = DefaultQuirksHandler.getQuirks(getChassis(), getModel());
-        } catch (Exception e) {
-            System.out.println(e);
-            return false;
-        }
+        List<QuirkEntry> quirks = DefaultQuirksHandler.getQuirks(getChassis(), getModel());
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {
-            return true;
+            return;
         }
 
         //System.out.println("Loading quirks for " + getChassis() + " " + getModel());
@@ -11752,6 +11746,5 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
             //System.out.println("Loaded.");
         }
-        return true;
     }
 }

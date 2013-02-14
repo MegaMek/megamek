@@ -4376,6 +4376,25 @@ public abstract class Mech extends Entity {
             bvText.append(endRow);
         }
 
+        if ((getCockpitType() == Mech.COCKPIT_INDUSTRIAL)
+                || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
+            // industrial without advanced firing control get's 0.9 mod to
+            // offensive BV
+            bvText.append("Weapon BV * Firing Control Modifier");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(obv);
+            bvText.append(" * ");
+            bvText.append("0.9");
+            bvText.append(endColumn);
+            weaponBV *= 0.9;
+            bvText.append(startColumn);
+            bvText.append(" = ");
+            bvText.append(obv);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
         double speedFactor = Math
                 .pow(1 + ((((double) runMP + (Math
                         .round((double) jumpCheck / 2))) - 5) / 10), 1.2);
@@ -4394,6 +4413,7 @@ public abstract class Mech extends Entity {
         bvText.append(endRow);
 
         obv = weaponBV * speedFactor;
+
 
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -4441,11 +4461,6 @@ public abstract class Mech extends Entity {
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
-        } else if ((getCockpitType() == Mech.COCKPIT_INDUSTRIAL)
-                || (getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
-            // industrial without advanced firing control get's 0.9 mod to
-            // total BV
-            finalBV *= 0.9;
         }
         finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");

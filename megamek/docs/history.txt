@@ -7,6 +7,7 @@ v0.35.35-dev (SVN)
 + Made changes to MechSummaryCache so that it continues to load units (even in
    zip files) when the units.cache is truncated
 + Bug: IM BV should have 0.9 mod for offensive BV, not overall BV
++ give destroyed infantry unit pilots six hits to identify dead ejected pilots in salvage mul
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

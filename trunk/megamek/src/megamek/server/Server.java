@@ -22786,6 +22786,13 @@ public class Server implements Runnable {
             entity.setSalvage(canSalvage);
             condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
+        
+        //if the unit is conventional infantry, then give its crew six hits
+        //this will help us identify dead ejected pilots in the MUL files
+        if(entity instanceof Infantry && !(entity instanceof BattleArmor)
+                && null != entity.getCrew()) {
+            entity.getCrew().setHits(6);
+        }
 
         // Destroy the entity, unless it's already destroyed.
         if (!entity.isDoomed() && !entity.isDestroyed()) {

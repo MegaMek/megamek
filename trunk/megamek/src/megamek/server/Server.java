@@ -8044,14 +8044,13 @@ public class Server implements Runnable {
                 } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
                     // Yup. Replace the old one.
                     removeMinefield(minefield);
-                    int newDamage = (damage / 2) + (damage % 2);
-                    newDamage += minefield.getDensity();
+                    damage += minefield.getDensity();
 
                     // Damage from Thunder minefields are capped.
-                    if (newDamage > Minefield.MAX_DAMAGE) {
-                        newDamage = Minefield.MAX_DAMAGE;
+                    if (damage > Minefield.MAX_DAMAGE) {
+                        damage = Minefield.MAX_DAMAGE;
                     }
-                    minefield.setDensity(newDamage);
+                    minefield.setDensity(damage);
                     game.addMinefield(minefield);
                     checkForRevealMinefield(minefield, game.getEntity(entityId));
                 }

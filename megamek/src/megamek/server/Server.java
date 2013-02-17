@@ -22791,7 +22791,12 @@ public class Server implements Runnable {
         //this will help us identify dead ejected pilots in the MUL files
         if(entity instanceof Infantry && !(entity instanceof BattleArmor)
                 && null != entity.getCrew()) {
-            entity.getCrew().setHits(6);
+            //this won't actually work if the crew is considered ejected,
+            //which it will be on the turn of its ejection. We can safely
+            //turn isEjected to false, because since the pilot is dead, it really
+            //doesn't matter what happens to it next.
+            entity.getCrew().setEjected(false);
+            entity.getCrew().setDead(true);
         }
 
         // Destroy the entity, unless it's already destroyed.

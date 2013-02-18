@@ -1199,6 +1199,10 @@ public class MechDisplay extends JPanel {
             // bad coding practice (duplicate code).
             int heatCap = en.getHeatCapacity();
             int heatCapWater = en.getHeatCapacityWithWater();
+            if(en.getCoolantFailureAmount() > 0) {
+                heatCap -= en.getCoolantFailureAmount();
+                heatCapWater -= en.getCoolantFailureAmount();
+            }
             String heatCapacityStr = Integer.toString(heatCap);
 
             if (heatCap < heatCapWater) {

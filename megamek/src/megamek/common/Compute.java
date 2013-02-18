@@ -3401,9 +3401,9 @@ public class Compute {
         // affected
         double worstECM = 0;
         for (Coords c : coords) {
-            // > 0: in friendly ECCM
+            // > 0: affected by enemy ECM
             // 0: unaffected by enemy ECM
-            // <0: affected by enemy ECM
+            // <0: in friendly ECCM
             double ecmStatus = 0;
             // if we're at ae's Position, figure in a possible
             // iNarc ECM pod
@@ -3617,9 +3617,9 @@ public class Compute {
         // affected
         double worstECM = 0;
         for (Coords c : coords) {
-            // > 0: in friendly ECCM
-            // 0: unaffected by enemy ECM
-            // <0: affected by enemy angel ECM
+            // > 0: affected by enemy Angel ECM
+            // 0: unaffected by enemy Angel ECM
+            // <0: in friendly ECCM
             double ecmStatus = 0;
             // first, subtract 2 for each enemy angel ECM that affects us
             Enumeration<Integer> ranges = vEnemyAngelECMRanges.elements();

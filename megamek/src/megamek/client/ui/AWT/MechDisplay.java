@@ -2807,12 +2807,12 @@ public class MechDisplay extends BufferedPanel {
 
             // Show ECM affect.
             Coords pos = en.getPosition();
-            if (Compute.isAffectedByECM(en, pos, pos)) {
-                narcList.add(Messages.getString("MechDisplay.InEnemyECMField")); //$NON-NLS-1$
-            } else if (Compute.isAffectedByAngelECM(en, pos, pos)) {
+            if (Compute.isAffectedByAngelECM(en, pos, pos)) {
                 narcList.add(Messages
                         .getString("MechDisplay.InEnemyAngelECMField")); //$NON-NLS-1$
-            }
+            } else if (Compute.isAffectedByECM(en, pos, pos)) {
+                narcList.add(Messages.getString("MechDisplay.InEnemyECMField")); //$NON-NLS-1$
+            } 
 
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive() && ((en instanceof Mech) || (en instanceof Tank))) {

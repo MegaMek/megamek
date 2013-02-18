@@ -10,6 +10,8 @@ v0.35.35-dev (SVN)
 + give destroyed infantry unit pilots six hits to identify dead ejected pilots in salvage mul
 + Bug 3640: Thunder-Augmented minefields stack incorrectly
 + Bug 3641: Coolant failure does not show in heat capacity
++ Bug: Angel ECM not showing up in affected by in mech display
++ Bug: Angel ECM not affecting streak launchers
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -3382,10 +3382,10 @@ public class Compute {
                     vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
                     vEnemyECMStrengths.addElement(new Double(other.getECMStrength()));
                 }
-                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                if (!other.isEnemyOf(ae) && other.hasActiveECCM() && (entPos != null)) {
                     vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                    vFriendlyECCMStrengths.addElement(new Double(ent.getECCMStrength()));
+                    vFriendlyECCMRanges.addElement(new Integer(other.getECMRange()));
+                    vFriendlyECCMStrengths.addElement(new Double(other.getECCMStrength()));
                 }
             }
         }
@@ -3486,10 +3486,10 @@ public class Compute {
                     vEnemyECCMRanges.addElement(new Integer(other.getECMRange()));
                     vEnemyECCMStrengths.addElement(new Double(other.getECMStrength()));
                 }
-                if (!other.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)) {
+                if (!other.isEnemyOf(ae) && other.hasActiveECM() && (entPos != null)) {
                     vFriendlyECMCoords.addElement(entPos);
-                    vFriendlyECMRanges.addElement(new Integer(ent.getECMRange()));
-                    vFriendlyECMStrengths.addElement(new Double(ent.getECCMStrength()));
+                    vFriendlyECMRanges.addElement(new Integer(other.getECMRange()));
+                    vFriendlyECMStrengths.addElement(new Double(other.getECCMStrength()));
                 }
             }
         }
@@ -3569,7 +3569,15 @@ public class Compute {
             return 0;
         }
 
-        // Only grab enemies with active angel ECM
+        //we have to track regular ECM here as well because some ECCM might 
+        //get "soaked up" by the regular ECM. I have a rules query in that
+        //asks for confirmation on whether regular ECM should always be soaked
+        //before Angel
+        //http://bg.battletech.com/forums/index.php/topic,27121.new.html#new
+        
+        Vector<Coords> vEnemyOtherECMCoords = new Vector<Coords>(16);
+        Vector<Integer> vEnemyOtherECMRanges = new Vector<Integer>(16);
+        Vector<Double> vEnemyOtherECMStrengths = new Vector<Double>(16);
         Vector<Coords> vEnemyAngelECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyAngelECMRanges = new Vector<Integer>(16);
         Vector<Double> vEnemyAngelECMStrengths = new Vector<Double>(16);
@@ -3580,10 +3588,16 @@ public class Compute {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             // add each angel ECM at its ECM strength
-            if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && (entPos != null)) {
-                vEnemyAngelECMCoords.addElement(entPos);
-                vEnemyAngelECMRanges.addElement(new Integer(ent.getECMRange()));
-                vEnemyAngelECMStrengths.add(ent.getECMStrength());
+            if (ent.isEnemyOf(ae) && (entPos != null)) {
+                if(ent.hasActiveAngelECM()) {
+                    vEnemyAngelECMCoords.addElement(entPos);
+                    vEnemyAngelECMRanges.addElement(new Integer(ent.getECMRange()));
+                    vEnemyAngelECMStrengths.add(ent.getECMStrength());
+                } else if(ent.hasActiveECM()) {
+                    vEnemyOtherECMCoords.addElement(entPos);
+                    vEnemyOtherECMRanges.addElement(new Integer(ent.getECMRange()));
+                    vEnemyOtherECMStrengths.add(ent.getECMStrength());
+                }
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
                 vFriendlyECCMCoords.addElement(entPos);
@@ -3593,15 +3607,21 @@ public class Compute {
 
             // Check the angel ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
-                if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && (entPos != null)) {
-                    vEnemyAngelECMCoords.addElement(entPos);
-                    vEnemyAngelECMRanges.addElement(new Integer(other.getECMRange()));
-                    vEnemyAngelECMStrengths.add(ent.getECMStrength());
+                if (other.isEnemyOf(ae) && (entPos != null)) {
+                    if(other.hasActiveAngelECM()) {
+                        vEnemyAngelECMCoords.addElement(entPos);
+                        vEnemyAngelECMRanges.addElement(new Integer(other.getECMRange()));
+                        vEnemyAngelECMStrengths.add(other.getECMStrength());
+                    } else if(other.hasActiveECM()) {
+                        vEnemyOtherECMCoords.addElement(entPos);
+                        vEnemyOtherECMRanges.addElement(new Integer(other.getECMRange()));
+                        vEnemyOtherECMStrengths.add(other.getECMStrength());
+                    }
                 }
-                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)) {
+                if (!other.isEnemyOf(ae) && other.hasActiveECCM() && (entPos != null)) {
                     vFriendlyECCMCoords.addElement(entPos);
-                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
-                    vFriendlyECCMStrengths.add(ent.getECMStrength());
+                    vFriendlyECCMRanges.addElement(new Integer(other.getECMRange()));
+                    vFriendlyECCMStrengths.add(other.getECMStrength());
                 }
             }
         }
@@ -3621,10 +3641,10 @@ public class Compute {
             // 0: unaffected by enemy Angel ECM
             // <0: in friendly ECCM
             double ecmStatus = 0;
-            // first, subtract 2 for each enemy angel ECM that affects us
-            Enumeration<Integer> ranges = vEnemyAngelECMRanges.elements();
-            Enumeration<Double> strengths = vEnemyAngelECMStrengths.elements();
-            for (Coords enemyECMCoords : vEnemyAngelECMCoords) {
+            //fist calculate other ECM
+            Enumeration<Integer> ranges = vEnemyOtherECMRanges.elements();
+            Enumeration<Double> strengths = vEnemyOtherECMStrengths.elements();
+            for (Coords enemyECMCoords : vEnemyOtherECMCoords) {
                 int range = ranges.nextElement().intValue();
                 int nDist = c.distance(enemyECMCoords);
                 double strength = strengths.nextElement().doubleValue();
@@ -3632,7 +3652,7 @@ public class Compute {
                     ecmStatus += strength;
                 }
             }
-            // now, add one for each friendly ECCM
+            // now, add friendly ECCM
             ranges = vFriendlyECCMRanges.elements();
             strengths = vFriendlyECCMStrengths.elements();
             for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
@@ -3644,6 +3664,23 @@ public class Compute {
                     ecmStatus -= strength;
                 }
             }
+            //if ecmStatus is greater than zero then we have more other ECM than ECCM,
+            //but we don't care about that so reset to zero
+            if(ecmStatus > 0) {
+                ecmStatus = 0;
+            }
+            // now get the angel ECM
+            ranges = vEnemyAngelECMRanges.elements();
+            strengths = vEnemyAngelECMStrengths.elements();
+            for (Coords enemyECMCoords : vEnemyAngelECMCoords) {
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(enemyECMCoords);
+                double strength = strengths.nextElement().doubleValue();
+                if (nDist <= range) {
+                    ecmStatus += strength;
+                }
+            }
+            
             // if any coords in the line are affected, the whole line is
             if (ecmStatus > worstECM) {
                 worstECM = ecmStatus;

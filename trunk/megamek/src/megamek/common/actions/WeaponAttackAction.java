@@ -2513,7 +2513,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // anything outside of visual range requires a "sensor lock" in order to
         // direct fire
         if (game.getOptions().booleanOption("double_blind") && !Compute.inVisualRange(game, ae, target)
-                && !Compute.inSensorRange(game, ae, target) && !isArtilleryIndirect) {
+                && !Compute.inSensorRange(game, ae, target) && !isArtilleryIndirect && !isIndirect) {
             boolean networkSee = false;
             if (ae.hasC3() || ae.hasC3i()) {
                 // c3 units can fire if any other unit in their network is in

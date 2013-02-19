@@ -24,6 +24,7 @@ v0.35.35-dev (SVN)
 + Bug 3319: Thunderbolt launchers "deal no damage"
 + Bug 2792: Ruler in Swing needs to be resized
 + Bug 3396: Ice Storm and low vis issues
++ Bug 2947: Smoke and Death From Above
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

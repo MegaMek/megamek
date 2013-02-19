@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import java.awt.AWTEvent;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -32,6 +33,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
@@ -71,23 +73,23 @@ public class Ruler extends JDialog implements BoardViewListener {
     private IBoardView bv;
     private boolean flip;
 
-    private JPanel panel1 = new JPanel();
+    private JPanel buttonPanel;
     private GridBagLayout gridBagLayout1 = new GridBagLayout();
     private JButton butFlip = new JButton();
-    private JLabel jLabel1 = new JLabel();
+    private JLabel jLabel1;
     private JTextField tf_start = new JTextField();
-    private JLabel jLabel2 = new JLabel();
+    private JLabel jLabel2;
     private JTextField tf_end = new JTextField();
-    private JLabel jLabel3 = new JLabel();
+    private JLabel jLabel3;
     private JTextField tf_distance = new JTextField();
-    private JLabel jLabel4 = new JLabel();
+    private JLabel jLabel4;
     private JTextField tf_los1 = new JTextField();
-    private JLabel jLabel5 = new JLabel();
+    private JLabel jLabel5;
     private JTextField tf_los2 = new JTextField();
     private JButton butClose = new JButton();
-    private JLabel heightLabel1 = new JLabel();
+    private JLabel heightLabel1;
     private JTextField height1 = new JTextField();
-    private JLabel heightLabel2 = new JLabel();
+    private JLabel heightLabel2;
     private JTextField height2 = new JTextField();
 
     public Ruler(JFrame f, Client c, IBoardView b) {
@@ -106,7 +108,7 @@ public class Ruler extends JDialog implements BoardViewListener {
 
         try {
             jbInit();
-            getContentPane().add(panel1);
+            //getContentPane().add(panel1);
             pack();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -114,27 +116,28 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     private void jbInit() {
+        buttonPanel = new JPanel();
         butFlip.setText(Messages.getString("Ruler.flip")); //$NON-NLS-1$
         butFlip.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 butFlip_actionPerformed();
             }
         });
-        panel1.setLayout(gridBagLayout1);
-        jLabel1.setText(Messages.getString("Ruler.Start")); //$NON-NLS-1$
+        getContentPane().setLayout(gridBagLayout1);
+        jLabel1 = new JLabel(Messages.getString("Ruler.Start"), SwingConstants.RIGHT); //$NON-NLS-1$
         tf_start.setEditable(false);
         tf_start.setColumns(16);
-        jLabel2.setText(Messages.getString("Ruler.End")); //$NON-NLS-1$
+        jLabel2 = new JLabel(Messages.getString("Ruler.End"), SwingConstants.RIGHT); //$NON-NLS-1$
         tf_end.setEditable(false);
         tf_end.setColumns(16);
-        jLabel3.setText(Messages.getString("Ruler.Distance")); //$NON-NLS-1$
+        jLabel3 = new JLabel(Messages.getString("Ruler.Distance"), SwingConstants.RIGHT); //$NON-NLS-1$
         tf_distance.setEditable(false);
         tf_distance.setColumns(5);
-        jLabel4.setText(Messages.getString("Ruler.POV") + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+        jLabel4 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT); //$NON-NLS-1$ //$NON-NLS-2$
         jLabel4.setForeground(startColor);
         tf_los1.setEditable(false);
         tf_los1.setColumns(30);
-        jLabel5.setText(Messages.getString("Ruler.POV")); //$NON-NLS-1$
+        jLabel5 = new JLabel(Messages.getString("Ruler.POV") + ":", SwingConstants.RIGHT); //$NON-NLS-1$
         jLabel5.setForeground(endColor);
         tf_los2.setEditable(false);
         tf_los2.setColumns(30);
@@ -144,7 +147,7 @@ public class Ruler extends JDialog implements BoardViewListener {
                 butClose_actionPerformed();
             }
         });
-        heightLabel1.setText(Messages.getString("Ruler.Height1")); //$NON-NLS-1$
+        heightLabel1 = new JLabel(Messages.getString("Ruler.Height1"), SwingConstants.RIGHT); //$NON-NLS-1$
         heightLabel1.setForeground(startColor);
         height1.setText("1"); //$NON-NLS-1$
         height1.addKeyListener(new KeyAdapter() {
@@ -154,7 +157,7 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height1.setColumns(5);
-        heightLabel2.setText(Messages.getString("Ruler.Height2")); //$NON-NLS-1$
+        heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT); //$NON-NLS-1$
         heightLabel2.setForeground(endColor);
         height2.setText("1"); //$NON-NLS-1$
         height2.addKeyListener(new KeyAdapter() {
@@ -165,112 +168,103 @@ public class Ruler extends JDialog implements BoardViewListener {
         });
         height2.setColumns(5);
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(0, 5, 0, 0);
-        c.ipadx = 0;
-        c.ipady = 0;
+        //need to set all the minimum sizes to prevent jtextfield going to zero size
+        //on dialog resize.setColumns(16);
+        tf_start.setMinimumSize(tf_start.getPreferredSize());
+        tf_end.setMinimumSize(tf_end.getPreferredSize());
+        height1.setMinimumSize(height1.getPreferredSize());
+        height2.setMinimumSize(height2.getPreferredSize());
+        tf_distance.setMinimumSize(tf_distance.getPreferredSize());
+        tf_los1.setMinimumSize(tf_los1.getPreferredSize());
+        tf_los2.setMinimumSize(tf_los2.getPreferredSize());
 
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.anchor = GridBagConstraints.EAST;
+        c.fill = GridBagConstraints.NONE;
         c.gridx = 0;
         c.gridy = 0;
-        c.gridwidth = 4;
-        c.insets = new Insets(0, 0, 0, 0);
-        gridBagLayout1.setConstraints(butFlip, c);
-        panel1.add(butFlip);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
         gridBagLayout1.setConstraints(heightLabel1, c);
-        panel1.add(heightLabel1);
-
+        getContentPane().add(heightLabel1);  
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
         gridBagLayout1.setConstraints(height1, c);
-        panel1.add(height1);
+        getContentPane().add(height1);
 
-        c.gridx = 2;
+        c.gridx = 0;
         c.gridy = 1;
-        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(heightLabel2, c);
-        panel1.add(heightLabel2);
-
-        c.gridx = 3;
-        c.gridy = 1;
-        c.gridwidth = 1;
+        getContentPane().add(heightLabel2);    
+        c.anchor = GridBagConstraints.WEST;   
+        c.gridx = 1;
         gridBagLayout1.setConstraints(height2, c);
-        panel1.add(height2);
-
+        getContentPane().add(height2);
+        
         c.gridx = 0;
         c.gridy = 2;
-        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel1, c);
-        panel1.add(jLabel1);
-
+        getContentPane().add(jLabel1); 
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-        c.gridy = 2;
-        c.gridwidth = 3;
         gridBagLayout1.setConstraints(tf_start, c);
-        panel1.add(tf_start);
+        getContentPane().add(tf_start);
 
         c.gridx = 0;
         c.gridy = 3;
-        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel2, c);
-        panel1.add(jLabel2);
-
+        getContentPane().add(jLabel2); 
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-        c.gridy = 3;
-        c.gridwidth = 3;
         gridBagLayout1.setConstraints(tf_end, c);
-        panel1.add(tf_end);
+        getContentPane().add(tf_end);
 
         c.gridx = 0;
         c.gridy = 4;
-        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel3, c);
-        panel1.add(jLabel3);
-
+        getContentPane().add(jLabel3); 
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 3;
         gridBagLayout1.setConstraints(tf_distance, c);
-        panel1.add(tf_distance);
+        getContentPane().add(tf_distance);
 
         c.gridx = 0;
         c.gridy = 5;
-        c.gridwidth = 1;
+      //  c.weightx = 0.0;
+        c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel4, c);
-        panel1.add(jLabel4);
-
+        getContentPane().add(jLabel4); 
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-        c.gridy = 5;
-        c.gridwidth = 3;
+       // c.weightx = 1.0;
+        c.fill = GridBagConstraints.HORIZONTAL;
         gridBagLayout1.setConstraints(tf_los1, c);
-        panel1.add(tf_los1);
+        getContentPane().add(tf_los1);
 
         c.gridx = 0;
         c.gridy = 6;
-        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel5, c);
-        panel1.add(jLabel5);
-
+        getContentPane().add(jLabel5); 
+        c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
-        c.gridy = 6;
-        c.gridwidth = 3;
+        c.fill = GridBagConstraints.HORIZONTAL;
         gridBagLayout1.setConstraints(tf_los2, c);
-        panel1.add(tf_los2);
+        getContentPane().add(tf_los2);
 
+        buttonPanel.add(butFlip);
+        buttonPanel.add(butClose);
         c.gridx = 0;
         c.gridy = 7;
-        c.gridwidth = 5;
-        gridBagLayout1.setConstraints(butClose, c);
-        panel1.add(butClose);
+        c.gridwidth = 2;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.CENTER;
+        gridBagLayout1.setConstraints(buttonPanel, c);
+        getContentPane().add(buttonPanel);
 
         validate();
 

@@ -3391,7 +3391,7 @@ public class Compute {
         }
 
         // none? get out of here
-        if (vEnemyECMCoords.size() == 0) {
+        if (vEnemyECMCoords.size() == 0 && !ae.isINarcedWith(INarcPod.ECM)) {
             return 0;
         }
 
@@ -3642,6 +3642,9 @@ public class Compute {
             // <0: in friendly ECCM
             double ecmStatus = 0;
             //fist calculate other ECM
+            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
+                ecmStatus++;
+            }
             Enumeration<Integer> ranges = vEnemyOtherECMRanges.elements();
             Enumeration<Double> strengths = vEnemyOtherECMStrengths.elements();
             for (Coords enemyECMCoords : vEnemyOtherECMCoords) {

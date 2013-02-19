@@ -820,6 +820,7 @@ public class Compute {
         if (isIndirect && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
+                && (!game.getOptions().booleanOption("double_blind") || Compute.canSee(game, ae, target))
                 && !(wtype instanceof ArtilleryCannonWeapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
         }

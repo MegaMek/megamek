@@ -1843,9 +1843,13 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus) {
         return Compute.getTargetTerrainModifier(game, t, eistatus, false);
     }
+    
+    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus, boolean attackerInSameBuilding) {
+        return Compute.getTargetTerrainModifier(game, t, eistatus, attackerInSameBuilding, false);
+    }
 
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus,
-            boolean attackerInSameBuilding) {
+            boolean attackerInSameBuilding, boolean underwaterWeapon) {
         Entity entityTarget = null;
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1858,6 +1862,7 @@ public class Compute {
 
         boolean isAboveWoods = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 2) || (entityTarget.isAirborne()));
         boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 3) || (entityTarget.isAirborne()));
+        boolean isUnderwater = ((entityTarget != null) && (hex != null)) && hex.containsTerrain(Terrains.WATER)  && (hex.depth() > 0) && (entityTarget.getElevation() < hex.surface());
         ToHitData toHit = new ToHitData();
 
         if (t.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB) {
@@ -1902,7 +1907,7 @@ public class Compute {
                 }
             }
         }
-        if (!isAboveSmoke) {
+        if (!isAboveSmoke && !isUnderwater && !underwaterWeapon) {
             if ( (hex.terrainLevel(Terrains.SMOKE) == 1)
                ||(hex.terrainLevel(Terrains.SMOKE) == 3)
                ||(hex.terrainLevel(Terrains.SMOKE) == 4) ) {

@@ -184,7 +184,10 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // check for non-mech entering a fire
-            if (curHex.containsTerrain(Terrains.FIRE) && !(entity instanceof Mech) && (step.getElevation() <= 1) && (moveType != EntityMovementType.MOVE_JUMP) && !(curPos.equals(lastPos))) {
+            boolean underwater = curHex.containsTerrain(Terrains.WATER) 
+                    && curHex.depth() > 0
+                    && (step.getElevation() < curHex.surface());
+            if (curHex.containsTerrain(Terrains.FIRE) && !underwater && !(entity instanceof Mech) && (step.getElevation() <= 1) && (moveType != EntityMovementType.MOVE_JUMP) && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] { new Integer(8) }));
             }
 

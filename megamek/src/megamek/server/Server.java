@@ -6771,11 +6771,15 @@ public class Server implements Runnable {
 
             // check to see if we are not a mech and we've moved INTO fire
             if (!(entity instanceof Mech)) {
+                boolean underwater = game.getBoard().getHex(curPos).containsTerrain(Terrains.WATER) 
+                        && (game.getBoard().getHex(curPos).depth() > 0) 
+                        && (step.getElevation() < game.getBoard().getHex(curPos).surface());
                 if (game.getBoard().getHex(curPos)
                         .containsTerrain(Terrains.FIRE)
                         && !lastPos.equals(curPos)
                         && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
-                        && (step.getElevation() <= 1)) {
+                        && (step.getElevation() <= 1)
+                        && !underwater) {
                     doFlamingDamage(entity);
                 }
             }
@@ -16678,8 +16682,10 @@ public class Server implements Runnable {
                 continue;
             }
             final IHex curHex = game.getBoard().getHex(entity.getPosition());
+            final boolean underwater = curHex.containsTerrain(Terrains.WATER) && (curHex.depth() > 0) && (entity.getElevation() < curHex.surface());
             if (curHex.containsTerrain(Terrains.FIRE)
-                    && (entity.getElevation() <= 1)) {
+                    && (entity.getElevation() <= 1)
+                    && !underwater) {
                 doFlamingDamage(entity);
             }
         }

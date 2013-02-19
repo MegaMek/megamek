@@ -12,6 +12,9 @@ v0.35.35-dev (SVN)
 + Bug 3641: Coolant failure does not show in heat capacity
 + Bug: Angel ECM not showing up in affected by in mech display
 + Bug: Angel ECM not affecting streak launchers
++ Bug: ECM and ECCM strength did not consider mode in calculation
++ Bug: hasActiveAngelECM and hasActiveAngelECCM in Entity only considered double ECM and ECCM modes
++ Bug: Compute.GetAngelECMFieldSize did not consider the issue of other enemy ECM soaking up friendly ECCM
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

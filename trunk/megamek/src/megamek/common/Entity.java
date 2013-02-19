@@ -3745,7 +3745,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 EquipmentType type = m.getType();
                 if ((type instanceof MiscType)
                         && type.hasFlag(MiscType.F_ANGEL_ECM)
-                        && m.curMode().equals("ECM")) {
+                        && (m.curMode().equals("ECM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets"))) {               
                     return !(m.isInoperable());
                 }
             }
@@ -3846,7 +3846,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 EquipmentType type = m.getType();
                 if ((type instanceof MiscType)
                         && type.hasFlag(MiscType.F_ANGEL_ECM)
-                        && m.curMode().equals("ECCM")) {
+                        && (m.curMode().equals("ECCM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets"))) {
                     return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
                 }
             }
@@ -9551,13 +9551,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public double getECMStrength() {
         int strength = 0;
-        for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_ECM) && (strength < 1)) {
+        for (Mounted m : getMisc()) {           
+            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                if(m.curMode().equals("ECM")) {
+                    strength = 2;
+                } else if(strength < 1 && 
+                        (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets"))) {
+                    strength = 1;
+                }
+            } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECM") && strength < 1) {
                 strength = 1;
-            }
-            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM) && (strength < 2)) {
-                strength = 2;
-            }
+            }          
         }
         return strength;
     }
@@ -9575,12 +9579,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if ((getTotalCommGearTons() > 6) && (strength < 1)) {
                     strength = 1;
                 }
+            }         
+            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                if(m.curMode().equals("ECM")) {
+                    strength = 2;
+                } else if(strength < 1 && 
+                        (m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets"))) {
+                    strength = 1;
+                }
             }
-            if (m.getType().hasFlag(MiscType.F_ECM) && (strength < 1)) {
+            else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM") && strength < 1) {
                 strength = 1;
-            }
-            if (m.getType().hasFlag(MiscType.F_ANGEL_ECM) && (strength < 2)) {
-                strength = 2;
             }
         }
         return strength;

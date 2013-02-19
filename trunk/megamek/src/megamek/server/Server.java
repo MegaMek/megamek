@@ -17955,7 +17955,8 @@ public class Server implements Runnable {
         boolean ferroLamellorArmor = false;
         boolean reflectiveArmor = false;
         boolean reactiveArmor = false;
-
+        boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
+        
         if (((te instanceof Mech) || (te instanceof Tank))
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)) {
             hardenedArmor = true;
@@ -17975,7 +17976,7 @@ public class Server implements Runnable {
                 && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE)) {
             reactiveArmor = true;
         }
-
+   
         // TACs from the hit location table
         int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1
                 : 0;
@@ -18131,14 +18132,15 @@ public class Server implements Runnable {
                 }
                 break;
             case ACID:
-                if (isFerroFibrousTarget) {
+                if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor || ferroLamellorArmor || bar5) {
                     damage = te.getArmor(hit) >= 3 ? 3 : te.getArmor(hit);
                     r = new Report(6061);
                     r.subject = te_n;
                     r.indent(2);
                     r.add(damage);
                     vDesc.addElement(r);
-                } else {
+                } else if (isPlatoon) {
+                    damage *= 1.5;
                     r = new Report(6062);
                     r.subject = te_n;
                     r.indent(2);

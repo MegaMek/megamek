@@ -45,6 +45,9 @@ public class ISThunderBolt20 extends ThunderBoltWeapon {
         this.mediumRange = 12;
         this.longRange = 18;
         this.extremeRange = 24;
+        this.shortAV = 20;
+        this.medAV = 20;
+        this.maxRange = RANGE_MED;
         this.tonnage = 15.0f;
         this.criticals = 5;
         this.bv = 305;

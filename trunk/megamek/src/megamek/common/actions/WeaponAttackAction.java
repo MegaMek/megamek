@@ -285,7 +285,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)
                 && !isECMAffected && !bMekTankStealthActive && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE));
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
+        
+        // is this attack originating from underwater
+        // TODO: assuming that torpedoes are underwater attacks even if fired
+        // from surface vessel, awaiting rules clarification
+        // http://www.classicbattletech.com/forums/index.php/topic,48744.0.html
+        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
+                || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
 
+        
         if (te != null) {
             if (!isTargetECMAffected
                     && te.isINarcedBy(ae.getOwner().getTeam())
@@ -393,7 +401,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 los.setArcedAttack(true);
             }
 
-            losMods = los.losModifiers(game, eistatus);
+            losMods = los.losModifiers(game, eistatus, underWater);
             if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                             || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO) || (((atype.getAmmoType() == AmmoType.T_SRM)
@@ -419,7 +427,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 los.setArcedAttack(true);
             }
 
-            losMods = los.losModifiers(game);
+            losMods = los.losModifiers(game, underWater);
         }
         if (mpMelevationHack) {
             // return to depth 1
@@ -1320,8 +1328,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // target terrain, not applicable when delivering minefields or bombs
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding));
-            toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding).getValue();
+            toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
+            toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater).getValue();
         }
 
         // target in water?
@@ -1332,7 +1340,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                                                                                         // partial
                                                                                                         // water
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
-            losMods = los.losModifiers(game, eistatus);
+            losMods = los.losModifiers(game, eistatus, underWater);
         }
 
         if ((target instanceof Infantry) && !wtype.hasFlag(WeaponType.F_FLAMER)) {
@@ -1554,13 +1562,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         }
 
-        // is this attack originating from underwater
-        // TODO: assuming that torpedoes are underwater attacks even if fired
-        // from surface vessel, awaiting rules clarification
-        // http://www.classicbattletech.com/forums/index.php/topic,48744.0.html
-        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
-                || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
-
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
@@ -1692,7 +1693,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.append(Compute.getImmobileMod(oldTarget, aimingAt, aimingMode));
             toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game.getEntity(oldTarget.getId()), eistatus,
-                    inSameBuilding));
+                    inSameBuilding, underWater));
             toHit.setCover(LosEffects.COVER_NONE);
             distance = Compute.effectiveDistance(game, ae, oldTarget);
             LosEffects swarmlos = LosEffects.calculateLos(game, te.getId(), oldTarget);
@@ -1747,6 +1748,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isHoming = false;
         ToHitData toHit = null;
 
+        // is the attack originating from underwater
+        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
+                || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
+
+        
         if ((ae instanceof Protomech) && ((Protomech)ae).isEDPCharging() && wtype.hasFlag(WeaponType.F_ENERGY)) {
             return "ProtoMech is charging EDP";
         }
@@ -2472,7 +2478,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 los.setArcedAttack(true);
             }
 
-            losMods = los.losModifiers(game, eistatus);
+            losMods = los.losModifiers(game, eistatus, underWater);
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
             // do not count attacker partial cover in indirect fire
@@ -2490,7 +2496,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 los.setArcedAttack(true);
             }
 
-            losMods = los.losModifiers(game);
+            losMods = los.losModifiers(game, underWater);
         }
 
         if (multiPurposeelevationHack) {
@@ -2657,10 +2663,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return "Narc pods cannot be used to attack infantry.";
             }
         }
-
-        // is the attack originating from underwater
-        boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
-                || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
 
         // attacker partial cover means no leg weapons
         if (los.isAttackerCover() && ae.locationIsLeg(weapon.getLocation()) && !underWater) {

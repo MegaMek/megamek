@@ -455,10 +455,14 @@ public class LosEffects {
      * effects data.
      */
     public ToHitData losModifiers(IGame game) {
-        return losModifiers(game, 0);
+        return losModifiers(game, 0, false);
+    }
+    
+    public ToHitData losModifiers(IGame game, boolean underWaterWeapon) {
+        return losModifiers(game, 0, underWaterWeapon);
     }
 
-    public ToHitData losModifiers(IGame game, int eistatus) {
+    public ToHitData losModifiers(IGame game, int eistatus, boolean underwaterWeapon) {
         ToHitData modifiers = new ToHitData();
 
         if ( arcedShot ) {
@@ -490,7 +494,7 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by woods.");
         }
 
-        if (lightSmoke + (heavySmoke * 2) > 2) {
+        if (!underwaterWeapon && (lightSmoke + (heavySmoke * 2) > 2)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by smoke.");
         }
 
@@ -506,7 +510,7 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by screen.");
         }
 
-        if (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2) {
+        if (!underwaterWeapon && (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by smoke and woods.");
         }
@@ -551,12 +555,12 @@ public class LosEffects {
             }
         }
 
-        if (lightSmoke > 0) {
+        if (lightSmoke > 0 && !underwaterWeapon) {
             modifiers.addModifier(lightSmoke, lightSmoke
                     + " intervening light smoke");
         }
 
-        if (heavySmoke > 0) {
+        if (heavySmoke > 0 && !underwaterWeapon) {
             StringBuffer text = new StringBuffer(heavySmoke);
             text.append(" intervening");
             text.append(" heavy");
@@ -952,7 +956,8 @@ public class LosEffects {
                     || ((hexEl + 2 > ai.attackAbsHeight) && (ai.attackPos
                             .distance(coords) == 1))
                     || ((hexEl + 2 > ai.targetAbsHeight) && (ai.targetPos
-                            .distance(coords) == 1))) {
+                            .distance(coords) == 1))
+                    && !ai.underWaterCombat) {
                 // smoke and woods stack for
                 // LOS
                 // so check them both

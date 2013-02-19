@@ -1861,8 +1861,7 @@ public class Compute {
             }
         }
 
-        boolean isAboveWoods = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 2) || (entityTarget.isAirborne()));
-        boolean isAboveSmoke = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 3) || (entityTarget.isAirborne()));
+        boolean isAboveWoodsAndSmoke = ((entityTarget != null) && (hex != null)) && ((entityTarget.absHeight() >= 2) || (entityTarget.isAirborne()));
         boolean isUnderwater = ((entityTarget != null) && (hex != null)) && hex.containsTerrain(Terrains.WATER)  && (hex.depth() > 0) && (entityTarget.getElevation() < hex.surface());
         ToHitData toHit = new ToHitData();
 
@@ -1893,7 +1892,7 @@ public class Compute {
         }
 
         if (!game.getOptions().booleanOption("tacops_woods_cover")
-                && !isAboveWoods
+                && !isAboveWoodsAndSmoke
                 && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
                         || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
                         || (t.getTargetType() == Targetable.TYPE_HEX_BOMB)
@@ -1908,7 +1907,7 @@ public class Compute {
                 }
             }
         }
-        if (!isAboveSmoke && !isUnderwater && !underwaterWeapon) {
+        if (!isAboveWoodsAndSmoke && !isUnderwater && !underwaterWeapon) {
             if ( (hex.terrainLevel(Terrains.SMOKE) == 1)
                ||(hex.terrainLevel(Terrains.SMOKE) == 3)
                ||(hex.terrainLevel(Terrains.SMOKE) == 4) ) {

@@ -18,6 +18,7 @@ v0.35.35-dev (SVN)
 + Bug 3342: BV of C3B network is wrong
 + Bug 3343: C3B network disrupted by ECM
 + Bug 2897: iNarc ECM Pod does not disrupt C3
++ Bug 3179: AX SRM Warheads don't work according to TO
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

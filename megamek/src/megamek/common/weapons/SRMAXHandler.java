@@ -13,10 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -43,22 +40,5 @@ public class SRMAXHandler extends SRMHandler {
         sSalvoType = " acid-head missile(s) ";
         nSalvoBonus = -2;
         damageType = DamageType.ACID;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    @Override
-    protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-            if (bGlancing) {
-                toReturn /= 2;
-            }
-            return (int)Math.floor(toReturn);
-        }
-        return 1;
     }
 }

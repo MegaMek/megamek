@@ -4107,6 +4107,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    public boolean hasBoostedC3() {
+        if (isShutDown() || isOffBoard()) {
+            return false;
+        }
+        for (Mounted m : getEquipment()) {
+            if ((m.getType().hasFlag(MiscType.F_C3SBS) || m.getType().hasFlag(WeaponType.F_C3MBS)) 
+                    && !m.isInoperable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * Checks if the entity has a C3 Master.
      *
@@ -4341,10 +4354,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         while ((master != null)
                 && !master.equals(m)
                 && master.hasC3()
-                && !(Compute.isAffectedByECM(m, m.getPosition(),
-                        master.getPosition()))
-                && !(Compute.isAffectedByECM(master, master.getPosition(),
-                        master.getPosition()))) {
+                && ((m.hasBoostedC3() && !Compute.isAffectedByAngelECM(m, m.getPosition(),master.getPosition())) 
+                        || !(Compute.isAffectedByECM(m, m.getPosition(), master.getPosition())))
+                && ((master.hasBoostedC3() && !Compute.isAffectedByAngelECM(master, master.getPosition(), master.getPosition())) 
+                        || !(Compute.isAffectedByECM(master, master.getPosition(),
+                        master.getPosition())))) {
             m = master;
             master = m.getC3Master();
         }
@@ -11011,7 +11025,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     totalForceBV += e.calculateBattleValue(true, true);
                 }
             }
-            xbv += totalForceBV * 0.05;
+            double multiplier = 0.05;
+            if(hasBoostedC3()) {
+                multiplier = 0.07;
+            }
+            xbv += totalForceBV * multiplier;
         }
         return xbv;
     }

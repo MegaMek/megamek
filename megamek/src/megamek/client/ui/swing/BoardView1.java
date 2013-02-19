@@ -2086,11 +2086,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
             if (eMaster.getPosition() == null) {
                 return;
             }
-
+                   
             // ECM cuts off the network
-            if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
-                    && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster
-                            .getPosition())) {
+            boolean blocked = false;
+            if(e.hasBoostedC3() && eMaster.hasBoostedC3()) {
+                blocked = Compute.isAffectedByAngelECM(e, e.getPosition(), eMaster.getPosition())
+                        || Compute.isAffectedByAngelECM(eMaster, eMaster.getPosition(), eMaster.getPosition());
+            } else {
+                blocked = Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
+                        || Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster.getPosition());
+            }
+            
+            if (!blocked) {
                 c3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }

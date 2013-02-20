@@ -68,9 +68,9 @@ public class HVACWeaponHandler extends ACWeaponHandler {
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;
-            } else if (board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4) {
+            } else if (board.getHex(rearCoords).getElevation() > currentHex.getElevation()) {
                 rearCoords = src;
-            } else if ((board.getBuildingAt(rearCoords) != null) && (board.getHex(rearCoords).terrainLevel(Terrains.BLDG_ELEV) + board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4)) {
+            } else if ((board.getBuildingAt(rearCoords) != null) && ((board.getHex(rearCoords).terrainLevel(Terrains.BLDG_ELEV) + board.getHex(rearCoords).getElevation()) > currentHex.getElevation())) {
                 rearCoords = src;
             }
 

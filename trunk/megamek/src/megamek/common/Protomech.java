@@ -561,11 +561,11 @@ public class Protomech extends Entity {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
+        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
     }
 
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
         int roll = -1;
 
         if ((aimedLocation != LOC_NONE) && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {

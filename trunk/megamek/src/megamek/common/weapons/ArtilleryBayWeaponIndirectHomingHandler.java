@@ -283,7 +283,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 toHit.setSideTable(entity.sideTable(aaa.getCoords()));
                 HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit
                         .getSideTable(), waa.getAimedLocation(), waa
-                        .getAimingMode());
+                        .getAimingMode(), toHit.getCover());
                 vPhaseReport.addAll(server.damageEntity(entity, hit,
                         ratedDamage, false, DamageType.NONE, false, true,
                         throughFront, underWater));

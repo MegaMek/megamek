@@ -63,6 +63,13 @@ public class SpaceBombAttackHandler extends WeaponHandler {
         for(int i = 0; i < payload.length; i++) {
             nbombs += payload[i];
         }
+        if(bDirect) {
+            nbombs = Math.min(nbombs+(toHit.getMoS()/3), nbombs*2);
+        }
+        if(bGlancing) {
+            nbombs = (int) Math.floor(nbombs / 2.0);
+
+        }
         return nbombs;
     }
     

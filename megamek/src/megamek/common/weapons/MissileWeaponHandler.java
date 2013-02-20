@@ -354,6 +354,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if ((atype.getAmmoType() == AmmoType.T_MML) && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             av = av * 2;
         }
+        if(bDirect) {
+            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        }
+        if(bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int)Math.floor(getBracketingMultiplier() * av);
         return (av);
     }
 
@@ -610,6 +618,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         nDamPerHit = calcDamagePerHit();
 
+        attackValue = calcAttackValue();
+        
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget)) {
             return false;

@@ -27,6 +27,7 @@ v0.35.35-dev (SVN)
 + Bug 2947: Smoke and Death From Above
 + Bug 3081: Thunder FASCAM not enough minefields
 + Bug 3633: Artillery getting Ghost Target penalty
++ Bug 2634: (AERO) Direct blow affecting aero crits (yes, they do!)
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

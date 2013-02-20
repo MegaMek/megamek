@@ -80,6 +80,14 @@ public class LBXHandler extends AmmoWeaponHandler {
     		// basically 60% of normal
     		return (int) Math.floor(0.6 * av);
     	} 
+    	if(bDirect) {
+            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        }
+        if(bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int)Math.floor(getBracketingMultiplier() * av);
     	return av;
     }
 

@@ -343,6 +343,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 addHeat();
                 heatAdded = true;
             }
+            
+            attackValue = calcAttackValue();
 
             // Any necessary PSRs, jam checks, etc.
             // If this boolean is true, don't report
@@ -545,6 +547,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 av = wtype.getRoundExtAV();
             }
         }
+        if(bDirect) {
+            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        }
+        if(bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int)Math.floor(getBracketingMultiplier() * av);
+
         return av;
     }
 
@@ -824,7 +835,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
         for(int i=0;i<nweapons;i++) {
             useAmmo();
         }
-        attackValue = (int)Math.floor(getBracketingMultiplier() * calcAttackValue());
     }
 
     protected void useAmmo() {

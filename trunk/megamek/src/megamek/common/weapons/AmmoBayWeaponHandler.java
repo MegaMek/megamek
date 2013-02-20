@@ -109,7 +109,15 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     av = av - current_av;
                 }
             }
-        }       
+        }
+        if(bDirect) {
+            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        }
+        if(bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int)Math.floor(getBracketingMultiplier() * av);
         return (int)Math.ceil(av);
     }
     

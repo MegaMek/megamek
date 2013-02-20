@@ -158,6 +158,14 @@ public class ATMHandler extends MissileWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
+        if(bDirect) {
+            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        }
+        if(bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+
+        }
+        av = (int)Math.floor(getBracketingMultiplier() * av);
         return av;
     }
 

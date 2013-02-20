@@ -509,6 +509,30 @@ public class MechFileParser {
 
       } // Check the next piece of equipment.
 
+      Vector<Integer> usedMG = new Vector<Integer>();
+      for(Mounted m : ent.getWeaponList()) {
+          //link MGs to their MGA
+          //we are going to use the bayWeapon vector because we can't directly link them
+          if(m.getType().hasFlag(WeaponType.F_MGA)) {
+              for (Mounted other : ent.getWeaponList()) {
+                  int eqn = ent.getEquipmentNum(other);
+                  if (!usedMG.contains(eqn)
+                          && (m.getLocation() == other.getLocation()) 
+                          && other.getType().hasFlag(WeaponType.F_MG)   
+                          && (((WeaponType) m.getType()).getRackSize() == ((WeaponType) other.getType()).getRackSize())
+                          && !m.getBayWeapons().contains(eqn)
+                          && m.getBayWeapons().size() <= 4) {
+                      m.addWeaponToBay(eqn);
+                      usedMG.add(eqn);
+                      if(m.getBayWeapons().size() >= 4) {
+                          break;
+                      }
+                  }
+              }
+          }
+      }
+        
+        
         // need to load all those weapons in the weapon bays
         if (ent.usesWeaponBays()) {
             ent.loadAllWeapons();

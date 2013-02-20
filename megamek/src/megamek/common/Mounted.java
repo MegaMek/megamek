@@ -90,6 +90,7 @@ public class Mounted implements Serializable, RoundUpdated {
     // A list of ids (equipment numbers) for the weapons and ammo linked to
     // this bay (if the mounted is of the BayWeapon type)
     // I can also use this for weapons of the same type on a capital fighter
+    //and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<Integer>();
     private Vector<Integer> bayAmmo = new Vector<Integer>();
 
@@ -600,7 +601,11 @@ public class Mounted implements Serializable, RoundUpdated {
         // sets number of shots for MG arrays
         else if (wtype.hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
-            for (Mounted m : entity.getWeaponList()) {
+            for(int eqn : getBayWeapons()) {
+                Mounted m = entity.getEquipment(eqn);
+                if(null == m) {
+                    continue;
+                }
                 if ((m.getLocation() == getLocation())
                         && !m.isDestroyed()
                         && !m.isBreached()

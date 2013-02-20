@@ -26,6 +26,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.ITerrain;
@@ -64,6 +65,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bDirect = false;
     protected boolean nukeS2S = false;
     protected WeaponType wtype;
+    protected String typeName;
     protected Mounted weapon;
     protected Entity ae;
     protected Targetable target;
@@ -810,6 +812,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         ae = game.getEntity(waa.getEntityId());
         weapon = ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
+        typeName = wtype.getInternalName();
         target = game.getTarget(waa.getTargetType(), waa.getTargetId());
         server = s;
         subjectId = getAttackerId();
@@ -1008,5 +1011,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int getNumberWeapons() {
         return weapon.getNWeapons();
+    }
+    
+    /**
+     * Restores the equipment from the name
+     */
+    public void restore() {
+        if (typeName == null) {
+            typeName = wtype.getName();
+        } else {
+            wtype = (WeaponType)EquipmentType.get(typeName);
+        }
+
+        if (wtype == null) {
+            System.err
+                    .println("WeaponHandler.restore: could not restore equipment type \""
+                            + typeName + "\"");
+        }
     }
 }

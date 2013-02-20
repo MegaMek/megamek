@@ -126,7 +126,7 @@ public class GunEmplacement extends Tank {
 
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode) {
+            int aimingMode, int cover) {
         return rollHitLocation(table, side);
     }
 

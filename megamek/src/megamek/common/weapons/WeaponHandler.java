@@ -600,7 +600,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         missed = false;
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(wtype.isCapital());
         hit.setBoxCars(roll == 12);

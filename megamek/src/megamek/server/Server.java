@@ -461,6 +461,13 @@ public class Server implements Runnable {
             p.setGame(game);
             p.setGhost(true);
         }
+        //might need to restore weapon type for some attacks that take multiple turns (like artillery)
+        for(Enumeration<AttackHandler> a = game.getAttacks(); a.hasMoreElements();) {
+            AttackHandler handler = a.nextElement();
+            if(handler instanceof WeaponHandler) {
+                ((WeaponHandler)handler).restore();
+            }
+        }
 
     }
 

@@ -30,6 +30,7 @@ v0.35.35-dev (SVN)
 + Bug 2634: (AERO) Direct blow affecting aero crits (yes, they do!)
 + Bug 3357: Floating TAC trumps Partial Cover
 + Bug 3271: HVAC and smoke
++ Bug 3141: Arrow IV Homing direct blow does no damage
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

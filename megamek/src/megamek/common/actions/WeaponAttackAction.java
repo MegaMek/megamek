@@ -575,7 +575,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // ghost target modifier
-        if (game.getOptions().booleanOption("tacops_ghost_target")) {
+        if (game.getOptions().booleanOption("tacops_ghost_target") && !isIndirect && !isArtilleryIndirect && !isArtilleryDirect) {
             int ghostTargetMod = Compute.getGhostTargetNumber(ae, ae.getPosition(), target.getPosition());
             if ((ghostTargetMod > -1) && !((ae instanceof Infantry) && !(ae instanceof BattleArmor))) {
                 int bapMod = 0;

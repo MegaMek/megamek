@@ -788,7 +788,7 @@ public class Aero extends Entity {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
         return rollHitLocation(table, side);
     }
 

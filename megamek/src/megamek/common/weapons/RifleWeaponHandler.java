@@ -70,7 +70,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Entity) {
             te = (Entity)target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
             if (!(te instanceof BattleArmor) && !(te instanceof Infantry) && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }

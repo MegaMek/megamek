@@ -92,7 +92,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
         if (target instanceof Mech) {
             hit = new HitData(Mech.LOC_CT);
         } else { // te instanceof Tank

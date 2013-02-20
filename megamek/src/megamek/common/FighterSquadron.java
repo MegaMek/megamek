@@ -378,7 +378,7 @@ public class FighterSquadron extends Aero {
      * Fighter Squadron units can only get hit in undestroyed fighters.
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
 
         // If this squadron is doomed or is of size 1 then just return the first
         // one
@@ -402,7 +402,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
+        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
     }
 
     @Override

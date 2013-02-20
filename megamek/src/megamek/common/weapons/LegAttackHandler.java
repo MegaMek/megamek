@@ -64,7 +64,7 @@ public class LegAttackHandler extends WeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
         if (entityTarget.getInternal(hit) <= 0) {

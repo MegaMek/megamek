@@ -2052,7 +2052,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Rolls the to-hit number
      */
     public abstract HitData rollHitLocation(int table, int side,
-            int aimedLocation, int aimingMode);
+            int aimedLocation, int aimingMode, int cover);
 
     /**
      * Rolls up a hit location

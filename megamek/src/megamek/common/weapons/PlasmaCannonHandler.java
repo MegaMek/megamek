@@ -57,7 +57,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster, int bldgAbsorbs) {
 
         if (entityTarget instanceof Mech || entityTarget instanceof Aero) {
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
             hit.setGeneralDamageType(generalDamageType);
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), Compute.targetSideTable(ae, entityTarget,
                     weapon.getCalledShot().getCall()))) {

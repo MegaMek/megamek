@@ -8848,10 +8848,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((m.getLocation() == mounted.getLocation())
                     && m.getType().hasFlag(WeaponType.F_MGA)
                     && !(m.isDestroyed() || m.isBreached())
+                    && m.getBayWeapons().contains(getEquipmentNum(mounted))
                     && m.getType().hasModes()
-                    && m.curMode().equals("Linked")
-                    && (((WeaponType) m.getType()).getDamage() == ((WeaponType) mounted
-                            .getType()).getDamage())) {
+                    && m.curMode().equals("Linked")) {
                 return true;
             }
         }

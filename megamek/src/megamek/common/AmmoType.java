@@ -8689,11 +8689,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "AP Mortar 1 Ammo";
-        ammo.shortName = "Mortar AP 1";
-        ammo.setInternalName("IS Ammo AP Mortar-1");
+        ammo.name = "Shaped Charge Mortar 1 Ammo";
+        ammo.shortName = "Mortar SC 1";
+        ammo.setInternalName("IS Ammo SC Mortar-1");
         ammo.addLookupName("ISArmorPiercingMortarAmmo1");
-        ammo.addLookupName("ISAPMortarAmmo1");
+        ammo.addLookupName("ISSCMortarAmmo1");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8708,11 +8708,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "AP Mortar 2 Ammo";
-        ammo.shortName = "Mortar AP 2";
-        ammo.setInternalName("IS Ammo AP Mortar-2");
+        ammo.name = "Shaped Charge Mortar 2 Ammo";
+        ammo.shortName = "Mortar SC 2";
+        ammo.setInternalName("IS Ammo SC Mortar-2");
         ammo.addLookupName("ISArmorPiercingMortarAmmo2");
-        ammo.addLookupName("ISAPMortarAmmo2");
+        ammo.addLookupName("ISSCMortarAmmo2");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8727,11 +8727,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "AP Mortar 4 Ammo";
-        ammo.shortName = "Mortar AP 4";
-        ammo.setInternalName("IS Ammo AP Mortar-4");
+        ammo.name = "Shaped Charge Mortar 4 Ammo";
+        ammo.shortName = "Mortar SC 4";
+        ammo.setInternalName("IS Ammo SC Mortar-4");
         ammo.addLookupName("ISArmorPiercingMortarAmmo4");
-        ammo.addLookupName("ISAPMortarAmmo4");
+        ammo.addLookupName("ISSCMortarAmmo4");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8746,11 +8746,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_ADVANCED;
-        ammo.name = "AP Mortar 8 Ammo";
-        ammo.shortName = "Mortar AP 8";
-        ammo.setInternalName("IS Ammo AP Mortar-8");
+        ammo.name = "Shaped Charge Mortar 8 Ammo";
+        ammo.shortName = "Mortar SC 8";
+        ammo.setInternalName("IS Ammo SC Mortar-8");
         ammo.addLookupName("ISArmorPiercingMortarAmmo8");
-        ammo.addLookupName("ISAPMortarAmmo8");
+        ammo.addLookupName("ISSCMortarAmmo8");
         ammo.damagePerShot = 2;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8765,11 +8765,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
-        ammo.name = "AP Mortar 1 Ammo";
-        ammo.shortName = "Mortar AP 1";
-        ammo.setInternalName("Clan Ammo AP Mortar-1");
+        ammo.name = "Shaped Charge Mortar 1 Ammo";
+        ammo.shortName = "Mortar SC 1";
+        ammo.setInternalName("Clan Ammo SC Mortar-1");
         ammo.addLookupName("CLArmorPiercingMortarAmmo1");
-        ammo.addLookupName("CLAPMortarAmmo1");
+        ammo.addLookupName("CLSCMortarAmmo1");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8784,11 +8784,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
-        ammo.name = "AP Mortar 2 Ammo";
-        ammo.shortName = "Mortar AP 2";
-        ammo.setInternalName("Clan Ammo AP Mortar-2");
+        ammo.name = "Shaped Charge Mortar 2 Ammo";
+        ammo.shortName = "Mortar SC 2";
+        ammo.setInternalName("Clan Ammo SC Mortar-2");
         ammo.addLookupName("CLArmorPiercingMortarAmmo2");
-        ammo.addLookupName("CLAPMortarAmmo2");
+        ammo.addLookupName("CLSCMortarAmmo2");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8803,11 +8803,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
-        ammo.name = "AP Mortar 4 Ammo";
-        ammo.shortName = "Mortar AP 4";
-        ammo.setInternalName("Clan Ammo AP Mortar-4");
+        ammo.name = "Shaped Charge Mortar 4 Ammo";
+        ammo.shortName = "Mortar SC 4";
+        ammo.setInternalName("Clan Ammo SC Mortar-4");
         ammo.addLookupName("CLArmorPiercingMortarAmmo4");
-        ammo.addLookupName("CLAPMortarAmmo4");
+        ammo.addLookupName("CLSCMortarAmmo4");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;
@@ -8822,11 +8822,11 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_ADVANCED;
-        ammo.name = "AP Mortar 8 Ammo";
-        ammo.shortName = "Mortar AP 8";
-        ammo.setInternalName("Clan Ammo AP Mortar-8");
+        ammo.name = "Shaped Charge Mortar 8 Ammo";
+        ammo.shortName = "Mortar SC 8";
+        ammo.setInternalName("Clan Ammo SC Mortar-8");
         ammo.addLookupName("CLArmorPiercingMortarAmmo8");
-        ammo.addLookupName("CLAPMortarAmmo8");
+        ammo.addLookupName("CLSCMortarAmmo8");
         ammo.damagePerShot = 2;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_MEK_MORTAR;

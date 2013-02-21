@@ -556,6 +556,7 @@ public class MechFileParser {
                         if ((tArmoredGloveCount > 1) || (tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
                                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK), BattleArmor.LOC_SQUAD, false, false, false);
                                 ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false, false);
                                 ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false, false);
                             } catch (LocationFullException ex) {
@@ -567,6 +568,7 @@ public class MechFileParser {
                         if ((tBasicManipulatorCount > 1) || (tBattleClawCount > 0)) {
                             try {
                                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), BattleArmor.LOC_SQUAD, false, false, false);
+                                ent.addEquipment(EquipmentType.get(Infantry.SWARM_WEAPON_MEK), BattleArmor.LOC_SQUAD, false, false, false);
                                 ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), BattleArmor.LOC_SQUAD, false, false, false);
                                 ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), BattleArmor.LOC_SQUAD, false, false, false);
                             } catch (LocationFullException ex) {

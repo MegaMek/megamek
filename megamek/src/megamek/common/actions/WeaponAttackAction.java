@@ -2044,7 +2044,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
                 && (!game.getOptions().booleanOption("double_blind") || Compute
                         .canSee(game, ae, target))
-                && !(wtype instanceof ArtilleryCannonWeapon)) {
+                && !(wtype instanceof ArtilleryCannonWeapon)
+                && !(wtype instanceof MekMortarWeapon)) {
             return "Indirect-fire LRM cannot be fired with direct LOS from attacker to target.";
         }
 
@@ -2686,13 +2687,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Indirect fire option not enabled";
         }
 
-        if (isIndirect
+        if (isIndirect 
                 && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, attackerId, target).canSee()
                 && (!game.getOptions().booleanOption("double_blind") || Compute
                         .canSee(game, ae, target))
-                && !(wtype instanceof ArtilleryCannonWeapon)) {
+                && !(wtype instanceof ArtilleryCannonWeapon)
+                && !(wtype instanceof MekMortarWeapon)) {
             return "Indirect fire impossible with direct LOS";
         }
 

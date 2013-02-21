@@ -937,6 +937,7 @@ public class WeaponType extends EquipmentType {
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());
+        EquipmentType.addType(new SwarmWeaponAttack());
         EquipmentType.addType(new StopSwarmAttack());
 
         // Infantry Level 1 Weapons

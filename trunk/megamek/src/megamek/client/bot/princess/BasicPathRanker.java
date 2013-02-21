@@ -26,6 +26,7 @@ import megamek.client.bot.princess.FireControl.FiringPlan;
 import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -255,23 +256,38 @@ public class BasicPathRanker extends PathRanker {
             }
 
             // How likely is it that I will succeed in reaching this path
-            MovePath pcopy=p.clone(); //get psr calls cliptopossible, I may not want to change p
-            List<TargetRoll> targets = SharedUtility.getPSRList(pcopy);
-            double success_probability = 1.0;
+            MovePath pathCopy = p.clone(); //get psr calls cliptopossible, I may not want to change p
+            List<TargetRoll> targets = SharedUtility.getPSRList(pathCopy);
+            double successProbability = 1.0;
             for (TargetRoll t : targets) {
-                success_probability *= Compute.oddsAbove(t.getValue()) / 100.0;
+                successProbability *= Compute.oddsAbove(t.getValue()) / 100.0;
+            }
+
+            //Try not to jump on buildings that cannot support our weight.
+            Coords finalCoords = pathCopy.getFinalCoords();
+            if (finalCoords != null) {
+                Building b = game.getBoard().getBuildingAt(finalCoords);
+                if ((b != null) && (pathCopy.isJumping() || b.getBasement() > Building.NOBASEMENT)) {
+                    owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
+                            "Final hex is on top of a building...");
+                    if (b.getCurrentCF(finalCoords) < pathCopy.getEntity().getWeight()) {
+                        owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
+                                "\tthat cannot hold my weight.");
+                        return -1000;
+                    }
+                }
             }
 
             // Factor the possibility of MASC failure in like a PSR (even though the penalty is
             // significantly higher).
             if (p.hasActiveMASC()) {
-                success_probability *= Compute.oddsAbove(p.getEntity().getMASCTarget()) / 100.0;
+                successProbability *= Compute.oddsAbove(p.getEntity().getMASCTarget()) / 100.0;
             }
             // Lets assume that I will fall if I fail. What's my expected damage
             // (and embarrassment) from that?
             int fall_damage = (int) (p.getEntity().getWeight() / 10);
             double expected_fall_damage = (fall_damage + fall_shame)
-                    * (1.0 - success_probability);
+                    * (1.0 - successProbability);
 
             // look at all of my enemies
             ArrayList<Entity> enemies = getEnemies(p.getEntity(), game);
@@ -362,7 +378,7 @@ public class BasicPathRanker extends PathRanker {
             // damage after I've looked at all enemies
             maximum_damage_done += maximum_physical_damage;
 
-            double utility = (success_probability
+            double utility = (successProbability
                     * ((maximum_damage_done * foolish_bravery) - expected_damage_taken))
                     - expected_fall_damage;
 

@@ -16,6 +16,9 @@ package megamek.common;
 
 import java.util.Vector;
 
+import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.infantry.InfantryWeapon;
+
 /**
  * This class represents a squad or point of battle armor equiped infantry,
  * sometimes referred to as "Elementals". Much of the behaviour of a battle
@@ -199,12 +202,6 @@ public class BattleArmor extends Infantry {
     public static final int LOC_TROOPER_4 = 4;
     public static final int LOC_TROOPER_5 = 5;
     public static final int LOC_TROOPER_6 = 6;
-
-    /**
-     * have all of this units attacks during a swarm attack already been
-     * resolved?
-     */
-    private boolean attacksDuringSwarmResolved = false;
 
     private boolean exoskeleton = false;
 
@@ -940,7 +937,6 @@ public class BattleArmor extends Infantry {
                 m.setMode("Single");
             }
         }
-        attacksDuringSwarmResolved = false;
     }
 
     /**
@@ -1626,27 +1622,6 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * have all attacks this BA made while swarming a unit already been resolved
-     * this turn?
-     *
-     * @return
-     */
-    public boolean isAttacksDuringSwarmResolved() {
-        return attacksDuringSwarmResolved;
-    }
-
-    /**
-     * set wether or not all attacks this BA made while swarming a unit have
-     * already been resolved
-     *
-     * @param resolved
-     *            - a <code>boolean</code>
-     */
-    public void setAttacksDuringSwarmResolved(boolean resolved) {
-        attacksDuringSwarmResolved = resolved;
-    }
-
-    /**
      * can this BattleArmor ride as Mechanized BA?
      *
      * @return
@@ -1737,5 +1712,40 @@ public class BattleArmor extends Infantry {
     @Override
     public boolean isDmgLight() {
         return (((double)getNumberActiverTroopers() / getSquadSize()) < 0.9);
+    }
+    
+    public int calculateSwarmDamage() {
+        int damage = 0;
+        for(Mounted m : getWeaponList()) {
+            WeaponType wtype;
+            if(m.getType() instanceof WeaponType) {
+                wtype = (WeaponType)m.getType();
+                if (wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    continue;
+                }
+                if (m.isBodyMounted()) {
+                    continue;
+                }
+                if(wtype instanceof InfantryWeapon) {
+                    continue;
+                }
+                if(wtype instanceof InfantryAttack) {
+                    continue;
+                }
+                int addToDamage = wtype.getDamage(0);
+                if(addToDamage < 0) {
+                    continue;
+                }
+                // if it's a squad mounted weapon, each trooper hits
+                if (m.getLocation() == BattleArmor.LOC_SQUAD) {
+                    addToDamage *= getShootingStrength();
+                }
+                damage += addToDamage;
+            }
+        }
+        if (hasMyomerBooster()) {
+            damage += getTroopers() * 2;
+        }
+        return damage;
     }
 } // End public class BattleArmor extends Infantry implements Serializable

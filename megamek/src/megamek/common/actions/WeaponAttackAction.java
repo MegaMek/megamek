@@ -547,11 +547,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM
                     : ToHitData.SIDE_FRONT;
             if (ae instanceof BattleArmor) {
+                if(!Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName())
+                        && !(wtype instanceof InfantryAttack)) {
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Use the 'Attack Swarmed Mek' attack instead");
+                }
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                        "Attack during swarm.", ToHitData.HIT_SWARM, side);
+                        "swarming", ToHitData.HIT_SWARM, side);
             }
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Attack during swarm.", ToHitData.HIT_SWARM_CONVENTIONAL,
+                    "swarming", ToHitData.HIT_SWARM_CONVENTIONAL,
                     side);
         } else if (isArtilleryFLAK) {
             toHit = new ToHitData(9, "artillery Flak");

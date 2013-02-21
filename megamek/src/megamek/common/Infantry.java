@@ -141,6 +141,7 @@ public class Infantry extends Entity {
      */
     public static final String LEG_ATTACK = "LegAttack";
     public static final String SWARM_MEK = "SwarmMek";
+    public static final String SWARM_WEAPON_MEK = "SwarmWeaponMek";
     public static final String STOP_SWARM = "StopSwarm";
 
     @Override

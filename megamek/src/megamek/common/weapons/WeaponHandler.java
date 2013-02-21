@@ -174,43 +174,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.add(r);
             return toReturn;
         }
-        // HACK: during a swarm, when they are not already resolved,
-        // get any other attacks by this unit at the target that
-        // are also automatic successes, and add their damage
-        // if they have already been resolved, just report how much they added
-        // to the damage
-        if (ae instanceof BattleArmor) {
-            BattleArmor ba = (BattleArmor)ae;
-            if (!ba.isAttacksDuringSwarmResolved()) {
-                for (AttackHandler ah : server.getGame().getAttacksVector()) {
-                    if ((ah.getAttackerId() == subjectId)
-                            && !(ah.equals(this))
-                            && (ah.getWaa().getTargetId() == target.getTargetId())
-                            && (((WeaponHandler)ah).toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS)) {
-                        WeaponType baWType = (WeaponType)ba.getEquipment(ah.getWaa().getWeaponId()).getType();
-                        // damage to add to the original attack's damage,
-                        // so we apply one block of damage to the target
-                        int addToDamage = baWType.getDamage(nRange);
-                        // if it's a squad mounted weapon, each trooper hits
-                        if (ba.getEquipment().get(ah.getWaa().getWeaponId()).getLocation() == BattleArmor.LOC_SQUAD) {
-                            addToDamage *= ba.getShootingStrength();
-                        }
-                        nDamPerHit += addToDamage;
-                    }
-                    if (ba.hasMyomerBooster()) {
-                        nDamPerHit += ba.getTroopers() * 2;
-                    }
-                }
-                ba.setAttacksDuringSwarmResolved(true);
-            } else {
-                Report r = new Report(3375);
-                r.subject = subjectId;
-                r.add(wtype.getDamage(nRange));
-                r.indent(2);
-                vPhaseReport.add(r);
-                return 0;
-            }
-        }
         return 1;
     }
 
@@ -495,14 +458,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
-        // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
-            BattleArmor ba = (BattleArmor)ae;
-            if (weapon.getLocation() == BattleArmor.LOC_SQUAD) {
-                toReturn *= ba.getShootingStrength();
-            }
-        }
         // we default to direct fire weapons for anti-infantry damage
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());

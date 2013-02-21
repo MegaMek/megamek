@@ -33,6 +33,7 @@ v0.35.35-dev (SVN)
 + Bug 3141: Arrow IV Homing direct blow does no damage
 + Patch 443: Hull Down Vehicle Partial Fix
 + Bug 3205: Multiple MG Arrays in 1 location always fire all MGs
++ Don't register with serverbrowser by default
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

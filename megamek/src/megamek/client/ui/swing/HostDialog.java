@@ -71,7 +71,7 @@ public class HostDialog extends JDialog implements ActionListener {
         metaserverL.setEnabled(register);
         metaserverF.setEnabled(register);
         registerC = new JCheckBox(Messages.getString("MegaMek.registerC")); //$NON-NLS-1$
-        register = true;
+        register = false;
         registerC.setSelected(register);
         metaserverL.setEnabled(registerC.isSelected());
         metaserverF.setEnabled(registerC.isSelected());

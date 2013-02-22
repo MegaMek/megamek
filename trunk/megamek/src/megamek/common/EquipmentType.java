@@ -65,6 +65,9 @@ public class EquipmentType {
     public static final int T_ARMOR_FERRO_LAMELLOR = 16;
     public static final int T_ARMOR_PRIMITIVE = 17;
     public static final int T_ARMOR_EDP = 18;
+    public static final int T_ARMOR_ALUM = 19;
+    public static final int T_ARMOR_HEAVY_ALUM = 20;
+    public static final int T_ARMOR_LIGHT_ALUM = 21;
 
     public static final int T_STRUCTURE_UNKNOWN = -1;
     public static final int T_STRUCTURE_STANDARD = 0;
@@ -80,7 +83,7 @@ public class EquipmentType {
           "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
           "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
           "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial",
-          "Heavy Industrial", "Ferro-Lamellor", "Primitive", "Electric Discharge ProtoMech" };
+          "Heavy Industrial", "Ferro-Lamellor", "Primitive", "Electric Discharge ProtoMech", "Ferro-Aluminum", "Heavy Ferro-Aluminum", "Light Ferro-Aluminum" };
 
     public static final String[] structureNames =
         { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Endo-Composite" };
@@ -91,10 +94,10 @@ public class EquipmentType {
 
     // Assume for now that prototype is not more expensive
     public static final double[] armorCosts =
-        { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork*/0, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000};
+        { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork*/0, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000, 25000, 15000};
 
     public static final double[] armorPointMultipliers =
-        { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1 };
+        { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1, 1.12, 1.24, 1.06 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
@@ -625,6 +628,9 @@ public class EquipmentType {
             return POINT_MULTIPLIER_UNKNOWN;
         }
         if ((inArmor == T_ARMOR_FERRO_FIBROUS) && clanArmor) {
+            return POINT_MULTIPLIER_CLAN_FF;
+        }
+        if ((inArmor == T_ARMOR_ALUM) && clanArmor) {
             return POINT_MULTIPLIER_CLAN_FF;
         }
         return armorPointMultipliers[inArmor];

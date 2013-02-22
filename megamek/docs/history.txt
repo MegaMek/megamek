@@ -39,6 +39,7 @@ v0.35.35-dev (SVN)
 + Bug 3341: Weapons deal no dmg during swarmattack
 + Bug 3268: Mech Mortar Ammo
 + Bug 3338: MechMortars and IF
++ Bug 3588: C3 Networks not loading
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

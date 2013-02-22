@@ -290,7 +290,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
                     .size();
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
-                entity.setC3Master(chosen);
+                entity.setC3Master(chosen, true);
             } else {
                 String message = Messages
                         .getString(

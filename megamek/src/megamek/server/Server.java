@@ -24734,13 +24734,18 @@ public class Server implements Runnable {
                     if ((entity.getC3MasterIsUUIDAsString() != null)
                             && entity.getC3MasterIsUUIDAsString().equals(
                                     e.getC3UUIDAsString())) {
-                        entity.setC3Master(e);
+                        entity.setC3Master(e, false);
                         entity.setC3MasterIsUUIDAsString(null);
                     } else if ((e.getC3MasterIsUUIDAsString() != null)
                             && e.getC3MasterIsUUIDAsString().equals(
                                     entity.getC3UUIDAsString())) {
-                        e.setC3Master(entity);
+                        e.setC3Master(entity, false);
                         e.setC3MasterIsUUIDAsString(null);
+                        //Taharqa: we need to update the other entity for the client
+                        //or it won't show up right. I am not sure if I like
+                        //the idea of updating other entities in this method, but it 
+                        //will work for now.
+                        entityUpdate(e.getId());
                     }
                 }
 

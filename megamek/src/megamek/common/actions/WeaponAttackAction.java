@@ -2427,6 +2427,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (isTAG && (te instanceof Infantry)) {
             return "Can not target infantry with TAG.";
         }
+        
+        // The TAG system cannot target Airborne Aeros.
+        if (isTAG && (te.isAirborne() || te.isSpaceborne())) {
+            return "Can not target airborne units with TAG.";
+        }
+        
+        //Airborne units cannot tag and attack
+        //http://bg.battletech.com/forums/index.php?topic=17613.new;topicseen#new
+        if(ae.isAirborne() && ae.usedTag()) {
+            return "Airborne units cannot fire TAG and other weapons in the same turn.";
+        }
 
         // capital fighters cannot use more heat than they have heat sinks to
         // dissipate

@@ -4489,22 +4489,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param e
      *            - the <code>Entity</code> that should be set as our C3 Master.
      */
-    public void setC3Master(Entity e) {
+    public void setC3Master(Entity e, boolean reset) {
         if (e == null) {
-            setC3Master(NONE);
+            setC3Master(NONE, reset);
         } else {
             if (isEnemyOf(e)) {
                 return;
             }
-            setC3Master(e.id);
+            setC3Master(e.id, reset);
         }
     }
 
     /**
      * @param entityId
      */
-    public void setC3Master(int entityId) {
-        if ((id == entityId) != (id == c3Master)) {
+    public void setC3Master(int entityId, boolean reset) {
+        if (reset && (id == entityId) != (id == c3Master)) {
             // this just changed from a company-level to lance-level (or vice
             // versa); have to disconnect all slaved units to maintain
             // integrity.
@@ -4512,7 +4512,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .hasMoreElements();) {
                 final Entity e = i.nextElement();
                 if (e.C3MasterIs(this) && !equals(e)) {
-                    e.setC3Master(NONE);
+                    e.setC3Master(NONE, reset);
                 }
             }
         }

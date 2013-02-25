@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -268,7 +269,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         // assumption: homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2);
+        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, false);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
             for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
@@ -284,9 +285,20 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit
                         .getSideTable(), waa.getAimedLocation(), waa
                         .getAimingMode(), toHit.getCover());
-                vPhaseReport.addAll(server.damageEntity(entity, hit,
-                        ratedDamage, false, DamageType.NONE, false, true,
-                        throughFront, underWater));
+                // BA gets damage to all troopers
+                if (entity instanceof BattleArmor) {
+                    BattleArmor ba = (BattleArmor)entity;
+                    for (int loc = 1; loc <= ba.getTroopers(); loc++) {
+                        hit.setLocation(loc);
+                        vPhaseReport.addAll(server.damageEntity(entity, hit,
+                                ratedDamage, false, DamageType.NONE, false, true,
+                                throughFront, underWater));
+                    }
+                } else {
+                    vPhaseReport.addAll(server.damageEntity(entity, hit,
+                            ratedDamage, false, DamageType.NONE, false, true,
+                            throughFront, underWater));
+                }
                 server.creditKill(entity, ae);
             }
         }
@@ -313,7 +325,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         Vector<TagInfo> allowed = new Vector<TagInfo>();
         //get only TagInfo on the same side
         for (TagInfo ti : v) {
-            if (ae.isEnemyOf(game.getEntity(ti.targetId))) {
+            if (ae.isEnemyOf(game.getEntity(ti.targetId)) || game.getOptions().booleanOption("friendly_fire")) {
                 allowed.add(ti);
             }
         }

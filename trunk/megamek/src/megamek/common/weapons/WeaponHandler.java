@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -41,7 +42,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.AmmoType;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -186,7 +186,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int calcnCluster() {
         return 1;
     }
-    
+
     protected int calcnClusterAero(Entity entityTarget) {
     	if(usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
     		return 5;
@@ -208,7 +208,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         boolean heatAdded = false;
         int numAttacks = 1;
-        if (game.getOptions().booleanOption("uac_tworolls") && (wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) && !weapon.curMode().equals("Single")) {
+        if (game.getOptions().booleanOption("uac_tworolls") && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) && !weapon.curMode().equals("Single")) {
             numAttacks = 2;
         }
 
@@ -308,7 +308,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 addHeat();
                 heatAdded = true;
             }
-            
+
             attackValue = calcAttackValue();
 
             // Any necessary PSRs, jam checks, etc.
@@ -321,12 +321,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             // Do we need some sort of special resolution (minefields, artillery,
-            if (specialResolution(vPhaseReport, entityTarget) && i < 2) {
+            if (specialResolution(vPhaseReport, entityTarget) && (i < 2)) {
                 return false;
             }
 
             if (bMissed && !missReported) {
-                if (game.getOptions().booleanOption("uac_tworolls") && (wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) && i == 2) {
+                if (game.getOptions().booleanOption("uac_tworolls") && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) && (i == 2)) {
                     reportMiss(vPhaseReport, true);
                 } else {
                 reportMiss(vPhaseReport);
@@ -335,7 +335,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // Works out fire setting, AMS shots, and whether continuation is
                 // necessary.
                 if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
-                        vPhaseReport) && i < 2) {
+                        vPhaseReport) && (i < 2)) {
                     return false;
                 }
             }
@@ -426,7 +426,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                 } // Handle the next cluster.
             } // End hit target
-            if (game.getOptions().booleanOption("uac_tworolls") && (wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) && i == 2) {
+            if (game.getOptions().booleanOption("uac_tworolls") && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) && (i == 2)) {
                 // Jammed weapon doesn't get 2nd shot...
                 if (isJammed) {
                     r = new Report(9905);
@@ -434,7 +434,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.subject = ae.getId();
                     vPhaseReport.addElement(r);
                     i--;
-                } else {  // If not jammed, it gets the second shot...    
+                } else {  // If not jammed, it gets the second shot...
                     r = new Report(9900);
                     r.indent();
                     r.subject = ae.getId();
@@ -657,7 +657,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         // If a BA squad is shooting at conventional infantry, damage may need to be
         // rerolled for the next attack (if any).
-        if (ae instanceof BattleArmor && target instanceof Infantry
+        if ((ae instanceof BattleArmor) && (target instanceof Infantry)
                 && !(target instanceof BattleArmor)) {
             nDamPerHit = calcDamagePerHit();
         }
@@ -682,7 +682,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {
-        if (!bSalvo) {
+        handleClearDamage(vPhaseReport, bldg, nDamage, true);
+    }
+
+    protected void handleClearDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean hitReport) {
+        if (!bSalvo && hitReport) {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
@@ -967,7 +972,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int getNumberWeapons() {
         return weapon.getNWeapons();
     }
-    
+
     /**
      * Restores the equipment from the name
      */

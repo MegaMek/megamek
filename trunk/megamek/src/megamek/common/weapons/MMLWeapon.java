@@ -77,6 +77,9 @@ public abstract class MMLWeapon extends MissileWeapon {
             if (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER) {
                 return new LRMFollowTheLeaderHandler(toHit, waa, game, server);
             }
+            if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+                return new LRMSmokeWarheadHandler(toHit, waa, game, server);
+            }
 
             return new LRMHandler(toHit, waa, game, server);
 
@@ -98,6 +101,9 @@ public abstract class MMLWeapon extends MissileWeapon {
         }
         if (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE) {
             return new SRMTandemChargeHandler(toHit, waa, game, server);
+        }
+        if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+            return new SRMSmokeWarheadHandler(toHit, waa, game, server);
         }
 
         return new SRMHandler(toHit, waa, game, server);

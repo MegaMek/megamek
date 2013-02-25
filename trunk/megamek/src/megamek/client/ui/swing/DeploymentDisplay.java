@@ -649,7 +649,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     } // End public void actionPerformed(ActionEvent ev)
 
     @Override
-    protected void clear() {
+    public void clear() {
         beginMyTurn();
     }
 

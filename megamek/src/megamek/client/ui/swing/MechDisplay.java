@@ -268,7 +268,7 @@ public class MechDisplay extends JPanel {
             MechDisplayListener lis = eventListeners.get(i);
             switch (event.getType()) {
             case MechDisplayEvent.WEAPON_SELECTED:
-                lis.WeaponSelected(event);
+                lis.weaponSelected(event);
                 break;
             default:
                 System.err.println("unknown event " + event.getType()

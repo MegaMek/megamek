@@ -756,7 +756,7 @@ public class BoardView3D extends Canvas3D implements megamek.client.ui.IBoardVie
         refreshDisplayables();
     }
 
-    public void WeaponSelected(MechDisplayEvent b) {
+    public void weaponSelected(MechDisplayEvent b) {
         attacks.setSelected(b.getEntity(), b.getEquip(), localPlayer);
         hoverInfo.setSelected(b.getEntity(), b.getEquip(), localPlayer);
         refreshDisplayables();

@@ -34,5 +34,5 @@ public interface MechDisplayListener extends java.util.EventListener {
      * 
      * @param b an event
      */
-    public void WeaponSelected(MechDisplayEvent b);
+    public void weaponSelected(MechDisplayEvent b);
 }

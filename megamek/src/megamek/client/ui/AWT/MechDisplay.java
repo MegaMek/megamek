@@ -263,7 +263,7 @@ public class MechDisplay extends BufferedPanel {
             MechDisplayListener lis = eventListeners.elementAt(i);
             switch (event.getType()) {
             case MechDisplayEvent.WEAPON_SELECTED:
-                lis.WeaponSelected(event);
+                lis.weaponSelected(event);
                 break;
             default:
                 System.err.println("unknown event " + event.getType()

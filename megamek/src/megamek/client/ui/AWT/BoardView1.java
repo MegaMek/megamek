@@ -5453,7 +5453,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
     }
 
-    public synchronized void WeaponSelected(MechDisplayEvent b) {
+    public synchronized void weaponSelected(MechDisplayEvent b) {
         selectedEntity = b.getEntity();
         selectedWeapon = b.getEquip();
         repaint(100);

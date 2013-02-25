@@ -507,7 +507,8 @@ public final class Player extends TurnOrdered {
         int commandb = 0;
         if (game.getOptions().booleanOption("command_init")) {
             for (Entity entity : game.getEntitiesVector()) {
-                if (entity.getOwner().equals(this)
+                if (null != entity.getOwner() 
+                        && entity.getOwner().equals(this)
                         && !entity.isDestroyed()
                         && entity.isDeployed()
                         && !entity.isOffBoard()

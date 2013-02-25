@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2000,2001,2002,2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -30,7 +30,7 @@ public class HitData {
     public static final int DAMAGE_BALLISTIC = -5;
     public static final int DAMAGE_ARMOR_PIERCING = -6;
     public static final int DAMAGE_ARMOR_PIERCING_MISSILE = -7;
-    
+
     private int location;
     private boolean rear;
     private int effect;
@@ -51,8 +51,8 @@ public class HitData {
     //need to keep track of the attack value for a single attack in the case of fighter squadrons
     //probably not the best place for this, but I don't want to add another parameter to damageEntity
     private int singleAV = -1;
-    
-    
+
+
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
     }
@@ -75,7 +75,7 @@ public class HitData {
                 HitData.DAMAGE_NONE);
 
     }
-    
+
     public HitData(int location, boolean rear, int effect,
             boolean hitAimedLocation, int specCrit, boolean fromWhere,
             int damageType) {
@@ -90,9 +90,9 @@ public class HitData {
         this.rear = rear;
         this.effect = effect;
         this.hitAimedLocation = hitAimedLocation;
-        this.specCritMod = specCrit;
-        this.fromFront = fromWhere;
-        this.generalDamageType = damageType;
+        specCritMod = specCrit;
+        fromFront = fromWhere;
+        generalDamageType = damageType;
         this.glancing = glancing;
     }
 
@@ -105,23 +105,24 @@ public class HitData {
     }
 
     public void makeArmorPiercing(AmmoType inType, int modifer) {
-        if (inType.getRackSize() == 2)
+        if (inType.getRackSize() == 2) {
             specCritMod = -4;
-        else if (inType.getRackSize() == 4)
+        } else if (inType.getRackSize() == 4) {
             specCritMod = -4;
-        else if (inType.getRackSize() == 5)
+        } else if (inType.getRackSize() == 5) {
             specCritMod = -3;
-        else if (inType.getRackSize() == 6)
+        } else if (inType.getRackSize() == 6) {
             specCritMod = -3;
-        else if (inType.getRackSize() == 8)
+        } else if (inType.getRackSize() == 8) {
             specCritMod = -3;
-        else if (inType.getRackSize() == 10)
+        } else if (inType.getRackSize() == 10) {
             specCritMod = -2;
-        else if (inType.getRackSize() == 15)
+        } else if (inType.getRackSize() == 15) {
             specCritMod = -2;
-        else if (inType.getRackSize() == 20)
+        } else if (inType.getRackSize() == 20) {
             specCritMod = -1;
-        
+        }
+
         specCritMod += modifer;
     }
 
@@ -132,7 +133,7 @@ public class HitData {
     public void makeDirectBlow(int mod){
         glancing = mod;
     }
-    
+
     public int glancingMod() {
         return glancing;
     }
@@ -148,7 +149,7 @@ public class HitData {
     public boolean isRear() {
         return rear;
     }
-    
+
     public int getEffect() {
         return effect;
     }
@@ -182,8 +183,8 @@ public class HitData {
     }
 
     public void makeFallDamage(boolean fall) {
-        this.fallDamage = fall;
-        this.generalDamageType = HitData.DAMAGE_PHYSICAL;
+        fallDamage = fall;
+        generalDamageType = HitData.DAMAGE_PHYSICAL;
     }
 
     public boolean isFallDamage() {
@@ -195,47 +196,51 @@ public class HitData {
     }
 
     public void setGeneralDamageType(int type) {
-        this.generalDamageType = type;
+        generalDamageType = type;
     }
-    
+
     public void setCapital(boolean b) {
-        this.capital = b;
+        capital = b;
     }
-    
+
     public boolean isCapital() {
         return capital;
     }
 
-    
+
     public int getCapMisCritMod() {
         return capMisCritMod;
     }
-    
+
     public void setCapMisCritMod(int m) {
-        this.capMisCritMod = m;
+        capMisCritMod = m;
     }
-    
+
     public void setBoxCars(boolean b) {
-        this.boxcars = b;
+        boxcars = b;
     }
-    
+
     public boolean rolledBoxCars() {
         return boxcars;
     }
-    
+
     public void setBurstFire(boolean b) {
-        this.burstFire = b;
+        burstFire = b;
     }
-    
+
     public boolean isBurstFire() {
         return burstFire;
     }
-    
+
     public void setSingleAV(int i) {
-        this.singleAV = i;
+        singleAV = i;
     }
-    
+
     public int getSingleAV() {
         return singleAV;
+    }
+
+    public void setLocation(int location) {
+        this.location = location;
     }
 }

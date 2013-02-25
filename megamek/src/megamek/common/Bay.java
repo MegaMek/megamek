@@ -162,7 +162,9 @@ public class Bay implements Transporter {
         }
 
         currentSpace -= 1;
-        loadedThisTurn += 1;
+        if(unit.game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT && unit.game.getPhase() != IGame.Phase.PHASE_LOUNGE) {
+                loadedThisTurn += 1;
+        }
 
         // Add the unit to our list of troops.
         troops.addElement(unit);

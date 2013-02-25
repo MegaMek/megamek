@@ -2675,15 +2675,35 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         names[loop] = currentFighters.elementAt(loop)
                                 .getShortName();
                     }
+                    
+                    boolean doIt = false;
                     ChoiceDialog choiceDialog = new ChoiceDialog(
                             clientgui.frame,
                             Messages
                                     .getString(
                                             "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
                                             currentBay.getType(), bayNum }),
-                            question, names);
-                    choiceDialog.setVisible(true);
-                    if (choiceDialog.getAnswer() == true) {
+                            question, names);;
+                    while(!doIt) {
+                        choiceDialog = new ChoiceDialog(
+                                clientgui.frame,
+                                Messages
+                                        .getString(
+                                                "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
+                                                currentBay.getType(), bayNum }),
+                                question, names);
+                        choiceDialog.setVisible(true);
+                        if(choiceDialog.getChoices().length > (doors * 2)) {
+                            ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages
+                                    .getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.ConfirmLaunch"), true);
+                            nag.setVisible(true);
+                            doIt = nag.getAnswer();
+                        } else {
+                            doIt = true;
+                        }
+                    }
+                    if (choiceDialog.getAnswer() == true && doIt) {
                         // load up the choices
                         int[] unitsLaunched = choiceDialog.getChoices();
                         for (int element : unitsLaunched) {

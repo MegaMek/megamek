@@ -259,7 +259,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     } // End public void actionPerformed(ActionEvent ev)
 
     @Override
-    protected void clear() {
+    public void clear() {
         //TODO no clear action currently defined
     }
 

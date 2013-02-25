@@ -396,7 +396,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    protected void clear() {
+    public void clear() {
         //TODO: undefined for now
     }
 

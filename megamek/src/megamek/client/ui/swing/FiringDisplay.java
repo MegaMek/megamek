@@ -1619,7 +1619,7 @@ KeyListener, ItemListener, ListSelectionListener {
     }
 
     @Override
-    protected void clear() {
+    public void clear() {
         clearAttacks();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);

@@ -1137,7 +1137,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * Clears out the currently selected movement data and resets it.
      */
     @Override
-    protected void clear() {
+    public void clear() {
         final Entity ce = ce();
 
         // switch back from swimming to normal mode.

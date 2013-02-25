@@ -482,7 +482,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * Clears all current actions
      */
     @Override
-    protected void clear() {
+    public void clear() {
         if (attacks.size() > 0) {
             attacks.removeAllElements();
         }

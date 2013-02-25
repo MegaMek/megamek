@@ -574,9 +574,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         waitD.setSize(250, 130);
         // move to middle of screen
         waitD.setLocation(
-                frame.getSize().width / 2 - waitD.getSize().width / 2, frame
+                (frame.getSize().width / 2) - (waitD.getSize().width / 2), (frame
                         .getSize().height
-                        / 2 - waitD.getSize().height / 2);
+                        / 2) - (waitD.getSize().height / 2));
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -652,8 +652,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     private void boardSaveAsImage() {
         JFileChooser fc = new JFileChooser(".");
-        fc
-                .setLocation(frame.getLocation().x + 150,
+        fc.setLocation(frame.getLocation().x + 150,
                         frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
@@ -667,17 +666,6 @@ public class BoardEditor extends JComponent implements ItemListener,
                 return ".png";
             }
         });
-        // Default to the board's name (if it has one).
-        String fileName;
-        if ((curfile != null) && (curfile.length() > 0)) {
-            fileName = curfile.getName().toUpperCase();
-            if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
-                int length = fileName.length();
-                fileName = fileName.substring(0, length - 6);
-            }
-            fileName = fileName.toLowerCase() + ".png"; //$NON-NLS-1$
-            fc.setSelectedFile(new File(fileName));
-        }
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION)
                 || (fc.getSelectedFile() == null)) {

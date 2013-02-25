@@ -48,7 +48,8 @@ v0.35.35-dev (SVN)
 + Bug 3619: Dropship can't load to full capacity
 + Bug 2855: esc to clear fire not always working 
 + Bug 2637: (AERO) No warning messages on unsafe launches
-+ Bug 2806: Homing Arrows & Collateral damage vs. BA 
++ Bug 2806: Homing Arrows & Collateral damage vs. BA
++ Bug 2963: save board as image saves in wrong folder 
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

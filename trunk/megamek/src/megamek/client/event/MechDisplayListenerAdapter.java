@@ -32,6 +32,6 @@ public class MechDisplayListenerAdapter implements MechDisplayListener {
      * 
      * @param b an event
      */
-    public void WeaponSelected(MechDisplayEvent b) {
+    public void weaponSelected(MechDisplayEvent b) {
     }
 }

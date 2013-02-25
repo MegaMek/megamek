@@ -5439,7 +5439,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
         }
     }
 
-    public synchronized void WeaponSelected(MechDisplayEvent b) {
+    public synchronized void weaponSelected(MechDisplayEvent b) {
         selectedEntity = b.getEntity();
         selectedWeapon = b.getEquip();
         repaint();

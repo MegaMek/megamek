@@ -19451,10 +19451,13 @@ public class Server implements Runnable {
         }
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjcent hexes
-        if (ammoExplosion
-                && game.getOptions().booleanOption("tacops_ammunition")
+        // But, this does not apply to CASE'd units and it only applies if the ammo explosion 
+        // destroyed the unit
+        if (ammoExplosion 
+                && game.getOptions().booleanOption("tacops_ammunition")                        
+                && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit.getLocation()))    
+                && (te.isDestroyed() || te.isDoomed())
                 && (damage_orig > 0) && ((damage_orig / 10) > 0)) {
-
             Report.addNewline(vDesc);
             r = new Report(5068, Report.PUBLIC);
             r.subject = te.getId();
@@ -19468,7 +19471,7 @@ public class Server implements Runnable {
             vDesc.add(r);
             int[] damages = { (int) Math.floor(damage_orig / 10),
                     (int) Math.floor(damage_orig / 20) };
-            doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5);
+            doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5, te.getId());
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();
@@ -19638,15 +19641,15 @@ public class Server implements Runnable {
             Vector<Report> vDesc, Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10),
                 (engineRating / 20), (engineRating / 40) };
-        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5);
+        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1);
     }
-
+    
     /**
      * General function to cause explosions in areas.
      */
     public void doExplosion(int damage, int degredation,
             boolean autoDestroyInSameHex, Coords position,
-            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits) {
+            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits, int excludedUnitId) {
 
         if (degredation < 1) {
             return;
@@ -19663,7 +19666,7 @@ public class Server implements Runnable {
             myDamages[x] = myDamages[x - 1] - degredation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter,
-                vDesc, vUnits, 5);
+                vDesc, vUnits, 5, excludedUnitId);
     }
 
     /**
@@ -19671,7 +19674,7 @@ public class Server implements Runnable {
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex,
             Coords position, boolean allowShelter, Vector<Report> vDesc,
-            Vector<Integer> vUnits, int clusterAmt) {
+            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId) {
         if (vDesc == null) {
             vDesc = new Vector<Report>();
         }
@@ -19716,6 +19719,10 @@ public class Server implements Runnable {
                 continue;
             }
 
+            if(entity.getId() == excludedUnitId) {
+                continue;
+            }
+             
             if (entity.isDestroyed() || !entity.isDeployed()) {
                 // FIXME
                 // IS this the behavior we want?
@@ -20087,7 +20094,7 @@ public class Server implements Runnable {
         Vector<Report> tmpV = new Vector<Report>();
         Vector<Integer> blastedUnitsVec = new Vector<Integer>();
         doExplosion(baseDamage, degredation, true, position, true, tmpV,
-                blastedUnitsVec);
+                blastedUnitsVec, -1);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
@@ -27186,7 +27193,7 @@ public class Server implements Runnable {
                         Vector<Report> vRep = new Vector<Report>();
                         doExplosion(((FuelTank) bldg).getMagnitude(), 10,
                                 false, bldg.getCoords().nextElement(), true,
-                                vRep, null);
+                                vRep, null, -1);
                         Report.indentAll(vRep, 2);
                         vPhaseReport.addAll(vRep);
                         return vPhaseReport;
@@ -27367,7 +27374,7 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     Vector<Report> vRep = new Vector<Report>();
                     doExplosion(((FuelTank) bldg).getMagnitude(), 10, false,
-                            bldg.getCoords().nextElement(), true, vRep, null);
+                            bldg.getCoords().nextElement(), true, vRep, null, -1);
                     Report.indentAll(vRep, 2);
                     vDesc.addAll(vRep);
                     return vPhaseReport;

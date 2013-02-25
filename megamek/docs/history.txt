@@ -43,6 +43,7 @@ v0.35.35-dev (SVN)
 + Bug 3101: Aerospace TAG Has Incorrect Range
 + Bug 2527: Ferro Alluminium Armour listed as Ferro Fiberous
 + Bug 3642: Frozen in heat phase (partial fix)
++ Bug 3644: Fighter hit by own inferno bomb
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

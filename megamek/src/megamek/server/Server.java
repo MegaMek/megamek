@@ -29637,6 +29637,9 @@ public class Server implements Runnable {
         for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
                 .hasMoreElements();) {
             Entity entity = impactHexHits.nextElement();
+            if(entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+                continue;
+            }
             // TacOps, p. 359 - treat as if hit by 5 inferno missiles
             r = new Report(6696);
             r.indent(3);

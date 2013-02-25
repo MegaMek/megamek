@@ -45,6 +45,7 @@ v0.35.35-dev (SVN)
 + Bug 3642: Frozen in heat phase (partial fix)
 + Bug 3644: Fighter hit by own inferno bomb
 + Bug 3556: Secondary ammo explosion damage negates CASE
++ Bug 3619: Dropship can't load to full capacity
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -38,10 +38,10 @@ import javax.swing.event.ListSelectionListener;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.common.Dropship;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
@@ -51,7 +51,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
@@ -62,6 +61,7 @@ import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.weapons.ArtilleryWeapon;
 
 /*
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -1110,7 +1110,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     @Override
-    protected void clear() {
+    public void clear() {
         clearAttacks();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);

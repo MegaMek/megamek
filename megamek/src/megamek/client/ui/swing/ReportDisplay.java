@@ -270,7 +270,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay {
     }
 
     @Override
-    protected void clear() {
+    public void clear() {
         // move along, move along, nothing to see here
     }
 

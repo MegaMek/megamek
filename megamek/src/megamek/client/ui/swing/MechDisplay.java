@@ -27,10 +27,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -41,6 +43,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -957,6 +960,27 @@ public class MechDisplay extends JPanel {
 
             setBackGround();
             onResize();
+
+            getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
+                    "clearButton");
+
+                    getActionMap().put("clearButton", new AbstractAction() {
+                        private static final long serialVersionUID = -7781405756822535409L;
+
+                        public void actionPerformed(ActionEvent e) {
+                            JComponent curPanel = clientgui.curPanel;
+                            if (curPanel instanceof StatusBarPhaseDisplay) {
+                                StatusBarPhaseDisplay display = (StatusBarPhaseDisplay)curPanel;
+                                if (display.isIgnoringEvents()) {
+                                    return;
+                                }
+                                if (clientgui.getClient().isMyTurn()) {
+                                    display.clear();
+                                }
+                            }
+
+                        }
+                    });
         }
 
         @Override
@@ -3186,7 +3210,7 @@ public class MechDisplay extends JPanel {
             } else if (Compute.isAffectedByECM(en, pos, pos)) {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages
                         .getString("MechDisplay.InEnemyECMField")); //$NON-NLS-1$
-            } 
+            }
 
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive() && ((en instanceof Mech) || (en instanceof Tank))) {

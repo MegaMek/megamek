@@ -321,12 +321,14 @@ public class MiscType extends EquipmentType {
             } else {
                 return 2.0f;
             }
-        } else if (hasFlag(F_PARTIAL_WING)) {
+        } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
             if (getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) {
                 return (float) (Math.ceil((entity.getWeight() / 20.0) * 2.0) / 2.0);
             } else if (getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) {
                 return (float) (Math.ceil(entity.getWeight() * 0.14) / 2.0);
             }
+        } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
+            return (float) (Math.ceil((entity.getWeight() / 5.0) * 2.0) / 2.0);
         } else if (hasFlag(F_CLUB) && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
             return (float) Math.ceil(entity.getWeight() / 15.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
@@ -1075,6 +1077,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createMASHExtraTheater());
         EquipmentType.addType(MiscType.createParamedicEquipment());
         EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
+        EquipmentType.addType(MiscType.createProtoPartialWing());
         EquipmentType.addType(MiscType.createCLMastMount());
         EquipmentType.addType(MiscType.createISMastMount());
         EquipmentType.addType(MiscType.createFuel1());
@@ -6040,6 +6043,21 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         misc.introDate = 3053;
+
+        return misc;
+    }
+
+    public static MiscType createProtoPartialWing() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        misc.name ="Partial Wing";
+        misc.setInternalName("ProtoMechPartialWing");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(F_PARTIAL_WING);
+        misc.techRating = RATING_F;
+        misc.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        misc.introDate = 3070;
 
         return misc;
     }

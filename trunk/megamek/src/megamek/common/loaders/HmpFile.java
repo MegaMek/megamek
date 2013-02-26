@@ -696,7 +696,7 @@ implements IMechLoader
                                     m = mech.addEquipment(equipment, location, rearMounted);
                                     spreadEquipment.put(equipment, m);
                                 }
-                            } else if (((equipment instanceof WeaponType) && equipment.hasFlag(WeaponType.F_SPLITABLE)) || ((equipment instanceof MiscType) && equipment.hasFlag(MiscType.F_SPLITABLE))) {
+                            } else if (((equipment instanceof WeaponType) && ((WeaponType)equipment).isSplitable()) || ((equipment instanceof MiscType) && equipment.hasFlag(MiscType.F_SPLITABLE))) {
                                 // do we already have this one in this or an
                                 // outer location?
                                 Mounted m = null;

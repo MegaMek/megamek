@@ -48,7 +48,6 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         extremeRange = 14;
         tonnage = 14.0f;
         criticals = 10;
-        flags = flags.or(F_SPLITABLE);
         bv = 204;
         cost = 700000;
     }

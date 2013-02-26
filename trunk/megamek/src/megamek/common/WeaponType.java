@@ -46,8 +46,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_NO_FIRES = BigInteger.valueOf(1).shiftLeft(5);
     //must be only weapon attacking
     public static final BigInteger F_SOLO_ATTACK = BigInteger.valueOf(1).shiftLeft(7);
-    //Weapons that can be split between locations
-    public static final BigInteger F_SPLITABLE = BigInteger.valueOf(1).shiftLeft(8);
+    public static final BigInteger F_VGL = BigInteger.valueOf(1).shiftLeft(8);
     // MGL for rapid fire setup
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(9);
     //Inferno weapon
@@ -123,7 +122,6 @@ public class WeaponType extends EquipmentType {
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
-    public static final BigInteger F_VGL = BigInteger.valueOf(1).shiftLeft(57);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = 1;
@@ -1407,6 +1405,10 @@ public class WeaponType extends EquipmentType {
         }
 
         return super.getCost(entity, isArmored, loc);
+    }
+
+    public boolean isSplitable() {
+        return criticals >= 8;
     }
 
 }

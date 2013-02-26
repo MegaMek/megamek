@@ -50,6 +50,5 @@ public class CLRAC20 extends RACWeapon {
         bv = 823;
         cost = 960000;
         techRating = RATING_F;
-        flags = flags.or(F_SPLITABLE);
     }
 }

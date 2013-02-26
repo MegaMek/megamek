@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -48,7 +47,6 @@ public class ISLB20XAC extends LBXACWeapon {
         tonnage = 14.0f;
         criticals = 11;
         bv = 237;
-        flags = flags.or(F_SPLITABLE);
         cost = 600000;
         shortAV = 20;
         medAV = 20;

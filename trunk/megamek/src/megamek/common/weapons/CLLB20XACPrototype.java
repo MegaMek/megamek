@@ -44,7 +44,6 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         tonnage = 14.0f;
         criticals = 12;
         bv = 237;
-        flags = flags.or(F_SPLITABLE);
         cost = 600000;
         shortAV = 20;
         medAV = 20;

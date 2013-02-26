@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -54,7 +53,6 @@ public class ISHGaussRifle extends GaussWeapon {
         damageShort = 25;
         damageMedium = 20;
         damageLong = 10;
-        flags = flags.or(F_SPLITABLE);
         tonnage = 18.0f;
         criticals = 11;
         bv = 346;

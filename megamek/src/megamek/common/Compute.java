@@ -196,8 +196,12 @@ public class Compute {
             thisLowStackingLevel = entering.calcElevation(game.getBoard().getHex(entering.getPosition()), game
                     .getBoard().getHex(coords));
         }
-        int thisHighStackingLevel = thisLowStackingLevel + entering.height();
-
+        int thisHighStackingLevel = thisLowStackingLevel;
+        //mechs only occupy one level of a building
+        if(!Compute.isInBuilding(game, entering, coords)) {
+            thisHighStackingLevel += entering.height();
+        }
+        
         // Walk through the entities in the given hex.
         for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = i.nextElement();
@@ -206,12 +210,16 @@ public class Compute {
                 continue;
             }
 
-            int lowStackinglevel = inHex.getElevation();
-            int highStackingLevel = lowStackinglevel + inHex.height();
-
+            int lowStackingLevel = inHex.getElevation();
+            int highStackingLevel = lowStackingLevel;
+            //units only occupy one level of a building
+            if(!Compute.isInBuilding(game, inHex)) {
+                highStackingLevel += inHex.height();
+            }
+                      
             // Only do all this jazz if they're close enough together on level
             // to interfere.
-            if ((thisLowStackingLevel <= highStackingLevel) && (thisHighStackingLevel >= lowStackinglevel)) {
+            if ((thisLowStackingLevel <= highStackingLevel) && (thisHighStackingLevel >= lowStackingLevel)) {
                 // Don't compare the entering entity to itself.
                 if (inHex.equals(entering)) {
                     continue;

@@ -48,7 +48,6 @@ public class CLUAC20 extends UACWeapon {
         criticals = 8;
         bv = 335;
         cost = 480000;
-        flags = flags.or(F_SPLITABLE);
         shortAV = 30;
         medAV = 30;
         maxRange = RANGE_MED;

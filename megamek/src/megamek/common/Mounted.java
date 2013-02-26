@@ -839,8 +839,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public boolean isSplitable() {
-        return (((getType() instanceof WeaponType) && getType().hasFlag(
-                WeaponType.F_SPLITABLE)) || ((getType() instanceof MiscType) && getType()
+        return (((getType() instanceof WeaponType) && ((WeaponType)getType()).isSplitable()) || ((getType() instanceof MiscType) && getType()
                 .hasFlag(MiscType.F_SPLITABLE)));
     }
 

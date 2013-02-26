@@ -243,16 +243,15 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public float getWeightArmor() {
-    	return (float)getEntity().getLabArmorTonnage();
-    	/*
-        float armorWeight = 0;
-        if (!getEntity().hasPatchworkArmor()) {
-            armorWeight += armor[0].getWeightArmor(getTotalOArmor(), getWeightCeilingArmor());
-        } else {
-            for (int i = 0; i < armor.length; i++) {
-                armorWeight += armor[i].getWeightArmor(getEntity().getOArmor(i), getWeightCeilingArmor());
-            }
-        }*/
+        return (float) getEntity().getLabArmorTonnage();
+        /*
+         * float armorWeight = 0; if (!getEntity().hasPatchworkArmor()) {
+         * armorWeight += armor[0].getWeightArmor(getTotalOArmor(),
+         * getWeightCeilingArmor()); } else { for (int i = 0; i < armor.length;
+         * i++) { armorWeight +=
+         * armor[i].getWeightArmor(getEntity().getOArmor(i),
+         * getWeightCeilingArmor()); } }
+         */
         //return armorWeight;
     }
 

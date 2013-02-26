@@ -228,6 +228,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.addTransporter(new DockingCollar(1));
             docks--;
         }
+        a.setArmorTonnage(a.getArmorWeight());
 
         return a;
     }

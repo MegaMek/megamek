@@ -194,7 +194,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
-
+        a.setArmorTonnage(a.getArmorWeight());
         return a;
     }
 

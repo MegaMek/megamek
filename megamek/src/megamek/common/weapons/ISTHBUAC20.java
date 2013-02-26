@@ -48,7 +48,6 @@ public class ISTHBUAC20 extends UACWeapon {
         extremeRange = 16;
         tonnage = 15.0f;
         criticals = 11;
-        flags = flags.or(F_SPLITABLE);
         bv = 335;
         cost = 600000;
     }

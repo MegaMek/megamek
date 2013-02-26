@@ -26,7 +26,7 @@ import megamek.server.Server;
  */
 public class ISAC20Primitive extends ACWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 4703572491922950865L;
 
@@ -51,7 +51,6 @@ public class ISAC20Primitive extends ACWeapon {
         tonnage = 14.0f;
         criticals = 10;
         bv = 178;
-        flags = flags.or(F_SPLITABLE);
         cost = 300000;
         shortAV = 20;
         maxRange = RANGE_SHORT;

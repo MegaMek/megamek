@@ -51,7 +51,6 @@ public class ISIHGaussRifle extends GaussWeapon {
         mediumRange = 12;
         longRange = 19;
         extremeRange = 24;
-        flags = flags.or(F_SPLITABLE);
         tonnage = 20.0f;
         criticals = 11;
         bv = 385;
@@ -61,8 +60,8 @@ public class ISIHGaussRifle extends GaussWeapon {
         longAV = 22;
         maxRange = RANGE_LONG;
         explosionDamage = 30;
-        techRating = RATING_E;	
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};	
+        techRating = RATING_E;
+        availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3065;
     }
 

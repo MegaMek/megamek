@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
 
 /**
@@ -47,7 +46,6 @@ public class CLLB20XAC extends LBXACWeapon {
         extremeRange = 16;
         tonnage = 12.0f;
         criticals = 9;
-        flags = flags.or(F_SPLITABLE);
         bv = 237;
         cost = 600000;
         shortAV = 20;

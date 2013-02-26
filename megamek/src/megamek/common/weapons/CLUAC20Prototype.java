@@ -44,7 +44,6 @@ public class CLUAC20Prototype extends CLPrototypeUACWeapon {
         criticals = 11;
         bv = 281;
         cost = 480000;
-        flags = flags.or(F_SPLITABLE);
         shortAV = 30;
         medAV = 30;
         maxRange = RANGE_MED;

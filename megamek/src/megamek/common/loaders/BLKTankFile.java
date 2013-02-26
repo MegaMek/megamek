@@ -222,6 +222,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("omni")) {
             t.setOmni(true);
         }
+        t.setArmorTonnage(t.getArmorWeight());
 
         return t;
     }

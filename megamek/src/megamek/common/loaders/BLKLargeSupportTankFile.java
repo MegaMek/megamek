@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author njrkrynn
  * @version
  */
@@ -88,9 +88,9 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
-        int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight() - t.getSuspensionFactor();
-        if (engineRating % 5 > 0) {
-            engineRating += (5 - engineRating % 5);
+        int engineRating = (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor();
+        if ((engineRating % 5) > 0) {
+            engineRating += (5 - (engineRating % 5));
         }
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
@@ -162,7 +162,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("omni")) {
             t.setOmni(true);
         }
-
+        t.setArmorTonnage(t.getArmorWeight());
         return t;
     }
 }

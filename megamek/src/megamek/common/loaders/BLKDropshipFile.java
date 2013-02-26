@@ -1,11 +1,11 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -14,12 +14,12 @@
 
 /*
  * BLkFile.java
- * 
+ *
  * Created on April 6, 2002, 2:06 AM
  */
 
 /**
- * 
+ *
  * @author taharqa
  * @version
  */
@@ -197,7 +197,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
-
+        a.setArmorTonnage(a.getArmorWeight());
         return a;
     }
 
@@ -205,10 +205,10 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         String[] saEquip1 = dataFile.getDataAsString(sName + " Equipment");
         String[] saEquip2 = new String[2];
         String[] saEquip;
-        
+
         // Special case handling for the LongTomIIICannon in the Fortress BLK
         // A bit of a hack, but it works...
-        if (nLoc == Aero.LOC_NOSE && dataFile.exists("transporters")) {
+        if ((nLoc == Aero.LOC_NOSE) && dataFile.exists("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");
             for (String transporter : transporters) {
                 if (transporter.equals("LongTomIIICannon")) {
@@ -217,7 +217,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 }
             }
         }
-        if (saEquip2 != null && saEquip2[0] != null) {
+        if ((saEquip2 != null) && (saEquip2[0] != null)) {
             saEquip = new String[saEquip1.length + saEquip2.length];
             System.arraycopy(saEquip2, 0, saEquip, 0, saEquip2.length);
             System.arraycopy(saEquip1, 0, saEquip, 2, saEquip1.length);

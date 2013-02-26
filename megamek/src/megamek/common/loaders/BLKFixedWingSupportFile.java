@@ -172,7 +172,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         // do this here, after equipment has been loaded, because fixed wing
         // support vees need equipment for this
         a.autoSetMaxBombPoints();
-
+        a.setArmorTonnage(a.getArmorWeight());
         return a;
     }
 

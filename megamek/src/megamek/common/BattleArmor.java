@@ -1628,6 +1628,9 @@ public class BattleArmor extends Infantry {
      */
     public boolean canDoMechanizedBA() {
         if (getChassisType() != CHASSIS_TYPE_QUAD) {
+            if (hasWorkingMisc(MiscType.F_MAGNETIC_CLAMP)) {
+                return true;
+            }
             int tBasicManipulatorCount = countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
             int tArmoredGloveCount = countWorkingMisc(MiscType.F_ARMORED_GLOVE);
             int tBattleClawCount = countWorkingMisc(MiscType.F_BATTLE_CLAW);
@@ -1713,7 +1716,7 @@ public class BattleArmor extends Infantry {
     public boolean isDmgLight() {
         return (((double)getNumberActiverTroopers() / getSquadSize()) < 0.9);
     }
-    
+
     public int calculateSwarmDamage() {
         int damage = 0;
         for(Mounted m : getWeaponList()) {

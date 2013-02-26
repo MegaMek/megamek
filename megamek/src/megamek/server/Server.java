@@ -4347,8 +4347,12 @@ public class Server implements Runnable {
                     // unit will land on the roof, if at a higher level,
                     // otherwise it will skid through the wall onto the same
                     // floor.
-                    nextAltitude = Math.min(curAltitude, nextHex.getElevation()
-                            + nextHex.terrainLevel(Terrains.BLDG_ELEV));
+                    // don't change this if the building starts at an elevation higher than the unit
+                    // (e.g. the building is on a hill). Otherwise, we skid into solid earth.
+                    if(curAltitude >= nextHex.floor()) {
+                        nextAltitude = Math.min(curAltitude, nextHex.getElevation()
+                                + nextHex.terrainLevel(Terrains.BLDG_ELEV));
+                    }
                 }
                 // Is there a bridge to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BRIDGE)) {

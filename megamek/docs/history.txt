@@ -56,6 +56,7 @@ v0.35.35-dev (SVN)
 + Implemented ProtoMech partial wing 
 + Bug 3269: mechs in buildings LOS
 + Bug 3574: Able to kick standing 'Mech's head while in building
++ Bug 3031: skid into building
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -38,7 +38,7 @@ public class CLLRM2 extends LRMWeapon {
         minimumRange = WEAPON_NA;
         tonnage = 0.4f;
         criticals = 0;
-        bv = 25;
+        bv = 24;
         introDate = 3060;
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_F;

@@ -2569,7 +2569,7 @@ public class MiscType extends EquipmentType {
             { "On", "Off" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(true);
-        misc.bv = 0;
+        misc.bv = 1;
         misc.introDate = 3062;
         misc.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         misc.techRating = RATING_C;

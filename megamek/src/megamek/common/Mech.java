@@ -1379,9 +1379,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int height() {
-        IHex posHex = game.getBoard().getHex(getPosition());
-        return (isProne() || ((posHex != null) && Compute.isInBuilding(game,
-                this))) ? 0 : 1;
+      return isProne() ? 0 : 1;
     }
 
     /**

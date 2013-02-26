@@ -613,6 +613,8 @@ public class LosEffects {
                         - game.getBoard().getHex(ai.attackPos).surface(),
                         ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
+            //elevation differences count as building hexes passed through
+            los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight-ai.attackHeight) - (ai.targetAbsHeight-ai.targetHeight)));
         }
 
         for (Coords c : in) {
@@ -627,14 +629,6 @@ public class LosEffects {
         // targeted by units in the same building.
         if (ai.targetInfantry && targetInBuilding && (null == los.getThruBldg())) {
             los.infProtected = true;
-        }
-
-        // If a target Entity is at a different elevation as its
-        // attacker, and if the attack is through a building, the
-        // target has cover.
-        if ((null != los.getThruBldg())
-                && (ai.attackAbsHeight != ai.targetAbsHeight)) {
-            los.setTargetCover(COVER_HORIZONTAL);
         }
 
         return los;
@@ -683,6 +677,8 @@ public class LosEffects {
                         - game.getBoard().getHex(ai.attackPos).surface(),
                         ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
+            //elevation differences count as building hexes passed through
+            los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight-ai.attackHeight) - (ai.targetAbsHeight-ai.targetHeight)));
         }
 
         // add non-divided line segments
@@ -723,11 +719,6 @@ public class LosEffects {
                         .getThruBldg());
                 usingLeft = false;
             }
-
-            // If a target Entity is at a different elevation as its
-            // attacker, and if the attack is through a building, the
-            // target has cover.
-            final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
 
             if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
                 los.blocked = true;
@@ -786,12 +777,6 @@ public class LosEffects {
                     los.targetCover = cover;
                 }
             }
-            
-            if (targetInBuilding && isElevDiff) {
-                if (null != toUse.getThruBldg()) {
-                    toUse.setTargetCover(COVER_HORIZONTAL);
-                }
-            }
         }
         return los;
     }
@@ -820,13 +805,6 @@ public class LosEffects {
 
         // ignore hexes the attacker or target are in
         if (coords.equals(ai.attackPos) || coords.equals(ai.targetPos)) {
-            if (los.getThruBldg() != null) {
-                // attacker and target in building at different height:
-                // +1 for each level of difference
-                if (ai.attackPos.equals(ai.targetPos) && ai.targetEntity) {
-                    los.buildingLevelsOrHexes += (Math.abs(ai.attackHeight - ai.targetHeight));
-                }
-            }
             return los;
         }
 
@@ -1081,20 +1059,6 @@ public class LosEffects {
                     .getThruBldg());
             LosEffects right = losForCoords(game, ai, in.get(i + 1), los
                     .getThruBldg());
-
-            // If a target Entity is at a different elevation as its
-            // attacker, and if the attack is through a building, the
-            // target has cover.
-            final boolean isElevDiff = ai.attackAbsHeight != ai.targetAbsHeight;
-
-            if (targetInBuilding && isElevDiff) {
-                if (null != left.getThruBldg()) {
-                    left.setTargetCover(COVER_HORIZONTAL);
-                }
-                if (null != right.getThruBldg()) {
-                    right.setTargetCover(COVER_HORIZONTAL);
-                }
-            }
 
             // Include all previous LOS effects.
             left.add(los);

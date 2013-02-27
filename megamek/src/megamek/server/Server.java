@@ -13648,6 +13648,12 @@ public class Server implements Runnable {
         }
 
         if (((MiscType) caa.getClub().getType())
+                .hasSubType(MiscType.S_WRECKING_BALL) && (ae instanceof SupportTank) && (te instanceof Mech)) {
+            //forces a PSR like a charge
+            game.addPSR(new PilotingRollData(te.getId(), 2, "was hit by wrecking ball"));
+        }
+        
+        if (((MiscType) caa.getClub().getType())
                 .hasSubType(MiscType.S_CHAIN_WHIP) && (te instanceof Mech)) {
             addNewLines();
 

@@ -3453,6 +3453,10 @@ public abstract class Mech extends Entity {
             mechHeatEfficiency -= getRunHeat();
             bvText.append(" - Run Heat ");
         }
+        if (hasStealth()) {
+            mechHeatEfficiency -= 10;
+            bvText.append(" - Stealth Heat ");
+        }
 
         bvText.append(endColumn);
         bvText.append(startColumn);

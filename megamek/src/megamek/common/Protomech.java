@@ -1121,7 +1121,8 @@ public class Protomech extends Entity {
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(
                 getRunMP(false, true, true), false, false).getValue();
-        double tmmFactor = 1 + (tmmRan / 10) + 0.1;
+        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false).getValue();
+        double tmmFactor = 1 + (Math.max(tmmRan,tmmJumped) / 10) + 0.1;
         dbv *= tmmFactor;
 
         double weaponBV = 0;

@@ -26,6 +26,9 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.HVACWeapon;
+import megamek.common.weapons.PPCWeapon;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -1143,6 +1146,7 @@ public class Aero extends Entity {
         double amsAmmoBV = 0;
         double screenBV = 0;
         double screenAmmoBV = 0;
+        double defEqBV = 0;
         for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
@@ -1195,6 +1199,19 @@ public class Aero extends Entity {
                 bvText.append(endRow);
             } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(etype.getName());
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append("+");
+                bvText.append(etype.getBV(this));
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            } else if (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
+                defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
@@ -1260,7 +1277,107 @@ public class Aero extends Entity {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
+        if (defEqBV > 0) {
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Total misc defensive equipment BV:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(defEqBV);
+            dbv += defEqBV;
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
 
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(dbv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        // subtract for explosive ammo
+        double ammoPenalty = 0;
+        for (Mounted mounted : getEquipment()) {
+            int loc = mounted.getLocation();
+            int toSubtract = 15;
+            EquipmentType etype = mounted.getType();
+
+            // only count explosive ammo
+            if (!etype.isExplosive(mounted)) {
+                continue;
+            }
+            // PPCs with capacitors subtract 1
+            if (etype instanceof PPCWeapon) {
+                if (mounted.getLinkedBy() != null) {
+                    toSubtract = 1;
+                } else {
+                    continue;
+                }
+            }
+
+            // don't count oneshot ammo
+            if (loc == LOC_NONE) {
+                continue;
+            }
+
+            // CASE means no subtraction
+            if (hasWorkingMisc(MiscType.F_CASE) || isClan()) {
+                continue;
+            }
+
+            // gauss rifles only subtract 1 point per slot, same for HVACs
+            if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)) {
+                toSubtract = 1;
+            }
+
+            // RACs, LACs and ACs don't really count
+            if ((etype instanceof WeaponType)
+                    && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
+                            || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype)
+                            .getAmmoType() == AmmoType.T_LAC))) {
+                toSubtract = 0;
+            }
+
+            // empty ammo shouldn't count
+            if ((etype instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
+                continue;
+            }
+
+            ammoPenalty += toSubtract;
+        }
+        dbv = Math.max(1, dbv - ammoPenalty);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("Explosive Weapons/Equipment Penalty ");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("= -");
+        bvText.append(ammoPenalty);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
 
         bvText.append("-------------");
         bvText.append(endColumn);
@@ -2185,7 +2302,7 @@ public class Aero extends Entity {
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
     	return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
-    
+
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
     	//if aeros are on the ground, they can only move at cruising speed
@@ -3753,7 +3870,7 @@ public class Aero extends Entity {
             damage -= damPerHit;
         }
     }
-    
+
     public int getNCrew() {
         return 1;
     }
@@ -3761,4 +3878,5 @@ public class Aero extends Entity {
     public int getNPassenger() {
         return 0;
     }
+
 }

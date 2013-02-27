@@ -61,6 +61,7 @@ v0.35.35-dev (SVN)
 + TM Errata: Aero defensive BV changes
 + TM Errata: stealth armor heat now counts for heat efficiency in BV calc
 + Bug 3217: wrecking ball should cause PSR when attacker is support vee
++ Protomech BV should use max TMM from running or jumping, not just running
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

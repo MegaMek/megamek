@@ -3,7 +3,7 @@
  * can redistribute it and/or modify it under the terms of the GNU General
  * Public License as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -426,6 +426,7 @@ public class Jumpship extends Aero {
         double amsAmmoBV = 0;
         double screenBV = 0;
         double screenAmmoBV = 0;
+        double defEqBV = 0;
         for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
@@ -441,12 +442,15 @@ public class Jumpship extends Aero {
                 screenAmmoBV += etype.getBV(this);
             } else if ((etype instanceof WeaponType) && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(this);
+            } else if (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
+                defEqBV += etype.getBV(this);
             }
         }
         dbv += amsBV;
         dbv += screenBV;
         dbv += Math.min(amsBV, amsAmmoBV);
         dbv += Math.min(screenBV, screenAmmoBV);
+        dbv += defEqBV;
 
         // unit type multiplier
         dbv *= getBVTypeModifier();
@@ -1013,7 +1017,7 @@ public class Jumpship extends Aero {
 
     /**
      * What's the range of the ECM equipment?
-     * 
+     *
      * @return the <code>int</code> range of this unit's ECM. This value will be
      *         <code>Entity.NONE</code> if no ECM is active.
      */

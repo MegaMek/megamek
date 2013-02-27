@@ -58,6 +58,7 @@ v0.35.35-dev (SVN)
 + Bug 3574: Able to kick standing 'Mech's head while in building
 + Bug 3031: skid into building
 + TM Errata: clan LRM 2 BV changed, Mag Clamp BV changed
++ TM Errata: Aero defensive BV changes
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

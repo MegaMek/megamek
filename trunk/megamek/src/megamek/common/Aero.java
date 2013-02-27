@@ -26,8 +26,6 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.PPCWeapon;
 
 /**
@@ -1210,7 +1208,7 @@ public class Aero extends Entity {
                 bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-            } else if (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
+            } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -1307,10 +1305,11 @@ public class Aero extends Entity {
         bvText.append(endRow);
 
         // subtract for explosive ammo
-        double ammoPenalty = 0;
+        double explosivePenalty = 0;
+        Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
         for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
-            int toSubtract = 15;
+            int toSubtract = 1;
             EquipmentType etype = mounted.getType();
 
             // only count explosive ammo
@@ -1319,9 +1318,7 @@ public class Aero extends Entity {
             }
             // PPCs with capacitors subtract 1
             if (etype instanceof PPCWeapon) {
-                if (mounted.getLinkedBy() != null) {
-                    toSubtract = 1;
-                } else {
+                if (mounted.getLinkedBy() == null) {
                     continue;
                 }
             }
@@ -1336,11 +1333,6 @@ public class Aero extends Entity {
                 continue;
             }
 
-            // gauss rifles only subtract 1 point per slot, same for HVACs
-            if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)) {
-                toSubtract = 1;
-            }
-
             // RACs, LACs and ACs don't really count
             if ((etype instanceof WeaponType)
                     && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
@@ -1353,10 +1345,14 @@ public class Aero extends Entity {
             if ((etype instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
                 continue;
             }
-
-            ammoPenalty += toSubtract;
+            if (etype instanceof AmmoType) {
+                ammos.put((AmmoType) etype, true);
+            } else {
+                explosivePenalty += toSubtract;
+            }
         }
-        dbv = Math.max(1, dbv - ammoPenalty);
+        explosivePenalty += ammos.size()*15;
+        dbv = Math.max(1, dbv - explosivePenalty);
 
         bvText.append(startRow);
         bvText.append(startColumn);
@@ -1368,7 +1364,7 @@ public class Aero extends Entity {
         bvText.append(startColumn);
 
         bvText.append("= -");
-        bvText.append(ammoPenalty);
+        bvText.append(explosivePenalty);
         bvText.append(endColumn);
         bvText.append(endRow);
 

@@ -64,6 +64,7 @@ v0.35.35-dev (SVN)
 + Protomech BV should use max TMM from running or jumping, not just running
 + TM Errata: compact engines give extra item slot on Tanks
 + TM Errata: aero explosive equipment BV penalty fixed
++ Bug: magnetic clamp BV
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -180,7 +180,7 @@ public class Tank extends Entity {
      * the side parameter falls outside ToHitData's range of "fixed" side
      * values; in particular, it will return 0 if handed
      * {@link ToHitData#SIDE_RANDOM}.
-     * 
+     *
      * @param side
      *            The attack direction as specified above.
      * @return The appropriate directional roll modifier.
@@ -1956,7 +1956,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
      */
     @Override
@@ -2014,7 +2014,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -2419,7 +2419,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     * 
+     *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
@@ -2495,7 +2495,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2793,7 +2793,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -2803,7 +2803,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
@@ -2870,7 +2870,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2901,7 +2901,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2924,7 +2924,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     * 
+     *
      * @return
      */
     public int getTotalSlots() {
@@ -2933,7 +2933,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     * 
+     *
      * @return
      */
     public int getFreeSlots() {
@@ -2980,6 +2980,9 @@ public class Tank extends Entity {
         }
         if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
             usedSlots++;
+        }
+        if (getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
+            usedSlots--;
         }
         // for ammo, each type of ammo takes one slots, regardless of
         // submunition type
@@ -3108,7 +3111,7 @@ public class Tank extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -3353,15 +3356,15 @@ public class Tank extends Entity {
 
     /**
      * Tanks go Hull Down slightly differently, this method accounts for this
-     * 
+     *
      * @see megamek.common.Entity#setHullDown(boolean)
      */
     @Override
     public void setHullDown(boolean down) {
         super.setHullDown(down);
-        if (getMovedBackwards() == true && down == true) {
+        if ((getMovedBackwards() == true) && (down == true)) {
             m_bBackedIntoHullDown = true;
-        } else if (getMovedBackwards() == false && down == true) {
+        } else if ((getMovedBackwards() == false) && (down == true)) {
             m_bBackedIntoHullDown = false;
         } else if (down == false) {
             m_bBackedIntoHullDown = false;
@@ -3370,7 +3373,7 @@ public class Tank extends Entity {
 
     /**
      * Returns True if this tank moved backwards before going Hull Down
-     * 
+     *
      * @return
      */
     public boolean isBackedIntoHullDown() {

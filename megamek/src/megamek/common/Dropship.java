@@ -21,9 +21,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.GaussWeapon;
-import megamek.common.weapons.HVACWeapon;
-import megamek.common.weapons.PPCWeapon;
 
 /**
  * @author Jay Lawson
@@ -438,80 +435,6 @@ public class Dropship extends SmallCraft {
             bvText.append(endColumn);
             bvText.append(endRow);
         }
-
-     // subtract for explosive ammo
-        double ammoPenalty = 0;
-        for (Mounted mounted : getEquipment()) {
-            int loc = mounted.getLocation();
-            int toSubtract = 15;
-            EquipmentType etype = mounted.getType();
-
-            // only count explosive ammo
-            if (!etype.isExplosive(mounted)) {
-                continue;
-            }
-            // PPCs with capacitors subtract 1
-            if (etype instanceof PPCWeapon) {
-                if (mounted.getLinkedBy() != null) {
-                    toSubtract = 1;
-                } else {
-                    continue;
-                }
-            }
-
-            // don't count oneshot ammo
-            if (loc == LOC_NONE) {
-                continue;
-            }
-
-            // CASE means no subtraction
-            if (hasWorkingMisc(MiscType.F_CASE) || isClan()) {
-                continue;
-            }
-
-            // gauss rifles only subtract 1 point per slot, same for HVACs
-            if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)) {
-                toSubtract = 1;
-            }
-
-            // RACs, LACs and ACs don't really count
-            if ((etype instanceof WeaponType)
-                    && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
-                            || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC) || (((WeaponType) etype)
-                            .getAmmoType() == AmmoType.T_LAC))) {
-                toSubtract = 0;
-            }
-
-            // empty ammo shouldn't count
-            if ((etype instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
-                continue;
-            }
-
-            ammoPenalty += toSubtract;
-        }
-        dbv = Math.max(1, dbv - ammoPenalty);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Explosive Weapons/Equipment Penalty ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= -");
-        bvText.append(ammoPenalty);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
 
         bvText.append(startRow);
         bvText.append(startColumn);

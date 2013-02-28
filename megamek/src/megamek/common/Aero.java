@@ -1908,7 +1908,7 @@ public class Aero extends Entity {
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_TARGCOMP)) {
+            if (mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP)) {
                 continue;
             }
             double bv = mtype.getBV(this);

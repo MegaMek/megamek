@@ -761,6 +761,14 @@ public class Client implements IClientCommandHandler {
         send(new Packet(Packet.COMMAND_ENTITY_REMOVE, new Integer(id)));
     }
 
+    /**
+     * Sends a "load entity" packet
+     */
+    public void sendLoadEntity(int id, int loaderId) {
+        checkDuplicateNamesDuringDelete(id);
+        send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[] {id, loaderId}));
+    }
+    
     /***
      * sends a load game file to the server
      */

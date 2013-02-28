@@ -99,6 +99,9 @@ public class Packet {
 
     public static final int COMMAND_SENDING_AVAILABLE_MAP_SIZES = 570;
 
+    public static final int COMMAND_ENTITY_LOAD = 580;
+
+    
     private int command;
 
     private Object[] data;

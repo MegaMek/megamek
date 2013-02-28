@@ -308,6 +308,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     /**
      * The components of this entity that can transport other entities.
+     * TODO: we should really redesign these transports to carry entity ids rather
+     * than entities for quicker connections between server and client
      */
     private Vector<Transporter> transports = new Vector<Transporter>();
 
@@ -7266,6 +7268,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setDeployRound(int deployRound) {
         this.deployRound = deployRound;
+        //also set this for any transported units
+        //TODO: currently this doesn't work in the chat lounge, because the entity updates to the server
+        //dont update the transported units for that entity. We should fix that but it doesn't seem to matter
+        //if deployment rounds are not the same for transporters.
+        for(Transporter transport : this.getTransports()) {
+            for(Entity e : transport.getLoadedUnits()) {
+                e.setDeployRound(deployRound);
+            }
+        }
+        
     }
 
     /**

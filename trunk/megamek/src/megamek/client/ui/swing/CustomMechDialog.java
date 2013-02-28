@@ -868,6 +868,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 choDeployment.setSelectedIndex(i);
             }
         }
+        if(entity.getTransportId() != Entity.NONE) {
+            choDeployment.setEnabled(false);
+        }  
     }
 
     /**

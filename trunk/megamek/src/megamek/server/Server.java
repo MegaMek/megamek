@@ -3668,7 +3668,7 @@ public class Server implements Runnable {
      */
     private void loadUnit(Entity loader, Entity unit) {
 
-        if (!unit.isDone()) {
+        if (game.getPhase() != IGame.Phase.PHASE_LOUNGE && !unit.isDone()) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -3676,7 +3676,7 @@ public class Server implements Runnable {
         }
 
         // Load the unit. Do not check for elevation during deployment
-        loader.load(unit, game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT);
+        loader.load(unit, game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT && game.getPhase() != IGame.Phase.PHASE_LOUNGE);
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3684,8 +3684,16 @@ public class Server implements Runnable {
         // Remove the loaded unit from the screen.
         unit.setPosition(null);
 
+        //set deployment round of the loadee to equal that of the loader
+        unit.setDeployRound(loader.getDeployRound());
+        
         // Update the loaded unit.
         entityUpdate(unit.getId());
+        
+        //Taharqa (2/28/13): I am not sure why the loader is not getting updated too - not updating it 
+        //is causing problem in the chat lounge loading, so I am going to do it here, but if we get 
+        //weird results for other loading, then the reason is probably this
+        entityUpdate(loader.getId());
     }
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
@@ -10437,8 +10445,11 @@ public class Server implements Runnable {
             int elevation, Vector<Entity> loadVector, boolean assaultDrop) {
 
         for (Entity loaded : loadVector) {
-            if ((loaded == null) || (loaded.getPosition() != null)
-                    || (loaded.getTransportId() != Entity.NONE)) {
+            if(loaded.getTransportId() != Entity.NONE) {
+                //we probably already loaded this unit in the chat lounge 
+                continue;
+            }
+            if ((loaded == null) || (loaded.getPosition() != null)) {
                 // Something is fishy in Denmark.
                 System.err.println("error: " + entity
                         + " can not load entity #" + loaded);
@@ -24864,6 +24875,42 @@ public class Server implements Runnable {
             // hey!
         }
     }
+    
+    /**
+     * loads an entity into another one. Meant to be called from the chat lounge
+     */
+    private void receiveEntityLoad(Packet c, int connIndex) {
+        int loadeeId = (Integer) c.getObject(0);
+        int loaderId = (Integer) c.getObject(1);               
+        Entity loadee = game.getEntity(loadeeId);
+        Entity loader = game.getEntity(loaderId);
+
+        if ((loadee != null) && (loader != null)) {
+            loadUnit(loader, loadee);
+            // In the chat lounge, notify players of customizing of unit
+            if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
+                /*StringBuffer message = new StringBuffer();
+                message.append("Unit ");
+                if (game.getOptions().booleanOption("blind_drop")
+                        || game.getOptions().booleanOption("real_blind_drop")) {
+                    if (!entity.getExternalIdAsString().equals("-1")) {
+                        message.append('[')
+                                .append(entity.getExternalIdAsString())
+                                .append("] ");
+                    }
+                    message.append(entity.getId()).append('(')
+                            .append(entity.getOwner().getName()).append(')');
+                } else {
+                    message.append(entity.getDisplayName());
+                }
+                message.append(" has been customized.");
+                sendServerChat(message.toString());
+                */
+            }
+        } else {
+            // hey!
+        }
+    }
 
     private void receiveCustomInit(Packet c, int connIndex) {
         // In the chat lounge, notify players of customizing of unit
@@ -25893,6 +25940,11 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_UPDATE:
                 receiveEntityUpdate(packet, connId);
+                resetPlayersDone();
+                transmitAllPlayerDones();
+                break;
+            case Packet.COMMAND_ENTITY_LOAD:
+                receiveEntityLoad(packet, connId);
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;

@@ -1078,10 +1078,13 @@ public class Compute {
             }
         }
 
+        //TODO: we need to adjust for stealth modifiers for Chameleon LPS but we don't have range brackets
+        //http://bg.battletech.com/forums/index.php/topic,27433.new.html#new
+        
         if(mod != 0) {
             mods.addModifier(mod, "infantry range");
         }
-
+   
         return mods;
     }
 

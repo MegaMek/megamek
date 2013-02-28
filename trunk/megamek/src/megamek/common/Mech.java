@@ -5071,20 +5071,22 @@ public abstract class Mech extends Entity {
             result = new TargetRoll(0, "stealth not active");
         }
         // Determine the modifier based upon the range.
+        // Infantry do not ignore Chameleon LPS!!!
         else {
             switch (range) {
                 case RangeType.RANGE_MINIMUM:
                 case RangeType.RANGE_SHORT:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(0, "stealth");
-                    } else if (isNullSigActive() && !isInfantry) {
-                        result = new TargetRoll(0, "null-sig");
-                        if (isChameleonShieldActive()) {
-                            result.addModifier(0, "chameleon");
-                        }
                     } else if (isChameleonShieldActive()) {
                         result = new TargetRoll(0, "chameleon");
-                    } else {
+                        if (isNullSigActive() && !isInfantry) {
+                            result.addModifier(0, "null-sig");
+                        }
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(0, "null-sig");
+                    } 
+                    else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5092,14 +5094,14 @@ public abstract class Mech extends Entity {
                 case RangeType.RANGE_MEDIUM:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(1, "stealth");
-                    } else if (isNullSigActive() && !isInfantry) {
-                        result = new TargetRoll(1, "null-sig");
-                        if (isChameleonShieldActive()) {
-                            result.addModifier(1, "chameleon");
-                        }
                     } else if (isChameleonShieldActive()) {
                         result = new TargetRoll(1, "chameleon");
-                    } else {
+                        if (isNullSigActive() && !isInfantry) {
+                            result.addModifier(1, "null-sig");
+                        }
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(1, "null-sig");
+                    }else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5107,14 +5109,14 @@ public abstract class Mech extends Entity {
                 case RangeType.RANGE_LONG:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
-                    } else if (isNullSigActive() && !isInfantry) {
-                        result = new TargetRoll(2, "null-sig");
-                        if (isChameleonShieldActive()) {
-                            result.addModifier(2, "chameleon");
-                        }
                     } else if (isChameleonShieldActive()) {
                         result = new TargetRoll(2, "chameleon");
-                    } else {
+                        if (isNullSigActive() && !isInfantry) {
+                            result.addModifier(2, "null-sig");
+                        }
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(2, "null-sig");
+                    }else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5122,14 +5124,14 @@ public abstract class Mech extends Entity {
                 case RangeType.RANGE_EXTREME:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
-                    } else if (isNullSigActive() && !isInfantry) {
-                        result = new TargetRoll(2, "null-sig");
-                        if (isChameleonShieldActive()) {
-                            result.addModifier(2, "chameleon");
-                        }
                     } else if (isChameleonShieldActive()) {
                         result = new TargetRoll(2, "chameleon");
-                    } else {
+                        if (isNullSigActive() && !isInfantry) {
+                            result.addModifier(2, "null-sig");
+                        }
+                    } else if (isNullSigActive() && !isInfantry) {
+                        result = new TargetRoll(2, "null-sig");
+                    }else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }

@@ -96,8 +96,6 @@ public final class Player extends TurnOrdered {
 
     private boolean admitsDefeat = false;
 
-    private Vector<Report> turnReports = new Vector<Report>();
-
     public Vector<Minefield> getMinefields() {
         return visibleMinefields;
     }
@@ -211,10 +209,6 @@ public final class Player extends TurnOrdered {
 
     public int getTeam() {
         return team;
-    }
-
-    public Vector<Report> getTurnReport() {
-        return turnReports;
     }
 
     public void setTeam(int team) {

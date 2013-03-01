@@ -68,6 +68,7 @@ v0.35.35-dev (SVN)
 + Bug 3437: Loading units onto transports from chatlounge is invalid
 + Bug: Chameleon LPS should effect infantry (but no range brackets)
 	http://bg.battletech.com/forums/index.php/topic,27433.new.html#new
++ Bug 3353: Spikes do not absorb damage
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

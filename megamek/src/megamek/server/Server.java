@@ -13613,19 +13613,17 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            /*
-             * if (damage >= 1 && te.hasWorkingMisc(MiscType.F_SPIKES, -1,
-             * hit.getLocation())) { r = new Report(4330); r.indent(2);
-             * r.newlines = 0; r.subject = ae.getId(); addReport(r);
-             * checkBreakSpikes(te, hit.getLocation()); damage = Math.max(1,
-             * damage - 4); int loc = caa.getClub().getLocation(); if (loc ==
-             * Entity.LOC_NONE) { addReport(damageEntity(ae, new
-             * HitData(Mech.LOC_LARM), 1, false, DamageType.NONE, false, false,
-             * false)); addReport(damageEntity(ae, new HitData(Mech.LOC_RARM),
-             * 1, false, DamageType.NONE, false, false, false)); } else {
-             * addReport(damageEntity(ae, new HitData(loc), 2, false,
-             * DamageType.NONE, false, false, false)); } }
-             */
+            if (damage >= 1 && te.hasWorkingMisc(MiscType.F_SPIKES, -1,
+                    hit.getLocation())) { 
+                r = new Report(4331); 
+                r.indent(2);
+                r.newlines = 0; 
+                r.subject = ae.getId(); 
+                addReport(r);
+                checkBreakSpikes(te, hit.getLocation()); 
+                damage = Math.max(1, damage - 4); 
+            }
+
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                     false, throughFront));

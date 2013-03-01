@@ -22427,7 +22427,9 @@ public class Server implements Runnable {
                 if (slot.isArmored()) {
                     r = new Report(6710);
                     r.subject = en.getId();
-                    r.add(en.getLocationName(loc));
+                    if(en instanceof Mech) {
+                        r.add(((Mech) en).getSystemName(slot.getIndex()));
+                    }
                     vDesc.addElement(r);
                     slot.setArmored(false);
                     hits--;

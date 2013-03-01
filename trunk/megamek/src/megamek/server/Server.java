@@ -24540,7 +24540,7 @@ public class Server implements Runnable {
      * @return a new Report, which has possibly been obscured
      */
     private Report filterReport(Report r, Player p, boolean omitCheck) {
-
+        
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER)
                 && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
@@ -25468,7 +25468,7 @@ public class Server implements Runnable {
         if ((p == null) || !doBlind()) {
             return new Packet(Packet.COMMAND_SENDING_REPORTS, vPhaseReport);
         }
-        return new Packet(Packet.COMMAND_SENDING_REPORTS, p.getTurnReport());
+        return new Packet(Packet.COMMAND_SENDING_REPORTS, filterReportVector(vPhaseReport, p));
     }
 
     /**
@@ -28996,14 +28996,6 @@ public class Server implements Runnable {
      * Master report queue vPhaseReport.
      */
     private void addReport(Vector<Report> reports) {
-        // Only bother with player reports if doing double blind.
-        if (doBlind()) {
-            for (IConnection conn : connections) {
-                Player p = game.getPlayer(conn.getId());
-
-                p.getTurnReport().addAll(filterReportVector(reports, p));
-            }
-        }
         vPhaseReport.addAll(reports);
     }
 
@@ -29012,14 +29004,6 @@ public class Server implements Runnable {
      * vPhaseReport queue
      */
     private void addReport(Report report) {
-        // Only bother with player reports if doing double blind.
-        if (doBlind()) {
-            for (IConnection conn : connections) {
-                Player p = game.getPlayer(conn.getId());
-
-                p.getTurnReport().addElement(filterReport(report, p, false));
-            }
-        }
         vPhaseReport.addElement(report);
     }
 
@@ -29027,14 +29011,6 @@ public class Server implements Runnable {
      * New Round has started clear everyone's report queue
      */
     private void clearReports() {
-        // Only bother with player reports if doing double blind.
-        if (doBlind()) {
-            for (IConnection conn : connections) {
-                Player p = game.getPlayer(conn.getId());
-
-                p.getTurnReport().removeAllElements();
-            }
-        }
         vPhaseReport.removeAllElements();
     }
 
@@ -29043,14 +29019,6 @@ public class Server implements Runnable {
      * added to all of the players filters
      */
     private void addNewLines() {
-        // Only bother with player reports if doing double blind.
-        if (doBlind()) {
-            for (IConnection conn : connections) {
-                Player p = game.getPlayer(conn.getId());
-
-                Report.addNewline(p.getTurnReport());
-            }
-        }
         Report.addNewline(vPhaseReport);
     }
 

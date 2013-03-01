@@ -31,6 +31,8 @@
 # elevator
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
+super * "swamp:2" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
+super * "swamp:3" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
 
 super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png"
 super * "rough:2" "" "hq_boring/ultra_rough.png"

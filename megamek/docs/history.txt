@@ -72,6 +72,7 @@ v0.35.35-dev (SVN)
 + Bug 3362: Vehicle Charge attack on another Vehicle
 + Bug 3536: armored component bug
 + Bug 3399: Swamp / quicksand bugs
++ Bug 3582: Warship name is misspelled.
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -19247,6 +19247,8 @@ public class Server implements Runnable {
                                                 .getOptions().booleanOption(
                                                         "conditional_ejection") && mech
                                                 .isCondEjectHeadshot()))) {
+                                    autoEject = true;
+                                    vDesc.addAll(ejectEntity(te, true));
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
@@ -19254,8 +19256,6 @@ public class Server implements Runnable {
                                                 .getCrew().getHits()));
                                         mech.setDoomed(true);
                                     }
-                                    autoEject = true;
-                                    vDesc.addAll(ejectEntity(te, true));
                                 }
                             }
 
@@ -21553,6 +21553,8 @@ public class Server implements Runnable {
                                                 .getOptions().booleanOption(
                                                         "conditional_ejection") && mech
                                                 .isCondEjectHeadshot()))) {
+                                    autoEject = true;
+                                    vDesc.addAll(ejectEntity(en, true));
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
                                         mech.setDoomed(false);
@@ -21560,8 +21562,6 @@ public class Server implements Runnable {
                                                 .getCrew().getHits()));
                                         mech.setDoomed(true);
                                     }
-                                    // autoEject = true;
-                                    vDesc.addAll(ejectEntity(en, true));
                                 }
                             }
                         }

@@ -202,7 +202,7 @@ public class PathSearcher {
         try {
             ArrayList<WeightedPath> allpaths = getAllWeightedPaths(entity,game);
             Collections.sort(allpaths);
-            return (ArrayList)allpaths.subList(0, npaths);
+            return (ArrayList<WeightedPath>)allpaths.subList(0, npaths);
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
         }

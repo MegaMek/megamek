@@ -67,7 +67,7 @@ v0.35.35-dev (SVN)
 + Bug: magnetic clamp BV
 + Bug 3437: Loading units onto transports from chatlounge is invalid
 + Bug: Chameleon LPS should effect infantry (but no range brackets)
-	http://bg.battletech.com/forums/index.php/topic,27433.new.html#new
+    http://bg.battletech.com/forums/index.php/topic,27433.new.html#new
 + Bug 3353: Spikes do not absorb damage
 + Bug 3362: Vehicle Charge attack on another Vehicle
 + Bug 3536: armored component bug
@@ -80,6 +80,8 @@ v0.35.35-dev (SVN)
 + Bug 3646: Unjam Ultra Autocannons optional rule is nonfunctional
 + Bug 3579: Skin-of-teeth Ejection
 + Bug: Bad copy/paste when fixing 3579
++ Bug: PathSearcher.java bad raw type call on ArrayList,
+    needed to be ArrayList<WeightedPath>
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working
@@ -113,7 +115,7 @@ v0.35.34 (2013-01-27, 22:55 UTC+1)
 + MechTextView for outputing units as formatted text
 + refactored MechView into megamek.common
 + Bug: 3630: Fixed an infinite loop in the default quirks load process that was
-   preventing the units cache inititialization from finishing.
+    preventing the units cache inititialization from finishing.
 + Mechs.zip contained two entries for the Mongoose MON-68: one in 3039u and the
     other in 3050u.  The one in 3050u had the MON-69 configuration, which was
     missing from mechs.zip. I have fixed and renamed the 3050u file.

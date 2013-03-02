@@ -462,11 +462,6 @@ public class ScenarioLoader {
                 }
 
                 if (round > 0) {
-                    if (player.getStartingPos() == 0) {
-                        throw new Exception(
-                                "Can not combine a starting position of 'any' with delayed deployment.");
-                    }
-
                     System.out.println(e.getDisplayName()
                             + " will be deployed before round " + round);
                     e.setDeployRound(round);

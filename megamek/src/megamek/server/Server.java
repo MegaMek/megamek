@@ -21553,7 +21553,6 @@ public class Server implements Runnable {
                                                 .getOptions().booleanOption(
                                                         "conditional_ejection") && mech
                                                 .isCondEjectHeadshot()))) {
-                                    autoEject = true;
                                     vDesc.addAll(ejectEntity(en, true));
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);

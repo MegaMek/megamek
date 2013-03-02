@@ -78,6 +78,7 @@ v0.35.35-dev (SVN)
 + Bug 3146: Error starting position any and delayed deployment
 + Bug 3604: no newline after "no breach" message
 + Bug 3646: Unjam Ultra Autocannons optional rule is nonfunctional
++ Bug 3579: Skin-of-teeth Ejection
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

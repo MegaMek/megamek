@@ -61,7 +61,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
      * if-statement below reads "if (false)...", so performance shouldn't be
      * impacted if you leave calls to this function in the code (I think).
      */
-    private void debugTime(String s, boolean collectGarbage) {
+    @SuppressWarnings("unused")
+	private void debugTime(String s, boolean collectGarbage) {
         // Change the "false" below to "true" to enable this function
         if (false) {
             if (collectGarbage) {

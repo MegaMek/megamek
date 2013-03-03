@@ -26109,8 +26109,9 @@ public class Server implements Runnable {
             // connectionsPending in order to avoid
             // ConcurrentModificationExceptions.
             toUpdate.clear();
-            Vector<IConnection> connectionsClone = (Vector<IConnection>) connections
+            Vector<IConnection> clone = (Vector<IConnection>) connections
                     .clone();
+			Vector<IConnection> connectionsClone = clone;
             toUpdate.addAll(connectionsClone);
             connectionsClone = (Vector<IConnection>) connectionsPending.clone();
             toUpdate.addAll(connectionsClone);

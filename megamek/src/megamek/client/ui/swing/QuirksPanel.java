@@ -42,7 +42,11 @@ import java.util.Set;
  */
 public class QuirksPanel extends JPanel {
 
-    private Entity entity;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8360885055638738148L;
+	private Entity entity;
     private List<DialogOptionComponent> quirkComps;
     private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer, ArrayList<DialogOptionComponent>>();
     private HashMap<Integer, WeaponQuirks> h_wpnQuirks;

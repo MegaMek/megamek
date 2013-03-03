@@ -229,7 +229,7 @@ public class Precognition implements Runnable {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            LinkedList remainingEvents = events_to_process;
+            LinkedList<GameEvent> remainingEvents = events_to_process;
             for (int count = 0; count < events_to_process.size(); count++) {
                 owner.log(getClass(), METHOD_NAME, "Processing event " + (count+1) + " out of " + events_to_process.size());
                 GameEvent event = events_to_process.get(count);

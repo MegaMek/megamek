@@ -226,9 +226,9 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             System.arraycopy(saEquip1, 0, saEquip, 0, saEquip1.length);
         }
 
-        if (saEquip == null) {
+        /*if (saEquip == null) {
             return;
-        }
+        }*/
 
         // prefix is "Clan " or "IS "
         String prefix;

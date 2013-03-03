@@ -713,7 +713,7 @@ public class Princess extends BotClient {
         }
     }
 
-    public void log(Class callingClass, String methodName, LogLevel level,
+    public void log(Class<?> callingClass, String methodName, LogLevel level,
             String msg) {
         if (level.getLevel() > verbosity.getLevel()) {
             return;
@@ -727,11 +727,11 @@ public class Princess extends BotClient {
         System.out.println(out);
     }
 
-    public void log(Class callingClass, String methodName, String msg) {
+    public void log(Class<?> callingClass, String methodName, String msg) {
         log(callingClass, methodName, LogLevel.DEBUG, msg);
     }
 
-    public void log(Class callingClass, String methodName, LogLevel level,
+    public void log(Class<?> callingClass, String methodName, LogLevel level,
             Throwable t) {
         if (t == null) {
             return;
@@ -746,15 +746,15 @@ public class Princess extends BotClient {
         log(callingClass, methodName, level, t);
     }
 
-    public void log(Class callingClass, String methodName, Throwable t) {
+    public void log(Class<?> callingClass, String methodName, Throwable t) {
         log(callingClass, methodName, LogLevel.ERROR, t);
     }
 
-    public void methodBegin(Class callingClass, String methodName) {
+    public void methodBegin(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, "method begin");
     }
 
-    public void methodEnd(Class callingClass, String methodName) {
+    public void methodEnd(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, "method end");
     }
 }

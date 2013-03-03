@@ -21,7 +21,7 @@ import java.awt.Button;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.Dimension;
+// import java.awt.Dimension; Import never used
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;

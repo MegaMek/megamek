@@ -233,7 +233,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
         panel.add(aggressionlabel,constraints);
         constraints.gridy++;
         aggression_slidebar=new JSlider(SwingConstants.HORIZONTAL,0,100,50);
-        Hashtable<Integer, JLabel> aggression_slidebar_labels = new Hashtable();
+        Hashtable<Integer, JLabel> aggression_slidebar_labels = new Hashtable<Integer, JLabel>();
         aggression_slidebar_labels.put(new Integer(0),new JLabel("Meek"));
         aggression_slidebar_labels.put(new Integer(100),new JLabel("Beserker"));
         aggression_slidebar.setLabelTable(aggression_slidebar_labels);

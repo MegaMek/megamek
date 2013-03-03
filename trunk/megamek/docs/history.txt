@@ -82,6 +82,7 @@ v0.35.35-dev (SVN)
 + Bug: Bad copy/paste when fixing 3579
 + Bug: PathSearcher.java bad raw type call on ArrayList,
     needed to be ArrayList<WeightedPath>
++ Parameterized a bunch of raw types and fixed other warnings as well.
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

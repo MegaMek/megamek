@@ -32,7 +32,7 @@ public class PathSearcher {
         this.owner = owner;
     }
 
-    public class WeightedPath implements Comparable {
+    public class WeightedPath implements Comparable<Object> {
         public WeightedPath(MovePath a, double w) {
             path = a;
             weight = w;

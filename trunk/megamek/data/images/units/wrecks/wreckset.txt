@@ -19,8 +19,6 @@ Ploppy
 # tinting process is subtractive, so make images light.
 # 
 
-include localclient_wreckset.txt
-
 # these 27 must be in here 
 exact "default_light" "small_boom.gif"
 exact "default_medium" "small_boom.gif"
@@ -1013,4 +1011,5 @@ chassis "Wasp" "wasp.gif"
 #chassis "Yu Huang" " .gif"
 #chassis "Zeus" "zeus.gif"
 
- 	  	 
+# Local Client moved here to support overrides of existing images!
+include localclient_wreckset.txt

@@ -88,6 +88,8 @@ v0.35.35-dev (SVN)
     Prowler Explorer Vehicle (As chassis), and Kyudo 01 and 02.
 + Bug: Lightning Mech uses Lightning ASF Sprite
     (Assigned to default images using exact)
++ Data 258: Update mechset to give priority to local client choices
+    RFE: Moved includes in mechset and wreckset files to the bottom.
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

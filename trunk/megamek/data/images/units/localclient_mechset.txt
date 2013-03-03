@@ -16,3 +16,8 @@
 # The tinting process is subtractive, so make images light.
 
 # As of v0.29.61, mechset files can include other mechset files.
+
+### Add new entries between this and end ###
+### End ###
+
+# Add any include files below so that they override what is in this file.

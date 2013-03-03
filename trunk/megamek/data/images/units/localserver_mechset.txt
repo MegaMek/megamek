@@ -16,4 +16,9 @@
 # The tinting process is subtractive, so make images light.
 
 # As of v0.29.61, mechset files can include other mechset files.
+
+### Add new entries between this and end ###
+### End ###
+
+# Local Client moved here to support overrides of existing images!
 include localclient_mechset.txt

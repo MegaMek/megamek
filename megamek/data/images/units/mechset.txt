@@ -45,7 +45,6 @@
 # The tinting process is subtractive, so make images light.
 
 # As of v0.29.61, mechset files can include other mechset files.
-include localserver_mechset.txt
 
 # these 18 must be in here
 exact "default_light" "defaults/default_light.gif"
@@ -2115,3 +2114,6 @@ chassis "Roc" "protomechs/roc.gif"
 chassis "Satyr" "protomechs/satyr.gif"
 chassis "Siren" "protomechs/siren.gif"
 chassis "Triton" "protomechs/triton.gif"
+
+# Local Server/Client moved here to support overrides of existing images!
+include localserver_mechset.txt

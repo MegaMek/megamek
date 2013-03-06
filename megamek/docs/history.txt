@@ -93,6 +93,9 @@ v0.35.35-dev (SVN)
 + Entity.getLocationName() return !UNDEFINED! if it receives a -1 input
     for location. This is for MekHQ safety net.
 + Data 341: Corrected RAT's
++ Data 292: Mech Images 3
++ Data 291: Mech Images 2
++ Data 194: Reseen Sprites
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

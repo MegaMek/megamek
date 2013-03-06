@@ -1,0 +1,12 @@
+SLDF Medium Vehicle (2766) SLDF Regular or House Elite
+Kanga Medium Hovertank,2
+Zephyr Hovertank,3
+Thor Artillery Vehicle,4
+Chaparral Missile Artillery Tank,5
+Turhan Urban Combat Vehicle,6
+T-12 Tiger Medium Tank,7
+Kanga Medium Hovertank,6
+Maxim Heavy Hover Transport,5
+Chaparral Missile Artillery Tank,4
+Goblin Medium Tank,3
+LVT-4 Hovertank,2

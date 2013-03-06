@@ -6,7 +6,7 @@ Condor Heavy Hover Tank (Upgrade Laser),4
 Goblin Infantry Support Vehicle,5
 Zephyr Hovertank (C3i),6
 Maxim (I) Heavy Hover Transport,5
-Drillson Heavy Hover Tank (MML),4
+Drillson Heavy Hover Tank,4
 Stygian Strike Tank,3
 Regulator Hovertank,2
 Chaparral Missile Artillery Tank,1

@@ -1,0 +1,12 @@
+Light Aerospace (2766) RWR
+Swift SW-606,2
+Sabre SB-27,3
+Centurion CNT-1D,4
+Cheetah F-10,5
+Tomahawk THK-63,6
+Trident TRN-3T,7
+Zero ZRO-114,6
+Rogue RGU-133E,5
+Spad SPD-502,4
+Zero ZRO-114,3
+Swift SW-606,2

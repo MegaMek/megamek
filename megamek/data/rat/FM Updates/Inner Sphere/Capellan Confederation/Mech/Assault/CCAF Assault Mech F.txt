@@ -7,6 +7,6 @@ Cyclops CP-10-Q,5
 Charger CGR-1A1,6
 Charger CGR-1A5,5
 Cyclops CP-10-Z,4
-Stalker STK-4P,3
+Stalker STK-3F,3
 Charger CGR-1L,2
 Charger CGR-1L,1

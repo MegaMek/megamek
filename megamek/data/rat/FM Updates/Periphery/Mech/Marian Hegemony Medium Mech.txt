@@ -1,7 +1,7 @@
 Marian Hegemony Medium Mechs 3067 FM-U
 Clint CLNT-2-3T,1
 Dervish DV-6M,2
-Assassin ASN-23,3
+Assassin ASN-101,3
 Hunchback HBK-4P,4
 Phoenix Hawk PXH-1,5
 Whitworth WTH-1H,6

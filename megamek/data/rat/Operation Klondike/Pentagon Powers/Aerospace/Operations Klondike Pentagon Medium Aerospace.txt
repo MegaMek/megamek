@@ -1,0 +1,14 @@
+2821 Operations Klondike Pentagon Medium Mech Aerospace
+Gotha GTHA-500b,1
+Lightning LTN-G15b,2
+Hellcat HCT-213,3
+Ironsides IRN-SD1,4
+Hellcat II HCT-213B,5
+Gotha GTHA-500,6
+Corsair CSR-V12,5
+Hellcat HCT-213,4
+Lightning LTN-G15,3
+Hellcat II HCT-213B,2
+Ironsides IRN-SD1b,1
+#Edited by Michael Moulden
+#11/15/2011

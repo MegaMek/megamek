@@ -1,0 +1,12 @@
+Assault Mech (2766) RWR Republican Guard
+Pillager PLG-3Z,2
+Stalker STK-3H,3
+Striker STC-2C,4
+Goliath GOL-1H,5
+Longbow LGB-7Q,6
+Banshee BNC-3M,7
+Highlander HGN-732,6
+Rampage RMP-4G,5
+BattleMaster BLR-1G,4
+Emperor EMP-6A,3
+Rampage RMP-5G,2

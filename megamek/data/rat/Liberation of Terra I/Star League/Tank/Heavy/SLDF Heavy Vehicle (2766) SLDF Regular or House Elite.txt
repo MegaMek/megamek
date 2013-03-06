@@ -1,0 +1,12 @@
+SLDF Heavy Vehicle (2766) SLDF Regular or House Elite
+Burke Defense Tank,2
+Padilla Heavy Artillery Tank,3
+Burke Defense Tank,4
+Von Luckner Heavy Tank (Star League),5
+Magi Infantry Support Vehicle,6
+Manticore Heavy Tank,7
+Bulldog Medium Tank,6
+Demon Tank,5
+Burke Defense Tank,4
+Marksman Artillery Vehicle,3
+Demon Tank,2

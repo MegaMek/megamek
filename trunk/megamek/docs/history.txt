@@ -92,6 +92,7 @@ v0.35.35-dev (SVN)
     RFE: Moved includes in mechset and wreckset files to the bottom.
 + Entity.getLocationName() return !UNDEFINED! if it receives a -1 input
     for location. This is for MekHQ safety net.
++ Data 341: Corrected RAT's
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

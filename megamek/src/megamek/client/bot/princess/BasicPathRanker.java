@@ -295,52 +295,55 @@ public class BasicPathRanker extends PathRanker {
             double maximum_physical_damage = 0;
             double expected_damage_taken = 0;
             for (Entity e : enemies) {
+                if (e.getPosition() == null) {
+                    continue; // Skip units not actually on the board.
+                }
                 if((!e.isSelectableThisTurn())||e.isImmobile()) { //For units that have already moved
-                // How much damage can they do to me?
-                double their_damage_potential = firecontrol
-                        .guessBestFiringPlanUnderHeatWithTwists(e, null,
-                                p.getEntity(), new EntityState(p),
-                                (e.getHeatCapacity() - e.heat) + 5, game)
-                                .utility;
-                // if they can kick me, and probably hit, they probably will.
-                FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
-                        e, null, p.getEntity(), new EntityState(p),
-                        PhysicalAttackType.RIGHT_KICK, game);
-                if (theirkick.prob_to_hit > 0.5) {
-                    their_damage_potential += theirkick.expected_damage_on_hit
-                            * theirkick.prob_to_hit;
-                }
-
-                // How much damage can I do to them?
-                FiringPlan my_firing_plan;
-                if(p.getEntity() instanceof Aero) {
-                    my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
-                } else {
-                    my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
-                }
-                double my_damage_potential = my_firing_plan.utility;
-                // If I can kick them and probably hit, I probably will
-                FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
-                        p.getEntity(), new EntityState(p), e, null,
-                        PhysicalAttackType.RIGHT_KICK, game);
-                if (mykick.prob_to_hit > 0.5) {
-                    double expected_kick_damage = mykick.expected_damage_on_hit
-                            * mykick.prob_to_hit;
-                    if (expected_kick_damage > maximum_physical_damage) {
-                        maximum_physical_damage = expected_kick_damage;
+                    // How much damage can they do to me?
+                    double their_damage_potential = firecontrol
+                            .guessBestFiringPlanUnderHeatWithTwists(e, null,
+                                    p.getEntity(), new EntityState(p),
+                                    (e.getHeatCapacity() - e.heat) + 5, game)
+                                    .utility;
+                    // if they can kick me, and probably hit, they probably will.
+                    FireControl.PhysicalInfo theirkick = new FireControl.PhysicalInfo(
+                            e, null, p.getEntity(), new EntityState(p),
+                            PhysicalAttackType.RIGHT_KICK, game);
+                    if (theirkick.prob_to_hit > 0.5) {
+                        their_damage_potential += theirkick.expected_damage_on_hit
+                                * theirkick.prob_to_hit;
                     }
-                }
 
-                // If this enemy is likely to fire at me, include that in the damage
-                // I will likely take
-                if (best_damage_by_enemies.get(e.getId()) < their_damage_potential) {
-                    expected_damage_taken += their_damage_potential;
-                }
-                // If this enemy is likely my target, use my damage to them as the
-                // maximum damage I can do
-                if (my_damage_potential >= maximum_damage_done) {
-                    maximum_damage_done = my_damage_potential;
-                }
+                    // How much damage can I do to them?
+                    FiringPlan my_firing_plan;
+                    if(p.getEntity() instanceof Aero) {
+                        my_firing_plan = firecontrol.guessFullAirToGroundPlan(p.getEntity(),e,new EntityState(e),p,game,false);
+                    } else {
+                        my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),e,null,game);
+                    }
+                    double my_damage_potential = my_firing_plan.utility;
+                    // If I can kick them and probably hit, I probably will
+                    FireControl.PhysicalInfo mykick = new FireControl.PhysicalInfo(
+                            p.getEntity(), new EntityState(p), e, null,
+                            PhysicalAttackType.RIGHT_KICK, game);
+                    if (mykick.prob_to_hit > 0.5) {
+                        double expected_kick_damage = mykick.expected_damage_on_hit
+                                * mykick.prob_to_hit;
+                        if (expected_kick_damage > maximum_physical_damage) {
+                            maximum_physical_damage = expected_kick_damage;
+                        }
+                    }
+
+                    // If this enemy is likely to fire at me, include that in the damage
+                    // I will likely take
+                    if (best_damage_by_enemies.get(e.getId()) < their_damage_potential) {
+                        expected_damage_taken += their_damage_potential;
+                    }
+                    // If this enemy is likely my target, use my damage to them as the
+                    // maximum damage I can do
+                    if (my_damage_potential >= maximum_damage_done) {
+                        maximum_damage_done = my_damage_potential;
+                    }
                 } else { //for units that have moved this round
                     //I would prefer not to have the unit be able to move directly behind or flank me
                     EntityEvaluationResponse resp=evaluateUnmovedEnemy(e,p,game);
@@ -353,6 +356,9 @@ public class BasicPathRanker extends PathRanker {
             // Include damage I can do to strategic targets
             for(int i=0;i<botbase.fire_control.additional_targets.size();i++) {
                 Targetable t=botbase.fire_control.additional_targets.get(i);
+                if (t.getPosition() == null) {
+                    continue; // Skip targets not actually on the board.
+                }
                 FiringPlan my_firing_plan = firecontrol.guessBestFiringPlanWithTwists(p.getEntity(),new EntityState(p),t,null,game);
                 double my_damage_potential = my_firing_plan.utility;
                 if(my_damage_potential>maximum_damage_done) {

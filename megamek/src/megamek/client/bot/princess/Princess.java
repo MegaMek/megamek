@@ -280,6 +280,9 @@ public class Princess extends BotClient {
                 ArrayList<Entity> enemies = getEnemyEntities();
                 // cycle through potential enemies
                 for (Entity e : enemies) {
+                    if (e.getPosition() == null) {
+                        continue; // Skip enemies not on the board.
+                    }
                     FireControl.PhysicalInfo right_punch = new FireControl.PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_PUNCH, game);
                     fire_control.calculateUtility(right_punch);

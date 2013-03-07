@@ -1254,7 +1254,9 @@ public class FireControl {
 
         try {
 
-            if (shooter instanceof Aero) {
+            if (shooter instanceof Aero ||
+                    shooter.getPosition() == null ||
+                    target.getPosition() == null) {
                 return null;
             }
             String ret = null;
@@ -1295,6 +1297,11 @@ public class FireControl {
             }
 
             String ret = null;
+            if (shooter.getPosition() == null) {
+                return "Shooter has NULL coordinates!";
+            } else if (target.getPosition() == null) {
+                return "Target has NULL coordinates!";
+            }
             PhysicalInfo guess_info = new PhysicalInfo(shooter, null, target, null,
                     attack_type, game);
             PhysicalInfo accurate_info = new PhysicalInfo(shooter, target,
@@ -1408,6 +1415,16 @@ public class FireControl {
             shooter_state = new EntityState(shooter);
         }
         FiringPlan myplan = new FiringPlan();
+        if (shooter.getPosition() == null) {
+            owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
+                      Princess.LogLevel.ERROR, "Shooter's position is NULL!");
+            return myplan;
+        }
+        if (target.getPosition() == null) {
+            owner.log(getClass(), "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)",
+                      Princess.LogLevel.ERROR, "Target's position is NULL!");
+            return myplan;
+        }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_state,
                     target, target_state, mw, game);
@@ -1446,6 +1463,18 @@ public class FireControl {
             }
         }
         FiringPlan myplan = new FiringPlan();
+        if (shooter.getPosition() == null) {
+            owner.log(getClass(),
+                      "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
+                      Princess.LogLevel.ERROR, "Shooter's position is NULL!");
+            return myplan;
+        }
+        if (target.getPosition() == null) {
+            owner.log(getClass(),
+                      "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, boolean)",
+                      Princess.LogLevel.ERROR, "Target's position is NULL!");
+            return myplan;
+        }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
 
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, shooter_path,
@@ -1479,6 +1508,18 @@ public class FireControl {
      */
     FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
         FiringPlan myplan = new FiringPlan();
+        if (shooter.getPosition() == null) {
+            owner.log(getClass(),
+                      "getFullFiringPlan(Entity, Targetable, IGame)", Princess.LogLevel.ERROR,
+                      "Shooter's position is NULL!");
+            return myplan;
+        }
+        if (target.getPosition() == null) {
+            owner.log(getClass(),
+                      "getFullFiringPlan(Entity, Targetable, IGame)", Princess.LogLevel.ERROR,
+                      "Target's position is NULL!");
+            return myplan;
+        }
         for (Mounted mw : shooter.getWeaponList()) { // cycle through my weapons
             WeaponFireInfo shoot = new WeaponFireInfo(shooter, target, mw, game);
             if ((shoot.prob_to_hit > 0)) {

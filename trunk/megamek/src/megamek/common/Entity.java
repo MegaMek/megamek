@@ -2927,8 +2927,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         Mounted oldammo = mounted.getLinked();
 
         if ((oldammo != null)
-                && (((AmmoType) oldammo.getType()).getMunitionType() != atype
-                        .getMunitionType())) {
+                && (!((AmmoType) oldammo.getType()).equals(atype)
+                        || (((AmmoType) oldammo.getType()).getMunitionType() != atype.getMunitionType()))) {
             return false;
         }
 

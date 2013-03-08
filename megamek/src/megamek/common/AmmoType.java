@@ -319,6 +319,23 @@ public class AmmoType extends EquipmentType {
         if (!(other instanceof AmmoType)) {
             return false;
         }
+        //there a couple of flags that need to be checked
+        if(getAmmoType() == T_MML) {
+            if(hasFlag(F_MML_LRM) != ((AmmoType)other).hasFlag(F_MML_LRM)) {
+                return false;
+            }
+        }
+        if(getAmmoType() == T_AR10) {
+            if(hasFlag(F_AR10_BARRACUDA) != ((AmmoType)other).hasFlag(F_AR10_BARRACUDA)) {
+                return false;
+            }
+            if(hasFlag(F_AR10_WHITE_SHARK) != ((AmmoType)other).hasFlag(F_AR10_WHITE_SHARK)) {
+                return false;
+            }
+            if(hasFlag(F_AR10_KILLER_WHALE) != ((AmmoType)other).hasFlag(F_AR10_KILLER_WHALE)) {
+                return false;
+            }
+        }
         return ((getAmmoType() == ((AmmoType) other).getAmmoType()) && (getRackSize() == ((AmmoType) other).getRackSize()));
     }
 

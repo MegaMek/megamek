@@ -2019,9 +2019,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "";
         }
         
-        // -1 check for MekHQ Safety
         if (loc < 0) {
-        	return "!UNDEFINED!";
+        	return "None";
         }
 
         return locationNames[loc];

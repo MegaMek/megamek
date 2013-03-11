@@ -592,6 +592,7 @@ public class Game implements Serializable, IGame {
             case PHASE_PHYSICAL:
                 return getOptions().booleanOption("simultaneous_physical");
             case PHASE_TARGETING:
+            case PHASE_OFFBOARD:
                 return getOptions().booleanOption("simultaneous_targeting");
             default:
                 return false;

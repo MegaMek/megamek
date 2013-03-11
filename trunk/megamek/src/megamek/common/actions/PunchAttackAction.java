@@ -98,7 +98,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        int attackerHeight = ae.absHeight() + attHex.getElevation();
+        int attackerElevation = attHex.getElevation();
+        int attackerHeight = ae.absHeight() + attackerElevation;
         if (ae.isHullDown()) {
             attackerHeight--;
         }
@@ -152,7 +153,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // check elevation
         if (target.isAirborneVTOLorWIGE()) {
-            if ((targetElevation - attackerHeight > 2) || (targetElevation - attackerHeight < 1)) {
+            if ((targetElevation - attackerElevation > 2) || (targetElevation - attackerElevation < 1)) {
                 return "Target elevation not in range";
             }
         } else if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {

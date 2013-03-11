@@ -104,6 +104,7 @@ v0.35.35-dev (SVN)
     no damage applied to pilot.
 + Bug: Offboard attack phase (TAG & Artillery Landing) not following
     simultaneous targeting option.
++ Bug 3664: Megamek doesn't remember window sizes
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

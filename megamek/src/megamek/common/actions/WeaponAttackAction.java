@@ -1089,19 +1089,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
-        // If it has a torso-mounted cockpit and two head sensor hits or three
-        // sensor hits...
-        // It gets a =4 penalty for being blind!
-        if ((ae instanceof Mech)
-                && (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                    Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            if (sensorHits == 2) {
-                toHit.addModifier(4,
-                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
-            }
-        }
-
         // industrial cockpit: +1 to hit
         if ((ae instanceof Mech)
                 && (((Mech) ae).getCockpitType() == Mech.COCKPIT_INDUSTRIAL)) {

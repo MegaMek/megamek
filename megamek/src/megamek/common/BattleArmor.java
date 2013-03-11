@@ -879,12 +879,12 @@ public class BattleArmor extends Infantry {
             oBV *= speedFactor;
             squadBV += dBV;
 
-            if (i == 1) {
+            /*if (i == 1) {
                 System.out.println(getChassis()+getModel());
                 System.out.println(dBV);
                 System.out.println(oBV);
                 System.out.println((oBV+dBV));
-            }
+            }*/
             squadBV += oBV;
         }
         // we have now added all troopers, divide by current strength to then

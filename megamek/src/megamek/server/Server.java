@@ -19248,14 +19248,7 @@ public class Server implements Runnable {
                                                         "conditional_ejection") && mech
                                                 .isCondEjectHeadshot()))) {
                                     autoEject = true;
-                                    vDesc.addAll(ejectEntity(te, true));
-                                    if (mech.getCrew().getHits() < 5) {
-                                        Report.addNewline(vDesc);
-                                        mech.setDoomed(false);
-                                        vDesc.addAll(damageCrew(te, 5 - mech
-                                                .getCrew().getHits()));
-                                        mech.setDoomed(true);
-                                    }
+                                    vDesc.addAll(ejectEntity(te, true, true));
                                 }
                             }
 
@@ -21553,14 +21546,7 @@ public class Server implements Runnable {
                                                 .getOptions().booleanOption(
                                                         "conditional_ejection") && mech
                                                 .isCondEjectHeadshot()))) {
-                                    vDesc.addAll(ejectEntity(en, true));
-                                    if (mech.getCrew().getHits() < 5) {
-                                        Report.addNewline(vDesc);
-                                        mech.setDoomed(false);
-                                        vDesc.addAll(damageCrew(en, 5 - mech
-                                                .getCrew().getHits()));
-                                        mech.setDoomed(true);
-                                    }
+                                    vDesc.addAll(ejectEntity(en, true, true));
                                 }
                             }
                         }
@@ -28038,6 +28024,22 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
     public Vector<Report> ejectEntity(Entity entity, boolean autoEject) {
+    	return ejectEntity(entity, autoEject, false);
+    }
+    
+    /**
+     * Eject an Entity.
+     *
+     * @param entity
+     *            The <code>Entity</code> to eject.
+     * @param autoEject
+     *            The <code>boolean</code> state of the entity's auto- ejection
+     *            system
+     * @param skin_of_the_teeth
+     *            Perform a skin of the teeth ejection
+     * @return a <code>Vector</code> of report objects for the gamelog.
+     */
+    public Vector<Report> ejectEntity(Entity entity, boolean autoEject, boolean skin_of_the_teeth) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -28242,6 +28244,13 @@ public class Server implements Runnable {
                             IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
             } // Crew safely ejects.
+            
+            // If this is a skin of the teeth ejection...
+            if (skin_of_the_teeth && pilot.getCrew().getHits() < 5) {
+                Report.addNewline(vDesc);
+                vDesc.addAll(damageCrew(pilot, 5 - pilot
+                        .getCrew().getHits()));
+            }
 
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())

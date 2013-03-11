@@ -369,6 +369,7 @@ WindowListener, TreeSelectionListener {
 
         // construct the main dialog
         setLayout(new BorderLayout());
+        this.setPreferredSize(new Dimension(800,500));
         add(m_pButtons, BorderLayout.SOUTH);
         add(m_pSplit, BorderLayout.CENTER);
         validate();

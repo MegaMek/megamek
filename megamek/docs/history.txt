@@ -107,6 +107,8 @@ v0.35.35-dev (SVN)
 + Bug 3664: Megamek doesn't remember window sizes
 + Bug 2948: Physical Attacks against VTOLs
 + Bug: +4 for head destruction of torso-mounted cockpit added twice
++ Cleanup resolveMechWarriorPickUp()
++ Bug: Enemy units ignored elevation when picking up MechWarriors.
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

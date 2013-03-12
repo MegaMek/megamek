@@ -28423,11 +28423,12 @@ public class Server implements Runnable {
                         || pe.isShutDown()
                         || pe.getCrew().isUnconscious()
                         || pe.isAirborne()
-                        || ((pe.getOwnerId() != e.getOwnerId()) || (pe
-                                .getElevation() != e.getElevation()))) {
+                        || pe.getElevation() != e.getElevation()
+                        || pe.getOwnerId() != e.getOwnerId()
+                        || pe.getId() == e.getId()) {
                     continue;
                 }
-                if (!pickedUp && (pe.getId() != e.getId())) {
+                if (!pickedUp) {
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
                         r = new Report(6415, Report.PUBLIC);
@@ -28453,14 +28454,18 @@ public class Server implements Runnable {
                 pickupEntities = game.getEntities(e.getPosition());
                 while (pickupEntities.hasMoreElements()) {
                     Entity pe = pickupEntities.nextElement();
-                    if (pe.isDoomed() || pe.isShutDown()
-                            || pe.getCrew().isUnconscious() || pe.isAirborne()) {
+                    if (pe.isDoomed()
+                            || pe.isShutDown()
+                            || pe.getCrew().isUnconscious()
+                            || pe.isAirborne()
+                            || pe.getElevation() != e.getElevation()
+                            || pe.getOwnerId() == e.getOwnerId()
+                            || pe.getId() == e.getId()
+                            || pe.getOwner().getTeam() == Player.TEAM_NONE
+                            || pe.getOwner().getTeam() != e.getOwner().getTeam()) {
                         continue;
                     }
-                    if (!pickedUp
-                            && (pe.getOwner().getTeam() != Player.TEAM_NONE)
-                            && (pe.getOwner().getTeam() == e.getOwner()
-                                    .getTeam()) && (pe.getId() != e.getId())) {
+                    if (!pickedUp) {
                         if (pe instanceof MechWarrior) {
                             // MWs have a beer together
                             r = new Report(6415, Report.PUBLIC);
@@ -28488,8 +28493,11 @@ public class Server implements Runnable {
                         .getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements()) {
                     Entity pe = pickupEnemyEntities.nextElement();
-                    if (pe.isDoomed() || pe.isShutDown()
-                            || pe.getCrew().isUnconscious() || pe.isAirborne()) {
+                    if (pe.isDoomed()
+                            || pe.isShutDown()
+                            || pe.getCrew().isUnconscious()
+                            || pe.isAirborne()
+                            || pe.getElevation() != e.getElevation()) {
                         continue;
                     }
                     if (pe instanceof MechWarrior) {

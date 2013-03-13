@@ -1039,7 +1039,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     private void beginMyTurn() {
         setStatusBarText(Messages.getString("MovementDisplay.its_your_turn")); //$NON-NLS-1$
-        selectEntity(clientgui.getClient().getFirstEntityNum());
         butDone.setText("<html><b>"+Messages.getString("MovementDisplay.Done")+"</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(true);
         setNextEnabled(true);
@@ -1048,6 +1047,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
+        selectEntity(clientgui.getClient().getFirstEntityNum());
     }
 
     /**

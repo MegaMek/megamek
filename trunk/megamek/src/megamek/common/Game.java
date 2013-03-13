@@ -1634,7 +1634,7 @@ public class Game implements Serializable, IGame {
      *            the entity id to start at
      */
     public int getNextEntityNum(GameTurn turn, int start) {
-        for (int i = start + 1; i < entities.size(); i++) {
+        for (int i = start; i < entities.size(); i++) {
             final Entity entity = entities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();

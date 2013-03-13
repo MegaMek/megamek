@@ -385,6 +385,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * Does turn start stuff
      */
     private void beginMyTurn() {
+        clientgui.setDisplayVisible(true);
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.
         if (turn instanceof GameTurn.CounterGrappleTurn) {
@@ -399,7 +400,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(true);
             butMore.setEnabled(true);
         }
-        clientgui.setDisplayVisible(true);
         clientgui.getBoardView().select(null);
     }
 

@@ -111,6 +111,7 @@ v0.35.35-dev (SVN)
 + Bug: Enemy units ignored elevation when picking up MechWarriors.
 + Bug 3575: Mud Takes Priority in Minimap
 + Bug: Next Unit button skipping units
++ Bug 3674: Null armor panel on loading save game
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -109,6 +109,7 @@ v0.35.35-dev (SVN)
 + Bug: +4 for head destruction of torso-mounted cockpit added twice
 + Cleanup resolveMechWarriorPickUp()
 + Bug: Enemy units ignored elevation when picking up MechWarriors.
++ Bug 3575: Mud Takes Priority in Minimap
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

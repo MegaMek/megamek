@@ -250,7 +250,7 @@ public class MiniMap extends JPanel {
         m_terrainColors[Terrains.BRIDGE] = new Color(109, 55, 25);
         m_terrainColors[Terrains.ICE] = new Color(204, 204, 255);
         m_terrainColors[Terrains.MAGMA] = new Color(200, 0, 0);
-        m_terrainColors[Terrains.MUD] = new Color(218, 160, 100);
+        //m_terrainColors[Terrains.MUD] = new Color(218, 160, 100);
         m_terrainColors[Terrains.JUNGLE] = new Color(180, 230, 130);
         m_terrainColors[Terrains.FIELDS] = new Color(250, 255, 205);
         m_terrainColors[Terrains.INDUSTRIAL] = new Color(112, 138, 144);

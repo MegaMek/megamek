@@ -344,12 +344,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void beginMyTurn() {
         target = null;
 
-        selectEntity(clientgui.getClient().getFirstEntityNum());
 
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
 
+        selectEntity(clientgui.getClient().getFirstEntityNum());
+        
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
         if ((turn instanceof GameTurn.TriggerAPPodTurn) && (null != ce())) {

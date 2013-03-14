@@ -71,7 +71,7 @@ public class InfantryMapSet implements DisplayMapSet {
 
     public void setEntity(Entity e) {
         Infantry inf = (Infantry) e;
-        int men = inf.getInternal(0);
+        int men = Math.min(inf.getInternal(0),Infantry.INF_PLT_MAX_MEN);
         for (int i = 0; i < men; i++) {
             areas[i].setVisible(true);
         }

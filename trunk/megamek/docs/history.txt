@@ -113,6 +113,7 @@ v0.35.35-dev (SVN)
 + Bug: Next Unit button skipping units
 + Bug 3674: Null armor panel on loading save game
 + Bug 2509: units should remember last turn movement (pavement for skid)
++ Bug: fail infantry assault drop as per paratroopers (needs work)
 
 v0.35.34 (2013-01-27, 22:55 UTC+1)
 + Bug: DWP jettison detection not working

@@ -5626,53 +5626,68 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     "Check false: flyinge entities don't skid");
             return roll;
         }
-
+        
+        if(isInfantry) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: infantry don't skid");
+            return roll;
+        }
+        
+        if(moveType == EntityMovementType.MOVE_JUMP) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: jumping entities don't skid");
+            return roll;
+        }
+        
+        if(null != prevStep && prevStep.isHasJustStood()) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: getting up entities don't skid");
+            return roll;
+        }
+        
+        IHex curHex = null;
+        if(null != curPos) {
+            curHex = game.getBoard().getHex(curPos);
+        }
+        
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        if ((moveType != EntityMovementType.MOVE_JUMP)
-                && (prevHex != null)
-                /*
-                 * Bug 754610: Revert fix for bug 702735. && (
-                 * prevHex.contains(Terrain.PAVEMENT) ||
-                 * prevHex.contains(Terrain.ROAD) ||
-                 * prevHex.contains(Terrain.BRIDGE) )
-                 */
-                && ((prevStep.isPavementStep()
-                        && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
-                        && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
-                        || (prevHex.containsTerrain(Terrains.ICE)
-                                && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) && ((game
-                        .getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game
-                        .getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
-                && (prevFacing != curFacing) && !lastPos.equals(curPos)
-                && !isInfantry
-                // Bug 912127, a unit that just got up and changed facing
-                // on pavement in that getting up does not skid.
-                && !prevStep.isHasJustStood()) {
-            // append the reason modifier
-            if (prevStep.isPavementStep()
-                    && !prevHex.containsTerrain(Terrains.ICE)) {
-                if (this instanceof Mech) {
-                    roll.append(new PilotingRollData(getId(),
-                            getMovementBeforeSkidPSRModifier(distance),
-                            "running & turning on pavement"));
-                } else {
-                    roll.append(new PilotingRollData(getId(),
-                            getMovementBeforeSkidPSRModifier(distance),
-                            "reckless driving on pavement"));
-                }
+        if ((prevHex != null)  
+                 && prevHex.containsTerrain(Terrains.ICE)
+                 && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
+                            || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) 
+                                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) 
+                                            || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
+                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+            roll.append(new PilotingRollData(getId(),
+                    getMovementBeforeSkidPSRModifier(distance),
+                    "turning on ice"));
+            adjustDifficultTerrainPSRModifier(roll);
+            return roll;
+        }        
+        else if ((prevHex != null)
+                && (prevStep.isPavementStep()
+                && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+                && (movementMode != EntityMovementMode.HOVER) 
+                && (movementMode != EntityMovementMode.WIGE))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+            if (this instanceof Mech) {
+                roll.append(new PilotingRollData(getId(),
+                        getMovementBeforeSkidPSRModifier(distance),
+                        "running & turning on pavement"));
             } else {
                 roll.append(new PilotingRollData(getId(),
                         getMovementBeforeSkidPSRModifier(distance),
-                        "turning on ice"));
+                        "reckless driving on pavement"));
             }
             adjustDifficultTerrainPSRModifier(roll);
-        } else {
+            return roll;
+        }
+        else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: Entity is not apparently skidding");
+            return roll;
         }
-
-        return roll;
     }
 
     /**

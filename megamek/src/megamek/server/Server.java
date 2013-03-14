@@ -7317,12 +7317,12 @@ public class Server implements Runnable {
             }
 
             // update lastPos, prevStep, prevFacing & prevHex
-            lastPos = new Coords(curPos);
-            lastElevation = curElevation;
-            prevStep = step;
-            if (!curHex.equals(prevHex)) {
+            if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
+            lastPos = new Coords(curPos);
+            lastElevation = curElevation;
+            prevStep = step;      
             prevHex = curHex;
 
             firstStep = false;

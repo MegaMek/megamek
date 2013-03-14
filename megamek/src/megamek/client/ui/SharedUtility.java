@@ -332,15 +332,11 @@ public class SharedUtility {
             }
             
             // update lastPos, prevStep, prevFacing & prevHex
-            lastPos = new Coords(curPos);
-            prevStep = step;
-            /*
-             * Bug 754610: Revert fix for bug 702735. if (prevHex != null &&
-             * !curHex.equals(prevHex)) {
-             */
-            if (!curHex.equals(prevHex)) {
+            if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;
             }
+            lastPos = new Coords(curPos);
+            prevStep = step;
             prevHex = curHex;
             lastElevation = step.getElevation();
 

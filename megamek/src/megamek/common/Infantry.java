@@ -122,21 +122,6 @@ public class Infantry extends Entity {
     public static final int INF_PLT_MAX_MEN = 30;
 
     /**
-     * The maximum number of men in an infantry platoon.
-     */
-    public static final int INF_PLT_FOOT_MAX_MEN = 21;
-
-    /**
-     * The maximum number of men in an infantry platoon.
-     */
-    public static final int INF_PLT_JUMP_MAX_MEN = 21;
-
-    /**
-     * The maximum number of men in an infantry platoon.
-     */
-    public static final int INF_PLT_CLAN_MAX_MEN = 25;
-
-    /**
      * The internal names of the anti-Mek attacks.
      */
     public static final String LEG_ATTACK = "LegAttack";

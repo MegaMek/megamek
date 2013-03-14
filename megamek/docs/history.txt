@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.35-dev (SVN)
+v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize
 + added getRawCost to equipmentType
 + Bug 3630: Duplicate defaultQuirks Entries Prevent Cache Refresh

@@ -29057,7 +29057,12 @@ public class Server implements Runnable {
             psr = new PilotingRollData(entity.getId(), 5,
                     "landing assault drop");
 
-        } else {
+        } 
+        else if(entity instanceof Infantry) {
+            psr = new PilotingRollData(entity.getId(), 4,
+                    "landing assault drop");
+        }
+        else {
             psr = entity.getBasePilotingRoll();
         }
         int roll = Compute.d6(2);
@@ -29124,7 +29129,12 @@ public class Server implements Runnable {
 
             // do fall damage
             entity.setElevation(fallHeight);
-            addReport(doEntityFallsInto(entity, c, c, psr, true));
+            if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+                HitData hit = new HitData(Infantry.LOC_INFANTRY);
+                addReport(damageEntity(entity, hit, 1));
+            } else {
+                addReport(doEntityFallsInto(entity, c, c, psr, true));
+            }
         }
         // set entity to expected elevation
         IHex hex = game.getBoard().getHex(entity.getPosition());

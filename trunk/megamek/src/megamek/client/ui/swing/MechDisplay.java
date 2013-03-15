@@ -1632,9 +1632,13 @@ public class MechDisplay extends JPanel {
                 wDamR.setText(Messages.getString("MechDisplay.Special")); //$NON-NLS-1$
             } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 StringBuffer damage = new StringBuffer();
-                damage.append(Integer.toString(wtype.getRackSize()))
-                        .append('/').append(
-                                Integer.toString(wtype.getRackSize() / 2));
+                int artyDamage = wtype.getRackSize();
+                damage.append(Integer.toString(artyDamage));
+                artyDamage -= 10;
+                while(artyDamage > 0) {
+                    damage.append('/').append(Integer.toString(artyDamage));
+                    artyDamage -= 10;
+                }
                 wDamR.setText(damage.toString());
             } else if (wtype.hasFlag(WeaponType.F_ENERGY)
                     && wtype.hasModes()

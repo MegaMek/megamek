@@ -7,6 +7,7 @@ v0.35.36-dev (SVN)
 + Bug: cant load magnetic clamp BA in chat lounge
 + Bug 3647: Chameleon LPS not working
 + Bug 3648: Issues with "skip ineligible for firing phase" option
++ Bug 3532: Arty splash damage listing
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

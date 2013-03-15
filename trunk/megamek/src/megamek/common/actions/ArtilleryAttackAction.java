@@ -49,7 +49,13 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         // adjust distance for gravity
         distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
-        if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
+        if(getEntity(game).isAirborne()) {
+            if(getEntity(game).getAltitude() < 9) {
+                turnsTilHit = 1;
+            } else {
+                turnsTilHit = 2;
+            }
+        } else if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
             turnsTilHit = 1 + (distance / 17 / 5);
         } else {
             if (distance <= 17)

@@ -3072,6 +3072,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (Entity.NONE == ae.getSwarmTargetId()) {
                 return "Not swarming a Mek.";
             }
+        } else if (Infantry.SWARM_WEAPON_MEK.equals(wtype.getInternalName())) {
+            // Can't stop if we're not swarming, otherwise automatic.
+            if (Entity.NONE == ae.getSwarmTargetId()) {
+                return "Not swarming a Mek.";
+            }
         } else if (BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName())) {
             // Mine launchers can not hit infantry.
             if (te instanceof Infantry) {

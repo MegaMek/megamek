@@ -837,7 +837,11 @@ public interface IGame {
      *         if no player has a Battle Armor squad equipped with a Magnetic
      *         Clamp.
      */
+    /* Taharqa: I am removing this function and instead I am simply adding clamp mounts to all
+     * non omni/ none BA handled mechs in the game.addEntity routine - It should not be too much memory to
+     * do this and it allows us to load these units in the lobby
     public abstract boolean checkForMagneticClamp();
+    */
 
     /** Adds the specified action to the actions list for this phase. */
     public abstract void addAction(EntityAction ea);

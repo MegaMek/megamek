@@ -22,8 +22,10 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -137,6 +139,29 @@ public class InfantryWeaponHandler extends WeaponHandler {
             return 1;
         }
         return damageDealt;
+    }
+    
+    //we need to figure out AV damage to aeros for AA weapons
+    protected int calcnClusterAero(Entity entityTarget) {
+        return 5;
+    }
+    
+    protected int calcAttackValue() {
+        int av = 0;
+        //Sigh, another rules oversight - nobody bothered to figure this out
+        //To be consistent with other cluster weapons we will assume 60% hit
+        double damage = ((InfantryWeapon)wtype).getInfantryDamage();
+        if((ae instanceof Infantry) && !(ae instanceof BattleArmor)) {
+            damage = ((Infantry)ae).getDamagePerTrooper();
+            av = (int) Math.round(damage * 0.6 * ((Infantry)ae).getShootingStrength());
+        }
+        if(bDirect) {
+            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        }
+        if(bGlancing) {
+            av = (int) Math.floor(av / 2.0);
+        }
+        return av;
     }
 
 }

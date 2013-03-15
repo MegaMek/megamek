@@ -2949,7 +2949,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "cannot target aero units beyond altitude 8";
         }
 
-        if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target)) {
+        if ((ae instanceof Infantry) && Compute.isGroundToAir(ae, target) && !wtype.hasFlag(WeaponType.F_INF_AA)) {
             return "Infantry cannot engage in ground-to-air attacks";
         }
 

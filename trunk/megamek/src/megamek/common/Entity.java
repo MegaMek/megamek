@@ -7539,6 +7539,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // Check for weapons. If we find them, return true. Otherwise... we
         // return false.
+        //Bug 3648: No, no, no - you cannot skip units with no weapons - what about spotting, unjamming, etc.?
+        /*
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             if ((wtype != null)
@@ -7548,7 +7550,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             .getLinked().getUsableShotsLeft() > 0)))) {
                 return true;
             }
-        }
+        }*/
 
         return false;
     }

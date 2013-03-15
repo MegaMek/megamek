@@ -9169,7 +9169,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public Coords passedThroughPrevious(Coords c) {
         if (passedThrough.size() == 0) {
-            getPosition();
+            return getPosition();
         }
         Coords prevCrd = passedThrough.get(0);
         for (Coords crd : passedThrough) {

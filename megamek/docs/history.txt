@@ -9,6 +9,7 @@ v0.35.36-dev (SVN)
 + Bug 3648: Issues with "skip ineligible for firing phase" option
 + Bug 3532: Arty splash damage listing
 + Bug 3610: Firing through Level-2 Fuel Tanks
++ Bug 3100: Flight Paths Conflict with TacOps Airborne Targeting
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

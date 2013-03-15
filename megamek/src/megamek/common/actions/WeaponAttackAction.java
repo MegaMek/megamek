@@ -1306,6 +1306,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else if (adjust != 0) {
                 toHit.addModifier(adjust, "adjusted fire");
             }
+            if(ae.isAirborne()) {
+                if(ae.getAltitude() > 6) {
+                    toHit.addModifier(+2, "altitude");
+                }
+                else if(ae.getAltitude() > 3) {
+                    toHit.addModifier(+1, "altitude");
+                }
+            }
             return toHit;
 
         }
@@ -2063,6 +2071,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if ((game.getPhase() != IGame.Phase.PHASE_OFFBOARD) && isTAG) {
             return "TAG can only be fired in the offboard attack phase";
         }
+        if (isArtilleryDirect
+                && ae.isAirborne()) {
+            return "Airborne units cannot make direct-Fire artillery attacks";
+        }
+        
         if (isArtilleryDirect
                 && (Compute.effectiveDistance(game, ae, target) <= 6)) {
             return "Direct-Fire artillery attacks impossible at range <= 6";
@@ -2867,11 +2880,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)
-                && !Compute.isAirToGround(ae, target)) {
+                && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)) {
             return "Target not in arc.";
         }
 
-        if (Compute.isAirToGround(ae, target)) {
+        if (Compute.isAirToGround(ae, target) && !isArtilleryIndirect) {
             if ((ae.getAltitude() > 5) && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 return "attacker is too high";
             }
@@ -3123,9 +3136,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (boardRange > wtype.getLongRange()) {
                 return "Indirect artillery attack out of range";
             }
-            if ((distance <= 17)
+            if ((distance <= 17 && !ae.isAirborne())
                     && !(losMods.getValue() == TargetRoll.IMPOSSIBLE)) {
                 return "Cannot fire indirectly at range <=17 hexes unless no LOS.";
+            }
+            if(ae.isAirborne() && ae.getAltitude() >= 10) {
+                return "Cannot fire indirectly at altitude 10";
             }
             if (isHoming) {
                 if (ttype != Targetable.TYPE_HEX_ARTILLERY) {

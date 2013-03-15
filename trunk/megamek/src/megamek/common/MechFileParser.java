@@ -244,7 +244,7 @@ public class MechFileParser {
                 ent.setNextSensor(ent.getSensors().lastElement());
             }
         }
-
+        
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
 

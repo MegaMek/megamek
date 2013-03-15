@@ -2176,11 +2176,6 @@ public class Server implements Runnable {
                 game.setupRoundDeployment();
                 game.setVictoryContext(new HashMap<String, Object>());
                 game.createVictoryConditions();
-                // If we add transporters for any Magnetic Clamp
-                // equiped squads, then update the clients' entities.
-                if (game.checkForMagneticClamp()) {
-                    entityAllUpdate();
-                }
                 // some entities may need to be checked and updated
                 checkEntityExchange();
                 break;

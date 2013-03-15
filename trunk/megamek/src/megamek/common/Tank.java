@@ -2729,16 +2729,19 @@ public class Tank extends Entity {
         if (isOmni()) {
             return;
         }
-        if (game.getOptions().booleanOption("ba_grab_bars")
-                && !hasBattleArmorHandles()) {
-            addTransporter(new BattleArmorHandlesTank());
-        } else {
-            Vector<Transporter> et = new Vector<Transporter>(getTransports());
-            for (Transporter t : et) {
-                if (t instanceof BattleArmorHandlesTank) {
-                    removeTransporter(t);
-                }
+        //TODO: I really hate this optional rule - what if some units are already loaded?
+        //if ba_grab_bars is on, then we need to add battlearmor handles, otherwise clamp mounts
+        //but first clear out whatever we have
+        Vector<Transporter> et = new Vector<Transporter>(getTransports());
+        for (Transporter t : et) {
+            if (t instanceof BattleArmorHandlesTank) {
+                removeTransporter(t);System.out.println("Log Testing Remove: Entity ID #"+getId());
             }
+        }
+        if (game.getOptions().booleanOption("ba_grab_bars")) {
+            addTransporter(new BattleArmorHandlesTank());System.out.println("Log Testing Add: Entity ID #"+getId());
+        } else {
+            addTransporter(new ClampMountTank());System.out.println("Log Testing Add: Entity ID #"+getId());
         }
     }
 

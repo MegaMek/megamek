@@ -6,6 +6,7 @@ v0.35.36-dev (SVN)
 + Bug 3658: Infantry with AA guns cannot attack aircraft
 + Bug: cant load magnetic clamp BA in chat lounge
 + Bug 3647: Chameleon LPS not working
++ Bug 3648: Issues with "skip ineligible for firing phase" option
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

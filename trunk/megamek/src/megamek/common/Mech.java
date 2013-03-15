@@ -4963,7 +4963,7 @@ public abstract class Mech extends Entity {
     public boolean isVoidSigActive() {
         // per the rules questions forum, externally mounted BA invalidates Void
         // Sig
-        if (getExternalUnits().size() > 0) {
+        if (getLoadedUnits().size() > 0) {
             return false;
         }
         if (!isShutDown()) {
@@ -5002,7 +5002,7 @@ public abstract class Mech extends Entity {
     public boolean isChameleonShieldActive() {
         // per the rules questions forum, externally mounted BA invalidates Void
         // Sig
-        if (getExternalUnits().size() > 0) {
+        if (getLoadedUnits().size() > 0) {
             return false;
         }
         if (!isShutDown()) {

@@ -37,12 +37,12 @@ package megamek.common;
     /**
      * The <code>String</code> reported when the handles are in use.
      */
-    private static final String NO_VACANCY_STRING = "A Fa Shih squad is loaded";
+    private static final String NO_VACANCY_STRING = "A BA squad with magnetic clamps is loaded";
 
     /**
      * The <code>String</code> reported when the handles are available.
      */
-    private static final String HAVE_VACANCY_STRING = "One Fa Shih squad";
+    private static final String HAVE_VACANCY_STRING = "One BA-magclamp squad";
 
     // Protected constructors and methods.
 

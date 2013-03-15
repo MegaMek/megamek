@@ -839,6 +839,12 @@ public class LosEffects {
                 && hex.containsTerrain(Terrains.BLDG_ELEV)) {
             bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
         }
+        
+        if ((null == los.getThruBldg())
+                && hex.containsTerrain(Terrains.FUEL_TANK_ELEV)
+                && hex.terrainLevel(Terrains.FUEL_TANK_ELEV) > bldgEl) {
+            bldgEl = hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
+        }
 
         //check for grounded dropships - treat like a building 10 elevations tall
         if(bldgEl < 10) {

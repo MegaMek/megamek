@@ -4,6 +4,7 @@ v0.35.36-dev (SVN)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment
 + Bug: weapon swarm attack possible when not swarming a mek
 + Bug 3658: Infantry with AA guns cannot attack aircraft
++ Bug: cant load magnetic clamp BA in chat lounge
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

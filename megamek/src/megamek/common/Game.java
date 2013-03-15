@@ -1140,6 +1140,15 @@ public class Game implements Serializable, IGame {
         if (entity instanceof Tank) {
             ((Tank) entity).setBAGrabBars();
         }
+        
+        // Add magnetic clamp mounts
+        if((entity instanceof Mech) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
+            entity.addTransporter(new ClampMountMech());
+        } else if ((entity instanceof Tank) && !(entity instanceof VTOL) && 
+                !entity.isOmni() && !entity.hasBattleArmorHandles()) {
+            entity.addTransporter(new ClampMountTank());
+        }
+        
         entity.setGameOptions();
         if (entity.getC3UUIDAsString() == null) { // We don't want to be
                                                   // resetting a UUID that
@@ -1917,6 +1926,9 @@ public class Game implements Serializable, IGame {
      * @return <code>true</code> if a unit was updated, <code>false</code> if no
      *         player has a Battle Armor squad equipped with a Magnetic Clamp.
      */
+    /* Taharqa: I am removing this function and instead I am simply adding clamp mounts to all
+     * non omni/ none BA handled mechs in the game.addEntity routine - It should not be too much memory to
+     * do this and it allows us to load these units in the lobby
     public boolean checkForMagneticClamp() {
 
         // Declare local variables.
@@ -1980,6 +1992,7 @@ public class Game implements Serializable, IGame {
         return result;
 
     } // End private boolean checkForMagneticClamp()
+     */
 
     /**
      * Adds the specified action to the actions list for this phase.

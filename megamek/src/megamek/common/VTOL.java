@@ -28,11 +28,12 @@ public class VTOL extends Tank {
     private static final long serialVersionUID = -7406911547399249173L;
 
     public static final int LOC_ROTOR = 5;
+    public static final int LOC_TURRET = 6;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-            "RO" };
+            "RO", "TU" };
     private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
-            "Left", "Rear", "Rotor" };
+            "Left", "Rear", "Rotor", "Turret" };
 
     // critical hits
     public static final int CRIT_COPILOT = 15;
@@ -184,9 +185,16 @@ public class VTOL extends Tank {
                 rv.setEffect(HitData.EFFECT_CRITICAL);
                 break;
             case 3:
-            case 4:
                 rv = new HitData(LOC_ROTOR, false,
                         HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                break;
+            case 4:
+                if (m_bHasNoTurret) {
+                    rv = new HitData(LOC_ROTOR, false,
+                        HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                } else {
+                    rv = new HitData(LOC_TURRET);
+                }
                 break;
             case 5:
                 if (bSide) {
@@ -372,6 +380,37 @@ public class VTOL extends Tank {
                     case 12:
                         return CRIT_ROTOR_DESTROYED;
                 }
+            } else if (loc == LOC_TURRET) {
+                switch (roll) {
+                    case 6:
+                        return CRIT_STABILIZER;
+                    case 7:
+                        return CRIT_TURRET_JAM;
+                    case 8:
+                        for (Mounted m : getWeaponList()) {
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
+                                    && !m.isJammed() && !m.isHit()) {
+                                return CRIT_WEAPON_JAM;
+                            }
+                        }
+                    case 9:
+                        return CRIT_TURRET_LOCK;
+                    case 10:
+                        for (Mounted m : getWeaponList()) {
+                            if ((m.getLocation() == loc) && !m.isDestroyed()
+                                    && !m.isHit()) {
+                                return CRIT_WEAPON_DESTROYED;
+                            }
+                        }
+                    case 11:
+                        for (Mounted m : getAmmo()) {
+                            if (!m.isDestroyed() && !m.isHit() && (m.getLocation() != Entity.LOC_NONE)) {
+                                return CRIT_AMMO;
+                            }
+                        }
+                    case 12:
+                        return CRIT_TURRET_DESTROYED;
+                }
             } else {
                 switch (roll) {
                     case 6:
@@ -410,7 +449,7 @@ public class VTOL extends Tank {
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
-                            if (!m.isDestroyed() && !m.isHit() && m.getLocation() != Entity.LOC_NONE) {
+                            if (!m.isDestroyed() && !m.isHit() && (m.getLocation() != Entity.LOC_NONE)) {
                                 return CRIT_AMMO;
                             }
                         }
@@ -496,7 +535,11 @@ public class VTOL extends Tank {
 
     @Override
     public int locations() {
-        return 6;
+        if (m_bHasNoTurret) {
+            return 6;
+        } else {
+            return 7;
+        }
     }
 
 }

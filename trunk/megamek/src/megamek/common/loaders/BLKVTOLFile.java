@@ -80,7 +80,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
-        int engineRating = (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor();
+        int engineRating = Math.max(10, (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor());
         if ((engineRating % 5) > 0) {
             engineRating += (5 - (engineRating % 5));
         }
@@ -118,9 +118,10 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if (armor.length != 5) {
+        if ((armor.length != 5) && (armor.length != 6)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
+        t.setHasNoTurret(armor.length == 5);
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];
         fullArmor[0] = 0;
@@ -137,6 +138,9 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         loadEquipment(t, "Rear", Tank.LOC_REAR);
         loadEquipment(t, "Body", Tank.LOC_BODY);
         loadEquipment(t, "Rotor", VTOL.LOC_ROTOR);
+        if (armor.length == 6) {
+            loadEquipment(t, "Turret", VTOL.LOC_TURRET);
+        }
 
         if (dataFile.exists("omni")) {
             t.setOmni(true);

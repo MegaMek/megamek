@@ -11,6 +11,8 @@ v0.35.36-dev (SVN)
 + Bug 3610: Firing through Level-2 Fuel Tanks
 + Bug 3100: Flight Paths Conflict with TacOps Airborne Targeting
 + Bug/Data 352: Fixed mechset in 0.35.35 release
++ Added construction support for VTOLs with turrets
+   MapSet for MechDisplay is missing
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

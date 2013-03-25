@@ -13,6 +13,7 @@ v0.35.36-dev (SVN)
 + Bug/Data 352: Fixed mechset in 0.35.35 release
 + Added construction support for VTOLs with turrets
    MapSet for MechDisplay is missing
++ Fixed Kyudo naming in Mechset
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

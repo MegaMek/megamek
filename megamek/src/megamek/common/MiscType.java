@@ -190,6 +190,7 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
     public static final BigInteger F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(145);
     public static final BigInteger F_NAVAL_TUG_ADAPTOR = BigInteger.valueOf(1).shiftLeft(146);
+    public static final BigInteger F_AMPHIBIOUS= BigInteger.valueOf(1).shiftLeft(147);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -969,6 +970,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createEnvironmentalSealing());
 
         EquipmentType.addType(MiscType.createFieldKitchen());
+        EquipmentType.addType(MiscType.createAmphibiousChassis());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
@@ -5232,6 +5234,21 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createAmphibiousChassis() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Amphibious";
+        misc.setInternalName("AmphibiousChassis");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+
+        return misc;
+    }
+
     public static MiscType createISDuneBuggyChassis() {
         MiscType misc = new MiscType();
         misc.techLevel = TechConstants.T_IS_ADVANCED;
@@ -6301,6 +6318,8 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_NAVAL_TUG_ADAPTOR);
         return misc;
     }
+
+
 
     @Override
     public String toString() {

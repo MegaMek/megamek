@@ -355,7 +355,7 @@ public class Protomech extends Entity {
      * This pmech's jumping MP modified for missing jump jets and gravity.
      */
     @Override
-    public int getJumpMP() {
+    public int getJumpMP(boolean gravity) {
         int jump = jumpMP;
         int torsoCrits = getCritsHit(LOC_TORSO);
         switch (torsoCrits) {
@@ -389,10 +389,14 @@ public class Protomech extends Entity {
                     break;
             }
         }
-        if (applyGravityEffectsOnMP(jump) > jump) {
+        if (!gravity) {
             return jump;
+        } else {
+            if (applyGravityEffectsOnMP(jump) > jump) {
+                return jump;
+            }
+            return applyGravityEffectsOnMP(jump);
         }
-        return applyGravityEffectsOnMP(jump);
     }
 
     /**

@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -60,7 +59,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         introDate = 3069;
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_F;
-        
+
     }
 
     /*

@@ -23,7 +23,7 @@ import megamek.common.TechConstants;
 /**
  * @author Sebastian Brocks
  */
-public class ISAC10i extends AmmoWeapon {
+public class ISAC10i extends ACWeapon {
     /**
      *
      */

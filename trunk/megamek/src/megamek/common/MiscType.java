@@ -190,7 +190,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
     public static final BigInteger F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(145);
     public static final BigInteger F_NAVAL_TUG_ADAPTOR = BigInteger.valueOf(1).shiftLeft(146);
-    public static final BigInteger F_AMPHIBIOUS= BigInteger.valueOf(1).shiftLeft(147);
+    public static final BigInteger F_ULTRA_LIGHT = BigInteger.valueOf(1).shiftLeft(147);
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1208,7 +1209,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBulldozer());
         EquipmentType.addType(MiscType.createExternalStoresHardpoint());
         EquipmentType.addType(MiscType.createManipulator());
-
+        EquipmentType.addType(MiscType.createPropChassisModification());
+        EquipmentType.addType(MiscType.createUltraLightChassisModification());
     }
 
     public static MiscType createHeatSink() {
@@ -6319,7 +6321,23 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createPropChassisModification() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Prop";
+        misc.setInternalName("PropChassisMod");
+        misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_PROP);
+        return misc;
+    }
 
+    public static MiscType createUltraLightChassisModification() {
+        MiscType misc = new MiscType();
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Ultra-Light";
+        misc.setInternalName("UltraLightChassisMod");
+        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
+        return misc;
+    }
 
     @Override
     public String toString() {

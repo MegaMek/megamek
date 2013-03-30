@@ -190,7 +190,9 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PINTLE_TURRET = BigInteger.valueOf(1).shiftLeft(144);
     public static final BigInteger F_IS_DOUBLE_HEAT_SINK_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(145);
     public static final BigInteger F_NAVAL_TUG_ADAPTOR = BigInteger.valueOf(1).shiftLeft(146);
-    public static final BigInteger F_ULTRA_LIGHT = BigInteger.valueOf(1).shiftLeft(147);
+    public static final BigInteger F_AMPHIBIOUS = BigInteger.valueOf(1).shiftLeft(147);
+    public static final BigInteger F_PROP = BigInteger.valueOf(1).shiftLeft(148);
+    public static final BigInteger F_ULTRA_LIGHT = BigInteger.valueOf(1).shiftLeft(149);
 
 
     // Secondary Flags for Physical Weapons

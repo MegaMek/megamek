@@ -44,7 +44,7 @@ public class ISSupportPPC extends PPCWeapon {
         mediumRange = 5;
         longRange = 7;
         extremeRange = 10;
-        bv = 14;
+        bv = 12;
         setModes(new String[] { "Field Inhibitor ON",
                 "Field Inhibitor OFF" });
         cost = 14000;

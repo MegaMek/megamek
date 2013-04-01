@@ -77,8 +77,7 @@ public class Princess extends BotClient {
     /*
      * Which direction should the bot flee. Defaults to North.
      */
-    public BasicPathRanker.HomeEdge homeEdge = BasicPathRanker
-            .getDefaultHomeEdge();
+    private BasicPathRanker.HomeEdge homeEdge = null;
     /*
      * Should the bot be running away
      */
@@ -759,5 +758,12 @@ public class Princess extends BotClient {
 
     public void methodEnd(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG, "method end");
+    }
+
+    public BasicPathRanker.HomeEdge getHomeEdge() {
+        if (homeEdge == null) {
+            homeEdge = BasicPathRanker.getDefaultHomeEdge();
+        }
+        return homeEdge;
     }
 }

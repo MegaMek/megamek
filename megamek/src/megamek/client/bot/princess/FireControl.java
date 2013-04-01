@@ -346,6 +346,10 @@ public class FireControl {
                         int hitloc = i;
                         while (mtarget.isLocationBad(hitloc)
                                 && (hitloc != Mech.LOC_CT)) {
+                            hitloc++;
+                            if (hitloc >= 7) {
+                                hitloc = 0;
+                            }
                             hitloc = Mech.getInnerLocation(hitloc);
                         }
                         double hprob = ProbabilityCalculator.getHitProbability(
@@ -694,6 +698,10 @@ public class FireControl {
                         int hitloc = i;
                         while (mtarget.isLocationBad(hitloc)
                                 && (hitloc != Mech.LOC_CT)) {
+                            hitloc++;
+                            if (hitloc >= 7) {
+                                hitloc = 0;
+                            }
                             hitloc = Mech.getInnerLocation(hitloc);
                         }
                         double hprob = 0;

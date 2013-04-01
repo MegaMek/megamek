@@ -63,7 +63,7 @@ public class BasicPathRanker extends PathRanker {
     
     Properties properties = null;
 
-    static HomeEdge defaultHomeEdge;
+    static HomeEdge defaultHomeEdge = HomeEdge.NORTH;
 
     TreeMap<Integer, Double> best_damage_by_enemies; // the best damage enemies
     // could expect were I not
@@ -402,8 +402,8 @@ public class BasicPathRanker extends PathRanker {
             //Should I be trying to withdraw?
             if(((p.getEntity().isCrippled())&&(botbase.forced_withdrawal))
                     ||(botbase.should_flee)) {
-                int new_distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.homeEdge, game);
-                int current_distance_to_edge = distanceToHomeEdge(p.getEntity().getPosition(), botbase.homeEdge, game);
+                int new_distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.getHomeEdge(), game);
+                int current_distance_to_edge = distanceToHomeEdge(p.getEntity().getPosition(), botbase.getHomeEdge(), game);
                 int delta_distance_to_edge = current_distance_to_edge - new_distance_to_edge;
                 
                 if (delta_distance_to_edge > 0) {

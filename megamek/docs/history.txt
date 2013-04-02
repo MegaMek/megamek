@@ -15,6 +15,7 @@ v0.35.36-dev (SVN)
    MapSet for MechDisplay is missing
 + Fixed Kyudo naming in Mechset
 + Bug 3549:  Torso Cockpit Head Destruction Causes MegaMek to Freeze / Bug 3645: Princess Bot NPE After Withdrawing Tank
++ Bug 3549/3645: Modified the code to make sure all references to the homeEdge variable go through the new getter & setter methods.
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

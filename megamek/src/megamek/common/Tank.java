@@ -3231,18 +3231,23 @@ public class Tank extends Entity {
     @Override
     public boolean isCrippled() {
         if (getArmor(LOC_FRONT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         }
         if (getArmor(LOC_RIGHT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Right armor destroyed.");
             return true;
         }
         if (getArmor(LOC_LEFT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Left armor destroyed.");
             return true;
         }
         if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Turret destroyed.");
             return true;
         }
         if (getArmor(LOC_REAR) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         }
 
@@ -3255,26 +3260,11 @@ public class Tank extends Entity {
         // no weapons can fire anymore, can cause no more than 5 points of
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
-        boolean noWeapons = true;
-        int totalDamage = 0;
-        for (Mounted weap : getWeaponList()) {
-            WeaponType wtype = (WeaponType) weap.getType();
-            if (!weap.isCrippled()) {
-                if (((WeaponType) weap.getType()).getLongRange() > 5) {
-                    noWeapons = false;
-                }
-                if (wtype.getDamage() > 0) {
-                    totalDamage += wtype.getDamage();
-                } else if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
-                    totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) || (wtype instanceof SRTWeapon)) ? 2
-                            : ((wtype instanceof ATMWeapon) ? 3 : 1)));
-                } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-                    totalDamage += wtype.getDamage(WeaponType.RANGE_SHORT);
-                }
-            }
+        if (!hasViableWeapons()) {
+            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            return true;
         }
-
-        return noWeapons && (totalDamage <= 5);
+        return false;
     }
 
     @Override

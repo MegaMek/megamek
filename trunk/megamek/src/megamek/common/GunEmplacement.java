@@ -449,12 +449,11 @@ public class GunEmplacement extends Tank {
 
     @Override
     public boolean isCrippled() {
-        for (Mounted weap : getWeaponList()) {
-            if (!weap.isCrippled()) {
-                return false;
-            }
+        if (isMilitary() && !hasViableWeapons()) {
+            System.out.println(getDisplayName() + " CRIPPLED: no viable weapons left.");
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override

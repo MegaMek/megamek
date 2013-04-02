@@ -14,15 +14,8 @@
 
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.text.DecimalFormat;
+import java.util.*;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
@@ -1481,7 +1474,7 @@ public class Aero extends Entity {
         // first, add up front-faced and rear-faced unmodified BV,
         // to know wether front- or rear faced BV should be halved
         double bvFront = 0, bvRear = 0;
-        ArrayList<Mounted> weapons = getTotalWeaponList();
+        List<Mounted> weapons = getTotalWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
             double dBV = wtype.getBV(this);
@@ -3686,16 +3679,23 @@ public class Aero extends Entity {
 
     @Override
     public boolean isCrippled() {
-        if (getInternalRemainingPercent() < 0.5) {
+        double internalPercent = getInternalRemainingPercent();
+        String msg = getDisplayName() + " CRIPPLED: ";
+        if (internalPercent < 0.5) {
+            System.out.println( msg + "only " + DecimalFormat.getPercentInstance().format(internalPercent) +
+                                       " internals remaining.");
             return true;
         }
         if (getEngineHits() > 0) {
+            System.out.println( msg + engineHits + " Engine Hits.");
             return true;
         }
         if (getPotCrit() == CRIT_FUEL_TANK) {
+            System.out.println( msg + " Fuel Tank Hit.");
             return true;
         }
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
+            System.out.println( msg + getCrew().getHits() + " Crew Hits.");
             return true;
         }
 
@@ -3704,18 +3704,11 @@ public class Aero extends Entity {
             return false;
         }
 
-        boolean noWeapons = true;
-        int totalDamage = 0;
-        for (Mounted weap : getWeaponList()) {
-            if (!weap.isCrippled()) {
-                if (((WeaponType)weap.getType()).getLongRange() > 5) {
-                    noWeapons = false;
-                }
-                totalDamage += ((WeaponType)weap.getType()).getDamage();
-            }
+        if (!hasViableWeapons()) {
+            System.out.println( msg + " no more viable weapons.");
+            return true;
         }
-
-        return noWeapons && (totalDamage <= 5);
+        return false;
     }
 
     @Override
@@ -3736,9 +3729,10 @@ public class Aero extends Entity {
             return false;
         }
 
-        int totalWeapons = getTotalWeaponList().size();
+        List<Mounted> weaponList = getTotalWeaponList();
+        int totalWeapons = weaponList.size();
         int totalInoperable = 0;
-        for (Mounted weap : getTotalWeaponList()) {
+        for (Mounted weap : weaponList) {
             if (weap.isCrippled()) {
                 totalInoperable++;
             }

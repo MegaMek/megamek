@@ -44,7 +44,6 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.NonCombatUnitList;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.ATMWeapon;
@@ -71,20 +70,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public static final int NONE = -1;
 
-    public static final int LOC_NONE = -1;
+    public static final int LOC_NONE      = -1;
     public static final int LOC_DESTROYED = -2;
 
-    public static final int MAX_C3_NODES = 12;
+    public static final int MAX_C3_NODES  = 12;
     public static final int MAX_C3i_NODES = 6;
 
-    public static final int GRAPPLE_BOTH = 0;
+    public static final int GRAPPLE_BOTH  = 0;
     public static final int GRAPPLE_RIGHT = 1;
-    public static final int GRAPPLE_LEFT = 2;
+    public static final int GRAPPLE_LEFT  = 2;
 
-    public static final int DMG_NONE = 0;
-    public static final int DMG_LIGHT = 1;
+    public static final int DMG_NONE     = 0;
+    public static final int DMG_LIGHT    = 1;
     public static final int DMG_MODERATE = 2;
-    public static final int DMG_HEAVY = 3;
+    public static final int DMG_HEAVY    = 3;
     public static final int DMG_CRIPPLED = 4;
 
     protected transient IGame game;
@@ -101,20 +100,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean omni = false;
     protected String chassis;
     protected String model;
-    protected int year;
-    protected int techLevel;
+    protected int    year;
+    protected int    techLevel;
     protected Engine engine;
-    protected boolean mixedTech = false;
+    protected boolean mixedTech   = false;
     protected boolean designValid = true;
     protected boolean useManualBV = false;
-    protected int manualBV = -1;
+    protected int     manualBV    = -1;
 
-    protected String displayName = null;
-    protected String shortName = null;
-    public int duplicateMarker = 1;
+    protected String displayName     = null;
+    protected String shortName       = null;
+    public    int    duplicateMarker = 1;
 
     protected transient Player owner;
-    protected int ownerId;
+    protected           int    ownerId;
     protected int traitorId = -1;
 
     private int startingPos = Board.START_NONE;
@@ -124,23 +123,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private Crew crew = new Crew(1);
 
-    private Quirks quirks = new Quirks();
+    private Quirks         quirks   = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
 
     // Variable for manually shutdown mechs.
-    protected boolean manualShutdown = false;
+    protected boolean manualShutdown   = false;
     protected boolean startupThisPhase = false;
 
-    protected boolean shutDown = false;
+    protected boolean shutDown          = false;
     protected boolean shutDownThisPhase = false;
-    protected boolean doomed = false;
-    protected boolean destroyed = false;
+    protected boolean doomed            = false;
+    protected boolean destroyed         = false;
 
     protected Coords position = null;
 
     protected Map<Integer, Coords> secondaryPositions = null;
 
-    protected int facing = 0;
+    protected int facing     = 0;
     protected int sec_facing = 0;
 
     protected int walkMP = 0;
@@ -148,54 +147,54 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected boolean done = false;
 
-    protected boolean prone = false;
-    protected boolean hullDown = false;
-    protected boolean findingClub = false;
-    protected boolean armsFlipped = false;
-    protected boolean unjammingRAC = false;
-    protected boolean selfDestructing = false;
+    protected boolean prone                 = false;
+    protected boolean hullDown              = false;
+    protected boolean findingClub           = false;
+    protected boolean armsFlipped           = false;
+    protected boolean unjammingRAC          = false;
+    protected boolean selfDestructing       = false;
     protected boolean selfDestructInitiated = false;
-    protected boolean hasSpotlight = false;
-    protected boolean illuminated = false;
-    protected boolean spotlightIsActive = false;
-    protected boolean usedSearchlight = false;
-    protected boolean stuckInSwamp = false;
-    protected boolean canUnstickByJumping = false;
-    protected int taggedBy = -1;
-    protected boolean layingMines = false;
-    protected boolean _isEMId = false;
+    protected boolean hasSpotlight          = false;
+    protected boolean illuminated           = false;
+    protected boolean spotlightIsActive     = false;
+    protected boolean usedSearchlight       = false;
+    protected boolean stuckInSwamp          = false;
+    protected boolean canUnstickByJumping   = false;
+    protected int     taggedBy              = -1;
+    protected boolean layingMines           = false;
+    protected boolean _isEMId               = false;
     protected boolean[] hardenedArmorDamaged;
     protected boolean[] locationBlownOff;
     protected boolean[] locationBlownOffThisPhase;
-    protected int[] armorType;
-    protected int[] armorTechLevel;
+    protected int[]     armorType;
+    protected int[]     armorTechLevel;
     protected boolean isJumpingNow = false;
 
     protected DisplacementAttackAction displacementAttack = null;
 
-    public int heat = 0;
-    public int heatBuildup = 0;
-    public int heatFromExternal = 0;
-    public int coolFromExternal = 0;
-    public int delta_distance = 0;
-    public int mpUsed = 0;
-    public EntityMovementType moved = EntityMovementType.MOVE_NONE;
-    private boolean movedBackwards = false;
-    protected int mpUsedLastRound = 0;
-    public boolean gotPavementBonus = false;
-    public boolean hitThisRoundByAntiTSM = false;
-    public boolean inReverse = false;
-    protected boolean struck = false;
-    protected boolean fell = false;
+    public    int                heat                  = 0;
+    public    int                heatBuildup           = 0;
+    public    int                heatFromExternal      = 0;
+    public    int                coolFromExternal      = 0;
+    public    int                delta_distance        = 0;
+    public    int                mpUsed                = 0;
+    public    EntityMovementType moved                 = EntityMovementType.MOVE_NONE;
+    private   boolean            movedBackwards        = false;
+    protected int                mpUsedLastRound       = 0;
+    public    boolean            gotPavementBonus      = false;
+    public    boolean            hitThisRoundByAntiTSM = false;
+    public    boolean            inReverse             = false;
+    protected boolean            struck                = false;
+    protected boolean            fell                  = false;
 
     private int[] exposure;
     private int[] armor;
     private int[] internal;
     private int[] orig_armor;
     private int[] orig_internal;
-    public int damageThisPhase;
-    public int damageThisRound;
-    public int engineHitsThisPhase;
+    public  int   damageThisPhase;
+    public  int   damageThisRound;
+    public  int   engineHitsThisPhase;
     public boolean rolledForEngineExplosion = false; // So that we don't roll
     // twice in one round
     public boolean dodging;
@@ -203,18 +202,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean evading = false;
 
     public boolean spotting;
-    private boolean clearingMinefield = false;
-    protected int killerId = Entity.NONE;
-    private int offBoardDistance = 0;
-    private OffBoardDirection offBoardDirection = OffBoardDirection.NONE;
-    private OffBoardDirection retreatedDirection = OffBoardDirection.NONE;
+    private   boolean           clearingMinefield  = false;
+    protected int               killerId           = Entity.NONE;
+    private   int               offBoardDistance   = 0;
+    private   OffBoardDirection offBoardDirection  = OffBoardDirection.NONE;
+    private   OffBoardDirection retreatedDirection = OffBoardDirection.NONE;
 
-    protected int[] vectors = { 0, 0, 0, 0, 0, 0 };
-    private int recoveryTurn = 0;
+    protected int[]          vectors       = {0, 0, 0, 0, 0, 0};
+    private   int            recoveryTurn  = 0;
     // need to keep a list of areas that this entity has passed through on the
     // current turn
-    private Vector<Coords> passedThrough = new Vector<Coords>();
-    private boolean ramming;
+    private   Vector<Coords> passedThrough = new Vector<Coords>();
+    private boolean   ramming;
     // to determine what arcs have fired for large craft
     private boolean[] frontArcFired;
     private boolean[] rearArcFired;
@@ -222,16 +221,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * The object that tracks this unit's Inferno round hits.
      */
-    public InfernoTracker infernos = new InfernoTracker();
-    public ArtilleryTracker aTracker = new ArtilleryTracker();
+    public InfernoTracker     infernos  = new InfernoTracker();
+    public ArtilleryTracker   aTracker  = new ArtilleryTracker();
     public TeleMissileTracker tmTracker = new TeleMissileTracker();
 
-    protected String c3NetIdString = null;
-    protected int c3Master = NONE;
-    protected int c3CompanyMasterIndex = LOC_DESTROYED;
-    private String c3UUID = null;
-    private String c3MasterIsUUID = null;
-    private String[] c3iUUIDs = new String[MAX_C3i_NODES];
+    protected String   c3NetIdString        = null;
+    protected int      c3Master             = NONE;
+    protected int      c3CompanyMasterIndex = LOC_DESTROYED;
+    private   String   c3UUID               = null;
+    private   String   c3MasterIsUUID       = null;
+    private   String[] c3iUUIDs             = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
 
@@ -280,14 +279,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected ArrayList<Mounted> miscList = new ArrayList<Mounted>();
 
     protected ArrayList<INarcPod> pendingINarcPods = new ArrayList<INarcPod>();
-    protected ArrayList<INarcPod> iNarcPods = new ArrayList<INarcPod>();
-    protected ArrayList<NarcPod> pendingNarcPods = new ArrayList<NarcPod>();
-    protected ArrayList<NarcPod> narcPods = new ArrayList<NarcPod>();
+    protected ArrayList<INarcPod> iNarcPods        = new ArrayList<INarcPod>();
+    protected ArrayList<NarcPod>  pendingNarcPods  = new ArrayList<NarcPod>();
+    protected ArrayList<NarcPod>  narcPods         = new ArrayList<NarcPod>();
 
     protected ArrayList<String> failedEquipmentList = new ArrayList<String>();
 
     // which teams have NARCd us? a long allows for 64 teams.
-    protected long m_lNarcedBy = 0;
+    protected long m_lNarcedBy    = 0;
     protected long m_lPendingNarc = 0;
 
     /**
@@ -430,8 +429,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean canon;
 
-    private int assaultDropInProgress = 0;
-    private boolean climbMode = false; // save climb mode from turn to turn for
+    private int     assaultDropInProgress = 0;
+    private boolean climbMode             = false; // save climb mode from turn to turn for
     // convenience
 
     protected int lastTarget = Entity.NONE;
@@ -454,7 +453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // the sensor chosen for next turn
     private Sensor nextSensor;
     // roll for sensor check
-    private int sensorCheck;
+    private int    sensorCheck;
 
     // the roll for ghost targets
     private int ghostTargetRoll;
@@ -473,34 +472,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // for how many more rounds does this unit suffer from taser feedback?
     protected int taserFeedBackRounds = 0;
 
-    protected int taserInterference = 0;
-    protected int taserInterferenceRounds = 0;
-    protected boolean taserInterferenceHeat = false;
+    protected int     taserInterference       = 0;
+    protected int     taserInterferenceRounds = 0;
+    protected boolean taserInterferenceHeat   = false;
 
     // contains a HTML string describing BV calculation
-    protected StringBuffer bvText = null;
-    protected String startTable = "<TABLE>";
-    protected String endTable = "</TABLE>";
+    protected StringBuffer bvText     = null;
+    protected String       startTable = "<TABLE>";
+    protected String       endTable   = "</TABLE>";
 
     protected String startRow = "<TR>";
-    protected String endRow = "</TR>";
+    protected String endRow   = "</TR>";
 
     protected String startColumn = "<TD>";
-    protected String endColumn = "</TD>";
+    protected String endColumn   = "</TD>";
 
     protected String nl = "<BR>";
 
     // Max range modifer is 6
-    protected double[] battleForceMinRangeModifier = new double[] { 1, .92,
-            .83, .75, .66, .58, .50 };
+    protected           double[] battleForceMinRangeModifier = new double[] {1, .92,
+            .83, .75, .66, .58, .50};
     // When getting the to hit mod add 4 got it and make sure the max is 8 since
     // the range is -4 to 8
-    protected double[] battleForceToHitModifier = new double[] { 1.20, 1.15,
-            1.10, 1.05, 1, .95, .9, .85, .8 };
-    public static final int BATTLEFORCESHORTRANGE = 0;
-    public static final int BATTLEFORCEMEDIUMRANGE = 4;
-    public static final int BATTLEFORCELONGRANGE = 16;
-    public static final int BATTLEFORCEEXTREMERANGE = 24;
+    protected           double[] battleForceToHitModifier    = new double[] {1.20, 1.15,
+            1.10, 1.05, 1, .95, .9, .85, .8};
+    public static final int      BATTLEFORCESHORTRANGE       = 0;
+    public static final int      BATTLEFORCEMEDIUMRANGE      = 4;
+    public static final int      BATTLEFORCELONGRANGE        = 16;
+    public static final int      BATTLEFORCEEXTREMERANGE     = 24;
 
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;
@@ -512,7 +511,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // is calculated by getArmorTonnage
     protected double armorTonnage;
 
-    protected static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
+    protected static int[] MASC_FAILURE = {2, 4, 6, 10, 12, 12, 12};
 
     // MASCLevel is the # of turns MASC has been used previously
     protected int nMASCLevel = 0;
@@ -520,6 +519,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean bMASCWentUp = false;
 
     protected boolean usedMASC = false; // Has masc been used?
+
+    protected boolean military;
 
     /**
      * Generates a new, blank, entity.
@@ -545,6 +546,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         quirks.initialize();
         secondaryPositions = new HashMap<Integer, Coords>();
         fluff = new EntityFluff();
+        initMilitary();
+    }
+
+    private void initMilitary() {
+        military = hasViableWeapons();
+    }
+
+    protected boolean hasViableWeapons() {
+        int totalDmg = 0;
+        boolean hasRangeSixPlus = false;
+        List<Mounted> weaponList = getTotalWeaponList();
+        for (Mounted weapon : weaponList) {
+            if (weapon.isDestroyed()) {
+                continue;
+            }
+            WeaponType type = (WeaponType) weapon.getType();
+            totalDmg += type.getDamage();
+            if (type.getLongRange() >= 6) {
+                hasRangeSixPlus = true;
+            }
+        }
+        return (totalDmg >= 5) || hasRangeSixPlus;
     }
 
     /**
@@ -2756,9 +2779,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return weaponList;
     }
 
-    public ArrayList<Mounted> getTotalWeaponList() {
+    public List<Mounted> getTotalWeaponList() {
         // return full weapon list even bay mounts and weapon groups
-        return totalWeaponList;
+        return new ArrayList<Mounted>(totalWeaponList);
     }
 
     public ArrayList<Mounted> getWeaponBayList() {
@@ -9889,7 +9912,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * unit).
      */
     public boolean isMilitary() {
-        return !NonCombatUnitList.isNonCombatUnit(this);
+        return military;
     }
 
     /**

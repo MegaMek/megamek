@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import megamek.common.weapons.InfantryAttack;
@@ -1706,7 +1707,14 @@ public class BattleArmor extends Infantry {
 
     @Override
     public boolean isCrippled() {
-        return (((double)getNumberActiverTroopers() / getSquadSize()) < 0.5);
+        double activeTroopPercent = (double)getNumberActiverTroopers() / getSquadSize();
+        if (activeTroopPercent < 0.5) {
+            System.out.println(getDisplayName() + " CRIPPLED: only " +
+                               DecimalFormat.getPercentInstance().format(activeTroopPercent) +
+                               " troops remaining.");
+            return true;
+        }
+        return false;
     }
 
     @Override

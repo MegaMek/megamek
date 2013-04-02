@@ -352,7 +352,7 @@ public class BotConfigDialog extends JDialog implements ActionListener,
             if (princess_shouldflee.isSelected()) {
             	toreturn.must_flee = princess_mustflee.isSelected();
             }
-            toreturn.homeEdge = BasicPathRanker.HomeEdge.getHomeEdge(princess_homeedge.getSelectedIndex());
+            toreturn.setHomeEdge(BasicPathRanker.HomeEdge.getHomeEdge(princess_homeedge.getSelectedIndex()));
             return toreturn;
         }
         return null; // shouldn't happen

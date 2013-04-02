@@ -7460,38 +7460,47 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isCrippled() {
         if (countInternalDamagedLimbs() >= 3) {
+            System.out.println(getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
+            System.out.println(getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
             return true;
         }
 
         if (isLocationDoomed(LOC_LT)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Left Torso destroyed.");
             return true;
         }
 
         if (isLocationDoomed(LOC_RT)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Right Torso destroyed.");
             return true;
         }
 
         if (getEngineHits() >= 2) {
+            System.out.println(getDisplayName() + " CRIPPLED: 2 Engine Hits.");
             return true;
         }
 
         if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
             return true;
         }
 
         if (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD) > 0) {
+            System.out.println(getDisplayName() + " CRIPPLED: Sensors destroyed.");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             return true;
         }
 
         if (isPermanentlyImmobilized()) {
+            System.out.println(getDisplayName() + " CRIPPLED: Immobilized.");
         	return true;
         }
 
@@ -7503,26 +7512,11 @@ public abstract class Mech extends Entity {
         // no weapons can fire anymore, can cause no more than 5 points of
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
-        boolean noWeapons = true;
-        int totalDamage = 0;
-        for (Mounted weap : getWeaponList()) {
-            WeaponType wtype = (WeaponType) weap.getType();
-            if (!weap.isCrippled()) {
-                if (((WeaponType)weap.getType()).getLongRange() > 5) {
-                    noWeapons = false;
-                }
-                if (wtype.getDamage() > 0) {
-                    totalDamage += wtype.getDamage();
-                } else if (wtype.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
-                    totalDamage += (wtype.getRackSize() * (((wtype instanceof SRMWeapon) || (wtype instanceof SRTWeapon)) ? 2
-                            : ((wtype instanceof ATMWeapon) ? 3 : 1)));
-                } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-                    totalDamage += wtype.getDamage(WeaponType.RANGE_SHORT);
-                }
-            }
+        if (!hasViableWeapons()) {
+            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            return true;
         }
-
-        return noWeapons && (totalDamage <= 5);
+        return false;
     }
 
     private int countInternalDamagedTorsos() {

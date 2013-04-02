@@ -370,7 +370,7 @@ public class Princess extends BotClient {
             if (((entity.isCrippled() && forced_withdrawal) || must_flee || should_flee)
                     && entity.canFlee()
                     && (BasicPathRanker.distanceToHomeEdge(
-                            entity.getPosition(), homeEdge, game) <= 0)) {
+                            entity.getPosition(), getHomeEdge(), game) <= 0)) {
                 MovePath mp = new MovePath(game, entity);
                 mp.addStep(MovePath.MoveStepType.FLEE);
                 return mp;
@@ -645,11 +645,10 @@ public class Princess extends BotClient {
             if (nameTo.equalsIgnoreCase(getLocalPlayer().getName())) {
                 if (message.equalsIgnoreCase("flee")) {
                     log(getClass(), METHOD_NAME,
-                            " received flee order. Running away to " + homeEdge
-                                    + " edge !");
+                            " received flee order. Running away to " + getHomeEdge().toString() + " edge !");
                     sendChat(getLocalPlayer().getName()
                             + " received flee order. Running away to "
-                            + homeEdge + " edge !");
+                            + getHomeEdge().toString() + " edge !");
                     should_flee = true;
                 } else if (message.equalsIgnoreCase("reset")) {
                     log(getClass(), METHOD_NAME,
@@ -765,5 +764,14 @@ public class Princess extends BotClient {
             homeEdge = BasicPathRanker.getDefaultHomeEdge();
         }
         return homeEdge;
+    }
+
+    public void setHomeEdge(BasicPathRanker.HomeEdge homeEdge) {
+        if (homeEdge == null) {
+            log(getClass(), "setHomeEdge(BasicPathRanker.HomeEdge)",
+                new IllegalArgumentException("Home Edge is required!"));
+            homeEdge = BasicPathRanker.getDefaultHomeEdge();
+        }
+        this.homeEdge = homeEdge;
     }
 }

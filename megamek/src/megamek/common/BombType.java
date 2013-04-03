@@ -134,6 +134,43 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createTorpedoBomb());
         EquipmentType.addType(BombType.createAlamoBomb());
     }
+    
+    public static BombType createBombByType(int bType)    {
+        switch (bType){
+            case B_HE:
+                return createHighExplosiveBomb();
+            case B_CLUSTER:
+                return createClusterBomb();
+            case B_LG:
+                return createLaserGuidedBomb();
+            case B_RL:
+                return createRocketBomb();
+            case B_TAG:
+                return createTAGBomb();
+            case B_AAA:
+                return createAAAMissileBomb();
+            case B_AS:
+                return createASMissileBomb();
+            case B_ASEW:
+                return createASEWMissileBomb();
+            case B_ARROW:
+                return createArrowIVBomb();
+            case B_HOMING:
+                return createArrowIVHomingBomb();
+            case B_INFERNO:
+                return createInfernoBomb();
+            case B_LAA:
+                return createLAAMissileBomb();
+            case B_THUNDER:
+                return createThunderBomb();
+            case B_TORPEDO:
+                return createTorpedoBomb();
+            case B_ALAMO:
+                return createAlamoBomb();
+            default:
+                return null;
+        }
+    }
 
     private static BombType createHighExplosiveBomb() {
         BombType bomb = new BombType();
@@ -148,7 +185,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_HE;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 12;
         bomb.cost = 0;
         bomb.techRating = RATING_B;
 
@@ -168,7 +205,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_CLUSTER;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 13;
         bomb.cost = 0;
         bomb.techRating = RATING_B;
 
@@ -188,7 +225,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_LG;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 20;
         bomb.cost = 0;
         bomb.techRating = RATING_C;
 
@@ -225,7 +262,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_RL_BOMB;
         bomb.bombType = BombType.B_RL;
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 18;
         bomb.cost = 0;
         bomb.techRating = RATING_B;
 
@@ -243,7 +280,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_AAA_MISSILE;
         bomb.bombType = BombType.B_AAA;;
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 57;
         bomb.cost = 0;
         bomb.techRating = RATING_B;
 
@@ -261,7 +298,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_AS_MISSILE;
         bomb.bombType = BombType.B_AS;
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 114;
         bomb.cost = 0;
         bomb.techRating = RATING_B;
 
@@ -279,7 +316,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_ASEW_MISSILE;
         bomb.bombType = BombType.B_ASEW;
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 75;
         bomb.cost = 0;
         bomb.techRating = RATING_C;
 
@@ -299,7 +336,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_ARROW;
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 34;
         bomb.cost = 0;
         bomb.techRating = RATING_E;
 
@@ -340,7 +377,7 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_INFERNO;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 16;
         bomb.cost = 0;
         bomb.techRating = RATING_C;
 
@@ -358,7 +395,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_LAA_MISSILE;
         bomb.bombType = BombType.B_LAA;;
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 17;
         bomb.cost = 0;
         bomb.techRating = RATING_B;
 
@@ -397,7 +434,7 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_BOMB;
         bomb.bombType = BombType.B_TORPEDO;
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 10;
         bomb.cost = 0;
         bomb.techRating = RATING_C;
 

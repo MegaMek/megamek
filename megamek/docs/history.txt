@@ -27,6 +27,7 @@ v0.35.36-dev (SVN)
 + Bug 3170: Chatterbox2 slows down rendering on many systems 
 + Bug 3637: Infantry Illegal Charges Mechs 
 + Bug: Turret VTOLs with patchwork armor don't get correct armortype on turret
++ Bug 3688: RS Unique Fighters 
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

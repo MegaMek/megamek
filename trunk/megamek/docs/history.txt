@@ -18,6 +18,7 @@ v0.35.36-dev (SVN)
 + Bug 3549/3645: Modified the code to make sure all references to the homeEdge variable go through the new getter & setter methods.
 + Bug 3671: Undamaged unit flagged as "Crippled"
 + Bug: Chain Whip BV wrong
++ Bug: CASE II should prevent all explosive BV reductions
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

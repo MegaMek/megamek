@@ -19,6 +19,7 @@ v0.35.36-dev (SVN)
 + Bug 3671: Undamaged unit flagged as "Crippled"
 + Bug: Chain Whip BV wrong
 + Bug: CASE II should prevent all explosive BV reductions
++ Bug 3684: TechConstants.getTechName(int) is unaware of T_ALLOWED_ALL
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

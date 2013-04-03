@@ -37,6 +37,7 @@ import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.RangeType;
+import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -1080,6 +1081,13 @@ public class FireControl {
                             "stops swarming");
                 }
             }
+            if (shooter instanceof Tank) {
+                int sensors = ((Tank)shooter).getSensorHits();
+                if (sensors > 0) {
+                    tohit.addModifier(sensors, "sensor damage");
+                }
+            }
+
             if (target instanceof Mech) {
                 if (Infantry.SWARM_MEK.equals(mw.getType().getInternalName())) {
                     tohit.append(Compute.getSwarmMekBaseToHit(shooter,
@@ -1262,9 +1270,9 @@ public class FireControl {
 
         try {
 
-            if (shooter instanceof Aero ||
-                    shooter.getPosition() == null ||
-                    target.getPosition() == null) {
+            if ((shooter instanceof Aero) ||
+                    (shooter.getPosition() == null) ||
+                    (target.getPosition() == null)) {
                 return null;
             }
             String ret = null;

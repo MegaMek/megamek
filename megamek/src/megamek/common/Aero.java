@@ -2127,6 +2127,56 @@ public class Aero extends Entity {
         bvText.append(endColumn);
         bvText.append(endRow);
 
+        //We need to consider external stores.  Per TechManual Pg314, 
+        //  TM BV Errata Pg23, the external stores BV is added to the 
+        // units base BV
+        boolean hasBombs = false;
+        double bombBV = 0;
+        for (int bombType = 0; bombType < BombType.B_NUM; bombType++ ){
+            BombType bomb = BombType.createBombByType(bombType);
+            bombBV += bomb.bv * bombChoices[bombType];
+            if (bombChoices[bombType] > 0)
+                hasBombs = true;
+        }
+        finalBV += bombBV;
+        if (hasBombs){
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("External Stores BV");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
+            bvText.append(bombBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);
+            
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
+            bvText.append("-------------");
+            bvText.append(endColumn);
+            bvText.append(endRow);
+
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append("Final BV");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+
+            bvText.append(finalBV);
+            bvText.append(endColumn);
+            bvText.append(endRow);            
+        }
+        
+        
         bvText.append(endTable);
         bvText.append("</BODY></HTML>");
 

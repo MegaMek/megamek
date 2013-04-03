@@ -178,7 +178,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         tableUnits.setRowSorter(sorter);
         tableUnits.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                refreshUnitView();
+                //There can be multiple events for one selection.  Check to
+                // see if this is the last.
+                if (!evt.getValueIsAdjusting())
+                    refreshUnitView();
             }
         });
         TableColumn column = null;
@@ -544,7 +547,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             populateTextFields = false;
         }
         if (populateTextFields && (mechView != null)) {
-            panelMekView.setMech(selectedUnit);
+            panelMekView.setMech(selectedUnit,mechView);
         } else {
             panelMekView.reset();
         }

@@ -24,6 +24,7 @@ v0.35.36-dev (SVN)
 + Bug 3676: Extended LRM name
 + Bug 3667: Deployment any on late deployment
 + Bug 2860: BV for external stores was not added
++ Bug 3170: Chatterbox2 slows down rendering on many systems 
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

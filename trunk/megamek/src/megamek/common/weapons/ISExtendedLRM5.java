@@ -31,11 +31,11 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
     public ISExtendedLRM5() {
         super();
         techLevel = TechConstants.T_IS_EXPERIMENTAL;
-        name = "ExtendedLRM 5";
+        name = "Extended LRM 5";
         setInternalName(name);
-        addLookupName("IS ExtendedLRM-5");
+        addLookupName("IS Extended LRM-5");
         addLookupName("ISExtendedLRM5");
-        addLookupName("IS ExtendedLRM 5");
+        addLookupName("IS Extended LRM 5");
         addLookupName("ELRM-5 (THB)");
         heat = 3;
         rackSize = 5;

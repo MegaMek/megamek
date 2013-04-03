@@ -21,7 +21,8 @@ v0.35.36-dev (SVN)
 + Bug: CASE II should prevent all explosive BV reductions
 + Bug 3684: TechConstants.getTechName(int) is unaware of T_ALLOWED_ALL
 + Bug 3679: MechViewPanel width and height not properly set
-+ Bug 3676: Extended LRM name 
++ Bug 3676: Extended LRM name
++ Bug 3667: Deployment any on late deployment
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

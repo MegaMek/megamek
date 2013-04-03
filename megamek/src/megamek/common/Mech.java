@@ -28,14 +28,11 @@ import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.PPCWeapon;
-import megamek.common.weapons.SRMWeapon;
-import megamek.common.weapons.SRTWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -2479,7 +2476,7 @@ public abstract class Mech extends Entity {
             HitData hd = rollHitLocation(table, side);
             //check for cover and keep rolling until you get something without cover
             int i = 0;
-            while(removePartialCoverHits(hd.getLocation(), cover, side) && i < 500) {
+            while(removePartialCoverHits(hd.getLocation(), cover, side) && (i < 500)) {
                 hd = rollHitLocation(table, side);
                 i++;
             }
@@ -5089,7 +5086,7 @@ public abstract class Mech extends Entity {
                         }
                     } else if (isNullSigActive() && !isInfantry) {
                         result = new TargetRoll(0, "null-sig");
-                    } 
+                    }
                     else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");

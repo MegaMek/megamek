@@ -876,8 +876,6 @@ public class MiscType extends EquipmentType {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.0;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             returnBV = Math.ceil(entity.getWeight() / 4.0);
-        } else if (hasFlag(F_CLUB) && (hasSubType(S_SWORD) || hasSubType(S_CHAIN_WHIP))) {
-            returnBV = (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             returnBV = Math.ceil(entity.getWeight() / 10.0) * 1.725;
         } else if (hasFlag(F_TARGCOMP)) {
@@ -2072,7 +2070,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
         misc.subType |= S_CHAIN_WHIP;
-        misc.bv = BV_VARIABLE;
+        misc.bv = 5.175;
 
         return misc;
     }

@@ -282,8 +282,8 @@ public final class Player extends TurnOrdered {
         if (startingPos > 10) {
             startingPos -= 10; // deep deploy change to standard
         }
-        if ((startingPos == 0) || (startingPos == 10)) {
-            startingPos = 9; // any or centre change to edge
+        if (startingPos == Board.START_CENTER) {
+            startingPos = Board.START_ANY; // center changes to any
         }
     }
 
@@ -501,7 +501,7 @@ public final class Player extends TurnOrdered {
         int commandb = 0;
         if (game.getOptions().booleanOption("command_init")) {
             for (Entity entity : game.getEntitiesVector()) {
-                if (null != entity.getOwner() 
+                if ((null != entity.getOwner())
                         && entity.getOwner().equals(this)
                         && !entity.isDestroyed()
                         && entity.isDeployed()

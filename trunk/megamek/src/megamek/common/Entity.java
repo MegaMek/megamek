@@ -2041,7 +2041,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((null == locationNames) || (loc >= locationNames.length)) {
             return "";
         }
-        
+
         if (loc < 0) {
         	return "None";
         }
@@ -5649,37 +5649,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     "Check false: flyinge entities don't skid");
             return roll;
         }
-        
+
         if(isInfantry) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: infantry don't skid");
             return roll;
         }
-        
+
         if(moveType == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: jumping entities don't skid");
             return roll;
         }
-        
-        if(null != prevStep && prevStep.isHasJustStood()) {
+
+        if((null != prevStep) && prevStep.isHasJustStood()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: getting up entities don't skid");
             return roll;
         }
-        
+
         IHex curHex = null;
         if(null != curPos) {
             curHex = game.getBoard().getHex(curPos);
         }
-        
+
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        if ((prevHex != null)  
+        if ((prevHex != null)
                  && prevHex.containsTerrain(Terrains.ICE)
                  && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
-                            || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) 
-                                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) 
+                            || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE))
+                                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                                             || (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
                  && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),
@@ -5687,11 +5687,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        }        
+        }
         else if ((prevHex != null)
                 && (prevStep.isPavementStep()
                 && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
-                && (movementMode != EntityMovementMode.HOVER) 
+                && (movementMode != EntityMovementMode.HOVER)
                 && (movementMode != EntityMovementMode.WIGE))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             if (this instanceof Mech) {
@@ -7314,12 +7314,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //TODO: currently this doesn't work in the chat lounge, because the entity updates to the server
         //dont update the transported units for that entity. We should fix that but it doesn't seem to matter
         //if deployment rounds are not the same for transporters.
-        for(Transporter transport : this.getTransports()) {
+        for(Transporter transport : getTransports()) {
             for(Entity e : transport.getLoadedUnits()) {
                 e.setDeployRound(deployRound);
             }
         }
-        
+
     }
 
     /**
@@ -7575,7 +7575,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }*/
 
-        return false;
+        return true;
     }
 
     /**

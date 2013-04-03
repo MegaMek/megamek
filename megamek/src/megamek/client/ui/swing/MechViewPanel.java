@@ -94,7 +94,7 @@ public class MechViewPanel extends JPanel {
         gridbag.setConstraints(scrMek, c);
         add(scrMek);
 
-        c.insets = new Insets(20,20,20,20);
+        c.insets = new Insets(0,0,0,0);
         c.gridx = 1;
         c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
@@ -105,18 +105,28 @@ public class MechViewPanel extends JPanel {
         add(lblMek);
     }
     
-    public void setMech(Entity entity) {
-        reset();
-        //MechView mechView = new MechView(entity, false);
-        MechView mechView = new MechView(entity, false);
+    public void setMech(Entity entity, MechView mechView){
+        reset();        
         txtMek.setText(mechView.getMechReadout());
         txtMek.setCaretPosition(0);
         Image image = FluffImageHelper.getFluffImage(entity);
         icon = null;
         if(null != image) {
+            // We don't want this window to be too big, so scale large images
+            if (image.getWidth(this) > DEFAULT_WIDTH)
+            {
+                double aspect_ratio = (float)image.getWidth(this) / image.getHeight(this);
+                image = image.getScaledInstance(DEFAULT_WIDTH, 
+                        (int)(DEFAULT_WIDTH/aspect_ratio), Image.SCALE_FAST);
+            }            
             icon = new ImageIcon(image);
             lblMek.setIcon(icon);
-        }
+        }  
+    }
+    
+    public void setMech(Entity entity) {
+        MechView mechView = new MechView(entity, false);
+        setMech(entity,mechView);
     }
     
     public void reset() {
@@ -125,7 +135,7 @@ public class MechViewPanel extends JPanel {
     }
     
     public int getBestWidth() {
-        int width = WIDTH;
+        int width = DEFAULT_WIDTH;
         if(null != icon) {
             width += icon.getIconWidth() + 20;
         }
@@ -133,7 +143,7 @@ public class MechViewPanel extends JPanel {
     }
     
     public int getBestHeight() {
-        int height = HEIGHT;
+        int height = DEFAULT_HEIGHT;
         if(null != icon) {
             height = Math.max(height, icon.getIconHeight());
         }

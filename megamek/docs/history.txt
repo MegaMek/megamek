@@ -29,7 +29,8 @@ v0.35.36-dev (SVN)
 + Bug: Turret VTOLs with patchwork armor don't get correct armortype on turret
 + Bug 3688: RS Unique Fighters 
 + Bug 3687: Unit intro date bug
-+ Data 338: Constable BA files  
++ Data 338: Constable BA files
++ Data 318: Katya Ground Assault Craft
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

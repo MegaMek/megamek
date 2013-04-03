@@ -29,6 +29,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
@@ -57,15 +58,16 @@ public class MoveOption extends MovePath {
         }
 
         public int compare(MoveOption e0, MoveOption e1) {
-            if (damage_weight * e0.damage - utility_weight * e0.getUtility() > damage_weight
-                    * e1.damage - utility_weight * e1.getUtility()) {
+            if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) > ((damage_weight
+                    * e1.damage) - (utility_weight * e1.getUtility()))) {
                 return -1;
             }
-            else if (damage_weight * e0.damage - utility_weight * e0.getUtility() < damage_weight
-                    * e1.damage - utility_weight * e1.getUtility())
+            else if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) < ((damage_weight
+                    * e1.damage) - (utility_weight * e1.getUtility()))) {
                 return 1;
-            else
+            } else {
                 return 0;
+            }
         }
     }
 
@@ -194,10 +196,10 @@ public class MoveOption extends MovePath {
             getStep(0).setDanger(true);
             current.setDanger(true);
         }
-        
+
         //Don't jump onto a building with CF < weight
         IHex h = game.getBoard().getHex(getFinalCoords());
-        if(h != null && h.getTerrain(Terrains.BLDG_CF) != null) {
+        if((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
             if(cf < entity.getWeight()) {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
@@ -248,6 +250,9 @@ public class MoveOption extends MovePath {
     }
 
     public boolean changeToPhysical() {
+        if (getEntity() instanceof Infantry) {
+            return false;
+        }
         MoveStep last = getLastStep();
         if (isJumping()) {
             if (getEntity().canCharge()) {
@@ -424,12 +429,12 @@ public class MoveOption extends MovePath {
             return utility;
         }
         // self threat and self damage are considered transient
-        double temp_threat = (threat + movement_threat + self_threat + (double) getMovementheatBuildup() / 20)
+        double temp_threat = (threat + movement_threat + self_threat + ((double) getMovementheatBuildup() / 20))
                 / getCEntity().strategy.attack;
         double temp_damage = (damage + self_damage) * centity.strategy.attack;
-        if (threat + movement_threat > 4 * centity.avg_armor) {
+        if ((threat + movement_threat) > (4 * centity.avg_armor)) {
             double ratio = (threat + movement_threat)
-                    / (centity.avg_armor + .25 * centity.avg_iarmor);
+                    / (centity.avg_armor + (.25 * centity.avg_iarmor));
             if (ratio > 2) {
                 temp_threat += centity.bv / 15.0; // likely to die
                 doomed = true;
@@ -441,7 +446,7 @@ public class MoveOption extends MovePath {
                 temp_threat += centity.bv / 75.0; // in danger
                 inDanger = true;
             }
-        } else if (threat + movement_threat > 30) {
+        } else if ((threat + movement_threat) > 30) {
             temp_threat += centity.entity.getWeight();
         }
         double retVal = temp_threat - temp_damage;
@@ -467,7 +472,7 @@ public class MoveOption extends MovePath {
         double mod = 1;
         // heat effect modifiers
         if (enemy.isJumping()
-                || (enemy.entity.heat + enemy.entity.heatBuildup > 4)) {
+                || ((enemy.entity.heat + enemy.entity.heatBuildup) > 4)) {
             if (enemy.centity.overheat == CEntity.OVERHEAT_LOW) {
                 mod = .75;
             } else if (enemy.centity.overheat == CEntity.OVERHEAT_HIGH) {
@@ -511,15 +516,15 @@ public class MoveOption extends MovePath {
             IHex h = game.getBoard().getHex(getFinalCoords());
             IHex h1 = game.getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-                max += (((h1.getElevation() - h.getElevation() == 1) || getFinalProne()) ? 5
+                max += ((((((h1.getElevation() - h.getElevation()) == 1) || getFinalProne()) ? 5
                         : 1)
                         * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)
                         * centity.entity.getWeight()
-                        * Compute.oddsAbove(3 + modifier)
-                        / 100
-                        + (1 - enemy.centity.base_psr_odds)
-                        * enemy.entity.getWeight() / 10.0;
+                        * Compute.oddsAbove(3 + modifier))
+                        / 100)
+                        + (((1 - enemy.centity.base_psr_odds)
+                        * enemy.entity.getWeight()) / 10.0);
             }
         }
         return max;
@@ -535,7 +540,7 @@ public class MoveOption extends MovePath {
     }
 
     public double getDistUtility() {
-        return getMpUsed() + movement_threat * 100 / centity.bv;
+        return getMpUsed() + ((movement_threat * 100) / centity.bv);
     }
 
     /**

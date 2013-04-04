@@ -79,6 +79,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Board;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
@@ -89,7 +90,6 @@ import megamek.common.Infantry;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
-import megamek.common.Crew;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -409,12 +409,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     return Messages.getString("ChatLounge.tipPlayer",
                             new Object[] { getValueAt(rowIndex, colIndex),
                                     player.getConstantInitBonus(), mines });
-                } else if (realColIndex == PlayerTableModel.COL_BV) {
-                    int bv = (Integer) getValueAt(rowIndex, colIndex);
-                    float ratio = playerModel.getPlayerAt(rowIndex)
-                            .getForceSizeBVMod();
-                    return Messages.getString("ChatLounge.tipBV", new Object[] {
-                            bv, ratio });
                 } else if (realColIndex == PlayerTableModel.COL_TON) {
                     return Float
                             .toString((Float) getValueAt(rowIndex, colIndex));
@@ -1247,7 +1241,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     "manei_domini")) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
-            
+
             if (!clientgui.getClient().game.getOptions().booleanOption(
                     "stratops_partialrepairs")) { //$NON-NLS-1$
                 entity.clearPartialRepairs();
@@ -1383,7 +1377,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 + entity.getTotalOInternal()
                 + Messages.getString("ChatLounge.internal") + "<br>";
         value += "<br>";
-        if(entity.getGame() != null && entity.getGame().getOptions().booleanOption("stratops_quirks")) {
+        if((entity.getGame() != null) && entity.getGame().getOptions().booleanOption("stratops_quirks")) {
 	        for (Enumeration<IOptionGroup> advGroups = entity.getQuirks()
 	                .getGroups(); advGroups.hasMoreElements();) {
 	            IOptionGroup advGroup = advGroups.nextElement();
@@ -1433,7 +1427,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
 
-        
+
         value += "</html>";
         return value;
 
@@ -1761,7 +1755,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if ((c != null) && (c.getLocalPlayer().getTeam() != team)) {
             c.getLocalPlayer().setTeam(team);
             c.sendPlayerInfo();
-            
+
             // WIP on getting entities to be able to be loaded by teammates
             for (Entity unit : c.game.getPlayerEntities(c.getLocalPlayer(), false)) {
                 // If unit has empty bays it needs to be updated in order for other entities to be able to load into it.
@@ -1783,7 +1777,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     continue;
                 }
 
-                if (unit.getTransportId() != Entity.NONE && (c.game.getEntity(unit.getTransportId()).getOwner().getTeam() != unit.getOwner().getTeam())) {
+                if ((unit.getTransportId() != Entity.NONE) && (c.game.getEntity(unit.getTransportId()).getOwner().getTeam() != unit.getOwner().getTeam())) {
                     unloader(unit);
     }
                 }
@@ -2623,7 +2617,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     && clientgui.getClient().game.getOptions().booleanOption(
                             "real_blind_drop");
             if (col == COL_BV) {
-                int bv = Math.round(bvs.get(row) * player.getForceSizeBVMod());
+                int bv = Math.round(bvs.get(row));
                 if (blindDrop) {
                     bv = bv > 0 ? 9999 : 0;
                 }
@@ -3128,7 +3122,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (!en.isCapitalFighter(true) || (en instanceof FighterSquadron)) {
                     allCapFighter = false;
                 }
-                if (prevOwnerId != -1 && en.getOwnerId() != prevOwnerId) {
+                if ((prevOwnerId != -1) && (en.getOwnerId() != prevOwnerId)) {
                     sameSide = false;
                 }
                 prevOwnerId = en.getOwnerId();

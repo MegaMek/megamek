@@ -72,7 +72,6 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
-import megamek.common.options.PartialRepairs;
 
 public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         ItemListener, DoneButtoned {
@@ -1250,7 +1249,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (useBv) {
                 lisBVs
                         .add(player.getName()
-                                + Messages.getString("ChatLounge.BV") + (int) playerValue + " (FM:" + (int) (playerValue * player.getForceSizeBVMod()) + ")"); //$NON-NLS-1$
+                                + Messages.getString("ChatLounge.BV") + (int) playerValue); //$NON-NLS-1$
             } else if (useCost) {
                 lisBVs.add(player.getName()
                         + Messages.getString("ChatLounge.Cost")
@@ -1720,8 +1719,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                     // check for overlapping starting directions
                     if (((player.getStartingPos() == i)
-                            || (player.getStartingPos() + 1 == i) || (player
-                            .getStartingPos() - 1 == i))
+                            || ((player.getStartingPos() + 1) == i) || ((player
+                            .getStartingPos() - 1) == i))
                             && (player.getId() != client.getLocalPlayer()
                                     .getId())) {
                         clientgui

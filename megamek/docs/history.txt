@@ -31,6 +31,7 @@ v0.35.36-dev (SVN)
 + Bug 3687: Unit intro date bug
 + Data 338: Constable BA files
 + Data 318: Katya Ground Assault Craft
++ TM errata: Force Size Mod for BV does not exist anymore
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

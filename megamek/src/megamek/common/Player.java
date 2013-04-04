@@ -364,7 +364,7 @@ public final class Player extends TurnOrdered {
                 bv += entity.calculateBattleValue();
             }
         }
-        return (int) (bv * getForceSizeBVMod());
+        return bv;
     }
 
     /**
@@ -390,57 +390,6 @@ public final class Player extends TurnOrdered {
 
     public int getInitialBV() {
         return initialBV;
-    }
-
-    public float getForceSizeBVMod() {
-        if (game.getOptions().booleanOption("no_force_size_mod")) {
-            return 1;
-        }
-        Enumeration<Entity> entities = game.getEntities();
-        float ourUnitCount = 0;
-        while (entities.hasMoreElements()) {
-            final Entity entity = entities.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed()) {
-                ourUnitCount++;
-            }
-        }
-        float enemyUnitCount = 0;
-        if (getTeam() == TEAM_NONE) {
-            for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
-                Player p = e.nextElement();
-                if (!p.equals(this)) {
-                    enemyUnitCount += game.getEntitiesOwnedBy(p);
-                }
-            }
-        } else {
-            Team teamObj = game.getTeamForPlayer(this);
-            if (teamObj != null) {
-                for (Enumeration<Player> e = teamObj.getPlayers(); e
-                        .hasMoreElements();) {
-                    Player p = e.nextElement();
-                    if (!p.equals(this)) {
-                        ourUnitCount += game.getEntitiesOwnedBy(p);
-                    }
-                }
-            }
-            for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                Team t = e.nextElement();
-                if (t.getId() != getTeam()) {
-                    for (Enumeration<Player> players = t.getPlayers(); players
-                            .hasMoreElements();) {
-                        Player p = players.nextElement();
-                        enemyUnitCount += game.getEntitiesOwnedBy(p);
-                    }
-                }
-            }
-        }
-        if ((ourUnitCount <= enemyUnitCount) || (enemyUnitCount == 0)
-                || (ourUnitCount == 0)) {
-            return 1;
-        }
-
-        return ((enemyUnitCount / ourUnitCount)
-                + (ourUnitCount / enemyUnitCount)) - 1;
     }
 
     public void setCompensationInitBonus(int newBonus) {

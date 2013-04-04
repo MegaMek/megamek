@@ -31,11 +31,10 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.CommonConstants;
-import megamek.common.MechSummaryCache;
 
 /**
  * Contains the options determining play in the current game.
- * 
+ *
  * @author Ben
  */
 public class GameOptions extends AbstractOptions {
@@ -58,7 +57,6 @@ public class GameOptions extends AbstractOptions {
         addOption(base, "team_initiative", true); //$NON-NLS-1$
         addOption(base, "autosave_msg", true); //$NON-NLS-1$
         addOption(base, "paranoid_autosave", false); //$NON-NLS-1$
-        addOption(base, "no_force_size_mod", false); //$NON-NLS-1$
         addOption(base, "exclusive_db_deployment", true); //$NON-NLS-1$
         addOption(base, "deep_deployment", false); //$NON-NLS-1$
         addOption(base, "blind_drop", false); //$NON-NLS-1$
@@ -386,7 +384,7 @@ public class GameOptions extends AbstractOptions {
 
     /**
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
-     * 
+     *
      * @param options
      *            <code>Vector</code> of <code>IBasicOption</code>
      */
@@ -433,7 +431,7 @@ public class GameOptions extends AbstractOptions {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     @Override

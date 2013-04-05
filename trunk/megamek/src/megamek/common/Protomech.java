@@ -118,6 +118,9 @@ public class Protomech extends Entity {
     private int edpChargeTurns = 0;
 
     private boolean isQuad = false;
+    
+    //for MHQ
+    private boolean engineHit = false;
 
     /**
      * Construct a new, blank, pmech.
@@ -245,6 +248,9 @@ public class Protomech extends Entity {
 
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
+        if(isEngineHit()) {
+            return 0;
+        }
         int wmp = getOriginalWalkMP();
         int legCrits = getCritsHit(LOC_LEG);
         int j;
@@ -397,6 +403,10 @@ public class Protomech extends Entity {
             }
             return applyGravityEffectsOnMP(jump);
         }
+    }
+    
+    public int getJumpJets() {
+        return jumpMP;
     }
 
     /**
@@ -1614,11 +1624,6 @@ public class Protomech extends Entity {
         return 0;
     }
 
-    @Override
-    public String getLocationDamage(int loc) {
-        return "";
-    }
-
     public boolean isEDPCharged() {
         return hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
                 && edpCharged;
@@ -1720,5 +1725,26 @@ public class Protomech extends Entity {
             }
         }
         return ((double) totalInoperable / totalWeapons) >= 0.25;
+    }
+    
+    @Override
+    public String getLocationDamage(int loc) {
+        int hits = getCritsHit(loc);
+        if(hits > 0) {
+            String strHit = " critical hit";
+            if(hits > 1) {
+                strHit += "s";
+            }
+            return hits + strHit;
+        }
+        return "";
+    }
+    
+    public boolean isEngineHit() {
+        return engineHit;
+    }
+    
+    public void setEngineHit(boolean b) {
+        engineHit = b;
     }
 }

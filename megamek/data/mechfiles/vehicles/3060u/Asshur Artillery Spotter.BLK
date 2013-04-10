@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Asshur Artillery Spotter
+</Name>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+13
+11
+11
+9
+13
+</Armor>
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLStreakSRM6
+</Turret Equipment>
+<Front Equipment>
+CLTAG
+</Front Equipment>
+<Body Equipment>
+CLStreakSRM6 Ammo
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Succession Wars
+</source>

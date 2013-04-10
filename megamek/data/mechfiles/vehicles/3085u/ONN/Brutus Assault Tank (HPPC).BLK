@@ -1,0 +1,68 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Brutus Assault Tank
+</Name>
+<Model>
+(HPPC)
+</Model>
+<Tonnage>
+75
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+34
+27
+27
+21
+27
+</Armor>
+<Turret Equipment>
+ISHPPC
+ISLRM20
+</Turret Equipment>
+<Front Equipment>
+ISSRM6
+ISSRM6
+ISSRM2
+</Front Equipment>
+<Body Equipment>
+ISSRM6 Ammo
+ISSRM2 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISC3SlaveUnit
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3075
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Jihad
+</source>

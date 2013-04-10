@@ -1,0 +1,340 @@
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+SpaceStation
+
+</UnitType>
+
+<Name>
+
+Bastion
+ System Defense Station
+</Name>
+
+<Tonnage>
+150000
+</Tonnage>
+<Armor>
+20
+20
+20
+20
+20
+20
+</Armor>
+<Nose Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISAC5
+ISAC5 Ammo
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+<Front Left Side Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISAC5
+ISAC5 Ammo
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISAC5
+ISAC5 Ammo
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISAC5
+ISAC5 Ammo
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISAC5
+ISAC5 Ammo
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Right Side Equipment>
+<Aft Equipment> 
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISAC5
+ISAC5 Ammo
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+1000
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+10000
+</fuel>
+<type>
+IS Level 1
+</type>
+<year>
+3057
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<transporters>
+SmallCraftBay:12:2
+CargoBay:123619:1
+ASFBay:36:6
+Repair:30000:1
+Repair:30000:1
+</transporters>
+<docking_collar>
+1
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+35
+</escape_pod>
+<life_boat>
+35
+</life_boat>
+<crew>
+533
+</crew>
+<passengers>
+25
+</passengers>

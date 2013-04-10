@@ -1,0 +1,151 @@
+Version:1.0
+Kingfisher
+F-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3060
+Rules Level:2
+
+Mass:90
+Engine:360 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:30
+RA Armor:30
+LT Armor:28
+RT Armor:28
+CT Armor:44
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:13
+
+Weapons:6
+1 CLATM9, Right Arm, Ammo:28
+1 CLATM9, Left Arm
+2 CLERMediumLaser, Right Torso
+1 CLATM9, Left Torso
+2 CLERMediumLaser, Left Torso
+1 CLERMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9 Ammo
+CLATM9 ER Ammo
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9 Ammo
+CLATM9 HE Ammo
+Endo Steel
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLERMediumLaser
+CLERMediumLaser
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+CLERMediumLaser
+Endo Steel
+Ferro-Fibrous
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

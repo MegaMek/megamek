@@ -1,0 +1,291 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Dante Frigate
+</Name>
+<Tonnage>
+610000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+100
+90
+90
+80
+80
+70
+</Armor>
+<Nose Equipment>
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+</Nose Equipment>
+<Front Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC35
+NAC35
+NAC35 Ammo:50
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC35
+NAC35
+NAC35 Ammo:50
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NAC30
+NAC30
+NAC30 Ammo:20
+</Aft Right Side Equipment>
+<Aft Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:120
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:228
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+</Aft Equipment>
+<structural_integrity>
+50
+</structural_integrity>
+<heatsinks>
+650
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+7500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2941
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+11
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:12:4
+CargoBay:17086:4
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+24
+</escape_pod>
+<life_boat>
+0
+</life_boat>
+<crew>
+258
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

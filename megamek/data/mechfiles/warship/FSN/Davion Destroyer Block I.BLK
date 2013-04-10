@@ -1,0 +1,160 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Davion Destroyer
+</Name>
+<Model>
+Block I
+</Model>
+<Tonnage>
+520000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+50
+49
+49
+44
+44
+29
+</Armor>
+<Nose Equipment>
+NAC25
+NAC25
+NAC25 Ammo:100
+NAC25
+NAC25
+NAC25 Ammo:100
+NL45
+NL45
+NL45
+NL45
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:198
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+<Front Left Side Equipment>
+NL45
+NL45
+NL45
+NL45
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL45
+NL45
+NL45
+NL45
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NL45
+NL45
+NL45
+NL45
+NL45
+NL45
+LightNPPC
+ISLargeLaser
+ISLargeLaser
+ISSRM6
+ISSRM6
+ISSRM6
+ISSRM6 Ammo:300
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NL45
+NL45
+NL45
+NL45
+NL45
+NL45
+LightNPPC
+ISLargeLaser
+ISLargeLaser
+ISSRM6
+ISSRM6
+ISSRM6
+ISSRM6 Ammo:300
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35 Ammo:100
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:198
+</Aft Equipment>
+<structural_integrity>
+55
+</structural_integrity>
+<heatsinks>
+2550
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+12500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2510
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:2:2
+CargoBay:70456:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+10
+</life_boat>
+<crew>
+287
+</crew>
+<passengers>
+0
+</passengers>

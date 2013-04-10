@@ -1,0 +1,73 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Engineering Vehicle
+</Name>
+
+<year>
+2050
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+40.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<armor>
+8
+8
+8
+8
+8
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+</Rear Equipment>
+
+<Turret Equipment>
+Backhoe
+</Turret Equipment>

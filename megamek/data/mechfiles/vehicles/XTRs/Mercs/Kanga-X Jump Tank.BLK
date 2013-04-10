@@ -1,0 +1,94 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Kanga-X
+</Name>
+
+<Model>
+Jump Tank
+</Model>
+
+<year>
+3075
+</year>
+
+<type>
+Clan Level 5
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+10
+</armor_tech>
+
+<armor>
+25
+24
+24
+22
+20
+</armor>
+
+<Body Equipment>
+CLLargeChemLaserAmmo
+Clan Streak LRM 10 Ammo
+Clan Streak LRM 10 Ammo
+Clan Streak SRM 4 Ammo
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+CLCASE
+CLLargeChemLaserAmmo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLLargeChemLaser
+CLStreakLRM10
+CLStreakSRM4
+</Turret Equipment>

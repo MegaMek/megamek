@@ -1,0 +1,55 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Yellow Jacket Gunship
+</Name>
+<Model>
+(PPC)
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+27
+19
+19
+12
+2
+</Armor>
+<Front Equipment>
+ISERPPC
+ISC3SlaveUnit
+</Front Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3076
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+6
+</armor_type>
+<engine_type>
+4
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Jihad
+</source>

@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Gürteltier MBT
+</Name>
+
+<Tonnage>
+100
+</Tonnage>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+109
+75
+75
+50
+67
+</Armor>
+
+<Left Equipment>
+ISMachine Gun
+</Left Equipment>
+
+<Right Equipment>
+ISMachine Gun
+</Right Equipment>
+
+<Rear Equipment>
+ISMachine Gun
+</Rear Equipment>
+
+<Turret Equipment>
+ISERPPC
+ISGaussRifle
+ISMML7
+</Turret Equipment>
+
+<Body Equipment>
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISMML7 LRM Ammo
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+ISMG Ammo (100)
+ISGuardianECMSuite
+ISTargeting Computer
+ISC3SlaveUnit
+ISCASE
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3081
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+Tracked
+</motion_type>

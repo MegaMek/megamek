@@ -1,0 +1,78 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Behemoth Heavy Tank
+</Name>
+<Model>
+(Kurita)
+</Model>
+<Tonnage>
+100
+</Tonnage>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+46
+38
+38
+40
+46
+</Armor>
+<Turret Equipment>
+ISUltraAC10
+ISUltraAC10
+ISSRM6
+ISArtemisIV
+ISSRM6
+ISArtemisIV
+ISMRM10
+ISMRM10
+</Turret Equipment>
+<Front Equipment>
+ISLRM5
+ISArtemisIV
+ISLRM5
+ISArtemisIV
+</Front Equipment>
+<Body Equipment>
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISSRM6 Ammo Artemis-capable
+ISSRM6 Ammo Artemis-capable
+ISMRM10 Ammo
+ISMRM10 Ammo
+ISLRM5 Ammo Artemis-capable
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Civil War
+</source>

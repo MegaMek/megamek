@@ -1,0 +1,73 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Heimdall Ground Monitor Tank
+</Name>
+<Model>
+A
+</Model>
+<Tonnage>
+95
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+106
+70
+70
+47
+59
+</Armor>
+<Turret Equipment>
+CLATM12
+CLATM12
+CLHeavyMediumLaser
+</Turret Equipment>
+<Front Equipment>
+CLLBXAC10
+CLLBXAC10
+</Front Equipment>
+<Body Equipment>
+CLLBXAC10 CL Ammo
+CLLBXAC10 Ammo
+CLLBXAC10 CL Ammo
+CLATM12 ER Ammo
+CLATM12 Ammo
+CLATM12 HE Ammo
+CLATM12 ER Ammo
+CLATM12 Ammo
+CLATM12 HE Ammo
+CLCASE
+</Body Equipment>
+<type>
+Clan
+</type>
+<year>
+3063
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<omni>
+</omni>
+<omni>
+</omni>

@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Behemoth II Tank
+</Name>
+<Tonnage>
+100
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+56
+38
+38
+25
+31
+</Armor>
+<Turret Equipment>
+ISGaussRifle
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISSRM4
+ISSRM4
+</Turret Equipment>
+<Body Equipment>
+ISGauss Ammo
+ISGauss Ammo
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISSRM4 Ammo
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3132
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

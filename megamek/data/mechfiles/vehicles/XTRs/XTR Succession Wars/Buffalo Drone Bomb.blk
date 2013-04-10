@@ -1,0 +1,145 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Buffalo
+</Name>
+
+<Model>
+Drone Bomb
+</Model>
+
+<year>
+2300
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+7
+</armor_type>
+
+<Front_armor_type>
+0
+</Front_armor_type>
+
+<Front_armor_tech>
+Inner Sphere
+</Front_armor_tech>
+
+<Front Right_armor_type>
+0
+</Front Right_armor_type>
+
+<Front Right_armor_tech>
+Inner Sphere
+</Front Right_armor_tech>
+
+<Front Left_armor_type>
+0
+</Front Left_armor_type>
+
+<Front Left_armor_tech>
+Inner Sphere
+</Front Left_armor_tech>
+
+<Rear Right_armor_type>
+0
+</Rear Right_armor_type>
+
+<Rear Right_armor_tech>
+Inner Sphere
+</Rear Right_armor_tech>
+
+<Rear Left_armor_type>
+-1
+</Rear Left_armor_type>
+
+<Rear Left_armor_tech>
+Inner Sphere
+</Rear Left_armor_tech>
+
+<Rear_armor_type>
+0
+</Rear_armor_type>
+
+<Rear_armor_tech>
+Inner Sphere
+</Rear_armor_tech>
+
+<armor>
+18
+15
+15
+15
+15
+15
+</armor>
+
+<Body Equipment>
+ISBoobyTrap
+Supercharger
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+ISDroneOperatingSystem
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+Cargo Container (10 tons)
+</Rear Equipment>
+
+<source>
+XTR Succesion Wars
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

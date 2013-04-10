@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+DI Morgan Assault Tank
+</Name>
+
+<Model>
+(LRM)
+</Model>
+
+<Tonnage>
+100
+</Tonnage>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Armor>
+57
+41
+41
+28
+41
+</Armor>
+
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Front Equipment>
+
+<Turret Equipment>
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+</Turret Equipment>
+
+<Body Equipment>
+ISC3SlaveUnit
+ISCASE
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3075
+</year>
+
+<source>
+Jihad
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+Tracked
+</motion_type>

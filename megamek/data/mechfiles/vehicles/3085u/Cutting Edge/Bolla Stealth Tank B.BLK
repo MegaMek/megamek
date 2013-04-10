@@ -1,0 +1,76 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Bolla Stealth Tank
+</Name>
+<Model>
+B
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+34
+32
+32
+30
+40
+</Armor>
+<Front Equipment>
+ISMachine Gun
+</Front Equipment>
+<Turret Equipment>
+ISMML7
+ISMML7
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+</Turret Equipment>
+<transporters>
+TroopSpace:4
+</transporters>
+<Body Equipment>
+ISMML7 LRM Ammo
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+ISMagshotGR Ammo
+ISC3MasterUnit
+ISMG Ammo (100)
+ISGuardianECM
+ISC3SlaveUnit
+</Body Equipment>
+<type>
+IS Level 4
+</type>
+<year>
+3084
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+8
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<omni>
+</omni>
+<Source>
+Dark Age
+</Source>

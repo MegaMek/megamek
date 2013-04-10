@@ -1,0 +1,86 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Thor Artillery Vehicle
+</Name>
+
+<Model>
+(Clan)
+</Model>
+
+<year>
+2870
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<tonnage>
+55.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+33
+27
+27
+25
+32
+</armor>
+
+<Body Equipment>
+CLThumperAmmo
+CLThumperAmmo
+</Body Equipment>
+
+<Front Equipment>
+CLThumper
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+CLCASE
+</Rear Equipment>
+
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Turret Equipment>
+

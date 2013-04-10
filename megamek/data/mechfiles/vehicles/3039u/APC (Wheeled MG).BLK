@@ -1,0 +1,80 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Armored Personnel Carrier
+</Name>
+
+<Model>
+(Wheeled MG)
+</Model>
+
+<year>
+3060
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+10.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<armor>
+12
+10
+10
+10
+6
+</armor>
+
+<Body Equipment>
+IS Ammo MG - Full
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+</Turret Equipment>

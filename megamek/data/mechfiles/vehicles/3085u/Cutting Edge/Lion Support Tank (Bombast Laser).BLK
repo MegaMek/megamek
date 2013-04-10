@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Lion Support Tank
+</Name>
+
+<Model>
+(Bombast Laser)
+</Model>
+
+<Tonnage>
+50
+</Tonnage>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+39
+27
+27
+17
+24
+</Armor>
+
+<Front Equipment>
+CLLightMG
+</Front Equipment>
+
+<Left Equipment>
+CLLightMG
+</Left Equipment>
+
+<Right Equipment>
+CLLightMG
+</Right Equipment>
+
+<Rear Equipment>
+CLLightMG
+</Rear Equipment>
+
+<Turret Equipment>
+Bombast Laser
+CLStreakSRM4
+CLVehicleFlamer
+</Turret Equipment>
+
+<Rear Right Equipment>
+CLLightMG
+</Rear Right Equipment>
+
+<Body Equipment>
+CLStreakSRM4 Ammo
+CLVehicleFlamer Ammo
+CLVehicleFlamer Ammo
+CLLightMG Ammo (200)
+CLCASE
+</Body Equipment>
+
+<type>
+Mixed (Clan Chassis) Experimental
+</type>
+
+<year>
+3084
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Wheeled
+</motion_type>

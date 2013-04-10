@@ -1,0 +1,68 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Demolisher II Heavy Tank
+</Name>
+<Tonnage>
+100
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+60
+50
+50
+40
+59
+</Armor>
+<Turret Equipment>
+ISUltraAC20
+ISLBXAC20
+</Turret Equipment>
+<Front Equipment>
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Body Equipment>
+ISMG Ammo (100)
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+ISLBXAC20 CL Ammo
+ISLBXAC20 Ammo
+ISLBXAC20 CL Ammo
+ISLBXAC20 Ammo
+ISCASE
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3060
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Clan Invasion
+</source>

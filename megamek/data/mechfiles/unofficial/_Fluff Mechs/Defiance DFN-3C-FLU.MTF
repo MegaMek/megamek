@@ -1,0 +1,154 @@
+Version:1.0
+Defiance
+DFN-3C-FLU
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3057
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:23
+RA Armor:23
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:9
+1 ISERPPC, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISERPPC, Left Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISSRM6, Right Torso, Ammo:15
+1 ISLBXAC10, Right Torso, Ammo:20
+1 ISSRM6, Left Torso
+2 ISSmallLaser, Left Torso
+1 ISMachine Gun, Head, Ammo:100
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSRM6
+ISSRM6
+ISSmallLaser
+ISSmallLaser
+ISMG Ammo (100)
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSRM6
+ISSRM6
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISSRM6 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMachine Gun
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

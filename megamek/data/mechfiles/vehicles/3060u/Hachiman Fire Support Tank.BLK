@@ -1,0 +1,67 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Hachiman Fire Support Tank 'Huey'
+</Name>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+30
+29
+29
+19
+27
+</Armor>
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLLRM20
+CLArtemisIV
+CLLRM20
+CLArtemisIV
+</Turret Equipment>
+<Front Equipment>
+CLStreakSRM4
+</Front Equipment>
+<Body Equipment>
+CLStreakSRM4 Ammo
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3060
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Succession Wars
+</source>

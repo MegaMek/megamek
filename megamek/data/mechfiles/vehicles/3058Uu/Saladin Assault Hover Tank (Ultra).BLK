@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Saladin Assault Hover Tank
+</Name>
+<Model>
+(Ultra)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+14
+8
+8
+5
+</Armor>
+<Front Equipment>
+ISUltraAC20
+</Front Equipment>
+<Body Equipment>
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3064
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Civil War
+</source>

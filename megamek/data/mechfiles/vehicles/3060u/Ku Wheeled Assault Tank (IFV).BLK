@@ -1,0 +1,67 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Ku Wheeled Assault Tank
+</Name>
+<Model>
+(IFV) "Turhan II"
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<CruiseMP>
+7
+</cruiseMP>
+<Armor>
+40
+30
+30
+28
+25
+</Armor>
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLAPGaussRifle
+</Turret Equipment>
+<Front Equipment>
+CLAPGaussRifle
+</Front Equipment>
+<Body Equipment>
+CLECMSuite
+CLAPGaussRifle Ammo
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3070
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<transporters>
+TroopSpace:10
+</transporters>
+<source>
+Jihad
+</source>

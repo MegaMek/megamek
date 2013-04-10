@@ -1,0 +1,98 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Vendetta Medium Fighter
+</Name>
+
+<Tonnage>
+60
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+15
+15
+15
+15
+</Armor>
+
+<Nose Equipment>
+ISLargeLaser
+ISSmallLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISMediumLaser
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISMediumLaser
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+15
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+250
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+2328
+</year>
+
+<source>
+XTR Primitives III
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<barrating>
+10
+</barrating>

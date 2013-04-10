@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Peregrine Attack VTOL
+</Name>
+<Model>
+(Cargo)
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+12
+</cruiseMP>
+<Armor>
+2
+2
+2
+1
+1
+</Armor>
+<Body Equipment>
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+3036
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Succession Wars
+</source>

@@ -1,0 +1,52 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Ripper Infantry Transport
+</Name>
+<Tonnage>
+10
+</Tonnage>
+<cruiseMP>
+12
+</cruiseMP>
+<Armor>
+10
+5
+5
+5
+2
+</Armor>
+<Front Equipment>
+ISMediumLaser
+ISMediumLaser
+</Front Equipment>
+<transporters>
+TroopSpace:1
+</transporters>
+<type>
+IS
+</type>
+<year>
+2680
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>

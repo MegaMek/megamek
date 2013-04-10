@@ -1,0 +1,149 @@
+Version:1.0
+Viper
+S-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3060
+Rules Level:2
+
+Mass:40
+Engine:320 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:8
+Jump MP:8
+
+Armor:Ferro-Fibrous
+LA Armor:12
+RA Armor:12
+LT Armor:13
+RT Armor:13
+CT Armor:16
+HD Armor:9
+LL Armor:19
+RL Armor:19
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:4
+1 CLATM3, Right Arm, Ammo:60
+1 CLATM3, Left Arm
+1 CLATM3, Right Torso
+1 CLERMediumLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLATM3
+CLATM3
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLATM3
+CLATM3
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+CLERMediumLaser
+CLATM3 Ammo
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+CLATM3
+CLATM3
+CLATM3 ER Ammo
+CLATM3 HE Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

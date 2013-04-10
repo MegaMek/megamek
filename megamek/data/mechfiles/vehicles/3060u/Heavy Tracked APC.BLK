@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Heavy Tracked APC
+</Name>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+20
+13
+13
+10
+</Armor>
+<Front Equipment>
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<transporters>
+TroopSpace:6
+</transporters>
+<Body Equipment>
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+2050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Star League
+</source>

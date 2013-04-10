@@ -1,0 +1,99 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Puma Assault Tank
+</Name>
+
+<Model>
+PMA-007
+</Model>
+
+<year>
+3066
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+95.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+4
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+49
+33
+33
+24
+49
+</armor>
+
+<Body Equipment>
+IS Vehicle Flamer Ammo
+IS MML-7 LRM Ammo
+IS MML-7 SRM Ammo
+IS MML-7 LRM Ammo
+IS MML-7 SRM Ammo
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+ISC3iUnit
+</Body Equipment>
+
+<Front Equipment>
+ISMML7
+ISBPod
+Medium Laser
+Medium Laser
+</Front Equipment>
+
+<Right Equipment>
+ISMML7
+ISMachine Gun
+ISMachine Gun
+ISMGA
+</Right Equipment>
+
+<Left Equipment>
+ISMML7
+ISMachine Gun
+ISMachine Gun
+ISMGA
+</Left Equipment>
+
+<Rear Equipment>
+Small Laser
+Vehicle Flamer
+</Rear Equipment>
+
+<Turret Equipment>
+ISHeavyPPC
+</Turret Equipment>
+

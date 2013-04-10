@@ -1,0 +1,154 @@
+Version:1.0
+Daishi (Dire Wolf)
+X-Batchall
+
+Config:Biped Omni
+TechBase:Clan
+Era:3050
+Rules Level:2
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:10
+1 CLUltraAC10, Right Arm, Ammo:20
+1 CLERLargeLaser, Right Arm
+1 CLLBXAC10, Left Arm, Ammo:20
+3 CLERMediumLaser, Left Arm
+1 CLATM6, Right Torso, Ammo:40
+1 CLSRM6, Right Torso, Ammo:30
+1 CLATM6, Left Torso
+1 CLSRM6, Left Torso
+1 CLERSmallLaser, Center Torso
+1 CLECMSuite, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLLBXAC10 Ammo
+CLLBXAC10 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLERLargeLaser
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM6
+CLATM6
+CLATM6
+CLSRM6
+CLArtemisIV
+Clan Ammo ATM-6
+Clan Ammo ATM-6 HE
+CLSRM6 Ammo (Clan) Artemis-capable
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLATM6
+CLATM6
+CLATM6
+CLSRM6
+CLArtemisIV
+Clan Ammo ATM-6
+Clan Ammo ATM-6 ER
+CLSRM6 Ammo (Clan) Artemis-capable
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

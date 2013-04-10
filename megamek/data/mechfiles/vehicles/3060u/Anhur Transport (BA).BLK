@@ -1,0 +1,67 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Anhur Transport
+</Name>
+<Model>
+(BA)
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+15
+14
+14
+12
+2
+</Armor>
+<Front Equipment>
+CLERMediumLaser
+CLAPGaussRifle
+</Front Equipment>
+<Rear Equipment>
+CLERMediumLaser
+CLAPGaussRifle
+</Rear Equipment>
+<Body Equipment>
+CLAPGaussRifle Ammo
+CLECMSuite
+CLCASE
+</Body Equipment>
+<transporters>
+TroopSpace:10
+</transporters>
+<type>
+Clan Level 2
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Jihad
+</source>

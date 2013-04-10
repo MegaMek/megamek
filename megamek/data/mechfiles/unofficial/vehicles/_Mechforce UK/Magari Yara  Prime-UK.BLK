@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Magari Yara
+</Name>
+<Model>
+Prime-UK
+</Model>
+<Tonnage>
+45
+</Tonnage>
+<cruiseMP>
+11
+</cruiseMP>
+<Armor>
+50
+40
+40
+22
+</Armor>
+<Front Equipment>
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISStreakSRM4
+ISStreakSRM4
+ISTAG
+</Front Equipment>
+<Body Equipment>
+ISStreakSRM4 Ammo
+ISC3SlaveUnit
+ISGuardianECM
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<omni>
+</omni>

@@ -1,0 +1,61 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Centipede Scout Car
+</Name>
+<Model>
+(SRM)
+</Model>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+16
+16
+16
+16
+</Armor>
+<Front Equipment>
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+</Front Equipment>
+<Body Equipment>
+ISSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Civil War
+</source>

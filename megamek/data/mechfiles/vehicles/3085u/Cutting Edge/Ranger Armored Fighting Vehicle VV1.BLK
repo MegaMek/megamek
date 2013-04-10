@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Ranger Armored Fighting Vehicle
+</Name>
+
+<Model>
+VV1
+</Model>
+
+<Tonnage>
+45
+</Tonnage>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+36
+32
+32
+28
+32
+</Armor>
+
+<Front Equipment>
+ISERSmallLaser
+ISERSmallLaser
+</Front Equipment>
+
+<Turret Equipment>
+ISLightMG
+ISLightMG
+ISLightMG
+ISLightMG
+ISLMGA
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMGA
+</Turret Equipment>
+
+<Body Equipment>
+ISMG Ammo (200)
+ISLightMG Ammo (200)
+ISLightMG Ammo (100)
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3076
+</year>
+
+<source>
+Jihad
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<imagepath>
+.\data\images\fluff\vehicle\ranger.jpg
+</imagepath>

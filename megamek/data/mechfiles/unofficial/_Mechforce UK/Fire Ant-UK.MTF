@@ -1,0 +1,153 @@
+Version:1.0
+Fire Ant
+FINT-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3060
+Rules Level:2
+
+Mass:30
+Engine:180 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:6
+RA Armor:6
+LT Armor:10
+RT Armor:10
+CT Armor:13
+HD Armor:9
+LL Armor:6
+RL Armor:6
+RTL Armor:4
+RTR Armor:4
+RTC Armor:6
+
+Weapons:8
+1 ISFlamer, Right Arm
+3 ISMachine Gun, Right Arm, Ammo:400
+1 ISFlamer, Left Arm
+3 ISMachine Gun, Left Arm
+1 ISMachine Gun, Right Torso
+1 ISMachine Gun, Left Torso
+1 ISFlamer, Center Torso
+1 ISMachine Gun, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISFlamer
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISFlamer
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISMachine Gun
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMG Ammo (200)
+ISMG Ammo (200)
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISMachine Gun
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISFlamer
+ISMachine Gun
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

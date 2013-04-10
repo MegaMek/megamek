@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Oro Heavy Tank
+</Name>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+24
+21
+21
+17
+22
+</Armor>
+<Turret Equipment>
+CLLargePulseLaser
+CLLBXAC20
+</Turret Equipment>
+<Front Equipment>
+CLERMediumLaser
+</Front Equipment>
+<Body Equipment>
+CLLBXAC20 CL Ammo
+CLLBXAC20 Ammo
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Succession Wars
+</source>

@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Ishtar Heavy Fire Support Tank
+</Name>
+<Tonnage>
+65
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+32
+30
+30
+24
+28
+</Armor>
+<Turret Equipment>
+CLLBXAC10
+CLUltraAC10
+</Turret Equipment>
+<Front Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLAntiMissileSystem
+CLLRM15
+CLArtemisIV
+</Front Equipment>
+<Body Equipment>
+CLAMS Ammo
+CLAMS Ammo
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+CLLBXAC10 CL Ammo
+CLLBXAC10 Ammo
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Succession Wars
+</source>

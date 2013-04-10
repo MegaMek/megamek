@@ -1,0 +1,150 @@
+Version:1.0
+Stone Rhino
+SERO-V2-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Ferro-Fibrous
+LA Armor:32
+RA Armor:32
+LT Armor:27
+RT Armor:27
+CT Armor:46
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:14
+RTR Armor:14
+RTC Armor:15
+
+Weapons:5
+1 CLGaussRifle, Right Arm, Ammo:48
+1 CLGaussRifle, Left Arm
+1 CLERMediumLaser, Right Torso
+1 CLGaussRifle, Right Torso
+1 CLERMediumLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+CLERMediumLaser
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLERMediumLaser
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

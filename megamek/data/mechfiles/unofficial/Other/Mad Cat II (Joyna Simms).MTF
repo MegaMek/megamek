@@ -1,0 +1,148 @@
+Version:1.0
+Mad Cat Mk II
+(Joyna Simms)
+
+Config:Biped
+TechBase:Clan
+Era:3132
+Rules Level:3
+
+Mass:90
+Engine:360 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:5
+
+Armor:Ferro-Fibrous
+LA Armor:30
+RA Armor:30
+LT Armor:28
+RT Armor:28
+CT Armor:44
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:3
+1 CLHeavyLargeLaser, Right Arm
+1 CLHeavyMediumLaser, Right Arm
+1 CLUltraAC20, Left Arm, Ammo:20
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+Endo Steel
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+Endo Steel
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLImprovedJump Jet
+CLImprovedJump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

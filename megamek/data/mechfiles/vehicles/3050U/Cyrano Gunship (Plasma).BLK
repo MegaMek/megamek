@@ -1,0 +1,83 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Cyrano Gunship
+</Name>
+
+<Model>
+(Plasma)
+</Model>
+
+<year>
+3071
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+30.0
+</tonnage>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<engine_type>
+4
+</engine_type>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+18
+13
+13
+8
+2
+</armor>
+
+<Body Equipment>
+ISPlasmaRifle Ammo
+ISPlasmaRifle Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISPlasmaRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+

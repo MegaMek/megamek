@@ -1,0 +1,82 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Yasha VTOL
+</Name>
+
+<Model>
+(Interdictor)
+</Model>
+
+<Tonnage>
+30
+</Tonnage>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+21
+18
+18
+10
+2
+</Armor>
+
+<Front Equipment>
+ISMML7
+ISArtemisIV
+ISMML7
+ISArtemisIV
+</Front Equipment>
+
+<Body Equipment>
+ISMML7 LRM Artemis-capable Ammo
+ISMML7 LRM Artemis-capable Ammo
+ISMML7 SRM Artemis-capable Ammo
+ISBeagleActiveProbe
+ISGuardianECMSuite
+ISCASE
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3085
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+VTOL
+</motion_type>

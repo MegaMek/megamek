@@ -1,0 +1,153 @@
+Version:1.0
+Falcon Eyrie
+Prime-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:90
+Engine:360 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:21 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:25
+RT Armor:25
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:8
+3 CLLRM15, Right Arm, Ammo:24
+3 CLERMediumLaser, Left Arm
+1 CLERSmallLaser, Left Arm
+2 CLERMediumLaser, Right Torso
+1 CLLRM10, Right Torso, Ammo:12
+1 CLAntiMissileSystem, Right Torso, Ammo:24
+2 CLERLargeLaser, Center Torso
+1 CLAntiMissileSystem, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERSmallLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+CLLRM10
+CLAntiMissileSystem
+CLLRM10 Ammo
+CLAMS Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERLargeLaser
+CLERLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

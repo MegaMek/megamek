@@ -1,0 +1,79 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Eldingar Hover Sled
+</Name>
+
+<Model>
+(Streak)
+</Model>
+
+<Tonnage>
+50
+</Tonnage>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+38
+28
+28
+18
+22
+</Armor>
+
+<Turret Equipment>
+CLStreakLRM15
+CLStreakLRM15
+</Turret Equipment>
+
+<Body Equipment>
+CLStreakLRM15 Ammo
+CLStreakLRM15 Ammo
+CLStreakLRM15 Ammo
+CLAngelECMSuite
+CLCASE
+</Body Equipment>
+
+<type>
+Clan Level 4
+</type>
+
+<year>
+3085
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+Hover
+</motion_type>

@@ -1,0 +1,220 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Davion Destroyer
+</Name>
+<Model>
+Block II
+</Model>
+<Tonnage>
+580000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+105
+90
+90
+85
+85
+80
+</Armor>
+<Nose Equipment>
+NAC25
+NAC25
+NAC25 Ammo:100
+NAC25
+NAC25
+NAC25 Ammo:100
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:208
+</Nose Equipment>
+<Front Left Side Equipment>
+NAC40
+NAC40 Ammo:50
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:112
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC40
+NAC40 Ammo:50
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:112
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC30
+NAC30
+NAC30 Ammo:100
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC30
+NAC30
+NAC30 Ammo:100
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NAC25
+NAC25 Ammo:50
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:104
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NAC25
+NAC25 Ammo:50
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:104
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NAC25
+NAC25
+NAC25 Ammo:100
+NAC25
+NAC25 Ammo:50
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:160
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+<structural_integrity>
+60
+</structural_integrity>
+<heatsinks>
+1000
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+12500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2552
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+11
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:18:6
+CargoBay:72216:2
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+30
+</escape_pod>
+<life_boat>
+24
+</life_boat>
+<crew>
+405
+</crew>
+<passengers>
+0
+</passengers>

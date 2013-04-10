@@ -1,0 +1,65 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Tokugawa Heavy Tank
+</Name>
+<Model>
+(Streak)
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+40
+33
+33
+26
+36
+</Armor>
+<Turret Equipment>
+ISLBXAC10
+ISStreakSRM6
+ISSmallPulseLaser
+</Turret Equipment>
+<Front Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Front Equipment>
+<Body Equipment>
+ISLBXAC10 Ammo
+ISLBXAC10 CL Ammo
+IS Streak SRM 6 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3063
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Civil War
+</source>

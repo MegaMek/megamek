@@ -1,0 +1,85 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Thor Artillery Vehicle
+</Name>
+
+<Model>
+(C3i)
+</Model>
+
+<year>
+3066
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+55.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+29
+23
+23
+22
+28
+</armor>
+
+<Body Equipment>
+ISThumperAmmo
+ISThumperAmmo
+ISC3iUnit
+</Body Equipment>
+
+<Front Equipment>
+ISThumper
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+ISCASE
+</Rear Equipment>
+
+<Turret Equipment>
+</Turret Equipment>
+

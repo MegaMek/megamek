@@ -1,0 +1,149 @@
+Version:1.0
+Mackie
+MCK-5S-FLU
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Rules Level:1
+
+Mass:50
+Engine:200 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:24
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:4
+1 ISPPC, Right Arm
+1 ISAC5, Left Arm, Ammo:20
+1 ISSRM2, Left Torso, Ammo:50
+2 ISSmallLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISAC5
+ISAC5
+ISAC5
+ISAC5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISPPC
+ISPPC
+ISPPC
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISSRM2
+ISAC5 Ammo
+ISSRM2 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSmallLaser
+ISSmallLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

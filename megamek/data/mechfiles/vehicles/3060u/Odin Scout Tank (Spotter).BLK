@@ -1,0 +1,66 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Odin Scout Tank
+</Name>
+<Model>
+(Spotter)
+</Model>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+6
+6
+6
+4
+6
+</Armor>
+<Turret Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLNarcBeacon
+CLTAG
+CLCASE
+</Turret Equipment>
+<Body Equipment>
+CLActiveProbe
+CLECMSuite
+CLAPGaussRifle Ammo
+CLNarc Pods
+CLNarc Pods
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 3
+</type>
+<year>
+3060
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+6
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Jihad
+</source>

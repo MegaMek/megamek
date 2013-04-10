@@ -1,0 +1,88 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Marsden II MBT
+</Name>
+
+<Model>
+II-A
+</Model>
+
+<year>
+2463
+</year>
+
+<source>
+Civil War
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+60.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+65
+56
+56
+56
+47
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-6
+IS Ammo AC/10
+IS Ammo AC/10
+</Body Equipment>
+
+<Front Equipment>
+SRM 6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/10
+</Turret Equipment>
+
+<armor_type>
+0
+</armor_type>

@@ -1,0 +1,94 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Turhan Urban Combat Vehicle
+</Name>
+
+<year>
+2530
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+TroopSpace: 5
+</transporters>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+30
+29
+29
+26
+20
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Large Laser
+Large Laser
+Machine Gun
+</Turret Equipment>
+

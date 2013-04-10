@@ -1,0 +1,150 @@
+Version:1.0
+Iron Cheetah
+B-NA
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:100
+Engine:400 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:18 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Ferro-Fibrous
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:48
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:5
+1 CLLargePulseLaser, Left Arm
+1 CLLargePulseLaser, Right Arm
+3 CLMediumPulseLaser, Left Arm
+3 CLMediumPulseLaser, Right Arm
+1 CLERSmallLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Ferro-Fibrous
+Ferro-Fibrous
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+CLERSmallLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

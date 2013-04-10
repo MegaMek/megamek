@@ -1,0 +1,148 @@
+Version:1.0
+Mangonel
+MNG-10N-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:2
+
+Mass:60
+Engine:180 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:20
+RA Armor:20
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:8
+RTR Armor:8
+RTC Armor:9
+
+Weapons:3
+1 ISERPPC, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISAC20, Left Arm, Ammo:35
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+ISAC20
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISCASE
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

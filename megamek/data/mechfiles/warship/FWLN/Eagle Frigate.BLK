@@ -1,0 +1,288 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Eagle Frigate
+</Name>
+<Tonnage>
+625000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+39
+36
+36
+33
+33
+33
+</Armor>
+<Nose Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL45
+NL45
+NAC20
+NAC20
+NAC20 Ammo:25
+HeavyNGauss
+HeavyNGauss Ammo:75
+</Nose Equipment>
+<Front Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL55
+NL55
+NAC20
+NAC20 Ammo:13
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL55
+NL55
+NAC20
+NAC20 Ammo:13
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL45
+NL45
+NAC35
+NAC35
+NAC35 Ammo:20
+NAC35
+NAC35
+NAC35 Ammo:20
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL45
+NL45
+NAC35
+NAC35
+NAC35 Ammo:20
+NAC35
+NAC35
+NAC35 Ammo:20
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL35
+NL35
+NAC20
+NAC20 Ammo:12
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+NL35
+NL35
+NAC20
+NAC20 Ammo:12
+</Aft Right Side Equipment>
+<Aft Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISAMS Ammo:300
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+NAC20
+NAC20
+NAC20 Ammo:25
+</Aft Equipment>
+<structural_integrity>
+45
+</structural_integrity>
+<heatsinks>
+2592
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+2500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3059
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:6:2
+CargoBay:68975:15
+</transporters>
+<docking_collar>
+4
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+30
+</escape_pod>
+<life_boat>
+30
+</life_boat>
+<crew>
+552
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

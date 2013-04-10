@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Hephaestus Scout Tank
+</Name>
+<Model>
+Prime
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+20
+20
+20
+18
+18
+</Armor>
+<Turret Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLTAG
+</Turret Equipment>
+<transporters>
+TroopSpace:4
+</transporters>
+<Body Equipment>
+CLActiveProbe
+CLECMSuite
+</Body Equipment>
+<type>
+Clan
+</type>
+<year>
+3064
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<omni>
+</omni>

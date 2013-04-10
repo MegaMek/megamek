@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Marksman Artillery Vehicle
+</Name>
+<Model>
+(AC)
+</Model>
+<Tonnage>
+55
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+54
+20
+20
+20
+22
+</Armor>
+<Turret Equipment>
+ISLargeLaser
+</Turret Equipment>
+<Front Equipment>
+ISAC20
+CLRL10Prototype
+CLRL10Prototype
+CLRL10Prototype
+CLRocketLauncher15Prototype
+CLRocketLauncher15Prototype
+</Front Equipment>
+<Body Equipment>
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+</Body Equipment>
+<type>
+IS Level 4
+</type>
+<year>
+2812
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

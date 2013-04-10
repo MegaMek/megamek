@@ -1,0 +1,88 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Cyrano Gunship
+</Name>
+
+<Model>
+(ML)
+</Model>
+
+<year>
+3071
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+30.0
+</tonnage>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+9
+6
+6
+4
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+Medium Laser
+Medium Laser
+BeagleActiveProbe
+RL10
+RL10
+RL10
+RL10
+RL10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+

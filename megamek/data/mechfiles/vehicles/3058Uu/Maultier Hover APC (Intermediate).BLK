@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Maultier Hover APC
+</Name>
+<Model>
+(Intermediate)
+</Model>
+<Tonnage>
+15
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+18
+12
+12
+11
+</Armor>
+<Front Equipment>
+ISSRM2
+</Front Equipment>
+<transporters>
+TroopSpace:3
+</transporters>
+<Body Equipment>
+ISSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3043
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Succession Wars
+</source>

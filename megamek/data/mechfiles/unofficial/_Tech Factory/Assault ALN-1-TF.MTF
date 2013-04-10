@@ -1,0 +1,151 @@
+Version:1.0
+Assault
+ALN-1-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:1
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:30 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:33
+RA Armor:33
+LT Armor:32
+RT Armor:32
+CT Armor:49
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:6
+1 ISPPC, Right Arm
+1 ISPPC, Left Arm
+3 ISMediumLaser, Right Torso
+3 ISMediumLaser, Left Torso
+1 ISLargeLaser, Center Torso
+1 ISMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPPC
+ISPPC
+ISPPC
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPPC
+ISPPC
+ISPPC
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLargeLaser
+ISLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Heavy LRM Carrier
+</Name>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+14
+12
+12
+12
+14
+</Armor>
+<Turret Equipment>
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+</Turret Equipment>
+<Body Equipment>
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+3039
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Clan Invasion
+</source>

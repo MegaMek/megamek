@@ -1,0 +1,89 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Chaparral Missile Artillery Tank
+</Name>
+
+<Model>
+(CASE)
+</Model>
+
+<Tonnage>
+50
+</Tonnage>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+16
+18
+18
+37
+</Armor>
+
+<Front Equipment>
+ISArrowIVSystem
+</Front Equipment>
+
+<Left Equipment>
+ISMediumLaser
+</Left Equipment>
+
+<Right Equipment>
+ISMediumLaser
+</Right Equipment>
+
+<Rear Equipment>
+ISSRM6
+</Rear Equipment>
+
+<Body Equipment>
+ISArrowIV Ammo
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+ISSRM6 Ammo
+ISCASE
+</Body Equipment>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3071
+</year>
+
+<source>
+Jihad
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Tracked
+</motion_type>

@@ -1,0 +1,91 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Marsden II MBT
+</Name>
+
+<Model>
+II-A (LB-X)
+</Model>
+
+<year>
+3075
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+60.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+65
+56
+56
+56
+47
+</armor>
+
+<Body Equipment>
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS Streak SRM 2 Ammo
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+ISLBXAC10
+</Turret Equipment>
+
+<armor_type>
+0
+</armor_type>

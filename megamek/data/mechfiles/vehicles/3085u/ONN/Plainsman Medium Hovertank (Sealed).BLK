@@ -1,0 +1,83 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Plainsman Medium Hovertank
+</Name>
+
+<Model>
+(Sealed)
+</Model>
+
+<Tonnage>
+35
+</Tonnage>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+18
+16
+16
+12
+18
+</Armor>
+
+<Front Equipment>
+ISSRT2
+</Front Equipment>
+
+<Turret Equipment>
+ISSRM6
+ISSRM6
+</Turret Equipment>
+
+<Body Equipment>
+ISSRM6 Ammo
+ISSRM6 Ammo
+ISSRT2 Ammo
+ISFlotationHull
+Environmental Sealing
+</Body Equipment>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3074
+</year>
+
+<source>
+Jihad
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+6
+</engine_type>
+
+<motion_type>
+Hover
+</motion_type>

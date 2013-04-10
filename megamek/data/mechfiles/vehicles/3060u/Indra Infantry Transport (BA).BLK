@@ -1,0 +1,100 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Indra Infantry Transport
+</Name>
+
+<Model>
+(BA)
+</Model>
+
+<year>
+3069
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<tonnage>
+35
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+TroopSpace: 5
+</transporters>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor>
+25
+20
+20
+14
+17
+</armor>
+
+<Body Equipment>
+CLLightActiveProbe
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLPlasmaCannon
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+CLBPod
+</Rear Equipment>
+
+<Turret Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLCASE
+</Turret Equipment>
+
+<source>
+Jihad
+</source>

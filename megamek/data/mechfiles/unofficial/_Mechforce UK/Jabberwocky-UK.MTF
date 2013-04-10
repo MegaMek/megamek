@@ -1,0 +1,147 @@
+Version:1.0
+Jabberwocky
+JRW-UK
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:2
+
+Mass:50
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:15
+RA Armor:15
+LT Armor:17
+RT Armor:17
+CT Armor:18
+HD Armor:9
+LL Armor:17
+RL Armor:17
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:2
+1 CLLBXAC20, Right Arm, Ammo:10
+1 CLERPPC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLBXAC20 CL Ammo
+CLLBXAC20 Ammo
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

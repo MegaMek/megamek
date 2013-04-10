@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Trajan Assault Infantry Fighting Vehicle
+</Name>
+
+<Model>
+(WoB)
+</Model>
+
+<Tonnage>
+85
+</Tonnage>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+52
+44
+44
+36
+40
+</Armor>
+
+<Front Equipment>
+ISLightMG
+IS AMS
+IS AMS
+</Front Equipment>
+
+<Left Equipment>
+ISLightMG
+</Left Equipment>
+
+<Right Equipment>
+ISLightMG
+</Right Equipment>
+
+<Rear Equipment>
+ISLightMG
+</Rear Equipment>
+
+<Turret Equipment>
+ISMML7
+ISMML7
+ISLAC5
+ISERMediumLaser
+</Turret Equipment>
+
+<Body Equipment>
+ISMML7 LRM Ammo
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+ISMML7 SRM Ammo
+ISLAC5 Ammo
+ISLAC5 Ammo
+ISLightMG Ammo (200)
+ISAMS Ammo
+ISAMS Ammo
+ISC3iUnit
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3074
+</year>
+
+<source>
+Jihad
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+TroopSpace:8
+</transporters>

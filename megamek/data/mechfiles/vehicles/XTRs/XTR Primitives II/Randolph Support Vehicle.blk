@@ -1,0 +1,90 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Randolph
+</Name>
+
+<Model>
+Support Vehicle
+</Model>
+
+<year>
+2300
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+16
+16
+16
+14
+</armor>
+
+<barrating>
+5
+</barrating>
+
+<Body Equipment>
+Basic Fire Control
+ISMG Ammo (100)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+XTR Primitives
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

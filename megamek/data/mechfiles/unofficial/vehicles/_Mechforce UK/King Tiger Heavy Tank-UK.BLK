@@ -1,0 +1,65 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+King Tiger Heavy Tank
+</Name>
+<Model>
+UK
+</Model>
+<Tonnage>
+75
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+36
+29
+29
+13
+36
+</Armor>
+<Turret Equipment>
+ISGaussRifle
+ISGaussRifle
+</Turret Equipment>
+<Front Equipment>
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Body Equipment>
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

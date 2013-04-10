@@ -1,0 +1,76 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Pegasus Scout Hover Tank
+</Name>
+
+<year>
+2791
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+35.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor>
+26
+19
+19
+19
+21
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-6
+</Body Equipment>
+
+<Front Equipment>
+Medium Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+SRM 6
+SRM 6
+</Turret Equipment>
+

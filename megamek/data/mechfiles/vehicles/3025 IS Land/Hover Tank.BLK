@@ -1,0 +1,56 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Hover Tank
+</Name>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+24
+16
+16
+16
+16
+</Armor>
+<Turret Equipment>
+ISPPC
+ISSRM6
+</Turret Equipment>
+<transporters>
+TroopSpace:4.5
+</transporters>
+<Body Equipment>
+ISSRM6 Ammo
+ISSRM6 Ammo
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

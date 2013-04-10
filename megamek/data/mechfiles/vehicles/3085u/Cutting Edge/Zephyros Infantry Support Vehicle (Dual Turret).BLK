@@ -1,0 +1,83 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Zephyros Infantry Support Vehicle
+</Name>
+
+<Model>
+(Dual Turret)
+</Model>
+
+<Tonnage>
+25
+</Tonnage>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+23
+18
+18
+14
+16
+16
+</Armor>
+
+<Front Turret Equipment>
+Clan ER Medium Laser
+Clan ER Medium Laser
+</Front Turret Equipment>
+
+<Rear Turret Equipment>
+Clan Light Machine Gun
+Clan Light Machine Gun
+</Rear Turret Equipment>
+
+<Body Equipment>
+Clan Light Machine Gun Ammo - Half
+Clan ECM Suite
+Clan CASE
+</Body Equipment>
+
+<type>
+Clan Level 4
+</type>
+
+<year>
+3086
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Wheeled
+</motion_type>

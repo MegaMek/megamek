@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Saracen Medium Hover Tank
+</Name>
+<Model>
+(MRM)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+25
+21
+21
+24
+25
+</Armor>
+<Turret Equipment>
+ISMRM20
+ISStreakSRM2
+</Turret Equipment>
+<Body Equipment>
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISStreakSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Civil War
+</source>

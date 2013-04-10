@@ -1,0 +1,84 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+MIT23 MASH Vehicle
+</Name>
+
+<year>
+3059
+</year>
+
+<source>
+Clan Invasion
+</source>
+
+<source>
+Clan Invasion
+</source>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+20.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+20
+13
+13
+10
+</armor>
+
+<Body Equipment>
+MASH core component
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+

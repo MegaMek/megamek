@@ -1,0 +1,154 @@
+Version:1.0
+Stalker
+STK-5S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:2
+
+Mass:85
+Engine:255 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:20 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:23
+RA Armor:23
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:9
+1 ISLRM10, Left Arm
+1 ISLRM10, Right Arm, Ammo:24
+1 ISLargePulseLaser, Right Torso
+1 ISLargePulseLaser, Left Torso
+1 ISSRM6, Left Torso
+1 ISSRM6, Right Torso, Ammo:30
+2 ISMediumLaser, Left Arm
+2 ISMediumLaser, Right Arm
+1 ISAntiMissileSystem, Left Torso, Ammo:12
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLRM10
+ISLRM10
+ISMediumLaser
+ISMediumLaser
+ISLRM10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLRM10
+ISLRM10
+ISMediumLaser
+ISMediumLaser
+ISLRM10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+ISLargePulseLaser
+ISLargePulseLaser
+ISSRM6
+ISSRM6
+ISAntiMissileSystem
+ISSRM6 Ammo
+ISAMS Ammo
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Heat Sink
+ISLargePulseLaser
+ISLargePulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

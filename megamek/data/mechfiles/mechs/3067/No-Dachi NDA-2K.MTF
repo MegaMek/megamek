@@ -1,0 +1,137 @@
+Version:1.1
+No-Dachi
+NDA-2K
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3059
+Rules Level:2
+
+Mass:70
+Engine:350 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Triple Strength Myomer
+
+Heat Sinks:11 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:21
+RA Armor:21
+LT Armor:22
+RT Armor:22
+CT Armor:29
+HD Armor:9
+LL Armor:29
+RL Armor:29
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:11
+1 ISERLargeLaser, Left Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISMediumPulseLaser, Left Torso
+1 ISMediumPulseLaser, Left Arm
+1 ISMediumPulseLaser, Left Torso
+1 ISSmallLaser, Head
+1 ISMRM10, Left Torso, Ammo:96
+1 ISMRM10, Right Torso
+1 ISGuardianECM, Center Torso
+1 ISMediumPulseLaser, Right Torso
+1 Sword, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Sword
+Sword
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+ISMRM10
+ISMRM10
+ISMRM10 Ammo
+ISMRM10 Ammo
+ISMediumPulseLaser
+ISMediumPulseLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Torso:
+Engine
+Engine
+Engine
+ISMRM10
+ISMRM10
+ISMRM10 Ammo
+ISMRM10 Ammo
+ISMediumPulseLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISGuardianECM
+ISGuardianECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

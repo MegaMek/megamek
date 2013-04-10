@@ -1,0 +1,152 @@
+Version:1.0
+Koshi (Mist Lynx)
+F
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3070
+Rules Level:2
+
+Mass:25
+Engine:175 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:4
+RA Armor:4
+LT Armor:7
+RT Armor:7
+CT Armor:10
+HD Armor:9
+LL Armor:5
+RL Armor:5
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:7
+1 CLActiveProbe, Head
+1 CLHeavyMediumLaser, Left Arm
+2 CLHeavySmallLaser, Left Arm
+1 CLLightTAG, Left Arm
+2 CLHeavyMediumLaser, Right Arm
+2 CLHeavySmallLaser, Right Arm
+1 CLECMSuite, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavySmallLaser
+CLHeavySmallLaser
+CLLightTAG
+Endo Steel
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavySmallLaser
+CLHeavySmallLaser
+Endo Steel
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+CLECMSuite
+CLTargeting Computer
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLActiveProbe
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

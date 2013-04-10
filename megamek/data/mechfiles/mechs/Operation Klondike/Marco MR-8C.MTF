@@ -1,0 +1,133 @@
+Version:1.1
+Marco
+MR-8C
+
+Config:Biped
+TechBase:Inner Sphere
+Era:0
+Rules Level:2
+
+Mass:30
+Engine:120 Fusion Engine
+Structure:Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:6
+RA Armor:6
+LT Armor:6
+RT Armor:6
+CT Armor:9
+HD Armor:8
+LL Armor:8
+RL Armor:8
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
+
+Weapons:6
+1 Searchlight, Center Torso
+1 Cargo (1 ton), Right Torso
+1 Cargo (1 ton), Right Torso
+1 ISSmallLaser, Left Arm
+1 SalvageArm, Right Arm
+1 Cargo (0.5 tons), Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallLaser
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+SalvageArm
+SalvageArm
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (0.5 tons)
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Searchlight
+Environmental Sealing
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Environmental Sealing
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Environmental Sealing

@@ -1,0 +1,41 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Fast Recon
+</Name>
+<Model>
+Cavalry Point
+</Model>
+<squad_size>
+5
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+InfantryClanMauserIICIAS
+</Primary>
+<InfantryArmor>
+2
+</InfantryArmor>
+<type>
+Clan Level 3
+</type>
+<year>
+2825
+</year>
+<era>
+Succession Wars
+</era> 
+<motion_type>
+Hover
+</motion_type>

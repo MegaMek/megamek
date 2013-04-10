@@ -1,0 +1,154 @@
+Version:1.0
+Mad Cat (Timber Wolf)
+F
+
+Config:Biped OmniMech
+TechBase:Clan
+Era:3067
+Rules Level:2
+
+Mass:75
+Engine:375 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous Armor
+LA Armor:24
+RA Armor:24
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:10
+1 CLERLargeLaser, Right Arm
+1 CLERLargeLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Torso
+1 CLAPGaussRifle, Left Torso, Ammo:40
+1 CLAPGaussRifle, Right Torso
+1 CLAPGaussRifle, Center Torso
+1 CLLRM20, Left Torso, Ammo:12
+1 CLLRM20, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERMediumLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERMediumLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLERMediumLaser
+CLAPGaussRifle
+CLLRM20 Ammo
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Engine
+Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLAPGaussRifle
+CLAPGaussRifle Ammo
+CLLRM20 Ammo
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLAPGaussRifle
+Endo Steel
+
+Head:
+Life Support
+Cockpit
+Sensors
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

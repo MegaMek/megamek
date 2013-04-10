@@ -1,0 +1,135 @@
+Version:1.1
+Crosscut LoggerMech
+ED-X2 (Rocket)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:0
+Rules Level:4
+
+Mass:30
+Engine:90 I.C.E. Engine
+Structure:Industrial
+Myomer:Standard
+
+Heat Sinks:3 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:6
+RA Armor:6
+LT Armor:6
+RT Armor:6
+CT Armor:11
+HD Armor:6
+LL Armor:7
+RL Armor:7
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:9
+1 CLRL10Prototype, Left Arm
+1 CLRL10Prototype, Left Arm
+1 CLRL10Prototype, Left Arm
+1 CLRL10Prototype, Left Arm
+1 CLRL10Prototype, Right Arm
+1 CLRL10Prototype, Right Arm
+1 CLRL10Prototype, Right Arm
+1 CLRL10Prototype, Right Arm
+1 Lift Hoist, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLRL10Prototype
+CLRL10Prototype
+CLRL10Prototype
+CLRL10Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLRL10Prototype
+CLRL10Prototype
+CLRL10Prototype
+CLRL10Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

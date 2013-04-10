@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Jumpship
+</UnitType>
+<Name>
+Hunter Jumpship
+</Name>
+<Model>
+(Lithium-Fusion)
+</Model>
+<Tonnage>
+95000
+</Tonnage>
+<Armor>
+8
+6
+6
+6
+6
+8
+</Armor>
+<Nose Equipment>
+CLLargePulseLaser
+CLStreakSRM4
+CLStreakSRM4 Ammo
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+Clan AMS Ammo
+Clan AMS Ammo
+</Nose Equipment>
+<Front Left Side Equipment>
+CLLargePulseLaser
+CLLargePulseLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+CLLargePulseLaser
+CLLargePulseLaser
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+CLStreakSRM4
+CLStreakSRM4 Ammo
+CLStreakSRM4 Ammo
+</Aft Left Side Equipment>
+CLStreakSRM4
+CLStreakSRM4 Ammo
+CLStreakSRM4 Ammo
+<Aft Right Side Equipment> 
+CLStreakSRM4
+CLStreakSRM4 Ammo
+CLStreakSRM4 Ammo
+</Aft Right Side Equipment>
+<Aft Equipment> 
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+93
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+4000
+</fuel>
+<type>
+Clan Level 2
+</type>
+<year>
+2832
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+CargoBay:40:1
+CargoBay:39:1
+CargoBay:39:1
+</transporters>
+<docking_collar>
+1
+</docking_collar>
+<grav_deck>
+0
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+4
+</life_boat>
+<crew>
+13
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+1
+</lithium-fusion>

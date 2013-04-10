@@ -1,0 +1,154 @@
+Version:1.0
+Mad Cat (Timber Wolf)
+U
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3075
+Source:Jihad
+Rules Level:4
+
+Mass:75
+Engine:375 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:15
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:25
+RT Armor:25
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:6
+ER Large Laser, Left Arm
+ER Micro Laser, Left Arm
+ER Large Laser, Right Arm
+ER Micro Laser, Right Arm
+LRT 15, Left Torso
+LRT 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERMicroLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargeLaser
+CLERMicroLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLUMU
+CLUMU
+CLLRTorpedo15
+CLLRTorpedo15
+CLArtemisIV
+Clan Ammo LRTorpedo-15 (Clan) Artemis-capable
+Clan HarJel
+Ferro-Fibrous
+Ferro-Fibrous
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLUMU
+CLUMU
+CLLRTorpedo15
+CLLRTorpedo15
+CLArtemisIV
+Clan Ammo LRTorpedo-15 (Clan) Artemis-capable
+Clan HarJel
+Ferro-Fibrous
+Ferro-Fibrous
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan HarJel
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

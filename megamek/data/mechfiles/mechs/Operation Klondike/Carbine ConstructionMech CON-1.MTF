@@ -1,0 +1,129 @@
+Version:1.1
+Carbine ConstructionMech
+CON-1
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Rules Level:1
+
+Mass:30
+Engine:120 I.C.E. Engine
+Structure:Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+
+Heat Sinks:0 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Industrial
+LA Armor:3
+RA Armor:3
+LT Armor:4
+RT Armor:4
+CT Armor:4
+HD Armor:4
+LL Armor:3
+RL Armor:3
+RTL Armor:1
+RTR Armor:1
+RTC Armor:2
+
+Weapons:2
+1 Backhoe, Right Arm
+1 Lift Hoist, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Backhoe
+Backhoe
+Backhoe
+Backhoe
+Backhoe
+Backhoe
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

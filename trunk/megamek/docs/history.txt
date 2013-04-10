@@ -37,6 +37,8 @@ v0.35.36-dev (SVN)
 + Data 350: New image for Jackrabbit
 + Data 353: New and Fixed Unit Files
 + Data 334: Katya Art
++ Zip unitfiles into zips only when releasing, to keep better track of unitfile
+    changes in SVN
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

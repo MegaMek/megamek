@@ -35,7 +35,8 @@ v0.35.36-dev (SVN)
 + minor additions in protomech (for MHQ)
 + Data 354: Assorted MegaMek unit images
 + Data 350: New image for Jackrabbit
-+ Data 353: New and Fixed Unit Files 
++ Data 353: New and Fixed Unit Files
++ Data 334: Katya Art
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

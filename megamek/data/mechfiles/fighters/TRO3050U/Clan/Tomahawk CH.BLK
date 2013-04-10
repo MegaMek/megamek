@@ -1,0 +1,135 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Tomahawk
+
+</Name>
+
+<Model>
+
+CH
+
+</Model>
+
+<Tonnage>
+
+45
+
+</Tonnage>
+
+<SafeThrust>
+
+8
+
+</SafeThrust>
+
+<Armor>
+
+72
+
+52
+
+52
+
+35
+
+</Armor>
+
+<Nose Equipment> 
+
+CLHeavySmallLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLHeavyLargeLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+CLHeavyLargeLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+</Aft Equipment>
+
+<heatsinks>
+
+13
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+2800
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+

@@ -1,0 +1,160 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Striga
+
+</Name>
+
+<Model>
+
+S-STR-0 Eminus (E)
+
+</Model>
+
+<Tonnage>
+
+85
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+100
+
+76
+
+76
+
+70
+
+</Armor>
+
+<Nose Equipment>
+
+ISLightGaussRifle
+
+ISLightGaussRifle
+
+ISLightGaussRifle
+
+ISLightGauss Ammo
+
+ISLightGauss Ammo
+
+ISLightGauss Ammo
+
+CASE
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+</Aft Equipment>
+
+<heatsinks>
+
+13
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 3
+
+</type>
+
+<year>
+
+3070
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<cockpit_type>
+
+1
+
+</cockpit_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+

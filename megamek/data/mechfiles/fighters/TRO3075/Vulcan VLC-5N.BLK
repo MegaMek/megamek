@@ -1,0 +1,150 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Vulcan
+
+</Name>
+
+<Model>
+
+VLC-5N
+
+</Model>
+
+<Tonnage>
+
+80
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+75
+
+51
+
+51
+
+39
+
+</Armor>
+
+<Nose Equipment>
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISSRM6
+
+ISSRM6 Ammo
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISAC10
+
+ISAC10 Ammo
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISAC10
+
+ISAC10 Ammo
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<heatsinks>
+
+20
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 1
+
+</type>
+
+<year>
+
+2525
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+

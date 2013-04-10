@@ -1,0 +1,47 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Tornado PA(L)
+</Name>
+<Model>
+G13 [Grenade Launcher]
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+0
+</weightclass>
+<Trooper Count>
+6
+</Trooper Count>
+<cruiseMP>
+1
+</cruiseMP>
+<Armor>
+2
+</Armor>
+<Squad Equipment>
+ISAutoGL
+Basic Stealth
+BAArmoredGlove
+BAArmoredGlove
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3070
+</year>
+<motion_type>
+Leg
+</motion_type>

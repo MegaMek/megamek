@@ -1,0 +1,181 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Ostrogoth
+
+</Name>
+
+<Model>
+
+C
+
+</Model>
+
+<Tonnage>
+
+75
+
+</Tonnage>
+
+<SafeThrust>
+
+7
+
+</SafeThrust>
+
+<Armor>
+
+77
+
+61
+
+61
+
+41
+
+</Armor>
+
+<Nose Equipment>
+
+CLLRM15
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+Clan Artemis IV FCS
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLLRM15
+
+CLLRM15
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+Clan Artemis IV FCS
+
+Clan Artemis IV FCS
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+CLLRM15
+
+CLLRM15
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+Clan Artemis IV FCS
+
+Clan Artemis IV FCS
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+CLERSmallLaser 
+
+CLECMSuite
+
+</Aft Equipment>
+
+<heatsinks>
+
+13
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+3078
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>
+
+<source>
+
+Jihad
+
+</source>

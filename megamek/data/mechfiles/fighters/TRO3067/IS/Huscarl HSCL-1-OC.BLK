@@ -1,0 +1,152 @@
+
+<BlockVersion>
+
+2
+
+</BlockVersion>
+
+<Version>
+
+1
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Huscarl
+
+</Name>
+
+<Model>
+
+HSCL-1-OC
+
+</Model>
+
+<Tonnage>
+
+75
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+70
+
+59
+
+59
+
+52
+
+</Armor>
+
+<Nose Equipment>
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISUltraAC20
+
+ISUltraAC20 Ammo
+
+ISUltraAC20 Ammo
+
+ISUltraAC20 Ammo
+
+ISUltraAC20 Ammo
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISUltraAC20
+
+ISUltraAC20 Ammo
+
+ISUltraAC20 Ammo
+
+ISUltraAC20 Ammo
+
+ISUltraAC20 Ammo
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+<heatsinks>
+
+15
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS
+
+</type>
+
+<year>
+
+3066
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

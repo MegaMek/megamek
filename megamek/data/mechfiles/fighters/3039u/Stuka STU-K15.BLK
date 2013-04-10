@@ -1,0 +1,212 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Stuka
+
+</Name>
+
+
+
+<Model>
+
+STU-K15
+
+</Model>
+
+
+
+<Tonnage>
+
+100
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+
+
+<Armor>
+
+59
+
+45
+
+45
+
+43
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+LRM 20
+
+Medium Laser
+
+SRM 4
+
+IS Ammo LRM-20
+
+IS Ammo LRM-20
+
+IS Ammo SRM-4
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Large Laser
+
+Large Laser
+
+Small Laser
+
+Small Laser
+
+Small Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Large Laser
+
+Large Laser
+
+Small Laser
+
+Small Laser
+
+Small Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+Medium Laser
+
+Medium Laser
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+30
+
+</heatsinks>
+
+
+
+<sink_type>
+
+0
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 1
+
+</type>
+
+
+
+<year>
+
+2965
+
+</year>
+
+
+
+<source>
+
+Succession Wars
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+0
+
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

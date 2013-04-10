@@ -1,0 +1,487 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Conquistador
+
+</Name>
+
+<Tonnage>
+
+17400
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+462
+
+410
+
+410
+
+350
+
+</Armor>
+
+<Nose Equipment>
+
+ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISRotaryAC5
+
+ISRotaryAC5
+
+ISRotaryAC5 Ammo:480
+
+(B) ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISRotaryAC5
+
+ISRotaryAC5
+
+ISRotaryAC5 Ammo:480
+
+ISLBXAC10
+
+ISLBXAC10
+
+ISLBXAC10
+
+ISLBXAC10
+
+ISLBXAC10 Ammo:160
+
+ISERPPC
+
+ISERPPC
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable:144
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:504
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISRotaryAC5
+
+ISRotaryAC5 Ammo:240
+
+(B) ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISRotaryAC5
+
+ISRotaryAC5 Ammo:240
+
+ISLBXAC20
+
+ISLBXAC20 CL Ammo:20
+
+ISLBXAC20 Ammo:20
+
+ISERPPC
+
+ISERPPC
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable:72
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:336
+
+(R) ISGaussRifle
+
+(R) ISGauss Ammo:40
+
+(R) ISRotaryAC5
+
+(R) ISRotaryAC5 Ammo:240
+
+(R) ISLBXAC10
+
+(R) ISLBXAC10 CL Ammo:20
+
+(R) ISLBXAC10 Ammo:20
+
+(R) ISLargePulseLaser
+
+(R) ISLargePulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS Ammo:504
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISRotaryAC5
+
+ISRotaryAC5 Ammo:240
+
+(B) ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISRotaryAC5
+
+ISRotaryAC5 Ammo:240
+
+ISLBXAC20
+
+ISLBXAC20 CL Ammo:20
+
+ISLBXAC20 Ammo:20
+
+ISERPPC
+
+ISERPPC
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable:72
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:336
+
+(R) ISGaussRifle
+
+(R) ISGauss Ammo:40
+
+(R) ISRotaryAC5
+
+(R) ISRotaryAC5 Ammo:240
+
+(R) ISLBXAC10
+
+(R) ISLBXAC10 CL Ammo:20
+
+(R) ISLBXAC10 Ammo:20
+
+(R) ISLargePulseLaser
+
+(R) ISLargePulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) ISMediumPulseLaser
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS Ammo:504
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:80
+
+ISERPPC
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:168
+
+</Aft Equipment>
+
+<structural_integrity>
+
+30
+
+</structural_integrity>
+
+<heatsinks>
+
+259
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+10000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3063
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+ASFBay:18:2
+
+HeavyVehicleBay:12:1
+
+MechBay:24:4
+
+BattleArmorBay:20:0
+
+InfantryBay:16:0
+
+CargoBay:877:1
+
+</transporters>
+
+<escape_pod>
+
+12
+
+</escape_pod>
+
+<life_boat>
+
+12
+
+</life_boat>
+
+<crew>
+
+815
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

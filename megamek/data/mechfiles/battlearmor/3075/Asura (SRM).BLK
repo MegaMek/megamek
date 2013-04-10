@@ -1,0 +1,49 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Asura Medium Battle Armor
+</Name>
+<Model>
+(SRM)
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+2
+</weightclass>
+<Trooper Count>
+6
+</Trooper Count>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+3
+</jumpingMP>
+<Armor>
+7
+</Armor>
+<Squad Equipment>
+ISBAHeavyMG
+ISSRM6OS:Body
+BABattleClaw
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3072
+</year>
+<motion_type>
+Jump
+</motion_type>

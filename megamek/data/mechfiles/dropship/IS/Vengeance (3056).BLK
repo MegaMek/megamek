@@ -1,0 +1,274 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Vengeance
+
+</Name>
+
+<Model>
+
+(3056)
+
+</Model>
+
+<Tonnage>
+
+11000
+
+</Tonnage>
+
+<SafeThrust>
+
+4
+
+</SafeThrust>
+
+<Armor>
+
+140
+
+150
+
+150
+
+180
+
+</Armor>
+
+<Nose Equipment>
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISGaussRifle
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISERPPC
+
+(R) ISLRM20
+
+(R) ISLRM20
+
+(R) ISArtemisIV
+
+(R) ISArtemisIV
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+(R) ISERLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISERPPC
+
+(R) ISLRM20
+
+(R) ISLRM20
+
+(R) ISArtemisIV
+
+(R) ISArtemisIV
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+(R) ISERLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISAC5
+
+ISAC5 Ammo
+
+ISLRM10
+
+ISArtemisIV
+
+ISLRM10 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+11
+
+</structural_integrity>
+
+<heatsinks>
+
+143
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+10500
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3056
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+SmallCraftBay:3:1
+
+CargoBay:225:0
+
+ASFBay:20:4
+
+ASFBay:20:4
+
+</transporters>
+
+<escape_pod>
+
+0
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+107
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

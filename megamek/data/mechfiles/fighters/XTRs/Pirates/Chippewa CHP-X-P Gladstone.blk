@@ -1,0 +1,164 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Chippewa
+
+</Name>
+
+<Model>
+
+CHP-X-P Gladstone
+
+</Model>
+
+<Tonnage>
+
+90
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+43
+
+24
+
+24
+
+29
+
+</Armor>
+
+<Nose Equipment>
+
+ISExtendedLRM15
+
+ISExtendedLRM15
+
+ISExtended LRM15 Ammo
+
+ISExtended LRM15 Ammo
+
+ISExtended LRM15 Ammo
+
+ISExtended LRM15 Ammo
+
+ISExtended LRM15 Ammo
+
+ISExtended LRM15 Ammo
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+<heatsinks>
+
+25
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 4
+
+</type>
+
+<year>
+
+3075
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+3
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

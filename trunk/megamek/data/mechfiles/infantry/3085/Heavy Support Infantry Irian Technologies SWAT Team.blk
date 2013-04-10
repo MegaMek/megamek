@@ -1,0 +1,47 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Heavy Support Infantry
+</Name>
+<Model>
+Irian Technologies SWAT Team
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+InfantryImperatorAX22
+</Primary>
+<Secondary>
+Infantry David Light Gauss Rifle
+</Secondary>
+<secondn>
+2
+</secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<type>
+IS Level 3
+</type>
+<year>
+3063
+</year>
+<era>
+Civil War
+</era>
+<motion_type>
+Motorized
+</motion_type>

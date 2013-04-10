@@ -1,0 +1,157 @@
+Version:1.0
+Crusader
+CRD-2R
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Source:Star League
+Rules Level:2
+
+Mass:65
+Engine:260 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:20
+RA Armor:20
+LT Armor:24
+RT Armor:24
+CT Armor:33
+HD Armor:9
+LL Armor:21
+RL Armor:21
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:10
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+LRM 15, Left Arm
+LRM 15, Right Arm
+Machine Gun, Left Arm
+Machine Gun, Right Arm
+Streak SRM 2, Left Leg
+Streak SRM 2, Left Leg
+Streak SRM 2, Right Leg
+Streak SRM 2, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 15
+LRM 15
+LRM 15
+ISArtemisIV
+Medium Laser
+Machine Gun
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 15
+LRM 15
+LRM 15
+ISArtemisIV
+Medium Laser
+Machine Gun
+Endo Steel
+Endo Steel
+
+Left Torso:
+IS Ammo LRM-15 Artemis-capable
+IS Ammo MG - Full
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+IS Ammo LRM-15 Artemis-capable
+IS Streak SRM 2 Ammo
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2
+ISStreakSRM2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2
+ISStreakSRM2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

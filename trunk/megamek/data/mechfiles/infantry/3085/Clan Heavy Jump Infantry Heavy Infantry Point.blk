@@ -1,0 +1,49 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Clan Heavy Jump Infantry
+</Name>
+<Model>
+Heavy Infantry Point
+</Model>
+<squad_size>
+5
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+InfantryClanMauserIICIAS
+</Primary>
+<Secondary>
+InfantryBearhunter
+</Secondary>
+<secondn>
+1
+</secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<type>
+IS Level 3
+</type>
+<year>
+3015
+</year>
+<era>
+Succession Wars
+</era>
+<motion_type>
+Jump
+</motion_type>
+<antimek>
+</antimek>

@@ -1,0 +1,149 @@
+Version:1.0
+Loki (Hellbringer)
+D
+
+Config:Biped OmniMech
+TechBase:Clan
+Era:3067
+Rules Level:2
+
+Mass:65
+Engine:325 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:17
+HD Armor:9
+LL Armor:15
+RL Armor:15
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:5
+2 CLPlasmaCannon, Left Arm
+2 CLPlasmaCannon, Right Arm
+2 CLMediumPulseLaser, Left Torso
+2 CLMediumPulseLaser, Right Torso
+1 CLMicroPulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLPlasmaCannon
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+CLPlasmaCannon Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLPlasmaCannon
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+CLPlasmaCannon Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLMediumPulseLaser
+CLMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+CLMediumPulseLaser
+CLMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Cockpit
+Sensors
+CLMicroPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLBPod
+CLBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLBPod
+CLBPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

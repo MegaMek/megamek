@@ -1,0 +1,155 @@
+Version:1.1
+Yeoman
+YMN-10-OR
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3075
+Source:Jihad
+Rules Level:2
+
+Mass:60
+Engine:240 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:21
+RT Armor:21
+CT Armor:23
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:6
+LRM 10, Left Arm
+LRM 10, Right Arm
+MML 5, Left Arm
+MML 5, Left Arm
+MML 5, Right Arm
+MML 5, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+LRM 10
+LRM 10
+ISMML5
+ISMML5
+ISMML5
+ISMML5
+ISMML5
+ISMML5
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRM 10
+LRM 10
+ISMML5
+ISMML5
+ISMML5
+ISMML5
+ISMML5
+ISMML5
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+IS Ammo LRM-10
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Ammo MML-5 SRM
+ISCASE
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

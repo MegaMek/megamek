@@ -1,0 +1,135 @@
+Version:1.1
+Blood Kite
+
+
+Config:Biped
+TechBase:Clan
+Era:2907
+Rules Level:2
+
+Mass:85
+Engine:255 Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:21 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:27
+RT Armor:27
+CT Armor:39
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:9
+RTR Armor:9
+RTC Armor:12
+
+Weapons:9
+1 CLERLargeLaser, Head
+1 CLERLargeLaser, Center Torso
+1 CLLRM15, Right Arm, Ammo:48
+1 CLSRM4, Left Torso, Ammo:25
+1 CLSRM4, Right Arm
+1 CLSRM4, Right Torso
+1 CLLRM15, Left Torso
+1 CLLRM15, Right Torso
+1 CLERLargeLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLSRM4
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo-Steel
+
+Left Torso:
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLSRM4
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Jump Jet
+
+Right Torso:
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLSRM4
+CLSRM4 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo-Steel
+Jump Jet
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLERLargeLaser
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERLargeLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

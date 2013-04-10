@@ -1,0 +1,149 @@
+Version:1.0
+Fwltur
+FWL-3R SalvageMech
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Source:Dark Age
+Rules Level:4
+
+Mass:35
+Engine:105 Fusion Engine(IS)
+Structure:Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Commercial(Inner Sphere)
+LA Armor:6
+RA Armor:6
+LT Armor:8
+RT Armor:8
+CT Armor:10
+HD Armor:8
+LL Armor:10
+RL Armor:10
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:0
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+Salvage Arm
+Salvage Arm
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+Salvage Arm
+Salvage Arm
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+BeagleActiveProbe
+BeagleActiveProbe
+Searchlight
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISUMU
+Environmental Sealing
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISUMU
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISUMU
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

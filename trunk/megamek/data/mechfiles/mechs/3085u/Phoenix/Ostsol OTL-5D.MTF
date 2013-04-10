@@ -1,0 +1,156 @@
+Version:1.0
+Ostsol
+OTL-5D
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3065
+Source:Civil War
+Rules Level:2
+
+Mass:60
+Engine:300 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Single
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:10
+RA Armor:10
+LT Armor:22
+RT Armor:22
+CT Armor:22
+HD Armor:8
+LL Armor:22
+RL Armor:22
+RTL Armor:4
+RTR Armor:4
+RTC Armor:6
+
+Weapons:9
+Large Laser, Left Torso
+Medium Laser, Left Torso
+Rocket Launcher 10, Left Torso
+Rocket Launcher 10, Left Torso
+Large Laser, Right Torso
+Medium Laser, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Right Torso
+Rocket Launcher 10, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Large Laser
+Large Laser
+Medium Laser
+RL10
+RL10
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Large Laser
+Large Laser
+Medium Laser
+RL10
+RL10
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+RL10
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

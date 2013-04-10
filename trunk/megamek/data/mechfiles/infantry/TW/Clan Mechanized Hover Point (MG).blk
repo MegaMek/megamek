@@ -1,0 +1,41 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Clan Mechanized Hover Point
+</Name>
+<Model>
+(MG)
+</Model>
+<squad_size>
+5
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Auto Rifle
+</Primary>
+<Secondary>
+InfantryMG
+</Secondary>
+<secondn>
+2
+</secondn>
+<type>
+Clan
+</type>
+<year>
+3050
+</year>
+<motion_type>
+Hover
+</motion_type>

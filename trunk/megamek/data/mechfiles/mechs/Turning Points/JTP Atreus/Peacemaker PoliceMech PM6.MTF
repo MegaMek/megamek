@@ -1,0 +1,131 @@
+Version:1.1
+Peacemaker PoliceMech
+PM6
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3070
+Rules Level:4
+
+Mass:35
+Engine:140 Fusion Engine
+Structure:Industrial
+Cockpit:Industrial Cockpit (AFC)
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:18
+HD Armor:8
+LL Armor:10
+RL Armor:10
+RTL Armor:3
+RTR Armor:3
+RTC Armor:4
+
+Weapons:4
+1 ISMachine Gun, Left Arm, Ammo:200
+1 ISSRM2, Right Torso, Ammo:50
+1 Searchlight, Left Torso
+1 ISBattleMechTaser, Right Arm, Ammo:5
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+-Empty-
+ISMachine Gun
+ISMG Ammo (100)
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISBattleMechTaser
+ISBattleMechTaser
+ISBattleMechTaser
+ISBattleMechTaser
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+Searchlight
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+ISSRM2
+ISSRM2 Ammo
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Environmental Sealing
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Environmental Sealing
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Environmental Sealing

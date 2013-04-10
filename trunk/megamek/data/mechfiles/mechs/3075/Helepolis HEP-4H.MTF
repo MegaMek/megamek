@@ -1,0 +1,153 @@
+Version:1.0
+Helepolis
+HEP-4H
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3070
+Source:Jihad
+Rules Level:3
+
+Mass:75
+Engine:300 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:21
+RT Armor:21
+CT Armor:31
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:6
+ER Large Laser, Left Arm
+Sniper, Right Torso
+LRM 5, Left Torso
+LRM 5, Left Torso
+SRM 6, Center Torso
+Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+LRM 5
+LRM 5
+IS Ammo LRM-5
+IS Ammo SRM-6
+ISSniperAmmo
+ISSniperAmmo
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Magi Infantry Support Vehicle
+</Name>
+<Tonnage>
+70
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+44
+43
+43
+40
+</Armor>
+<Front Equipment>
+ISMediumLaser
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Right Equipment>
+ISMediumLaser
+</Right Equipment>
+<Left Equipment>
+ISMediumLaser
+</Left Equipment>
+<Body Equipment>
+ISMG Ammo (200)
+ISCASE
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+2727
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

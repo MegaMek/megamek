@@ -1,0 +1,150 @@
+Version:1.0
+Bearcub
+BRC-SRM-UK
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:2
+
+Mass:25
+Engine:200 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:8
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:7
+RA Armor:7
+LT Armor:7
+RT Armor:7
+CT Armor:10
+HD Armor:7
+LL Armor:10
+RL Armor:10
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
+
+Weapons:5
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLSRM4, Right Torso, Ammo:50
+1 CLSRM4, Left Torso
+1 CLERSmallLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLSRM4
+CLSRM4 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLSRM4
+CLSRM4 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

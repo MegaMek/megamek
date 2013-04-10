@@ -1,0 +1,152 @@
+Version:1.0
+Copperhead
+CPR-HD-002-S7
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:2
+
+Mass:30
+Engine:180 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:6
+Jump MP:2
+
+Armor:Ferro-Fibrous
+LA Armor:6
+RA Armor:6
+LT Armor:9
+RT Armor:9
+CT Armor:12
+HD Armor:9
+LL Armor:9
+RL Armor:9
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
+
+Weapons:7
+1 ISSRM4, Right Arm, Ammo:25
+1 ISMediumPulseLaser, Left Arm
+1 ISSmallLaser, Left Arm
+1 ISMediumLaser, Right Torso
+1 ISMediumLaser, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISStreakSRM2 (OS), Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumPulseLaser
+ISSmallLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSRM4
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISSRM4 Ammo
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISStreakSRM2 (OS)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

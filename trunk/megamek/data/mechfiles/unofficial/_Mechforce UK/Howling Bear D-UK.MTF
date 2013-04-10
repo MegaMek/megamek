@@ -1,0 +1,150 @@
+Version:1.0
+Howling Bear
+D-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:5
+1 CLLBXAC20, Right Arm, Ammo:20
+1 CLLBXAC20, Left Arm
+1 CLERMediumLaser, Right Torso
+1 CLERSmallLaser, Right Torso
+3 CLERMediumLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20 CL Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20 CL Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLBXAC20 Ammo
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+CLERSmallLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLLBXAC20 Ammo
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

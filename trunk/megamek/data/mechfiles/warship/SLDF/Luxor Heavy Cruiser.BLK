@@ -1,0 +1,183 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Luxor Heavy Cruiser
+</Name>
+<Tonnage>
+890000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+153
+151
+151
+151
+151
+145
+</Armor>
+<Nose Equipment>
+NL55
+NL55
+NL55
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC25
+NAC25
+NAC25 Ammo:46
+</Nose Equipment>
+<Front Left Side Equipment>
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC25
+NAC25
+NAC25 Ammo:46
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:48
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC25
+NAC25
+NAC25 Ammo:46
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:48
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+MediumNPPC
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC30
+NAC30
+NAC30 Ammo:46
+NAC30
+NAC30
+NAC30 Ammo:46
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+MediumNPPC
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC30
+NAC30
+NAC30 Ammo:46
+NAC30
+NAC30
+NAC30 Ammo:46
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC25
+NAC25
+NAC25 Ammo:46
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:48
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC25
+NAC25
+NAC25 Ammo:46
+MediumNGauss
+MediumNGauss
+MediumNGauss Ammo:48
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NL55
+NL55
+NL55
+NL55
+NL55
+MediumNPPC
+MediumNPPC
+MediumNPPC
+MediumNPPC
+NAC25
+NAC25
+NAC25 Ammo:46
+</Aft Equipment>
+<structural_integrity>
+80
+</structural_integrity>
+<heatsinks>
+3250
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+12500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2727
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+13
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:12:6
+CargoBay:51094:1
+</transporters>
+<docking_collar>
+4
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+30
+</escape_pod>
+<life_boat>
+35
+</life_boat>
+<crew>
+399
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

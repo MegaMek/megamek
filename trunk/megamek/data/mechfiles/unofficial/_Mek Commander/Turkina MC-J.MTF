@@ -1,0 +1,154 @@
+Version:1.0
+Turkina
+MC-J
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3059
+Rules Level:2
+
+Mass:95
+Engine:285 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:29
+RA Armor:29
+LT Armor:28
+RT Armor:28
+CT Armor:41
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:9
+1 CLLBXAC2, Right Arm, Ammo:45
+1 CLERLargeLaser, Right Arm
+1 CLLBXAC2, Left Arm
+1 CLERLargeLaser, Left Arm
+1 CLLRM5, Right Torso, Ammo:24
+1 CLLBXAC10, Right Torso, Ammo:40
+1 CLLRM5, Left Torso
+1 CLLBXAC10, Left Torso
+1 CLMediumPulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC2
+CLLBXAC2
+CLLBXAC2
+CLERLargeLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC2
+CLLBXAC2
+CLLBXAC2
+CLERLargeLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM5
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC2 CL Ammo
+CLLBXAC10 Ammo
+CLLBXAC10 CL Ammo
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM5
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLRM5 Ammo
+CLLBXAC10 CL Ammo
+CLLBXAC10 Ammo
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

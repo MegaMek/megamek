@@ -1,0 +1,66 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Enyo Strike Tank
+</Name>
+<Tonnage>
+55
+</Tonnage>
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+30
+29
+29
+29
+27
+</Armor>
+<Turret Equipment>
+CLLargePulseLaser
+CLStreakSRM6
+</Turret Equipment>
+<Front Equipment>
+CLStreakSRM6
+CLStreakSRM6
+</Front Equipment>
+<Right Equipment>
+CLMG
+</Right Equipment>
+<Left Equipment>
+CLMG
+</Left Equipment>
+<Body Equipment>
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLMG Ammo (100)
+CLCASE
+</Body Equipment>
+<type>
+Clan
+</type>
+<year>
+3063
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

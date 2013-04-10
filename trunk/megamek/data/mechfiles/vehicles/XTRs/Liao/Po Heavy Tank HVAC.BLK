@@ -1,0 +1,85 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Po Heavy Tank
+</Name>
+
+<Model>
+HVAC
+</Model>
+
+<year>
+3077
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<tonnage>
+60.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor_type>
+4
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+20
+16
+16
+15
+17
+</armor>
+
+<Body Equipment>
+IS Streak SRM 6 Ammo
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Hyper Velocity Auto Cannon/10
+</Turret Equipment>
+

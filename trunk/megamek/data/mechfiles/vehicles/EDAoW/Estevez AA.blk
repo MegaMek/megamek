@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Estevez AA
+</Name>
+
+<Tonnage>
+80
+</Tonnage>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+35
+32
+32
+30
+35
+</Armor>
+
+<Front Equipment>
+</Front Equipment>
+
+<Turret Equipment>
+Autocannon/2
+Autocannon/2
+Machine Gun
+</Turret Equipment>
+
+<Body Equipment>
+IS Ammo AC/2
+IS Ammo AC/2
+IS Ammo AC/2
+IS Machine Gun Ammo - half
+Armored Chassis
+Basic Fire Control
+</Body Equipment>
+
+<Right Equipment>
+ISVehicularGrenadeLauncher
+</Right Equipment>
+
+<Left Equipment>
+ISVehicularGrenadeLauncher
+</Left Equipment>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+</year>
+
+<source>
+Star League
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+1
+</engine_type>
+
+<barrating>
+8
+</barrating>
+
+<motion_type>
+Tracked
+</motion_type>

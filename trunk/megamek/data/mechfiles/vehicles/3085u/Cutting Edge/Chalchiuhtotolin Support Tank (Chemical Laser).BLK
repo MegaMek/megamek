@@ -1,0 +1,96 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Chalchiuhtotolin Support Tank
+</Name>
+
+<Model>
+(Chemical Laser)
+</Model>
+
+<year>
+3085
+</year>
+
+<type>
+Mixed (Clan Chassis)
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+0
+</armor_tech>
+
+<armor>
+39
+27
+27
+16
+25
+</armor>
+
+<Body Equipment>
+CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo
+Clan Streak SRM 4 Ammo
+Clan Light Machine Gun Ammo - Full
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLLightMG
+</Front Equipment>
+
+<Right Equipment>
+CLLightMG
+</Right Equipment>
+
+<Left Equipment>
+CLLightMG
+</Left Equipment>
+
+<Rear Equipment>
+CLLightMG
+</Rear Equipment>
+
+<Turret Equipment>
+CLLargeChemLaser
+CLERMediumLaser
+CLERMediumLaser
+CLStreakSRM4
+CLStreakSRM4
+ISChaffPod
+ISChaffPod
+</Turret Equipment>
+

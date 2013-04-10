@@ -1,0 +1,88 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Naval
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Sea Skimmer
+</Name>
+
+<Model>
+ELRM
+</Model>
+
+<year>
+3080		
+</year>
+
+<Source>
+Jihad
+</Source>
+
+<type>
+IS Level 4
+</type>
+
+<tonnage>
+25.0
+</tonnage>
+
+<motion_type>
+Hydrofoil
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+13
+12
+12
+12
+10
+</armor>
+
+<Body Equipment>
+ISExtended LRM10 Ammo
+ISExtended LRM10 Ammo
+</Body Equipment>
+
+<Turret Equipment>
+ISExtendedLRM10
+</Turret Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+

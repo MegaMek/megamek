@@ -1,0 +1,84 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Demon Tank
+</Name>
+
+<Model>
+(Horned Demon)
+</Model>
+
+<year>
+2721
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+60.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+52
+31
+31
+22
+32
+</armor>
+
+<Body Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+</Turret Equipment>
+

@@ -1,0 +1,81 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Demolisher Heavy Tank
+</Name>
+<Model>
+(Clan)
+</Model>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+48
+40
+40
+24
+30
+</Armor>
+<Turret Equipment>
+CLLBXAC20
+CLLBXAC20
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Turret Equipment>
+<Front Equipment>
+CLMG
+CLMG
+</Front Equipment>
+<Right Equipment>
+CLMG
+CLMG
+</Right Equipment>
+<Left Equipment>
+CLMG
+CLMG
+</Left Equipment>
+<Body Equipment>
+CLLBXAC20 Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 CL Ammo
+CLLBXAC20 CL Ammo
+CLLBXAC20 CL Ammo
+CLLBXAC20 CL Ammo
+CLMG Ammo (100)
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3066
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Civil War
+</source>

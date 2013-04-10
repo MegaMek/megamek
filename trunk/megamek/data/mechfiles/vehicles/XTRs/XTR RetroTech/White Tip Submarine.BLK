@@ -1,0 +1,94 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+White Tip
+</Name>
+
+<year>
+3074
+</year>
+
+<source>
+XTR RetroTech
+</source>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+250
+</tonnage>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor>
+22
+14
+14
+17
+20
+</armor>
+
+<barrating>
+8
+</barrating>
+
+<Body Equipment>
+Advanced Fire Control
+IS Ammo SRTorpedo-4
+IS Ammo SRTorpedo-4
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-10
+IS Ammo LRTorpedo-10
+CommsGear:7
+FieldKitchen
+MASH core component
+</Body Equipment>
+
+<Front Equipment>
+SRT 4
+LRT 15
+Large Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+LRT 15
+</Rear Equipment>
+
+<Turret Equipment>
+SRT 4
+LRT 10
+IS ER Medium Laser
+</Turret Equipment>
+

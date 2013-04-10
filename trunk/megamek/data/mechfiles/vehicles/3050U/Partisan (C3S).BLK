@@ -1,0 +1,80 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Partisan
+</Name>
+
+<Model>
+(C3S)
+</Model>
+
+<year>
+3067
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+80.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor>
+22
+18
+18
+16
+22
+</armor>
+
+<Body Equipment>
+ISC3SlaveUnit
+IS Ammo AC/5
+IS Ammo AC/5
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+ISCASE
+</Rear Equipment>
+
+<Turret Equipment>
+Auto Cannon/5
+Auto Cannon/5
+Auto Cannon/5
+Auto Cannon/5
+</Turret Equipment>
+

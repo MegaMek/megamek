@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Heavy Hover APC
+</Name>
+<Model>
+(SRM)
+</Model>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+20
+13
+13
+10
+</Armor>
+<Front Equipment>
+ISSRM4
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<transporters>
+TroopSpace:3
+</transporters>
+<Body Equipment>
+ISSRM4 Ammo
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+2050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Star League
+</source>

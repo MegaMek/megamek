@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Light Thunderbolt Carrier
+</Name>
+<Tonnage>
+40
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+16
+14
+14
+12
+15
+</Armor>
+<Turret Equipment>
+ISThunderbolt5
+ISThunderbolt5
+ISThunderbolt5
+ISThunderbolt5
+ISThunderbolt5
+</Turret Equipment>
+<Body Equipment>
+ISThunderbolt5 Ammo
+ISThunderbolt5 Ammo
+ISThunderbolt5 Ammo
+</Body Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3078
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Jihad
+</source>

@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Air Defence Vehicle
+</Name>
+<Model>
+(ADV10)-UK
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+17
+15
+15
+10
+15
+</Armor>
+<Turret Equipment>
+ISLBXAC10
+ISLBXAC10
+</Turret Equipment>
+<Body Equipment>
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+ISC3SlaveUnit
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

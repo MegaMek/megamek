@@ -1,0 +1,108 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Schiltron Mobile Fire-Support Platform
+</Name>
+
+<Model>
+F
+</Model>
+
+<year>
+3071
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+80
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+46
+34
+34
+25
+40
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+ISC3MasterUnit
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+IS Ammo MML-3 LRM
+IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
+IS Ammo MML-3 SRM
+</Body Equipment>
+
+<Front Equipment>
+Thunderbolt 15
+ISMML3
+ISMML3
+ISMML3
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Thunderbolt 15
+ISMML3
+ISMML3
+ISMML3
+ISERMediumLaser
+</Turret Equipment>
+
+<source>
+Jihad
+</source>

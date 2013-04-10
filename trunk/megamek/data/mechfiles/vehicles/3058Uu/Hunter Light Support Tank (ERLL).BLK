@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Hunter Light Support Tank
+</Name>
+<Model>
+(ERLL)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+27
+15
+15
+14
+</Armor>
+<Front Equipment>
+ISERLargeLaser
+ISLRM15
+ISArtemisIV
+</Front Equipment>
+<Body Equipment>
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3059
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Clan Invasion
+</source>

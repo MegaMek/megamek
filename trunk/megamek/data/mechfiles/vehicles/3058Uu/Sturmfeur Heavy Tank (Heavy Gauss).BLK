@@ -1,0 +1,68 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Sturmfeur Heavy Tank
+</Name>
+<Model>
+(Heavy Gauss)
+</Model>
+<Tonnage>
+85
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+66
+66
+66
+48
+66
+</Armor>
+<Turret Equipment>
+ISLRM10
+ISArtemisIV
+ISERMediumLaser
+</Turret Equipment>
+<Front Equipment>
+ISHeavyGaussRifle
+</Front Equipment>
+<Body Equipment>
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISLRM10 Ammo Artemis-capable
+ISLRM10 Ammo Artemis-capable
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3066
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Civil War
+</source>

@@ -1,0 +1,153 @@
+Version:1.0
+Grand Titan
+T-IT-N11M-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:2
+
+Mass:100
+Engine:400 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:30
+RT Armor:30
+CT Armor:40
+HD Armor:9
+LL Armor:39
+RL Armor:39
+RTL Armor:12
+RTR Armor:12
+RTC Armor:17
+
+Weapons:8
+2 ISMediumPulseLaser, Right Arm
+1 ISSmallPulseLaser, Right Arm
+2 ISMediumLaser, Right Arm
+1 ISSmallPulseLaser, Left Arm
+1 ISLRM10, Left Arm, Ammo:12
+1 ISLBXAC10, Right Torso, Ammo:40
+1 ISLBXAC10, Left Torso
+1 ISMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISSmallPulseLaser
+ISLRM10
+ISLRM10
+ISLRM10 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISMediumLaser
+ISMediumLaser
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

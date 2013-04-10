@@ -1,0 +1,150 @@
+Version:1.0
+Kingpin
+KGP-1-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Rules Level:2
+
+Mass:90
+Engine:270 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:30
+RA Armor:30
+LT Armor:28
+RT Armor:28
+CT Armor:45
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:5
+1 ISGaussRifle, Right Arm, Ammo:32
+1 ISGaussRifle, Left Arm
+1 ISERLargeLaser, Right Torso
+1 ISERLargeLaser, Left Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERLargeLaser
+ISERLargeLaser
+ISGauss Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERLargeLaser
+ISERLargeLaser
+ISGauss Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGauss Ammo
+ISGauss Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

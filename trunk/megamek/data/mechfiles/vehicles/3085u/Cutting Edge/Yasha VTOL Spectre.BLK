@@ -1,0 +1,76 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Yasha VTOL
+</Name>
+
+<Model>
+Spectre
+</Model>
+
+<Tonnage>
+30
+</Tonnage>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+15
+15
+15
+9
+2
+</Armor>
+
+<Front Equipment>
+ISLightGaussRifle
+</Front Equipment>
+
+<Body Equipment>
+ISLightGauss Ammo
+ISTargeting Computer
+ISGuardianECMSuite
+</Body Equipment>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3085
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+8
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+VTOL
+</motion_type>

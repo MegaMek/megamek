@@ -1,0 +1,73 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Von Luckner Heavy Tank
+</Name>
+<Model>
+(Royal)
+</Model>
+<Tonnage>
+75
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+41
+40
+40
+31
+45
+</Armor>
+<Turret Equipment>
+ISLBXAC10
+ISLBXAC10
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISSmallPulseLaser
+</Turret Equipment>
+<Front Equipment>
+
+IS LRM-10
+ISArtemisIV
+</Front Equipment>
+<Rear Equipment>
+
+</Rear Equipment>
+<Body Equipment>
+ISLBXAC10 Ammo
+ISLBXAC10 Ammo
+ISLBXAC10 CL Ammo
+ISLBXAC10 CL Ammo
+IS Ammo LRM-10 Artemis-capable
+ISStreakSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+2750
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

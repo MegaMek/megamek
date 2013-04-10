@@ -1,0 +1,63 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Balac Strike VTOL
+</Name>
+<Model>
+(Spotter)
+</Model>
+<Tonnage>
+25
+</Tonnage>
+<cruiseMP>
+11
+</cruiseMP>
+<Armor>
+15
+12
+12
+7
+2
+</Armor>
+<Front Equipment>
+CLATM6
+CLATM6
+CLTAG
+</Front Equipment>
+<Body Equipment>
+CLATM6 Ammo
+CLATM6 Ammo
+CLECMSuite
+CLActiveProbe
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3080
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Jihad
+</source>

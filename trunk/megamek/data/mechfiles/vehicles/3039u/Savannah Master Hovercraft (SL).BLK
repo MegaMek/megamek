@@ -1,0 +1,74 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Savannah Master Hovercraft
+</Name>
+
+<Model>
+(SL)
+</Model>
+
+<year>
+3033
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+5.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+13
+</cruiseMP>
+
+<armor>
+10
+6
+6
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+Small Laser
+Small Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+

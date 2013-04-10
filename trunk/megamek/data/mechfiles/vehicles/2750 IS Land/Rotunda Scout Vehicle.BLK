@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Rotunda Scout Vehicle
+</Name>
+<Model>
+RND-J-1-11
+</Model>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+6
+4
+4
+4
+</Armor>
+<Front Equipment>
+ISLargeLaser
+ISSRM2
+</Front Equipment>
+<Body Equipment>
+ISSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+2725
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

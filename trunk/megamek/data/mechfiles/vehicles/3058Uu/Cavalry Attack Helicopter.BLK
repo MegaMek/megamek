@@ -1,0 +1,58 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Cavalry Attack Helicopter
+</Name>
+<Tonnage>
+25
+</Tonnage>
+<cruiseMP>
+10
+</cruiseMP>
+<Armor>
+20
+13
+13
+8
+2
+</Armor>
+<Front Equipment>
+ISSRM6
+ISSRM2
+ISSRM2
+ISSRM2
+</Front Equipment>
+<Body Equipment>
+ISSRM6 Ammo
+ISSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+3054
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Clan Invasion
+</source>

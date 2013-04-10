@@ -1,0 +1,84 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Fensalir Combat WiGE
+</Name>
+
+<Model>
+(HAG)
+</Model>
+
+<Tonnage>
+80
+</Tonnage>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<Armor>
+60
+60
+60
+48
+</Armor>
+
+<Front Equipment>
+CLHAG30
+CLATM9
+CLATM9
+CLERMediumLaser
+CLERMediumLaser
+</Front Equipment>
+<Body Equipment>
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLATM9 Ammo
+CLATM9 ER Ammo
+CLATM9 HE Ammo
+</Body Equipment>
+<transporters>
+TroopSpace:5
+</transporters>
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<year>
+3084
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+WIGE
+</motion_type>

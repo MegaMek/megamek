@@ -1,0 +1,55 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+M.A.S.H. Truck
+</Name>
+<Model>
+(Small)
+</Model>
+<Tonnage>
+15
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+10
+13
+13
+10
+10
+</Armor>
+<Turret Equipment>
+ISSmallLaser
+ISSmallLaser
+</Turret Equipment>
+<transporters>
+TroopSpace:1
+</transporters>
+<type>
+IS Level 3
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

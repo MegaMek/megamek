@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Lightning Attack Hovercraft
+</Name>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+11
+</cruiseMP>
+<Armor>
+20
+16
+16
+11
+</Armor>
+<Front Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Front Equipment>
+<Right Equipment>
+ISSRM4 (OS)
+</Right Equipment>
+<Left Equipment>
+ISSRM4 (OS)
+</Left Equipment>
+<type>
+IS
+</type>
+<year>
+2696
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

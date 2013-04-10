@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Donar Assault Helicopter
+</Name>
+<Tonnage>
+21
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+16
+14
+14
+11
+2
+</Armor>
+<Front Equipment>
+CLERLargeLaser
+CLStreakSRM2
+CLStreakSRM2
+</Front Equipment>
+<Body Equipment>
+CLStreakSRM2 Ammo
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3060
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Succession Wars
+</source>

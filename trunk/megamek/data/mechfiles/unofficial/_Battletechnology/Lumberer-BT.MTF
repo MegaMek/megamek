@@ -1,0 +1,152 @@
+Version:1.0
+Lumberer
+LUM-BT
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:1
+
+Mass:80
+Engine:240 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:15 Single
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:14
+RTR Armor:14
+RTC Armor:20
+
+Weapons:7
+1 ISPPC, Right Arm
+1 ISLRM10, Right Torso, Ammo:24
+1 ISMediumLaser, Right Torso (R)
+1 ISLRM10, Left Torso
+1 ISMediumLaser, Left Torso (R)
+1 ISMediumLaser, Left Torso
+1 ISMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPPC
+ISPPC
+ISPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISLRM10
+ISLRM10
+ISLRM10 Ammo
+ISMediumLaser (R)
+ISMediumLaser
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISLRM10
+ISLRM10
+ISLRM10 Ammo
+ISMediumLaser (R)
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

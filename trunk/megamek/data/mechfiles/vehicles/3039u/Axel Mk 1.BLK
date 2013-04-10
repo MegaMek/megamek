@@ -1,0 +1,87 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Axel
+</Name>
+
+<Model>
+Mk 1
+</Model>
+
+<year>
+3036
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+65.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor>
+36
+36
+36
+24
+36
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 10
+Machine Gun
+Autocannon/20
+</Turret Equipment>
+

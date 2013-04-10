@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Kestrel VTOL
+</Name>
+<Model>
+(ML)
+</Model>
+<Tonnage>
+25
+</Tonnage>
+<cruiseMP>
+12
+</cruiseMP>
+<Armor>
+8
+5
+5
+4
+2
+</Armor>
+<Front Equipment>
+ISMediumLaser
+</Front Equipment>
+<Body Equipment>
+Cargo (0.5 tons)
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+3030
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Succession Wars
+</source>

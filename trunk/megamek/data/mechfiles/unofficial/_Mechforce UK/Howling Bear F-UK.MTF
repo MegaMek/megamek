@@ -1,0 +1,152 @@
+Version:1.0
+Howling Bear
+F-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:7
+1 CLLRM20, Right Arm, Ammo:48
+1 CLLRM20, Left Arm
+1 CLLRM20, Right Torso
+1 CLERMediumLaser, Right Torso
+1 CLLRM20, Left Torso
+1 CLERMediumLaser, Left Torso
+1 CLERSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisIV
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisIV
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisIV
+CLERMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisIV
+CLERMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

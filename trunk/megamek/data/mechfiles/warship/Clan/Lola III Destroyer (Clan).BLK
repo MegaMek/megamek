@@ -1,0 +1,148 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Lola III Destroyer
+</Name>
+<Model>
+(Clan)
+</Model>
+<Tonnage>
+680000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+48
+48
+48
+48
+48
+48
+</Armor>
+<Nose Equipment>
+NL55
+NL55
+</Nose Equipment>
+<Front Left Side Equipment>
+NL55
+NL55
+NL55
+WhiteShark
+WhiteShark Ammo:10
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL55
+NL55
+NL55
+WhiteShark
+WhiteShark Ammo:10
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:100
+NL45
+Barracuda
+Barracuda Ammo:10
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:100
+NL45
+Barracuda
+Barracuda Ammo:10
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:100
+NL45
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:100
+NL45
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NL55
+NL55
+NL55
+NL55
+Barracuda
+Barracuda Ammo:10
+</Aft Equipment>
+<structural_integrity>
+50
+</structural_integrity>
+<heatsinks>
+742
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+3000
+</fuel>
+<type>
+Clan Level 3
+</type>
+<year>
+2900
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+11
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:10:1
+SmallCraftBay:10:1
+CargoBay:101554:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+0
+</grav_deck>
+<escape_pod>
+8
+</escape_pod>
+<life_boat>
+0
+</life_boat>
+<crew>
+288
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

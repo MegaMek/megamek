@@ -1,0 +1,65 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Zephyr Hovertank
+</Name>
+<Model>
+(SRM-2)
+</Model>
+<Tonnage>
+40
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+37
+24
+24
+19
+29
+</Armor>
+<Turret Equipment>
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Turret Equipment>
+<Front Equipment>
+ISSRM6
+</Front Equipment>
+<Rear Equipment>
+ISSRM2
+ISSmallLaser
+</Rear Equipment>
+<Body Equipment>
+ISSRM6 Ammo
+ISSRM6 Ammo
+ISSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+2621
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

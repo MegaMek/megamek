@@ -1,0 +1,141 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Dart Light Cruiser
+</Name>
+<Tonnage>
+680000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+101
+88
+88
+88
+88
+79
+</Armor>
+<Nose Equipment>
+NAC20
+NAC20
+NAC20 Ammo:100
+NL45
+NL45
+KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:40
+</Nose Equipment>
+<Front Left Side Equipment>
+NL35
+NL35
+NAC25
+NAC25
+NAC25 Ammo:40
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL35
+NL35
+NAC25
+NAC25
+NAC25 Ammo:40
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC30
+NAC30
+NAC30 Ammo:40
+LightNPPC
+LightNPPC
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC30
+NAC30
+NAC30 Ammo:40
+LightNPPC
+LightNPPC
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL35
+NL35
+NAC25
+NAC25
+NAC25 Ammo:40
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NL35
+NL35
+NAC25
+NAC25
+NAC25 Ammo:40
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NL35
+NL35
+NAC25
+NAC25
+NAC25 Ammo:25
+</Aft Equipment>
+<structural_integrity>
+90
+</structural_integrity>
+<heatsinks>
+2358
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+22437
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2305
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:6:2
+CargoBay:139160:2
+</transporters>
+<docking_collar>
+6
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+29
+</escape_pod>
+<life_boat>
+35
+</life_boat>
+<crew>
+367
+</crew>
+<passengers>
+0
+</passengers>

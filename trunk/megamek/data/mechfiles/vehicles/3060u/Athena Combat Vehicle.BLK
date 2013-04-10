@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Athena Combat Vehicle
+</Name>
+<Tonnage>
+75
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+38
+26
+26
+24
+30
+</Armor>
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLMG
+CLMG
+</Turret Equipment>
+<Front Equipment>
+CLGaussRifle
+CLGaussRifle
+CLLRM10
+</Front Equipment>
+<Body Equipment>
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+CLLRM10 Ammo
+CLMG Ammo (100)
+CLTargeting Computer
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Succession Wars
+</source>

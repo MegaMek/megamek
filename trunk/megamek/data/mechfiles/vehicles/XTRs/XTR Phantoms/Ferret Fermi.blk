@@ -1,0 +1,90 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Ferret
+</Name>
+
+<Model>
+Fermi
+</Model>
+
+<year>
+3076
+</year>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+15
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+8
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+2
+1
+1
+2
+2
+</armor>
+
+<Body Equipment>
+Stealth
+CLECMSuite
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+XTR:Phantoms
+</source>
+
+<tonnage>
+5.0
+</tonnage>
+

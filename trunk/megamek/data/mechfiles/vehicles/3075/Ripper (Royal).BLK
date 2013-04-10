@@ -1,0 +1,93 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Ripper Infantry Transport
+</Name>
+
+<Model>
+(Royal)
+</Model>
+
+<year>
+2750
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+10.0
+</tonnage>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+TroopSpace: 1
+</transporters>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+10
+5
+5
+5
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+ISMediumPulseLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+

@@ -1,0 +1,150 @@
+Version:1.0
+Marauder II
+MAD-5B-FLU
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:2
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:31
+RT Armor:31
+CT Armor:45
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:11
+RTR Armor:11
+RTC Armor:16
+
+Weapons:5
+1 ISERPPC, Right Arm
+1 ISMediumLaser, Right Arm
+1 ISERPPC, Left Arm
+1 ISMediumLaser, Left Arm
+1 ISGaussRifle, Right Torso, Ammo:24
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

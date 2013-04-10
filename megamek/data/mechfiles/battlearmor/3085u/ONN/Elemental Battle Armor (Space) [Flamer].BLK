@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Elemental Battle Armor
+</Name>
+
+<Model>
+(Space) [Flamer]
+</Model>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+10
+</Armor>
+
+<Squad Equipment>
+CLBAFlamer
+BAAPMount
+BACuttingTorch
+BASpaceOperationsAdaptation
+BAHeavyBattleClaw
+BAHeavyBattleClaw
+</Squad Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+2903
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+Star League
+</source>

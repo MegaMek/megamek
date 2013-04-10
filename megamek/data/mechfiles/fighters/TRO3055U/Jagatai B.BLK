@@ -1,0 +1,151 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Jagatai
+
+</Name>
+
+<Model>
+
+B
+
+</Model>
+
+<Tonnage>
+
+70
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+65
+
+50
+
+50
+
+46
+
+</Armor>
+
+<Nose Equipment>
+
+CLGaussRifle
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLERLargeLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+CLERLargeLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+CLERMediumLaser
+
+CLMediumPulseLaser
+
+</Aft Equipment>
+
+<heatsinks>
+
+15
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+320
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+3016
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

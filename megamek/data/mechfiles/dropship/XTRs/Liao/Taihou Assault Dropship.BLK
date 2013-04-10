@@ -1,0 +1,303 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Taihou Assault Dropship
+
+</Name>
+
+<Tonnage>
+
+12000
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+601
+
+451
+
+451
+
+328
+
+</Armor>
+
+<Nose Equipment>
+
+HeavySCC
+
+HeavySCC
+
+HeavySCC
+
+HeavySCC
+
+Heavy SCC Ammo:60
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40 Ammo:42
+
+ScreenLauncher
+
+ScreenLauncher Ammo:10
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40 Ammo:42
+
+IS AMS 
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:72
+
+(R) IS AMS 
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS Ammo:72
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40 Ammo:42
+
+IS AMS 
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:72
+
+(R) IS AMS 
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS Ammo:72
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISHeavyPPC
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40 Ammo:42
+
+</Aft Equipment>
+
+<structural_integrity>
+
+30
+
+</structural_integrity>
+
+<heatsinks>
+
+250
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+12000
+
+</fuel>
+
+<type>
+
+IS Level 3
+
+</type>
+
+<year>
+
+3079
+
+</year>
+
+<source>
+
+Jihad
+
+</source>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+20
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<transporters>
+
+SmallCraftBay:2:1
+
+CargoBay:472:2
+
+</transporters>
+
+<escape_pod>
+
+5
+
+</escape_pod>
+
+<life_boat>
+
+5
+
+</life_boat>
+
+<crew>
+
+33
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>
+
+<battlearmor>
+
+36
+
+</battlearmor>
+
+<System Wide Equipment>
+
+ISNC3
+
+</System Wide Equipment>

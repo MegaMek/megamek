@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Katya Ground Assault Craft
+</Name>
+
+<Model>
+C-906
+</Model>
+
+<Tonnage>
+30
+</Tonnage>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<Armor>
+10
+5
+5
+4
+</Armor>
+
+<Nose Equipment>
+Light Machine Gun
+Light Machine Gun
+IS Light Machine Gun Ammo - Half
+</Nose Equipment>
+<Left Wing Equipment>
+RL10
+RL10
+RL10
+RL10
+</Left Wing Equipment>
+<Right Wing Equipment>
+RL10
+RL10
+RL10
+RL10
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3067
+</year>
+
+<source>
+Civil War
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<vstol>
+</vstol>

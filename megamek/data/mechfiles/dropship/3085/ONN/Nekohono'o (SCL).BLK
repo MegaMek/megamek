@@ -1,0 +1,375 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Nekohono'o 
+
+</Name>
+
+<Model>
+
+(SCL)
+
+</Model>
+
+<Tonnage>
+
+16000
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+310
+
+236
+
+236
+
+176
+
+</Armor>
+
+<Nose Equipment>
+
+SCL1
+
+SCL1
+
+SCL1
+
+SCL1
+
+SCL1
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40 Ammo:54
+
+IS AMS
+
+IS AMS
+
+IS AMS
+
+IS AMS Ammo:72
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+SCL1
+
+SCL1
+
+SCL1
+
+SCL1
+
+SCL1
+
+ISMRM40
+
+ISApollo
+
+ISMRM40
+
+ISApollo
+
+ISMRM40 Ammo:36
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+(R) SCL2
+
+(R) SCL2
+
+(R) ISHPPC
+
+(R) ISHPPC
+
+(R) ISHPPC
+
+(R) ISMRM40
+
+(R) ISMRM40
+
+(R) ISMRM40
+
+(R) ISMRM40 Ammo:54
+
+(R) ISApollo
+
+(R) ISApollo
+
+(R) ISApollo
+
+(R) ScreenLauncher
+
+(R) ScreenLauncher Ammo:20
+
+(R) IS AMS 
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS Ammo:72
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+SCL1
+
+SCL1
+
+SCL1
+
+SCL1
+
+SCL1
+
+ISMRM40
+
+ISMRM40
+
+ISMRM40 Ammo:36
+
+ISApollo
+
+ISApollo
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+(R) SCL2
+
+(R) SCL2
+
+(R) ISHPPC
+
+(R) ISHPPC
+
+(R) ISHPPC
+
+(R) ISMRM40
+
+(R) ISMRM40
+
+(R) ISMRM40
+
+(R) ISMRM40 Ammo:54
+
+(R) ISApollo
+
+(R) ISApollo
+
+(R) ISApollo
+
+(R) ScreenLauncher
+
+(R) ScreenLauncher Ammo:20
+
+(R) IS AMS 
+
+(R) IS AMS
+
+(R) IS AMS
+
+(R) IS AMS Ammo:72
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+SCL2
+
+SCL2
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISLargePulseLaser
+
+ISMRM40
+
+ISMRM40
+
+ISMRM40
+
+ISMRM40 Ammo:54
+
+ISApollo
+
+ISApollo
+
+ISApollo
+
+</Aft Equipment>
+
+<structural_integrity>
+
+16
+
+</structural_integrity>
+
+<heatsinks>
+
+295
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+12000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3080
+
+</year>
+
+<source>
+
+Jihad
+
+</source>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+ASFBay:6:2
+
+SmallCraftBay:9:2
+
+BattleArmorBay:27:2
+
+CargoBay:1583:2
+
+NC3
+
+</transporters>
+
+<escape_pod>
+
+6
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+276
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

@@ -1,0 +1,55 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Elemental Battle Armor
+</Name>
+<Model>
+[MG]
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+2
+</weightclass>
+<Trooper Count>
+5
+</Trooper Count>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+3
+</jumpingMP>
+<Armor>
+10
+</Armor>
+<Squad Equipment>
+Clan BA Machine Gun
+CLSRM2:Body
+BASRM2 Ammo
+BASRM2 Ammo
+BABattleClaw
+BAAPMount
+</Squad Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+2868
+</year>
+<motion_type>
+Jump
+</motion_type>
+<source>
+Succession Wars
+</source>

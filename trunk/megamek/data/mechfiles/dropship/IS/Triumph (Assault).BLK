@@ -1,0 +1,322 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Triumph
+
+</Name>
+
+<Model>
+
+(Assault)
+
+</Model>
+
+<Tonnage>
+
+8000
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+260
+
+210
+
+210
+
+130
+
+</Armor>
+
+<Nose Equipment>
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISERPPC
+
+ISGaussRifle
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISLRM20
+
+ISArtemisIV
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20
+
+ISArtemisIV
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20
+
+ISArtemisIV
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20
+
+ISArtemisIV
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISLBXAC10
+
+ISLBXAC10
+
+ISLBXAC10 Ammo
+
+ISLBXAC10 Ammo
+
+ISLBXAC10 Ammo
+
+ISLBXAC10 Ammo
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISSmallPulseLaser
+
+ISSmallPulseLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISLBXAC10
+
+ISLBXAC10
+
+ISLBXAC10 Ammo
+
+ISLBXAC10 Ammo
+
+ISLBXAC10 Ammo
+
+ISLBXAC10 Ammo
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISSmallPulseLaser
+
+ISSmallPulseLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISLRM15
+
+ISLRM15
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISArtemisIV
+
+ISArtemisIV
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+11
+
+</structural_integrity>
+
+<heatsinks>
+
+135
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+9000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3062
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<transporters>
+
+HeavyVehicleBay:24:1
+
+MechBay:6:1
+
+CargoBay:550:1
+
+ASFBay:6:2
+
+BattleArmorBay:6:1
+
+</transporters>
+
+<escape_pod>
+
+4
+
+</escape_pod>
+
+<life_boat>
+
+3
+
+</life_boat>
+
+<crew>
+
+275
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

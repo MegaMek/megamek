@@ -1,0 +1,145 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Lightning
+
+</Name>
+
+<Model>
+
+LTN-G16-P Branson
+
+</Model>
+
+<Tonnage>
+
+50
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+44
+
+35
+
+35
+
+33
+
+</Armor>
+
+<Nose Equipment>
+
+ISHVAC10
+
+ISHVAC10 Ammo
+
+ISHVAC10 Ammo
+
+ISERMediumLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISERMediumLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+ISERMediumLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+ISERSmallLaser
+
+ISERSmallLaser
+
+</Aft Equipment>
+
+<heatsinks>
+
+13
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 4
+
+</type>
+
+<year>
+
+3075
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+

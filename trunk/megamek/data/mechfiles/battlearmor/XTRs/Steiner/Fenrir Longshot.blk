@@ -1,0 +1,57 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Fenrir Battle Armor
+</Name>
+<Model>
+"Longshot"
+</Model>
+<chassis>
+quad
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+6
+</Armor>
+<Squad Equipment>
+ClLRM4:Body
+BACLLRM4 Ammo
+BACLLRM4 Ammo
+BACLLRM4 Ammo
+BACLLRM4 Ammo
+ClLRM4:Body
+BACLLRM4 Ammo
+BACLLRM4 Ammo
+BACLLRM4 Ammo
+BACLLRM4 Ammo
+ISC3SlaveUnit
+</Squad Equipment>
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+<year>
+3076
+</year>
+<motion_type>
+Leg
+</motion_type>
+<source>
+Jihad
+</source>

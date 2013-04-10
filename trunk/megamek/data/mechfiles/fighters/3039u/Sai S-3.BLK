@@ -1,0 +1,186 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Sai
+
+</Name>
+
+
+
+<Model>
+
+S-3
+
+</Model>
+
+
+
+<Tonnage>
+
+40
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+8
+
+</SafeThrust>
+
+
+
+<Armor>
+
+40
+
+30
+
+30
+
+20
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+Large Laser
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Medium Laser
+
+Medium Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Medium Laser
+
+Medium Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+14
+
+</heatsinks>
+
+
+
+<sink_type>
+
+0
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 1
+
+</type>
+
+
+
+<year>
+
+3045
+
+</year>
+
+
+
+<source>
+
+Succession Wars
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+0
+
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

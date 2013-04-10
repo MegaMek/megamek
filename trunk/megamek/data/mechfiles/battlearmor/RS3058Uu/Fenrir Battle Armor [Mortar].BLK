@@ -1,0 +1,48 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Fenrir Battle Armor
+</Name>
+<Model>
+[Mortar]
+</Model>
+<chassis>
+quad
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+5
+</Armor>
+<Squad Equipment>
+ISHeavyMortar:Body
+BA Machine Gun:Body
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3064
+</year>
+<motion_type>
+Leg
+</motion_type>
+<source>
+Civil War
+</source>

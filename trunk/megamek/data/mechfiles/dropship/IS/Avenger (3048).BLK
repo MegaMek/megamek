@@ -1,0 +1,248 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Avenger
+
+</Name>
+
+<Model>
+
+(3048)
+
+</Model>
+
+<Tonnage>
+
+1400
+
+</Tonnage>
+
+<SafeThrust>
+
+7
+
+</SafeThrust>
+
+<Armor>
+
+230
+
+203
+
+203
+
+180
+
+</Armor>
+
+<Nose Equipment>
+
+ISAC20
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISERPPC
+
+ISGaussRifle
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISERPPC
+
+ISGaussRifle
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable
+
+ISLRM20 Ammo Artemis-capable
+
+ISERLargeLaser
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+12
+
+</structural_integrity>
+
+<heatsinks>
+
+70
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+8000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3048
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+CargoBay:155:1
+
+</transporters>
+
+<escape_pod>
+
+2
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+15
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

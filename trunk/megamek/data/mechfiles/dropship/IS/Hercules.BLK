@@ -1,0 +1,252 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Hercules
+
+</Name>
+
+<Tonnage>
+
+7200
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+140
+
+120
+
+120
+
+130
+
+</Armor>
+
+<Nose Equipment>
+
+ISAC5
+
+ISAC5 Ammo:20
+
+ISGaussRifle
+
+ISGauss Ammo:16
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable:12
+
+ISERPPC
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15 Ammo Artemis-capable:16
+
+ISERPPC
+
+ISSRM6
+
+IS Artemis IV FCS
+
+ISSRM6 Ammo Artemis-capable:15
+
+(R) ISMediumLaser
+
+(R) ISLargePulseLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15 Ammo Artemis-capable:16
+
+ISERPPC
+
+ISSRM6
+
+IS Artemis IV FCS
+
+ISSRM6 Ammo Artemis-capable:15
+
+(R) ISMediumLaser
+
+(R) ISLargePulseLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISAC5
+
+ISAC5 Ammo:20
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM15
+
+IS Artemis IV FCS
+
+ISLRM15 Ammo Artemis-capable:16
+
+</Aft Equipment>
+
+<structural_integrity>
+
+9
+
+</structural_integrity>
+
+<heatsinks>
+
+101
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+4350
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3053
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+HeavyVehicleBay:36:2
+
+InfantryBay:12:2
+
+CargoBay:1381:2
+
+</transporters>
+
+<escape_pod>
+
+2
+
+</escape_pod>
+
+<life_boat>
+
+2
+
+</life_boat>
+
+<crew>
+
+652
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

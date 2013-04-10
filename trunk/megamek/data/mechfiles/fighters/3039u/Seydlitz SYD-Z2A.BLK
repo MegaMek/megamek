@@ -1,0 +1,185 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Seydlitz
+
+</Name>
+
+
+
+<Model>
+
+SYD-Z2A
+
+</Model>
+
+
+
+<Tonnage>
+
+20
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+11
+
+</SafeThrust>
+
+
+
+<Armor>
+
+20
+
+12
+
+12
+
+18
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+Medium Laser
+
+Medium Laser
+
+Medium Laser
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Medium Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Medium Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+10
+
+</heatsinks>
+
+
+
+<sink_type>
+
+1
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 2
+
+</type>
+
+
+
+<year>
+
+3050
+
+</year>
+
+
+
+<source>
+
+Clan Invasion
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+19
+</armor_type>
+
+
+
+<engine_type>				
+
+2
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

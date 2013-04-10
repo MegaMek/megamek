@@ -1,0 +1,153 @@
+Version:1.0
+Battle Cobra
+X
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3073
+Source:Jihad
+Rules Level:4
+
+Mass:40
+Engine:240 Fusion (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:18 Double
+Base Chassis Heat Sinks:9
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:16
+HD Armor:9
+LL Armor:17
+RL Armor:17
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:5
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+
+Left Torso:
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLTargeting Computer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

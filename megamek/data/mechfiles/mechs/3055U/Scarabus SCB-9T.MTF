@@ -1,0 +1,152 @@
+Version:1.0
+Scarabus
+SCB-9T
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Source:Clan Invasion
+Rules Level:2
+
+Mass:30
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+
+Heat Sinks:10 Single
+Walk MP:10
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:9
+RA Armor:9
+LT Armor:10
+RT Armor:10
+CT Armor:12
+HD Armor:9
+LL Armor:13
+RL Armor:13
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:5
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Small Laser, Left Arm
+Small Laser, Left Arm
+TAG, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Medium Laser
+Medium Laser
+Small Laser
+Small Laser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+TSM
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet
+Hatchet
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+TSM
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+TSM
+TSM
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+TSM
+TSM
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

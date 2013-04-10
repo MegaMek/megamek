@@ -1,0 +1,154 @@
+Version:1.1
+Grand Dragon
+DRG-7KC
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3077
+Source:Jihad
+Rules Level:4
+
+Mass:60
+Engine:360 XL Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:15 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:16
+RT Armor:16
+CT Armor:24
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER PPC, Right Arm
+MML 5, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+Light Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+ISMASC
+ISMASC
+ISMASC
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\Dragon.jpg

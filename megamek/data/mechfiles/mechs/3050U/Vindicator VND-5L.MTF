@@ -1,0 +1,134 @@
+Version:1.1
+Vindicator
+VND-5L
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3060
+Rules Level:2
+
+Mass:45
+Engine:180 Fusion Engine
+Structure:Standard
+Myomer:Triple Strength Myomer
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:8
+1 ISERPPC, Right Arm
+1 ISERMediumLaser, Right Torso
+1 ISMediumPulseLaser, Right Torso
+1 ISSmallPulseLaser, Right Torso
+1 ISERMediumLaser, Left Torso
+1 ISMediumPulseLaser, Left Torso
+1 ISSmallLaser, Left Torso
+1 Sword, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERPPC
+ISERPPC
+ISERPPC
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISMediumPulseLaser
+ISSmallLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-

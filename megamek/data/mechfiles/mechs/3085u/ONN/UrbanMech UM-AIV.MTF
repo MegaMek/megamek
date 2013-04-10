@@ -1,0 +1,151 @@
+Version:1.1
+UrbanMech
+UM-AIV
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3078
+Source:Jihad
+Rules Level:3
+
+Mass:30
+Engine:60 XL Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:10 Single
+Walk MP:2
+Jump MP:2
+
+Armor:Standard(Inner Sphere)
+LA Armor:10
+RA Armor:10
+LT Armor:8
+RT Armor:8
+CT Armor:11
+HD Armor:9
+LL Armor:12
+RL Armor:12
+RTL Armor:4
+RTR Armor:4
+RTC Armor:8
+
+Weapons:2
+Arrow IV, Right Arm
+ER Medium Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Jump Jet
+ISArrowIVAmmo
+ISArrowIVHomingAmmo
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Jump Jet
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+ISArrowIV
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Heat Sink
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

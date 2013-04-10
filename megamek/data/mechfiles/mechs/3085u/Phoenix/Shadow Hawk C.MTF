@@ -1,0 +1,151 @@
+Version:1.0
+Shadow Hawk
+C
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3050
+Source:Clan Invasion
+Rules Level:4
+
+Mass:55
+Engine:275 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Single
+Walk MP:5
+Jump MP:3
+
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:4
+ER Medium Laser, Right Arm
+LB 5-X AC, Left Torso
+LRM 5, Right Torso
+Streak SRM 2, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+Clan LB 5-X AC Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Jump Jet
+CLLRM5
+Clan Ammo LRM-5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Streak SRM 2 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLStreakSRM2
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\Shadowhawk3050.jpg

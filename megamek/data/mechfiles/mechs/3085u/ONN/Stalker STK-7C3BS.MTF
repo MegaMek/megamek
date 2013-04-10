@@ -1,0 +1,156 @@
+Version:1.0
+Stalker
+STK-7C3BS
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3075
+Source:Jihad
+Rules Level:4
+
+Mass:85
+Engine:255 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:18 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:23
+RA Armor:23
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:9
+MML 5, Left Arm
+Medium Pulse Laser, Left Arm
+MML 5, Right Arm
+Medium Pulse Laser, Right Arm
+ER PPC, Left Torso
+ER PPC, Right Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
+Small VSP Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMML5
+ISMML5
+ISMML5
+ISMediumPulseLaser
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMML5
+ISMML5
+ISMML5
+ISMediumPulseLaser
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallVariableSpeedLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3039Stalker.jpg

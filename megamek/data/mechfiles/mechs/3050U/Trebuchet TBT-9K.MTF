@@ -1,0 +1,132 @@
+Version:1.1
+Trebuchet
+TBT-9K
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3059
+Rules Level:2
+
+Mass:50
+Engine:250 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:12
+RA Armor:12
+LT Armor:18
+RT Armor:18
+CT Armor:25
+HD Armor:9
+LL Armor:17
+RL Armor:17
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:6
+1 ISMediumPulseLaser, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISMRM20, Left Arm, Ammo:36
+1 ISMRM20, Right Torso
+1 ISC3SlaveUnit, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMRM20
+ISMRM20
+ISMRM20
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumPulseLaser
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISMRM20 Ammo
+ISC3SlaveUnit
+ISCASE
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+ISMRM20
+ISMRM20
+ISMRM20
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet

@@ -1,0 +1,154 @@
+Version:1.0
+Ursus II
+
+
+Config:Biped
+TechBase:Clan
+Era:3078
+Source:Jihad
+Rules Level:2
+
+Mass:50
+Engine:200 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:6
+
+Armor:Standard(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:20
+RT Armor:20
+CT Armor:24
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:4
+RTR Armor:4
+RTC Armor:7
+
+Weapons:7
+ER Large Laser, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+LRM 10, Left Arm
+Streak SRM 6, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM10
+CLArtemisIV
+Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLERSmallLaser
+Clan Ammo LRM-10 (Clan) Artemis-capable
+Clan Streak SRM 6 Ammo
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLERSmallLaser
+CLECMSuite
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

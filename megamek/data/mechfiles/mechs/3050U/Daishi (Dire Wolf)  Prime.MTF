@@ -1,0 +1,152 @@
+Version:1.0
+Daishi (Dire Wolf)
+Prime
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3050
+Rules Level:2
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:22 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:7
+2 CLERLargeLaser, Left Arm
+2 CLMediumPulseLaser, Left Arm
+1 CLUltraAC5, Left Arm, Ammo:20
+1 CLLRM10, Left Torso, Ammo:12
+2 CLERLargeLaser, Right Arm
+2 CLMediumPulseLaser, Right Arm
+1 CLUltraAC5, Right Arm, Ammo:20
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+CLERLargeLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5 Ammo
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+CLERLargeLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5 Ammo
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLLRM10
+CLLRM10 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,151 @@
+Version:1.0
+Thor (Summoner)
+U
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3070
+Source:Jihad
+Rules Level:2
+
+Mass:70
+Engine:350 XL (Clan) Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks:14
+Walk MP:5
+Jump MP:5
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:17
+RA Armor:17
+LT Armor:22
+RT Armor:22
+CT Armor:27
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:3
+ER PPC, Right Arm
+ER PPC, Left Arm
+LRT 15, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRTorpedo15
+CLLRTorpedo15
+Clan Ammo LRTorpedo-15
+Clan Ammo LRTorpedo-15
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

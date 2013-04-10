@@ -1,0 +1,152 @@
+Version:1.0
+Ghost
+GST-11
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Source:Dark Age
+Rules Level:2
+
+Mass:50
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:17
+RT Armor:17
+CT Armor:21
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:5
+Light PPC, Right Torso
+Light PPC, Left Torso
+ER Medium Laser, Right Arm
+MML 3, Right Torso
+MML 3, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+BeagleActiveProbe
+BeagleActiveProbe
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Light PPC
+Light PPC
+ISMML3
+ISMML3
+IS Ammo MML-3 SRM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Light PPC
+Light PPC
+ISMML3
+ISMML3
+IS Ammo MML-3 LRM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

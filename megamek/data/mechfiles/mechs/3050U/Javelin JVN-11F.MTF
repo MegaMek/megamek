@@ -1,0 +1,149 @@
+Version:1.0
+Javelin
+JVN-11F
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3072
+Rules Level:2
+
+Mass:30
+Engine:180 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Standard
+LA Armor:8
+RA Armor:8
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:8
+LL Armor:12
+RL Armor:12
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:5
+3 ISMG, Right Arm, Ammo:200
+1 ISMGA, Right Arm
+3 ISMG, Left Arm
+1 ISMGA, Left Arm
+1 ISSNPPC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMGA
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMGA
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISSNPPC
+ISSNPPC
+ISMG Ammo (200)
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

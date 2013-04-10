@@ -1,0 +1,148 @@
+Version:1.0
+Gladiator (Executioner)
+P
+
+Config:Biped OmniMech
+TechBase:Clan
+Era:3067
+Rules Level:2
+
+Mass:95
+Engine:380 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Ferro-Fibrous Armor
+LA Armor:32
+RA Armor:32
+LT Armor:20
+RT Armor:20
+CT Armor:37
+HD Armor:9
+LL Armor:40
+RL Armor:40
+RTL Armor:10
+RTR Armor:10
+RTC Armor:9
+
+Weapons:4
+3 CLHeavyMediumLaser, Left Torso
+1 CLPlasmaCannon, Left Arm, Ammo:10
+1 CLHAG30, Right Arm, Ammo:12
+1 CLLRM10, Right Torso, Ammo:12
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+
+Right Torso:
+Engine
+Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM10
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLLRM10 Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Ferro-Fibrous
+Ferro-Fibrous
+
+Head:
+Life Support
+Cockpit
+Sensors
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+JumpJet
+JumpJet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+JumpJet
+JumpJet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

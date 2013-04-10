@@ -1,0 +1,149 @@
+Version:1.1
+Jabberwocky DemolitionMech
+JAW-66C
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Source:Star League
+Rules Level:2
+
+Mass:50
+Engine:200 Fusion Engine
+Structure:Industrial
+Myomer:Industrial Triple-Strength
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:3
+
+Armor:Standard(Inner Sphere)
+LA Armor:6
+RA Armor:6
+LT Armor:5
+RT Armor:5
+CT Armor:9
+HD Armor:6
+LL Armor:6
+RL Armor:6
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
+
+Weapons:0
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+Industrial TSM
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Salvage Arm
+Salvage Arm
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Jump Jet
+Searchlight
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Jump Jet
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+Environmental Sealing
+Industrial TSM
+Industrial TSM
+Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Environmental Sealing
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Tracks
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Tracks
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,149 @@
+Version:1.0
+Preta
+C-PRT-O Caelestis
+
+Config:Biped Omni
+TechBase:Mixed (IS Chassis)
+Era:3067
+Rules Level:4
+
+Mass:45
+Engine:270 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+
+Heat Sinks:12 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Standard
+LA Armor:13
+RA Armor:13
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:4
+1 CLERLargePulseLaser, Right Arm
+1 CLERMediumPulseLaser, Left Arm
+1 ISImprovedC3CPU, Center Torso
+1 CLERMediumPulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedC3CPU
+ISImprovedC3CPU
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

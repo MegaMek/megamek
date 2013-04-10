@@ -1,0 +1,134 @@
+Version:1.1
+Firefly
+FFL-4A
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Rules Level:1
+
+Mass:30
+Engine:150 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:5
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:10
+RA Armor:10
+LT Armor:11
+RT Armor:11
+CT Armor:15
+HD Armor:8
+LL Armor:14
+RL Armor:14
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
+
+Weapons:8
+1 ISMediumLaser, Center Torso
+1 ISMediumLaser, Left Torso
+1 ISMediumLaser, Right Torso
+1 ISSmallLaser, Left Torso
+1 ISSmallLaser, Center Torso
+1 ISSmallLaser, Right Arm
+1 ISSmallLaser, Left Arm
+1 ISLRM5, Right Torso, Ammo:24
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+ISMediumLaser
+ISSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+ISMediumLaser
+ISLRM5
+ISLRM5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMediumLaser
+ISSmallLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet

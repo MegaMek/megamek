@@ -1,0 +1,154 @@
+Version:1.0
+JagerMech
+JM7-C3BS
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3075
+Source:Jihad
+Rules Level:4
+
+Mass:70
+Engine:280 XL Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:7
+Snub-Nose PPC, Left Arm
+Light Auto Cannon/2, Left Arm
+Light Auto Cannon/2, Left Arm
+Snub-Nose PPC, Right Arm
+Light Auto Cannon/2, Right Arm
+Light Auto Cannon/2, Right Arm
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISSNPPC
+ISSNPPC
+Light Auto Cannon/2
+Light Auto Cannon/2
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISSNPPC
+ISSNPPC
+Light Auto Cannon/2
+Light Auto Cannon/2
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ammo LAC/2
+ISCASE
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ammo LAC/2
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+ISCASE
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

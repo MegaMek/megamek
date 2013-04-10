@@ -1,0 +1,150 @@
+Version:1.1
+DemolitionMech
+WI-DM
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2513
+Source:Star League
+Rules Level:2
+
+Mass:35
+Engine:105 Fuel Cell Engine
+Structure:Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:1 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Industrial(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:8
+RT Armor:8
+CT Armor:10
+HD Armor:8
+LL Armor:10
+RL Armor:10
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:1
+Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Rock Cutter
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+IS Wrecking Ball
+IS Wrecking Ball
+IS Wrecking Ball
+IS Wrecking Ball
+IS Wrecking Ball
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Small Laser
+Cargo (1 ton)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

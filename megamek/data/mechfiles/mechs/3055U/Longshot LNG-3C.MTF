@@ -1,0 +1,154 @@
+Version:1.0
+Longshot
+LNG-3C
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Source:Civil War
+Rules Level:4
+
+Mass:35
+Engine:245 XXL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:7
+RA Armor:7
+LT Armor:11
+RT Armor:11
+CT Armor:14
+HD Armor:9
+LL Armor:10
+RL Armor:10
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:7
+iNarc, Right Arm
+SRM 4, Left Torso
+Medium X-Pulse Laser, Left Torso
+ER Small Laser, Left Torso
+SRM 4, Right Torso
+Medium X-Pulse Laser, Right Torso
+ER Small Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISImprovedNarc
+ISImprovedNarc
+ISImprovedNarc
+ISiNarc Pods
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 4
+ISMediumXPulseLaser
+ISERSmallLaser
+IS Ammo SRM-4 Narc-capable
+Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 4
+ISMediumXPulseLaser
+ISERSmallLaser
+IS Ammo SRM-4 Narc-capable
+Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

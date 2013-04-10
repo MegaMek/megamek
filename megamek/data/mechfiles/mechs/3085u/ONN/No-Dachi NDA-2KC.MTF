@@ -1,0 +1,158 @@
+Version:1.0
+No-Dachi
+NDA-2KC
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3081
+Source:Dark Age
+Rules Level:2
+
+Mass:70
+Engine:350 XL Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+
+Heat Sinks:14 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:20
+RT Armor:20
+CT Armor:31
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:11
+ER Medium Laser, Left Torso
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Center Torso
+Small Laser, Center Torso
+Small Pulse Laser, Left Arm
+Flamer, Head
+Large Pulse Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Sword
+Sword
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISERMediumLaser (R)
+Endo Steel
+Endo Steel
+Endo Steel
+TSM
+TSM
+TSM
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISC3SlaveUnit
+Endo Steel
+Endo Steel
+Endo Steel
+TSM
+TSM
+TSM
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+Small Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Flamer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

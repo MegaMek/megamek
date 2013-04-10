@@ -1,0 +1,135 @@
+Version:1.1
+Thunderbolt
+TDR-10M Salazar
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Rules Level:3
+
+Mass:65
+Engine:260 XL Fusion Engine
+Structure:Standard
+Gyro:XL Gyro
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:3
+
+Armor:Stealth Armor
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:8
+1 ISGuardianECM, Right Arm
+1 ISSmallVSPLaser (R), Head (R)
+1 ISFlamer, Right Torso
+1 ISMediumPulseLaser, Left Torso
+1 ISPlasmaRifle, Right Arm, Ammo:20
+1 ISSNPPC, Left Torso
+1 ISLightPPC, Left Torso
+1 ISMML5, Right Torso, Ammo:48
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Stealth Armor
+Stealth Armor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifle Ammo
+ISPlasmaRifle Ammo
+ISGuardianECM
+ISGuardianECM
+Stealth Armor
+Stealth Armor
+
+Left Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+ISSNPPC
+ISSNPPC
+ISLightPPC
+ISLightPPC
+ISMediumPulseLaser
+Stealth Armor
+Stealth Armor
+
+Right Torso:
+Engine
+Engine
+Engine
+Jump Jet
+ISMML5
+ISMML5
+ISMML5
+ISFlamer
+ISMML5 LRM Ammo
+ISMML5 SRM Ammo
+Stealth Armor
+Stealth Armor
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallVSPLaser (R)
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth Armor
+Stealth Armor
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth Armor
+Stealth Armor

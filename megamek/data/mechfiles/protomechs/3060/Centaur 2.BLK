@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Centaur
+</Name>
+<Model>
+2
+</Model>
+<Tonnage>
+5
+</Tonnage>
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+3
+7
+2
+2
+4
+3
+</Armor>
+<Main Gun Equipment>
+CLHeavySmallLaser
+</Main Gun Equipment>
+<Torso Equipment>
+CLSRM2
+CLSRM2 Ammo (10)
+</Torso Equipment>
+<type>
+Clan
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Biped
+</motion_type>
+
+<source>
+Civil War
+</source>

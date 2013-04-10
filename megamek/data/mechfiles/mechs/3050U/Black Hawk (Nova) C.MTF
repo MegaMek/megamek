@@ -1,0 +1,148 @@
+Version:1.0
+Black Hawk (Nova)
+C
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3050
+Rules Level:2
+
+Mass:50
+Engine:250 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:16
+RA Armor:16
+LT Armor:16
+RT Armor:16
+CT Armor:23
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:8
+RTR Armor:8
+RTC Armor:8
+
+Weapons:3
+1 CLGaussRifle, Left Arm, Ammo:8
+1 CLSRM4, Left Torso, Ammo:25
+1 CLSmallPulseLaser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLSRM4
+CLSRM4 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLSmallPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

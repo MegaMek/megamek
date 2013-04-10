@@ -1,0 +1,149 @@
+Version:1.0
+Vulcan
+VT-5S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:2
+
+Mass:40
+Engine:240 XL Engine
+Structure:Standard
+Myomer:MASC
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:6
+RA Armor:6
+LT Armor:10
+RT Armor:10
+CT Armor:10
+HD Armor:8
+LL Armor:12
+RL Armor:12
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:4
+1 ISUltraAC5, Right Torso, Ammo:20
+1 ISMediumLaser, Left Torso
+1 ISFlamer, Right Arm
+1 ISMachine Gun, Left Arm, Ammo:200
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMachine Gun
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISFlamer
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Jump Jet
+Jump Jet
+ISMASC
+ISMASC
+ISMediumLaser
+ISMG Ammo (200)
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5
+ISUltraAC5 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

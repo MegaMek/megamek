@@ -1,0 +1,153 @@
+Version:1.1
+Toyama
+TYM-1C
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3072
+Source:Jihad
+Rules Level:3
+
+Mass:75
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:23
+RA Armor:23
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:4
+Gauss Rifle, Left Arm
+Medium VSP, Right Arm
+Medium VSP, Right Arm
+LRM 20, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumVariableSpeedLaser
+ISMediumVariableSpeedLaser
+ISMediumVariableSpeedLaser
+ISMediumVariableSpeedLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Gauss Ammo
+IS Gauss Ammo
+ISC3iUnit
+ISC3iUnit
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

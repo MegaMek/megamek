@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Minotaur
+</Name>
+<Model>
+4
+</Model>
+<Tonnage>
+9
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<jumpingMP>
+5
+</jumpingMP>
+<Armor>
+3
+7
+3
+3
+6
+2
+</Armor>
+<Main Gun Equipment>
+CLProtoMechAC2
+Clan ProtoMech AC/2 Ammo (16)
+</Main Gun Equipment>
+<type>
+Clan Level 3
+</type>
+<year>
+3073
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Biped
+</motion_type>
+<source>
+Jihad
+</source>

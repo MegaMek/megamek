@@ -1,0 +1,154 @@
+Version:1.0
+Goshawk (Vapor Eagle)
+2
+
+Config:Biped
+TechBase:Clan
+Era:3055
+Source:Succession Wars
+Rules Level:2
+
+Mass:55
+Engine:330 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:20
+RT Armor:20
+CT Armor:28
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:7
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Medium Pulse Laser, Right Arm
+Ultra AC/10, Left Torso
+Machine Gun, Left Torso
+Medium Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMG
+CLMG
+CLMG
+Clan Machine Gun Ammo - Half
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLMediumPulseLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLMG
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLMediumPulseLaser
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

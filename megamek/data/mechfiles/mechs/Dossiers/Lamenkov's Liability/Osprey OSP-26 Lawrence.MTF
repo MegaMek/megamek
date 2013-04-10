@@ -1,0 +1,133 @@
+Version:1.1
+Osprey
+OSP-26 Lawrence
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Rules Level:2
+
+Mass:55
+Engine:220 XL Fusion Engine
+Structure:Endo-Steel
+Gyro:Compact Gyro
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:16
+RA Armor:16
+LT Armor:22
+RT Armor:22
+CT Armor:30
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:6
+1 ISHeavyPPC, Right Torso
+1 ISMediumPulseLaser, Right Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISMML7, Left Torso, Ammo:34
+1 ISC3SlaveUnit, Center Torso
+1 ISBeagleActiveProbe, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumPulseLaser
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+ISCASE
+
+Right Torso:
+Engine
+Engine
+Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ISC3SlaveUnit
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ImprovedJump Jet
+ImprovedJump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ImprovedJump Jet
+ImprovedJump Jet

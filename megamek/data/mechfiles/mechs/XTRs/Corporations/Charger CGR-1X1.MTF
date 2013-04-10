@@ -1,0 +1,136 @@
+Version:1.1
+Charger
+CGR-1X1
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3076
+Source:Jihad
+Rules Level:4
+
+Mass:80
+Engine:400 XL Fusion Engine
+Structure:Standard
+Myomer:ISMASC
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Heavy Ferro-Fibrous
+LA Armor:26
+RA Armor:26
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:14
+RTR Armor:14
+RTC Armor:20
+
+Weapons:9
+1 ISTAG, Head
+1 ISERLargeLaser, Center Torso
+1 ISMediumXPulseLaser, Right Torso
+1 ISC3BoostedSystemSlaveUnit, Right Torso
+1 ISLaserAntiMissileSystem, Right Torso
+1 ISAngelECM, Left Torso
+1 ISBloodhoundActiveProbe, Left Torso
+1 ISChaffPod, Left Torso
+1 ISLaserAntiMissileSystem, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+Engine
+IS Super Charger
+ISBloodhoundActiveProbe
+ISBloodhoundActiveProbe
+ISBloodhoundActiveProbe
+ISAngelECM
+ISAngelECM
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISChaffPod
+
+Right Torso:
+Engine
+Engine
+Engine
+ISMediumXPulseLaser
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
+ISMASC
+ISMASC
+ISMASC
+ISMASC
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISERLargeLaser
+ISERLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heavy Ferro-Fibrous
+Heavy Ferro-Fibrous

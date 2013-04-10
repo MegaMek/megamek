@@ -1,0 +1,49 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+HALO Paratrooper
+</Name>
+<Model>
+Lyran Paratrooper Corps
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+3
+</squadn>
+<Primary>
+InfantryM&GG150
+</Primary>
+<Secondary>
+InfantryHRR
+</Secondary>
+<secondn>
+1
+</secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<type>
+IS Level 3
+</type>
+<year>
+2500
+</year>
+<era>
+Age of War
+</era>
+<motion_type>
+Leg
+</motion_type>
+<antimek>
+</antimek>

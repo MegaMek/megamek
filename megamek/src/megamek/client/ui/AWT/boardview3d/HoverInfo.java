@@ -241,7 +241,7 @@ class HoverInfo implements IDisplayable {
         } else {
             // ...otherwise, use the generic LOS tool
             LosEffects le = LosEffects.calculateLos(game, ai);
-            if (le.isBlocked()) {
+            if (!le.canSee()) {
                 out.add(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
                     new Integer(src.distance(coords))}));
             } else {

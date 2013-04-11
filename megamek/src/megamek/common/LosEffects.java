@@ -411,12 +411,7 @@ public class LosEffects {
 
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
-        finalLoS.hasLoS = !finalLoS.blocked && (finalLoS.screen < 1) && (finalLoS.plantedFields < 6)
-                && (finalLoS.heavyIndustrial < 3)
-                && ((finalLoS.lightWoods + finalLoS.lightSmoke)
-                        + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2)
-                        + (finalLoS.ultraWoods * 3) < 3);
-
+        
         return finalLoS;
     }
 
@@ -444,10 +439,21 @@ public class LosEffects {
         }
 
         double degree = ai.attackPos.degree(ai.targetPos);
+        LosEffects finalLoS;
         if (degree % 60 == 30) {
-            return LosEffects.losDivided(game, ai);
+            finalLoS = LosEffects.losDivided(game, ai);
+        }else{
+            finalLoS = LosEffects.losStraight(game, ai);
         }
-        return LosEffects.losStraight(game, ai);
+        
+        finalLoS.hasLoS = !finalLoS.blocked && 
+                            (finalLoS.screen < 1) && 
+                            (finalLoS.plantedFields < 6) && 
+                            (finalLoS.heavyIndustrial < 3) && 
+                           ((finalLoS.lightWoods + finalLoS.lightSmoke)
+                             + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2)
+                             + (finalLoS.ultraWoods * 3) < 3);
+        return finalLoS;
     }
 
     /**
@@ -619,7 +625,7 @@ public class LosEffects {
 
         for (Coords c : in) {
             los.add(LosEffects.losForCoords(game, ai, c, los.getThruBldg()));
-        }
+        }      
 
         if ((ai.minimumWaterDepth < 1) && ai.underWaterCombat) {
             los.blocked = true;

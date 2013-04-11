@@ -95,6 +95,7 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.ToHitData;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
@@ -2196,41 +2197,40 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         "BoardView1.Target", new Object[] { //$NON-NLS-1$
                                 te.getDisplayName(), c2.getBoardNum() }));
             }
-            if (le.isBlocked()) {
-                message.append(Messages.getString(
-                        "BoardView1.LOSBlocked", new Object[] { //$NON-NLS-1$
-                                new Integer(c1.distance(c2)) }));
+            //Check to see if LoS is blocked
+            if (!le.canSee()) {
+                message.append(Messages.getString("BoardView1.LOSBlocked", 
+                        new Object[] { //$NON-NLS-1$
+                            new Integer(c1.distance(c2)) 
+                        }));
+                ToHitData thd = le.losModifiers(game);
+                message.append("\t"+thd.getDesc()+"\n");
             } else {
-                message.append(Messages.getString(
-                        "BoardView1.LOSNotBlocked", new Object[] { //$NON-NLS-1$
-                                new Integer(c1.distance(c2)) }));
+                message.append(Messages.getString("BoardView1.LOSNotBlocked", 
+                        new Object[] { //$NON-NLS-1$
+                            new Integer(c1.distance(c2)) 
+                            }));            
                 if (le.getHeavyWoods() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
-                                    new Integer(le.getHeavyWoods()) }));
+                    message.append(Messages.getString("BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
+                            new Integer(le.getHeavyWoods()) }));
                 }
                 if (le.getLightWoods() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.LightWoods", new Object[] { //$NON-NLS-1$
-                                    new Integer(le.getLightWoods()) }));
+                    message.append(Messages.getString("BoardView1.LightWoods", new Object[] { //$NON-NLS-1$
+                            new Integer(le.getLightWoods()) }));
                 }
                 if (le.getLightSmoke() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.LightSmoke", new Object[] { //$NON-NLS-1$
-                                    new Integer(le.getLightSmoke()) }));
+                    message.append(Messages.getString("BoardView1.LightSmoke", new Object[] { //$NON-NLS-1$
+                            new Integer(le.getLightSmoke()) }));
                 }
                 if (le.getHeavySmoke() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
-                                    new Integer(le.getHeavySmoke()) }));
+                    message.append(Messages.getString("BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
+                            new Integer(le.getHeavySmoke()) }));
                 }
-                if (le.isTargetCover()) {
-                    message.append(Messages
-                            .getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
+                if (le.isTargetCover() && le.canSee()) {
+                    message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
                 }
-                if (le.isAttackerCover()) {
-                    message.append(Messages
-                            .getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
+                if (le.isAttackerCover() && le.canSee()) {
+                    message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
             AlertDialog alert = new AlertDialog((Frame)SwingUtilities.getAncestorOfClass(Frame.class, this), Messages

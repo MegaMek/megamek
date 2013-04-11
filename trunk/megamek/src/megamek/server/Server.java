@@ -3663,7 +3663,7 @@ public class Server implements Runnable {
      */
     private void loadUnit(Entity loader, Entity unit) {
 
-        if (game.getPhase() != IGame.Phase.PHASE_LOUNGE && !unit.isDone()) {
+        if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -3671,7 +3671,7 @@ public class Server implements Runnable {
         }
 
         // Load the unit. Do not check for elevation during deployment
-        loader.load(unit, game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT && game.getPhase() != IGame.Phase.PHASE_LOUNGE);
+        loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3681,12 +3681,12 @@ public class Server implements Runnable {
 
         //set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
-        
+
         // Update the loaded unit.
         entityUpdate(unit.getId());
-        
-        //Taharqa (2/28/13): I am not sure why the loader is not getting updated too - not updating it 
-        //is causing problem in the chat lounge loading, so I am going to do it here, but if we get 
+
+        //Taharqa (2/28/13): I am not sure why the loader is not getting updated too - not updating it
+        //is causing problem in the chat lounge loading, so I am going to do it here, but if we get
         //weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
@@ -7317,7 +7317,7 @@ public class Server implements Runnable {
             }
             lastPos = new Coords(curPos);
             lastElevation = curElevation;
-            prevStep = step;      
+            prevStep = step;
             prevHex = curHex;
 
             firstStep = false;
@@ -10441,7 +10441,7 @@ public class Server implements Runnable {
 
         for (Entity loaded : loadVector) {
             if(loaded.getTransportId() != Entity.NONE) {
-                //we probably already loaded this unit in the chat lounge 
+                //we probably already loaded this unit in the chat lounge
                 continue;
             }
             if ((loaded == null) || (loaded.getPosition() != null)) {
@@ -13608,15 +13608,15 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            if (damage >= 1 && te.hasWorkingMisc(MiscType.F_SPIKES, -1,
-                    hit.getLocation())) { 
-                r = new Report(4331); 
+            if ((damage >= 1) && te.hasWorkingMisc(MiscType.F_SPIKES, -1,
+                    hit.getLocation())) {
+                r = new Report(4331);
                 r.indent(2);
-                r.newlines = 0; 
-                r.subject = ae.getId(); 
+                r.newlines = 0;
+                r.subject = ae.getId();
                 addReport(r);
-                checkBreakSpikes(te, hit.getLocation()); 
-                damage = Math.max(1, damage - 4); 
+                checkBreakSpikes(te, hit.getLocation());
+                damage = Math.max(1, damage - 4);
             }
 
             DamageType damageType = DamageType.NONE;
@@ -13656,7 +13656,7 @@ public class Server implements Runnable {
             //forces a PSR like a charge
             game.addPSR(new PilotingRollData(te.getId(), 2, "was hit by wrecking ball"));
         }
-        
+
         if (((MiscType) caa.getClub().getType())
                 .hasSubType(MiscType.S_CHAIN_WHIP) && (te instanceof Mech)) {
             addNewLines();
@@ -19360,7 +19360,6 @@ public class Server implements Runnable {
                 crits = 0;
 
                 for (int i = 0; i < specCrits; i++) {
-                    vDesc.elementAt(vDesc.size() - 1).newlines++;
                     // against BAR or reflective armor, we get a +2 mod
                     int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
                     critMod += reflectiveArmor ? 2 : 0;
@@ -24520,7 +24519,7 @@ public class Server implements Runnable {
      * @return a new Report, which has possibly been obscured
      */
     private Report filterReport(Report r, Player p, boolean omitCheck) {
-        
+
         if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER)
                 && (r.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
@@ -24855,13 +24854,13 @@ public class Server implements Runnable {
             // hey!
         }
     }
-    
+
     /**
      * loads an entity into another one. Meant to be called from the chat lounge
      */
     private void receiveEntityLoad(Packet c, int connIndex) {
         int loadeeId = (Integer) c.getObject(0);
-        int loaderId = (Integer) c.getObject(1);               
+        int loaderId = (Integer) c.getObject(1);
         Entity loadee = game.getEntity(loadeeId);
         Entity loader = game.getEntity(loaderId);
 
@@ -28021,7 +28020,7 @@ public class Server implements Runnable {
     public Vector<Report> ejectEntity(Entity entity, boolean autoEject) {
     	return ejectEntity(entity, autoEject, false);
     }
-    
+
     /**
      * Eject an Entity.
      *
@@ -28239,9 +28238,9 @@ public class Server implements Runnable {
                             IEntityRemovalConditions.REMOVE_IN_RETREAT));
                 }
             } // Crew safely ejects.
-            
+
             // If this is a skin of the teeth ejection...
-            if (skin_of_the_teeth && pilot.getCrew().getHits() < 5) {
+            if (skin_of_the_teeth && (pilot.getCrew().getHits() < 5)) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(pilot, 5 - pilot
                         .getCrew().getHits()));
@@ -28418,9 +28417,9 @@ public class Server implements Runnable {
                         || pe.isShutDown()
                         || pe.getCrew().isUnconscious()
                         || pe.isAirborne()
-                        || pe.getElevation() != e.getElevation()
-                        || pe.getOwnerId() != e.getOwnerId()
-                        || pe.getId() == e.getId()) {
+                        || (pe.getElevation() != e.getElevation())
+                        || (pe.getOwnerId() != e.getOwnerId())
+                        || (pe.getId() == e.getId())) {
                     continue;
                 }
                 if (!pickedUp) {
@@ -28453,11 +28452,11 @@ public class Server implements Runnable {
                             || pe.isShutDown()
                             || pe.getCrew().isUnconscious()
                             || pe.isAirborne()
-                            || pe.getElevation() != e.getElevation()
-                            || pe.getOwnerId() == e.getOwnerId()
-                            || pe.getId() == e.getId()
-                            || pe.getOwner().getTeam() == Player.TEAM_NONE
-                            || pe.getOwner().getTeam() != e.getOwner().getTeam()) {
+                            || (pe.getElevation() != e.getElevation())
+                            || (pe.getOwnerId() == e.getOwnerId())
+                            || (pe.getId() == e.getId())
+                            || (pe.getOwner().getTeam() == Player.TEAM_NONE)
+                            || (pe.getOwner().getTeam() != e.getOwner().getTeam())) {
                         continue;
                     }
                     if (!pickedUp) {
@@ -28492,7 +28491,7 @@ public class Server implements Runnable {
                             || pe.isShutDown()
                             || pe.getCrew().isUnconscious()
                             || pe.isAirborne()
-                            || pe.getElevation() != e.getElevation()) {
+                            || (pe.getElevation() != e.getElevation())) {
                         continue;
                     }
                     if (pe instanceof MechWarrior) {
@@ -29052,7 +29051,7 @@ public class Server implements Runnable {
             psr = new PilotingRollData(entity.getId(), 5,
                     "landing assault drop");
 
-        } 
+        }
         else if(entity instanceof Infantry) {
             psr = new PilotingRollData(entity.getId(), 4,
                     "landing assault drop");
@@ -29124,7 +29123,7 @@ public class Server implements Runnable {
 
             // do fall damage
             entity.setElevation(fallHeight);
-            if(entity instanceof Infantry && !(entity instanceof BattleArmor)) {
+            if((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
                 addReport(damageEntity(entity, hit, 1));
             } else {

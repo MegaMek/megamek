@@ -409,13 +409,13 @@ public abstract class Mech extends Entity {
         Vector<Transporter> et = new Vector<Transporter>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandles) {
-                removeTransporter(t);System.out.println("Log Testing Remove: Entity ID #"+getId());
+                removeTransporter(t);
             }
         }
         if (game.getOptions().booleanOption("ba_grab_bars")) {
-            addTransporter(new BattleArmorHandles());System.out.println("Log Testing Add: Entity ID #"+getId());
+            addTransporter(new BattleArmorHandles());
         } else {
-            addTransporter(new ClampMountMech());System.out.println("Log Testing Add: Entity ID #"+getId());
+            addTransporter(new ClampMountMech());
         }
     }
 

@@ -28,7 +28,7 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT   ("data/images/hexes/artyauto.gif") {
+        ARTILLERY_AUTOHIT("data/images/hexes/artyauto.gif") {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -39,7 +39,7 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_ADJUSTED  ("data/images/hexes/artyadj.gif") {
+        ARTILLERY_ADJUSTED("data/images/hexes/artyadj.gif") {
             @Override
             public boolean drawBefore() {
                 return false;
@@ -50,20 +50,20 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_INCOMING   ("data/images/hexes/artyinc.gif"),
-        ARTILLERY_TARGET      ("data/images/hexes/artytarget.gif"){
+        ARTILLERY_INCOMING("data/images/hexes/artyinc.gif"), ARTILLERY_TARGET(
+                "data/images/hexes/artytarget.gif") {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_HIT        ("data/images/hexes/artyhit.gif") {
+        ARTILLERY_HIT("data/images/hexes/artyhit.gif") {
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        PLAYER_NOTE         (null);
+        PLAYER_NOTE(null);
 
         private transient Image defaultImage;
         private final String defaultImagePath;
@@ -73,7 +73,7 @@ public class SpecialHexDisplay implements Serializable {
         }
 
         public void init(Toolkit toolkit) {
-            if(defaultImagePath != null) {
+            if (defaultImagePath != null) {
                 defaultImage = toolkit.getImage(defaultImagePath);
             }
 
@@ -108,7 +108,7 @@ public class SpecialHexDisplay implements Serializable {
 
     @SuppressWarnings("unused")
     private SpecialHexDisplay() {
-        //deserialization use only
+        // deserialization use only
     }
 
     public SpecialHexDisplay(Type type) {
@@ -136,7 +136,8 @@ public class SpecialHexDisplay implements Serializable {
         this.owner = owner;
     }
 
-    public SpecialHexDisplay(Type type, int round, String owner, String info, boolean obscured) {
+    public SpecialHexDisplay(Type type, int round, String owner, String info,
+            boolean obscured) {
         this.type = type;
         this.info = info;
         this.round = round;
@@ -153,7 +154,7 @@ public class SpecialHexDisplay implements Serializable {
 
     /** Does this SpecialHexDisplayObjet concern a round in the future? */
     public boolean futureRound(int testRound) {
-        if(NO_ROUND == round) {
+        if (NO_ROUND == round) {
             return true;
         }
         return testRound > round;
@@ -161,7 +162,7 @@ public class SpecialHexDisplay implements Serializable {
 
     /** Does this SpecialHexDisplayObjet concern a round in the past? */
     public boolean pastRound(int testRound) {
-        if(NO_ROUND == round) {
+        if (NO_ROUND == round) {
             return true;
         }
         return testRound < round;
@@ -212,23 +213,29 @@ public class SpecialHexDisplay implements Serializable {
      * @param curRound
      * @return
      */
-    public boolean drawNow(IGame.Phase phase, int curRound,String playerChecking) {
-        boolean shouldDisplay = thisRound(curRound) ||
-            (pastRound(curRound) && type.drawBefore()) ||
-            (futureRound(curRound) && type.drawAfter());
+    public boolean drawNow(IGame.Phase phase, int curRound,
+            String playerChecking) {
+        boolean shouldDisplay = thisRound(curRound)
+                || (pastRound(curRound) && type.drawBefore())
+                || (futureRound(curRound) && type.drawAfter());
 
-        if(phase.isBefore(IGame.Phase.PHASE_OFFBOARD) &&
-                ((type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT))) {
-            System.err.println("//hack to display atry targets the round after the hit.");
-            shouldDisplay = shouldDisplay || thisRound(curRound-1);
+        if (phase.isBefore(IGame.Phase.PHASE_OFFBOARD)
+                && ((type == Type.ARTILLERY_TARGET) || (type == Type.ARTILLERY_HIT))) {
+            System.err
+                    .println("//hack to display atry targets the round after the hit.");
+            shouldDisplay = shouldDisplay || thisRound(curRound - 1);
         }
 
-        if(isObscured() && !isOwner(playerChecking)) {
-	        System.err.println("player " + playerChecking + " on turn: " + round + " Special type: " + type + " NOT drawing: " + shouldDisplay + " details: " + info);
-        	return false;
-		}
+        if (isObscured() && !isOwner(playerChecking)) {
+            System.err.println("player " + playerChecking + " on turn: "
+                    + round + " Special type: " + type + " NOT drawing: "
+                    + shouldDisplay + " details: " + info);
+            return false;
+        }
 
-        System.err.println("player " + playerChecking + " on turn: " + round + " Special type: " + type + " drawing: " + shouldDisplay + " details: " + info);
+        System.err.println("player " + playerChecking + " on turn: " + round
+                + " Special type: " + type + " drawing: " + shouldDisplay
+                + " details: " + info);
 
         return shouldDisplay;
     }
@@ -238,9 +245,10 @@ public class SpecialHexDisplay implements Serializable {
      * @return
      */
     public boolean isOwner(String toPlayer) {
-        if((owner == null) || owner.equals(toPlayer)) {
-			if(owner == null)
-				System.err.println("Owner of special hex " + info + "is null!");
+        if ((owner == null) || owner.equals(toPlayer)) {
+            if (owner == null) {
+                System.err.println("Owner of special hex " + info + "is null!");
+            }
             return true;
         }
 

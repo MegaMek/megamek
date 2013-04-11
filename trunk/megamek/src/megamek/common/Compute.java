@@ -201,7 +201,7 @@ public class Compute {
         if(!Compute.isInBuilding(game, entering, coords)) {
             thisHighStackingLevel += entering.height();
         }
-        
+
         // Walk through the entities in the given hex.
         for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = i.nextElement();
@@ -216,7 +216,7 @@ public class Compute {
             if(!Compute.isInBuilding(game, inHex)) {
                 highStackingLevel += inHex.height();
             }
-                      
+
             // Only do all this jazz if they're close enough together on level
             // to interfere.
             if ((thisLowStackingLevel <= highStackingLevel) && (thisHighStackingLevel >= lowStackingLevel)) {
@@ -435,7 +435,7 @@ public class Compute {
         if(entity instanceof Dropship) {
         	return false;
         }
-        
+
         // an easy check
         if (!game.getBoard().contains(dest)) {
             if (game.getOptions().booleanOption("push_off_board")) {
@@ -485,14 +485,14 @@ public class Compute {
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = { 0, 1, 5, 2, 4, 3 };
         int range = 1;
-        //check for a central dropship hex and if so, then displace to a two hex radius 
+        //check for a central dropship hex and if so, then displace to a two hex radius
         Enumeration<Entity> entities = game.getEntities(src);
         while(entities.hasMoreElements()) {
             Entity en = entities.nextElement();
-            if(en instanceof Dropship && !en.isAirborne() && en.getPosition().equals(src)) {
+            if((en instanceof Dropship) && !en.isAirborne() && en.getPosition().equals(src)) {
             	range = 2;
             }
-        }        
+        }
         for (int offset : offsets) {
             Coords dest = src.translated((direction + offset) % 6, range);
             if (Compute.isValidDisplacement(game, entityId, src, dest)) {
@@ -1080,11 +1080,11 @@ public class Compute {
 
         //TODO: we need to adjust for stealth modifiers for Chameleon LPS but we don't have range brackets
         //http://bg.battletech.com/forums/index.php/topic,27433.new.html#new
-        
+
         if(mod != 0) {
             mods.addModifier(mod, "infantry range");
         }
-   
+
         return mods;
     }
 
@@ -1134,7 +1134,7 @@ public class Compute {
         int distance = Integer.MAX_VALUE;
         for(Coords apos : attackPos) {
             for(Coords tpos : targetPos) {
-                if (tpos != null && (apos.distance(tpos) < distance)) {
+                if ((tpos != null) && (apos.distance(tpos) < distance)) {
                     distance = apos.distance(tpos);
                 }
             }
@@ -1855,7 +1855,7 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus) {
         return Compute.getTargetTerrainModifier(game, t, eistatus, false);
     }
-    
+
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus, boolean attackerInSameBuilding) {
         return Compute.getTargetTerrainModifier(game, t, eistatus, attackerInSameBuilding, false);
     }
@@ -2219,7 +2219,7 @@ public class Compute {
             }
 
             // adjust for previous AMS
-            if (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE
+            if ((wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
                     && wt.hasFlag(WeaponType.F_MISSILE)) {
                 ArrayList<Mounted> vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {
@@ -3407,7 +3407,7 @@ public class Compute {
         }
 
         // none? get out of here
-        if (vEnemyECMCoords.size() == 0 && !ae.isINarcedWith(INarcPod.ECM)) {
+        if ((vEnemyECMCoords.size() == 0) && !ae.isINarcedWith(INarcPod.ECM)) {
             return 0;
         }
 
@@ -3585,12 +3585,12 @@ public class Compute {
             return 0;
         }
 
-        //we have to track regular ECM here as well because some ECCM might 
+        //we have to track regular ECM here as well because some ECCM might
         //get "soaked up" by the regular ECM. I have a rules query in that
         //asks for confirmation on whether regular ECM should always be soaked
         //before Angel
         //http://bg.battletech.com/forums/index.php/topic,27121.new.html#new
-        
+
         Vector<Coords> vEnemyOtherECMCoords = new Vector<Coords>(16);
         Vector<Integer> vEnemyOtherECMRanges = new Vector<Integer>(16);
         Vector<Double> vEnemyOtherECMStrengths = new Vector<Double>(16);
@@ -3699,7 +3699,7 @@ public class Compute {
                     ecmStatus += strength;
                 }
             }
-            
+
             // if any coords in the line are affected, the whole line is
             if (ecmStatus > worstECM) {
                 worstECM = ecmStatus;
@@ -5075,9 +5075,9 @@ public class Compute {
                 break;
         }
         damage = Math.ceil(damage);
-        
+
         //according to the following ruling, the half damage that mechanized inf
-        //get against burst fire should trump the double damage they get from 
+        //get against burst fire should trump the double damage they get from
         //non-infantry rather than cancel it out
         //http://bg.battletech.com/forums/index.php/topic,23928.0.html
         if (isNonInfantryAgainstMechanized) {
@@ -5321,6 +5321,84 @@ public class Compute {
 
         return mountable;
 
+    }
+
+    public static boolean allowAimedShotWith(Mounted weapon, int aimingMode) {
+        WeaponType wtype = (WeaponType) weapon.getType();
+        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA)
+        && !isWeaponInfantry;
+        Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+
+        // Leg and swarm attacks can't be aimed.
+        if (wtype.getInternalName().equals(Infantry.LEG_ATTACK)
+                || wtype.getInternalName().equals(Infantry.SWARM_MEK)) {
+            return false;
+        }
+        switch (aimingMode) {
+        case (IAimingModes.AIM_MODE_NONE):
+            return false;
+        case (IAimingModes.AIM_MODE_IMMOBILE):
+            if (weapon.getCurrentShots() > 1) {
+                return false;
+            }
+            if (atype != null) {
+                switch (atype.getAmmoType()) {
+                case (AmmoType.T_SRM_STREAK):
+                case (AmmoType.T_LRM_STREAK):
+                case (AmmoType.T_LRM):
+                case (AmmoType.T_LRM_TORPEDO):
+                case (AmmoType.T_SRM):
+                case (AmmoType.T_SRM_TORPEDO):
+                case (AmmoType.T_MRM):
+                case (AmmoType.T_NARC):
+                case (AmmoType.T_AMS):
+                case (AmmoType.T_ARROW_IV):
+                case (AmmoType.T_LONG_TOM):
+                case (AmmoType.T_SNIPER):
+                case (AmmoType.T_THUMPER):
+                case (AmmoType.T_SRM_ADVANCED):
+                case (AmmoType.T_LRM_TORPEDO_COMBO):
+                case (AmmoType.T_ATM):
+                case (AmmoType.T_MML):
+                case (AmmoType.T_EXLRM):
+                case AmmoType.T_TBOLT_5:
+                case AmmoType.T_TBOLT_10:
+                case AmmoType.T_TBOLT_15:
+                case AmmoType.T_TBOLT_20:
+                case AmmoType.T_PXLRM:
+                case AmmoType.T_HSRM:
+                case AmmoType.T_MRM_STREAK:
+                case AmmoType.T_HAG:
+                case AmmoType.T_ROCKET_LAUNCHER:
+                    return false;
+                }
+                if (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
+                        .getAmmoType() == AmmoType.T_AC_LBX_THB))
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+                    return false;
+                }
+            }
+        break;
+        case (IAimingModes.AIM_MODE_TARG_COMP):
+            if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                    || wtype.hasFlag(WeaponType.F_PULSE)
+                    || (wtype instanceof HAGWeapon)) {
+                return false;
+            }
+        if (weapon.getCurrentShots() > 1) {
+            return false;
+        }
+        if ((atype != null)
+                && ((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
+                        .getAmmoType() == AmmoType.T_AC_LBX_THB))
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+            return false;
+        }
+        break;
+        }
+        return true;
     }
 
 } // End public class Compute

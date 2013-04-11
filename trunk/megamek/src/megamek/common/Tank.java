@@ -21,10 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.weapons.ATMWeapon;
-import megamek.common.weapons.SRMWeapon;
-import megamek.common.weapons.SRTWeapon;
-
 /**
  * You know what tanks are, silly.
  */
@@ -1024,6 +1020,9 @@ public class Tank extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
+        if (getCrew().isDead()) {
+            return 0;
+        }
         if (useManualBV) {
             return manualBV;
         }

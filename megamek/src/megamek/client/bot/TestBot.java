@@ -287,10 +287,10 @@ public class TestBot extends BotClient {
                         WeaponType test_weapon = new WeaponType();
 
                         test_weapon = (WeaponType) equip.getType();
-                        if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY
+                        if (((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY)
                                 || (game.getOptions().booleanOption("uac_tworolls")
-                                && (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA
-                                || test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))
+                                && ((test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA)
+                                || (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB))))
                                 && (equip.isJammed() == true)) {
                             rac_damage = rac_damage + (4 * (test_weapon.getDamage()));
                         } else {
@@ -2222,7 +2222,7 @@ public class TestBot extends BotClient {
                             // increased to-hit number
 
                             refactored_head = 0.0;
-                            if ((base_to_hit + 4) <= 12) {
+                            if (((base_to_hit + 4) <= 12) && Compute.allowAimedShotWith(test_weapon, IAimingModes.AIM_MODE_TARG_COMP)) {
                                 refactored_damage = base_damage
                                         * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
@@ -2260,20 +2260,23 @@ public class TestBot extends BotClient {
 
                             if (has_tcomp) {
 
-                                // Refactor the expected damage to account for
-                                // increased to-hit number of the tcomp
+                                if (Compute.allowAimedShotWith(test_weapon, IAimingModes.AIM_MODE_TARG_COMP)) {
+                                    // Refactor the expected damage to account for
+                                    // increased to-hit number of the tcomp
 
-                                refactored_damage = base_damage
-                                        * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
-                                refactored_head = 0.0;
-                                ((WeaponAttackAction) atk_action_list
-                                        .get(action_index))
-                                        .setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
+                                    refactored_damage = base_damage
+                                            * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
+                                    refactored_head = 0.0;
+                                    ((WeaponAttackAction) atk_action_list
+                                            .get(action_index))
+                                            .setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
 
-                                // Check against immobile aim mode w/tcomp
-                                // assist
-                                if ((0.50 * base_damage * (Compute
-                                        .oddsAbove(base_to_hit) / 100.0)) > refactored_damage) {
+                                    // Check against immobile aim mode w/tcomp
+                                    // assist
+
+                                }
+                                if (((0.50 * base_damage * (Compute
+                                        .oddsAbove(base_to_hit) / 100.0)) > refactored_damage) && Compute.allowAimedShotWith(test_weapon, IAimingModes.AIM_MODE_IMMOBILE)) {
                                     refactored_damage = 0.50
                                             * base_damage
                                             * (Compute.oddsAbove(base_to_hit) / 100.0);
@@ -2286,7 +2289,7 @@ public class TestBot extends BotClient {
                                             .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
                                 }
 
-                            } else {
+                            } else if (Compute.allowAimedShotWith(test_weapon, IAimingModes.AIM_MODE_IMMOBILE)){
 
                                 // If the attacker doesn't have a tcomp, settle
                                 // for immobile aim

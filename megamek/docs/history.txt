@@ -43,6 +43,7 @@ v0.35.36-dev (SVN)
 + Bug 3355: Bot makes aimed shots with LB-X Cluster
 + Bug 3513: super heavy combat vehicle turrets not working 
 + Bug 3581: BV calculation for vehicles with dead crew 
++ Bug 3656: Hardened armor does not provide the -2 bonus for all penetrating critical hits 
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

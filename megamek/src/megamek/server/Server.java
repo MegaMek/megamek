@@ -970,8 +970,7 @@ public class Server implements Runnable {
         // player is most likely the Bot disconnected after receiving
         // the COMMAND_END_OF_GAME command
         // see the Bug 1225949.
-        // TODO Perhaps there is a better solution to handle the Bot disconnect
-        // Done. Ghost players (Bots mostly) are now removed during the
+        // Ghost players (Bots mostly) are now removed during the
         // resetGame(), so we don't need to do it here.
         // This fixes Bug 3399000 without reintroducing 1225949
         if ((phase == IGame.Phase.PHASE_VICTORY)
@@ -1879,6 +1878,8 @@ public class Server implements Runnable {
                         mapSettings.getBoardHeight()));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
+                checkForObservers();
+                transmitAllPlayerUpdates();
                 break;
             case PHASE_INITIATIVE:
                 // remove the last traces of last round
@@ -1888,6 +1889,7 @@ public class Server implements Runnable {
                 resetEntityRound();
                 resetEntityPhase(phase);
                 checkForObservers();
+                transmitAllPlayerUpdates();
 
                 // roll 'em
                 resetActivePlayersDone();
@@ -1917,6 +1919,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
                 checkForObservers();
+                transmitAllPlayerUpdates();
                 resetActivePlayersDone();
                 setIneligible(phase);
 
@@ -1943,6 +1946,7 @@ public class Server implements Runnable {
                     en.deployOffBoard();
                 }
                 checkForObservers();
+                transmitAllPlayerUpdates();
                 resetActivePlayersDone();
                 setIneligible(phase);
 
@@ -1994,6 +1998,7 @@ public class Server implements Runnable {
             case PHASE_OFFBOARD:
                 resetEntityPhase(phase);
                 checkForObservers();
+                transmitAllPlayerUpdates();
                 setIneligible(phase);
                 determineTurnOrder(phase);
                 resetActivePlayersDone();
@@ -2031,6 +2036,7 @@ public class Server implements Runnable {
                 resolveVeeINarcPodRemoval();
                 resolveFortify();
                 checkForObservers();
+                transmitAllPlayerUpdates();
                 entityAllUpdate();
                 break;
             case PHASE_INITIATIVE_REPORT:

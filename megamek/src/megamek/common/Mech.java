@@ -2963,16 +2963,17 @@ public abstract class Mech extends Entity {
                     .hasFlag(WeaponType.F_B_POD)))
                     || ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM)
+                            || etype.hasFlag(MiscType.F_BAP)
                             || etype.hasFlag(MiscType.F_AP_POD)
+                            || etype.hasFlag(MiscType.F_MASS)
                             || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                            || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                            || etype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_CHAFF_POD)
-                            || etype.hasFlag(MiscType.F_MASS)
-                            || etype.hasFlag(MiscType.F_BAP)
-                            || etype.hasFlag(MiscType.F_SPIKES) || (etype
-                            .hasFlag(MiscType.F_CLUB) && (etype
-                            .hasSubType(MiscType.S_SHIELD_LARGE)
+                            || etype.hasFlag(MiscType.F_TARGCOMP)
+                            || etype.hasFlag(MiscType.F_SPIKES)
+                            || (etype.hasFlag(MiscType.F_CLUB) && (etype
+                                    .hasSubType(MiscType.S_SHIELD_LARGE)
                             || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype
                                 .hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(this);
@@ -4158,7 +4159,9 @@ public abstract class Mech extends Entity {
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD)
                     || mtype.hasFlag(MiscType.F_MASS)
-                    // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                    || mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || mtype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_CHAFF_POD)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)
                     || mtype.hasFlag(MiscType.F_SPIKES)

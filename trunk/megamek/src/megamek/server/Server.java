@@ -18677,9 +18677,9 @@ public class Server implements Runnable {
                         && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     armorThreshold *= 2;
                     armorThreshold -= (te.isHardenedArmorDamaged(hit)) ? 1 : 0;
+                    vDesc.lastElement().newlines = 0;
                     r = new Report(6069);
                     r.subject = te_n;
-                    r.newlines = 0;
                     int reportedDamage = damage / 2;
                     if ((damage % 2) > 0) {
                         r.add(String.valueOf(reportedDamage) + ".5");

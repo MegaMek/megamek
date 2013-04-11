@@ -22,6 +22,7 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mech;
@@ -89,6 +90,6 @@ public class LegAttackHandler extends WeaponHandler {
         Report.addNewline(vPhaseReport);
         // Do criticals.
         vPhaseReport.addAll(server.criticalEntity(entityTarget, hit
-                .getLocation(), 0, damage));
+                .getLocation(), entityTarget.getArmorType(hit.getLocation())==EquipmentType.T_ARMOR_HARDENED?-2:0, damage));
     }
 }

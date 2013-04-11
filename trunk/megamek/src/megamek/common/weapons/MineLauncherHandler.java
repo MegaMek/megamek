@@ -19,6 +19,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -101,7 +102,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         hit.setGeneralDamageType(generalDamageType);
         // Do criticals.
         Vector<Report> specialDamageReport = server.criticalEntity(
-                entityTarget, hit.getLocation(), 0, 4);
+                entityTarget, hit.getLocation(), entityTarget.getArmorType(hit.getLocation())==EquipmentType.T_ARMOR_HARDENED?-2:0, 4);
 
         // Replace "no effect" results with 4 points of damage.
         if ((specialDamageReport.lastElement()).messageId == 6005) {

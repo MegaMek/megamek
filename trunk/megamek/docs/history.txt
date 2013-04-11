@@ -40,7 +40,8 @@ v0.35.36-dev (SVN)
 + Data 334: Katya Art
 + Zip unitfiles into zips only when releasing, to keep better track of unitfile
     changes in SVN
-+ Bug 3355: Bot makes aimed shots with LB-X Cluster 
++ Bug 3355: Bot makes aimed shots with LB-X Cluster
++ Bug 3513: super heavy combat vehicle turrets not working 
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

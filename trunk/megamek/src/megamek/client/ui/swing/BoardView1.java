@@ -111,6 +111,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.ToHitData;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -2299,12 +2300,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                 message.append(Messages.getString("BoardView1.Target", new Object[] { //$NON-NLS-1$
                         te.getDisplayName(), c2.getBoardNum() }));
             }
-            if (le.isBlocked()) {
-                message.append(Messages.getString("BoardView1.LOSBlocked", new Object[] { //$NON-NLS-1$
-                        new Integer(c1.distance(c2)) }));
+            //Check to see if LoS is blocked
+            if (!le.canSee()) {
+                message.append(Messages.getString("BoardView1.LOSBlocked", 
+                        new Object[] { //$NON-NLS-1$
+                            new Integer(c1.distance(c2)) 
+                        }));
+                ToHitData thd = le.losModifiers(game);
+                message.append("\t"+thd.getDesc()+"\n");
             } else {
-                message.append(Messages.getString("BoardView1.LOSNotBlocked", new Object[] { //$NON-NLS-1$
-                        new Integer(c1.distance(c2)) }));
+                message.append(Messages.getString("BoardView1.LOSNotBlocked", 
+                        new Object[] { //$NON-NLS-1$
+                            new Integer(c1.distance(c2)) 
+                            }));            
                 if (le.getHeavyWoods() > 0) {
                     message.append(Messages.getString("BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
                             new Integer(le.getHeavyWoods()) }));
@@ -2321,10 +2329,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardL
                     message.append(Messages.getString("BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
                             new Integer(le.getHeavySmoke()) }));
                 }
-                if (le.isTargetCover()) {
+                if (le.isTargetCover() && le.canSee()) {
                     message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
                 }
-                if (le.isAttackerCover()) {
+                if (le.isAttackerCover() && le.canSee()) {
                     message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }

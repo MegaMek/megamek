@@ -73,6 +73,7 @@ import megamek.client.ui.swing.widget.ProtomechMapSet;
 import megamek.client.ui.swing.widget.QuadMapSet;
 import megamek.client.ui.swing.widget.SpheroidMapSet;
 import megamek.client.ui.swing.widget.SquadronMapSet;
+import megamek.client.ui.swing.widget.SuperHeavyTankMapSet;
 import megamek.client.ui.swing.widget.TankMapSet;
 import megamek.client.ui.swing.widget.VTOLMapSet;
 import megamek.client.ui.swing.widget.WarshipMapSet;
@@ -103,6 +104,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Sensor;
 import megamek.common.SmallCraft;
+import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
@@ -407,6 +409,7 @@ public class MechDisplay extends JPanel {
         private GunEmplacementMapSet gunEmplacement;
         private ArmlessMechMapSet armless;
         private LargeSupportTankMapSet largeSupportTank;
+        private SuperHeavyTankMapSet superHeavyTank;
         private AeroMapSet aero;
         private CapitalFighterMapSet capFighter;
         private SquadronMapSet squad;
@@ -444,6 +447,7 @@ public class MechDisplay extends JPanel {
             gunEmplacement = new GunEmplacementMapSet(this);
             armless = new ArmlessMechMapSet(this);
             largeSupportTank = new LargeSupportTankMapSet(this);
+            superHeavyTank = new SuperHeavyTankMapSet(this);
             aero = new AeroMapSet(this);
             capFighter = new CapitalFighterMapSet(this);
             sphere = new SpheroidMapSet(this);
@@ -505,8 +509,14 @@ public class MechDisplay extends JPanel {
                 minTopMargin = minVTOLTopMargin;
                 minBottomMargin = minVTOLTopMargin;
                 minRightMargin = minVTOLLeftMargin;
-            } else if ((en instanceof LargeSupportTank) || ((en instanceof Tank) && ((Tank)en).isSuperHeavy())) {
+            } else if (en instanceof LargeSupportTank) {
                 ams = largeSupportTank;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
+            } else if (en instanceof SuperHeavyTank) {
+                ams = superHeavyTank;
                 minLeftMargin = minTankLeftMargin;
                 minTopMargin = minTankTopMargin;
                 minBottomMargin = minTankTopMargin;

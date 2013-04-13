@@ -289,6 +289,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // wreck sprites
     private ArrayList<WreckSprite> wreckSprites = new ArrayList<WreckSprite>();
+    private ArrayList<IsometricWreckSprite> isometricWreckSprites = new ArrayList<IsometricWreckSprite>();
 
     private Coords rulerStart;
     private Coords rulerEnd;
@@ -750,7 +751,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             .getViewport().getViewPosition().y, this);
         }
         // draw wrecks
-        if (GUIPreferences.getInstance().getShowWrecks()) {
+        if (GUIPreferences.getInstance().getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
         }
 
@@ -873,6 +874,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ArrayList<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
+            Coords cp = sprite.getEntity().getPosition();
+            if (cp.equals(c) && view.intersects(sprite.getBounds())
+                    && !sprite.hidden) {
+                if (!sprite.isReady()) {
+                    sprite.prepare();
+                }
+                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
+                        this, false);
+            }
+        }
+    }
+
+    /**
+     * Draws the wrecksprites for the given hex. This function is used by the
+     * isometric rendering process so that sprites are drawn in the order that
+     * hills are rendered to create the appearance that the sprite is behind the
+     * hill.
+     *
+     * @param c
+     *            The Coordinates of the hex that the sprites should be drawn
+     *            for.
+     * @param g
+     *            The Graphics object for this board.
+     * @param spriteArrayList
+     *            The complete list of all IsometricSprite on the board.
+     */
+    private synchronized void drawIsometricWreckSpritesForHex(Coords c, Graphics g,
+            ArrayList<IsometricWreckSprite> spriteArrayList) {
+        Rectangle view = g.getClipBounds();
+        for (IsometricWreckSprite sprite : spriteArrayList) {
             Coords cp = sprite.getEntity().getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
                     && !sprite.hidden) {
@@ -1235,6 +1266,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     IHex hex = game.getBoard().getHex(c);
                     if (hex != null) {
                         drawOrthograph(c, g);
+                        drawIsometricWreckSpritesForHex(c, g, isometricWreckSprites);
                         drawIsometricSpritesForHex(c, g, isometricSprites);
                     }
                 }
@@ -1971,6 +2003,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 game.getNoOfEntities());
 
         ArrayList<WreckSprite> newWrecks = new ArrayList<WreckSprite>();
+        ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<IsometricWreckSprite>();
+
 
         Enumeration<Entity> e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
@@ -1978,9 +2012,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
                 WreckSprite ws = new WreckSprite(entity, -1);
                 newWrecks.add(ws);
+                IsometricWreckSprite iws = new IsometricWreckSprite(entity, -1);
+                newIsometricWrecks.add(iws);
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     ws = new WreckSprite(entity, secondaryPos);
                     newWrecks.add(ws);
+                    iws = new IsometricWreckSprite(entity, secondaryPos);
+                    newIsometricWrecks.add(iws);
                 }
             }
         }
@@ -2040,6 +2078,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         isometricSpriteIds = newIsoSpriteIds;
 
         wreckSprites = newWrecks;
+        isometricWreckSprites = newIsometricWrecks;
 
         scheduleRedraw();
     }
@@ -3276,6 +3315,162 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             tempImage.flush();
         }
     }
+
+    /**
+     * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
+     * and an identification label.
+     */
+    private class IsometricWreckSprite extends Sprite {
+        private Entity entity;
+
+        private Rectangle modelRect;
+
+        private int secondaryPos;
+
+        public IsometricWreckSprite(final Entity entity, int secondaryPos) {
+            this.entity = entity;
+            this.secondaryPos = secondaryPos;
+
+            String shortName = entity.getShortName();
+
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(
+                    shortName) + 1, getFontMetrics(font).getAscent());
+            int altAdjust = 0;
+            if (useIsometric()
+                    && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
+                altAdjust = (int) (DROPSHDW_DIST * scale);
+            } else if (useIsometric() && (entity.getElevation() != 0)) {
+                altAdjust = (int) (entity.getElevation() * HEX_ELEV * scale);
+            }
+
+            Dimension dim = new Dimension(hex_size.width, hex_size.height
+                    + altAdjust);
+            Rectangle tempBounds = new Rectangle(dim).union(modelRect);
+
+            if (secondaryPos == -1) {
+                tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            } else {
+                tempBounds.setLocation(getHexLocation(entity
+                        .getSecondaryPositions().get(secondaryPos)));
+            }
+            if (entity.getElevation() > 0) {
+                tempBounds.y = tempBounds.y - altAdjust;
+            }
+            bounds = tempBounds;
+            image = null;
+        }
+
+        @Override
+        public Rectangle getBounds() {
+            Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
+            tempBounds.setLocation(getHexLocation(entity.getPosition()));
+            bounds = tempBounds;
+
+            return bounds;
+        }
+
+        /**
+        *
+        */
+       @Override
+       public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
+               boolean makeTranslucent) {
+           if (isReady()) {
+               Graphics2D g2 = (Graphics2D) g;
+               if (makeTranslucent) {
+                   g2.setComposite(AlphaComposite.getInstance(
+                           AlphaComposite.SRC_OVER, 0.35f));
+                   g2.drawImage(image, x, y, observer);
+                   g2.setComposite(AlphaComposite.getInstance(
+                           AlphaComposite.SRC_OVER, 1.0f));
+               } else {
+                   g.drawImage(image, x, y, observer);
+               }
+           } else {
+               prepare();
+           }
+       }
+
+       public Entity getEntity() {
+           return entity;
+       }
+
+        /**
+         * Creates the sprite for this entity. It is an extra pain to create
+         * transparent images in AWT.
+         */
+        @Override
+        public void prepare() {
+            // figure out size
+            String shortName = entity.getShortName();
+            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+            Rectangle tempRect = new Rectangle(47, 55, getFontMetrics(font)
+                    .stringWidth(shortName) + 1, getFontMetrics(font)
+                    .getAscent());
+
+            // create image for buffer
+            Image tempImage;
+            Graphics graph;
+            try {
+                tempImage = createImage(bounds.width, bounds.height);
+                graph = tempImage.getGraphics();
+            } catch (NullPointerException ex) {
+                // argh! but I want it!
+                return;
+            }
+
+            // fill with key color
+            graph.setColor(new Color(TRANSPARENT));
+            graph.fillRect(0, 0, bounds.width, bounds.height);
+
+            // Draw wreck image,if we've got one.
+            Image wreck = tileManager.wreckMarkerFor(entity, -1);
+            if (null != wreck) {
+                graph.drawImage(wreck, 0, 0, this);
+            }
+
+            if (secondaryPos == -1) {
+                // draw box with shortName
+                Color text = Color.lightGray;
+                Color bkgd = Color.darkGray;
+                Color bord = Color.black;
+
+                graph.setFont(font);
+                graph.setColor(bord);
+                graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
+                        tempRect.height);
+                tempRect.translate(-1, -1);
+                graph.setColor(bkgd);
+                graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
+                        tempRect.height);
+                graph.setColor(text);
+                graph.drawString(shortName, tempRect.x + 1,
+                        (tempRect.y + tempRect.height) - 1);
+            }
+
+            // create final image
+            if (zoomIndex == BASE_ZOOM_INDEX) {
+                image = createImage(new FilteredImageSource(
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(
+                        tempImage.getSource(), new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
+        }
+
+        /**
+         * Overrides to provide for a smaller sensitive area.
+         */
+        @Override
+        public boolean isInside(Point point) {
+            return false;
+        }
+
+    }
+
 
     /**
      * Sprite for an wreck. Consists of an image, drawn from the Tile Manager

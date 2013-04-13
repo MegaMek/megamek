@@ -19,12 +19,13 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.GridLayout;
+import java.awt.GridBagLayout;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.MechSummaryCache;
 
@@ -36,7 +37,6 @@ public class UnitLoadingDialog extends JDialog {
     private static final long serialVersionUID = -3454307876761238915L;
     private JLabel lLoading = new JLabel(Messages
             .getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
-    private JLabel lSpacer = new JLabel();
     private JLabel lCacheText = new JLabel(Messages
             .getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$
     private JLabel lCacheCount = new JLabel();
@@ -54,18 +54,17 @@ public class UnitLoadingDialog extends JDialog {
     public UnitLoadingDialog(JFrame frame) {
         super(frame, Messages.getString("UnitLoadingDialog.pleaseWait")); //$NON-NLS-1$
 
-        getContentPane().setLayout(new GridLayout(4, 2));
-        getContentPane().add(lLoading);
-        getContentPane().add(lSpacer);
+        getContentPane().setLayout(new GridBagLayout());
+        getContentPane().add(lLoading, GBC.eol());
 
-        getContentPane().add(lCacheText);
-        getContentPane().add(lCacheCount);
+        getContentPane().add(lCacheText, GBC.std());
+        getContentPane().add(lCacheCount, GBC.eol());
 
-        getContentPane().add(lFileText);
-        getContentPane().add(lFileCount);
+        getContentPane().add(lFileText, GBC.std());
+        getContentPane().add(lFileCount, GBC.eol());
 
-        getContentPane().add(lZipText);
-        getContentPane().add(lZipCount);
+        getContentPane().add(lZipText, GBC.std());
+        getContentPane().add(lZipCount, GBC.eol());
 
         setSize(250, 130);
         // move to middle of screen

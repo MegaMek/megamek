@@ -62,7 +62,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        if (!missed && (entityTarget instanceof Mech || entityTarget instanceof Aero)) {
+        if (!missed && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
@@ -86,7 +86,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Mech || target instanceof Aero) {
+        if ((target instanceof Mech) || (target instanceof Aero)) {
             int toReturn = 10;
             if (bGlancing) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
@@ -107,7 +107,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcnCluster() {
-        if (target instanceof Mech || target instanceof Aero) {
+        if ((target instanceof Mech) || (target instanceof Aero)) {
             bSalvo = false;
             return 1;
         }
@@ -134,7 +134,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
         // against mechs, 1 hit with 10 damage, plus heat
-        if (target instanceof Mech || target instanceof Aero) {
+        if ((target instanceof Mech) || (target instanceof Aero)) {
             toReturn = 1;
             // otherwise, 10+2d6 damage
             // but fireresistant BA armor gets no damage from heat, and half the
@@ -207,15 +207,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        
+
         nDamage *= 2; // Plasma weapons deal double damage to woods.
-        
+
         // report that damage was "applied" to terrain
         Report r = new Report(3385);
-        r.indent();
+        r.indent(2);
         r.subject = subjectId;
         r.add(nDamage);
         vPhaseReport.addElement(r);
@@ -230,10 +229,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (clearReports.size() > 0) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
         return;
     }
-    
+
     @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage, Coords coords) {

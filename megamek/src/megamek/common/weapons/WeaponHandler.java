@@ -597,7 +597,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (hit.hitAimedLocation() && !bSalvo) {
             Report r = new Report(3410);
             r.subject = subjectId;
-            r.newlines = 0;
+            vPhaseReport.lastElement().newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.
@@ -651,7 +651,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (hit.hitAimedLocation() && bSalvo) {
                 Report r = new Report(3410);
                 r.subject = subjectId;
-                r.newlines = 0;
+                vPhaseReport.lastElement().newlines = 0;
                 vPhaseReport.addElement(r);
             }
         }
@@ -691,12 +691,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
         Report r = new Report(3385);
-        r.indent();
+        r.indent(2);
         r.subject = subjectId;
         r.add(nDamage);
         vPhaseReport.addElement(r);
@@ -711,7 +710,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (clearReports.size() > 0) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
         return;
     }
 

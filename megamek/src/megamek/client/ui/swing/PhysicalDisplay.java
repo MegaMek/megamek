@@ -37,7 +37,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.widget.IndexedCheckbox;
+import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -587,10 +587,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-     /*   if (!SearchlightAttackAction.isPossible(clientgui.getClient().game,
+        if (!SearchlightAttackAction.isPossible(clientgui.getClient().game,
                 cen, target, null)) {
             return;
-        }*/
+        }
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
@@ -1828,7 +1828,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // ItemListener, listens to the radiobuttons in the dialog.
         public void itemStateChanged(ItemEvent ev) {
-            IndexedCheckbox icb = (IndexedCheckbox) ev.getSource();
+            IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
             aimingAt = icb.getIndex();
             updateTarget();
         }

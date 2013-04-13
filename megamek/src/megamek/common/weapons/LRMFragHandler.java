@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -34,7 +34,7 @@ import megamek.server.Server.DamageType;
 public class LRMFragHandler extends LRMHandler {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2308151080895016663L;
 
@@ -52,28 +52,30 @@ public class LRMFragHandler extends LRMHandler {
 
     /**
      * Calculate the damage per hit.
-     * 
+     *
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override
     protected int calcDamagePerHit() {
         float toReturn = 1;
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor
-                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+        if ((ae instanceof BattleArmor)
+                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize();
-            if (bDirect )
+            if (bDirect ) {
                 toReturn += toHit.getMoS()/3;
+            }
         }
 
-        if (target instanceof Entity && !(target instanceof Infantry)
-                || target instanceof BattleArmor)
+        if (((target instanceof Entity) && !(target instanceof Infantry))
+                || (target instanceof BattleArmor)) {
             toReturn = 0;
+        }
 
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
@@ -83,7 +85,7 @@ public class LRMFragHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean)
      */
@@ -94,7 +96,6 @@ public class LRMFragHandler extends LRMHandler {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
@@ -103,7 +104,7 @@ public class LRMFragHandler extends LRMHandler {
         nDamage *= 2;
 
         Report r = new Report(3385);
-        r.indent();
+        r.indent(2);
         r.subject = subjectId;
         r.add(nDamage);
         vPhaseReport.addElement(r);
@@ -111,19 +112,23 @@ public class LRMFragHandler extends LRMHandler {
         // Any clear attempt can result in accidental ignition, even
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
-        if (bldg != null
+        if ((bldg != null)
                 && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
 
-        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (clearReports.size() > 0) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
         return;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean, Coords)
      */

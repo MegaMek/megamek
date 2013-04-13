@@ -122,7 +122,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (hit.hitAimedLocation() && !bSalvo) {
             r = new Report(3410);
             r.subject = subjectId;
-            r.newlines = 0;
+            vPhaseReport.lastElement().newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.

@@ -32,9 +32,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
- 
+
     /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4718048077136686433L;
 
@@ -61,7 +61,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
             int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        if (!missed && (entityTarget instanceof Mech || entityTarget instanceof Aero)) {
+        if (!missed && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
             int extraHeat = 0;
             for(int wId: weapon.getBayWeapons()) {
                 Mounted m = ae.getEquipment(wId);
@@ -69,13 +69,13 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     WeaponType bayWType = ((WeaponType)m.getType());
                     if(bayWType instanceof ISPlasmaRifle) {
                     	extraHeat += Compute.d6();
-                    } 
+                    }
                     else if(bayWType instanceof CLPlasmaCannon) {
                     	extraHeat += Compute.d6(2);
                     }
                 }
             }
-            if(extraHeat > 0) { 
+            if(extraHeat > 0) {
 	        	Report r = new Report(3400);
 	            r.subject = subjectId;
 	            r.indent(2);
@@ -140,15 +140,14 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        
+
         nDamage *= 2; // Plasma weapons deal double damage to woods.
-        
+
         // report that damage was "applied" to terrain
         Report r = new Report(3385);
-        r.indent();
+        r.indent(2);
         r.subject = subjectId;
         r.add(nDamage);
         vPhaseReport.addElement(r);
@@ -163,10 +162,14 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (clearReports.size() > 0) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
         return;
     }
-    
+
     @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage, Coords coords) {

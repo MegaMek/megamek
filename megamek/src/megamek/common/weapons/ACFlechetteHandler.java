@@ -64,7 +64,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -84,7 +84,6 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Flechette weapons do double damage to woods
@@ -92,21 +91,26 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
         // report that damage was "applied" to terrain
         Report r = new Report(3385);
-        r.indent();
+        r.indent(2);
         r.subject = subjectId;
         r.add(nDamage);
+        r.newlines = 0;
         vPhaseReport.addElement(r);
 
         // Any clear attempt can result in accidental ignition, even
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
-        if (bldg != null
+        if ((bldg != null)
                 && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
 
-        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (clearReports.size() > 0) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
         return;
     }
 }

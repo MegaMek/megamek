@@ -20,7 +20,7 @@ package megamek.common.event;
 public class GameSettingsChangeEvent extends GameEvent {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7470732576407688193L;
 
@@ -31,13 +31,13 @@ public class GameSettingsChangeEvent extends GameEvent {
         super(source);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameSettingsChange(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameSettingsChange(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "New Settings";
-	}
+    @Override
+    public String getEventName() {
+        return "New Settings";
+    }
 }

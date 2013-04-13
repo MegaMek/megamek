@@ -1200,7 +1200,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         panOptions.add(sl);
     }
 
-    private void loadValues() {
+    public void loadValues() {
         texBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));
         texBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
         texTheme.setText(mapSettings.getTheme());
@@ -2581,6 +2581,10 @@ public class RandomMapDialog extends JDialog implements ActionListener,
         }
     }
 
+    public MapSettings getMapSettings() {
+        return mapSettings;
+    }
+
     public void setMapSettings(MapSettings mapSettings) {
         this.mapSettings = mapSettings;
         loadValues();
@@ -2597,7 +2601,7 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 .getSize().height);
                 */
         int width = 600;
-        int height = 500;               
+        int height = 500;
         setPreferredSize(new Dimension(width, height));
     }
 

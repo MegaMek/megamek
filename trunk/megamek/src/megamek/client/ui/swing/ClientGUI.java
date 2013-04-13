@@ -29,6 +29,7 @@ import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -386,7 +387,24 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
         // minimap
-        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
+        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false){
+                /**
+                 * 
+                 */
+                private static final long serialVersionUID = 1L;
+    
+                /**
+                 * In addition to the default Dialog processKeyEvent, this method 
+                 * dispatches a KeyEvent to the client gui.  
+                 * This enables all of the gui hotkeys. 
+                 */
+                protected void processKeyEvent(KeyEvent e) {        
+                    //menuBar.dispatchEvent(e);
+                    curPanel.dispatchEvent(e);
+                    super.processKeyEvent(e);                                                                       
+                }
+            }; //$NON-NLS-1$
+            
         x = GUIPreferences.getInstance().getMinimapPosX();
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {

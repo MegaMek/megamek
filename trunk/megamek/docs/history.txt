@@ -1,7 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.36-dev (SVN)
-+ Bug 3690: The LOS tool doesn't appear to consider wooded hexes when determing whether LOS is blocked or not
 + Bug 3325: Oversized custom platoon causes client to hang on deployment
 + Bug: weapon swarm attack possible when not swarming a mek
 + Bug 3658: Infantry with AA guns cannot attack aircraft
@@ -45,6 +44,8 @@ v0.35.36-dev (SVN)
 + Bug 3581: BV calculation for vehicles with dead crew 
 + Bug 3656: Hardened armor does not provide the -2 bonus for all penetrating critical hits
 + Bug 3592: Defeated player stuck as observer in lobby after game ends  
++ Bug 3690: The LOS tool doesn't appear to consider wooded hexes when determing whether LOS is blocked or not
++ Bug 3496: Hotkeys failing to work 
 
 v0.35.35 (2013-03-14, 22:49 UTC+1)
 + CL Mech Mortars have wrong racksize

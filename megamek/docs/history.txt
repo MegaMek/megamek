@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.36-dev (SVN)
+v0.35.36 (2013-04-13, 23:23 UTC+2)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment
 + Bug: weapon swarm attack possible when not swarming a mek
 + Bug 3658: Infantry with AA guns cannot attack aircraft
@@ -14,8 +14,10 @@ v0.35.36-dev (SVN)
 + Added construction support for VTOLs with turrets
    MapSet for MechDisplay is missing
 + Fixed Kyudo naming in Mechset
-+ Bug 3549:  Torso Cockpit Head Destruction Causes MegaMek to Freeze / Bug 3645: Princess Bot NPE After Withdrawing Tank
-+ Bug 3549/3645: Modified the code to make sure all references to the homeEdge variable go through the new getter & setter methods.
++ Bug 3549:  Torso Cockpit Head Destruction Causes MegaMek to Freeze
++ Bug 3645: Princess Bot NPE After Withdrawing Tank
++ Bug 3549/3645: Modified the code to make sure all references to the homeEdge
+    variable go through the new getter & setter methods.
 + Bug 3671: Undamaged unit flagged as "Crippled"
 + Bug: Chain Whip BV wrong
 + Bug: CASE II should prevent all explosive BV reductions
@@ -42,9 +44,11 @@ v0.35.36-dev (SVN)
 + Bug 3355: Bot makes aimed shots with LB-X Cluster
 + Bug 3513: super heavy combat vehicle turrets not working 
 + Bug 3581: BV calculation for vehicles with dead crew 
-+ Bug 3656: Hardened armor does not provide the -2 bonus for all penetrating critical hits
++ Bug 3656: Hardened armor does not provide the -2 bonus for all penetrating
+    critical hits
 + Bug 3592: Defeated player stuck as observer in lobby after game ends
-+ Bug 3690: The LOS tool doesn't appear to consider wooded hexes when determing whether LOS is blocked or not
++ Bug 3690: The LOS tool doesn't appear to consider wooded hexes when determing
+    whether LOS is blocked or not
 + Bug 3496: Hotkeys failing to work 
 + Bug 3660: Map selection bug, keeps defaulting to "surprise"
 + Misc report fixes

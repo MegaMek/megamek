@@ -18577,9 +18577,11 @@ public class Server implements Runnable {
                     }
                 }
             }
+            boolean prevArmorDamage = false;
 
             // is there armor in the location hit?
             if (!ammoExplosion && (te.getArmor(hit) > 0) && !damageIS) {
+                prevArmorDamage = true;
                 int tmpDamageHold = -1;
                 int origDamage = damage;
 
@@ -19004,6 +19006,9 @@ public class Server implements Runnable {
                         damage = 0;
                         r = new Report(6100);
                         r.subject = te_n;
+                        if (!prevArmorDamage) {
+                            r.indent(3);
+                        }
                         // Infantry platoons have men not "Internals".
                         if (isPlatoon) {
                             r.messageId = 6095;
@@ -19046,6 +19051,7 @@ public class Server implements Runnable {
                         } else {
                             r.messageId = 6115;
                         }
+                        r.indent(3);
                         vDesc.addElement(r);
 
                         // If a sidetorso got destroyed, and the

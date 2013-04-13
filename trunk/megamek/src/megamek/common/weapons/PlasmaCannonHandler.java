@@ -56,7 +56,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     @Override
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster, int bldgAbsorbs) {
 
-        if (entityTarget instanceof Mech || entityTarget instanceof Aero) {
+        if ((entityTarget instanceof Mech) || (entityTarget instanceof Aero)) {
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
             hit.setGeneralDamageType(generalDamageType);
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), Compute.targetSideTable(ae, entityTarget,
@@ -99,7 +99,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target instanceof Mech || target instanceof Aero) {
+        if ((target instanceof Mech) || (target instanceof Aero)) {
             return 0;
         }
         int toReturn = 1;
@@ -128,7 +128,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcnCluster() {
-        if (target instanceof Mech || target instanceof Aero) {
+        if ((target instanceof Mech) || (target instanceof Aero)) {
             bSalvo = false;
             return 1;
         }
@@ -148,7 +148,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             return 1;
         }
-        if (target instanceof Mech || target instanceof Aero) {
+        if ((target instanceof Mech) || (target instanceof Aero)) {
             return 1;
         }
         if ((target instanceof BattleArmor) && ((BattleArmor) target).isFireResistant()) {
@@ -211,15 +211,14 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             // hits!
             Report r = new Report(2270);
             r.subject = subjectId;
-            r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        
+
         nDamage *= 2; // Plasma weapons deal double damage to woods.
-        
+
         // report that damage was "applied" to terrain
         Report r = new Report(3385);
-        r.indent();
+        r.indent(2);
         r.subject = subjectId;
         r.add(nDamage);
         vPhaseReport.addElement(r);
@@ -234,10 +233,14 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (clearReports.size() > 0) {
+            vPhaseReport.lastElement().newlines = 0;
+        }
+        vPhaseReport.addAll(clearReports);
         return;
     }
-    
+
     @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage, Coords coords) {

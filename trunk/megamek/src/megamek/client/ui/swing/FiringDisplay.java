@@ -45,7 +45,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.widget.IndexedCheckbox;
+import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -2022,7 +2022,7 @@ KeyListener, ItemListener, ListSelectionListener {
          * ItemListener, listens to the radiobuttons in the dialog.
          */
         public void itemStateChanged(ItemEvent ev) {
-            IndexedCheckbox icb = (IndexedCheckbox) ev.getSource();
+            IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
             aimingAt = icb.getIndex();
             updateTarget();
         }

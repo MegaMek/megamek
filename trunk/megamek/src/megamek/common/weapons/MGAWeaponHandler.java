@@ -172,6 +172,7 @@ public class MGAWeaponHandler extends MGHandler {
         if (hit.hitAimedLocation()) {
             Report r = new Report(3410);
             r.subject = subjectId;
+            vPhaseReport.lastElement().newlines = 0;
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.

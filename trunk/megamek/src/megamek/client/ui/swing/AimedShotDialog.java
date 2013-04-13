@@ -1,14 +1,14 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 
@@ -28,11 +28,11 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.widget.IndexedCheckbox;
+import megamek.client.ui.swing.widget.IndexedRadioButton;
 
 public class AimedShotDialog extends JDialog {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6527374019085650613L;
 
@@ -42,7 +42,7 @@ public class AimedShotDialog extends JDialog {
     /**
      * The checkboxes for available choices.
      */
-    private IndexedCheckbox[] checkboxes;
+    private IndexedRadioButton[] checkboxes;
     private boolean[] boxEnabled;
 
     public AimedShotDialog(JFrame parent, String title, String message,
@@ -67,11 +67,11 @@ public class AimedShotDialog extends JDialog {
         getContentPane().add(labMessage);
 
         ButtonGroup radioGroup = new ButtonGroup();
-        checkboxes = new IndexedCheckbox[choices.length];
+        checkboxes = new IndexedRadioButton[choices.length];
 
         for (int i = 0; i < choices.length; i++) {
             boolean even = (i & 1) == 0;
-            checkboxes[i] = new IndexedCheckbox(choices[i], i == selectedIndex,
+            checkboxes[i] = new IndexedRadioButton(choices[i], i == selectedIndex,
                     radioGroup, i);
             checkboxes[i].addItemListener(il);
             checkboxes[i].setEnabled(enabled[i]);
@@ -91,9 +91,9 @@ public class AimedShotDialog extends JDialog {
         butNoAim.requestFocus();
 
         pack();
-        setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - getSize().width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation((parent.getLocation().x + (parent.getSize().width / 2))
+                - (getSize().width / 2), (parent.getLocation().y
+                + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
     public void setEnableAll(boolean enableAll) {

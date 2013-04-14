@@ -1,0 +1,139 @@
+Version:1.1
+Vanquisher
+VQR-7U
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3071
+Rules Level:3
+
+Mass:100
+Engine:300 Compact Fusion Engine
+Structure:Endo-Steel
+Gyro:Compact Gyro
+Cockpit:Small Cockpit
+Myomer:Triple Strength Myomer
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:45
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:11
+1 ISHeavyFlamer, Head, Ammo:10
+1 ISBeagleActiveProbe, Center Torso
+1 ISRemoteSensorDispenser, Left Torso
+1 ISImprovedC3CPU, Center Torso
+1 ISERFlamer, Right Arm
+1 ISERFlamer, Left Arm
+1 ISPlasmaRifle, Right Arm, Ammo:40
+1 ISPlasmaRifle, Left Arm
+1 ISSmallVSPLaser, Left Torso
+1 ISSmallVSPLaser, Left Torso
+1 ISSNPPC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+ISERFlamer
+ISPlasmaRifle Ammo
+-Empty-
+-Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+ISERFlamer
+ISPlasmaRifle Ammo
+-Empty-
+-Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISPlasmaRifle Ammo
+RemoteSensorDispenser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISSNPPC
+ISSNPPC
+ISPlasmaRifle Ammo
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+ISImprovedC3CPU
+ISImprovedC3CPU
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISHeavyFlamer
+ISHeavyFlamer Ammo
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Endo-Steel

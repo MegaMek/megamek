@@ -1,0 +1,133 @@
+Version:1.1
+Lobo
+2
+
+Config:Biped
+TechBase:Clan
+Era:3072
+Rules Level:2
+
+Mass:40
+Engine:240 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:12
+RA Armor:12
+LT Armor:15
+RT Armor:15
+CT Armor:18
+HD Armor:9
+LL Armor:19
+RL Armor:19
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:7
+1 CLAPGaussRifle, Right Torso, Ammo:40
+1 CLAPGaussRifle, Left Torso
+1 CLERMediumLaser, Left Torso
+1 CLERMediumLaser, Head
+1 CLLargePulseLaser, Right Torso
+1 CLPlasmaCannon, Right Arm, Ammo:20
+1 CLPlasmaCannon, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+CLAPGaussRifle
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+CLLargePulseLaser
+CLLargePulseLaser
+CLAPGaussRifle
+Clan AP Gauss Rifle Ammo
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERMediumLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Ferro-Fibrous

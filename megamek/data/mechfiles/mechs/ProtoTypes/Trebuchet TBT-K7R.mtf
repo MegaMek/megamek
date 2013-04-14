@@ -1,0 +1,133 @@
+Version:1.1
+Trebuchet
+TBT-K7R
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3132
+Rules Level:4
+
+Mass:50
+Engine:250 Light Fusion Engine
+Structure:Endo-Steel
+Myomer:Triple Strength Myomer
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:16
+RA Armor:16
+LT Armor:19
+RT Armor:19
+CT Armor:24
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:7
+1 Chain Whip, Right Arm
+1 ISStreakSRM6, Right Torso, Ammo:15
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Left Arm
+1 ISERFlamer, Left Torso
+1 ISERFlamer, Left Torso
+1 ISMekTaser, Left Arm, Ammo:10
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISMekTaser
+ISMekTaser
+ISMekTaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Chain Whip
+Chain Whip
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Left Torso:
+Engine
+Engine
+ISERFlamer
+ISERFlamer
+ISStreakSRM6 Ammo
+MekTaserAmmo
+MekTaserAmmo
+ISCASE
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Torso:
+Engine
+Engine
+ISStreakSRM6
+ISStreakSRM6
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet

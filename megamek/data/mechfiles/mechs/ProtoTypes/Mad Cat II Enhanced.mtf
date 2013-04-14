@@ -1,0 +1,132 @@
+Version:1.1
+Mad Cat II
+Enhanced
+
+Config:Biped
+TechBase:Clan
+Era:3082
+Rules Level:4
+
+Mass:90
+Engine:360 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:18 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Hardened
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:30
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:8
+RTR Armor:8
+RTC Armor:15
+
+Weapons:6
+1 CLERLargeLaser, Right Arm
+1 CLERLargeLaser, Left Arm
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLLRM10, Right Torso, Ammo:24
+1 CLLRM10, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+Jump Jet
+CLLRM10
+CLLRM10 Ammo
+Endo-Steel
+-Empty-
+
+Right Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+Jump Jet
+CLLRM10
+CLLRM10 Ammo
+Endo-Steel
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

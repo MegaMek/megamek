@@ -1,0 +1,132 @@
+Version:1.1
+Templar
+TLR1-OH
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3080
+Rules Level:3
+
+Mass:85
+Engine:340 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:28
+RA Armor:28
+LT Armor:26
+RT Armor:26
+CT Armor:44
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:6
+1 ISLightPPC, Right Torso
+1 ISLightPPC, Left Torso
+1 ISERFlamer, Right Arm
+1 ISC3SlaveUnit, Left Torso
+1 ISMRM30, Right Arm, Ammo:32
+1 ISMRM30, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISApollo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISApollo
+ISERFlamer
+Endo-Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+ISLightPPC
+ISLightPPC
+ISTargeting Computer
+ISTargeting Computer
+ISC3SlaveUnit
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+ISLightPPC
+ISLightPPC
+ISMRM30 Ammo
+ISMRM30 Ammo
+ISMRM30 Ammo
+ISMRM30 Ammo
+ISCASE
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

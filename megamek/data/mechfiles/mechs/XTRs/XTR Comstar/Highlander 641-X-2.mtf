@@ -1,0 +1,134 @@
+Version:1.1
+Highlander
+641-X-2
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3070
+Rules Level:4
+
+Mass:90
+Engine:270 XL Fusion Engine
+Structure:Reinforced
+Gyro:XL Gyro
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Light Ferro-Fibrous
+LA Armor:25
+RA Armor:30
+LT Armor:27
+RT Armor:27
+CT Armor:40
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:16
+
+Weapons:7
+1 ISGaussRifle, Right Arm, Ammo:16
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Right Torso
+1 ISAngelECM, Right Torso
+1 ISC3SlaveUnit, Head
+1 ISMML7, Left Torso, Ammo:68
+1 ISMML7, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISArtemisIV
+ISMML7 LRM Ammo Artemis-capable
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISCASEII
+Light Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+Engine
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISArtemisIV
+ISMML7 LRM Ammo Artemis-capable
+ISMML7 LRM Ammo Artemis-capable
+ISMML7 SRM Ammo Artemis-capable
+ISCASEII
+
+Right Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISERMediumLaser
+ISERMediumLaser
+ISGauss Ammo
+ISGauss Ammo
+ISAngelECM
+ISAngelECM
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Light Ferro-Fibrous
+Light Ferro-Fibrous

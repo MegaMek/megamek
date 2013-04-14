@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-SM1
+SM1 Tank Destroyer
 </Name>
 
 <Model>
-Telos
+(Telos)
 </Model>
 
 <year>
@@ -72,7 +72,7 @@ ISCASE
 </Body Equipment>
 
 <Front Equipment>
-ExtendedLRM 15
+ISExtendedLRM15
 Machine Gun
 </Front Equipment>
 

@@ -1,0 +1,131 @@
+Version:1.1
+Orion
+ON3-M
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Rules Level:4
+
+Mass:75
+Engine:300 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:22
+RT Armor:22
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:5
+1 ISERMediumLaser, Right Arm
+1 ISGaussRifle, Right Torso, Ammo:16
+1 ISTAG, Head
+1 ISExtendedLRM15, Left Arm, Ammo:24
+1 ISERMediumLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISERMediumLaser
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISCASEII
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISGauss Ammo
+ISGauss Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

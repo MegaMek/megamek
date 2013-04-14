@@ -1,0 +1,92 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Garuda Heavy VTOL
+</Name>
+
+<year>
+3084
+</year>
+
+<source>
+TRO:Prototypes
+</source>
+
+<type>
+Clan Level 4
+</type>
+
+<tonnage>
+40
+</tonnage>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<armor>
+30
+25
+25
+22
+2
+20
+</armor>
+
+<Body Equipment>
+CLVTOLJetBooster
+CLECMSuite
+CLStreakLRM15 Ammo
+</Body Equipment>
+
+<Front Equipment>
+CLStreakLRM15
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<Turret Equipment>
+Clan ER Large Laser
+Clan TAG
+</Turret Equipment>
+
+<heatsinks>
+12
+</heatsinks>
+
+<armor_type>
+1
+</armor_type>
+
+
+

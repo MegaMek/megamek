@@ -1,0 +1,131 @@
+Version:1.1
+Beowulf
+IIC
+
+Config:Biped
+TechBase:Clan
+Era:3085
+Rules Level:4
+
+Mass:45
+Engine:270 XL Fusion Engine
+Structure:Standard
+Myomer:CLMASC
+
+Heat Sinks:12 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:5
+1 CLERLargeLaser, Right Arm
+1 CLLightTAG, Head
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLWatchdogECM, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Jump Jet
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLMASC
+CLMASC
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLWatchdogECM
+CLWatchdogECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLLightTAG
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

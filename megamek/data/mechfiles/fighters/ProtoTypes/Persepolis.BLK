@@ -1,0 +1,92 @@
+<BlockVersion>
+1
+</BlockVersion>
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+<Name>
+Persepolis
+</Name>
+
+<Tonnage>
+70
+</Tonnage>
+<SafeThrust>
+6
+</SafeThrust>
+<Armor>
+56
+40
+40
+36
+</Armor>
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLImprovedHeavyMediumLaser
+CLImprovedHeavyMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakLRM20
+CLStreakLRM20 Ammo
+CLStreakLRM20 Ammo
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLStreakLRM20
+CLStreakLRM20 Ammo
+CLStreakLRM20 Ammo
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLImprovedHeavySmallLaser
+CLImprovedHeavySmallLaser
+</Aft Equipment>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+Clan Level 3
+</type>
+
+<source>
+TRO:Prototypes
+</source>
+
+<year>
+3085
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<cockpit_type>
+0
+</cockpit_type>

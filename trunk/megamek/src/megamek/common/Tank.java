@@ -2379,8 +2379,19 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean canGoHullDown() {
-        return game.getOptions().booleanOption("tacops_hull_down");
+    /**
+     * Checks to see if a Tank is capable of going hull-down.  This is true if
+     * hull-down rules are enabled and the Tank is in a fortified hex.
+     * 
+     *  @return True if hull-down is enabled and the Tank is in a fortified hex.
+     */
+    public boolean canGoHullDown() {    
+        //MoveStep line 2179 performs this same check
+        // performing it here will allow us to disable the Hulldown button 
+        // if the movement is illegal
+        IHex occupiedHex = getGame().getBoard().getHex(getPosition());            
+        return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
+               game.getOptions().booleanOption("tacops_hull_down");
     }
 
     public void setOnFire(boolean inferno) {

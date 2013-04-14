@@ -2,6 +2,7 @@
 ----------------
 v0.35.37-dev (SVN)
 + Bug 3458: Imaging stacking error 
++ Bug 3694: Hull-down button for vehicles is enabled when the vehicle cannot go hull-down
 
 v0.35.36 (2013-04-13, 23:23 UTC+2)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment

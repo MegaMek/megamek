@@ -145,7 +145,6 @@ public class MechDisplay extends JPanel {
      */
     public MechDisplay(ClientGUI clientgui) {
         super(new GridBagLayout());
-        
         this.clientgui = clientgui;
 
         tabStrip = new MechPanelTabStrip(this);
@@ -278,17 +277,6 @@ public class MechDisplay extends JPanel {
                 break;
             }
         }
-    }
-
-    /**
-     * In addition to the default JPanel processKeyBinding, this method 
-     * dispatches a KeyEvent to the client gui.  This enables all of the gui
-     * hotkeys. 
-     */
-    protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
-            int condition, boolean pressed) {        
-        clientgui.dispatchEvent(e);
-        return super.processKeyBinding(ks,e,condition,pressed);        
     }
     
     /**

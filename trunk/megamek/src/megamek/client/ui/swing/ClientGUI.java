@@ -348,7 +348,24 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         int y;
         int h;
         int w;
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false){
+                /**
+                 * 
+                 */
+                private static final long serialVersionUID = 1L;
+    
+                /**
+                 * In addition to the default Dialog processKeyEvent, this method 
+                 * dispatches a KeyEvent to the client gui.  
+                 * This enables all of the gui hotkeys. 
+                 */
+                protected void processKeyEvent(KeyEvent e) {        
+                    //menuBar.dispatchEvent(e);
+                    curPanel.dispatchEvent(e);
+                    if (!e.isConsumed())
+                        super.processKeyEvent(e);                                                                       
+                }
+            }; //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
@@ -401,7 +418,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 protected void processKeyEvent(KeyEvent e) {        
                     //menuBar.dispatchEvent(e);
                     curPanel.dispatchEvent(e);
-                    super.processKeyEvent(e);                                                                       
+                    if (!e.isConsumed())
+                        super.processKeyEvent(e);                                                                       
                 }
             }; //$NON-NLS-1$
             

@@ -1,0 +1,133 @@
+Version:1.1
+Hellspawn
+HSN-10SR
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3081
+Rules Level:2
+
+Mass:45
+Engine:270 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:8
+
+Armor:Standard Armor
+LA Armor:14
+RA Armor:14
+LT Armor:17
+RT Armor:17
+CT Armor:21
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:7
+1 ISGuardianECM, Center Torso
+1 ISTAG, Right Torso
+1 ISBeagleActiveProbe, Left Torso
+1 ISERMediumLaser, Right Arm
+1 ISERMediumLaser, Left Arm
+1 ISLightPPC, Right Arm
+1 ISLightPPC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLightPPC
+ISLightPPC
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLightPPC
+ISLightPPC
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISTAG
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISGuardianECM
+ISGuardianECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISImprovedJump Jet
+ISImprovedJump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISImprovedJump Jet
+ISImprovedJump Jet

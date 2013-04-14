@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Tyr Infantry Support Tank
+</Name>
+
+<Model>
+(Kurita)
+</Model>
+
+<year>
+3070
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+21
+21
+21
+21
+20
+</armor>
+
+<Body Equipment>
+CLCASE
+Clan Light Machine Gun Ammo - Half
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLLightMG
+CLLightMG
+ISMML7
+ISMML7
+</Turret Equipment>
+
+<source>
+RS 3067U
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

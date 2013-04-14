@@ -1,0 +1,153 @@
+Version:1.0
+Super Griffin
+GRF-2N-X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3020
+Source:XTR Succession Wars
+Rules Level:4
+
+Mass:60
+Engine:240 Fusion Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:6
+
+Armor:Standard(Inner Sphere)
+LA Armor:14
+RA Armor:14
+LT Armor:22
+RT Armor:22
+CT Armor:24
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:4
+PPC, Right Arm
+LRM 10, Right Torso
+Medium Laser, Left Arm
+Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+PPC
+PPC
+PPC
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+ISPrototypeJumpJet
+ISPrototypeJumpJet
+ISPrototypeJumpJet
+
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+ISPrototypeJumpJet
+ISPrototypeJumpJet
+ISPrototypeJumpJet
+LRM 10
+LRM 10
+IS Ammo LRM-10
+IS Ammo LRM-10
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Small Laser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+history:This mech is NOT valid. The freezers are not implemented and it's using IS double heat sinks instead.
+

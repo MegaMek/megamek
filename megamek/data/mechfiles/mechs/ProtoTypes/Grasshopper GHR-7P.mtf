@@ -1,0 +1,133 @@
+Version:1.1
+Grasshopper
+GHR-7P
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Rules Level:4
+
+Mass:70
+Engine:280 Light Fusion Engine
+Structure:Endo-Steel
+Cockpit:Torso-Mounted Cockpit
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:6
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:22
+RT Armor:22
+CT Armor:32
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:6
+1 ISLargeXPulseLaser, Right Arm
+1 ISERMediumLaser, Right Arm
+1 ISERMediumLaser, Left Arm
+1 ISERMediumLaser, Head
+1 ISLargeXPulseLaser, Left Arm
+1 ISBloodhoundActiveProbe, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Life Support
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Life Support
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+ISERMediumLaser
+ISBloodhoundActiveProbe
+ISBloodhoundActiveProbe
+ISBloodhoundActiveProbe
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISImprovedJump Jet
+ISImprovedJump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISImprovedJump Jet
+ISImprovedJump Jet

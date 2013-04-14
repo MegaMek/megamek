@@ -1,0 +1,138 @@
+Version:1.1
+Mad Cat
+III
+
+Config:Biped
+TechBase:Clan
+Era:3086
+Rules Level:4
+
+Mass:55
+Engine:330 XL Fusion Engine
+Structure:Endo-Composite
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:15
+RA Armor:15
+LT Armor:19
+RT Armor:19
+CT Armor:20
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:12
+1 CLERMicroLaser, Center Torso
+1 CLERMicroLaser, Center Torso
+1 CLERMicroLaser, Left Torso
+1 CLERMicroLaser, Left Torso
+1 CLERMicroLaser, Right Torso
+1 CLERMicroLaser, Right Torso
+1 CLLRM20, Right Torso, Ammo:24
+1 CLLRM20, Left Torso
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+Endo-Composite
+Endo-Composite
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+Endo-Composite
+Endo-Composite
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLERMicroLaser
+CLERMicroLaser
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+
+Right Torso:
+Engine
+Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLERMicroLaser
+CLERMicroLaser
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLERMicroLaser
+CLERMicroLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous

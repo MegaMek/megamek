@@ -1,0 +1,161 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Hydaspes
+
+</Name>
+
+<Model>
+
+2
+
+</Model>
+
+<Tonnage>
+
+95
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+138
+
+106
+
+106
+
+82
+
+</Armor>
+
+<Nose Equipment>
+
+CLHeavyMediumLaser
+
+CLHeavyMediumLaser
+
+CLTargeting Computer
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLHeavyLargeLaser
+
+CLATM9
+
+CLATM9
+
+CLATM9 Ammo
+
+CLATM9 Ammo
+
+CLATM9 Ammo
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+CLHeavyLargeLaser
+
+CLATM9
+
+CLATM9
+
+CLATM9 Ammo
+
+CLATM9 Ammo
+
+CLATM9 Ammo
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+<heatsinks>
+
+25
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+640
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+3064
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

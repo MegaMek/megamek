@@ -1,0 +1,129 @@
+Version:1.1
+Stinger
+IIC
+
+Config:Biped
+TechBase:Clan
+Era:3085
+Rules Level:4
+
+Mass:20
+Engine:120 Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:6
+RA Armor:6
+LT Armor:7
+RT Armor:7
+CT Armor:8
+HD Armor:7
+LL Armor:8
+RL Armor:8
+RTL Armor:3
+RTR Armor:3
+RTC Armor:4
+
+Weapons:3
+1 CLAPGaussRifle, Right Arm, Ammo:40
+1 CLImprovedHeavyMediumLaser, Right Arm
+1 CLImprovedHeavyMediumLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedHeavyMediumLaser
+CLImprovedHeavyMediumLaser
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedHeavyMediumLaser
+CLImprovedHeavyMediumLaser
+CLAPGaussRifle
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+Jump Jet
+Jump Jet
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Clan AP Gauss Rifle Ammo
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

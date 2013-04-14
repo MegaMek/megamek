@@ -13,7 +13,7 @@ VTOL
 </UnitType>
 
 <Name>
-Warrior
+Warrior Attack Helicopter
 </Name>
 
 <Model>
@@ -64,7 +64,7 @@ IS Ammo Extended LRM-10
 </Body Equipment>
 
 <Front Equipment>
-ExtendedLRM 10
+ISExtendedLRM10
 </Front Equipment>
 
 <Right Equipment>

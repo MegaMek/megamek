@@ -1,0 +1,135 @@
+Version:1.1
+Ursus
+3
+
+Config:Biped
+TechBase:Clan
+Era:3079
+Rules Level:4
+
+Mass:50
+Engine:200 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:15
+RA Armor:15
+LT Armor:18
+RT Armor:18
+CT Armor:25
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:9
+1 CLProtoAC8, Right Arm, Ammo:30
+1 CLProtoAC8, Right Arm
+1 CLImprovedHeavyMediumLaser, Right Torso
+1 CLImprovedHeavyMediumLaser, Left Torso
+1 CLAPGaussRifle, Left Arm, Ammo:80
+1 CLAPGaussRifle, Left Arm
+1 CLAPGaussRifle, Left Arm
+1 CLWatchdogECM, Center Torso
+1 CLERFlamer, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+Clan AP Gauss Rifle Ammo
+Clan AP Gauss Rifle Ammo
+CLCASEII
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+Ferro-Fibrous
+
+Left Torso:
+CLImprovedHeavyMediumLaser
+CLImprovedHeavyMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLImprovedHeavyMediumLaser
+CLImprovedHeavyMediumLaser
+CLProtoAC8Ammo
+CLProtoAC8Ammo
+CLProtoAC8Ammo
+CLCASEII
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLWatchdogECM
+CLWatchdogECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERFlamer
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

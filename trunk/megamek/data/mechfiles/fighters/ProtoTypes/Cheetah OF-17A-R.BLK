@@ -1,0 +1,96 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Cheetah
+</Name>
+
+<Model>
+OF-17A-R
+</Model>
+
+<Tonnage>
+25
+</Tonnage>
+
+<SafeThrust>
+12
+</SafeThrust>
+
+<Armor>
+11
+11
+11
+7
+</Armor>
+
+<Nose Equipment>
+ISGuardianECMSuite
+ISHypersprectralImager
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3085
+</year>
+
+<source>
+TRO:Prototypes
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+8
+</armor_type>
+
+<engine_type>				
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<cockpit_type>
+1
+</cockpit_type>

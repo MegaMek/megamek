@@ -1,0 +1,87 @@
+<BlockVersion>
+1
+</BlockVersion>
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+<Name>
+Corax
+</Name>
+<Model>
+C
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<SafeThrust>
+9
+</SafeThrust>
+<Armor>
+46
+34
+34
+30
+</Armor>
+<Nose Equipment>
+CLStreakLRM15
+CLStreakLRM15 Ammo
+CLStreakLRM15 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+Clan Level 3
+</type>
+
+<source>
+TRO:Prototypes
+</source>
+
+<year>
+3081
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+1
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<cockpit_type>
+1
+</cockpit_type>

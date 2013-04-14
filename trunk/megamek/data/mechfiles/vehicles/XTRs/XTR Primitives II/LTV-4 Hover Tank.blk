@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-LTV-4
+Hover Tank
 </Name>
 
 <Model>
-Hover Tank
+LTV-4
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ Hover Tank
 </year>
 
 <type>
-IS Level 5
+IS Level 2
 </type>
 
 <motion_type>
@@ -49,7 +49,7 @@ Hover
 </armor>
 
 <Body Equipment>
-IS SRM 4 Ammo
+IS Ammo SRM-4
 </Body Equipment>
 
 <Front Equipment>
@@ -70,7 +70,7 @@ SRM 4
 </Turret Equipment>
 
 <source>
-XTR Primitives II
+XTR:Prim II
 </source>
 
 <tonnage>

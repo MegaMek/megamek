@@ -1,0 +1,133 @@
+Version:1.1
+Pendragon
+PDG-1R
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Rules Level:4
+
+Mass:95
+Engine:380 XL Fusion Engine
+Structure:Composite
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:32
+RA Armor:32
+LT Armor:30
+RT Armor:30
+CT Armor:48
+HD Armor:9
+LL Armor:40
+RL Armor:40
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:7
+1 ISExtendedLRM15, Right Arm, Ammo:24
+1 ISExtendedLRM15, Left Arm
+1 ISERPPC, Left Torso
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Right Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISCASEII
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtendedLRM15
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISCASEII
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPCCapacitor
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Engine
+Engine
+Engine
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous

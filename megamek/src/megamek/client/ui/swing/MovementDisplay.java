@@ -1767,7 +1767,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 setGetUpEnabled(false);
                 setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
                         && !(butUp.isEnabled()));
-                setHullDownEnabled(ce.canGoHullDown());
+                if (!(ce instanceof Tank)){
+                    setHullDownEnabled(ce.canGoHullDown());
+                }else{
+                    // So that vehicle can move and go hull-down, we have to
+                    //  check if it's moved into a fortified position
+                    if (cmd.getLastStep() != null){
+                        boolean hullDownEnabled = clientgui.getClient().game.
+                            getOptions().booleanOption("tacops_hull_down");
+                        IHex occupiedHex = clientgui.getClient().game.
+                            getBoard().getHex(cmd.getLastStep().getPosition());
+                        boolean fortifiedHex = 
+                            occupiedHex.containsTerrain(Terrains.FORTIFIED); 
+                        setHullDownEnabled(hullDownEnabled && fortifiedHex);
+                    }else{
+                        // If there's queued up movement, we can call the
+                        //  canGoHullDown() method in the Tank class.
+                        setHullDownEnabled(ce.canGoHullDown()); 
+                    }
+                    
+                }
             }
         } else {
             setGetUpEnabled(false);

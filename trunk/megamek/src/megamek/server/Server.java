@@ -7490,6 +7490,14 @@ public class Server implements Runnable {
                 }
             }
         }
+        
+        // We need to check for the removal of hull-down for tanks.  
+        // Tanks can just drive out of hull-down:  if the tank was hull-down
+        // and doesn't end hull-down we can remove the hull-down status
+        if ((entity instanceof Tank) && entity.isHullDown()
+                && !md.getFinalHullDown()) {
+            entity.setHullDown(false);
+        }
 
         // If the entity is being swarmed, erratic movement may dislodge the
         // fleas.

@@ -967,6 +967,12 @@ public class MoveStep implements Serializable {
         if (noCost) {
             setMp(0);
         }
+        
+        // Tanks can just drive out of hull-down.  If we're a tank, and we moved
+        //  then we are no longer hull-down.
+        if ((entity instanceof Tank) && distance > 0){
+            setHullDown(false);
+        }            
 
         // Update the entity's total MP used.
         addMpUsed(getMp());
@@ -1954,6 +1960,7 @@ public class MoveStep implements Serializable {
                     && (stepType != MoveStepType.CAREFUL_STAND)
                     && (stepType != MoveStepType.HULL_DOWN)
                     && (stepType != MoveStepType.GO_PRONE)
+                    && !(entity instanceof Tank) // Tanks can drive out of hull-down
                     && (isProne() || isHullDown())) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
@@ -2169,7 +2176,7 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // only standing quads may go hull down
+        // Standing mechs and vehicles in fortified terrain can hull-down 
         if (stepType == MoveStepType.HULL_DOWN) {
             if ((isHullDown()
                     || !((entity instanceof Mech) || (entity instanceof Tank)) || entity

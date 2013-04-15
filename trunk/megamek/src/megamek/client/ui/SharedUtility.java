@@ -36,7 +36,6 @@ import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MovePath;
-import megamek.common.Report;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -190,8 +189,8 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // check for non-mech entering a fire
-            boolean underwater = curHex.containsTerrain(Terrains.WATER) 
-                    && curHex.depth() > 0
+            boolean underwater = curHex.containsTerrain(Terrains.WATER)
+                    && (curHex.depth() > 0)
                     && (step.getElevation() < curHex.surface());
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater && !(entity instanceof Mech) && (step.getElevation() <= 1) && (moveType != EntityMovementType.MOVE_JUMP) && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.FireMoving", new Object[] { new Integer(8) }));
@@ -268,9 +267,6 @@ public class SharedUtility {
                 // Get the building being entered.
                 Building bldg = null;
                 String reason ="entering";
-                if ((buildingMove & 2) == 2) {
-                    bldg = game.getBoard().getBuildingAt(curPos);
-                }
                 if ((buildingMove & 1) == 1) {
                     bldg = game.getBoard().getBuildingAt(lastPos);
                 }
@@ -330,7 +326,7 @@ public class SharedUtility {
                     }
                 }
             }
-            
+
             // update lastPos, prevStep, prevFacing & prevHex
             if (!curPos.equals(lastPos)) {
                 prevFacing = curFacing;

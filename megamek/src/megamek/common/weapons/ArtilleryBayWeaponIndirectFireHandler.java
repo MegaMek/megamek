@@ -214,17 +214,21 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // previously fired at the target hex, this would in fact appear to be
             // correct.
             else if (null != bestSpotter) {
-                ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
+                // only add mods if it's not an automatic success
+                if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
+                    ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
 
-                game.getBoard().addSpecialHexDisplay(targetPos,
-                        new SpecialHexDisplay(
-                            SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
-                            game.getRoundCount(),
-                            game.getPlayer(aaa.getPlayerId()).getName(),
-                            "Artillery bay toHit Adjusted fire Incoming.in "+ (game.getRoundCount() + aaa.turnsTilHit) +" rounds from" + game.getPlayer(aaa.getPlayerId()).getName(),
-                            false
-                        )
-                );
+                    game.getBoard().addSpecialHexDisplay(targetPos,
+                            new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
+                                game.getRoundCount(),
+                                game.getPlayer(aaa.getPlayerId()).getName(),
+                                "Artillery bay toHit Adjusted fire Incoming.in "+ (game.getRoundCount() + aaa.turnsTilHit) +" rounds from" + game.getPlayer(aaa.getPlayerId()).getName(),
+                                false
+                            )
+                    );
+                }
+
             }
 
         } // End artyAttacker-alive

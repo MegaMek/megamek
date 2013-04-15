@@ -2119,7 +2119,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(
                     newVar + ": " + name, newVar); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().set(newVar, name);
-            randomMapDialog.getMapSettings().getBoardsSelectedVector().set(newVar, name);
         }
         lisBoardsSelected.setSelectedIndices(selected);
         clientgui.getClient().sendMapSettings(mapSettings);
@@ -2187,6 +2186,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         refreshEntities();
         refreshPlayerInfo();
         setupMapSizes();
+        randomMapDialog.getMapSettings().setBoardSize(
+                (mapSettings.getBoardWidth()), mapSettings.getBoardHeight());
+        randomMapDialog.getMapSettings().setMapSize(mapSettings.getMapWidth(), mapSettings.getMapHeight());
+        randomMapDialog.getMapSettings().setBoardsAvailableVector(mapSettings.getBoardsAvailableVector());
+        randomMapDialog.getMapSettings().setBoardsSelectedVector(mapSettings.getBoardsSelectedVector());
+        randomMapDialog.loadValues();
     }
 
     /*
@@ -2355,9 +2360,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         .split("x");
                 mapSettings.setBoardSize(Integer.parseInt(sizes[0]),
                         Integer.parseInt(sizes[1]));
-                randomMapDialog.getMapSettings().setBoardSize(
-                        Integer.parseInt(sizes[0]), Integer.parseInt(sizes[1]));
-                randomMapDialog.loadValues();
                 clientgui.getClient().sendMapSettings(mapSettings);
             }
         } else if (ev.getSource().equals(chkRotateBoard)

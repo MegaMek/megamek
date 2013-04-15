@@ -7211,15 +7211,7 @@ public class Server implements Runnable {
                 }
 
                 boolean collapsed = false;
-                // are we passing through a building wall?
-                if ((bldgExited != null) && !bldgExited.equals(bldgEntered)) {
-                    String reason = "exiting";
-                    collapsed = passBuildingWall(entity, bldgExited, lastPos,
-                            curPos, distance, reason,
-                            step.isThisStepBackwards(), step.getParent()
-                                    .getLastStepMovementType(), false);
-                    addAffectedBldg(bldgExited, collapsed);
-                } else if ((bldgEntered != null)) {
+                if ((bldgEntered != null)) {
                     // If we're not leaving a building, just handle the
                     // "entered".
                     String reason;
@@ -7490,8 +7482,8 @@ public class Server implements Runnable {
                 }
             }
         }
-        
-        // We need to check for the removal of hull-down for tanks.  
+
+        // We need to check for the removal of hull-down for tanks.
         // Tanks can just drive out of hull-down:  if the tank was hull-down
         // and doesn't end hull-down we can remove the hull-down status
         if ((entity instanceof Tank) && entity.isHullDown()

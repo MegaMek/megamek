@@ -2959,8 +2959,9 @@ public abstract class Mech extends Entity {
             }
 
             if (((etype instanceof WeaponType) && (etype
-                    .hasFlag(WeaponType.F_AMS) || etype
-                    .hasFlag(WeaponType.F_B_POD)))
+                    .hasFlag(WeaponType.F_AMS)
+                    || etype.hasFlag(WeaponType.F_M_POD)
+                    || etype.hasFlag(WeaponType.F_B_POD)))
                     || ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM)
                             || etype.hasFlag(MiscType.F_BAP)

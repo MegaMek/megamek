@@ -232,6 +232,10 @@ public class EquipmentType {
     }
 
     public boolean isExplosive(Mounted mounted) {
+        return isExplosive(mounted, false);
+    }
+
+    public boolean isExplosive(Mounted mounted, boolean ignoreCharge) {
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) && ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
             return false;
@@ -279,6 +283,16 @@ public class EquipmentType {
         }
 
         // special case. PPC with Capacitor only explodes when charged
+        if (ignoreCharge) {
+            // for BV purposes, we need to ignore the chargedness and check only if there's a capacitor
+            if ((mounted.getType() instanceof PPCWeapon) && (mounted.getLinkedBy() != null)) {
+                return true;
+            }
+            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && (mounted.getLinked() != null)) {
+                return true;
+            }
+
+        }
         if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && !mounted.curMode().equals("Charge")) {
             return false;
         }
@@ -524,7 +538,7 @@ public class EquipmentType {
     public double getCost(Entity entity, boolean armored, int loc) {
         return cost;
     }
-    
+
     public double getRawCost() {
         return cost;
     }
@@ -543,7 +557,7 @@ public class EquipmentType {
     public String getTechRatingName() {
         return EquipmentType.getRatingName(getTechRating());
     }
-    
+
     public String getFullRatingName() {
     	String rating = getTechRatingName();
     	rating += "/";
@@ -578,14 +592,14 @@ public class EquipmentType {
     public int getReintruductionDate() {
         return reintroDate;
     }
-    
+
     public static String getEquipDateAsString(int date) {
     	if(date == DATE_NONE) {
     		return "-";
     	} else {
     		return Integer.toString(date);
     	}
-    	
+
     }
 
     public boolean isAvailableIn(int year) {
@@ -714,7 +728,7 @@ public class EquipmentType {
                 w.write(getEquipDateAsString(type.getIntroductionDate()));
                 w.write(",");
                 w.write(getEquipDateAsString(type.getExtinctionDate()));
-                w.write(","); 
+                w.write(",");
                 w.write(getEquipDateAsString(type.getReintruductionDate()));
                 w.write(",");
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {

@@ -870,14 +870,29 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_CLUB) && hasSubType(S_HATCHET)) {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
+            if (entity.hasWorkingMisc(F_TSM)) {
+                returnBV *= 2;
+            }
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE_THB)) {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
+            if (entity.hasWorkingMisc(F_TSM)) {
+                returnBV *= 2;
+            }
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.0;
+            if (entity.hasWorkingMisc(F_TSM)) {
+                returnBV *= 2;
+            }
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
             returnBV = Math.ceil(entity.getWeight() / 4.0);
+            if (entity.hasWorkingMisc(F_TSM)) {
+                returnBV *= 2;
+            }
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
             returnBV = Math.ceil(entity.getWeight() / 10.0) * 1.725;
+            if (entity.hasWorkingMisc(F_TSM)) {
+                returnBV *= 2;
+            }
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
             double fFrontBV = 0.0, fRearBV = 0.0;
@@ -902,6 +917,9 @@ public class MiscType extends EquipmentType {
             // they
             // do for kicks, so 50% of normal kick damage
             returnBV = Math.round(Math.floor(entity.getWeight() / 5.0) * 0.5);
+            if (entity.hasWorkingMisc(MiscType.F_TSM)) {
+                returnBV *= 2;
+            }
         }
 
         return returnBV;

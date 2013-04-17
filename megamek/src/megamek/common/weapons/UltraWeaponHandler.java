@@ -60,7 +60,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         setDone();
         checkAmmo();
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if (total > 1 && !weapon.curMode().equals("Single")) {
+        if ((total > 1) && !weapon.curMode().equals("Single")) {
             howManyShots = 2;
         } else {
             howManyShots = 1;
@@ -102,7 +102,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         bSalvo = true;
 
-        if (howManyShots == 1 || (game.getOptions().booleanOption("unjam_uac") && (wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))) {
+        if ((howManyShots == 1) || (game.getOptions().booleanOption("unjam_uac") && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
             return 1;
         }
 
@@ -172,12 +172,12 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if ((roll == 2) && (howManyShots == 2)) {
+        if ((roll == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
             isJammed = true;
-            if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
+            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 r.messageId = 3160;
                 if (!game.getOptions().booleanOption("uac_tworolls")) {
                     weapon.setHit(true);
@@ -225,6 +225,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         return !game.getOptions().booleanOption("uac_tworolls");
     }
 
+    @Override
     protected int calcnClusterAero(Entity entityTarget) {
     	if(usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
     		return (int)Math.ceil(attackValue / 2.0);
@@ -232,5 +233,5 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     		return 1;
     	}
     }
-    
+
 }

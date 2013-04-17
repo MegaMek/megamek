@@ -8,6 +8,7 @@ v0.35.37-dev (SVN)
 + Bug 3692: Map selection broken for map sheets beyond the first
 + Bug 3695: Artillery modifier of 2,147,483,644 
 + Bug 3691: Mech forced to make skill test to exit building 
++ Bug: PPCs with capacitors should reduce defensive BV for explodability
 
 v0.35.36 (2013-04-13, 23:23 UTC+2)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment

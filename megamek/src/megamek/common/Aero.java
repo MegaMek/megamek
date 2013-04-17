@@ -14,8 +14,17 @@
 
 package megamek.common;
 
-import java.text.DecimalFormat;
-import java.util.*;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.weapons.EnergyWeapon;
@@ -1306,7 +1315,7 @@ public class Aero extends Entity {
             EquipmentType etype = mounted.getType();
 
             // only count explosive ammo
-            if (!etype.isExplosive(mounted)) {
+            if (!etype.isExplosive(mounted, true)) {
                 continue;
             }
             // PPCs with capacitors subtract 1
@@ -2127,16 +2136,17 @@ public class Aero extends Entity {
         bvText.append(endColumn);
         bvText.append(endRow);
 
-        //We need to consider external stores.  Per TechManual Pg314, 
-        //  TM BV Errata Pg23, the external stores BV is added to the 
+        //We need to consider external stores.  Per TechManual Pg314,
+        //  TM BV Errata Pg23, the external stores BV is added to the
         // units base BV
         boolean hasBombs = false;
         double bombBV = 0;
         for (int bombType = 0; bombType < BombType.B_NUM; bombType++ ){
             BombType bomb = BombType.createBombByType(bombType);
             bombBV += bomb.bv * bombChoices[bombType];
-            if (bombChoices[bombType] > 0)
+            if (bombChoices[bombType] > 0) {
                 hasBombs = true;
+            }
         }
         finalBV += bombBV;
         if (hasBombs){
@@ -2151,7 +2161,7 @@ public class Aero extends Entity {
             bvText.append(bombBV);
             bvText.append(endColumn);
             bvText.append(endRow);
-            
+
             bvText.append(startRow);
             bvText.append(startColumn);
             bvText.append(endColumn);
@@ -2173,10 +2183,10 @@ public class Aero extends Entity {
 
             bvText.append(finalBV);
             bvText.append(endColumn);
-            bvText.append(endRow);            
+            bvText.append(endRow);
         }
-        
-        
+
+
         bvText.append(endTable);
         bvText.append("</BODY></HTML>");
 
@@ -3732,7 +3742,7 @@ public class Aero extends Entity {
         double internalPercent = getInternalRemainingPercent();
         String msg = getDisplayName() + " CRIPPLED: ";
         if (internalPercent < 0.5) {
-            System.out.println( msg + "only " + DecimalFormat.getPercentInstance().format(internalPercent) +
+            System.out.println( msg + "only " + NumberFormat.getPercentInstance().format(internalPercent) +
                                        " internals remaining.");
             return true;
         }

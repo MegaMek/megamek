@@ -3056,7 +3056,7 @@ public abstract class Mech extends Entity {
             EquipmentType etype = mounted.getType();
 
             // only count explosive ammo
-            if (!etype.isExplosive(mounted)) {
+            if (!etype.isExplosive(mounted, true)) {
                 continue;
             }
             // PPCs with capacitors subtract 1

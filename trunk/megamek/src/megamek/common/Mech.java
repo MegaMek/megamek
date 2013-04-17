@@ -3172,6 +3172,9 @@ public abstract class Mech extends Entity {
         if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
             int unProtectedCrits = 0;
             for (int loc = LOC_CT; loc <= LOC_LLEG; loc++) {
+                if (hasCASEII(loc)) {
+                    continue;
+                }
                 if (isClan()) {
                     // Clan mechs only count ammo in ct, legs or head (per
                     // BMRr).

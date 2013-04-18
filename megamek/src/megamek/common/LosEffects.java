@@ -886,9 +886,8 @@ public class LosEffects {
                     los.blockedByHill = true;
                 }
             }
-        }
-
-        if (((hexEl + bldgEl > ai.attackAbsHeight) && (hexEl + bldgEl > ai.targetAbsHeight))
+        // check for LOS according to normal rules
+        }else if (((hexEl + bldgEl > ai.attackAbsHeight) && (hexEl + bldgEl > ai.targetAbsHeight))
                 || ((hexEl + bldgEl > ai.attackAbsHeight) && (ai.attackPos
                         .distance(coords) == 1))
                 || ((hexEl + bldgEl > ai.targetAbsHeight) && (ai.targetPos

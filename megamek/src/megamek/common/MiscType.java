@@ -1456,7 +1456,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        misc.name = "IS Double Heat Sink Prototype";
+        misc.name = "Double Heat Sink Prototype";
         misc.setInternalName("ISDoubleHeatSinkPrototype");
         misc.addLookupName("IS Double Heat Sink Prototype");
         misc.addLookupName("ISDouble Heat Sink Prototype");

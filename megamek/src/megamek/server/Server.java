@@ -62,6 +62,7 @@ import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.BombType;
 import megamek.common.Building;
+import megamek.common.Building.BasementType;
 import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
@@ -10000,7 +10001,7 @@ public class Server implements Runnable {
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             fallElevation -= destHex.terrainLevel(Terrains.BLDG_ELEV);
         }
-        if (destHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
+        if (destHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
             if (entity.getElevation() == 0) { // floor 0 falling into basement
                 fallElevation = destHex.depth(true);
             }
@@ -23454,8 +23455,8 @@ public class Server implements Runnable {
                 newElevation = 0;
             }
             waterDepth = 0;
-            if ((bldg.getBasement() != Building.NOBASEMENT)
-                    && (bldg.getBasement() != Building.ONE_DEEP_NORMALINFONLY)
+            if ((bldg.getBasement() != BasementType.NONE)
+                    && (bldg.getBasement() != BasementType.ONE_DEEP_NORMALINFONLY)
                     && (entity.getElevation() == 0)
                     && (bldg.getBasementCollapsed() == true)) {
 
@@ -23463,24 +23464,18 @@ public class Server implements Runnable {
                     System.err.println(" Entity " + entity.getDisplayName()
                             + " is falling into a depth " + fallHex.depth(true)
                             + " basement -- not allowed!!");
-                    fallHex.getTerrain(Terrains.BLDG_BASEMENT);
                     return vPhaseReport;
                 }
-                if ((bldg.getBasement() == Building.TWO_DEEP_FEET)
-                        || (bldg.getBasement() == Building.TWO_DEEP_HEAD)) {
-                    damageHeight = 2;
-                } else {
-                    damageHeight = 1;
-                }
+                damageHeight = bldg.getBasement().getDepth();
 
                 newElevation = height - damageHeight;
 
                 handlingBasement = true;
-                if ((bldg.getBasement() == Building.TWO_DEEP_FEET)
-                        || (bldg.getBasement() == Building.ONE_DEEP_FEET)) {
+                if ((bldg.getBasement() == BasementType.TWO_DEEP_FEET)
+                        || (bldg.getBasement() == BasementType.ONE_DEEP_FEET)) {
                     damageTable = ToHitData.HIT_KICK;
-                } else if ((bldg.getBasement() == Building.TWO_DEEP_HEAD)
-                        || (bldg.getBasement() == Building.ONE_DEEP_HEAD)) {
+                } else if ((bldg.getBasement() == BasementType.TWO_DEEP_HEAD)
+                        || (bldg.getBasement() == BasementType.ONE_DEEP_HEAD)) {
                     damageTable = ToHitData.HIT_PUNCH;
                 } else {
                     damageTable = ToHitData.HIT_NORMAL;
@@ -26697,8 +26692,8 @@ public class Server implements Runnable {
 
             // did anyone fall into the basement?
             if (!basementMap.isEmpty()
-                    && (bldg.getBasement() != Building.NOBASEMENT)
-                    && (bldg.getBasement() != Building.ONE_DEEP_NORMALINFONLY)
+                    && (bldg.getBasement() != BasementType.NONE)
+                    && (bldg.getBasement() != BasementType.ONE_DEEP_NORMALINFONLY)
                     && !collapse) {
 
                 collapseBasement(bldg, basementMap, coords, vPhaseReport);
@@ -26771,7 +26766,7 @@ public class Server implements Runnable {
         final Vector<Entity> vector = positionMap.get(coords);
         IHex hex = game.getBoard().getHex(coords);
 
-        if (bldg.getBasement() == Building.NOBASEMENT) {
+        if (bldg.getBasement() == BasementType.NONE) {
             return;
         } else {
             bldg.setBasementCollapsed(true, hex);
@@ -26815,16 +26810,16 @@ public class Server implements Runnable {
                 entity.addPilotingModifierForTerrain(psr, coords);
 
                 // fall into basement
-                if ((bldg.getBasement() == Building.TWO_DEEP_HEAD)
-                        || (bldg.getBasement() == Building.TWO_DEEP_FEET)) {
+                if ((bldg.getBasement() == BasementType.TWO_DEEP_HEAD)
+                        || (bldg.getBasement() == BasementType.TWO_DEEP_FEET)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 2 floors into " + coords.toString());
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,
                             coords, psr, true));
                     entity.setElevation(floor - 2);
                     runningCFTotal -= CFDamage * 2;
-                } else if ((bldg.getBasement() != Building.NOBASEMENT)
-                        && (bldg.getBasement() != Building.ONE_DEEP_NORMALINFONLY)) {
+                } else if ((bldg.getBasement() != BasementType.NONE)
+                        && (bldg.getBasement() != BasementType.ONE_DEEP_NORMALINFONLY)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 1 floor into " + coords.toString());
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,

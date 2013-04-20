@@ -35,6 +35,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Vector;
 
+import megamek.common.Building.BasementType;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 
@@ -292,7 +293,7 @@ public class Board implements Serializable, IBoard {
                         // Nope. Try to create an object for the new building.
                         try {
                             Building bldg = new Building(coords, this,
-                                    Terrains.BUILDING);
+                                    Terrains.BUILDING, BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -346,7 +347,7 @@ public class Board implements Serializable, IBoard {
                         // Nope. Try to create an object for the new building.
                         try {
                             Building bldg = new Building(coords, this,
-                                    Terrains.BRIDGE);
+                                    Terrains.BRIDGE, BasementType.NONE);
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
@@ -1086,11 +1087,11 @@ public class Board implements Serializable, IBoard {
                     Terrains.RUBBLE, type));
         }
 
-        if (curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
+        if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
             // per TW 176 the basement doesn't change the elevation of the bulding hex
             // the basement fills in with the rubble of the building
             // any units in the basement are destroyed
-            curHex.removeTerrain(Terrains.BLDG_BASEMENT);
+            curHex.removeTerrain(Terrains.BLDG_BASEMENT_TYPE);
         }
 
         // Update the hex.

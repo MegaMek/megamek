@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
+import megamek.common.Building.BasementType;
+
 /**
  * Hex represents a single hex on the board.
  *
@@ -276,14 +278,14 @@ public class Hex implements IHex, Serializable {
     public int depth(boolean hidden) {
         int depth = 0;
         ITerrain water = getTerrain(Terrains.WATER);
-        ITerrain basement = getTerrain(Terrains.BLDG_BASEMENT);
+        ITerrain basement = getTerrain(Terrains.BLDG_BASEMENT_TYPE);
 
         if (water != null) {
             depth += water.getLevel();
         }
         if (basement != null) {
             if (hidden) {
-                depth += basement.getLevel();
+                depth += BasementType.getType(basement.getLevel()).getDepth();
             }
         }
 

@@ -40,9 +40,9 @@ import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.ITerrain;
 import megamek.common.Minefield;
 import megamek.common.Player;
-import megamek.common.ITerrain;
 import megamek.common.Terrains;
 
 class BoardHexModel extends HexModel {
@@ -104,10 +104,10 @@ class BoardHexModel extends HexModel {
         final Point3d hexLoc = BoardModel.getHexLocation(c, h.floor());
         setTransform(new Transform3D(C.nullRot, new Vector3d(hexLoc), 1.0));
 
-        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT);
+        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
 
         // Water surface
-        if (surface == null && hex.depth() > 0 && basement == null) {
+        if ((surface == null) && (hex.depth() > 0) && (basement == null)) {
             TransformGroup sTrans = new TransformGroup(new Transform3D(C.nullRot, new Vector3d(0.0, 0.0, hex.depth()*BoardModel.HEX_HEIGHT), 1.0));
             surface = new Shape3D(polygon);
             surface.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
@@ -133,7 +133,9 @@ class BoardHexModel extends HexModel {
         }
 
         int keep = (surface == null?KEEP:KEEP+1);
-        for (int i = numChildren()-1; i >= keep; i--) removeChild(i);
+        for (int i = numChildren()-1; i >= keep; i--) {
+            removeChild(i);
+        }
 
 
         // mine fields
@@ -162,10 +164,12 @@ class BoardHexModel extends HexModel {
                     addText(Messages.getString("BoardView1.Command-"), col); //$NON-NLS-1$
                     break;
                 case Minefield.TYPE_VIBRABOMB:
-                    if (localPlayer != null && mf.getPlayerId() == localPlayer.getId())
+                    if ((localPlayer != null) && (mf.getPlayerId() == localPlayer.getId())) {
                         addText(Messages.getString("BoardView1.Vibrabomb")+" (" + mf.getSetting() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
-                    else
+                    }
+                    else {
                         addText(Messages.getString("BoardView1.Vibrabomb"), col); //$NON-NLS-1$
+                    }
                     break;
                 }
             }
@@ -175,7 +179,9 @@ class BoardHexModel extends HexModel {
         // FIXME: this needs much more detailed processing... but it is good enough for now
         int ih = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
         double height = Math.max(ih, Math.max(hex.terrainLevel(Terrains.SMOKE), hex.terrainLevel(Terrains.FIRE)))*BoardModel.HEX_HEIGHT;
-        if (height < 1.0) height = 1.0;
+        if (height < 1.0) {
+            height = 1.0;
+        }
         height += (hex.surface() - hex.floor()) * BoardModel.HEX_HEIGHT;
         Transform3D supert = new Transform3D();
         supert.setScale(new Vector3d(2*BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER, height));
@@ -206,10 +212,16 @@ class BoardHexModel extends HexModel {
             new Point3d(BoardModel.HEX_SIDE_LENGTH, BoardModel.HEX_DIAMETER/2, height)
         ));
 
-        if (hex.getElevation() != 0) addText(Messages.getString("BoardView1.LEVEL") + hex.getElevation(), col);
-        if (hex.depth() != 0) addText(Messages.getString("BoardView1.DEPTH") + hex.depth(), col);
-        if (ih > 0) addText(Messages.getString("BoardView1.HEIGHT") + ih,
-                new Color3f(GUIPreferences.getInstance().getColor("AdvancedBuildingTextColor")));
+        if (hex.getElevation() != 0) {
+            addText(Messages.getString("BoardView1.LEVEL") + hex.getElevation(), col);
+        }
+        if (hex.depth() != 0) {
+            addText(Messages.getString("BoardView1.DEPTH") + hex.depth(), col);
+        }
+        if (ih > 0) {
+            addText(Messages.getString("BoardView1.HEIGHT") + ih,
+                    new Color3f(GUIPreferences.getInstance().getColor("AdvancedBuildingTextColor")));
+        }
 
     }
 
@@ -231,7 +243,9 @@ class BoardHexModel extends HexModel {
         app.setTextureAttributes(new TextureAttributes(TextureAttributes.MODULATE, new Transform3D(), new Color4f(), TextureAttributes.NICEST));
         floor.setAppearance(app);
 
-        if (surface != null) setSurfaceEffect(mat, surface.getAppearance().getTexture());
+        if (surface != null) {
+            setSurfaceEffect(mat, surface.getAppearance().getTexture());
+        }
     }
 
     void setEffect(Material mat) {
@@ -253,7 +267,7 @@ class BoardHexModel extends HexModel {
     private int ypos = 0;
     private final void addText(String s, Color3f col) {
         Transform3D t = new Transform3D();
-        t.setTranslation(new Vector3d(0.0, -BoardModel.HEX_DIAMETER/3-3.5+ypos*2.75, hex.depth()*BoardModel.HEX_HEIGHT));
+        t.setTranslation(new Vector3d(0.0, ((-BoardModel.HEX_DIAMETER/3)-3.5)+(ypos*2.75), hex.depth()*BoardModel.HEX_HEIGHT));
         TransformGroup tg = new TransformGroup(t);
         tg.addChild(new LabelModel(s, col, null, LabelModel.BIG));
         addChild(tg);

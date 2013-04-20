@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 
+import megamek.common.Building.BasementType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -1348,7 +1349,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case INF_JUMP:
             case INF_LEG:
             case INF_MOTORIZED:
-                minAlt -= Math.max(0, hex.terrainLevel(Terrains.BLDG_BASEMENT));
+                minAlt -= Math.max(0, BasementType.getType(hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth());
                 break;
             case VTOL:
             case WIGE:
@@ -1484,7 +1485,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech)
                         || (this instanceof Infantry)) {
-                    if (hex.containsTerrain(Terrains.BLDG_BASEMENT)) {
+                    if (hex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
                         if ((assumedAlt >= (hex.surface() - hex.depth(true)))
                                 && (assumedAlt <= hex.ceiling())) {
                             return true;

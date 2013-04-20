@@ -1303,7 +1303,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         int depth = hex.depth(false);
 
-        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT);
+        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
         if (basement != null) {
             depth = 0;
 
@@ -6394,6 +6394,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     buf.append(bldg.getCurrentCF(mcoords));
                     buf.append(Messages.getString("BoardView1.BldgArmor")); //$NON-NLS-1$
                     buf.append(bldg.getArmor(mcoords));
+                    buf.append(Messages.getString("BoardView1.BldgBasement"));
+                    buf.append(bldg.getBasement().getDesc());
                     strings[stringsIndex] = buf.toString();
                     stringsIndex += 1;
                 }

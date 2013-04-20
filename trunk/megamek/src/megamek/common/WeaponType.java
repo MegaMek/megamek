@@ -939,13 +939,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new StopSwarmAttack());
 
         // Infantry Level 1 Weapons
-        EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantryLRMWeapon());
-        EquipmentType.addType(new InfantryLightSRMWeapon());
         EquipmentType.addType(new InfantryInfernoSRMWeapon());
-        EquipmentType.addType(new InfantryLRMWeapon());
-        EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
         // Infantry Archaic Weapons
@@ -1029,48 +1025,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolTKEnforcerAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolTranqGunWeapon());
         EquipmentType.addType(new InfantryPistolWhiteDwarfLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolBlazerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanGaussPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanPulseLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolCoventryHandrocketGyrojetPistolWeapon());
-        EquipmentType.addType(new InfantryPistolDartGunWeapon());
-        EquipmentType.addType(new InfantryPistolFlamerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolFlarePistolWeapon());
-        EquipmentType.addType(new InfantryPistolGyrojetPistolWeapon());
-        EquipmentType.addType(new InfantryPistolHawkEagleAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolHoldoutGyrojetPistolWeapon());
-        EquipmentType.addType(new InfantryPistolHoldOutLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolHoldoutNeedlerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolHoldoutPistolWeapon());
-        EquipmentType.addType(new InfantryPistolLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolMagnumRevolverWeapon());
-        EquipmentType.addType(new InfantryPistolMakeshiftPistolWeapon());
-        EquipmentType.addType(new InfantryPistolMandrakeGaussPistolWeapon());
-        EquipmentType.addType(new InfantryPistolMartialEagleMachinePistolWeapon());
-        EquipmentType.addType(new InfantryPistolMauserAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolMauserNeedlerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolMagnumAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolMydronAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolNakjimaLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolNambuAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolNeedlerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolPaintGunPistolWeapon());
-        EquipmentType.addType(new InfantryPistolPulseLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolRevolverWeapon());
-        EquipmentType.addType(new InfantryPistolSeaEagleNeedlerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolSerrekAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolSonicStunnerWeapon());
-        EquipmentType.addType(new InfantryPistolSpitballGasPistolWeapon());
-        EquipmentType.addType(new InfantryPistolSternsnachtPistolWeapon());
-        EquipmentType.addType(new InfantryPistolSternsnachtPythonAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolStettaAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolSunbeamLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolSunbeamNovaLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolTKEnforcerAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolTranqGunWeapon());
-        EquipmentType.addType(new InfantryPistolWhiteDwarfLaserPistolWeapon());
+
         // Infantry Rifles
         EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
         EquipmentType.addType(new InfantryRifleBlazerRifleWeapon());

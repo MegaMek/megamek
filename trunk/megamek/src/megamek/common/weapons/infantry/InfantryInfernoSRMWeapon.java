@@ -40,7 +40,7 @@ public class InfantryInfernoSRMWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_SRM;
         cost = 1500;
         bv = 1.71;
-        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE);
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
         infantryDamage = 0.41;
         infantryRange = 2;
         String[] modeStrings = { "Damage", "Heat" };

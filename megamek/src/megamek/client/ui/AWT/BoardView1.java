@@ -95,7 +95,6 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.ToHitData;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PlanetaryConditions;
@@ -106,6 +105,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.ToHitData;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -1122,7 +1122,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         depth = hex.depth(false);
 
-        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT);
+        ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
         if (basement != null) {
             depth = 0;
 
@@ -2199,17 +2199,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             //Check to see if LoS is blocked
             if (!le.canSee()) {
-                message.append(Messages.getString("BoardView1.LOSBlocked", 
+                message.append(Messages.getString("BoardView1.LOSBlocked",
                         new Object[] { //$NON-NLS-1$
-                            new Integer(c1.distance(c2)) 
+                            new Integer(c1.distance(c2))
                         }));
                 ToHitData thd = le.losModifiers(game);
                 message.append("\t"+thd.getDesc()+"\n");
             } else {
-                message.append(Messages.getString("BoardView1.LOSNotBlocked", 
+                message.append(Messages.getString("BoardView1.LOSNotBlocked",
                         new Object[] { //$NON-NLS-1$
-                            new Integer(c1.distance(c2)) 
-                            }));            
+                            new Integer(c1.distance(c2))
+                            }));
                 if (le.getHeavyWoods() > 0) {
                     message.append(Messages.getString("BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
                             new Integer(le.getHeavyWoods()) }));

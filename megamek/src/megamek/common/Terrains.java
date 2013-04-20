@@ -20,9 +20,9 @@ public class Terrains implements ITerrainFactory {
 
     //base terrain types
     public static final int WOODS      = 1; //1: light 2: heavy 3: ultra
-    public static final int WATER      = 2; //level = depth  
+    public static final int WATER      = 2; //level = depth
     public static final int ROUGH      = 3; //1: normal 2: ultra
-    public static final int RUBBLE     = 4; //1: light bldg 2: medium bldg 3: heavy bldg 4: hardened bldg 5: wall 6: ultra  
+    public static final int RUBBLE     = 4; //1: light bldg 2: medium bldg 3: heavy bldg 4: hardened bldg 5: wall 6: ultra
     public static final int JUNGLE     = 5; //1: light 2: heavy 3: ultra
     public static final int SAND       = 6;
     public static final int TUNDRA     = 7;
@@ -33,7 +33,7 @@ public class Terrains implements ITerrainFactory {
     //unimplemented
     //Level 1 Foliage
     //Sheer Cliffs
-    
+
     //Terrain modifications
     public static final int PAVEMENT = 12;
     public static final int ROAD     = 13;
@@ -41,7 +41,7 @@ public class Terrains implements ITerrainFactory {
     public static final int MUD      = 15;
     public static final int RAPIDS   = 16; //1: rapids 2: torrent
     public static final int ICE      = 17;
-    public static final int SNOW     = 18; // 1: thin 2: deep  
+    public static final int SNOW     = 18; // 1: thin 2: deep
     public static final int FIRE     = 19; // 1: normal fire 2: inferno fire
     public static final int SMOKE    = 20; // 1: light smoke 2: heavy smoke 3:light LI smoke 4: Heavy LI smoke
     public static final int GEYSER   = 21; // 1: dormant 2: active 3: magma vent
@@ -53,12 +53,12 @@ public class Terrains implements ITerrainFactory {
     //Rail
     //Dirt Roads, Gravel Roads
     //Water Flow
-    
+
     //Building stuff
     public static final int BUILDING       = 22; // 1: light 2: medium 3: heavy 4: hardened 5: wall
     public static final int BLDG_CF        = 23;
     public static final int BLDG_ELEV      = 24;
-    public static final int BLDG_BASEMENT  = 25; //level equals depth
+    public static final int BLDG_BASEMENT_TYPE = 25; // level equals BasemenType, one of the values of the BasementType enum
     public static final int BLDG_CLASS     = 26; //1: hangars 2: fortresses 3: gun emplacements
     public static final int BLDG_ARMOR     = 27;
     //leaving this empty will be interpreted as standard
@@ -89,7 +89,7 @@ public class Terrains implements ITerrainFactory {
         "heavy_industrial", "space",
         "pavement", "road", "swamp", "mud", "rapids", "ice", "snow",
         "fire", "smoke", "geyser",
-        "building", "bldg_cf", "bldg_elev", "bldg_basement", "bldg_class", "bldg_armor", "bridge", "bridge_cf",
+        "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class", "bldg_armor", "bridge", "bridge_cf",
         "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev", "fuel_tank_magn",
         "impassable", "elevator", "fortified", "screen",
         "fluff", "arms", "legs", "metal_deposit", "bldg_base_collapsed" };
@@ -175,7 +175,7 @@ public class Terrains implements ITerrainFactory {
                 if(level == 1) {
                     return "swamp";
                 }
-                if(level == 2 || level == 3) {
+                if((level == 2) || (level == 3)) {
                     return "quicksand";
                 }
                 return "swamp";
@@ -257,13 +257,13 @@ public class Terrains implements ITerrainFactory {
                 if(level == 2) {
                     return "low metal content";
                 }
-                if(level == 3 || level == 4) {
+                if((level == 3) || (level == 4)) {
                     return "medium metal content";
                 }
-                if(level == 5 || level == 6) {
+                if((level == 5) || (level == 6)) {
                     return "high metal content";
                 }
-                if(level == 7 || level == 8) {
+                if((level == 7) || (level == 8)) {
                     return "very high metal content";
                 }
                 return "extreme high metal content";

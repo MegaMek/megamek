@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import megamek.common.Building.BasementType;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
@@ -4706,8 +4707,8 @@ public class Compute {
         // Get the elevations occupied by the building.
         int bldgHeight = curHex.terrainLevel(Terrains.BLDG_ELEV);
         int basement = 0;
-        if (curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
-            basement = curHex.terrainLevel(Terrains.BLDG_BASEMENT);
+        if (curHex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
+            basement = BasementType.getType(curHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
         }
 
         // Return true if the entity is in the range of building elevations.

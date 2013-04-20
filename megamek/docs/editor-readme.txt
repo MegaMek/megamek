@@ -117,8 +117,16 @@ information on the board file format, and the tileset file format.
         building: 1-4; 1 = light ... 4 = hardened
         bldg_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bldg_elev: 1+; you must supply a number if a building is supplied.
-        bldg_basement: 0-2; indicates depth, leaving this parameter out 
-            indicates that the game should "roll" for the basement dynamically
+        bldg_basement_type: 0-7, indicates type of basement and type of fall
+            0: unknown basement, game will roll the type of basement when entering first
+            1: no basement
+            2: double basement, feet first fall
+            3: single basement, feet first fall
+            4: single basement, normal fall
+            5: small basement
+            6: single basement, head first fall
+            7: double basement, head first fall
+        
         bldg_class: 0-3; 0 for standard, 1 for hangar, 2 for fortress, 3 for gun emplacement, 
                          defaults to standard if not specified
         bldg_armor: 0-150

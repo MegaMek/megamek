@@ -27,6 +27,7 @@ import megamek.client.bot.princess.FireControl.PhysicalAttackType;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
 import megamek.common.Building;
+import megamek.common.Building.BasementType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -60,7 +61,7 @@ public class BasicPathRanker extends PathRanker {
 
     //Fleeing the board
     double self_preservation; //how closely will I follow the forced withdrawal rules.
-    
+
     Properties properties = null;
 
     static HomeEdge defaultHomeEdge = HomeEdge.NORTH;
@@ -100,8 +101,8 @@ public class BasicPathRanker extends PathRanker {
 
         defaultHomeEdge = HomeEdge.getHomeEdge(Integer.valueOf(props.getProperty("home_edge")));
         owner = owningPrincess;
-        this.properties = props;
-        
+        properties = props;
+
         resetParametersFromProperties();
     }
 
@@ -140,7 +141,7 @@ public class BasicPathRanker extends PathRanker {
 	public static HomeEdge getDefaultHomeEdge() {
         return defaultHomeEdge;
     }
-	
+
 	public void resetParametersFromProperties () {
     	// give some default values for tunable parameters
         fall_shame = 10.0;
@@ -267,7 +268,7 @@ public class BasicPathRanker extends PathRanker {
             Coords finalCoords = pathCopy.getFinalCoords();
             if (finalCoords != null) {
                 Building b = game.getBoard().getBuildingAt(finalCoords);
-                if ((b != null) && (pathCopy.isJumping() || b.getBasement() > Building.NOBASEMENT)) {
+                if ((b != null) && (pathCopy.isJumping() || (b.getBasement().getValue() > BasementType.NONE.getValue()))) {
                     owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
                             "Final hex is on top of a building...");
                     if (b.getCurrentCF(finalCoords) < pathCopy.getEntity().getWeight()) {
@@ -405,7 +406,7 @@ public class BasicPathRanker extends PathRanker {
                 int new_distance_to_edge=distanceToHomeEdge(p.getFinalCoords(), botbase.getHomeEdge(), game);
                 int current_distance_to_edge = distanceToHomeEdge(p.getEntity().getPosition(), botbase.getHomeEdge(), game);
                 int delta_distance_to_edge = current_distance_to_edge - new_distance_to_edge;
-                
+
                 if (delta_distance_to_edge > 0) {
                 	//if it's small enough, the unit should do more of a fighting withdrawal
                 	utility+=self_preservation*delta_distance_to_edge;
@@ -520,7 +521,7 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    
+
     /*
      * Returns distance to the unit's home edge.
      * Gives the distance to the closest edge
@@ -565,7 +566,7 @@ public class BasicPathRanker extends PathRanker {
         }
     }
     */
-    
+
     /**
      * Returns distance to the unit's home edge.
      * Gives the distance to the closest edge
@@ -578,13 +579,13 @@ public class BasicPathRanker extends PathRanker {
     public static int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
     	final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
         owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
-        
+
         try {
         	String msg = "Getting distance to home edge: " + homeEdge.toString();
-	        
+
 	        int width=game.getBoard().getWidth();
 	        int height=game.getBoard().getHeight();
-	        
+
 	        int distance = 9999;
 	        switch (homeEdge) {
 	        	case NORTH : {
@@ -608,7 +609,7 @@ public class BasicPathRanker extends PathRanker {
 	        		distance = position.y;
 	        	}
 	        }
-	        
+
 	        msg += " -> " + distance;
 	        owner.log(BasicPathRanker.class, METHOD_NAME, msg);
 	        return distance;

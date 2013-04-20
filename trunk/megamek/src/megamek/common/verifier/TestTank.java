@@ -34,6 +34,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.CLChemicalLaserWeapon;
+import megamek.common.weapons.VehicleFlamerWeapon;
 
 public class TestTank extends TestEntity {
     private Tank tank = null;
@@ -359,7 +360,7 @@ public class TestTank extends TestEntity {
             int weight = 0;
             for (Mounted m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon)) {
+                if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon) && !(wt instanceof VehicleFlamerWeapon)) {
                     weight += wt.getTonnage(tank);
                 }
                 if ((m.getLinkedBy() != null) && (m.getLinkedBy().getType() instanceof

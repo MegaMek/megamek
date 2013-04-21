@@ -19,6 +19,7 @@ v0.35.37-dev (SVN)
 + Bug 3700: Three-quarters and vertical cover are not working for TacOps partial cover
 + Bug 3517: heavy flamer power amplifier weight
 + Bug: duplicate infantry weapons
++ Refactor armor point multiplier for hardened armor
 
 v0.35.36 (2013-04-13, 23:23 UTC+2)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment

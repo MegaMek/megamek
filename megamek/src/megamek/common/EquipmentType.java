@@ -97,7 +97,7 @@ public class EquipmentType {
         { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork*/0, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000, 25000, 15000};
 
     public static final double[] armorPointMultipliers =
-        { 1, 1.12, 1, 1, 1, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1, 1.12, 1.24, 1.06 };
+        { 1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1, 1.12, 1.24, 1.06 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 

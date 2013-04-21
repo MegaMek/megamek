@@ -8363,9 +8363,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getArmorWeight(int loc) {
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType[loc], armorTechLevel[loc]);
-        if (armorType[loc] == EquipmentType.T_ARMOR_HARDENED) {
-            armorPerTon = 8.0;
-        }
         double points = getOArmor(loc);
         double armorWeight = points / armorPerTon;
         return Math.ceil(armorWeight * 2.0) / 2.0;
@@ -8384,9 +8381,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // weirdness. Yeah, it's dumb.
             double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                     armorType[0], armorTechLevel[0]);
-            if (armorType[0] == EquipmentType.T_ARMOR_HARDENED) {
-                armorPerTon = 8.0;
-            }
             double points = getTotalOArmor();
             double armorWeight = points / armorPerTon;
             armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
@@ -11807,9 +11801,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getLabTotalArmorPoints() {
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType[0], armorTechLevel[0]);
-        if (armorType[0] == EquipmentType.T_ARMOR_HARDENED) {
-            armorPerTon = 8.0;
-        }
         return (int) Math.floor(armorPerTon * armorTonnage);
     }
 

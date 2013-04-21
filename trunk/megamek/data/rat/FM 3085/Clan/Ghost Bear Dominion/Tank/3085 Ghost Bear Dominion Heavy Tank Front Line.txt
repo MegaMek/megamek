@@ -3,7 +3,7 @@ Tokugawa Heavy Tank,1
 Shoden Assault Vehicle,2
 Ishtar Heavy Fire Support Tank,3
 Oro Heavy Tank,4
-Vidar,5
+Vidar Heavy Defense Tank,5
 Axel Heavy Tank IIC,6
 Axel Heavy Tank IIC (XL),5
 Oro Heavy Tank (HAG),4

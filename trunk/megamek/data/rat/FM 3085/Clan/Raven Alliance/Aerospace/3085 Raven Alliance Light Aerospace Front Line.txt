@@ -3,7 +3,7 @@ Corax CRX-O,1
 Seydlitz SYD-Z4,2
 Chaeronea,3
 Issus,4
-Chaeronea (ERLL),5
+Chaeronea 3,5
 Corax C,6
 Corax CRX-O,5
 Issus,4

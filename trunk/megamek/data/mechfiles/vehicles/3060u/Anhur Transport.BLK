@@ -47,6 +47,11 @@ Clan Level 2
 <armor_type>
 1
 </armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
 <engine_type>
 0
 </engine_type>

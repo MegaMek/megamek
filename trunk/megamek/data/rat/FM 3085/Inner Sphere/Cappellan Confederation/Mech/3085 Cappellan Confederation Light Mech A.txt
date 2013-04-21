@@ -6,7 +6,7 @@ Duan Gung D9-G10,4
 Flea FLE-20,5
 Raven RVN-4Lr,6
 Ebony MEB-9,5
-DOL-1A1 Dola ,4
+Dola DOL-1A1,4
 Ebony MEB-11,3
-DOL-1A2 Dola ,2
+Dola DOL-1A2 "Yoh Ti Ts’angs",2
 Owens OW-1,1

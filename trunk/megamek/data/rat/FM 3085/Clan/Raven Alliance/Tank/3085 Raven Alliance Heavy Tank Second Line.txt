@@ -2,10 +2,10 @@
 Ishtar Heavy Fire Support Tank,1
 Ishtar Heavy Fire Support Tank,2
 Oro Heavy Tank,3
-Nuberu 2 "Numantia",4
+Nuberu Anti Aircraft Tank 2 "Numantia",4
 Po Heavy Tank,5
 Oro Heavy Tank (HAG),6
-Nuberu,5
+Nuberu Anti Aircraft Tank,5
 Rommel Tank,4
 Oro Heavy Tank (HAG),3
 Oro Heavy Tank,2

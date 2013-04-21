@@ -4,9 +4,9 @@ Elemental Battle Armor [MG],2
 Afreet Medium Battle Armor (Hells's Horses),3
 Gnome Battle Armor (LRM),4
 Gnome Battle Armor (Upgrade) [Bearhunter],5
-Golem Assault Armor (ACi),6
+Golem Assault Armor (Rock),6
 Gnome Battle Armor,5
 Golem Assault Armor (Fast Assault),4
 Elemental Battle Armor (Fire) [AP Gauss],3
-Golem Assault Armor,2
+Golem Assault Armor (Standard),2
 Afreet Medium Battle Armor,1

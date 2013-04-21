@@ -30,7 +30,7 @@
 #   to turn the table into a d10,000 roll and drop any weights that end up  #
 #   less than 1.                                                            #
 #############################################################################
-SLReg2750MediumMechs
+Star League Regular 2750 Medium Mechs
 Cicada CDA-2A,23
 Sentinel STN-3L,57
 Whitworth WTH-1,57

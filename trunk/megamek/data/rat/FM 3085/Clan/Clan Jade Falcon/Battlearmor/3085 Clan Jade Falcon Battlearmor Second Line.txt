@@ -1,6 +1,6 @@
 3085 Clan Jade Falcon Battlearmor Second Line
-Resgate (Support) (Vehicle),1
-Resgate (Spotter) (Vehicle),2
+#Resgate (Support) (Vehicle),1
+#Resgate (Spotter) (Vehicle),2
 Gnome Battle Armor,3
 Afreet Medium Battle Armor,4
 Salamander Battle Armor,5

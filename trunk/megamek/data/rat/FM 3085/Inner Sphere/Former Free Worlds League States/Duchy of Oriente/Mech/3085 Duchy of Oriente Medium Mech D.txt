@@ -7,6 +7,6 @@ Griffin GRF-3M,5
 Shadow Hawk SHD-5M,6
 Wolverine WVR-7M,5
 Hunchback HBK-6N,4
-Kyudo KY2-D03,3
+Kyudo KY2-D-03,3
 Wraith TR1,2
 Shockwave SKW-2F,1

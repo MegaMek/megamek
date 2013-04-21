@@ -6,12 +6,20 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Golem Assault Armor
 </Name>
+
+<Model>
+(Standard)
+</Model>
+
+
 <chassis>
 biped
 </chassis>

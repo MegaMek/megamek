@@ -9,4 +9,4 @@ Griffin GRF-3M,5
 Shadow Hawk SHD-5M,4
 Wolverine WVR-7M,3
 Hunchback HBK-6N,2
-Kyudo KY2-D03,1
+Kyudo KY2-D-03,1

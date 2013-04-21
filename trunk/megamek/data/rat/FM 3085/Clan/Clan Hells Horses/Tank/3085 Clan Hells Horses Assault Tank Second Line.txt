@@ -2,7 +2,7 @@
 Puma Assault Tank PMA-005,1
 Fury Command Tank (Royal),2
 Rhino Fire Support Tank,3
-Aithon,4
+Aithon Assault Transport,4
 Carnivore Assault Tank (Second Line),5
 Mars Assault Vehicle,6
 Demolisher Heavy Tank (Clan),5

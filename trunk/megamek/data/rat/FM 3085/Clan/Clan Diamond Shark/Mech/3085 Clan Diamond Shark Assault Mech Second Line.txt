@@ -3,7 +3,7 @@ Phoenix Hawk IIC 2,1
 Warhammer IIC 3,2
 Phoenix Hawk IIC,3
 Atlas AS7-K2,4
-Mad Cat Mk II-Enhanced,5
+Mad Cat II Enhanced,5
 Mad Cat Mk II,6
 Supernova,5
 Phoenix Hawk IIC 7,4

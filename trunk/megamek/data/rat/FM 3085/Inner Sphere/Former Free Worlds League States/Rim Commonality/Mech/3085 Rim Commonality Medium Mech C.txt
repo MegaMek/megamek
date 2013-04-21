@@ -8,5 +8,5 @@ Hunchback HBK-6N,6
 Vulcan VT-5M,5
 Wraith TR1,4
 Shockwave SKW-2F,3
-Snake SNK-1B,2
+Snake SNK-1V,2
 Strider SR1-O,1

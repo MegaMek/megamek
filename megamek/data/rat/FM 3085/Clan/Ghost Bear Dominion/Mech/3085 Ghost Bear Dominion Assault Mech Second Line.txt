@@ -8,5 +8,5 @@ Marauder IIC 7,6
 Supernova,5
 Warhammer IIC 8,4
 Bruin,3
-Mad Cat Mk II-Enhanced,2
+Mad Cat II Enhanced,2
 Marauder IIC 4,1

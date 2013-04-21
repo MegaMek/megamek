@@ -13,7 +13,7 @@ Engine:240 Fusion Engine(IS)
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:10 Double
+Heat Sinks:15 Single
 Walk MP:4
 Jump MP:6
 
@@ -32,9 +32,9 @@ RTC Armor:7
 
 Weapons:4
 PPC, Right Arm
-LRM 10, Right Torso
-Medium Laser, Left Arm
 Small Laser, Center Torso
+Medium Laser, Left Arm
+LRM 10, Right Torso
 
 Left Arm:
 Shoulder
@@ -55,9 +55,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
 PPC
 PPC
 PPC
@@ -65,24 +65,23 @@ PPC
 -Empty-
 
 Left Torso:
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
 ISPrototypeJumpJet
 ISPrototypeJumpJet
 ISPrototypeJumpJet
-
 
 Right Torso:
--Empty-
--Empty-
--Empty-
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
 ISPrototypeJumpJet
 ISPrototypeJumpJet
 ISPrototypeJumpJet
@@ -111,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+Heat Sink
 Sensors
 Life Support
 -Empty-
@@ -149,5 +148,4 @@ Foot Actuator
 -Empty-
 -Empty-
 
-history:This mech is NOT valid. The freezers are not implemented and it's using IS double heat sinks instead.
 

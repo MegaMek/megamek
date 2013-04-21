@@ -6,7 +6,7 @@ Arctic Fox AF1,4
 Javelin JVN-11B,5
 Talon TLN-5W,6
 Jackal JA-KL-1532,5
-WLF-2H Wolfhound ,4
+Wolfhound WLF-2H,4
 Uller (Kit Fox) Prime,3
 Wolfhound WLF-5,2
 Puma (Adder) Prime,1

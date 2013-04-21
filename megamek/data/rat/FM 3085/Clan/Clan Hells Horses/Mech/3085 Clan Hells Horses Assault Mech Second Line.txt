@@ -1,7 +1,7 @@
 3085 Clan Hell's Horses Assault Mech Second Line
 Warhammer IIC 4,1
 Naga Prime,2
-Mad Cat Mk II-Enhanced,3
+Mad Cat II Enhanced,3
 Annihilator ANH-4A,4
 Thunder Stallion 2 "Fire Stallion",5
 Thunder Stallion,6

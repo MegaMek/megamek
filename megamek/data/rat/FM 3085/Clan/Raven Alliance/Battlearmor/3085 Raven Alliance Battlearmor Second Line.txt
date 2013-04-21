@@ -1,7 +1,7 @@
 3085 Raven Alliance Battlearmor Second Line
 Aerie PA(L),1
 Aerie PA(L),2
-Salamander Battle Armor (Anti-Personnel)),3
+Salamander Battle Armor (Anti-Personnel),3
 Elemental Battle Armor [MG],4
 Elemental Battle Armor [MG],5
 Elemental Battle Armor (Space) [MG],6

@@ -8,5 +8,5 @@ Turhan Urban Combat Vehicle,7
 Maxim Heavy Hover Transport,6
 Chaparral Missile Artillery Tank,5
 Zephyr Hovertank,4
-LVT-4 Hovertank,3
+Hover Tank LTV-4,3
 Chaparral Missile Artillery Tank,2

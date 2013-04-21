@@ -1,6 +1,6 @@
 3085 Clan Jade Falcon Assault Mech Second Line
 Naga Prime,1
-Atlas AS7-D (C),2
+Atlas AS7-D(C),2
 Stalker STK-5S,3
 Kraken (Bane),4
 BattleMaster BLR-4S,5

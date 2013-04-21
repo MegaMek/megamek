@@ -8,5 +8,5 @@ Clan Medium Battle Armor "Rache",6
 Undine Battle Armor (Upgrade),5
 Elemental Battle Armor [MG],4
 Elemental Battle Armor [MG],3
-Salamander Battle Armor (Anti-Personnel)),2
+Salamander Battle Armor (Anti-Personnel),2
 Gnome Battle Armor,1

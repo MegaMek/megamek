@@ -1,7 +1,7 @@
 3085 Clan Hell's Horses Medium Tank Keshik
 Bellona Hover Tank (Laser),1
 Bellona Hover Tank,2
-Garuda,3
+Garuda Heavy VTOL,3
 Ku Wheeled Assault Tank (IFV) "Turhan II",4
 Epona Pursuit Tank Prime,5
 Enyo Strike Tank,6
@@ -9,4 +9,4 @@ Hachiman Fire Support Tank 'Huey',5
 Ku Wheeled Assault Tank (IFV) "Turhan II",4
 Epona Pursuit Tank Prime,3
 Enyo Strike Tank,2
-Garuda,1
+Garuda Heavy VTOL,1

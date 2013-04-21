@@ -1,12 +1,12 @@
-3085 Clan Hell’s Horses Protomech Front Line
+3085 Clan Hells Horses Protomech Front Line
 Orc 2,1
-Orc 3 ,2
+Orc 3,2
 Minotaur 2,3
 Procyon,4
 Orc,5
 Hydra,6
 Minotaur,5
 Hydra 2,4
-Minotaur P2 ,3
-Procyon (Quad) ,2
-Svartalfa ,1
+Minotaur P2,3
+Procyon (Quad),2
+Svartalfa Ultra,1

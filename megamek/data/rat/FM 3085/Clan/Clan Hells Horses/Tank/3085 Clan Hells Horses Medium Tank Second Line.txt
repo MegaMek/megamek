@@ -3,10 +3,10 @@ Chaparral Missile Artillery Tank,1
 Zephyr Hovertank,2
 Thor Artillery Vehicle (Clan),3
 Epona Pursuit Tank Prime,4
-Enyo (ER Pulse),5
+Enyo ER Pulse,5
 Bellona Hover Tank (Laser),6
 Bellona Hover Tank,5
-Garuda,4
+Garuda Heavy VTOL,4
 Ku Wheeled Assault Tank (IFV) "Turhan II",3
 Epona Pursuit Tank Prime,2
 Enyo Strike Tank,1

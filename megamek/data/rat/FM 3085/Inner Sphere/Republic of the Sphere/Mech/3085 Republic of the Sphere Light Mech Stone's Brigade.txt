@@ -9,4 +9,4 @@ Hankyu (Arctic Cheetah) Prime,5
 Wolfhound WLF-5,4
 Puma (Adder) Prime,3
 Pack Hunter II,2
-WLF-2H Wolfhound,1
+Wolfhound WLF-2H,1

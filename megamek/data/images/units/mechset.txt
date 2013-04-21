@@ -30,6 +30,7 @@
 # sulla
 # Megasaurer
 # archonlomendil@hotmail.com
+# Mattiator
 
 # The format goes as follows:
 # {chassis/exact} [model] [image filename]
@@ -833,6 +834,7 @@ chassis "Zugvogel Omni Support Aircraft" "vehicles/zugvogel.gif"
 #Mechs
 chassis "Akuma" "mechs/akuma.gif"
 chassis "Albatross" "mechs/albatross.gif"
+chassis "Alfar" "mechs/alfar.gif"
 chassis "Alliance" "mechs/Alliance_ALI-1A-BT.gif"
 exact "Alliance ALI-1A-BT" "mechs/Alliance_ALI-1A-BT.gif"
 exact "Alliance ALI-2A-BT" "mechs/Alliance_ALI-2A-BT.gif"
@@ -1432,6 +1434,7 @@ exact "Jenner IIC 3" "mechs/jenner_iic3.gif"
 exact "Jenner IIC 4" "mechs/jenner_iic4.gif"
 chassis "Jenner" "mechs/Jenner.gif"
 exact "Jenner JR7-F" "mechs/JennerF.gif"
+exact "Jenner JR7-A" "mechs/JennerA.gif"
 chassis "Jinggau" "mechs/jinggau.gif"
 exact "Jinggau JN-G9CC" "mechs/jinggau JN-G9CC.gif"
 exact "Jinggau JN-G7L" "mechs/jinggau JN-G7L.gif"
@@ -1522,6 +1525,7 @@ exact "Loki (Hellbringer) E" "mechs/hellbringer_e.gif"
 exact "Loki (Hellbringer) H" "mechs/hellbringer_h.gif"
 chassis "Longbow" "mechs/longbow.gif"
 exact "Longbow LGB-7V" "mechs/Longbow7v.gif"
+exact "Longbow LGB-8V" "mechs/longbow_LGB-8V.gif"
 exact "Longbow LGB-13NAIS" "mechs/longbow_LGB-13NAIS.gif"
 chassis "Longshot" "mechs/longshot.gif"
 chassis "Lupus" "mechs/lupus.gif"

@@ -9,4 +9,4 @@ Cataphract CTF-3L,5
 Koschei KSC-5MC,4
 Marauder MAD-3R,3
 Penthesilea PEN-2H,2
-THR-C4 Thunder ,1
+Thunder THR-C4,1

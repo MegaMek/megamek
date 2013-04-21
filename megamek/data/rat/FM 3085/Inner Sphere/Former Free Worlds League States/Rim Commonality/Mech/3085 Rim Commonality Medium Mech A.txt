@@ -4,7 +4,7 @@ Hunchback HBK-6N,2
 Vulcan VT-5M,3
 Wraith TR1,4
 Shockwave SKW-2F,5
-Snake SNK-1B,6
+Snake SNK-1V,6
 Strider SR1-O,5
 Shadow Hawk SHD-7M,4
 Blackjack BJ2-O,3

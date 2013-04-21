@@ -1,16 +1,19 @@
-Version:1.0
+Version:1.1
 Kiso Command Mech
 K-3N-KRHQ
 
 Config:Quad
 TechBase:Inner Sphere
-Era:2750
+Era:2823
+Source:XTRO Succesion Wars
 Rules Level:4
 
 Mass:100
 Engine:200 Fusion Engine(IS)
 Structure:Industrial
 Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
 
 Heat Sinks:10 Single
 Walk MP:2
@@ -108,7 +111,7 @@ Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+Cockpit
 Sensors
 Life Support
 -Empty-
@@ -147,3 +150,4 @@ Searchlight
 -Empty-
 
 history:This mech is NOT valid. Command Console Isn't coded into MegaMek to include.
+

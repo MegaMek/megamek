@@ -9,4 +9,4 @@ Kanga Medium Hovertank,6
 Maxim Heavy Hover Transport,5
 Chaparral Missile Artillery Tank,4
 Goblin Medium Tank,3
-LVT-4 Hovertank,2
+Hover Tank LTV-4,2

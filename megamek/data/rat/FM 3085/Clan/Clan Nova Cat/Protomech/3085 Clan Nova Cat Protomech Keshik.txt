@@ -2,7 +2,7 @@
 Gorgon,1
 Roc 2,2
 Chrysaor,3
-Satyr-XP ,4
+Satyr XP,4
 Gorgon,5
 Roc,6
 Satyr,5

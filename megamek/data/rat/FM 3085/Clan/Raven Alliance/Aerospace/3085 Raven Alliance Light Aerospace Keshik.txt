@@ -2,7 +2,7 @@
 Seydlitz SYD-Z4,1
 Chaeronea,2
 Issus,3
-Chaeronea (ERLL),4
+Chaeronea 3,4
 Corax C,5
 Corax CRX-O,6
 Issus,5

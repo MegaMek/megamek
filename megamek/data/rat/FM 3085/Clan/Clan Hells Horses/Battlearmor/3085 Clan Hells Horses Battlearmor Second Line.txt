@@ -2,11 +2,11 @@
 Salamander Battle Armor,1
 Elemental Battle Armor [MG],2
 Elemental Battle Armor [MG],3
-Elemental Battle ArmorII,4
-Elemental Battle ArmorII,5
+Elemental II (Production),4
+Elemental II (Production),5
 Gnome Battle Armor,6
 Elemental Battle Armor [MG],5
 Afreet Medium Battle Armor (Hells's Horses),4
 Gnome Battle Armor (LRM),3
 Gnome Battle Armor (Upgrade) [Bearhunter],2
-Golem Assault Armor (ACi),1
+Golem Assault Armor (Rock),1

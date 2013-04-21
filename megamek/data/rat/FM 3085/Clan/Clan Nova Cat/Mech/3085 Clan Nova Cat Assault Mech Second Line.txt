@@ -5,7 +5,7 @@ Phoenix Hawk IIC,3
 Viking VKG-2G,4
 Mad Cat Mk II,5
 Supernova,6
-Mad Cat Mk II-Enhanced,5
+Mad Cat II Enhanced,5
 Phoenix Hawk IIC 2,4
 Supernova 2,3
 Marauder IIC 4,2

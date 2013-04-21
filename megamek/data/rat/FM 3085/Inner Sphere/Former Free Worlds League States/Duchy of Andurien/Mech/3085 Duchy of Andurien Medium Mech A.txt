@@ -1,7 +1,7 @@
 3085 Duchy of Andurien Medium Mech A
 Wolverine WVR-7M,1
 Hunchback HBK-6N,2
-Kyudo KY2-D03,3
+Kyudo KY2-D-03,3
 Wraith TR1,4
 Shockwave SKW-2F,5
 Hermes II HER-5SA,6

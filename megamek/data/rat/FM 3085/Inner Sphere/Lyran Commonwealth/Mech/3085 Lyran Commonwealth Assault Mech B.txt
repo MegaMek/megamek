@@ -5,7 +5,7 @@ Gunslinger GUN-1ERD,3
 Highlander HGN-734,4
 Banshee BNC-5S,5
 Fafnir FNR-5B,6
-Battlemaster BLR-10S,5
+BattleMaster BLR-10S,5
 Thunder Hawk TDK-7X,4
 Atlas AS7-S2,3
 Hauptmann HA1-O,2

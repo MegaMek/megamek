@@ -9,4 +9,4 @@ Gunslinger GUN-1ERD,5
 Highlander HGN-734,4
 Banshee BNC-5S,3
 Fafnir FNR-5B,2
-Battlemaster BLR-10S,1
+BattleMaster BLR-10S,1

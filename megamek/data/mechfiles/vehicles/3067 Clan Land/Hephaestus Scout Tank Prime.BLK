@@ -33,30 +33,39 @@ CLMediumPulseLaser
 CLMediumPulseLaser
 CLTAG
 </Turret Equipment>
+
 <transporters>
 TroopSpace:4
 </transporters>
+
 <Body Equipment>
 CLActiveProbe
 CLECMSuite
 </Body Equipment>
+
 <type>
 Clan
 </type>
+
 <year>
 3064
 </year>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 1
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 Hover
 </motion_type>
+
 <omni>
 </omni>

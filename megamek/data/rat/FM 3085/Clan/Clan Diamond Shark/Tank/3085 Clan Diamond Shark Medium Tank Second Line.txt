@@ -1,5 +1,5 @@
 3085 Clan Diamond Shark Medium Tank Second Line
-Garuda,1
+Garuda Heavy VTOL,1
 Tyr Infantry Support Tank,2
 Maxim Heavy Hover Transport,3
 Bandit (C) Hovercraft Prime,4

@@ -23,6 +23,7 @@ v0.35.37-dev (SVN)
 + Refactor armor point multiplier for hardened armor
 + Corrected Clan availability codes, tech ratings and dates includes Weapons,Ammo and Misc. Equipment.
 + Deleting empty folders in Mechfiles.
++ Bug: Swords not accounted for in BV calculation.
 
 v0.35.36 (2013-04-13, 23:23 UTC+2)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment

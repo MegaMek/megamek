@@ -898,23 +898,6 @@ public class MiscType extends EquipmentType {
             if (entity.hasWorkingMisc(F_TSM)) {
                 returnBV *= 2;
             }
-        } else if (hasFlag(F_TARGCOMP)) {
-            // 20% of direct_fire weaponry BV (half for rear-facing)
-            double fFrontBV = 0.0, fRearBV = 0.0;
-            for (Mounted m : entity.getWeaponList()) {
-                WeaponType wt = (WeaponType) m.getType();
-                if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    if (m.isRearMounted()) {
-                        fRearBV += wt.getBV(entity);
-                    } else {
-                        fFrontBV += wt.getBV(entity);
-                    }
-                }
-            }
-            if (fFrontBV > fRearBV) {
-                returnBV = (fFrontBV * 0.2) + (fRearBV * 0.1);
-            }
-            returnBV = (fRearBV * 0.2) + (fFrontBV * 0.1);
         } else if (hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW)) {
             returnBV = (Math.ceil(entity.getWeight() / 7.0)) * 1.275;
         } else if (hasFlag(F_TALON)) {
@@ -2402,7 +2385,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.bv = BV_VARIABLE;
+        misc.bv = 0; // TarComps modify weapon BVs, they have none of their own.
         misc.flags = misc.flags.or(F_TARGCOMP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         // see note above
         misc.spreadable = true;
@@ -2426,7 +2409,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.bv = BV_VARIABLE;
+        misc.bv = 0; // TarComps modify weapon BVs, they have none of their own.
         misc.flags = misc.flags.or(F_TARGCOMP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         // see note above
         misc.spreadable = true;

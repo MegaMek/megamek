@@ -56,7 +56,7 @@ public class CLERSmallLaser extends LaserWeapon {
         shortAV = 5;
         maxRange = RANGE_SHORT;
         introDate = 2825;
-        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_F;
     }
 }

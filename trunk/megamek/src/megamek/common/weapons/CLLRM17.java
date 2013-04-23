@@ -40,7 +40,7 @@ public class CLLRM17 extends LRMWeapon {
         criticals = 0;
         bv = 215;
         introDate = 3060;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
     }
 }

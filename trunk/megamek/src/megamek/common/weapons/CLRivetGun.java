@@ -31,6 +31,9 @@ public class CLRivetGun extends NailRivetGunWeapon {
         name = "Rivet Gun";
         setInternalName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
+        introDate = 2310;
+        availRating = new int[]{RATING_X,RATING_C,RATING_C};
+        techRating = RATING_C;
     }
 
 }

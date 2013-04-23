@@ -47,7 +47,7 @@ public class ISLRM5 extends LRMWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
-        introDate = 2400;
+        introDate = 2300;
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
     }
 }

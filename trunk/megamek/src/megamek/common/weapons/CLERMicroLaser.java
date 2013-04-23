@@ -57,5 +57,6 @@ public class CLERMicroLaser extends LaserWeapon {
         maxRange = RANGE_SHORT;
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
         this.introDate = 3060;
-    }
+        techRating = RATING_F;
+        }
 }

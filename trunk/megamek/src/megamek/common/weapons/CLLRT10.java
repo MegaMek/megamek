@@ -47,8 +47,8 @@ public class CLLRT10 extends LRTWeapon {
         this.criticals = 1;
         this.bv = 109;
         this.cost = 100000;
-        introDate = 2380;
-        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        introDate = 2824;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_C;
     }
 }

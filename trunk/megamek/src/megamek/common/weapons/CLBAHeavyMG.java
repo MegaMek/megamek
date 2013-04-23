@@ -52,7 +52,7 @@ public class CLBAHeavyMG extends BAMGWeapon {
         this.bv = 6;
         this.cost = 7500;
         introDate = 3059;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_C;
     }
 

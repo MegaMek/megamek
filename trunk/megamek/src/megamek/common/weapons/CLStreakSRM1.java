@@ -42,7 +42,7 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
         this.criticals = 0;
         this.bv = 20;
         introDate = 3060;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
     }
 }

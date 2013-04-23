@@ -48,7 +48,7 @@ public class CLSRT4OS extends SRTWeapon {
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 30000;
         this.introDate = 2676;
-        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_F;
     }
 }

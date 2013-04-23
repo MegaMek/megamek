@@ -49,7 +49,7 @@ public class CLLRM5OS extends LRMWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         this.introDate = 2676;
-        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_F;
         
     }

@@ -47,7 +47,7 @@ public class ISLightTAG extends TAGWeapon {
         this.extremeRange = 12;
         this.bv = 0;
         this.cost = 40000;
-        introDate = 3063;
+        introDate = 3053;
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_E;
     }

@@ -53,6 +53,10 @@ public class CLMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
+        introDate = 2825;
+        availRating = new int[]{RATING_A,RATING_A,RATING_B};
+        techRating = RATING_B;
+        
     }
 
 }

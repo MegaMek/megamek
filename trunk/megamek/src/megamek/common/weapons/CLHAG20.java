@@ -52,7 +52,7 @@ public class CLHAG20 extends HAGWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = rackSize/2;
         introDate = 3068;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
 
     }

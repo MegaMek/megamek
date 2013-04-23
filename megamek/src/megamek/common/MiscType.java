@@ -873,6 +873,11 @@ public class MiscType extends EquipmentType {
             if (entity.hasWorkingMisc(F_TSM)) {
                 returnBV *= 2;
             }
+        } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
+            returnBV = Math.ceil(entity.getWeight() / 10.0 + 1) * 1.725;
+            if (entity.hasWorkingMisc(F_TSM)) {
+                returnBV *= 2;
+            }
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE_THB)) {
             returnBV = Math.ceil(entity.getWeight() / 5.0) * 1.5;
             if (entity.hasWorkingMisc(F_TSM)) {

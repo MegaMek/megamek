@@ -48,8 +48,8 @@ public class CLSRM4 extends SRMWeapon {
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        introDate = 2370;
-        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        introDate = 2824;
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_F;
     }
 }

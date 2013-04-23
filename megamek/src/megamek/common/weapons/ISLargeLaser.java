@@ -54,6 +54,6 @@ public class ISLargeLaser extends LaserWeapon {
         this.medAV = 8;
         this.maxRange = RANGE_MED;
         this.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_D,EquipmentType.RATING_C};
-        this.introDate = 2430;
+        this.introDate = 2316;
     }
 }

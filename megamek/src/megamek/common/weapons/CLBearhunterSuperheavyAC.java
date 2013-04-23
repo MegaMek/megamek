@@ -54,7 +54,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE);
         introDate = 3062;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_D;
     }
 

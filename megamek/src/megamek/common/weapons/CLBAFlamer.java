@@ -53,7 +53,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         maxRange = RANGE_SHORT;
         flags = flags.or(F_BA_WEAPON);
         introDate = 1950;
-        availRating = new int[]{RATING_X,RATING_A,RATING_A};
+        availRating = new int[]{RATING_X,RATING_X,RATING_B};
         techRating = RATING_C;
     }
 }

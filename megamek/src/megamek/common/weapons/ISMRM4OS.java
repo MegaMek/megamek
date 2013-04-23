@@ -39,9 +39,10 @@ public class ISMRM4OS extends MRMWeapon {
         mediumRange = 8;
         longRange = 15;
         extremeRange = 16;
-        bv = 5;
+        bv = 45;
         flags = flags.or(F_ONESHOT);
-        introDate = 3058;
+        introDate = 3057;
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

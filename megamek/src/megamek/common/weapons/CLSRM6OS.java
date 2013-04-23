@@ -49,7 +49,7 @@ public class CLSRM6OS extends SRMWeapon {
         shortAV = 8;
         maxRange = RANGE_SHORT;
         this.introDate = 2676;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
     }
 }

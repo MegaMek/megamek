@@ -2971,7 +2971,6 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_CHAFF_POD)
-                            || etype.hasFlag(MiscType.F_TARGCOMP)
                             || etype.hasFlag(MiscType.F_SPIKES)
                             || (etype.hasFlag(MiscType.F_CLUB) && (etype
                                     .hasSubType(MiscType.S_SHIELD_LARGE)

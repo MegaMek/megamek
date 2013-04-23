@@ -50,7 +50,7 @@ public class CLSRM2OS extends SRMWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         this.introDate = 2676;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_F;
     }
 }

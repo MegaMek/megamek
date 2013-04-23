@@ -57,8 +57,8 @@ public class CLLargePulseLaser extends PulseLaserWeapon {
         this.medAV = 10;
         this.longAV = 10;
         this.maxRange = RANGE_LONG;
-        introDate = 2609;
-        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        introDate = 2824;
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
         techRating = RATING_F;
     }
 }

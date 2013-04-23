@@ -39,5 +39,8 @@ public class ISLRM1 extends LRMWeapon {
         rackSize = 1;
         minimumRange = 6;
         bv = 14;
+        introDate = 3057;
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techRating = RATING_E;
     }
 }

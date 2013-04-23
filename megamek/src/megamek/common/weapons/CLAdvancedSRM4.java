@@ -44,7 +44,7 @@ public class CLAdvancedSRM4 extends AdvancedSRMWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 60000;
         introDate = 3058;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
     }
 }

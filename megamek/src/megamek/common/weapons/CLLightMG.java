@@ -58,7 +58,7 @@ public class CLLightMG extends MGWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AC;
         introDate = 3060;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_F;
     }
 

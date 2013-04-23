@@ -53,7 +53,7 @@ public class CLBAAPGaussRifle extends Weapon {
         explosionDamage = 3;
         flags = flags.or(F_BA_WEAPON).or(F_BURST_FIRE);
         introDate = 3069;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
     }
 

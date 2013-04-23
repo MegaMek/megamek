@@ -47,7 +47,7 @@ public class CLNarcOS extends NarcWeapon {
         bv = 6;
         cost = 100000;
         introDate = 2587;
-        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        availRating = new int[]{RATING_E,RATING_F,RATING_D};
         techRating = RATING_F;
     }
 }

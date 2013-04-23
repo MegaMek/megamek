@@ -43,5 +43,8 @@ public class ISSRM1 extends SRMWeapon {
         extremeRange = 12;
         bv = 15;
         flags = flags.or(F_NO_FIRES);
+        introDate = 3050;
+        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techRating = RATING_E;
     }
 }

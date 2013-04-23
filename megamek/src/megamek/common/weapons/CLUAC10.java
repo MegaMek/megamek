@@ -54,6 +54,6 @@ public class CLUAC10 extends UACWeapon {
         this.explosionDamage = damage;
         this.techRating = RATING_F;
         introDate = 2825;
-        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        availRating = new int[]{RATING_X,RATING_X,RATING_E};
     }
 }

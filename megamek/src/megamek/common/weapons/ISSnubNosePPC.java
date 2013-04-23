@@ -28,6 +28,7 @@ public class ISSnubNosePPC extends PPCWeapon {
      *
      */
     private static final long serialVersionUID = -5650794792475465261L;
+	private int reintroduced;
 
     /**
      *
@@ -62,7 +63,9 @@ public class ISSnubNosePPC extends PPCWeapon {
         medAV = 8;
         // with a capacitor
         explosive = true;
-        introDate = 3067;
+        introDate = 2874;
+        extinctDate = 2790;
+        reintroduced = 3067;
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_E;
     }

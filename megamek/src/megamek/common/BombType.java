@@ -187,6 +187,8 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 12;
         bomb.cost = 0;
+        bomb.introDate = 1950;
+        bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
         bomb.techRating = RATING_B;
 
         return bomb;
@@ -207,6 +209,8 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 13;
         bomb.cost = 0;
+        bomb.introDate = 1950;
+        bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
         bomb.techRating = RATING_B;
 
         return bomb;
@@ -227,6 +231,10 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 20;
         bomb.cost = 0;
+        bomb.introDate = 1950;
+        bomb.extinctDate = 2800;
+        bomb.reintroDate = 3060;
+        bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
         bomb.techRating = RATING_C;
 
         return bomb;
@@ -246,6 +254,10 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
+        bomb.introDate = 2605;
+        bomb.extinctDate = 2835;
+        bomb.reintroDate = 3035;
+        bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
         bomb.techRating = RATING_E;
 
         return bomb;
@@ -264,8 +276,10 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 18;
         bomb.cost = 0;
-        bomb.techRating = RATING_B;
-
+        bomb.introDate = 3064;
+        bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
+        bomb.techRating = RATING_C;
+        
         return bomb;
     }
 
@@ -282,7 +296,10 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 57;
         bomb.cost = 0;
-        bomb.techRating = RATING_B;
+        bomb.introDate = 3072;
+        bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+        bomb.techRating = RATING_E;
+       
 
         return bomb;
     }
@@ -300,7 +317,9 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 114;
         bomb.cost = 0;
-        bomb.techRating = RATING_B;
+        bomb.introDate = 3071;
+        bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+        bomb.techRating = RATING_D;
 
         return bomb;
     }
@@ -318,7 +337,9 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 75;
         bomb.cost = 0;
-        bomb.techRating = RATING_C;
+        bomb.introDate = 3067;
+        bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        bomb.techRating = RATING_E;
 
         return bomb;
     }
@@ -338,8 +359,10 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 34;
         bomb.cost = 0;
+        bomb.introDate = 2623;
+        bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
         bomb.techRating = RATING_E;
-
+       
         return bomb;
     }
 
@@ -359,7 +382,9 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
-        bomb.techRating = RATING_B;
+        bomb.introDate = 2600;
+        bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
+        bomb.techRating = RATING_E;
 
         return bomb;
     }
@@ -379,7 +404,9 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 16;
         bomb.cost = 0;
-        bomb.techRating = RATING_C;
+        bomb.introDate = 1950;
+        bomb.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_D, EquipmentType.RATING_D};
+        bomb.techRating = RATING_B;
 
         return bomb;
     }
@@ -397,7 +424,9 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 17;
         bomb.cost = 0;
-        bomb.techRating = RATING_B;
+        bomb.introDate = 3072;
+        bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
+        bomb.techRating = RATING_E;
 
         return bomb;
     }
@@ -417,7 +446,9 @@ public class BombType extends AmmoType {
         bomb.shots = 1;
         bomb.bv = 0;
         bomb.cost = 0;
-        bomb.techRating = RATING_B;
+        bomb.introDate = 3052;
+        bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_X, EquipmentType.RATING_E};
+        bomb.techRating = RATING_C;
 
         return bomb;
     }
@@ -437,6 +468,9 @@ public class BombType extends AmmoType {
         bomb.bv = 10;
         bomb.cost = 0;
         bomb.techRating = RATING_C;
+        bomb.introDate = 1950;
+        bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
+        bomb.techRating = RATING_B;
 
         return bomb;
     }

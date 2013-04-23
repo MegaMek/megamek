@@ -49,7 +49,7 @@ public class CLLRT15OS extends LRTWeapon {
         flags = flags.or(F_ONESHOT);
         cost = 87500;
         introDate = 2676;
-        availRating = new int[]{RATING_X,RATING_B,RATING_A};
+        availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_C;
         
     }

@@ -45,7 +45,6 @@ public class CLAdvancedSRM6IOS extends AdvancedSRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3058;
-        introDate = 3058;
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+   
     }
 }

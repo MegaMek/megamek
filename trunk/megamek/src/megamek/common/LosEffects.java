@@ -778,7 +778,7 @@ public class LosEffects {
                     cover = (toUse.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
                 }
                 */
-                if ((cover < COVER_FULL) && (!toUse.blocked || !notUsing.blocked)){
+                if ((cover != COVER_NONE && cover < COVER_FULL) && (!toUse.blocked || !notUsing.blocked)){
                     los.blocked = false;
                     los.targetCover = cover;
                 }

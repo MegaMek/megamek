@@ -1314,6 +1314,10 @@ public class Aero extends Entity {
             int toSubtract = 1;
             EquipmentType etype = mounted.getType();
 
+            if (mounted.isWeaponGroup()) {
+                continue;
+            }
+
             // only count explosive ammo
             if (!etype.isExplosive(mounted, true)) {
                 continue;

@@ -50,7 +50,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.35.37"; //$NON-NLS-1$
+    public static String VERSION = "0.35.38-dev"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager.getClientPreferences().getLogDirectory() + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();

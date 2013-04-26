@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.35.37-dev (SVN)
+v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 
 + Bug 3694: Hull-down button for vehicles is enabled when the vehicle cannot go hull-down
 + Data 355: Vehicle Files missed in Latest Release .35.36

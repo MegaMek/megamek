@@ -3250,7 +3250,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.cost = 2000;        
+        ammo.cost = 2000;
         ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.introDate = 3064;
         ammo.techRating = RATING_B;
@@ -3269,7 +3269,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1000;
-        
+
 
         return ammo;
     }
@@ -3286,7 +3286,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1500;
-        
+
         return ammo;
     }
 
@@ -3301,8 +3301,8 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.cost = 2000;        
-        
+        ammo.cost = 2000;
+
         return ammo;
     }
 
@@ -3580,7 +3580,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2825;
         ammo.availRating = new int[]{RATING_C,RATING_D,RATING_D};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -3652,7 +3652,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2826;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -3678,7 +3678,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2825;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -3924,7 +3924,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2827;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -3947,7 +3947,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2640;
         ammo.availRating = new int[]{RATING_D,RATING_F,RATING_D};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -3991,7 +3991,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2825;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -4549,7 +4549,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3060;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
         ammo.techRating = RATING_C;
-        
+
         return ammo;
     }
 
@@ -4572,7 +4572,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2370;
         ammo.availRating = new int[]{RATING_B,RATING_B,RATING_B};
         ammo.techRating = RATING_C;
-        
+
         return ammo;
     }
 
@@ -4594,7 +4594,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3060;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
         ammo.techRating = RATING_C;
-        
+
         return ammo;
     }
 
@@ -5127,7 +5127,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3060;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_F};
         ammo.techRating = RATING_C;
-        
+
         return ammo;
     }
 
@@ -5281,7 +5281,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2647;
         ammo.availRating = new int[]{RATING_E,RATING_F,RATING_D};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -5325,7 +5325,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2826;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -5369,7 +5369,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2826;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
-        
+
         return ammo;
     }
 
@@ -5392,7 +5392,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2617;
         ammo.availRating = new int[]{RATING_E,RATING_F,RATING_D};
         ammo.techRating = RATING_F;
-        
+
         return ammo;
     }
 
@@ -5435,7 +5435,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2828;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_D};
         ammo.techRating = RATING_E;
-       
+
         return ammo;
     }
 
@@ -6140,7 +6140,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_IS_TW_NON_BOX;
-        ammo.name = "Mine Launcher Ammo";
+        ammo.name = "Pop-up Mine Ammo";
         ammo.shortName = "Mine";
         ammo.setInternalName("BA-Mine Launcher Ammo");
         ammo.addLookupName("BAMineLauncher Ammo");
@@ -6151,7 +6151,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.introDate = 3062;
-        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};        
+        ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -6523,7 +6523,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3057;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_E;
-        
+
 
         return ammo;
     }
@@ -6593,7 +6593,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3060;
         ammo.availRating = new int[]{RATING_X,RATING_X,RATING_E};
         ammo.techRating = RATING_F;
-        
+
 
         return ammo;
     }
@@ -6872,7 +6872,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("BARL1 Ammo");
         ammo.addLookupName("LAW Launcher Ammo");
         ammo.addLookupName("IS Ammo LAW Launcher");
-        ammo.damagePerShot = 1; 
+        ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
@@ -6881,7 +6881,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3050;
         ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
-        
+
 
         return ammo;
     }
@@ -7007,7 +7007,7 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3050;
         ammo.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
-      
+
 
         return ammo;
     }
@@ -9965,6 +9965,7 @@ public class AmmoType extends EquipmentType {
         return ((kgPerShot * shots) / 1000) * bv;
     }
 
+    @Override
     public String getShortName() {
         if (shortName.trim().length() < 1) {
             return getName();

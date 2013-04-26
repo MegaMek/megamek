@@ -1187,7 +1187,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMicroGrenadeLauncher());
         EquipmentType.addType(new CLHeavyGrenadeLauncher());
         EquipmentType.addType(new ISCompactNarc());
-        EquipmentType.addType(new ISMineLauncher());
+        EquipmentType.addType(new ISPopUpMineLauncher());
         EquipmentType.addType(new CLMicroBomb());
         EquipmentType.addType(new ISGrandMaulerGaussCannon());
         EquipmentType.addType(new ISTsunamiGaussRifle());

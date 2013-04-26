@@ -14,9 +14,10 @@
 
 package megamek.common;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Vector;
 
+import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -706,6 +707,14 @@ public class BattleArmor extends Infantry {
         // If the BA can swarm, they're anti-mek.
         if (Infantry.SWARM_MEK.equals(name)) {
             setAntiMek(true);
+        }
+
+        if (mounted.getType() instanceof ISPopUpMineLauncher) {
+            if (loc == BattleArmor.LOC_SQUAD) {
+                for (int i = LOC_TROOPER_1; i <= getTroopers();i++) {
+                    this.addEquipment(EquipmentType.get("BA-Mine Launcher Ammo"), loc);
+                }
+            }
         }
     }
 
@@ -1710,7 +1719,7 @@ public class BattleArmor extends Infantry {
         double activeTroopPercent = (double)getNumberActiverTroopers() / getSquadSize();
         if (activeTroopPercent < 0.5) {
             System.out.println(getDisplayName() + " CRIPPLED: only " +
-                               DecimalFormat.getPercentInstance().format(activeTroopPercent) +
+                               NumberFormat.getPercentInstance().format(activeTroopPercent) +
                                " troops remaining.");
             return true;
         }

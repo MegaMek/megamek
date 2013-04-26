@@ -32,18 +32,6 @@ ISSmallLaser:Body
 ISSmallLaser:Body
 ISMine Launcher:Body
 </Squad Equipment>
-<Trooper 1 Equipment>
-BA-Mine Launcher Ammo
-</Trooper 1 Equipment>
-<Trooper 2 Equipment>
-BA-Mine Launcher Ammo
-</Trooper 2 Equipment>
-<Trooper 3 Equipment>
-BA-Mine Launcher Ammo
-</Trooper 3 Equipment>
-<Trooper 4 Equipment>
-BA-Mine Launcher Ammo
-</Trooper 4 Equipment>
 <type>
 IS Level 2
 </type>

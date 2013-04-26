@@ -151,7 +151,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                 throw new EntityLoadingException("Incorrect armor array length");
             }
             t.setHasNoTurret(armor.length == 6);
-            t.setHasNoDualTurret((armor.length == 7) || (armor.length == 8));
+            t.setHasNoDualTurret((armor.length == 6) || (armor.length == 7));
         }
 
         // add the body to the armor array

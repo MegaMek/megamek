@@ -982,30 +982,35 @@ public class LosEffects {
             }
         }
 
-
-        // check for target partial cover
-        if (ai.targetPos.distance(coords) == 1) {
-            if (los.blocked
-                    && game.getOptions().booleanOption("tacops_partial_cover")) {
-                los.targetCover = COVER_FULL;
-            } else if ((hexEl + bldgEl == ai.targetAbsHeight)
-                    && (ai.attackAbsHeight <= ai.targetAbsHeight)
-                    && (ai.targetHeight > 0)) {
-                los.targetCover |= COVER_HORIZONTAL;
-            }
+        //Partial Cover related code
+        
+        boolean potentialCover = false;
+        // If LoS is blocked and we have TacOps partial cover, set full cover
+        //  so we check for lesser cover elsewhere
+        if (los.blocked
+                && game.getOptions().booleanOption("tacops_partial_cover")) {
+            los.targetCover = COVER_FULL;
+            los.attackerCover = COVER_FULL;
+            potentialCover = true;
         }
 
-        // check for attacker partial cover
-        if (ai.attackPos.distance(coords) == 1) {
-            if (los.blocked
-                    && game.getOptions().booleanOption("tacops_partial_cover")) {
-                los.attackerCover = COVER_FULL;
-            } else if ((hexEl + bldgEl == ai.attackAbsHeight)
-                    && (ai.attackAbsHeight >= ai.targetAbsHeight)
-                    && (ai.attackHeight > 0)) {
-                los.attackerCover |= COVER_HORIZONTAL;
-            }
+        // check for target partial (horizontal) cover
+        if (ai.targetPos.distance(coords) == 1 && 
+               (hexEl + bldgEl == ai.targetAbsHeight)
+                && (ai.attackAbsHeight <= ai.targetAbsHeight)
+                && (ai.targetHeight > 0)) {
+            los.targetCover |= COVER_HORIZONTAL; 
+            potentialCover = true;
         }
+
+        // check for attacker partial (horizontal) cover
+        if (ai.attackPos.distance(coords) == 1 &&
+                (hexEl + bldgEl == ai.attackAbsHeight)
+                && (ai.attackAbsHeight >= ai.targetAbsHeight)
+                && (ai.attackHeight > 0)) {
+            los.attackerCover |= COVER_HORIZONTAL;
+            potentialCover = true;
+        }        
 
         return los;
     }

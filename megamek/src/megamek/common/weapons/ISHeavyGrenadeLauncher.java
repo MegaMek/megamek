@@ -24,19 +24,20 @@ import megamek.common.WeaponType;
 /**
  * @author Andrew Hunter
  */
-public class ISAutoGrenadeLauncher extends Weapon {
+public class ISHeavyGrenadeLauncher extends Weapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -5514157095037913844L;
 
-    public ISAutoGrenadeLauncher() {
+    public ISHeavyGrenadeLauncher() {
         super();
         techLevel = TechConstants.T_IS_TW_NON_BOX;
-        name = "Auto Grenade Launcher";
+        name = "Heavy Grenade Launcher";
         setInternalName(name);
         addLookupName("ISAutoGL");
+        addLookupName("ISHeavyGL");
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_HALFD6;

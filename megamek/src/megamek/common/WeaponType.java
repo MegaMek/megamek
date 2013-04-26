@@ -1183,7 +1183,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBAPlasmaRifle());
         EquipmentType.addType(new ISHeavyMortar());
         EquipmentType.addType(new ISLightMortar());
-        EquipmentType.addType(new ISAutoGrenadeLauncher());
+        EquipmentType.addType(new ISHeavyGrenadeLauncher());
         EquipmentType.addType(new ISMicroGrenadeLauncher());
         EquipmentType.addType(new CLHeavyGrenadeLauncher());
         EquipmentType.addType(new ISCompactNarc());

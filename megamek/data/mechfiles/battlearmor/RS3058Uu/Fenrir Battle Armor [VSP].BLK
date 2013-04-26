@@ -32,7 +32,7 @@ quad
 </Armor>
 <Squad Equipment>
 ISSmallVSPLaser:Body
-ISAutoGL:Body
+ISHeavyGL:Body
 </Squad Equipment>
 <type>
 IS Level 3

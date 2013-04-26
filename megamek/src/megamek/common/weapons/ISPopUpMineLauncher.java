@@ -28,7 +28,7 @@ import megamek.server.Server;
 /**
  * @author Andrew Hunter
  */
-public class ISMineLauncher extends Weapon {
+public class ISPopUpMineLauncher extends Weapon {
     /**
      *
      */
@@ -37,10 +37,10 @@ public class ISMineLauncher extends Weapon {
     /**
      *
      */
-    public ISMineLauncher() {
+    public ISPopUpMineLauncher() {
         super();
         techLevel = TechConstants.T_IS_TW_NON_BOX;
-        name = "Mine Launcher";
+        name = "Pop-up Mine";
         setInternalName(BattleArmor.MINE_LAUNCHER);
         addLookupName("ISMine Launcher");
         heat = 0;
@@ -65,7 +65,7 @@ public class ISMineLauncher extends Weapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

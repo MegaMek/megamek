@@ -45,7 +45,7 @@ public class ISKingDavidLightGaussRifle extends Weapon {
         longRange = 9;
         extremeRange = 12;
         bv = 7;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON);
         introDate = 3063;
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;

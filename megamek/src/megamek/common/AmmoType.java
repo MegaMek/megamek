@@ -7408,6 +7408,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "ELRM 5";
         ammo.setInternalName("IS Ammo Extended LRM-5");
         ammo.addLookupName("ISExtended LRM5 Ammo");
+        ammo.addLookupName("ISExtendedLRM5 Ammo");
         ammo.addLookupName("IS Extended LRM 5 Ammo");
         ammo.addLookupName("ELRM-5 Ammo (THB)");
         ammo.addLookupName("ELRM 5 Ammo");
@@ -7434,6 +7435,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "ELRM 10";
         ammo.setInternalName("IS Ammo Extended LRM-10");
         ammo.addLookupName("ISExtended LRM10 Ammo");
+        ammo.addLookupName("ISExtendedLRM10 Ammo");
         ammo.addLookupName("IS Extended LRM 10 Ammo");
         ammo.addLookupName("ELRM-10 Ammo (THB)");
         ammo.addLookupName("ELRM 10 Ammo");
@@ -7460,6 +7462,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "ELRM 15";
         ammo.setInternalName("IS Ammo Extended LRM-15");
         ammo.addLookupName("ISExtended LRM15 Ammo");
+        ammo.addLookupName("ISExtendedLRM15 Ammo");
         ammo.addLookupName("IS Extended LRM 15 Ammo");
         ammo.addLookupName("ELRM-15 Ammo (THB)");
         ammo.addLookupName("ELRM 15 Ammo");
@@ -7487,6 +7490,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "ELRM 20";
         ammo.setInternalName("IS Ammo Extended LRM-20");
         ammo.addLookupName("ISExtended LRM20 Ammo");
+        ammo.addLookupName("ISExtendedLRM20 Ammo");
         ammo.addLookupName("IS Extended LRM 20 Ammo");
         ammo.addLookupName("ELRM-20 Ammo (THB)");
         ammo.addLookupName("ELRM 20 Ammo");

@@ -735,7 +735,7 @@ public class LosEffects {
         }
 
         // go through divided line segments
-                LosEffects totalLeftLos = new LosEffects();
+        LosEffects totalLeftLos = new LosEffects();
         LosEffects totalRightLos = new LosEffects();
         for (int i = 1; i < in.size() - 2; i += 3) {
             LosEffects leftLos = losForCoords(game, ai, in.get(i), los

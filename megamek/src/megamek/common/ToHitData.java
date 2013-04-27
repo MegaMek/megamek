@@ -45,6 +45,26 @@ public class ToHitData extends TargetRoll {
     private int sideTable = SIDE_FRONT;
     private int cover = LosEffects.COVER_NONE;
     private int margineOfSuccess = 0;
+    
+    /**
+     * Determines the drop of damagable cover.  Values are defined in 
+     * <code>LosEffects<code>.
+     */
+    private int damagableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
+    /**
+     * If a grounded Dropship provides cover, it is stored here in case it
+     * absorbs damage.
+     */
+    Entity coverDropship;
+    /**
+     * If a building is providing cover, it is stored here in case it absorbs 
+     * damage.
+     */
+    Building coverBuilding;
+    /**
+     * The coordinates of the entity providing cover.
+     */
+    Coords coverLoc;
 
     /**
      * Construct default.
@@ -157,6 +177,38 @@ public class ToHitData extends TargetRoll {
 
     public void setMoS(int moS) {
         margineOfSuccess = moS;
+    }
+
+    public void setDamagableCoverType(int damagableCoverType) {
+        this.damagableCoverType = damagableCoverType;
+    }
+
+    public int getDamagableCoverType() {
+        return damagableCoverType;
+    }
+
+    public Entity getCoverDropship() {
+        return coverDropship;
+    }
+
+    public void setCoverDropship(Entity coverDropship) {
+        this.coverDropship = coverDropship;
+    }
+
+    public Building getCoverBuilding() {
+        return coverBuilding;
+    }
+
+    public void setCoverBuilding(Building coverBuilding) {
+        this.coverBuilding = coverBuilding;
+    }
+
+    public Coords getCoverLoc() {
+        return coverLoc;
+    }
+
+    public void setCoverLoc(Coords coverLoc) {
+        this.coverLoc = coverLoc;
     }
 
 }

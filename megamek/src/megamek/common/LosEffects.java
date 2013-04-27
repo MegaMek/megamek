@@ -730,9 +730,6 @@ public class LosEffects {
                 los.blocked = true;
             }
 
-            // Include all previous LOS effects.
-            toUse.add(los);
-
             // Infantry inside a building can only be
             // targeted by units in the same building.
             if (ai.targetInfantry && targetInBuilding) {
@@ -740,8 +737,8 @@ public class LosEffects {
                     toUse.infProtected = true;
                 }
             }
-            los = toUse;
-
+       
+            // Check for advanced cover
             if (game.getOptions().booleanOption("tacops_partial_cover")) {
                 int cover = toUse.targetCover;
                 if((cover == COVER_HORIZONTAL && notUsing.targetCover == COVER_NONE) 
@@ -769,20 +766,16 @@ public class LosEffects {
                         cover = COVER_75RIGHT;
                     }
                 }
-                /*
-                 * I don't fully understand all the bit stuff here so I am just going
-                 * to go through the cases the old-fashioned way
-                if (usingLeft) {
-                    cover = (toUse.targetCover & (COVER_LEFT | COVER_LOWLEFT));
-                } else {
-                    cover = (toUse.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
+                //In the case of vertical cover and 75% cover, LoS will have 
+                // been blocked.  We need to unblock it.
+                if ((!toUse.blocked || !notUsing.blocked && !los.blocked) &&
+                        (cover == COVER_75LEFT || cover == COVER_75RIGHT || 
+                         cover == COVER_LEFT  | cover == COVER_RIGHT)){                   
+                    toUse.blocked = false;                                        
                 }
-                */
-                if ((cover != COVER_NONE && cover < COVER_FULL) && (!toUse.blocked || !notUsing.blocked)){
-                    los.blocked = false;
-                    los.targetCover = cover;
-                }
+                toUse.targetCover = cover;
             }
+            los.add(toUse);
         }
         return los;
     }

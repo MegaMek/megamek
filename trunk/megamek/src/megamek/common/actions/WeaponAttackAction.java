@@ -1774,11 +1774,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 if (game.getOptions().booleanOption("tacops_partial_cover")) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
-                    toHit.setCover(los.getTargetCover());
+                    toHit.setCover(los.getTargetCover());                    
                 } else {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
                 }
+                //Check to see if there's a covering entity
+                toHit.setDamagableCoverType(los.getDamagableCoverType());
+                toHit.setCoverLoc(los.getCoverLoc());
+                if (los.getDamagableCoverType() == 
+                        LosEffects.DAMAGABLE_COVER_DROPSHIP){                        
+                    toHit.setCoverDropship(los.getCoverDropship());
+                } else if (los.getDamagableCoverType() == 
+                    LosEffects.DAMAGABLE_COVER_BUILDING){
+                    toHit.setCoverBuilding(los.getCoverBuilding());                    
+                }                                       
             }
             // XXX what to do about GunEmplacements with partial cover?
         }

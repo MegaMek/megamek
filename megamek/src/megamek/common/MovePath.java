@@ -350,7 +350,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Returns whether or not a unit would end up prone after all of the steps
+     * Returns whether or not a unit would end up hull-down after all of the steps
      */
     public boolean getFinalHullDown() {
         if (getLastStep() != null) {
@@ -864,7 +864,10 @@ public class MovePath implements Cloneable, Serializable {
             return result;
         }
 
-        if (getFinalProne() || getFinalHullDown()) {
+        // If the unit is prone or hull-down it limits movement options, unless
+        //  it's a tank; tanks can just drive out of hull-down and they cannot 
+        //  be prone.
+        if (getFinalProne() || getFinalHullDown() && !(entity instanceof Tank)) {
             if ((last != null) && (last.getType() != MoveStepType.TURN_RIGHT)) {
                 result.add(clone().addStep(MovePath.MoveStepType.TURN_LEFT));
             }

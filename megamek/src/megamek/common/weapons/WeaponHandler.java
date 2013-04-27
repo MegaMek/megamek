@@ -29,9 +29,11 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
+import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.ITerrain;
 import megamek.common.Infantry;
+import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
@@ -570,14 +572,79 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (!isIndirect && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
+            
+            //Keep spacing consistent
+            Report.addNewline(vPhaseReport);
+            
             Report r = new Report(3460);
             r.subject = subjectId;
             r.add(entityTarget.getShortName());
             r.add(entityTarget.getLocationAbbr(hit));
             r.indent(2);
             vPhaseReport.addElement(r);
+            //Check if we need to damage the cover that absorbed the hit.
+            if (toHit.getDamagableCoverType() == 
+                    LosEffects.DAMAGABLE_COVER_DROPSHIP){
+                //We need to adjust some state and then restore it later
+                // This allows us to make a call to handleEntityDamage
+                ToHitData savedToHit = toHit;
+                int savedAimingMode = waa.getAimingMode();
+                waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+                int savedAimedLocation = waa.getAimedLocation();
+                waa.setAimedLocation(Entity.LOC_NONE);
+                boolean savedSalvo = bSalvo;
+                bSalvo = true;
+                //Create new toHitData
+                toHit = new ToHitData(0,"",ToHitData.HIT_NORMAL,
+                        Compute.targetSideTable(ae,savedToHit.getCoverDropship()));
+                System.out.println("WeaponHandler: " + toHit.getSideTable());
+                //Report cover was damaged
+                int sizeBefore = vPhaseReport.size();
+                r = new Report(3465);
+                r.subject = subjectId;
+                r.add(savedToHit.getCoverDropship().getShortName());
+                vPhaseReport.add(r);
+                //Damage the dropship
+                handleEntityDamage(savedToHit.getCoverDropship(),vPhaseReport,
+                        bldg,hits,nCluster,bldgAbsorbs);
+                //Remove a blank line in the report list
+                if (vPhaseReport.elementAt(sizeBefore).newlines > 0)
+                    vPhaseReport.elementAt(sizeBefore).newlines--;
+                //Indent reports related to the damage absorption
+                while (sizeBefore < vPhaseReport.size()){
+                    vPhaseReport.elementAt(sizeBefore).indent(3);
+                    sizeBefore++;
+                }
+                //Restore state                
+                toHit = savedToHit;
+                waa.setAimingMode(savedAimingMode);
+                waa.setAimedLocation(savedAimedLocation);
+                bSalvo = savedSalvo;
+            //Damage a building that blocked a shot
+            } else if (toHit.getDamagableCoverType() == 
+                    LosEffects.DAMAGABLE_COVER_BUILDING){
+                //Normal damage
+                nDamage = nDamPerHit * Math.min(nCluster, hits);           
+                Vector<Report> buildingReport = 
+                    server.damageBuilding(toHit.getCoverBuilding(), nDamage, 
+                            " blocks the shot and takes ",toHit.getCoverLoc());
+                for (Report report : buildingReport) {
+                    report.subject = subjectId;
+                    report.indent();
+                }
+                vPhaseReport.addAll(buildingReport);
+                // Damage any infantry in the building.
+                Vector<Report> infantryReport =
+                        server.damageInfantryIn(toHit.getCoverBuilding(),
+                                nDamage, toHit.getCoverLoc(), 
+                                wtype.getInfantryDamageClass());                
+                for (Report report : infantryReport){
+                    report.indent(2);
+                }
+                vPhaseReport.addAll(infantryReport);                                
+            }
             nDamage = 0;
-            missed = true;
+            missed = true;            
             return;
         }
 

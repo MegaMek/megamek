@@ -53,6 +53,7 @@ import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISLAC5;
+import megamek.common.weapons.ISPopUpMineLauncher;
 import megamek.common.weapons.ISSnubNosePPC;
 import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
@@ -547,10 +548,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         quirks.initialize();
         secondaryPositions = new HashMap<Integer, Coords>();
         fluff = new EntityFluff();
-        initMilitary();
+
     }
 
-    private void initMilitary() {
+    protected void initMilitary() {
         military = hasViableWeapons();
     }
 
@@ -563,7 +564,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 continue;
             }
             WeaponType type = (WeaponType) weapon.getType();
-            totalDmg += type.getDamage();
+            if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
+
+            } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
+                return true;
+            } else if (type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                totalDmg += type.getRackSize();
+            } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {
+                if (type instanceof ISPopUpMineLauncher) {
+                    totalDmg += 4;
+                }
+            } else {
+                totalDmg += type.getDamage();
+            }
+
             if (type.getLongRange() >= 6) {
                 hasRangeSixPlus = true;
             }

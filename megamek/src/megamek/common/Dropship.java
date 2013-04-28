@@ -355,7 +355,7 @@ public class Dropship extends SmallCraft {
                 bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-            } else if (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
+            } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -1291,6 +1291,7 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public int getECMRange() {
+        boolean test = game.getOptions().booleanOption("stratops_ecm");
         if (!game.getOptions().booleanOption("stratops_ecm")
                 || !game.getBoard().inSpace()) {
             return super.getECMRange();

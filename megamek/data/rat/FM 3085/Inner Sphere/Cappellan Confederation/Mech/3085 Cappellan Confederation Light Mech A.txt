@@ -8,5 +8,5 @@ Raven RVN-4Lr,6
 Ebony MEB-9,5
 Dola DOL-1A1,4
 Ebony MEB-11,3
-Dola DOL-1A2 "Yoh Ti Ts’angs",2
+Dola DOL-1A2 "Yoh Ti Ts'angs",2
 Owens OW-1,1

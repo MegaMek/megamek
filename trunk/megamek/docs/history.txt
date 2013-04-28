@@ -1,7 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.35.38-dev (SVN)
-+ Bug 3703: TacOps partial cover causes one-sided LOS 
++ Bug 3703: TacOps partial cover causes one-sided LOS
++ Bug: fixed wrong apostrophe character in 3 mechfiles
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

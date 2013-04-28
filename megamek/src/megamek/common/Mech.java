@@ -2755,8 +2755,9 @@ public abstract class Mech extends Entity {
                 && ((loc == LOC_LARM) || (loc == LOC_RARM))
                 && ((mounted.getType() instanceof GaussWeapon)
                         || (mounted.getType() instanceof ACWeapon)
-                        || (mounted.getType() instanceof UACWeapon) || (mounted
-                            .getType() instanceof LBXACWeapon))) {
+                        || (mounted.getType() instanceof UACWeapon)
+                        || (mounted.getType() instanceof LBXACWeapon)
+                        || (mounted.getType() instanceof PPCWeapon))) {
             if (hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }

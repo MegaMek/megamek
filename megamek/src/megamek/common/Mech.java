@@ -28,11 +28,14 @@ import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
+import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.UACWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -403,9 +406,11 @@ public abstract class Mech extends Entity {
         if (isOmni()) {
             return;
         }
-        //TODO: I really hate this optional rule - what if some units are already loaded?
-        //if ba_grab_bars is on, then we need to add battlearmor handles, otherwise clamp mounts
-        //but first clear out whatever we have
+        // TODO: I really hate this optional rule - what if some units are
+        // already loaded?
+        // if ba_grab_bars is on, then we need to add battlearmor handles,
+        // otherwise clamp mounts
+        // but first clear out whatever we have
         Vector<Transporter> et = new Vector<Transporter>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandles) {
@@ -1380,7 +1385,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int height() {
-      return isProne() ? 0 : 1;
+        return isProne() ? 0 : 1;
     }
 
     /**
@@ -1426,8 +1431,10 @@ public abstract class Mech extends Entity {
             System.out.println("Mech: can't find heat sink to add to engine");
         }
 
-        int toAllocate = Math.min(totalSinks, getEngine()
-                .integralHeatSinkCapacity(sinkType.hasFlag(MiscType.F_COMPACT_HEAT_SINK)));
+        int toAllocate = Math.min(
+                totalSinks,
+                getEngine().integralHeatSinkCapacity(
+                        sinkType.hasFlag(MiscType.F_COMPACT_HEAT_SINK)));
         addEngineSinks(sinkName, toAllocate);
     }
 
@@ -1499,15 +1506,17 @@ public abstract class Mech extends Entity {
 
     /**
      * Returns the number of heat sinks, functional or not.
-     * @param countPrototypes Set TRUE to include Prototype Heat Sinks in the total.
+     *
+     * @param countPrototypes
+     *            Set TRUE to include Prototype Heat Sinks in the total.
      */
     public int heatSinks(boolean countPrototypes) {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {
             EquipmentType etype = mounted.getType();
             if (etype.hasFlag(MiscType.F_COMPACT_HEAT_SINK)
-                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || (etype.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
+                    && (etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK) || (etype
+                            .hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE) && countPrototypes))) {
                 sinks += 2;
             } else if (etype.hasFlag(MiscType.F_HEAT_SINK)
                     || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
@@ -1553,27 +1562,32 @@ public abstract class Mech extends Entity {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
-            if ((activeCount > 0) && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if ((activeCount > 0)
+                    && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
                 activeCount--;
-            } else if ((activeCount > 0) && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if ((activeCount > 0)
+                    && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
-            } else if (mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (mounted.getType().hasFlag(
+                    MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
-            } else if (includePartialWing && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
-                        && // unless
-                        // all crits
-                        // are
-                        // destroyed,
-                        // we get
-                        // the bonus
-                        ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                                getEquipmentNum(mounted), Mech.LOC_RT) > 0) || (getGoodCriticals(
-                                CriticalSlot.TYPE_EQUIPMENT,
-                                getEquipmentNum(mounted), Mech.LOC_LT) > 0))) {
-                    capacity += getPartialWingHeatBonus();
-                includePartialWing = false; //Only count the partial wing bonus once.
+            } else if (includePartialWing
+                    && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                    && // unless
+                       // all crits
+                       // are
+                       // destroyed,
+                       // we get
+                       // the bonus
+                    ((getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                            getEquipmentNum(mounted), Mech.LOC_RT) > 0) || (getGoodCriticals(
+                            CriticalSlot.TYPE_EQUIPMENT,
+                            getEquipmentNum(mounted), Mech.LOC_LT) > 0))) {
+                capacity += getPartialWingHeatBonus();
+                includePartialWing = false; // Only count the partial wing bonus
+                                            // once.
             }
         }
 
@@ -1621,7 +1635,8 @@ public abstract class Mech extends Entity {
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                    || mounted.getType().hasFlag(
+                            MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 sinksUnderwater += 2;
             }
         }
@@ -2469,14 +2484,17 @@ public abstract class Mech extends Entity {
      * either returns no critical hit, rolls a floating crit, or returns a TAC
      * in the specified location.
      */
-    protected HitData tac(int table, int side, int location, int cover, boolean rear) {
+    protected HitData tac(int table, int side, int location, int cover,
+            boolean rear) {
         if (game.getOptions().booleanOption("no_tac")) {
             return new HitData(location, rear);
         } else if (game.getOptions().booleanOption("floating_crits")) {
             HitData hd = rollHitLocation(table, side);
-            //check for cover and keep rolling until you get something without cover
+            // check for cover and keep rolling until you get something without
+            // cover
             int i = 0;
-            while(removePartialCoverHits(hd.getLocation(), cover, side) && (i < 500)) {
+            while (removePartialCoverHits(hd.getLocation(), cover, side)
+                    && (i < 500)) {
                 hd = rollHitLocation(table, side);
                 i++;
             }
@@ -2730,6 +2748,22 @@ public abstract class Mech extends Entity {
         if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
             slots = 1;
         }
+        // gauss and AC weapons on omni arms means no arm actuators, so we
+        // remove them
+        if (isOmni()
+                && (this instanceof BipedMech)
+                && ((loc == LOC_LARM) || (loc == LOC_RARM))
+                && ((mounted.getType() instanceof GaussWeapon)
+                        || (mounted.getType() instanceof ACWeapon)
+                        || (mounted.getType() instanceof UACWeapon) || (mounted
+                            .getType() instanceof LBXACWeapon))) {
+            if (hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)) {
+                setCritical(loc, 2, null);
+            }
+            if (hasSystem(Mech.ACTUATOR_HAND, loc)) {
+                setCritical(loc, 3, null);
+            }
+        }
 
         // check criticals for space
         if (getEmptyCriticals(loc) < slots) {
@@ -2960,8 +2994,8 @@ public abstract class Mech extends Entity {
 
             if (((etype instanceof WeaponType) && (etype
                     .hasFlag(WeaponType.F_AMS)
-                    || etype.hasFlag(WeaponType.F_M_POD)
-                    || etype.hasFlag(WeaponType.F_B_POD)))
+                    || etype.hasFlag(WeaponType.F_M_POD) || etype
+                        .hasFlag(WeaponType.F_B_POD)))
                     || ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM)
                             || etype.hasFlag(MiscType.F_BAP)
@@ -2971,9 +3005,9 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
                             || etype.hasFlag(MiscType.F_CHAFF_POD)
-                            || etype.hasFlag(MiscType.F_SPIKES)
-                            || (etype.hasFlag(MiscType.F_CLUB) && (etype
-                                    .hasSubType(MiscType.S_SHIELD_LARGE)
+                            || etype.hasFlag(MiscType.F_SPIKES) || (etype
+                            .hasFlag(MiscType.F_CLUB) && (etype
+                            .hasSubType(MiscType.S_SHIELD_LARGE)
                             || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype
                                 .hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(this);
@@ -3094,11 +3128,9 @@ public abstract class Mech extends Entity {
                     continue;
                 }
             } else {
-                if ((loc == LOC_LARM)
-                        && (hasCASEII(LOC_LT))) {
+                if ((loc == LOC_LARM) && (hasCASEII(LOC_LT))) {
                     continue;
-                } else if ((loc == LOC_RARM)
-                        && (hasCASEII(LOC_RT))) {
+                } else if ((loc == LOC_RARM) && (hasCASEII(LOC_RT))) {
                     continue;
                 }
                 // inner sphere with XL or XXL counts everywhere
@@ -3143,7 +3175,8 @@ public abstract class Mech extends Entity {
             }
 
             // empty ammo shouldn't count
-            if ((etype instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
+            if ((etype instanceof AmmoType)
+                    && (mounted.getUsableShotsLeft() == 0)) {
                 continue;
             }
 
@@ -4436,7 +4469,6 @@ public abstract class Mech extends Entity {
 
         obv = weaponBV * speedFactor;
 
-
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -4623,11 +4655,12 @@ public abstract class Mech extends Entity {
         costs[i++] = hasFullHeadEject() ? 1725000 : 0;
         // armored components
         int armoredCrits = 0;
-        for (int j = 0; j<locations(); j++) {
+        for (int j = 0; j < locations(); j++) {
             int numCrits = getNumberOfCriticals(j);
             for (int k = 0; k < numCrits; k++) {
                 CriticalSlot ccs = getCritical(j, k);
-                if ((ccs != null) && ccs.isArmored() && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                if ((ccs != null) && ccs.isArmored()
+                        && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {
                     armoredCrits++;
                 }
             }
@@ -4673,7 +4706,8 @@ public abstract class Mech extends Entity {
         bvText = new StringBuffer();
         String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer",
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
-                "Heatsinks", "Full Head Ejection System", "Armored System Components", "Armor", "Equipment",
+                "Heatsinks", "Full Head Ejection System",
+                "Armored System Components", "Armor", "Equipment",
                 "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
@@ -5099,8 +5133,7 @@ public abstract class Mech extends Entity {
                         }
                     } else if (isNullSigActive() && !isInfantry) {
                         result = new TargetRoll(0, "null-sig");
-                    }
-                    else {
+                    } else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5115,7 +5148,7 @@ public abstract class Mech extends Entity {
                         }
                     } else if (isNullSigActive() && !isInfantry) {
                         result = new TargetRoll(1, "null-sig");
-                    }else {
+                    } else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5130,7 +5163,7 @@ public abstract class Mech extends Entity {
                         }
                     } else if (isNullSigActive() && !isInfantry) {
                         result = new TargetRoll(2, "null-sig");
-                    }else {
+                    } else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5145,7 +5178,7 @@ public abstract class Mech extends Entity {
                         }
                     } else if (isNullSigActive() && !isInfantry) {
                         result = new TargetRoll(2, "null-sig");
-                    }else {
+                    } else {
                         // must be infantry
                         result = new TargetRoll(0, "infantry ignore stealth");
                     }
@@ -5729,7 +5762,8 @@ public abstract class Mech extends Entity {
 
         if (isOmni()) {
             sb.append("Base Chassis Heat Sinks:");
-            sb.append(getEngine().getBaseChassisHeatSinks(hasCompactHeatSinks()));
+            sb.append(getEngine()
+                    .getBaseChassisHeatSinks(hasCompactHeatSinks()));
             sb.append(newLine);
         }
 
@@ -6398,7 +6432,8 @@ public abstract class Mech extends Entity {
     public void destroyLocation(int loc, boolean blownOff) {
         // If it's already destroyed, don't bother -- as of 12/06/28, super.
         // destroyLocation() will just return having done nothing itself and
-        // then we'd potentially end up with a second PSR for an already-destroyed
+        // then we'd potentially end up with a second PSR for an
+        // already-destroyed
         // leg.
         if (getInternal(loc) < 0) {
             return;
@@ -6642,8 +6677,7 @@ public abstract class Mech extends Entity {
                     || (getCrew().getHits() >= 6)) {
                 base = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
                         "Pilot dead");
-            }
-            else if (!getCrew().isActive()) {
+            } else if (!getCrew().isActive()) {
                 base = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE,
                         "Pilot unconscious");
             }
@@ -6704,8 +6738,7 @@ public abstract class Mech extends Entity {
                     || (getCrew().getHits() >= 6)) {
                 base = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
                         "Pilot dead");
-            }
-            else if (!getCrew().isActive()) {
+            } else if (!getCrew().isActive()) {
                 base = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE,
                         "Pilot unconscious");
             }
@@ -7470,22 +7503,26 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isCrippled() {
         if (countInternalDamagedLimbs() >= 3) {
-            System.out.println(getDisplayName() + " CRIPPLED: 3+ limbs have taken internals.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: 3+ limbs have taken internals.");
             return true;
         }
 
         if (countInternalDamagedTorsos() >= 2) {
-            System.out.println(getDisplayName() + " CRIPPLED: 2+ torsos have taken internals.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: 2+ torsos have taken internals.");
             return true;
         }
 
         if (isLocationDoomed(LOC_LT)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Left Torso destroyed.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: Left Torso destroyed.");
             return true;
         }
 
         if (isLocationDoomed(LOC_RT)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Right Torso destroyed.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: Right Torso destroyed.");
             return true;
         }
 
@@ -7495,26 +7532,29 @@ public abstract class Mech extends Entity {
         }
 
         if ((getEngineHits() == 1) && (getGyroHits() == 1)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Engine + Gyro hit.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: Engine + Gyro hit.");
             return true;
         }
 
         if (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD) > 0) {
-            System.out.println(getDisplayName() + " CRIPPLED: Sensors destroyed.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: Sensors destroyed.");
             return true;
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: Pilot has taken 4+ damage.");
             return true;
         }
 
         if (isPermanentlyImmobilized()) {
             System.out.println(getDisplayName() + " CRIPPLED: Immobilized.");
-        	return true;
+            return true;
         }
 
-        //If this is not a military unit, we don't care about weapon status.
+        // If this is not a military unit, we don't care about weapon status.
         if (!isMilitary()) {
             return false;
         }
@@ -7523,7 +7563,8 @@ public abstract class Mech extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -7593,7 +7634,7 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        //If this is not a military unit, we don't care about weapon status.
+        // If this is not a military unit, we don't care about weapon status.
         if (!isMilitary()) {
             return false;
         }
@@ -7626,7 +7667,7 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        //If this is not a military unit, we don't care about weapon status.
+        // If this is not a military unit, we don't care about weapon status.
         if (!isMilitary()) {
             return false;
         }
@@ -7656,7 +7697,7 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        //If this is not a military unit, we don't care about weapon status.
+        // If this is not a military unit, we don't care about weapon status.
         if (!isMilitary()) {
             return false;
         }
@@ -7682,13 +7723,14 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Report the location as destroyed if blown off in a previous phase, doomed if
-     * blown off in this one.
+     * Report the location as destroyed if blown off in a previous phase, doomed
+     * if blown off in this one.
      */
     @Override
     public int getInternal(int loc) {
         if (isLocationBlownOff(loc)) {
-            return isLocationBlownOffThisPhase(loc) ? IArmorState.ARMOR_DOOMED : IArmorState.ARMOR_DESTROYED;
+            return isLocationBlownOffThisPhase(loc) ? IArmorState.ARMOR_DOOMED
+                    : IArmorState.ARMOR_DESTROYED;
         }
         return super.getInternal(loc);
     }

@@ -4,6 +4,8 @@ v0.35.38-dev (SVN)
 + Bug 3703: TacOps partial cover causes one-sided LOS
 + Bug: fixed wrong apostrophe character in 3 mechfiles
 + Bug: civilian/military check not working correctly
++ Automatically remove hand and lower arm actuators when adding AC guns/Gauss
+    rifles to omni unit's arms
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

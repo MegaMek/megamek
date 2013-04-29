@@ -666,26 +666,6 @@
         <quirk>stable</quirk>
     </unit>
     <unit>
-        <chassis>Dragon Fire</chassis>
-        <model>DRG-3F</model>
-        <quirk>stable</quirk>
-    </unit>
-    <unit>
-        <chassis>Dragon Fire</chassis>
-        <model>DRG-4F</model>
-        <quirk>stable</quirk>
-    </unit>
-    <unit>
-        <chassis>Dragon Fire</chassis>
-        <model>DRG-6FC</model>
-        <quirk>stable</quirk>
-    </unit>
-    <unit>
-        <chassis>Dragon Fire</chassis>
-        <model>DRG-6FC2 Kishi</model>
-        <quirk>stable</quirk>
-    </unit>
-    <unit>
         <chassis>Grand Dragon</chassis>
         <model>DRG-1G (Douglas)</model>
         <quirk>stable</quirk>

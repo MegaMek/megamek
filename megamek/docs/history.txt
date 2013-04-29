@@ -6,6 +6,7 @@ v0.35.38-dev (SVN)
 + Bug: civilian/military check not working correctly
 + Automatically remove hand and lower arm actuators when adding AC guns/Gauss
     rifles to omni unit's arms
++ Bug 3704: Dragon Fire default quirks wrong 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

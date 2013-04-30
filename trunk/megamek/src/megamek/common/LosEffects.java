@@ -1350,19 +1350,45 @@ public class LosEffects {
         return false;
     }
     
-    static public String getCoverName(int cover){
+     
+    /**
+     * Returns the text name of a particular type of cover, given its id.
+     * TacOps partial cover is assigned from the perspective of the attacker,
+     * so it's possible that the sides should be switched to make sense
+     * from the perspective of the target.
+     * 
+     * @param cover  The int id that represents the cover type.
+     * @param switchSides A boolean that determines if left/right side should
+     *                     be switched.  This is useful since cover is given
+     *                     from the perspective of the attacker, and the sides
+     *                     need to be switched for the target.
+     * @return
+     */
+    static public String getCoverName(int cover, boolean switchSides){
         switch (cover)
         {
             case COVER_NONE:
                 return Messages.getString("LosEffects.name_cover_none");
             case COVER_LOWLEFT:
-                return Messages.getString("LosEffects.name_cover_lowleft");
+                if (switchSides)
+                    return Messages.getString("LosEffects.name_cover_lowright");
+                else
+                    return Messages.getString("LosEffects.name_cover_lowleft");
             case COVER_LOWRIGHT:
-                return Messages.getString("LosEffects.name_cover_lowright");
+                if (switchSides)
+                    return Messages.getString("LosEffects.name_cover_lowleft");
+                else
+                    return Messages.getString("LosEffects.name_cover_lowright");
             case COVER_LEFT:
-                return Messages.getString("LosEffects.name_cover_left");
+                if (switchSides)
+                    return Messages.getString("LosEffects.name_cover_right");
+                else
+                    return Messages.getString("LosEffects.name_cover_left");
             case COVER_RIGHT:
-                return Messages.getString("LosEffects.name_cover_right");
+                if (switchSides)
+                    return Messages.getString("LosEffects.name_cover_left");
+                else
+                    return Messages.getString("LosEffects.name_cover_right");
             case COVER_HORIZONTAL:
                 return Messages.getString("LosEffects.name_cover_horizontal");
             case COVER_UPPER:
@@ -1370,9 +1396,15 @@ public class LosEffects {
             case COVER_FULL:
                 return Messages.getString("LosEffects.name_cover_full");
             case COVER_75LEFT:
-                return Messages.getString("LosEffects.name_cover_75left");
+                if (switchSides)
+                    return Messages.getString("LosEffects.name_cover_75right");
+                else
+                    return Messages.getString("LosEffects.name_cover_75left");
             case COVER_75RIGHT:
-                return Messages.getString("LosEffects.name_cover_75right");
+                if (switchSides)
+                    return Messages.getString("LosEffects.name_cover_75left");
+                else
+                    return Messages.getString("LosEffects.name_cover_75right");
             default:
                 return Messages.getString("LosEffects.name_cover_unknown");
         }

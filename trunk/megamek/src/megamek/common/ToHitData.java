@@ -184,7 +184,8 @@ public class ToHitData extends TargetRoll {
                     tdesc += "Below ";
                     break;
                 case HIT_PARTIAL_COVER:
-                    tdesc += "Partial cover ";
+                    tdesc += "Partial cover " + 
+                        "(" + LosEffects.getCoverName(cover,true) + ") ";
                     break;
             }
             return " (using " + tdesc + "table)";

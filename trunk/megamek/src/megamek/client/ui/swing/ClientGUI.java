@@ -1170,21 +1170,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
             dlgLoadList.setFileFilter(new FileFilter() {
-            @Override
-            public boolean accept(File dir) {
-                return ((dir.getName() != null) && (dir.getName().endsWith(
-                        ".mul") || dir.isDirectory())); //$NON-NLS-1$
-            }
+                @Override
+                public boolean accept(File dir) {
+                    return ((dir.getName() != null) && (dir.getName().endsWith(
+                            ".mul") || dir.isDirectory())); //$NON-NLS-1$
+                }
 
-            @Override
-            public String getDescription() {
-                return "*.mul";
-            }
-        });
+                @Override
+                public String getDescription() {
+                    return "*.mul";
+                }
+            });
+            // Default to the player's name.
+            dlgLoadList.setSelectedFile(new File(player.getName() + ".mul")); //$NON-NLS-1$
         }
-        // Default to the player's name.
-        dlgLoadList.setSelectedFile(new File(player.getName() + ".mul")); //$NON-NLS-1$
-
+        
         int returnVal = dlgLoadList.showOpenDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
             // I want a file, y'know!

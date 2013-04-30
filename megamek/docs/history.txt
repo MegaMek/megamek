@@ -12,6 +12,7 @@ v0.35.38-dev (SVN)
 + Bug 2916: Building partial cover takes no damage from attacks
 + Bug: Selection not translating correctly to facing in 'Mech turret rotation dialog.
 + Right-shoulder turrets now acknowledge heads exist.
++ Fix some errors in Princess' to-hit guesses
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

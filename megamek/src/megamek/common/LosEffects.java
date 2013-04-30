@@ -44,6 +44,7 @@ public class LosEffects {
         public boolean targetEntity = true;
         public boolean targetInfantry;
         public boolean targetIsMech;
+        public boolean attackerIsMech;
         public boolean attOffBoard;
         public Coords attackPos;
         public Coords targetPos;
@@ -389,6 +390,7 @@ public class LosEffects {
         }
 
         final AttackInfo ai = new AttackInfo();
+        ai.attackerIsMech = ae instanceof Mech;
         ai.attackPos = attackPos;
         ai.attackerId = ae.getId();
         ai.targetPos = targetPos;

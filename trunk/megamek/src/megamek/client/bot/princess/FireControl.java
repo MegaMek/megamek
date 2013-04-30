@@ -1162,6 +1162,13 @@ public class FireControl {
                 tohit.addModifier(((WeaponType) mw.getType()).getToHitModifier(),
                         "weapon to-hit");
             }
+            if (((WeaponType)mw.getType()).getAmmoType() != AmmoType.T_NA) {
+                AmmoType atype = (AmmoType)mw.getLinked().getType();
+                if ((atype != null) && (atype.getToHitModifier() != 0)) {
+                    tohit.addModifier(atype.getToHitModifier(),
+                        "ammunition to-hit modifier");
+                }
+            }
             if (shooter.hasTargComp()
                     && ((WeaponType) mw.getType())
                             .hasFlag(WeaponType.F_DIRECT_FIRE)) {

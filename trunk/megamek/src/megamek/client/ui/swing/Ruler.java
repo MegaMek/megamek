@@ -23,11 +23,14 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -91,6 +94,11 @@ public class Ruler extends JDialog implements BoardViewListener {
     private JTextField height1 = new JTextField();
     private JLabel heightLabel2;
     private JTextField height2 = new JTextField();
+    
+    private JCheckBox cboIsMech1 = 
+        new JCheckBox(Messages.getString("Ruler.isMech"));
+    private JCheckBox cboIsMech2 = 
+        new JCheckBox(Messages.getString("Ruler.isMech"));
 
     public Ruler(JFrame f, Client c, IBoardView b) {
         super(f, Messages.getString("Ruler.title"), false); //$NON-NLS-1$
@@ -157,6 +165,14 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height1.setColumns(5);
+        cboIsMech1.addItemListener(new ItemListener(){
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                checkBoxSelectionChanged();
+            }
+            
+        });
+        
         heightLabel2 = new JLabel(Messages.getString("Ruler.Height2"), SwingConstants.RIGHT); //$NON-NLS-1$
         heightLabel2.setForeground(endColor);
         height2.setText("1"); //$NON-NLS-1$
@@ -167,7 +183,14 @@ public class Ruler extends JDialog implements BoardViewListener {
             }
         });
         height2.setColumns(5);
-
+        cboIsMech2.addItemListener(new ItemListener(){
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                checkBoxSelectionChanged();
+            }
+            
+        });
+        
         //need to set all the minimum sizes to prevent jtextfield going to zero size
         //on dialog resize.setColumns(16);
         tf_start.setMinimumSize(tf_start.getPreferredSize());
@@ -190,6 +213,9 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridx = 1;
         gridBagLayout1.setConstraints(height1, c);
         getContentPane().add(height1);
+        c.gridx = 2;
+        gridBagLayout1.setConstraints(cboIsMech1, c);
+        getContentPane().add(cboIsMech1);
 
         c.gridx = 0;
         c.gridy = 1;
@@ -200,6 +226,9 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridx = 1;
         gridBagLayout1.setConstraints(height2, c);
         getContentPane().add(height2);
+        c.gridx = 2;
+        gridBagLayout1.setConstraints(cboIsMech2, c);
+        getContentPane().add(cboIsMech2);
         
         c.gridx = 0;
         c.gridy = 2;
@@ -208,7 +237,9 @@ public class Ruler extends JDialog implements BoardViewListener {
         getContentPane().add(jLabel1); 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
+        c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_start, c);
+        c.gridwidth = 1;
         getContentPane().add(tf_start);
 
         c.gridx = 0;
@@ -217,8 +248,10 @@ public class Ruler extends JDialog implements BoardViewListener {
         gridBagLayout1.setConstraints(jLabel2, c);
         getContentPane().add(jLabel2); 
         c.anchor = GridBagConstraints.WEST;
-        c.gridx = 1;
+        c.gridwidth = 2;
+        c.gridx = 1;        
         gridBagLayout1.setConstraints(tf_end, c);
+        c.gridwidth = 1;
         getContentPane().add(tf_end);
 
         c.gridx = 0;
@@ -241,7 +274,9 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridx = 1;
        // c.weightx = 1.0;
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_los1, c);
+        c.gridwidth = 1;
         getContentPane().add(tf_los1);
 
         c.gridx = 0;
@@ -253,7 +288,9 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_los2, c);
+        c.gridwidth = 1;
         getContentPane().add(tf_los2);
 
         buttonPanel.add(butFlip);
@@ -325,12 +362,12 @@ public class Ruler extends JDialog implements BoardViewListener {
         ToHitData thd;
         if (flip) {
             thd = LosEffects.calculateLos(client.game,
-                    buildAttackInfo(start, end, h1, h2)).losModifiers(
-                    client.game);
+                    buildAttackInfo(start, end, h1, h2,cboIsMech1.isSelected(),
+                            cboIsMech2.isSelected())).losModifiers(client.game);
         } else {
             thd = LosEffects.calculateLos(client.game,
-                    buildAttackInfo(end, start, h2, h1)).losModifiers(
-                    client.game);
+                    buildAttackInfo(end, start, h2, h1,cboIsMech2.isSelected(),
+                            cboIsMech1.isSelected())).losModifiers(client.game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -339,12 +376,12 @@ public class Ruler extends JDialog implements BoardViewListener {
 
         if (flip) {
             thd = LosEffects.calculateLos(client.game,
-                    buildAttackInfo(end, start, h2, h1)).losModifiers(
-                    client.game);
+                    buildAttackInfo(end, start, h2, h1,cboIsMech2.isSelected(),
+                            cboIsMech1.isSelected())).losModifiers(client.game);
         } else {
             thd = LosEffects.calculateLos(client.game,
-                    buildAttackInfo(start, end, h1, h2)).losModifiers(
-                    client.game);
+                    buildAttackInfo(start, end, h1, h2,cboIsMech1.isSelected(),
+                            cboIsMech2.isSelected())).losModifiers(client.game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -370,12 +407,14 @@ public class Ruler extends JDialog implements BoardViewListener {
      * @return
      */
     private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
-            int h2) {
+            int h2, boolean attackerIsMech, boolean targetIsMech) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
         ai.attackHeight = h1;
         ai.targetHeight = h2;
+        ai.attackerIsMech = attackerIsMech;
+        ai.targetIsMech = targetIsMech;
         ai.attackAbsHeight = client.game.getBoard().getHex(c1).floor() + h1;
         ai.targetAbsHeight = client.game.getBoard().getHex(c2).floor() + h2;
         return ai;
@@ -444,6 +483,11 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     void height2_keyReleased() {
+        setText();
+        setVisible(true);
+    }
+    
+    void checkBoxSelectionChanged(){
         setText();
         setVisible(true);
     }

@@ -768,7 +768,7 @@ public class Client implements IClientCommandHandler {
         checkDuplicateNamesDuringDelete(id);
         send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[] {id, loaderId}));
     }
-    
+
     /***
      * sends a load game file to the server
      */
@@ -1235,9 +1235,10 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SEND_SAVEGAME:
             String sFinalFile = (String) c.getObject(0);
-            String localFile = "savegames" + File.separator + sFinalFile;
+            String sLocalPath = (String) c.getObject(2);
+            String localFile = sLocalPath + sFinalFile;
             try {
-                File sDir = new File("savegames");
+                File sDir = new File(sLocalPath);
                 if (!sDir.exists()) {
                     sDir.mkdir();
                 }

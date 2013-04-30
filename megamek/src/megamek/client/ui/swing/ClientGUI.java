@@ -19,7 +19,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-// import java.awt.Dimension; Import never used
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -350,20 +349,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         int w;
         mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false){
                 /**
-                 * 
+                 *
                  */
                 private static final long serialVersionUID = 1L;
-    
+
                 /**
-                 * In addition to the default Dialog processKeyEvent, this method 
-                 * dispatches a KeyEvent to the client gui.  
-                 * This enables all of the gui hotkeys. 
+                 * In addition to the default Dialog processKeyEvent, this method
+                 * dispatches a KeyEvent to the client gui.
+                 * This enables all of the gui hotkeys.
                  */
-                protected void processKeyEvent(KeyEvent e) {        
+                @Override
+                protected void processKeyEvent(KeyEvent e) {
                     //menuBar.dispatchEvent(e);
                     curPanel.dispatchEvent(e);
-                    if (!e.isConsumed())
-                        super.processKeyEvent(e);                                                                       
+                    if (!e.isConsumed()) {
+                        super.processKeyEvent(e);
+                    }
                 }
             }; //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
@@ -406,23 +407,25 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         // minimap
         minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false){
                 /**
-                 * 
+                 *
                  */
                 private static final long serialVersionUID = 1L;
-    
+
                 /**
-                 * In addition to the default Dialog processKeyEvent, this method 
-                 * dispatches a KeyEvent to the client gui.  
-                 * This enables all of the gui hotkeys. 
+                 * In addition to the default Dialog processKeyEvent, this method
+                 * dispatches a KeyEvent to the client gui.
+                 * This enables all of the gui hotkeys.
                  */
-                protected void processKeyEvent(KeyEvent e) {        
+                @Override
+                protected void processKeyEvent(KeyEvent e) {
                     //menuBar.dispatchEvent(e);
                     curPanel.dispatchEvent(e);
-                    if (!e.isConsumed())
-                        super.processKeyEvent(e);                                                                       
+                    if (!e.isConsumed()) {
+                        super.processKeyEvent(e);
+                    }
                 }
             }; //$NON-NLS-1$
-            
+
         x = GUIPreferences.getInstance().getMinimapPosX();
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {
@@ -553,12 +556,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 return;
             }
             if (fc.getSelectedFile() != null) {
-                String file = fc.getSelectedFile().getAbsolutePath();
+                String file = fc.getSelectedFile().getName();
                 // stupid hack to allow for savegames in folders with spaces in
                 // the name
-                file = file.replace(" ", "|");
-                client.sendChat("/save " + file); //$NON-NLS-1$
+                String path = fc.getSelectedFile().getParentFile().getPath();
+                path = path.replace(" ", "|");
+                client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
             }
+        }
+        if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
+            client.sendChat("/save " + filename);
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showAbout();

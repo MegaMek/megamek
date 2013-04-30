@@ -12,7 +12,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -47,6 +46,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fileGameNew;
     private JMenuItem fileGameOpen;
     private JMenuItem fileGameSave;
+    private JMenuItem fileGameSaveServer;
     private JMenuItem fileGameScenario;
     private JMenuItem fileGameConnectBot;
     private JMenuItem fileGameConnect;
@@ -214,6 +214,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fileGameSave.addActionListener(this);
         fileGameSave.setActionCommand("fileGameSave"); //$NON-NLS-1$
         submenu.add(fileGameSave);
+        fileGameSaveServer = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileGameSaveServer")); //$NON-NLS-1$
+        fileGameSaveServer.addActionListener(this);
+        fileGameSaveServer.setActionCommand("fileGameSaveServer"); //$NON-NLS-1$
+        submenu.add(fileGameSaveServer);
         submenu.addSeparator();
         fileGameScenario = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileGameScenario")); //$NON-NLS-1$
@@ -715,8 +720,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
                     && (phase != IGame.Phase.PHASE_VICTORY)
                     && (phase != IGame.Phase.PHASE_STARTING_SCENARIO)) {
                 fileGameSave.setEnabled(true);
+                fileGameSaveServer.setEnabled(true);
             } else {
                 fileGameSave.setEnabled(false);
+                fileGameSaveServer.setEnabled(false);
             }
         }
         // If we have no game, we can't save, but we can create or join one.
@@ -724,6 +731,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             fileGameNew.setEnabled(true);
             fileGameOpen.setEnabled(true);
             fileGameSave.setEnabled(false);
+            fileGameSaveServer.setEnabled(false);
             fileGameScenario.setEnabled(true);
             fileGameConnectBot.setEnabled(true);
             fileGameConnect.setEnabled(true);

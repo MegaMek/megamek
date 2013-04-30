@@ -1072,26 +1072,29 @@ public class Server implements Runnable {
     }
 
     /**
-     * save the game and send it to the sepecified connection
+     * save the game and send it to the specified connection
      *
      * @param connId
      *            The <code>int</code> connection id to send to
      * @param sFile
      *            The <code>String</code> filename to use
+     * @param sLocalPath
+     *            The <code>String</code> path to the file to be used on the client
      */
-    public void sendSaveGame(int connId, String sFile) {
+    public void sendSaveGame(int connId, String sFile, String sLocalPath) {
         saveGame(sFile, false);
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
         }
+        sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
         File f = new File(localFile);
         try {
             ObjectInputStream ois = new ObjectInputStream(
                     new FileInputStream(f));
             send(connId, new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[] {
-                    sFinalFile, ois.readObject() }));
+                    sFinalFile, ois.readObject(), sLocalPath }));
             sendChat(connId, "***Server", "Savegame has been sent to you.");
             ois.close();
         } catch (Exception e) {
@@ -1125,16 +1128,7 @@ public class Server implements Runnable {
                 gameListenersClone.add(listener);
             }
             getGame().purgeGameListeners();
-            // the passed in string might be an absolut name, including a path
-            // when the user uses the save game dialog.
-            // if so, save there
-            // we also need to replace any | with " ", so we can support saving
-            // in folders with spacse
-            sFinalFile = sFinalFile.replace("|", " ");
-            File dir = new File(sFinalFile);
-            if (dir.getParent() == null) {
-                sFinalFile = sDir + File.separator + sFinalFile;
-            }
+            sFinalFile = sDir+File.separator+sFinalFile;
 
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(sFinalFile));

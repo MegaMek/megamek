@@ -186,6 +186,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         public void doneLoading() {
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
+            butLoadList.setEnabled(true);
         }
     };
 
@@ -314,6 +315,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
+        butLoadList.setEnabled(mechSummaryCache.isInitialized());
         butSkills.setEnabled(true);
         butNames.setEnabled(true);
 

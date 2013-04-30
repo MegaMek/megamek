@@ -14,6 +14,7 @@ v0.35.38-dev (SVN)
 + Right-shoulder turrets now acknowledge heads exist.
 + Fix some errors in Princess' to-hit guesses
 + Bug 3368: Saving games with dedicated hosts 
++ Bug 3706: Load Unit List button is enabled before all units are loaded 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

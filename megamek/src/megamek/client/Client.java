@@ -1236,7 +1236,7 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_SEND_SAVEGAME:
             String sFinalFile = (String) c.getObject(0);
             String sLocalPath = (String) c.getObject(2);
-            String localFile = sLocalPath + sFinalFile;
+            String localFile = sLocalPath + File.separator + sFinalFile;
             try {
                 File sDir = new File(sLocalPath);
                 if (!sDir.exists()) {

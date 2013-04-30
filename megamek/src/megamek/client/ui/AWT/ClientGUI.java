@@ -532,11 +532,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             fd.setVisible(true);
 
             if (null != fd.getFile()) {
-                String file = fd.getDirectory() + fd.getFile();
+                String file = fd.getFile();
                 // stupid hack to allow for savegames in folders with spaces in
                 // the name
+                String path = fd.getDirectory();
                 file = file.replace(" ", "|");
-                client.sendChat("/save " + file); //$NON-NLS-1$
+                client.sendChat("/localsave " + file + " " + path); //$NON-NLS-1$
             }
         }
 

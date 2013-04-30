@@ -20,11 +20,13 @@
 
 package megamek.server.commands;
 
+import java.io.File;
+
 import megamek.server.Server;
 
 /**
  * Saves the current game.
- * 
+ *
  * @author Ben
  */
 public class LocalSaveGameCommand extends ServerCommand {
@@ -46,10 +48,14 @@ public class LocalSaveGameCommand extends ServerCommand {
                     .sendServerChat("Local Save only outside double blind games.");
         } else {
             String fileName = "savegame.sav";
+            String localPath = "savegames"+ File.separator;
             if (args.length > 1) {
                 fileName = args[1];
             }
-            server.sendSaveGame(connId, fileName);
+            if (args.length > 2) {
+                localPath = args[2];
+            }
+            server.sendSaveGame(connId, fileName, localPath);
         }
     }
 }

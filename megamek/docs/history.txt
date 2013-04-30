@@ -7,6 +7,9 @@ v0.35.38-dev (SVN)
 + Automatically remove hand and lower arm actuators when adding AC guns/Gauss
     rifles to omni unit's arms
 + Bug 3704: Dragon Fire default quirks wrong 
++ Bug 3708: Vertical cover doesn't protect legs like it should 
++ Bug 3705: TacOps partial cover should only effect meks
++ Bug 2916: Building partial cover takes no damage from attacks
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

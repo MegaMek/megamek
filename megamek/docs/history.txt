@@ -16,6 +16,7 @@ v0.35.38-dev (SVN)
 + Bug 3368: Saving games with dedicated hosts 
 + Bug 3706: Load Unit List button is enabled before all units are loaded 
 + Bug 3707: File selection doesn't clear on file selector dialog for Load Unit List 
++ Bug 3594: Taking no damage from partial cover not always occurring
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

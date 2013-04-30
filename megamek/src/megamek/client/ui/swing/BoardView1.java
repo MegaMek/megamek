@@ -2528,13 +2528,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     message.append(Messages
                             .getString(
                                     "BoardView1.TargetPartialCover", new Object[] { //$NON-NLS-1$
-                                            LosEffects.getCoverName(le.getTargetCover())}));
+                                            LosEffects.getCoverName(le.getTargetCover(),true)}));
                 }
                 if (le.isAttackerCover() && le.canSee()) {
                     message.append(Messages
                             .getString(
                                     "BoardView1.AttackerPartialCover", new Object[] { //$NON-NLS-1$
-                                            LosEffects.getCoverName(le.getAttackerCover())}));
+                                            LosEffects.getCoverName(le.getAttackerCover(),false)}));
                 }
             }
             JOptionPane.showMessageDialog(getRootPane(), message.toString(),

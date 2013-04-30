@@ -546,10 +546,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
             Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits, int nCluster,
             int bldgAbsorbs){
         
-        //Keep spacing consistent
-        Report.addNewline(vPhaseReport);           
+        //Report the hit and table description, if this isn't part of a salvo
+        Report r;
+        if (!bSalvo) {
+            r = new Report(3405);
+            r.subject = subjectId;
+            r.add(toHit.getTableDesc());
+            r.add(entityTarget.getLocationAbbr(hit));
+            vPhaseReport.addElement(r);
+        }else{        
+            //Keep spacing consistent
+            Report.addNewline(vPhaseReport);
+        }
         
-        Report r = new Report(3460);
+        r = new Report(3460);
         r.subject = subjectId;
         r.add(entityTarget.getShortName());
         r.add(entityTarget.getLocationAbbr(hit));

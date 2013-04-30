@@ -2465,7 +2465,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 ai.targetPos = c2;
                 ai.attackHeight = mechInFirst ? 1 : 0;
                 ai.targetHeight = mechInSecond ? 1 : 0;
-                ai.targetIsMech = mechInSecond ? true : false;
+                ai.targetIsMech = mechInSecond;
+                ai.attackerIsMech = mechInFirst;
                 ai.attackAbsHeight = game.getBoard().getHex(c1).floor()
                         + ai.attackHeight;
                 ai.targetAbsHeight = game.getBoard().getHex(c2).floor()

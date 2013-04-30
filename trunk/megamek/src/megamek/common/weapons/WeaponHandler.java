@@ -542,6 +542,117 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return 0;
     }
 
+    protected void handlePartialCoverHit(Entity entityTarget,
+            Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs){
+        
+        //Keep spacing consistent
+        Report.addNewline(vPhaseReport);           
+        
+        Report r = new Report(3460);
+        r.subject = subjectId;
+        r.add(entityTarget.getShortName());
+        r.add(entityTarget.getLocationAbbr(hit));
+        r.indent(2);
+        vPhaseReport.addElement(r);
+        
+        int damagableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
+        Building coverBuilding = null;
+        Entity coverDropship = null;
+        Coords coverLoc = null;
+        
+        //Determine if there is primary and secondary cover, 
+        // and then determine which one gets hit
+        if ((toHit.getCover() == LosEffects.COVER_75RIGHT || 
+                toHit.getCover() == LosEffects.COVER_75LEFT) ||
+            //75% cover has a primary and secondary           
+                (toHit.getCover() == LosEffects.COVER_HORIZONTAL &&
+                 toHit.getDamagableCoverTypeSecondary() != 
+                    LosEffects.DAMAGABLE_COVER_NONE)){
+            //Horiztonal cover provided by two 25%'s, so primary and secondary
+            int hitLoc = hit.getLocation();
+            //Primary stores the left side, from the perspective of the attacker
+            if (hitLoc == Mech.LOC_RLEG || hitLoc == Mech.LOC_RT || 
+                    hitLoc == Mech.LOC_RARM){
+                //Left side is primary
+                damagableCoverType = toHit.getDamagableCoverTypePrimary();
+                coverBuilding = toHit.getCoverBuildingPrimary();
+                coverDropship = toHit.getCoverDropshipPrimary();
+                coverLoc = toHit.getCoverLocPrimary();
+            }else{
+                //If not left side, then right side, which is secondary
+                damagableCoverType = toHit.getDamagableCoverTypeSecondary();
+                coverBuilding = toHit.getCoverBuildingSecondary();
+                coverDropship = toHit.getCoverDropshipSecondary();
+                coverLoc = toHit.getCoverLocSecondary();
+            }            
+        } else{ //Only primary cover exists
+            damagableCoverType = toHit.getDamagableCoverTypePrimary();
+            coverBuilding = toHit.getCoverBuildingPrimary();
+            coverDropship = toHit.getCoverDropshipPrimary();
+            coverLoc = toHit.getCoverLocPrimary();                
+        }
+        //Check if we need to damage the cover that absorbed the hit.
+        if (damagableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP){
+          //We need to adjust some state and then restore it later
+            // This allows us to make a call to handleEntityDamage
+            ToHitData savedToHit = toHit;
+            int savedAimingMode = waa.getAimingMode();
+            waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+            int savedAimedLocation = waa.getAimedLocation();
+            waa.setAimedLocation(Entity.LOC_NONE);
+            boolean savedSalvo = bSalvo;
+            bSalvo = true;
+            //Create new toHitData
+            toHit = new ToHitData(0,"",ToHitData.HIT_NORMAL,
+                    Compute.targetSideTable(ae,coverDropship));
+            //Report cover was damaged
+            int sizeBefore = vPhaseReport.size();
+            r = new Report(3465);
+            r.subject = subjectId;
+            r.add(coverDropship.getShortName());
+            vPhaseReport.add(r);
+            //Damage the dropship
+            handleEntityDamage(coverDropship,vPhaseReport,
+                    bldg,hits,nCluster,bldgAbsorbs);
+            //Remove a blank line in the report list
+            if (vPhaseReport.elementAt(sizeBefore).newlines > 0)
+                vPhaseReport.elementAt(sizeBefore).newlines--;
+            //Indent reports related to the damage absorption
+            while (sizeBefore < vPhaseReport.size()){
+                vPhaseReport.elementAt(sizeBefore).indent(3);
+                sizeBefore++;
+            }
+            //Restore state                
+            toHit = savedToHit;
+            waa.setAimingMode(savedAimingMode);
+            waa.setAimedLocation(savedAimedLocation);
+            bSalvo = savedSalvo;
+        //Damage a building that blocked a shot
+        } else if (damagableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING){
+            //Normal damage
+            int nDamage = nDamPerHit * Math.min(nCluster, hits);           
+            Vector<Report> buildingReport = 
+                server.damageBuilding(coverBuilding, nDamage, 
+                        " blocks the shot and takes ",coverLoc);
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+                report.indent();
+            }
+            vPhaseReport.addAll(buildingReport);
+            // Damage any infantry in the building.
+            Vector<Report> infantryReport =
+                    server.damageInfantryIn(coverBuilding,
+                            nDamage, coverLoc, 
+                            wtype.getInfantryDamageClass());                
+            for (Report report : infantryReport){
+                report.indent(2);
+            }
+            vPhaseReport.addAll(infantryReport);                                
+        }
+        missed = true; 
+    }
+    
     /**
      * Handle damage against an entity, called once per hit by default.
      *
@@ -571,80 +682,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         if (!isIndirect && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-            // Weapon strikes Partial Cover.
-            
-            //Keep spacing consistent
-            Report.addNewline(vPhaseReport);
-            
-            Report r = new Report(3460);
-            r.subject = subjectId;
-            r.add(entityTarget.getShortName());
-            r.add(entityTarget.getLocationAbbr(hit));
-            r.indent(2);
-            vPhaseReport.addElement(r);
-            //Check if we need to damage the cover that absorbed the hit.
-            if (toHit.getDamagableCoverType() == 
-                    LosEffects.DAMAGABLE_COVER_DROPSHIP){
-                //We need to adjust some state and then restore it later
-                // This allows us to make a call to handleEntityDamage
-                ToHitData savedToHit = toHit;
-                int savedAimingMode = waa.getAimingMode();
-                waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
-                int savedAimedLocation = waa.getAimedLocation();
-                waa.setAimedLocation(Entity.LOC_NONE);
-                boolean savedSalvo = bSalvo;
-                bSalvo = true;
-                //Create new toHitData
-                toHit = new ToHitData(0,"",ToHitData.HIT_NORMAL,
-                        Compute.targetSideTable(ae,savedToHit.getCoverDropship()));
-                System.out.println("WeaponHandler: " + toHit.getSideTable());
-                //Report cover was damaged
-                int sizeBefore = vPhaseReport.size();
-                r = new Report(3465);
-                r.subject = subjectId;
-                r.add(savedToHit.getCoverDropship().getShortName());
-                vPhaseReport.add(r);
-                //Damage the dropship
-                handleEntityDamage(savedToHit.getCoverDropship(),vPhaseReport,
-                        bldg,hits,nCluster,bldgAbsorbs);
-                //Remove a blank line in the report list
-                if (vPhaseReport.elementAt(sizeBefore).newlines > 0)
-                    vPhaseReport.elementAt(sizeBefore).newlines--;
-                //Indent reports related to the damage absorption
-                while (sizeBefore < vPhaseReport.size()){
-                    vPhaseReport.elementAt(sizeBefore).indent(3);
-                    sizeBefore++;
-                }
-                //Restore state                
-                toHit = savedToHit;
-                waa.setAimingMode(savedAimingMode);
-                waa.setAimedLocation(savedAimedLocation);
-                bSalvo = savedSalvo;
-            //Damage a building that blocked a shot
-            } else if (toHit.getDamagableCoverType() == 
-                    LosEffects.DAMAGABLE_COVER_BUILDING){
-                //Normal damage
-                nDamage = nDamPerHit * Math.min(nCluster, hits);           
-                Vector<Report> buildingReport = 
-                    server.damageBuilding(toHit.getCoverBuilding(), nDamage, 
-                            " blocks the shot and takes ",toHit.getCoverLoc());
-                for (Report report : buildingReport) {
-                    report.subject = subjectId;
-                    report.indent();
-                }
-                vPhaseReport.addAll(buildingReport);
-                // Damage any infantry in the building.
-                Vector<Report> infantryReport =
-                        server.damageInfantryIn(toHit.getCoverBuilding(),
-                                nDamage, toHit.getCoverLoc(), 
-                                wtype.getInfantryDamageClass());                
-                for (Report report : infantryReport){
-                    report.indent(2);
-                }
-                vPhaseReport.addAll(infantryReport);                                
-            }
-            nDamage = 0;
-            missed = true;            
+            // Weapon strikes Partial Cover.            
+            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
+                    nCluster, bldgAbsorbs);
             return;
         }
 

@@ -41,6 +41,7 @@ public class LosEffects {
         public boolean underWaterCombat;
         public boolean targetEntity = true;
         public boolean targetInfantry;
+        public boolean targetIsMech;
         public boolean attOffBoard;
         public Coords attackPos;
         public Coords targetPos;
@@ -91,21 +92,54 @@ public class LosEffects {
     int targetCover = COVER_NONE; // that means partial cover
     int attackerCover = COVER_NONE; // ditto
     Building thruBldg = null;
-    int damagableCoverType = DAMAGABLE_COVER_NONE;
     /**
-     * Keeps track of the first building that provides cover.  This is used
-     * to assign damage for shots that hit cover.
+     * Indicates if the primary cover is damagable.
      */
-    Building coverBuilding = null;
+    int damagableCoverTypePrimary   = DAMAGABLE_COVER_NONE;
     /**
-     * Keeps track of the first grounded Dropship that provides cover.  This is
-     * used to assign damage for shots that hit cover.
-     */
-    Entity coverDropship = null;
+     * Indicates if the secondary cover is damagable
+     */   
+    int damagableCoverTypeSecondary = DAMAGABLE_COVER_NONE;
     /**
-     * Stores the hx location of the covering entity.
+     * Keeps track of the building that provides cover.  This is used
+     * to assign damage for shots that hit cover.  The primary cover is used 
+     * if there is a sole piece of cover (horizontal cover, 25% cover).
+     * In the case of a primary and secondary, the primary cover protects the 
+     * right side.
      */
-    Coords coverLoc = null;
+    Building coverBuildingPrimary = null;
+    /**
+     * Keeps track of the building that provides cover.  This is used
+     * to assign damage for shots that hit cover.  The secondary cover is used
+     * if there are two buildings that provide cover, like in the case of 75%
+     * cover or two buildings providing 25% cover for a total of horizontal 
+     * cover.  The secondary cover protects the left side.
+     */
+    Building coverBuildingSecondary = null;
+    /**
+     * Keeps track of the grounded Dropship that provides cover.  This is
+     * used to assign damage for shots that hit cover. The primary cover is used 
+     * if there is a sole piece of cover (horizontal cover, 25% cover).
+     * In the case of a primary and secondary, the primary cover protects the 
+     * right side.
+     */
+    Entity coverDropshipPrimary = null;
+    /**
+     * Keeps track of the grounded Dropship that provides cover.  This is
+     * used to assign damage for shots that hit cover. The secondary cover is used
+     * if there are two buildings that provide cover, like in the case of 75%
+     * cover or two buildings providing 25% cover for a total of horizontal 
+     * cover.  The secondary cover protects the left side.
+     */
+    Entity coverDropshipSecondary = null;    
+    /**
+     * Stores the hex location of the primary cover.
+     */
+    Coords coverLocPrimary = null;
+    /**
+     * Stores the hex location of the secondary cover.
+     */
+    Coords coverLocSecondary = null;
     int minimumWaterDepth = -1;
     boolean arcedShot = false;
 
@@ -122,15 +156,17 @@ public class LosEffects {
         //  We need to update cover if it's present, but we don't want to
         //  remove cover if no new cover is present
         //  this assumes that LoS is being drawn from attacker to target
-        if (other.damagableCoverType != DAMAGABLE_COVER_NONE && 
+        if (other.damagableCoverTypePrimary != DAMAGABLE_COVER_NONE && 
                 other.targetCover >= targetCover){
-            damagableCoverType = other.damagableCoverType;
-            if (damagableCoverType == DAMAGABLE_COVER_DROPSHIP){
-                coverDropship = other.coverDropship;
-            } else 
-                coverBuilding = other.coverBuilding;   
-            coverLoc = other.coverLoc;
-        }
+            damagableCoverTypePrimary = other.damagableCoverTypePrimary;
+            coverDropshipPrimary = other.coverDropshipPrimary;
+            coverBuildingPrimary = other.coverBuildingPrimary;
+            coverLocPrimary = other.coverLocPrimary;
+            damagableCoverTypeSecondary = other.damagableCoverTypeSecondary;            
+            coverDropshipSecondary = other.coverDropshipSecondary;        
+            coverBuildingSecondary = other.coverBuildingSecondary;   
+            coverLocSecondary = other.coverLocSecondary;
+        }           
         
         blocked |= other.blocked;
         infProtected |= other.infProtected;
@@ -357,7 +393,11 @@ public class LosEffects {
         ai.targetEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         if(ai.targetEntity) {
             ai.targetId = ((Entity)target).getId();
+            ai.targetIsMech = target instanceof Mech;
+        }else {
+            ai.targetIsMech = false;
         }
+        
         ai.targetInfantry = target instanceof Infantry;
         ai.attackHeight = ae.getHeight();
         ai.targetHeight = target.getHeight();
@@ -753,8 +793,9 @@ public class LosEffects {
                 }
             }
        
-            // Check for advanced cover
-            if (game.getOptions().booleanOption("tacops_partial_cover")) {
+            // Check for advanced cover, only 'mechs can get partial cover
+            if (game.getOptions().booleanOption("tacops_partial_cover") && 
+                    ai.targetIsMech) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
                 if(leftLos.targetCover == COVER_HORIZONTAL && 
@@ -784,13 +825,21 @@ public class LosEffects {
                     //75% cover, left
                     leftLos.targetCover  = COVER_75LEFT;
                     rightLos.targetCover = COVER_75LEFT;
+                    setSecondaryCover(leftLos,rightLos);                                       
                     losBlockedByCover = true;                    
                 } else if (leftLos.targetCover == COVER_HORIZONTAL && 
                           rightLos.targetCover == COVER_FULL) { 
                     //75% cover, right
                     leftLos.targetCover  = COVER_75RIGHT;
                     rightLos.targetCover = COVER_75RIGHT;
+                    setSecondaryCover(leftLos,rightLos);
                     losBlockedByCover = true;
+                } else if (leftLos.targetCover == COVER_HORIZONTAL && 
+                        rightLos.targetCover == COVER_HORIZONTAL) { 
+                    //50% cover
+                    //Cover will be set properly, but we need to set secondary
+                    // cover in case there are two buildings providing 25% cover
+                    setSecondaryCover(leftLos,rightLos);
                 }
                 //In the case of vertical and 75% cover, LoS will be blocked.  
                 // We need to unblock it, unless Los is already blocked.
@@ -813,6 +862,38 @@ public class LosEffects {
             los.add(totalRightLos);
         }
         return los;
+    }
+    
+    /**
+     * Convenience method for setting the secondary cover values.  The left LoS
+     * has retains it's primary cover, and its secondary cover becomes the 
+     * primary of the right los while the right los has its primary become 
+     * secondary and its primary becomes the primary of the left side.
+     * This ensures that the primary protects the left side and the secondary
+     * protects the right side which is important to determine which to pick
+     * later on when damage is handled.
+     * 
+     * @param leftLos  The left side of the line of sight for a divided hex 
+     *                  LoS computation
+     * @param rightLos The right side of the line of sight for a dividied hex
+     *                  LoS computation
+     */
+    private static void setSecondaryCover(LosEffects leftLos, LosEffects rightLos){
+        //Set left secondary to right primary
+        leftLos.setDamagableCoverTypeSecondary(rightLos.getDamagableCoverTypePrimary());
+        leftLos.setCoverBuildingSecondary(rightLos.getCoverBuildingPrimary());
+        leftLos.setCoverDropshipSecondary(rightLos.getCoverDropshipPrimary());
+        leftLos.setCoverLocSecondary(rightLos.getCoverLocPrimary());        
+        //Set right secondary to right primary
+        rightLos.setDamagableCoverTypeSecondary(rightLos.getDamagableCoverTypePrimary());
+        rightLos.setCoverBuildingSecondary(rightLos.getCoverBuildingPrimary());
+        rightLos.setCoverDropshipSecondary(rightLos.getCoverDropshipPrimary());
+        rightLos.setCoverLocSecondary(rightLos.getCoverLocPrimary());
+        //Set right primary to left primary
+        rightLos.setDamagableCoverTypePrimary(leftLos.getDamagableCoverTypePrimary());
+        rightLos.setCoverBuildingPrimary(leftLos.getCoverBuildingPrimary());
+        rightLos.setCoverDropshipPrimary(leftLos.getCoverDropshipPrimary());        
+        rightLos.setCoverLocPrimary(leftLos.getCoverLocPrimary());
     }
 
     /**
@@ -1050,16 +1131,16 @@ public class LosEffects {
         // they block a shot.
         if (potentialCover){
             if (coveredByDropship){
-                los.setDamagableCoverType(DAMAGABLE_COVER_DROPSHIP);
-                los.coverDropship = coveringDropship;
+                los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_DROPSHIP);
+                los.coverDropshipPrimary = coveringDropship;
             }else if (bldg != null){
-                los.setDamagableCoverType(DAMAGABLE_COVER_BUILDING);
-                los.coverBuilding = bldg;                    
+                los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_BUILDING);
+                los.coverBuildingPrimary = bldg;                    
             }
             else {
-                los.setDamagableCoverType(DAMAGABLE_COVER_NONE);
+                los.setDamagableCoverTypePrimary(DAMAGABLE_COVER_NONE);
             }
-            los.coverLoc = coords;
+            los.coverLocPrimary = coords;
         }      
 
         return los;
@@ -1217,36 +1298,68 @@ public class LosEffects {
         return false;
     }
     
-    public Building getCoverBuilding() {
-        return coverBuilding;
+    public Building getCoverBuildingPrimary() {
+        return coverBuildingPrimary;
     }
 
-    public void setCoverBuilding(Building coverBuilding) {
-        this.coverBuilding = coverBuilding;
+    public void setCoverBuildingPrimary(Building coverBuilding) {
+        this.coverBuildingPrimary = coverBuilding;
     }
 
-    public Entity getCoverDropship() {
-        return coverDropship;
+    public Entity getCoverDropshipPrimary() {
+        return coverDropshipPrimary;
     }
 
-    public void setCoverDropship(Entity coverDropship) {
-        this.coverDropship = coverDropship;
+    public void setCoverDropshipPrimary(Entity coverDropship) {
+        this.coverDropshipPrimary = coverDropship;
     }
 
-    public int getDamagableCoverType() {
-        return damagableCoverType;
+    public int getDamagableCoverTypePrimary() {
+        return damagableCoverTypePrimary;
     }
 
-    public void setDamagableCoverType(int damagableCover) {
-        this.damagableCoverType = damagableCover;
+    public void setDamagableCoverTypePrimary(int damagableCover) {
+        this.damagableCoverTypePrimary = damagableCover;
     }
 
-    public Coords getCoverLoc() {
-        return coverLoc;
+    public Coords getCoverLocPrimary() {
+        return coverLocPrimary;
     }
 
-    public void setCoverLoc(Coords coverLoc) {
-        this.coverLoc = coverLoc;
+    public void setCoverLocPrimary(Coords coverLoc) {
+        this.coverLocPrimary = coverLoc;
+    }
+
+    public Building getCoverBuildingSecondary() {
+        return coverBuildingSecondary;
+    }
+
+    public void setCoverBuildingSecondary(Building coverBuildingSecondary) {
+        this.coverBuildingSecondary = coverBuildingSecondary;
+    }
+
+    public Entity getCoverDropshipSecondary() {
+        return coverDropshipSecondary;
+    }
+
+    public void setCoverDropshipSecondary(Entity coverDropshipSecondary) {
+        this.coverDropshipSecondary = coverDropshipSecondary;
+    }
+
+    public int getDamagableCoverTypeSecondary() {
+        return damagableCoverTypeSecondary;
+    }
+
+    public void setDamagableCoverTypeSecondary(int damagableCoverTypeSecondary) {
+        this.damagableCoverTypeSecondary = damagableCoverTypeSecondary;
+    }
+
+    public Coords getCoverLocSecondary() {
+        return coverLocSecondary;
+    }
+
+    public void setCoverLocSecondary(Coords coverLocSecondary) {
+        this.coverLocSecondary = coverLocSecondary;
     }    
 }
 

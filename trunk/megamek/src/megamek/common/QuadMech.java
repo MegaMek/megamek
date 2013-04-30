@@ -747,35 +747,56 @@ public class QuadMech extends Mech {
     @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
-        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && ((location == Mech.LOC_CT) || (location == Mech.LOC_HEAD))) {
+        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER) && 
+                ((location == Mech.LOC_CT) || (location == Mech.LOC_HEAD))) {
             return true;
         }
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && ((location == Mech.LOC_LARM) || (location == Mech.LOC_LLEG))) {
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && 
+                    ((location == Mech.LOC_LARM) || 
+                     (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && ((location == Mech.LOC_RARM) || (location == Mech.LOC_RLEG))) {
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && 
+                    ((location == Mech.LOC_RARM) || 
+                     (location == Mech.LOC_RLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_RIGHT) != 0) && (location == Mech.LOC_LT)) {
+            if (((cover & LosEffects.COVER_RIGHT) != 0) && 
+                    ((location == Mech.LOC_LARM) || 
+                     (location == Mech.LOC_LT) ||
+                     (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LEFT) != 0) && (location == Mech.LOC_RT)) {
+            if (((cover & LosEffects.COVER_LEFT) != 0) && 
+                    ((location == Mech.LOC_RARM) || 
+                     (location == Mech.LOC_RT) ||
+                     (location == Mech.LOC_RLEG))) {
                 return true;
             }
         } else {
-            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && ((location == Mech.LOC_LARM) || (location == Mech.LOC_LLEG))) {
+            if (((cover & LosEffects.COVER_LOWLEFT) != 0) && 
+                    ((location == Mech.LOC_LARM) || 
+                     (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && ((location == Mech.LOC_RARM) || (location == Mech.LOC_RLEG))) {
+            if (((cover & LosEffects.COVER_LOWRIGHT) != 0) && 
+                    ((location == Mech.LOC_RARM) || 
+                     (location == Mech.LOC_RLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_LEFT) != 0) && (location == Mech.LOC_LT)) {
+            if (((cover & LosEffects.COVER_LEFT) != 0) && 
+                    ((location == Mech.LOC_LARM) || 
+                     (location == Mech.LOC_LT) ||
+                     (location == Mech.LOC_LLEG))) {
                 return true;
             }
-            if (((cover & LosEffects.COVER_RIGHT) != 0) && (location == Mech.LOC_RT)) {
+            if (((cover & LosEffects.COVER_RIGHT) != 0) && 
+                    ((location == Mech.LOC_RARM) || 
+                     (location == Mech.LOC_RT) ||
+                     (location == Mech.LOC_RLEG))) {
                 return true;
             }
         }

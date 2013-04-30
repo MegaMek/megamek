@@ -5404,11 +5404,15 @@ public abstract class Mech extends Entity {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mech.LOC_LARM) || (location == Mech.LOC_LT))) {
+                    && ((location == Mech.LOC_LARM) || 
+                        (location == Mech.LOC_LT) ||
+                        (location == Mech.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mech.LOC_RARM) || (location == Mech.LOC_RT))) {
+                    && ((location == Mech.LOC_RARM) || 
+                        (location == Mech.LOC_RT) ||
+                        (location == Mech.LOC_RLEG))) {
                 return true;
             }
         } else {
@@ -5421,11 +5425,15 @@ public abstract class Mech extends Entity {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mech.LOC_LARM) || (location == Mech.LOC_LT))) {
+                    && ((location == Mech.LOC_LARM) || 
+                            (location == Mech.LOC_LT) ||
+                            (location == Mech.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mech.LOC_RARM) || (location == Mech.LOC_RT))) {
+                    && ((location == Mech.LOC_LARM) || 
+                            (location == Mech.LOC_LT) ||
+                            (location == Mech.LOC_LLEG))) {
                 return true;
             }
         }

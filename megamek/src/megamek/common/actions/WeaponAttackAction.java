@@ -1779,18 +1779,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
                 }
-                //Check to see if there's a covering entity
-                toHit.setDamagableCoverType(los.getDamagableCoverType());
-                toHit.setCoverLoc(los.getCoverLoc());
-                if (los.getDamagableCoverType() == 
-                        LosEffects.DAMAGABLE_COVER_DROPSHIP){                        
-                    toHit.setCoverDropship(los.getCoverDropship());
-                } else if (los.getDamagableCoverType() == 
-                    LosEffects.DAMAGABLE_COVER_BUILDING){
-                    toHit.setCoverBuilding(los.getCoverBuilding());                    
-                }                                       
+                //Set damagable cover state information
+                toHit.setDamagableCoverTypePrimary(los.getDamagableCoverTypePrimary());
+                toHit.setCoverLocPrimary(los.getCoverLocPrimary());
+                toHit.setCoverDropshipPrimary(los.getCoverDropshipPrimary());
+                toHit.setCoverBuildingPrimary(los.getCoverBuildingPrimary());
+                toHit.setDamagableCoverTypeSecondary(los.getDamagableCoverTypeSecondary());
+                toHit.setCoverLocSecondary(los.getCoverLocSecondary());
+                toHit.setCoverDropshipSecondary(los.getCoverDropshipSecondary());
+                toHit.setCoverBuildingSecondary(los.getCoverBuildingSecondary());                
             }
             // XXX what to do about GunEmplacements with partial cover?
+            //    Only 'mechs can have partial cover - Arlith 
         }
 
         // add penalty for called shots and change hit table, if necessary

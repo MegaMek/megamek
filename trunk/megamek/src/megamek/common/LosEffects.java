@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.client.ui.Messages;
+
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
  *
@@ -1296,6 +1298,34 @@ public class LosEffects {
             return  0 < 2 * (2*IntElev - highElev - lowElev) + IntPos.distance(highPos) - IntPos.distance(lowPos);
         }
         return false;
+    }
+    
+    static public String getCoverName(int cover){
+        switch (cover)
+        {
+            case COVER_NONE:
+                return Messages.getString("LosEffects.name_cover_none");
+            case COVER_LOWLEFT:
+                return Messages.getString("LosEffects.name_cover_lowleft");
+            case COVER_LOWRIGHT:
+                return Messages.getString("LosEffects.name_cover_lowright");
+            case COVER_LEFT:
+                return Messages.getString("LosEffects.name_cover_left");
+            case COVER_RIGHT:
+                return Messages.getString("LosEffects.name_cover_right");
+            case COVER_HORIZONTAL:
+                return Messages.getString("LosEffects.name_cover_horizontal");
+            case COVER_UPPER:
+                return Messages.getString("LosEffects.name_cover_upper");                                                  
+            case COVER_FULL:
+                return Messages.getString("LosEffects.name_cover_full");
+            case COVER_75LEFT:
+                return Messages.getString("LosEffects.name_cover_75left");
+            case COVER_75RIGHT:
+                return Messages.getString("LosEffects.name_cover_75right");
+            default:
+                return Messages.getString("LosEffects.name_cover_unknown");
+        }
     }
     
     public Building getCoverBuildingPrimary() {

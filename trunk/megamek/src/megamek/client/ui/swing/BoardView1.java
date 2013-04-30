@@ -2465,6 +2465,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 ai.targetPos = c2;
                 ai.attackHeight = mechInFirst ? 1 : 0;
                 ai.targetHeight = mechInSecond ? 1 : 0;
+                ai.targetIsMech = mechInSecond ? true : false;
                 ai.attackAbsHeight = game.getBoard().getHex(c1).floor()
                         + ai.attackHeight;
                 ai.targetAbsHeight = game.getBoard().getHex(c2).floor()
@@ -2524,11 +2525,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 if (le.isTargetCover() && le.canSee()) {
                     message.append(Messages
-                            .getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
+                            .getString(
+                                    "BoardView1.TargetPartialCover", new Object[] { //$NON-NLS-1$
+                                            LosEffects.getCoverName(le.getTargetCover())}));
                 }
                 if (le.isAttackerCover() && le.canSee()) {
                     message.append(Messages
-                            .getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
+                            .getString(
+                                    "BoardView1.AttackerPartialCover", new Object[] { //$NON-NLS-1$
+                                            LosEffects.getCoverName(le.getAttackerCover())}));
                 }
             }
             JOptionPane.showMessageDialog(getRootPane(), message.toString(),

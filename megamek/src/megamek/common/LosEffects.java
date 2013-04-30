@@ -251,7 +251,7 @@ public class LosEffects {
      * @return Value of property targetCover.
      */
     public boolean isTargetCover() {
-        return targetCover >= COVER_HORIZONTAL;
+        return targetCover >= COVER_LOWLEFT;
     }
 
     public int getTargetCover() {
@@ -273,7 +273,7 @@ public class LosEffects {
      * @return Value of property attackerCover.
      */
     public boolean isAttackerCover() {
-        return attackerCover >= COVER_HORIZONTAL;
+        return attackerCover >= COVER_LOWLEFT;
     }
 
     public int getAttackerCover() {
@@ -853,6 +853,55 @@ public class LosEffects {
                     rightLos.blocked = false;
                 }                
             }
+            
+            if (game.getOptions().booleanOption("tacops_partial_cover") && 
+                    ai.attackerIsMech) {
+                // 75% and vertical cover will have blocked LoS
+                boolean losBlockedByCover = false;
+                if(leftLos.attackerCover == COVER_HORIZONTAL && 
+                        rightLos.attackerCover == COVER_NONE) {
+                    //25% cover, left
+                    leftLos.attackerCover  = COVER_LOWLEFT;
+                    rightLos.attackerCover = COVER_LOWLEFT;
+                }else if ((leftLos.attackerCover == COVER_NONE && 
+                          rightLos.attackerCover == COVER_HORIZONTAL)) {
+                    //25% cover, right
+                    leftLos.attackerCover  = COVER_LOWRIGHT;
+                    rightLos.attackerCover = COVER_LOWRIGHT;
+                } else if(leftLos.attackerCover == COVER_FULL && 
+                         rightLos.attackerCover == COVER_NONE){
+                    //vertical cover, left
+                    leftLos.attackerCover  = COVER_LEFT;
+                    rightLos.attackerCover = COVER_LEFT;
+                    losBlockedByCover = true;
+                }else if (leftLos.attackerCover == COVER_NONE && 
+                         rightLos.attackerCover == COVER_FULL) {
+                    //vertical cover, right
+                    leftLos.attackerCover  = COVER_RIGHT;
+                    rightLos.attackerCover = COVER_RIGHT;
+                    losBlockedByCover = true;
+                } else if(leftLos.attackerCover == COVER_FULL && 
+                         rightLos.attackerCover == COVER_HORIZONTAL){
+                    //75% cover, left
+                    leftLos.attackerCover  = COVER_75LEFT;
+                    rightLos.attackerCover = COVER_75LEFT;   
+                    losBlockedByCover = true;
+                } else if (leftLos.attackerCover == COVER_HORIZONTAL && 
+                          rightLos.attackerCover == COVER_FULL) { 
+                    //75% cover, right
+                    leftLos.attackerCover  = COVER_75RIGHT;
+                    rightLos.attackerCover = COVER_75RIGHT;
+                    losBlockedByCover = true;
+                }
+                
+                //In the case of vertical and 75% cover, LoS will be blocked.  
+                // We need to unblock it, unless Los is already blocked.
+                if (!los.blocked && (!leftLos.blocked || !rightLos.blocked) &&
+                        losBlockedByCover){                   
+                    leftLos.blocked = false;
+                    rightLos.blocked = false;
+                }                
+            }
             totalLeftLos.add(leftLos);
             totalRightLos.add(rightLos);           
         }
@@ -1100,34 +1149,33 @@ public class LosEffects {
             }
         }
 
-        //Partial Cover related code
-        
+        //Partial Cover related code        
         boolean potentialCover = false;
-        // If LoS is blocked and we have TacOps partial cover, set full cover
-        //  so we check for lesser cover elsewhere
-        if (los.blocked
-                && game.getOptions().booleanOption("tacops_partial_cover")) {
-            los.targetCover = COVER_FULL;
-            los.attackerCover = COVER_FULL;
-            potentialCover = true;
+        // check for target partial cover
+        if (ai.targetPos.distance(coords) == 1){
+            if (los.blocked
+                    && game.getOptions().booleanOption("tacops_partial_cover")){
+                los.targetCover = COVER_FULL; 
+                potentialCover = true;
+            } else if  ((hexEl + bldgEl == ai.targetAbsHeight)
+                    && (ai.attackAbsHeight <= ai.targetAbsHeight)
+                    && (ai.targetHeight > 0)) {
+                los.targetCover |= COVER_HORIZONTAL; 
+                potentialCover = true;
+            }
         }
-
-        // check for target partial (horizontal) cover
-        if (ai.targetPos.distance(coords) == 1 && !los.blocked &&
-               (hexEl + bldgEl == ai.targetAbsHeight)
-                && (ai.attackAbsHeight <= ai.targetAbsHeight)
-                && (ai.targetHeight > 0)) {
-            los.targetCover |= COVER_HORIZONTAL; 
-            potentialCover = true;
-        }
-
         // check for attacker partial (horizontal) cover
-        if (ai.attackPos.distance(coords) == 1 && !los.blocked &&
-                (hexEl + bldgEl == ai.attackAbsHeight)
-                && (ai.attackAbsHeight >= ai.targetAbsHeight)
-                && (ai.attackHeight > 0)) {
-            los.attackerCover |= COVER_HORIZONTAL;
-            potentialCover = true;
+        if (ai.attackPos.distance(coords) == 1 ) {
+            if (los.blocked
+                    && game.getOptions().booleanOption("tacops_partial_cover")){
+                los.attackerCover = COVER_FULL; 
+                potentialCover = true;
+            } else if  ((hexEl + bldgEl == ai.attackAbsHeight)
+                    && (ai.attackAbsHeight >= ai.targetAbsHeight)
+                    && (ai.attackHeight > 0)) {
+                los.attackerCover |= COVER_HORIZONTAL; 
+                potentialCover = true;
+            }
         }    
         
         //If there's a partial cover situation, we may need to keep track of 

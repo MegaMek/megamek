@@ -124,7 +124,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             if (turret.getLocation() == Mech.LOC_LT) {
                 facings.get((frontFacing + 1) % 6).setEnabled(false);
                 facings.get((frontFacing + 2) % 6).setEnabled(false);
-            } else if (turret.getLocation() == Mech.LOC_LT) {
+            } else if (turret.getLocation() == Mech.LOC_RT) {
                 facings.get((frontFacing + 4) % 6).setEnabled(false);
                 facings.get((frontFacing + 5) % 6).setEnabled(false);
             }
@@ -238,7 +238,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
             int facing = Integer.parseInt(buttonGroup.getSelection().getActionCommand());
             int locToChange;
             if (mech != null) {
-                facing = (mech.getFacing() + facing)%6;
+                facing = (6 - mech.getFacing() + facing) % 6;
                 turret.setFacing(facing);
                 clientgui.getClient().sendMountFacingChange(mech.getId(), mech.getEquipmentNum(turret), facing);
                 if (turret.getLocation() == Mech.LOC_CT) {
@@ -253,7 +253,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
                     }
                 }
             } else if (tank != null) {
-                tank.setDualTurretOffset((tank.getFacing() + facing) % 6);
+                tank.setDualTurretOffset((6 - tank.getFacing() + facing) % 6);
             }
 
             dispose();

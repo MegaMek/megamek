@@ -27,6 +27,8 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
+import megamek.common.EntityWeightClass;
+import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -42,6 +44,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.KickAttackAction;
@@ -799,7 +802,7 @@ public class FireControl {
             tohit.append(Compute.getAttackerMovementModifier(game, shooter.getId(),
                     shooter_state.movement_type));
             tohit.append(Compute.getTargetMovementModifier(
-                    target_state.hexes_moved, target_state.isjumping, false));
+                    target_state.hexes_moved, target_state.isjumping, target instanceof VTOL));
             if (shooter_state.isprone) {
                 tohit.addModifier(2, "attacker prone");
             }
@@ -808,6 +811,16 @@ public class FireControl {
             }
             if (target_state.movement_type == EntityMovementType.MOVE_SKID) {
                 tohit.addModifier(2, "target skidded");
+            }
+            if (game.getOptions().booleanOption("tacops_standing_still") && (target_state.movement_type == EntityMovementType.MOVE_NONE)
+                    && !target_state.isimmobile
+                    && !((target instanceof Infantry) || (target instanceof VTOL) || (target instanceof GunEmplacement))) {
+                tohit.addModifier(-1, "target didn't move");
+            }
+
+            // did the target sprint?
+            if (target_state.movement_type== EntityMovementType.MOVE_SPRINT) {
+                tohit.addModifier(-1, "target sprinted");
             }
 
             // terrain modifiers, since "compute" won't let me do these remotely
@@ -977,6 +990,14 @@ public class FireControl {
                 if (!shooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc)) {
                     tohit.addModifier(1, "Foot actuator destroyed");
                 }
+                if (game.getOptions().booleanOption("tacops_attack_physical_psr")) {
+                    if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
+                        tohit.addModifier(-2, "Weight Class Attack Modifier");
+                    } else if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                        tohit.addModifier(-1, "Weight Class Attack Modifier");
+                    }
+                }
+
             }
             return tohit;
         } finally {
@@ -1104,7 +1125,7 @@ public class FireControl {
             }
             // Now deal with range effects
             int range = RangeType.rangeBracket(distance,
-                    ((WeaponType) mw.getType()).getRanges(mw), false);
+                    ((WeaponType) mw.getType()).getRanges(mw), game.getOptions().booleanOption("tacops_range"));
             // Aeros are 2x further for each altitude
             if (target instanceof Aero) {
                 range += 2 * target.getAltitude();

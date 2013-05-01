@@ -4,11 +4,12 @@ Koshi
 
 Config:Biped
 TechBase:Clan
-Era:3132
+Era:3091
+Source:Record Sheets: Mech Warrior Dark Age I
 Rules Level:2
 
 Mass:25
-Engine:175 XL Engine
+Engine:175 XL (Clan) Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
@@ -16,7 +17,7 @@ Heat Sinks:10 Double
 Walk MP:7
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:6
 RA Armor:6
 LT Armor:7
@@ -30,9 +31,9 @@ RTR Armor:2
 RTC Armor:3
 
 Weapons:3
-1 CLStreakSRM6, Right Arm, Ammo:30
-1 CLStreakSRM6, Left Arm
-1 CLLightTAG, Right Torso
+Streak SRM 6, Left Arm
+Streak SRM 6, Right Arm
+Light TAG, Right Torso
 
 Left Arm:
 Shoulder
@@ -41,7 +42,7 @@ Lower Arm Actuator
 Hand Actuator
 CLStreakSRM6
 CLStreakSRM6
-CLStreakSRM6 Ammo
+Clan Streak SRM 6 Ammo
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -55,7 +56,7 @@ Lower Arm Actuator
 Hand Actuator
 CLStreakSRM6
 CLStreakSRM6
-CLStreakSRM6 Ammo
+Clan Streak SRM 6 Ammo
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -65,10 +66,10 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
@@ -79,8 +80,8 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLLightTAG
 Jump Jet
 Jump Jet
@@ -145,4 +146,5 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
 

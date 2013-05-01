@@ -34,20 +34,20 @@ Ultra
 </Armor>
 <Main Gun Equipment>
 Clan Streak SRM 6
-Clan Ammo Streak-6 (10)
+CLStreakSRM6 Ammo (10)
 </Main Gun Equipment>
 <Torso Equipment>
 Clan Machine Gun
 Clan Machine Gun Ammo (50)
-BAPartialWing
+ProtoMechPartialWing
 </Torso Equipment>
 <Right Arm Equipment>
 CLMediumChemicalLaser
-Medium Chemical Laser Ammo (15)
+CLMediumChemLaserAmmo (15)
 </Right Arm Equipment>
 <Left Arm Equipment>
 CLMediumChemicalLaser
-Medium Chemical Laser Ammo (15)
+CLMediumChemLaserAmmo (15)
 </Left Arm Equipment>
 
 <type>
@@ -72,7 +72,4 @@ Biped
 XTR Clans
 </source>
 
-<History>
-Equipment to make it fly doesn't work.  Included for completeness
-</History>
 

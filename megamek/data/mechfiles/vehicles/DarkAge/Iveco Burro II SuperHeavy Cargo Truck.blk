@@ -13,63 +13,61 @@ Tank
 </UnitType>
 
 <Name>
-Aithon
+Iveco Burro II
 </Name>
 
 <Model>
-Assault Transport
+SuperHeavy Cargo Truck
 </Model>
 
 <year>
-3085
+3064
 </year>
 
 <type>
-Clan Level 4
+IS Level 3
 </type>
 
 <motion_type>
-Tracked
+Wheeled
 </motion_type>
-
-<transporters>
-troopspace:10.0
-</transporters>
 
 <cruiseMP>
 3
 </cruiseMP>
 
 <engine_type>
-2
+0
 </engine_type>
 
-<armor_type>
-16
-</armor_type>
-
-<armor_tech>
-8
-</armor_tech>
-
 <armor>
-37
-37
-37
-34
-30
+25
+20
+20
+13
 </armor>
 
 <Body Equipment>
-CLArmoredMotiveSystem
-CLLongTomCannonAmmo
-CLLongTomCannonAmmo
-CLLongTomCannonAmmo
-CLCASE
+Cargo (0.5 tons)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Environmental Sealing
+Armored Chassis
+ISOffRoadChassis
 </Body Equipment>
 
 <Front Equipment>
-CLLongTomCannon
+Searchlight
 </Front Equipment>
 
 <Right Equipment>
@@ -81,18 +79,15 @@ CLLongTomCannon
 <Rear Equipment>
 </Rear Equipment>
 
-<Turret Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-</Turret Equipment>
-
 <source>
-TRO:Prototype
+DTP Dark Age
 </source>
 
 <tonnage>
-100.0
+50.0
 </tonnage>
+
+<barrating>
+9
+</barrating>
 

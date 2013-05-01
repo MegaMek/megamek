@@ -1,170 +1,97 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
-Aero
-
+ConvFighter
 </UnitType>
 
 <Name>
-
-Chippewa IIC
-
+Drake Medium Strike Fighter
 </Name>
 
-<model>
-(Standard)
-</model>
-
 <Tonnage>
-
-90
-
+35
 </Tonnage>
 
 <SafeThrust>
-
-5
-
+6
 </SafeThrust>
 
 <Armor>
-
-92
-
-62
-
-62
-
-43
-
+10
+8
+8
+6
 </Armor>
 
 <Nose Equipment>
-
-CLLRM15
-
-CLArtemisIV
-
-CLLRM15
-
-CLArtemisIV
-
-CLLRM15 Ammo
-
-CLLRM15 Ammo
-
-CLLRM15 Ammo
-
-CLLRM15 Ammo
-
-CLStreakSRM4
-
-CLStreakSRM4 Ammo
-
-CLERMediumLaser
-
-CLERMediumLaser
-
-CLTargeting Computer
-
+Light Auto Cannon/5
+Light AC/5 Ammo
+ISMML3
+IS MML-3 LRM Ammo
+IS MML-3 SRM Ammo
+ISMML3
+IS MML-3 LRM Ammo
+IS MML-3 SRM Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-CLERLargeLaser
-
-CLERLargeLaser
-
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-
-CLERLargeLaser
-
-CLERLargeLaser
-
 </Right Wing Equipment>
 
 <Aft Equipment>
-
-CLERSmallLaser
-
-CLERSmallLaser
-
+ISGuardianECMSuite
 </Aft Equipment>
 
 <heatsinks>
-
-25
-
+0
 </heatsinks>
 
 <sink_type>
-
-1
-
+10
 </sink_type>
 
 <fuel>
-
-400
-
+560
 </fuel>
 
 <type>
-
-Clan Level 2
-
+IS Level 4
 </type>
 
 <year>
-
-2861
-
+3087
 </year>
 
-<Source>
-
-ED:Golden Age
-
+<source>
+TRO:Prototypes
 </source>
 
 <internal_type>
-
-0
-
+0				
 </internal_type>
 
 <armor_type>
-
-0
-
+8
 </armor_type>
 
-<engine_type>
-
+<engine_type>				
 0
-
 </engine_type>
 
 <motion_type>
-
-aerodyne
-
+Aerodyne
 </motion_type>
+
+<vstol>
+1
+</vstol>

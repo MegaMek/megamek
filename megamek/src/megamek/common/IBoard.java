@@ -301,7 +301,7 @@ public interface IBoard {
      * @param bldgs - the <code>Vector</code> of <code>Building</code>
      *            objects to be updated.
      */
-    public abstract void updateBuildingCF(Vector<Building> bldgs);
+    public abstract void updateBuildings(Vector<Building> bldgs);
 
     /**
      * Get the current value of the "road auto-exit" option.

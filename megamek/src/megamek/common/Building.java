@@ -54,7 +54,7 @@ public class Building implements Serializable {
     /**
      * The Basement type of the building.
      */
-    private BasementType basement = BasementType.UNKNOWN;
+    private Map<Coords,BasementType> basement = new HashMap<Coords,BasementType>();
     /**
      * the class of the building
      */
@@ -83,7 +83,7 @@ public class Building implements Serializable {
     /**
      * The current state of the basement.
      */
-    private boolean basementCollapsed = false;
+    private Map<Coords, Boolean> basementCollapsed = new HashMap<Coords, Boolean>();
 
     /**
      * The name of the building.
@@ -160,6 +160,8 @@ public class Building implements Serializable {
         originalHexes++;
         currentCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
         phaseCF.put(coords, nextHex.terrainLevel(Terrains.BLDG_CF));
+        basement.put(coords, BasementType.getType(nextHex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+        basementCollapsed.put(coords, false);
         if (structureType == Terrains.BRIDGE) {
             currentCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
             phaseCF.put(coords, nextHex.terrainLevel(Terrains.BRIDGE_CF));
@@ -328,7 +330,8 @@ public class Building implements Serializable {
 
         phaseCF.putAll(currentCF);
 
-        basement = basementType;
+        basement.put(coords, basementType);
+        basementCollapsed.put(coords, false);
 
         // Walk through the exit directions and
         // identify all hexes in this building.
@@ -395,6 +398,8 @@ public class Building implements Serializable {
                 throw new IllegalArgumentException(
                         "Invalid construction type: " + this.type + ".");
             }
+            basement.put(coord, BasementType.UNKNOWN);
+            basementCollapsed.put(coord, false);
         }
     }
 
@@ -466,51 +471,54 @@ public class Building implements Serializable {
      *
      * @return the <code>int</code> code of the buildingbasement type.
      */
-    public boolean getBasementCollapsed() {
-        return basementCollapsed;
+    public boolean getBasementCollapsed(Coords coords) {
+        return basementCollapsed.get(coords);
     }
 
-    public void setBasementCollapsed(boolean state, IHex hex) {
-        if ((basement == BasementType.NONE) || (basement == BasementType.ONE_DEEP_NORMALINFONLY)) {
+    public void rollBasementCollapsed(boolean state, IHex hex) {
+        Coords coords = hex.getCoords();
+        if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
             System.err.println("hex has no basement to collapse");
             return;
-        } else if (basement == BasementType.UNKNOWN) {
+        } else if (basement.get(coords) == BasementType.UNKNOWN) {
             int basementRoll = Compute.d6(2);
             System.err
                     .println("hex has undefined basement to collapse - roll for a basement was "
                             + basementRoll);
 
             if (basementRoll == 2) {
-                basement = BasementType.TWO_DEEP_FEET;
+                basement.put(coords, BasementType.TWO_DEEP_FEET);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.getDepth()));
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 3) {
-                basement = BasementType.ONE_DEEP_FEET;
+                basement.put(coords, BasementType.ONE_DEEP_FEET);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.getDepth()));
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 4) {
-                basement = BasementType.ONE_DEEP_NORMAL;
+                basement.put(coords, BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.getDepth()));
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 10) {
-                basement = BasementType.ONE_DEEP_NORMAL;
+                basement.put(coords, BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.getDepth()));
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 11) {
-                basement = BasementType.ONE_DEEP_HEAD;
+                basement.put(coords, BasementType.ONE_DEEP_HEAD);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.getDepth()));
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else if (basementRoll == 12) {
-                basement = BasementType.TWO_DEEP_HEAD;
+                basement.put(coords, BasementType.TWO_DEEP_HEAD);
                 hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                        Terrains.BLDG_BASEMENT_TYPE, basement.getDepth()));
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
             } else {
-                basement = BasementType.NONE;
+                basement.put(coords, BasementType.NONE);
+                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                        Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).getValue()));
                 return;
             }
 
         }
-        if (basementCollapsed) {
+        if (basementCollapsed.get(coords)) {
             System.err.println("hex has basement that already collapsed");
             return;
         }
@@ -519,7 +527,7 @@ public class Building implements Serializable {
                     + hex.getCoords().toString() + " set terrain!");
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.BLDG_BASE_COLLAPSED, 1));
-            basementCollapsed = state;
+            basementCollapsed.put(coords, state);
         }
     }
 
@@ -818,12 +826,18 @@ public class Building implements Serializable {
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);
     }
 
-    public BasementType getBasement() {
-        return basement;
+    public BasementType getBasement(Coords coords) {
+        return basement.get(coords);
     }
 
-    public void setBasement(BasementType basement) {
-        this.basement = basement;
+    public void setBasement(Coords coords, BasementType basement) {
+        this.basement.put(coords, basement);
     }
+
+    public void setBasementCollapsed(Coords coords, boolean collapsed) {
+        basementCollapsed.put(coords, collapsed);
+    }
+
+
 
 } // End public class Building implements Serializable

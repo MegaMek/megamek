@@ -398,7 +398,7 @@ public class PacketTool extends Frame implements Runnable {
                 case Packet.COMMAND_BLDG_REMOVE:
                     System.out.print("COMMAND_BLDG_REMOVE");
                     break;
-                case Packet.COMMAND_BLDG_UPDATE_CF:
+                case Packet.COMMAND_BLDG_UPDATE:
                     System.out.print("COMMAND_BLDG_UPDATE_CF");
                     break;
                 case Packet.COMMAND_BLDG_COLLAPSE:

@@ -19426,8 +19426,13 @@ public class Server implements Runnable {
                 }
             }
 
-            // loop to next location
-            hit = nextHit;
+            // If damage remains, loop to next location; if not, be sure to stop
+            // here because we may need to refer back to the last *damaged* 
+            // location again later. (This is safe because at damage <= 0 the
+            // loop terminates anyway.)
+            if (damage > 0) {
+                hit = nextHit;
+            }
             if (damageIS) {
                 wasDamageIS = true;
                 damageIS = false;

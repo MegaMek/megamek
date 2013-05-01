@@ -19,6 +19,7 @@ v0.35.38-dev (SVN)
 + Bug 3594: Taking no damage from partial cover not always occurring
 + Bug: TacOps ammo explosion rule checks wrong location for CASE.
 + Bug 3710: Default Quirks Jenner JR7-C4 Missing
++ Bug: Jump-capable units sometimes can't enter buildings 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 
@@ -2436,7 +2437,7 @@ v0.33.44 (0.34.0 Release Candidate 1) (2009-04-07, 03:43 UTC+2)
 + Bug: Armor appears twice in MechView for Aeros
 + Bug 1988508: Large Support Tank Vee Armor Display Distorted
 
-v0.33.43 (2008-03-31, 20:31 GMT+2)
+v0.33.43 (2009-03-31, 20:31 GMT+2)
 + Updated Lancelot 25-01X
 + Bug: WiGE not loading if movement type was WiGE instead of WIGE
 + RFE: added public methods for BattleArmor Stealth Armor

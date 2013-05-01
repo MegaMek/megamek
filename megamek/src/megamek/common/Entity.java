@@ -4717,6 +4717,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         delta_distance = 0;
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
+        isJumpingNow = false;
         damageThisRound = 0;
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;

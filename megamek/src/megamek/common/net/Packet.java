@@ -49,7 +49,7 @@ public class Packet {
 
     public static final int COMMAND_BLDG_ADD = 200;
     public static final int COMMAND_BLDG_REMOVE = 210;
-    public static final int COMMAND_BLDG_UPDATE_CF = 220;
+    public static final int COMMAND_BLDG_UPDATE = 220;
     public static final int COMMAND_BLDG_COLLAPSE = 230;
 
     public static final int COMMAND_PHASE_CHANGE = 240;

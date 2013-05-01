@@ -697,7 +697,7 @@ public class Board implements Serializable, IBoard {
                     }
                     int elevation = Integer.parseInt(args[1]);
                     int newIndex = indexFor(args[0], nw, y_pos);
-                    nd[newIndex] = new Hex(elevation, args[2], args[3], new Coords(x_pos,y_pos));
+                    nd[newIndex] = new Hex(elevation, args[2], args[3], new Coords(x_pos-1,y_pos-1));
                     x_pos++;
                     if (x_pos > nw) {
                         y_pos++;
@@ -1127,7 +1127,7 @@ public class Board implements Serializable, IBoard {
      * @param bldgs - the <code>Vector</code> of <code>Building</code>
      *            objects to be updated.
      */
-    public void updateBuildingCF(Vector<Building> bldgs) {
+    public void updateBuildings(Vector<Building> bldgs) {
 
         // Walk through the vector of buildings.
         Enumeration<Building> loop = bldgs.elements();
@@ -1151,6 +1151,9 @@ public class Board implements Serializable, IBoard {
                 bldg.setCurrentCF(other.getCurrentCF(coords), coords);
                 bldg.setPhaseCF(other.getPhaseCF(coords), coords);
                 bldg.setArmor(other.getArmor(coords), coords);
+                IHex hex = getHex(coords);
+                bldg.setBasement(coords, BasementType.getType(getHex(coords).terrainLevel(Terrains.BLDG_BASEMENT_TYPE)));
+                bldg.setBasementCollapsed(coords, other.getBasementCollapsed(coords));
             }
         } // Handle the next building.
 

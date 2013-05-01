@@ -905,9 +905,9 @@ public class Client implements IClientCommandHandler {
     }
 
     @SuppressWarnings("unchecked")
-    protected void receiveBuildingUpdateCF(Packet packet) {
+    protected void receiveBuildingUpdate(Packet packet) {
         game.getBoard()
-                .updateBuildingCF((Vector<Building>) packet.getObject(0));
+                .updateBuildings((Vector<Building>) packet.getObject(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -1140,8 +1140,8 @@ public class Client implements IClientCommandHandler {
             game.getBoard().setHex((Coords) c.getObject(0),
                     (IHex) c.getObject(1));
             break;
-        case Packet.COMMAND_BLDG_UPDATE_CF:
-            receiveBuildingUpdateCF(c);
+        case Packet.COMMAND_BLDG_UPDATE:
+            receiveBuildingUpdate(c);
             break;
         case Packet.COMMAND_BLDG_COLLAPSE:
             receiveBuildingCollapse(c);

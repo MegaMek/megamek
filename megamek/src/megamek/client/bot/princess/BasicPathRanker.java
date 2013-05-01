@@ -268,7 +268,7 @@ public class BasicPathRanker extends PathRanker {
             Coords finalCoords = pathCopy.getFinalCoords();
             if (finalCoords != null) {
                 Building b = game.getBoard().getBuildingAt(finalCoords);
-                if ((b != null) && (pathCopy.isJumping() || (b.getBasement().getValue() > BasementType.NONE.getValue()))) {
+                if ((b != null) && (pathCopy.isJumping() || (b.getBasement(finalCoords).getValue() > BasementType.NONE.getValue()))) {
                     owner.log(getClass(), METHOD_NAME, Princess.LogLevel.WARNING,
                             "Final hex is on top of a building...");
                     if (b.getCurrentCF(finalCoords) < pathCopy.getEntity().getWeight()) {

@@ -1290,6 +1290,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 } else if (elevation == -(current.depth(true))) {
                     if (climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
+                    } else if ((current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE.getValue()) && (assumedElevation == -BasementType.getType(current.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth())) {
+                        retVal = -BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
                     } else {
                         retVal += current.surface();
                         retVal -= next.surface();
@@ -1499,12 +1501,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech)
                         || (this instanceof Infantry)) {
-                    if (hex.containsTerrain(Terrains.BLDG_BASEMENT_TYPE)) {
-                        if ((assumedAlt >= (hex.surface() - hex.depth(true)))
-                                && (assumedAlt <= hex.ceiling())) {
-                            return true;
-                        }
-                    }
                     if ((assumedAlt >= (hex.surface() - hex.depth(true)))
                             && (assumedAlt <= hex.ceiling())) {
                         return true;

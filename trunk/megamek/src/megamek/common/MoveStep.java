@@ -967,12 +967,12 @@ public class MoveStep implements Serializable {
         if (noCost) {
             setMp(0);
         }
-        
+
         // Tanks can just drive out of hull-down.  If we're a tank, and we moved
         //  then we are no longer hull-down.
-        if ((entity instanceof Tank) && distance > 0){
+        if ((entity instanceof Tank) && (distance > 0)){
             setHullDown(false);
-        }            
+        }
 
         // Update the entity's total MP used.
         addMpUsed(getMp());
@@ -2176,7 +2176,7 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // Standing mechs and vehicles in fortified terrain can hull-down 
+        // Standing mechs and vehicles in fortified terrain can hull-down
         if (stepType == MoveStepType.HULL_DOWN) {
             if ((isHullDown()
                     || !((entity instanceof Mech) || (entity instanceof Tank)) || entity
@@ -2588,6 +2588,7 @@ public class MoveStep implements Serializable {
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV))
                     && (bld.getArmor(dest) > 0)
                     && !(entity instanceof Infantry)) {
+                System.err.println("no entering armored buildings for non-inf");
                 return false;
             }
 
@@ -2595,6 +2596,7 @@ public class MoveStep implements Serializable {
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV))
                     && (bld.getBldgClass() == Building.GUN_EMPLACEMENT)
                     && !(entity instanceof Infantry)) {
+                System.err.println("no entering gun-emplacements for non-inf");
                 return false;
             }
         }
@@ -2615,6 +2617,7 @@ public class MoveStep implements Serializable {
 
         // Swarming entities can't move.
         if (Entity.NONE != entity.getSwarmTargetId()) {
+            System.err.println("no moving for swarming infantry");
             return false;
         }
 
@@ -2881,8 +2884,8 @@ public class MoveStep implements Serializable {
             if (parent.isJumping()) {
                 terrainInvalid = true;
             } else {
-                // System.err.println("isElevationValid failed destHex is " +
-                // destHex.getCoords().toString());
+                System.err.println("isElevationValid failed destHex is " +
+                destHex.getCoords().toString());
                 return false;
             }
         }

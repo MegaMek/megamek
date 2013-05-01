@@ -4201,7 +4201,7 @@ public class Server implements Runnable {
         if (!bldgUpdates.isEmpty()) {
 
             // Send the building updates to the clients.
-            sendChangedCFBuildings(bldgUpdates);
+            sendChangedBuildings(bldgUpdates);
 
             // Clear the list of affected buildings.
             affectedBldgs.clear();
@@ -19427,7 +19427,7 @@ public class Server implements Runnable {
             }
 
             // If damage remains, loop to next location; if not, be sure to stop
-            // here because we may need to refer back to the last *damaged* 
+            // here because we may need to refer back to the last *damaged*
             // location again later. (This is safe because at damage <= 0 the
             // loop terminates anyway.)
             if (damage > 0) {
@@ -23454,10 +23454,10 @@ public class Server implements Runnable {
                 newElevation = 0;
             }
             waterDepth = 0;
-            if ((bldg.getBasement() != BasementType.NONE)
-                    && (bldg.getBasement() != BasementType.ONE_DEEP_NORMALINFONLY)
+            if ((bldg.getBasement(fallPos) != BasementType.NONE)
+                    && (bldg.getBasement(fallPos) != BasementType.ONE_DEEP_NORMALINFONLY)
                     && (entity.getElevation() == 0)
-                    && (bldg.getBasementCollapsed() == true)) {
+                    && (bldg.getBasementCollapsed(fallPos) == true)) {
 
                 if (fallHex.depth(true) == 0) {
                     System.err.println(" Entity " + entity.getDisplayName()
@@ -23465,16 +23465,16 @@ public class Server implements Runnable {
                             + " basement -- not allowed!!");
                     return vPhaseReport;
                 }
-                damageHeight = bldg.getBasement().getDepth();
+                damageHeight = bldg.getBasement(fallPos).getDepth();
 
                 newElevation = height - damageHeight;
 
                 handlingBasement = true;
-                if ((bldg.getBasement() == BasementType.TWO_DEEP_FEET)
-                        || (bldg.getBasement() == BasementType.ONE_DEEP_FEET)) {
+                if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_FEET)
+                        || (bldg.getBasement(fallPos) == BasementType.ONE_DEEP_FEET)) {
                     damageTable = ToHitData.HIT_KICK;
-                } else if ((bldg.getBasement() == BasementType.TWO_DEEP_HEAD)
-                        || (bldg.getBasement() == BasementType.ONE_DEEP_HEAD)) {
+                } else if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_HEAD)
+                        || (bldg.getBasement(fallPos) == BasementType.ONE_DEEP_HEAD)) {
                     damageTable = ToHitData.HIT_PUNCH;
                 } else {
                     damageTable = ToHitData.HIT_NORMAL;
@@ -26663,7 +26663,7 @@ public class Server implements Runnable {
                         if ((numFloors > 0)
                                 && (floor == 0)
                                 && ((load > currentCF) || bldg
-                                        .getBasementCollapsed())) {
+                                        .getBasementCollapsed(coords))) {
 
                             basement.addElement(entity);
                         } else if (floor > 0) {
@@ -26691,8 +26691,8 @@ public class Server implements Runnable {
 
             // did anyone fall into the basement?
             if (!basementMap.isEmpty()
-                    && (bldg.getBasement() != BasementType.NONE)
-                    && (bldg.getBasement() != BasementType.ONE_DEEP_NORMALINFONLY)
+                    && (bldg.getBasement(coords) != BasementType.NONE)
+                    && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)
                     && !collapse) {
 
                 collapseBasement(bldg, basementMap, coords, vPhaseReport);
@@ -26762,26 +26762,25 @@ public class Server implements Runnable {
         Report r;
         final int phaseCF = bldg.getPhaseCF(coords);
         // Get the Vector of Entities at these coordinates.
-        final Vector<Entity> vector = positionMap.get(coords);
-        IHex hex = game.getBoard().getHex(coords);
+        final Vector<Entity> entities = positionMap.get(coords);
+        IHex curHex = game.getBoard().getHex(coords);
 
-        if (bldg.getBasement() == BasementType.NONE) {
+        if (bldg.getBasement(coords) == BasementType.NONE) {
             return;
         } else {
-            bldg.setBasementCollapsed(true, hex);
+            bldg.rollBasementCollapsed(true, curHex);
         }
 
         // Are there any Entities at these coords?
-        if (vector != null) {
+        if (entities != null) {
 
             // How many levels does this building have in this hex?
-            final IHex curHex = game.getBoard().getHex(coords);
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             final int numFloors = Math.max(bridgeEl,
                     curHex.terrainLevel(Terrains.BLDG_ELEV));
 
             // Sort in elevation order
-            Collections.sort(vector, new Comparator<Entity>() {
+            Collections.sort(entities, new Comparator<Entity>() {
                 public int compare(Entity a, Entity b) {
                     if (a.getElevation() > b.getElevation()) {
                         return -1;
@@ -26792,9 +26791,7 @@ public class Server implements Runnable {
                 }
             });
             // Walk through the entities in this position.
-            Enumeration<Entity> entities = vector.elements();
-            while (entities.hasMoreElements()) {
-                final Entity entity = entities.nextElement();
+            for (Entity entity: entities) {
 
                 int floor = entity.getElevation();
 
@@ -26809,16 +26806,16 @@ public class Server implements Runnable {
                 entity.addPilotingModifierForTerrain(psr, coords);
 
                 // fall into basement
-                if ((bldg.getBasement() == BasementType.TWO_DEEP_HEAD)
-                        || (bldg.getBasement() == BasementType.TWO_DEEP_FEET)) {
+                if ((bldg.getBasement(coords) == BasementType.TWO_DEEP_HEAD)
+                        || (bldg.getBasement(coords) == BasementType.TWO_DEEP_FEET)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 2 floors into " + coords.toString());
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,
                             coords, psr, true));
                     entity.setElevation(floor - 2);
                     runningCFTotal -= CFDamage * 2;
-                } else if ((bldg.getBasement() != BasementType.NONE)
-                        && (bldg.getBasement() != BasementType.ONE_DEEP_NORMALINFONLY)) {
+                } else if ((bldg.getBasement(coords) != BasementType.NONE)
+                        && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 1 floor into " + coords.toString());
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,
@@ -26839,7 +26836,6 @@ public class Server implements Runnable {
         } // End have-entities-here.
 
         // Update the building
-        bldg.setBasementCollapsed(true, hex);
         if (runningCFTotal < 0) {
             bldg.setCurrentCF(0, coords);
             bldg.setPhaseCF(0, coords);
@@ -26847,6 +26843,10 @@ public class Server implements Runnable {
             bldg.setCurrentCF(runningCFTotal, coords);
             bldg.setPhaseCF(runningCFTotal, coords);
         }
+        sendChangedHex(coords);
+        Vector<Building> buildings = new Vector<Building>();
+        buildings.add(bldg);
+        sendChangedBuildings(buildings);
     } // End private void collapseBuilding( Building )
 
     /**
@@ -27059,8 +27059,8 @@ public class Server implements Runnable {
      *            be updated.
      * @return a <code>Packet</code> for the command.
      */
-    private Packet createUpdateBuildingCFPacket(Vector<Building> buildings) {
-        return new Packet(Packet.COMMAND_BLDG_UPDATE_CF, buildings);
+    private Packet createUpdateBuildingPacket(Vector<Building> buildings) {
+        return new Packet(Packet.COMMAND_BLDG_UPDATE, buildings);
     }
 
     /**
@@ -27137,7 +27137,7 @@ public class Server implements Runnable {
 
         // If we have any buildings to update, send the message.
         if (!update.isEmpty()) {
-            sendChangedCFBuildings(new Vector<Building>(update.keySet()));
+            sendChangedBuildings(new Vector<Building>(update.keySet()));
         }
     }
 
@@ -27461,8 +27461,8 @@ public class Server implements Runnable {
 
     }
 
-    public void sendChangedCFBuildings(Vector<Building> buildings) {
-        send(createUpdateBuildingCFPacket(buildings));
+    public void sendChangedBuildings(Vector<Building> buildings) {
+        send(createUpdateBuildingPacket(buildings));
     }
 
     /**

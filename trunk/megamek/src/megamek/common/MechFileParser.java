@@ -617,10 +617,8 @@ public class MechFileParser {
             }
         }
 
-        // need to load all those weapons in the weapon bays
-        if (ent.usesWeaponBays()) {
-            ent.loadAllWeapons();
-        }
+        // Don't forget to actually load any applicable weapons.
+        ent.loadAllWeapons();
 
         if (ent instanceof Aero) {
             // set RACs and UACs at maximum firing rate if aero

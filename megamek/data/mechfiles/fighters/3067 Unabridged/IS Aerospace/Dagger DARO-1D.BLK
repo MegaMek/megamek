@@ -25,7 +25,7 @@ Dagger
 
 <Model>
 
-DARO-1
+DARO-1D
 
 </Model>
 
@@ -54,40 +54,29 @@ DARO-1
 </Armor>
 
 <Nose Equipment>
-
-ISRotaryAC5
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
+ISBeagleActiveProbe
+ISERMediumLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISERMediumLaser
-
-ISERMediumLaser
-
+ISMediumPulseLaser
+ISMediumPulseLaser
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
-
-ISERMediumLaser
-
-ISERMediumLaser
-
+ISMediumPulseLaser
+ISMediumPulseLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-
+ISGuardianECM
 </Aft Equipment>
 
 <heatsinks>
 
-11
+12
 
 </heatsinks>
 
@@ -105,7 +94,7 @@ ISERMediumLaser
 
 <type>
 
-IS
+IS Level 3
 
 </type>
 

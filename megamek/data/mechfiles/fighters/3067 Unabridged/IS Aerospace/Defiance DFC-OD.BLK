@@ -25,7 +25,7 @@ Defiance
 
 <Model>
 
-DFC-O
+DFC-OD
 
 </Model>
 
@@ -53,42 +53,20 @@ DFC-O
 
 </Armor>
 
-<Nose Equipment> 
-
-ISGaussRifle
-
-ISGauss Ammo
-
-ISGauss Ammo
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser
-
+<Nose Equipment>
+ISThunderbolt10
+ISThunderbolt10 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISERMediumLaser
-
-ISERMediumLaser
-
+ISLargeVSPLaser
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
-
-ISERMediumLaser
-
-ISERMediumLaser
-
+<Right Wing Equipment>
+ISLargeVSPLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-
-ISERSmallLaser
-
-ISERSmallLaser 
-
 </Aft Equipment>
 
 <heatsinks>
@@ -111,7 +89,7 @@ ISERSmallLaser
 
 <type>
 
-IS
+IS Level 3
 
 </type>
 

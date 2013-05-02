@@ -22,78 +22,62 @@ Aero
 </UnitType>
 
 <Name>
-
-Scytha
-
+Seydlitz
 </Name>
 
 <Model>
 
-C
+ SYD-45X "Starling"
 
 </Model>
 
 <Tonnage>
 
-90
+25
 
 </Tonnage>
 
 <SafeThrust>
 
-6
+14
 
 </SafeThrust>
 
 <Armor>
 
-89
+20
 
-66
+17
 
-66
+17
 
-47
+15
 
 </Armor>
 
 <Nose Equipment>
 
-CLMediumPulseLaser
-
-CLMediumPulseLaser
+ISBombastLaser
 
 </Nose Equipment>
 
 <Left Wing Equipment>
 
-CLGaussRifle
-
-CLGauss Ammo
-
-CLERPPC
-
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
 
-CLGaussRifle
-
-CLGauss Ammo
-
-CLERPPC
-
 </Right Wing Equipment>
 
-<Aft Equipment>
+<Aft Equipment> 
 
-CLERSmallLaser
+ISChaffPod
 
 </Aft Equipment>
 
 <heatsinks>
 
-20
+10
 
 </heatsinks>
 
@@ -105,19 +89,19 @@ CLERSmallLaser
 
 <fuel>
 
-320
+400
 
 </fuel>
 
 <type>
 
-Clan Level 2
+IS Level 4
 
 </type>
 
 <year>
 
-3000
+3073
 
 </year>
 
@@ -129,12 +113,12 @@ Clan Level 2
 
 <armor_type>
 
-19
+20
 </armor_type>
 
 <engine_type>
 
-2
+3
 
 </engine_type>
 
@@ -144,6 +128,12 @@ aerodyne
 
 </motion_type>
 
-<omni>
+<cockpit_type>
 
-</omni>
+1
+
+</cockpit_type>
+
+
+
+

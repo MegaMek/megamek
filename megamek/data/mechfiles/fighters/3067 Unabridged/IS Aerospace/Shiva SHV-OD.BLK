@@ -25,7 +25,7 @@ Shiva
 
 <Model>
 
-SHV-O
+SHV-OD
 
 </Model>
 
@@ -54,46 +54,30 @@ SHV-O
 </Armor>
 
 <Nose Equipment>
-
-ISLBXAC20
-
-ISLBXAC20 CL Ammo
-
-ISLBXAC20 CL Ammo
-
-ISSRM6
-
-ISSRM6 Ammo
-
-ISSRM6 Ammo
-
-ISERSmallLaser
-
+ISLightGaussRifle
+ISLightGauss Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISLargePulseLaser
-
-ISLargePulseLaser
-
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
-
-ISLargePulseLaser
-
-ISLargePulseLaser
-
+<Right Wing Equipment>
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
 </Right Wing Equipment>
 
 <Aft Equipment>
-
+ISGuardianECMSuite
+ISMediumVSPLaser
 </Aft Equipment>
 
 <heatsinks>
 
-21
+18
 
 </heatsinks>
 
@@ -111,7 +95,7 @@ ISLargePulseLaser
 
 <type>
 
-IS
+IS Level 3
 
 </type>
 

@@ -25,7 +25,7 @@ Huscarl
 
 <Model>
 
-HSCL-1-O
+HSCL-1-OD
 
 </Model>
 
@@ -54,46 +54,36 @@ HSCL-1-O
 </Armor>
 
 <Nose Equipment>
-
-ISLRM10
-
-ISLRM10 Ammo
-
-ISLRM10 Ammo
-
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISTargeting Computer
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISERLargeLaser
-
-ISLBXAC10
-
-ISLBXAC10 CL Ammo
-
-ISLBXAC10 CL Ammo
-
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
-
-ISERLargeLaser
-
-ISLBXAC10
-
-ISLBXAC10 CL Ammo
-
-ISLBXAC10 CL Ammo
-
+<Right Wing Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-
+ISERMediumLaser
 </Aft Equipment>
 
 <heatsinks>
 
-14
+19
 
 </heatsinks>
 

@@ -15,7 +15,7 @@ Burke Defense Tank
 (Royal)
 </Model>
 <year>
-2750
+2713
 </year>
 <type>
 IS Level 2
@@ -32,12 +32,10 @@ Tracked
 <cruiseMP>
 3
 </cruiseMP>
+
 <armor_type>
 0
 </armor_type>
-<armor_tech>
--1
-</armor_tech>
 
 <armor>
 42

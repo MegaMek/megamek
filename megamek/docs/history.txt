@@ -29,6 +29,7 @@ v0.35.38-dev (SVN)
 + Bug: damage from building collapse using wrong table 
 + Bug: Units crippled from weapon loss not always recognized as such.
 + Bug: PSRs resulting from IndustrialMech end-of-turn crits delayed until next turn.
++ Data: Clean up of Aerospace Duplicate units and more unit fixes.
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

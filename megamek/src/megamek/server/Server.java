@@ -6461,6 +6461,18 @@ public class Server implements Runnable {
 
             IHex curHex = game.getBoard().getHex(curPos);
 
+            //when first entering a building, we need to roll what type
+            //of basement it has
+            if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+                Building bldg = game.getBoard().getBuildingAt(curPos);
+                if (bldg.rollBasement(game.getBoard().getHex(curPos), vPhaseReport)) {
+                    sendChangedHex(curPos);
+                    Vector<Building> buildings = new Vector<Building>();
+                    buildings.add(bldg);
+                    sendChangedBuildings(buildings);
+                }
+            }
+
             // check for automatic unstick
             if (entity.canUnstickByJumping() && entity.isStuck()
                     && (moveType == EntityMovementType.MOVE_JUMP)) {
@@ -6595,11 +6607,11 @@ public class Server implements Runnable {
                         overallMoveType, prevStep, prevFacing, curFacing,
                         lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    int MoF = doSkillCheckWhileMoving(entity, lastPos, curPos,
+                    int moF = doSkillCheckWhileMoving(entity, lastPos, curPos,
                             rollTarget, false);
-                    if (MoF > 0) {
+                    if (moF > 0) {
                         // maximum distance is hexes moved / 2
-                        int sideslipDistance = Math.min(MoF, distance - 1);
+                        int sideslipDistance = Math.min(moF, distance - 1);
                         if (sideslipDistance > 0) {
                             int skidDirection = prevFacing;
                             // report sideslip
@@ -7250,6 +7262,15 @@ public class Server implements Runnable {
 
                 // TODO: what if a building collapses into rubble?
             }
+            // we need to specal case infantry and protomechs to check for building collapse,
+            // because the earlier code is not getting called because they
+            // don't need PSRs
+            if ((entity instanceof Infantry) || (entity instanceof Protomech)) {
+                if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    Building bldg = game.getBoard().getBuildingAt(curPos);
+                    addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg, entity, curPos));
+                }
+            }
 
             // did the entity just fall?
             if (!wasProne && entity.isProne()) {
@@ -7323,7 +7344,7 @@ public class Server implements Runnable {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement) {
+        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
             entity.setElevation(curVTOLElevation);
         }
         entity.setAltitude(curAltitude);
@@ -9942,6 +9963,7 @@ public class Server implements Runnable {
             return roll.getValue() - diceRoll;
         }
         r.choose(true);
+        r.newlines = 2;
         addReport(r);
         return 0;
     }
@@ -10535,12 +10557,29 @@ public class Server implements Runnable {
             if ((bld != null) && (bld.getType() == Building.WALL)) {
                 entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
             }
+
         }
         // add the elevation that was passed into this method
         // TODO: currently only used for building placement, we should do this
         // more systematically with
         // up/down buttons in the deployment display
         entity.setElevation(entity.getElevation() + elevation);
+
+        //when first entering a building, we need to roll what type
+        //of basement it has
+        Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
+        if ((bldg != null)) {
+            if (bldg.rollBasement(game.getBoard().getHex(entity.getPosition()), vPhaseReport)) {
+                sendChangedHex(entity.getPosition());
+                Vector<Building> buildings = new Vector<Building>();
+                buildings.add(bldg);
+                sendChangedBuildings(buildings);
+            }
+            boolean collapse = checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
+            if (collapse) {
+                addAffectedBldg(bldg, collapse);
+            }
+        }
 
         entity.setDone(true);
         entity.setDeployed(true);
@@ -10824,6 +10863,194 @@ public class Server implements Runnable {
                                 return ((player == entity.getOwnerId())
                                         && !(los.isBlocked()) && entity
                                         .isActive());
+                            }
+
+                            /**
+                             * Process a batch of entity attack (or twist) actions by adding them to the
+                             * proper list to be processed later.
+                             */
+                            private void processAttack(Entity entity, Vector<EntityAction> vector) {
+
+                                // Not **all** actions take up the entity's turn.
+                                boolean setDone = !((game.getTurn() instanceof GameTurn.TriggerAPPodTurn) || (game
+                                        .getTurn() instanceof GameTurn.TriggerBPodTurn));
+                                for (EntityAction ea : vector) {
+                                    // is this the right entity?
+                                    if (ea.getEntityId() != entity.getId()) {
+                                        System.err.println("error: attack packet has wrong attacker");
+                                        continue;
+                                    }
+                                    if (ea instanceof PushAttackAction) {
+                                        // push attacks go the end of the displacement attacks
+                                        PushAttackAction paa = (PushAttackAction) ea;
+                                        entity.setDisplacementAttack(paa);
+                                        game.addCharge(paa);
+                                    } else if (ea instanceof DodgeAction) {
+                                        entity.dodging = true;
+                                    } else if (ea instanceof SpotAction) {
+                                        entity.setSpotting(true);
+                                        entity.setSpotTargetId(((SpotAction) ea).getTargetId());
+                                    } else {
+                                        // add to the normal attack list.
+                                        game.addAction(ea);
+                                    }
+
+                                    // Anti-mech and pointblank attacks from
+                                    // hiding may allow the target to respond.
+                                    if (ea instanceof WeaponAttackAction) {
+                                        final WeaponAttackAction waa = (WeaponAttackAction) ea;
+                                        final String weaponName = entity
+                                                .getEquipment(waa.getWeaponId()).getType()
+                                                .getInternalName();
+
+                                        if (Infantry.SWARM_MEK.equals(weaponName)
+                                                || Infantry.LEG_ATTACK.equals(weaponName)) {
+
+                                            // Does the target have any AP Pods available?
+                                            final Entity target = game.getEntity(waa.getTargetId());
+                                            for (Mounted equip : target.getMisc()) {
+                                                if (equip.getType().hasFlag(MiscType.F_AP_POD)
+                                                        && equip.canFire()) {
+
+                                                    // Yup. Insert a game turn to handle AP pods.
+                                                    // ASSUMPTION : AP pod declarations come
+                                                    // immediately after the attack declaration.
+                                                    game.insertNextTurn(new GameTurn.TriggerAPPodTurn(
+                                                            target.getOwnerId(), target.getId()));
+                                                    send(createTurnVectorPacket());
+
+                                                    // We can stop looking.
+                                                    break;
+
+                                                } // end found-available-ap-pod
+
+                                            } // Check the next piece of equipment on the target.
+
+                                            for (Mounted weapon : target.getWeaponList()) {
+                                                if (weapon.getType().hasFlag(WeaponType.F_B_POD)
+                                                        && weapon.canFire()) {
+
+                                                    // Yup. Insert a game turn to handle B pods.
+                                                    // ASSUMPTION : B pod declarations come
+                                                    // immediately after the attack declaration.
+                                                    game.insertNextTurn(new GameTurn.TriggerBPodTurn(
+                                                            target.getOwnerId(), target.getId(),
+                                                            weaponName));
+                                                    send(createTurnVectorPacket());
+
+                                                    // We can stop looking.
+                                                    break;
+
+                                                } // end found-available-b-pod
+                                            } // Check the next piece of equipment on the target.
+                                        } // End check-for-available-ap-pod
+                                    }
+
+                                    // If attacker breaks grapple, defender may counter
+                                    if (ea instanceof BreakGrappleAttackAction) {
+                                        final BreakGrappleAttackAction bgaa = (BreakGrappleAttackAction) ea;
+                                        final Entity att = (game.getEntity(bgaa.getEntityId()));
+                                        if (att.isGrappleAttacker()) {
+                                            final Entity def = (game.getEntity(bgaa.getTargetId()));
+                                            // Remove existing break grapple by defender (if exists)
+                                            if (def.isDone()) {
+                                                game.removeActionsFor(def.getId());
+                                            } else {
+                                                game.removeTurnFor(def);
+                                                def.setDone(true);
+                                            }
+                                            // Add a turn to declare counterattack
+                                            game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
+                                                    .getOwnerId(), def.getId()));
+                                            send(createTurnVectorPacket());
+                                        }
+                                    }
+                                    if (ea instanceof ArtilleryAttackAction) {
+                                        boolean firingAtNewHex = false;
+                                        final ArtilleryAttackAction aaa = (ArtilleryAttackAction) ea;
+                                        final Entity firingEntity = game.getEntity(aaa.getEntityId());
+                                        for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex
+                                                && j.hasMoreElements();) {
+                                            WeaponHandler wh = (WeaponHandler) j.nextElement();
+                                            if (wh.waa instanceof ArtilleryAttackAction) {
+                                                ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
+                                                if ((oaaa.getEntityId() == aaa.getEntityId())
+                                                        && !oaaa.getTarget(game)
+                                                                .getPosition()
+                                                                .equals(aaa.getTarget(game)
+                                                                        .getPosition())) {
+                                                    firingAtNewHex = true;
+                                                }
+                                            }
+                                        }
+                                        if (firingAtNewHex) {
+                                            clearArtillerySpotters(firingEntity.getId(),
+                                                    aaa.getWeaponId());
+                                        }
+                                        Enumeration<Entity> spotters = game
+                                                .getSelectedEntities(new EntitySelector() {
+                                                    public int player = firingEntity.getOwnerId();
+                                                    public Targetable target = aaa.getTarget(game);
+
+                                                    public boolean accept(Entity entity) {
+                                                        LosEffects los = LosEffects.calculateLos(game,
+                                                                entity.getId(), target);
+                                                        return ((player == entity.getOwnerId())
+                                                                && !(los.isBlocked()) && entity
+                                                                .isActive());
+                                                    }
+                                                });
+                                        Vector<Integer> spotterIds = new Vector<Integer>();
+                                        while (spotters.hasMoreElements()) {
+                                            Integer id = new Integer(spotters.nextElement().getId());
+                                            spotterIds.addElement(id);
+                                        }
+                                        aaa.setSpotterIds(spotterIds);
+                                    }
+
+                                    // The equipment type of a club needs to be restored.
+                                    if (ea instanceof ClubAttackAction) {
+                                        ClubAttackAction caa = (ClubAttackAction) ea;
+                                        Mounted club = caa.getClub();
+                                        club.restore();
+                                    }
+
+                                    // Mark any AP Pod as used in this turn.
+                                    if (ea instanceof TriggerAPPodAction) {
+                                        TriggerAPPodAction tapa = (TriggerAPPodAction) ea;
+                                        Mounted pod = entity.getEquipment(tapa.getPodId());
+                                        pod.setUsedThisRound(true);
+                                    }
+                                    // Mark any B Pod as used in this turn.
+                                    if (ea instanceof TriggerBPodAction) {
+                                        TriggerBPodAction tba = (TriggerBPodAction) ea;
+                                        Mounted pod = entity.getEquipment(tba.getPodId());
+                                        pod.setUsedThisRound(true);
+                                    }
+                                }
+
+                                // Unless otherwise stated,
+                                // this entity is done for the round.
+                                if (setDone) {
+                                    entity.setDone(true);
+                                }
+                                entityUpdate(entity.getId());
+
+                                Packet p = createAttackPacket(vector, 0);
+                                if (game.isPhaseSimultaneous()) {
+                                    // Update attack only to player who declared it & observers
+                                    for (Player player : game.getPlayersVector()) {
+                                        if (player.canSeeAll() || player.isObserver()
+                                                || (entity.getOwnerId() == player.getId())) {
+                                            send(player.getId(), p);
+                                        }
+                                    }
+                                } else {
+                                    // update all players on the attacks. Don't worry about pushes being
+                                    // a
+                                    // "charge" attack. It doesn't matter to the client.
+                                    send(p);
+                                }
                             }
                         });
                 Vector<Integer> spotterIds = new Vector<Integer>();
@@ -23418,8 +23645,7 @@ public class Server implements Runnable {
                 + fallHex.depth(true);
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
-        int newElevation;
-        newElevation = 0;
+        int newElevation = 0;
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;
@@ -23467,7 +23693,7 @@ public class Server implements Runnable {
                 }
                 damageHeight = bldg.getBasement(fallPos).getDepth();
 
-                newElevation = height - damageHeight;
+                newElevation = newElevation - damageHeight;
 
                 handlingBasement = true;
                 if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_FEET)
@@ -26384,7 +26610,7 @@ public class Server implements Runnable {
 
             // Infantry and BA are damaged by buildings but do not damage them
             if (entity instanceof Infantry) {
-                return false;
+                return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
             }
             // Damage the building. The CF can never drop below 0.
             int toBldg = (int) Math.floor(bldg.getDamageToScale()
@@ -26585,6 +26811,8 @@ public class Server implements Runnable {
         // look for a collapse.
         boolean collapse = false;
 
+        boolean basementCollapse = false;
+
         if (checkBecauseOfDamage && (currentCF <= 0)) {
             collapse = true;
         }
@@ -26612,11 +26840,12 @@ public class Server implements Runnable {
 
             // Track the load of each floor (and of the roof) separately.
             // Track all units that fall into the basement in this hex.
-            // N.B. don't track the ground floor, the first floor is at
-            // index 0, the second is at index 1, etc., and the roof is
-            // at index (numFloors-1).
-            // if bridge is present, bridge will be numFloors
-            int[] loads = new int[numLoads];
+            // track all floors, ground at index 0, the first floor is at
+            // index 1, the second is at index 1, etc., and the roof is
+            // at index (numFloors).
+            // if bridge is present, bridge will be numFloors+1
+            float[] loads = new float[numLoads+1];
+            // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
             boolean recheckLoop = true;
@@ -26647,43 +26876,35 @@ public class Server implements Runnable {
                         continue; // under the bridge even at same level
                     }
 
-                    // Add the weight of a Mek or tank or infantry to the
+                    if (entityElev == 0) {
+                        basement.add(entity);
+                    }
+
+                    // Add the weight to the
                     // correct floor.
-                    if ((entity instanceof Mech) || (entity instanceof Tank)
-                            || (entity instanceof Infantry)) {
-                        int load = (int) entity.getWeight();
-                        int floor = entityElev;
-                        if (floor == bridgeEl) {
-                            floor = numLoads;
+
+                    float load = entity.getWeight();
+                    int floor = entityElev;
+                    if (floor == bridgeEl) {
+                        floor = numLoads;
+                    }
+
+                    loads[floor] += load;
+                    if (loads[floor] > currentCF) {
+                        // If the load on any floor but the ground floor
+                        // exceeds the building's current CF it collapses.
+                        if (floor != 0) {
+                            collapse = true;
+                        } else {
+                            basementCollapse = true;
                         }
-
-                        // Entities on the ground floor may fall into the
-                        // basement, but they won't collapse the building.
-                        // if the basement is already collapsed, they fall in.
-                        if ((numFloors > 0)
-                                && (floor == 0)
-                                && ((load > currentCF) || bldg
-                                        .getBasementCollapsed(coords))) {
-
-                            basement.addElement(entity);
-                        } else if (floor > 0) {
-
-                            // If the load on any floor but the ground floor
-                            // exceeds the building's current CF it collapses.
-                            floor--;
-                            loads[floor] += load;
-                            if (loads[floor] > currentCF) {
-                                collapse = true;
-                            }
-
-                        } // End not-ground-floor
-
-                    } // End increase-load
+                    }
+                    // End increase-load
 
                 } // Handle the next entity.
 
                 // Track all entities that fell into the basement.
-                if (!basement.isEmpty()) {
+                if (basementCollapse) {
                     basementMap.put(coords, basement);
                 }
 
@@ -26692,7 +26913,6 @@ public class Server implements Runnable {
             // did anyone fall into the basement?
             if (!basementMap.isEmpty()
                     && (bldg.getBasement(coords) != BasementType.NONE)
-                    && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)
                     && !collapse) {
 
                 collapseBasement(bldg, basementMap, coords, vPhaseReport);
@@ -26757,10 +26977,6 @@ public class Server implements Runnable {
         int runningCFTotal;
         runningCFTotal = bldg.getCurrentCF(coords);
 
-        // Loop through the hexes in the building, and apply
-        // damage to all entities inside or on top of the building.
-        Report r;
-        final int phaseCF = bldg.getPhaseCF(coords);
         // Get the Vector of Entities at these coordinates.
         final Vector<Entity> entities = positionMap.get(coords);
         IHex curHex = game.getBoard().getHex(coords);
@@ -26768,16 +26984,11 @@ public class Server implements Runnable {
         if (bldg.getBasement(coords) == BasementType.NONE) {
             return;
         } else {
-            bldg.rollBasementCollapsed(true, curHex);
+            bldg.collapseBasement(curHex, vPhaseReport);
         }
 
         // Are there any Entities at these coords?
         if (entities != null) {
-
-            // How many levels does this building have in this hex?
-            final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
-            final int numFloors = Math.max(bridgeEl,
-                    curHex.terrainLevel(Terrains.BLDG_ELEV));
 
             // Sort in elevation order
             Collections.sort(entities, new Comparator<Entity>() {
@@ -26795,10 +27006,8 @@ public class Server implements Runnable {
 
                 int floor = entity.getElevation();
 
-                int CFDamage = (int) Math
+                int cfDamage = (int) Math
                         .ceil(Math.round(entity.getWeight() / 10.0));
-
-                // FAHR add calc for fall damage here, based on normal falling
 
                 // all entities should fall
                 // ASSUMPTION: PSR to avoid pilot damage
@@ -26813,15 +27022,14 @@ public class Server implements Runnable {
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,
                             coords, psr, true));
                     entity.setElevation(floor - 2);
-                    runningCFTotal -= CFDamage * 2;
+                    runningCFTotal -= cfDamage * 2;
                 } else if ((bldg.getBasement(coords) != BasementType.NONE)
                         && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 1 floor into " + coords.toString());
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords,
                             coords, psr, true));
-                    entity.setElevation(floor - 1);
-                    runningCFTotal -= CFDamage;
+                    runningCFTotal -= cfDamage;
                 } else {
                     System.err.println(entity.getDisplayName()
                             + " is not falling into " + coords.toString());
@@ -26847,7 +27055,7 @@ public class Server implements Runnable {
         Vector<Building> buildings = new Vector<Building>();
         buildings.add(bldg);
         sendChangedBuildings(buildings);
-    } // End private void collapseBuilding( Building )
+    }
 
     /**
      * Collapse a building hex. Inflict the appropriate amount of damage on all

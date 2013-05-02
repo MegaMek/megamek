@@ -82,7 +82,7 @@ public class Terrains implements ITerrainFactory {
     public static final int LEGS  = 41; // blown off legs for use as clubs, level = number of legs in that hex
 
     public static final int METAL_CONTENT = 42; // Is there metal content that will block magscan sensors?
-	public static final int BLDG_BASE_COLLAPSED = 43; //1 means collapsed
+    public static final int BLDG_BASE_COLLAPSED = 43; //1 means collapsed
 
     private static final String[] names = { "none", "woods", "water", "rough",
         "rubble", "jungle", "sand", "tundra", "magma", "planted_fields",

@@ -16889,7 +16889,8 @@ public class Server implements Runnable {
     private void checkForIndustrialEndOfTurn() {
         checkForIndustrialWaterDeath();
         checkForIndustrialUnstall();
-        checkForIndustrialCrit();
+        checkForIndustrialCrit(); // This might hit an actuator or gyro, so...
+        addReport(resolvePilotingRolls()); 
     }
 
     private void checkForIndustrialUnstall() {

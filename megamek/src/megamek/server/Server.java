@@ -26947,14 +26947,11 @@ public class Server implements Runnable {
                     continue;
                 }
 
-                // final int entityElev = entity.elevationOccupied( curHex
-                // );
                 int floor = entity.getElevation();
                 // units trapped in a basement under a collapsing building are
                 // destroyed
                 if (floor < 0) {
-                    entity.destroy("Crushed under building rubble", false,
-                            false);
+                    vPhaseReport.addAll(destroyEntity(entity, "Crushed under building rubble", false, false));
                 }
 
                 // Ignore units above the building / bridge.
@@ -26983,7 +26980,6 @@ public class Server implements Runnable {
                 }
 
                 // Apply collapse damage the entity.
-                // ASSUMPTION: use 5 point clusters.
                 r = new Report(6455);
                 r.indent();
                 r.subject = entity.getId();
@@ -26998,19 +26994,15 @@ public class Server implements Runnable {
                 }
                 while (remaining > 0) {
                     int next = Math.min(cluster, remaining);
-                    // In
-                    // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
-                    // pg. 18, Randall Bills says that all damage from a
-                    // collapsing building is applied to the front.
-
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
+                    // FIXME: use special hit table for protomechs, looks like it's not yet implemented at all
+                    // also, infantry should take damage as if the damage came from another infantry unit
+                    HitData hit = entity.rollHitLocation(entity.getElevation() == numFloors?ToHitData.HIT_NORMAL:ToHitData.HIT_PUNCH,
                             ToHitData.SIDE_FRONT);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     vPhaseReport.addAll(damageEntity(entity, hit, next));
                     remaining -= next;
                 }
                 vPhaseReport.add(new Report(1210, Report.PUBLIC));
-                // TODO: Why are dead entities showing up on firing phase?
 
                 // all entities should fall
                 floor = entity.getElevation();

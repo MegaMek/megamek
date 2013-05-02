@@ -560,7 +560,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean hasRangeSixPlus = false;
         List<Mounted> weaponList = getTotalWeaponList();
         for (Mounted weapon : weaponList) {
-            if (weapon.isDestroyed()) {
+            if (weapon.isCrippled()) {
                 continue;
             }
             WeaponType type = (WeaponType) weapon.getType();

@@ -71,15 +71,10 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
                             .getAimingMode(), toHit.getCover());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-                // Weapon strikes Partial Cover.
-                Report r = new Report(3460);
-                r.subject = subjectId;
-                r.add(entityTarget.getShortName());
-                r.add(entityTarget.getLocationAbbr(hit));
-                r.indent(2);
-                vPhaseReport.addElement(r);
-                missed = true;
+                    .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
+                // Weapon strikes Partial Cover.            
+                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
+                        nCluster, bldgAbsorbs);
                 return;
             }
 

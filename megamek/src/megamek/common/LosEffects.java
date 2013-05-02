@@ -1152,7 +1152,7 @@ public class LosEffects {
         //Partial Cover related code        
         boolean potentialCover = false;
         // check for target partial cover
-        if (ai.targetPos.distance(coords) == 1){
+        if (ai.targetPos.distance(coords) == 1 && ai.targetIsMech){
             if (los.blocked
                     && game.getOptions().booleanOption("tacops_partial_cover")){
                 los.targetCover = COVER_FULL; 
@@ -1165,7 +1165,7 @@ public class LosEffects {
             }
         }
         // check for attacker partial (horizontal) cover
-        if (ai.attackPos.distance(coords) == 1 ) {
+        if (ai.attackPos.distance(coords) == 1 && ai.attackerIsMech) {
             if (los.blocked
                     && game.getOptions().booleanOption("tacops_partial_cover")){
                 los.attackerCover = COVER_FULL; 

@@ -29,7 +29,7 @@ Eisensturm
 
 <Model>
 
-EST-O
+EST-OD
 
 </Model>
 
@@ -58,44 +58,36 @@ EST-O
 </Armor>
 
 <Nose Equipment>
-
-ISGaussRifle
-
-ISGaussRifle
-
-ISGauss Ammo
-
-ISGauss Ammo
-
-ISGauss Ammo
-
-ISGauss Ammo
-
-ISMediumLaser
-
-ISMediumLaser
-
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISTargeting Computer
+ISMML7 SRM Ammo Artemis-capable
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISLargeLaser
-
+ISMML7
+ISArtemisIV
+ISMML7 LRM Ammo Artemis-capable
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
-
-ISLargeLaser
-
+ISMML7
+ISArtemisIV
+ISMML7 LRM Ammo Artemis-capable
 </Right Wing Equipment>
 
 <Aft Equipment> 
-
+ISERMediumLaser
 </Aft Equipment>
 
 <heatsinks>
 
-11
+15
 
 </heatsinks>
 

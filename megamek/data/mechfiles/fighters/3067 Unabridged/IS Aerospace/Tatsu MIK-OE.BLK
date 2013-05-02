@@ -25,7 +25,7 @@ Tatsu
 
 <Model>
 
-MIK-O
+MIK-OE
 
 </Model>
 
@@ -54,48 +54,33 @@ MIK-O
 </Armor>
 
 <Nose Equipment>
-
-ISMRM10
-
-ISMRM10 Ammo
-
-ISERMediumLaser
-
-ISERMediumLaser
-
+ISAMS
+ISAMS Ammo
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISLargePulseLaser
-
-ISMediumPulseLaser
-
+ISERMediumLaser
+ISSnubNosedPPC
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
-
-ISLargePulseLaser
-
-ISMediumPulseLaser
-
+<Right Wing Equipment>
+ISERMediumLaser
+ISSnubNosedPPC
 </Right Wing Equipment>
 
 <Aft Equipment>
-
-ISMRM30
-
-ISMRM30 Ammo
-
-ISMRM30 Ammo
-
-ISMRM30 Ammo
-
+ISGuardianECMSuite
 </Aft Equipment>
 
 <heatsinks>
 
-14
+18
 
 </heatsinks>
 
@@ -113,7 +98,7 @@ ISMRM30 Ammo
 
 <type>
 
-IS
+IS Level 2
 
 </type>
 

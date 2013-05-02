@@ -25,7 +25,7 @@ Troika
 
 <Model>
 
-CMT-4U
+CMT-6T
 
 </Model>
 
@@ -54,50 +54,33 @@ CMT-4U
 </Armor>
 
 <Nose Equipment>
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
+ISHeavyPPC
+ISRocketLauncher10
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISERPPC
-
-ISERMediumLaser
-
-ISRocketLauncher15
-
-ISRocketLauncher15
-
+ISRocketLauncher10
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
-
-ISERPPC
-
-ISERMediumLaser
-
-ISRocketLauncher15
-
-ISRocketLauncher15
-
+ISRocketLauncher10
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-
+IS AMS
+ISAMS Ammo
+ISCASE
 </Aft Equipment>
 
 <heatsinks>
 
-19
+17
 
 </heatsinks>
 
@@ -115,7 +98,7 @@ ISRocketLauncher15
 
 <type>
 
-IS
+IS Level 3
 
 </type>
 

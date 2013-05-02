@@ -462,11 +462,13 @@ public class Server implements Runnable {
             p.setGame(game);
             p.setGhost(true);
         }
-        //might need to restore weapon type for some attacks that take multiple turns (like artillery)
-        for(Enumeration<AttackHandler> a = game.getAttacks(); a.hasMoreElements();) {
+        // might need to restore weapon type for some attacks that take multiple
+        // turns (like artillery)
+        for (Enumeration<AttackHandler> a = game.getAttacks(); a
+                .hasMoreElements();) {
             AttackHandler handler = a.nextElement();
-            if(handler instanceof WeaponHandler) {
-                ((WeaponHandler)handler).restore();
+            if (handler instanceof WeaponHandler) {
+                ((WeaponHandler) handler).restore();
             }
         }
 
@@ -1079,7 +1081,8 @@ public class Server implements Runnable {
      * @param sFile
      *            The <code>String</code> filename to use
      * @param sLocalPath
-     *            The <code>String</code> path to the file to be used on the client
+     *            The <code>String</code> path to the file to be used on the
+     *            client
      */
     public void sendSaveGame(int connId, String sFile, String sLocalPath) {
         saveGame(sFile, false);
@@ -1128,7 +1131,7 @@ public class Server implements Runnable {
                 gameListenersClone.add(listener);
             }
             getGame().purgeGameListeners();
-            sFinalFile = sDir+File.separator+sFinalFile;
+            sFinalFile = sDir + File.separator + sFinalFile;
 
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(sFinalFile));
@@ -3672,7 +3675,8 @@ public class Server implements Runnable {
         }
 
         // Load the unit. Do not check for elevation during deployment
-        loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
+        loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+                && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3680,15 +3684,17 @@ public class Server implements Runnable {
         // Remove the loaded unit from the screen.
         unit.setPosition(null);
 
-        //set deployment round of the loadee to equal that of the loader
+        // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
 
         // Update the loaded unit.
         entityUpdate(unit.getId());
 
-        //Taharqa (2/28/13): I am not sure why the loader is not getting updated too - not updating it
-        //is causing problem in the chat lounge loading, so I am going to do it here, but if we get
-        //weird results for other loading, then the reason is probably this
+        // Taharqa (2/28/13): I am not sure why the loader is not getting
+        // updated too - not updating it
+        // is causing problem in the chat lounge loading, so I am going to do it
+        // here, but if we get
+        // weird results for other loading, then the reason is probably this
         entityUpdate(loader.getId());
     }
 
@@ -4351,11 +4357,16 @@ public class Server implements Runnable {
                     // unit will land on the roof, if at a higher level,
                     // otherwise it will skid through the wall onto the same
                     // floor.
-                    // don't change this if the building starts at an elevation higher than the unit
-                    // (e.g. the building is on a hill). Otherwise, we skid into solid earth.
-                    if(curAltitude >= nextHex.floor()) {
-                        nextAltitude = Math.min(curAltitude, nextHex.getElevation()
-                                + nextHex.terrainLevel(Terrains.BLDG_ELEV));
+                    // don't change this if the building starts at an elevation
+                    // higher than the unit
+                    // (e.g. the building is on a hill). Otherwise, we skid into
+                    // solid earth.
+                    if (curAltitude >= nextHex.floor()) {
+                        nextAltitude = Math
+                                .min(curAltitude,
+                                        nextHex.getElevation()
+                                                + nextHex
+                                                        .terrainLevel(Terrains.BLDG_ELEV));
                     }
                 }
                 // Is there a bridge to "catch" the unit?
@@ -6461,11 +6472,12 @@ public class Server implements Runnable {
 
             IHex curHex = game.getBoard().getHex(curPos);
 
-            //when first entering a building, we need to roll what type
-            //of basement it has
+            // when first entering a building, we need to roll what type
+            // of basement it has
             if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
-                if (bldg.rollBasement(game.getBoard().getHex(curPos), vPhaseReport)) {
+                if (bldg.rollBasement(game.getBoard().getHex(curPos),
+                        vPhaseReport)) {
                     sendChangedHex(curPos);
                     Vector<Building> buildings = new Vector<Building>();
                     buildings.add(bldg);
@@ -6798,15 +6810,16 @@ public class Server implements Runnable {
 
             // check to see if we are not a mech and we've moved INTO fire
             if (!(entity instanceof Mech)) {
-                boolean underwater = game.getBoard().getHex(curPos).containsTerrain(Terrains.WATER)
+                boolean underwater = game.getBoard().getHex(curPos)
+                        .containsTerrain(Terrains.WATER)
                         && (game.getBoard().getHex(curPos).depth() > 0)
-                        && (step.getElevation() < game.getBoard().getHex(curPos).surface());
+                        && (step.getElevation() < game.getBoard()
+                                .getHex(curPos).surface());
                 if (game.getBoard().getHex(curPos)
                         .containsTerrain(Terrains.FIRE)
                         && !lastPos.equals(curPos)
                         && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
-                        && (step.getElevation() <= 1)
-                        && !underwater) {
+                        && (step.getElevation() <= 1) && !underwater) {
                     doFlamingDamage(entity);
                 }
             }
@@ -7211,12 +7224,6 @@ public class Server implements Runnable {
                     bldgEntered = game.getBoard().getBuildingAt(curPos);
                 }
 
-                // Get the building being stepped on.
-                Building bldgStepped = null;
-                if ((buildingMove & 4) == 4) {
-                    bldgStepped = game.getBoard().getBuildingAt(curPos);
-                }
-
                 boolean collapsed = false;
                 if ((bldgEntered != null)) {
                     // If we're not leaving a building, just handle the
@@ -7236,18 +7243,11 @@ public class Server implements Runnable {
                     else {
                         reason = "entering";
                     }
-                    collapsed = passBuildingWall(entity, bldgEntered, lastPos,
-                            curPos, distance, reason,
-                            step.isThisStepBackwards(), step.getParent()
-                                    .getLastStepMovementType(), true);
+                    passBuildingWall(entity, bldgEntered, lastPos, curPos,
+                            distance, reason, step.isThisStepBackwards(), step
+                                    .getParent().getLastStepMovementType(),
+                            true);
                     addAffectedBldg(bldgEntered, collapsed);
-                }
-
-                // stepping on roof, no PSR just check for over weight
-                if (bldgStepped != null) {
-                    collapsed = checkBuildingCollapseWhileMoving(bldgStepped,
-                            entity, curPos);
-                    addAffectedBldg(bldgStepped, collapsed);
                 }
 
                 // Clean up the entity if it has been destroyed.
@@ -7262,14 +7262,11 @@ public class Server implements Runnable {
 
                 // TODO: what if a building collapses into rubble?
             }
-            // we need to specal case infantry and protomechs to check for building collapse,
-            // because the earlier code is not getting called because they
-            // don't need PSRs
-            if ((entity instanceof Infantry) || (entity instanceof Protomech)) {
-                if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                    Building bldg = game.getBoard().getBuildingAt(curPos);
-                    addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg, entity, curPos));
-                }
+
+            if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+                Building bldg = game.getBoard().getBuildingAt(curPos);
+                addAffectedBldg(bldg,
+                        checkBuildingCollapseWhileMoving(bldg, entity, curPos));
             }
 
             // did the entity just fall?
@@ -7344,7 +7341,8 @@ public class Server implements Runnable {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
+        if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
+                && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
             entity.setElevation(curVTOLElevation);
         }
         entity.setAltitude(curAltitude);
@@ -7500,7 +7498,7 @@ public class Server implements Runnable {
         }
 
         // We need to check for the removal of hull-down for tanks.
-        // Tanks can just drive out of hull-down:  if the tank was hull-down
+        // Tanks can just drive out of hull-down: if the tank was hull-down
         // and doesn't end hull-down we can remove the hull-down status
         if ((entity instanceof Tank) && entity.isHullDown()
                 && !md.getFinalHullDown()) {
@@ -10269,10 +10267,8 @@ public class Server implements Runnable {
                         "displaced into",
                         Math.abs(entity.getFacing() - src.direction(dest)) == 3,
                         entity.moved, true);
-            } else {
-                // woops, we step on the roof
-                checkBuildingCollapseWhileMoving(bldg, entity, dest);
             }
+            checkBuildingCollapseWhileMoving(bldg, entity, dest);
         }
         if (destHex.containsTerrain(Terrains.MAGMA, 1)) {
             int d6 = Compute.d6(1);
@@ -10463,11 +10459,11 @@ public class Server implements Runnable {
             int elevation, Vector<Entity> loadVector, boolean assaultDrop) {
 
         for (Entity loaded : loadVector) {
-            if(loaded.getTransportId() != Entity.NONE) {
-                //we probably already loaded this unit in the chat lounge
+            if (loaded.getTransportId() != Entity.NONE) {
+                // we probably already loaded this unit in the chat lounge
                 continue;
             }
-            if ((loaded == null) || (loaded.getPosition() != null)) {
+            if (loaded.getPosition() != null) {
                 // Something is fishy in Denmark.
                 System.err.println("error: " + entity
                         + " can not load entity #" + loaded);
@@ -10565,17 +10561,19 @@ public class Server implements Runnable {
         // up/down buttons in the deployment display
         entity.setElevation(entity.getElevation() + elevation);
 
-        //when first entering a building, we need to roll what type
-        //of basement it has
+        // when first entering a building, we need to roll what type
+        // of basement it has
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
-            if (bldg.rollBasement(game.getBoard().getHex(entity.getPosition()), vPhaseReport)) {
+            if (bldg.rollBasement(game.getBoard().getHex(entity.getPosition()),
+                    vPhaseReport)) {
                 sendChangedHex(entity.getPosition());
                 Vector<Building> buildings = new Vector<Building>();
                 buildings.add(bldg);
                 sendChangedBuildings(buildings);
             }
-            boolean collapse = checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
+            boolean collapse = checkBuildingCollapseWhileMoving(bldg, entity,
+                    entity.getPosition());
             if (collapse) {
                 addAffectedBldg(bldg, collapse);
             }
@@ -10863,194 +10861,6 @@ public class Server implements Runnable {
                                 return ((player == entity.getOwnerId())
                                         && !(los.isBlocked()) && entity
                                         .isActive());
-                            }
-
-                            /**
-                             * Process a batch of entity attack (or twist) actions by adding them to the
-                             * proper list to be processed later.
-                             */
-                            private void processAttack(Entity entity, Vector<EntityAction> vector) {
-
-                                // Not **all** actions take up the entity's turn.
-                                boolean setDone = !((game.getTurn() instanceof GameTurn.TriggerAPPodTurn) || (game
-                                        .getTurn() instanceof GameTurn.TriggerBPodTurn));
-                                for (EntityAction ea : vector) {
-                                    // is this the right entity?
-                                    if (ea.getEntityId() != entity.getId()) {
-                                        System.err.println("error: attack packet has wrong attacker");
-                                        continue;
-                                    }
-                                    if (ea instanceof PushAttackAction) {
-                                        // push attacks go the end of the displacement attacks
-                                        PushAttackAction paa = (PushAttackAction) ea;
-                                        entity.setDisplacementAttack(paa);
-                                        game.addCharge(paa);
-                                    } else if (ea instanceof DodgeAction) {
-                                        entity.dodging = true;
-                                    } else if (ea instanceof SpotAction) {
-                                        entity.setSpotting(true);
-                                        entity.setSpotTargetId(((SpotAction) ea).getTargetId());
-                                    } else {
-                                        // add to the normal attack list.
-                                        game.addAction(ea);
-                                    }
-
-                                    // Anti-mech and pointblank attacks from
-                                    // hiding may allow the target to respond.
-                                    if (ea instanceof WeaponAttackAction) {
-                                        final WeaponAttackAction waa = (WeaponAttackAction) ea;
-                                        final String weaponName = entity
-                                                .getEquipment(waa.getWeaponId()).getType()
-                                                .getInternalName();
-
-                                        if (Infantry.SWARM_MEK.equals(weaponName)
-                                                || Infantry.LEG_ATTACK.equals(weaponName)) {
-
-                                            // Does the target have any AP Pods available?
-                                            final Entity target = game.getEntity(waa.getTargetId());
-                                            for (Mounted equip : target.getMisc()) {
-                                                if (equip.getType().hasFlag(MiscType.F_AP_POD)
-                                                        && equip.canFire()) {
-
-                                                    // Yup. Insert a game turn to handle AP pods.
-                                                    // ASSUMPTION : AP pod declarations come
-                                                    // immediately after the attack declaration.
-                                                    game.insertNextTurn(new GameTurn.TriggerAPPodTurn(
-                                                            target.getOwnerId(), target.getId()));
-                                                    send(createTurnVectorPacket());
-
-                                                    // We can stop looking.
-                                                    break;
-
-                                                } // end found-available-ap-pod
-
-                                            } // Check the next piece of equipment on the target.
-
-                                            for (Mounted weapon : target.getWeaponList()) {
-                                                if (weapon.getType().hasFlag(WeaponType.F_B_POD)
-                                                        && weapon.canFire()) {
-
-                                                    // Yup. Insert a game turn to handle B pods.
-                                                    // ASSUMPTION : B pod declarations come
-                                                    // immediately after the attack declaration.
-                                                    game.insertNextTurn(new GameTurn.TriggerBPodTurn(
-                                                            target.getOwnerId(), target.getId(),
-                                                            weaponName));
-                                                    send(createTurnVectorPacket());
-
-                                                    // We can stop looking.
-                                                    break;
-
-                                                } // end found-available-b-pod
-                                            } // Check the next piece of equipment on the target.
-                                        } // End check-for-available-ap-pod
-                                    }
-
-                                    // If attacker breaks grapple, defender may counter
-                                    if (ea instanceof BreakGrappleAttackAction) {
-                                        final BreakGrappleAttackAction bgaa = (BreakGrappleAttackAction) ea;
-                                        final Entity att = (game.getEntity(bgaa.getEntityId()));
-                                        if (att.isGrappleAttacker()) {
-                                            final Entity def = (game.getEntity(bgaa.getTargetId()));
-                                            // Remove existing break grapple by defender (if exists)
-                                            if (def.isDone()) {
-                                                game.removeActionsFor(def.getId());
-                                            } else {
-                                                game.removeTurnFor(def);
-                                                def.setDone(true);
-                                            }
-                                            // Add a turn to declare counterattack
-                                            game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
-                                                    .getOwnerId(), def.getId()));
-                                            send(createTurnVectorPacket());
-                                        }
-                                    }
-                                    if (ea instanceof ArtilleryAttackAction) {
-                                        boolean firingAtNewHex = false;
-                                        final ArtilleryAttackAction aaa = (ArtilleryAttackAction) ea;
-                                        final Entity firingEntity = game.getEntity(aaa.getEntityId());
-                                        for (Enumeration<AttackHandler> j = game.getAttacks(); !firingAtNewHex
-                                                && j.hasMoreElements();) {
-                                            WeaponHandler wh = (WeaponHandler) j.nextElement();
-                                            if (wh.waa instanceof ArtilleryAttackAction) {
-                                                ArtilleryAttackAction oaaa = (ArtilleryAttackAction) wh.waa;
-                                                if ((oaaa.getEntityId() == aaa.getEntityId())
-                                                        && !oaaa.getTarget(game)
-                                                                .getPosition()
-                                                                .equals(aaa.getTarget(game)
-                                                                        .getPosition())) {
-                                                    firingAtNewHex = true;
-                                                }
-                                            }
-                                        }
-                                        if (firingAtNewHex) {
-                                            clearArtillerySpotters(firingEntity.getId(),
-                                                    aaa.getWeaponId());
-                                        }
-                                        Enumeration<Entity> spotters = game
-                                                .getSelectedEntities(new EntitySelector() {
-                                                    public int player = firingEntity.getOwnerId();
-                                                    public Targetable target = aaa.getTarget(game);
-
-                                                    public boolean accept(Entity entity) {
-                                                        LosEffects los = LosEffects.calculateLos(game,
-                                                                entity.getId(), target);
-                                                        return ((player == entity.getOwnerId())
-                                                                && !(los.isBlocked()) && entity
-                                                                .isActive());
-                                                    }
-                                                });
-                                        Vector<Integer> spotterIds = new Vector<Integer>();
-                                        while (spotters.hasMoreElements()) {
-                                            Integer id = new Integer(spotters.nextElement().getId());
-                                            spotterIds.addElement(id);
-                                        }
-                                        aaa.setSpotterIds(spotterIds);
-                                    }
-
-                                    // The equipment type of a club needs to be restored.
-                                    if (ea instanceof ClubAttackAction) {
-                                        ClubAttackAction caa = (ClubAttackAction) ea;
-                                        Mounted club = caa.getClub();
-                                        club.restore();
-                                    }
-
-                                    // Mark any AP Pod as used in this turn.
-                                    if (ea instanceof TriggerAPPodAction) {
-                                        TriggerAPPodAction tapa = (TriggerAPPodAction) ea;
-                                        Mounted pod = entity.getEquipment(tapa.getPodId());
-                                        pod.setUsedThisRound(true);
-                                    }
-                                    // Mark any B Pod as used in this turn.
-                                    if (ea instanceof TriggerBPodAction) {
-                                        TriggerBPodAction tba = (TriggerBPodAction) ea;
-                                        Mounted pod = entity.getEquipment(tba.getPodId());
-                                        pod.setUsedThisRound(true);
-                                    }
-                                }
-
-                                // Unless otherwise stated,
-                                // this entity is done for the round.
-                                if (setDone) {
-                                    entity.setDone(true);
-                                }
-                                entityUpdate(entity.getId());
-
-                                Packet p = createAttackPacket(vector, 0);
-                                if (game.isPhaseSimultaneous()) {
-                                    // Update attack only to player who declared it & observers
-                                    for (Player player : game.getPlayersVector()) {
-                                        if (player.canSeeAll() || player.isObserver()
-                                                || (entity.getOwnerId() == player.getId())) {
-                                            send(player.getId(), p);
-                                        }
-                                    }
-                                } else {
-                                    // update all players on the attacks. Don't worry about pushes being
-                                    // a
-                                    // "charge" attack. It doesn't matter to the client.
-                                    send(p);
-                                }
                             }
                         });
                 Vector<Integer> spotterIds = new Vector<Integer>();
@@ -13836,8 +13646,9 @@ public class Server implements Runnable {
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
 
-            if ((damage >= 1) && te.hasWorkingMisc(MiscType.F_SPIKES, -1,
-                    hit.getLocation())) {
+            if ((damage >= 1)
+                    && te.hasWorkingMisc(MiscType.F_SPIKES, -1,
+                            hit.getLocation())) {
                 r = new Report(4331);
                 r.indent(2);
                 r.newlines = 0;
@@ -13880,9 +13691,11 @@ public class Server implements Runnable {
         }
 
         if (((MiscType) caa.getClub().getType())
-                .hasSubType(MiscType.S_WRECKING_BALL) && (ae instanceof SupportTank) && (te instanceof Mech)) {
-            //forces a PSR like a charge
-            game.addPSR(new PilotingRollData(te.getId(), 2, "was hit by wrecking ball"));
+                .hasSubType(MiscType.S_WRECKING_BALL)
+                && (ae instanceof SupportTank) && (te instanceof Mech)) {
+            // forces a PSR like a charge
+            game.addPSR(new PilotingRollData(te.getId(), 2,
+                    "was hit by wrecking ball"));
         }
 
         if (((MiscType) caa.getClub().getType())
@@ -16931,10 +16744,11 @@ public class Server implements Runnable {
                 continue;
             }
             final IHex curHex = game.getBoard().getHex(entity.getPosition());
-            final boolean underwater = curHex.containsTerrain(Terrains.WATER) && (curHex.depth() > 0) && (entity.getElevation() < curHex.surface());
+            final boolean underwater = curHex.containsTerrain(Terrains.WATER)
+                    && (curHex.depth() > 0)
+                    && (entity.getElevation() < curHex.surface());
             if (curHex.containsTerrain(Terrains.FIRE)
-                    && (entity.getElevation() <= 1)
-                    && !underwater) {
+                    && (entity.getElevation() <= 1) && !underwater) {
                 doFlamingDamage(entity);
             }
         }
@@ -18397,7 +18211,8 @@ public class Server implements Runnable {
                 }
                 break;
             case ACID:
-                if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor || ferroLamellorArmor || bar5) {
+                if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor
+                        || ferroLamellorArmor || bar5) {
                     damage = te.getArmor(hit) >= 3 ? 3 : te.getArmor(hit);
                     r = new Report(6061);
                     r.subject = te_n;
@@ -19706,12 +19521,13 @@ public class Server implements Runnable {
         }
 
         // TacOps p.78 Ammo booms can hurt other units in same and adjcent hexes
-        // But, this does not apply to CASE'd units and it only applies if the ammo explosion
+        // But, this does not apply to CASE'd units and it only applies if the
+        // ammo explosion
         // destroyed the unit
         if (ammoExplosion
                 && game.getOptions().booleanOption("tacops_ammunition")
-                && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit.getLocation()))
-                && (te.isDestroyed() || te.isDoomed())
+                && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit
+                        .getLocation())) && (te.isDestroyed() || te.isDoomed())
                 && (damage_orig > 0) && ((damage_orig / 10) > 0)) {
             Report.addNewline(vDesc);
             r = new Report(5068, Report.PUBLIC);
@@ -19726,7 +19542,8 @@ public class Server implements Runnable {
             vDesc.add(r);
             int[] damages = { (int) Math.floor(damage_orig / 10),
                     (int) Math.floor(damage_orig / 20) };
-            doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5, te.getId());
+            doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5,
+                    te.getId());
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();
@@ -19904,7 +19721,8 @@ public class Server implements Runnable {
      */
     public void doExplosion(int damage, int degredation,
             boolean autoDestroyInSameHex, Coords position,
-            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits, int excludedUnitId) {
+            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits,
+            int excludedUnitId) {
 
         if (degredation < 1) {
             return;
@@ -19974,7 +19792,7 @@ public class Server implements Runnable {
                 continue;
             }
 
-            if(entity.getId() == excludedUnitId) {
+            if (entity.getId() == excludedUnitId) {
                 continue;
             }
 
@@ -22645,7 +22463,7 @@ public class Server implements Runnable {
                 if (slot.isArmored()) {
                     r = new Report(6710);
                     r.subject = en.getId();
-                    if(en instanceof Mech) {
+                    if (en instanceof Mech) {
                         r.add(((Mech) en).getSystemName(slot.getIndex()));
                     }
                     vDesc.addElement(r);
@@ -23057,14 +22875,15 @@ public class Server implements Runnable {
             condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
 
-        //if the unit is conventional infantry, then give its crew six hits
-        //this will help us identify dead ejected pilots in the MUL files
-        if((entity instanceof Infantry) && !(entity instanceof BattleArmor)
+        // if the unit is conventional infantry, then give its crew six hits
+        // this will help us identify dead ejected pilots in the MUL files
+        if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)
                 && (null != entity.getCrew())) {
-            //this won't actually work if the crew is considered ejected,
-            //which it will be on the turn of its ejection. We can safely
-            //turn isEjected to false, because since the pilot is dead, it really
-            //doesn't matter what happens to it next.
+            // this won't actually work if the crew is considered ejected,
+            // which it will be on the turn of its ejection. We can safely
+            // turn isEjected to false, because since the pilot is dead, it
+            // really
+            // doesn't matter what happens to it next.
             entity.getCrew().setEjected(false);
             entity.getCrew().setDead(true);
         }
@@ -24990,10 +24809,12 @@ public class Server implements Runnable {
                                     entity.getC3UUIDAsString())) {
                         e.setC3Master(entity, false);
                         e.setC3MasterIsUUIDAsString(null);
-                        //Taharqa: we need to update the other entity for the client
-                        //or it won't show up right. I am not sure if I like
-                        //the idea of updating other entities in this method, but it
-                        //will work for now.
+                        // Taharqa: we need to update the other entity for the
+                        // client
+                        // or it won't show up right. I am not sure if I like
+                        // the idea of updating other entities in this method,
+                        // but it
+                        // will work for now.
                         entityUpdate(e.getId());
                     }
                 }
@@ -25100,23 +24921,19 @@ public class Server implements Runnable {
             loadUnit(loader, loadee);
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
-                /*StringBuffer message = new StringBuffer();
-                message.append("Unit ");
-                if (game.getOptions().booleanOption("blind_drop")
-                        || game.getOptions().booleanOption("real_blind_drop")) {
-                    if (!entity.getExternalIdAsString().equals("-1")) {
-                        message.append('[')
-                                .append(entity.getExternalIdAsString())
-                                .append("] ");
-                    }
-                    message.append(entity.getId()).append('(')
-                            .append(entity.getOwner().getName()).append(')');
-                } else {
-                    message.append(entity.getDisplayName());
-                }
-                message.append(" has been customized.");
-                sendServerChat(message.toString());
-                */
+                /*
+                 * StringBuffer message = new StringBuffer();
+                 * message.append("Unit "); if
+                 * (game.getOptions().booleanOption("blind_drop") ||
+                 * game.getOptions().booleanOption("real_blind_drop")) { if
+                 * (!entity.getExternalIdAsString().equals("-1")) {
+                 * message.append('[') .append(entity.getExternalIdAsString())
+                 * .append("] "); } message.append(entity.getId()).append('(')
+                 * .append(entity.getOwner().getName()).append(')'); } else {
+                 * message.append(entity.getDisplayName()); }
+                 * message.append(" has been customized.");
+                 * sendServerChat(message.toString());
+                 */
             }
         } else {
             // hey!
@@ -25679,7 +25496,8 @@ public class Server implements Runnable {
         if ((p == null) || !doBlind()) {
             return new Packet(Packet.COMMAND_SENDING_REPORTS, vPhaseReport);
         }
-        return new Packet(Packet.COMMAND_SENDING_REPORTS, filterReportVector(vPhaseReport, p));
+        return new Packet(Packet.COMMAND_SENDING_REPORTS, filterReportVector(
+                vPhaseReport, p));
     }
 
     /**
@@ -26323,7 +26141,7 @@ public class Server implements Runnable {
             toUpdate.clear();
             Vector<IConnection> clone = (Vector<IConnection>) connections
                     .clone();
-			Vector<IConnection> connectionsClone = clone;
+            Vector<IConnection> connectionsClone = clone;
             toUpdate.addAll(connectionsClone);
             connectionsClone = (Vector<IConnection>) connectionsPending.clone();
             toUpdate.addAll(connectionsClone);
@@ -26553,13 +26371,10 @@ public class Server implements Runnable {
      * @param entering
      *            - a <code>boolean</code> if the entity is entering or exiting
      *            a building
-     *
-     * @return <code>true</code> if the building collapses due to overloading.
      */
-    private boolean passBuildingWall(Entity entity, Building bldg,
-            Coords lastPos, Coords curPos, int distance, String why,
-            boolean backwards, EntityMovementType overallMoveType,
-            boolean entering) {
+    private void passBuildingWall(Entity entity, Building bldg, Coords lastPos,
+            Coords curPos, int distance, String why, boolean backwards,
+            EntityMovementType overallMoveType, boolean entering) {
 
         Report r;
 
@@ -26610,7 +26425,7 @@ public class Server implements Runnable {
 
             // Infantry and BA are damaged by buildings but do not damage them
             if (entity instanceof Infantry) {
-                return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
+                return;
             }
             // Damage the building. The CF can never drop below 0.
             int toBldg = (int) Math.floor(bldg.getDamageToScale()
@@ -26625,7 +26440,6 @@ public class Server implements Runnable {
             addReport(damageInfantryIn(bldg, toBldg, entering ? curPos
                     : lastPos));
         }
-        return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
     }
 
     /**
@@ -26844,7 +26658,7 @@ public class Server implements Runnable {
             // index 1, the second is at index 1, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
-            float[] loads = new float[numLoads+1];
+            float[] loads = new float[numLoads + 1];
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
@@ -26880,6 +26694,11 @@ public class Server implements Runnable {
                         basement.add(entity);
                     }
 
+                    // units already in the basement
+                    if (entityElev < 0) {
+                        continue;
+                    }
+
                     // Add the weight to the
                     // correct floor.
 
@@ -26895,7 +26714,7 @@ public class Server implements Runnable {
                         // exceeds the building's current CF it collapses.
                         if (floor != 0) {
                             collapse = true;
-                        } else {
+                        } else if (!bldg.getBasementCollapsed(coords)){
                             basementCollapse = true;
                         }
                     }
@@ -27002,7 +26821,7 @@ public class Server implements Runnable {
                 }
             });
             // Walk through the entities in this position.
-            for (Entity entity: entities) {
+            for (Entity entity : entities) {
 
                 int floor = entity.getElevation();
 
@@ -27640,7 +27459,8 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     Vector<Report> vRep = new Vector<Report>();
                     doExplosion(((FuelTank) bldg).getMagnitude(), 10, false,
-                            bldg.getCoords().nextElement(), true, vRep, null, -1);
+                            bldg.getCoords().nextElement(), true, vRep, null,
+                            -1);
                     Report.indentAll(vRep, 2);
                     vDesc.addAll(vRep);
                     return vPhaseReport;
@@ -28232,7 +28052,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
     public Vector<Report> ejectEntity(Entity entity, boolean autoEject) {
-    	return ejectEntity(entity, autoEject, false);
+        return ejectEntity(entity, autoEject, false);
     }
 
     /**
@@ -28247,7 +28067,8 @@ public class Server implements Runnable {
      *            Perform a skin of the teeth ejection
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
-    public Vector<Report> ejectEntity(Entity entity, boolean autoEject, boolean skin_of_the_teeth) {
+    public Vector<Report> ejectEntity(Entity entity, boolean autoEject,
+            boolean skin_of_the_teeth) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -28456,8 +28277,7 @@ public class Server implements Runnable {
             // If this is a skin of the teeth ejection...
             if (skin_of_the_teeth && (pilot.getCrew().getHits() < 5)) {
                 Report.addNewline(vDesc);
-                vDesc.addAll(damageCrew(pilot, 5 - pilot
-                        .getCrew().getHits()));
+                vDesc.addAll(damageCrew(pilot, 5 - pilot.getCrew().getHits()));
             }
 
         } // End entity-is-Mek
@@ -28627,10 +28447,8 @@ public class Server implements Runnable {
             // Check for owner entities first...
             while (pickupEntities.hasMoreElements()) {
                 Entity pe = pickupEntities.nextElement();
-                if (pe.isDoomed()
-                        || pe.isShutDown()
-                        || pe.getCrew().isUnconscious()
-                        || pe.isAirborne()
+                if (pe.isDoomed() || pe.isShutDown()
+                        || pe.getCrew().isUnconscious() || pe.isAirborne()
                         || (pe.getElevation() != e.getElevation())
                         || (pe.getOwnerId() != e.getOwnerId())
                         || (pe.getId() == e.getId())) {
@@ -28670,7 +28488,8 @@ public class Server implements Runnable {
                             || (pe.getOwnerId() == e.getOwnerId())
                             || (pe.getId() == e.getId())
                             || (pe.getOwner().getTeam() == Player.TEAM_NONE)
-                            || (pe.getOwner().getTeam() != e.getOwner().getTeam())) {
+                            || (pe.getOwner().getTeam() != e.getOwner()
+                                    .getTeam())) {
                         continue;
                     }
                     if (!pickedUp) {
@@ -28701,10 +28520,8 @@ public class Server implements Runnable {
                         .getEnemyEntities(e.getPosition(), e);
                 while (pickupEnemyEntities.hasMoreElements()) {
                     Entity pe = pickupEnemyEntities.nextElement();
-                    if (pe.isDoomed()
-                            || pe.isShutDown()
-                            || pe.getCrew().isUnconscious()
-                            || pe.isAirborne()
+                    if (pe.isDoomed() || pe.isShutDown()
+                            || pe.getCrew().isUnconscious() || pe.isAirborne()
                             || (pe.getElevation() != e.getElevation())) {
                         continue;
                     }
@@ -29265,12 +29082,10 @@ public class Server implements Runnable {
             psr = new PilotingRollData(entity.getId(), 5,
                     "landing assault drop");
 
-        }
-        else if(entity instanceof Infantry) {
+        } else if (entity instanceof Infantry) {
             psr = new PilotingRollData(entity.getId(), 4,
                     "landing assault drop");
-        }
-        else {
+        } else {
             psr = entity.getBasePilotingRoll();
         }
         int roll = Compute.d6(2);
@@ -29337,7 +29152,8 @@ public class Server implements Runnable {
 
             // do fall damage
             entity.setElevation(fallHeight);
-            if((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
+            if ((entity instanceof Infantry)
+                    && !(entity instanceof BattleArmor)) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
                 addReport(damageEntity(entity, hit, 1));
             } else {
@@ -29919,7 +29735,7 @@ public class Server implements Runnable {
         for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
                 .hasMoreElements();) {
             Entity entity = impactHexHits.nextElement();
-            if(entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+            if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
                 continue;
             }
             // TacOps, p. 359 - treat as if hit by 5 inferno missiles

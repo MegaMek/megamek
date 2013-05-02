@@ -6403,7 +6403,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     buf.append(Messages.getString("BoardView1.BldgBasement"));
                     buf.append(bldg.getBasement(mcoords).getDesc());
                     if (bldg.getBasementCollapsed(mcoords)) {
-                        buf.append(Messages.getString("BordView1.BldgBasementCollapsed"));
+                        buf.append(Messages.getString("BoardView1.BldgBasementCollapsed"));
                     }
                     strings[stringsIndex] = buf.toString();
                     stringsIndex += 1;

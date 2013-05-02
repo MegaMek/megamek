@@ -26,6 +26,7 @@ v0.35.38-dev (SVN)
 + Bug: lots of bugs with basements, should now work correctly
 + Bug: check buildings for collapse after deployment
 + Bug: misc building basement bugfixes
++ Bug: damage from building collapse using wrong table 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

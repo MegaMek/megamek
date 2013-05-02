@@ -25,7 +25,7 @@ Lancer
 
 <Model>
 
-LX-2
+LX-3
 
 </Model>
 
@@ -43,40 +43,29 @@ LX-2
 
 <Armor>
 
-38
+45
 
-33
+39
 
-33
+39
 
-32
+37
 
 </Armor>
 
 <Nose Equipment>
-
-ISLRM10
-
-ISArtemisIV
-
-ISLRM10 Ammo Artemis-capable
-
+ISGuardianECMSuite
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISLargePulseLaser
-
+ISLargeVSPLaser
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
-
-ISLargePulseLaser
-
+ISLargeVSPLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-
 </Aft Equipment>
 
 <heatsinks>
@@ -99,7 +88,7 @@ ISLargePulseLaser
 
 <type>
 
-IS
+IS Level 3
 
 </type>
 

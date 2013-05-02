@@ -25,7 +25,7 @@ Huscarl
 
 <Model>
 
-HSCL-1-O
+HSCL-1-OR
 
 </Model>
 
@@ -54,41 +54,33 @@ HSCL-1-O
 </Armor>
 
 <Nose Equipment>
-
-ISLRM10
-
-ISLRM10 Ammo
-
-ISLRM10 Ammo
-
+Clan Ultra AC/20
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISERLargeLaser
-
-ISLBXAC10
-
-ISLBXAC10 CL Ammo
-
-ISLBXAC10 CL Ammo
-
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Clan LRM-20
+CLArtemisIV
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
-
-ISERLargeLaser
-
-ISLBXAC10
-
-ISLBXAC10 CL Ammo
-
-ISLBXAC10 CL Ammo
-
+<Right Wing Equipment>
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+Clan LRM-20
+CLArtemisIV
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
 </Right Wing Equipment>
 
 <Aft Equipment>
-
+CLPlasmaCannon
 </Aft Equipment>
 
 <heatsinks>
@@ -111,7 +103,7 @@ ISLBXAC10 CL Ammo
 
 <type>
 
-IS
+Mixed (IS Chassis) Experimental
 
 </type>
 

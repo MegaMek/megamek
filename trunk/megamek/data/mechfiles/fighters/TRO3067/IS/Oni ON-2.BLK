@@ -1,17 +1,13 @@
 
-#building block data file
-
 <BlockVersion>
 
-1
+2
 
 </BlockVersion>
 
-#Write the version number just in case...
-
 <Version>
 
-MAM0
+1
 
 </Version>
 
@@ -23,65 +19,66 @@ Aero
 
 <Name>
 
-Tomahawk
+Oni
 
 </Name>
 
 <Model>
 
-THK-63CS
+ON-2
 
 </Model>
 
 <Tonnage>
 
-45
+55
 
 </Tonnage>
 
 <SafeThrust>
 
-8
+7
 
 </SafeThrust>
 
 <Armor>
 
-57
+37
 
-42
+30
 
-42
+30
 
-38
+28
 
 </Armor>
 
-<Nose Equipment> 
-
-ISERSmallLaser
-
+<Nose Equipment>
+ISMRM40
+IS MRM Apollo FCS
+ISMRM40 Ammo
+ISMRM40 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
-
-ISERLargeLaser
-
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
-
-ISERLargeLaser
-
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
 </Right Wing Equipment>
 
-<Aft Equipment> 
-
+<Aft Equipment>
+ISGuardianECMSuite
 </Aft Equipment>
 
 <heatsinks>
 
-12
+13
 
 </heatsinks>
 
@@ -93,19 +90,19 @@ ISERLargeLaser
 
 <fuel>
 
-400
+320
 
 </fuel>
 
 <type>
 
-IS Level 2
+IS Level 3
 
 </type>
 
 <year>
 
-3067
+3078
 
 </year>
 
@@ -131,7 +128,3 @@ IS Level 2
 aerodyne
 
 </motion_type>
-
-
-
-

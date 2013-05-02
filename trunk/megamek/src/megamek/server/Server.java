@@ -26995,7 +26995,6 @@ public class Server implements Runnable {
                 while (remaining > 0) {
                     int next = Math.min(cluster, remaining);
                     // FIXME: use special hit table for protomechs, looks like it's not yet implemented at all
-                    // also, infantry should take damage as if the damage came from another infantry unit
                     HitData hit = entity.rollHitLocation(entity.getElevation() == numFloors?ToHitData.HIT_NORMAL:ToHitData.HIT_PUNCH,
                             ToHitData.SIDE_FRONT);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);

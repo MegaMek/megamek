@@ -5808,6 +5808,9 @@ public class Server implements Runnable {
             boolean isPavementStep = step.isPavementStep();
             entity.inReverse = step.isThisStepBackwards();
             boolean entityFellWhileAttemptingToStand = false;
+            boolean isOnGround = !i.hasMoreElements();
+            isOnGround |= step.getMovementType() != EntityMovementType.MOVE_JUMP;
+            isOnGround &= step.getElevation() < 1;
 
             // stop for illegal movement
             if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
@@ -6474,7 +6477,7 @@ public class Server implements Runnable {
 
             // when first entering a building, we need to roll what type
             // of basement it has
-            if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            if (isOnGround && curHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 if (bldg.rollBasement(game.getBoard().getHex(curPos),
                         vPhaseReport)) {
@@ -6833,9 +6836,6 @@ public class Server implements Runnable {
             // VTOLs may land and submarines may rise or lower into a minefield
             if (!lastPos.equals(curPos) || (lastElevation != curElevation)) {
                 boolean boom = false;
-                boolean isOnGround = !i.hasMoreElements();
-                isOnGround |= step.getMovementType() != EntityMovementType.MOVE_JUMP;
-                isOnGround &= step.getElevation() < 1;
                 if (isOnGround) {
                     boom = checkVibrabombs(entity, curPos, false, lastPos,
                             curPos, vPhaseReport);
@@ -7263,7 +7263,7 @@ public class Server implements Runnable {
                 // TODO: what if a building collapses into rubble?
             }
 
-            if (curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            if (isOnGround && curHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 addAffectedBldg(bldg,
                         checkBuildingCollapseWhileMoving(bldg, entity, curPos));

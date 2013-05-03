@@ -6337,6 +6337,7 @@ public class Server implements Runnable {
                             target.getTargetType(), target.getTargetId(),
                             target.getPosition());
                     entity.setDisplacementAttack(daa);
+                    entity.setElevation(step.getElevation());
                     game.addCharge(daa);
                     charge = daa;
                 } else {
@@ -10321,6 +10322,16 @@ public class Server implements Runnable {
                 dest, entity.getElevation()));
         vPhaseReport.addAll(doSetLocationsExposure(entity, destHex, false,
                 entity.getElevation()));
+        if (destHex.containsTerrain(Terrains.BLDG_ELEV) && (entity.getElevation() == 0)) {
+            bldg = game.getBoard().getBuildingAt(dest);
+            if (bldg.rollBasement(game.getBoard().getHex(dest),
+                    vPhaseReport)) {
+                sendChangedHex(dest);
+                Vector<Building> buildings = new Vector<Building>();
+                buildings.add(bldg);
+                sendChangedBuildings(buildings);
+            }
+        }
         // Falling into water instantly destroys most non-mechs
         if ((destHex.terrainLevel(Terrains.WATER) > 0)
                 && !(entity instanceof Mech)
@@ -23504,15 +23515,9 @@ public class Server implements Runnable {
             damageHeight = height - waterDepth;
             newElevation = -waterDepth;
         }
-        if (fallHex.containsTerrain(Terrains.BLDG_ELEV)) {
+        //only do these basement checks if we didn't fall onto the building from above
+        if (fallHex.containsTerrain(Terrains.BLDG_ELEV) && !checkCollapse) {
             Building bldg = game.getBoard().getBuildingAt(fallPos);
-            if (bldg.getType() == Building.WALL) {
-                newElevation = Math.max(fallHex.getElevation(),
-                        fallHex.terrainLevel(Terrains.BLDG_ELEV));
-            } else {
-                newElevation = 0;
-            }
-            waterDepth = 0;
             if ((bldg.getBasement(fallPos) != BasementType.NONE)
                     && (bldg.getBasement(fallPos) != BasementType.ONE_DEEP_NORMALINFONLY)
                     && (entity.getElevation() == 0)
@@ -23704,7 +23709,7 @@ public class Server implements Runnable {
             roll.removeAutos();
 
             if (height > 1) {
-                roll.addModifier(height - 1, "height of fall");
+                roll.addModifier(height - newElevation - 1, "height of fall");
             }
 
             if (roll.getValue() == TargetRoll.IMPOSSIBLE) {

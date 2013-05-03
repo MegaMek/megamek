@@ -34,7 +34,8 @@ v0.35.38-dev (SVN)
 + Bug 3716: Jumping over buildings causes collapse and fall
 + Bug: Burst-fire weapons deal too much damage against conventional infantry in buildings
 + Bug 3712: implement protomech special hit location table
-+ Bug: bug with DFA elevation and buildings 
++ Bug: bug with DFA elevation and buildings
++ Bug: climbing backwards on building should require PSR with tacops backwards movement 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

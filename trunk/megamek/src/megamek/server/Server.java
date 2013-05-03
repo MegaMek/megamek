@@ -7170,16 +7170,13 @@ public class Server implements Runnable {
                     send(createTurnVectorPacket());
                 }
             }
-
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
                     .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && ((lastHex.getElevation() + entity.calcElevation(curHex,
-                            lastHex)) != (curHex.getElevation() + entity
+                            lastHex, step.getElevation(), md.getFinalClimbMode(), false)) != (curHex.getElevation() + entity
                             .getElevation()))
-                    && ((lastHex.getElevation() - lastHex.depth(true)) != (curHex
-                            .getElevation() - curHex.depth(true)))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex

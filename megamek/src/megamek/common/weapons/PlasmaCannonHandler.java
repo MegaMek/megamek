@@ -176,8 +176,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             Targetable origTarget = target;
             target = new BuildingTarget(coverLoc,game.getBoard(),false);
             hits = calcHits(vPhaseReport);
-            //Plasma Cannons do 1 damager per-hit to buildings
-            int nDamage = 1 * hits;           
+            //Plasma Cannons do double damage per-hit to buildings
+            int nDamage = 2 * hits;           
             Vector<Report> buildingReport = 
                 server.damageBuilding(coverBuilding, nDamage, 
                         " blocks the shot and takes ",coverLoc);
@@ -393,8 +393,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage, Coords coords) {
         // Plasma weapons deal double damage to buildings.
-        //  ^- I think this is no longer the case - Arlith
-        super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 1, coords);
+        super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }
 
 }

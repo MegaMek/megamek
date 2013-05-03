@@ -5078,15 +5078,15 @@ public class Compute {
         damage = Math.ceil(damage);
 
         //according to the following ruling, the half damage that mechanized inf
-        //get against burst fire should trump the double damage they get from
-        //non-infantry rather than cancel it out
-        //http://bg.battletech.com/forums/index.php/topic,23928.0.html
+        // get against burst fire should trump the double damage they get from
+        // non-infantry rather than cancel it out
+        // http://bg.battletech.com/forums/index.php/topic,23928.0.html
         if (isNonInfantryAgainstMechanized) {
-        	if(damageType < WeaponType.WEAPON_BURST_HALFD6) {
-        		damage *= 2;
-        	} else {
-        		damage /= 2;
-        	}
+            if (damageType < WeaponType.WEAPON_BURST_HALFD6) {
+                damage *= 2;
+            } else {
+                damage /= 2;
+            }
         }
         return (int) damage;
     }

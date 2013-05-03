@@ -30,6 +30,7 @@ public class ToHitData extends TargetRoll {
     public static final int HIT_PARTIAL_COVER = 6;
     public static final int HIT_SWARM_CONVENTIONAL = 7;
     public static final int HIT_UNDERWATER = 8;
+    public static final int HIT_SPECIAL_PROTO = 9;
 
     public static final int SIDE_FRONT = 0;
     public static final int SIDE_REAR = 1;
@@ -45,20 +46,20 @@ public class ToHitData extends TargetRoll {
     private int sideTable = SIDE_FRONT;
     private int cover = LosEffects.COVER_NONE;
     private int margineOfSuccess = 0;
-    
+
     /**
      * Indicates if the primary cover is damagable.
      */
     int damagableCoverTypePrimary   = LosEffects.DAMAGABLE_COVER_NONE;
     /**
      * Indicates if the secondary cover is damagable
-     */   
+     */
     int damagableCoverTypeSecondary = LosEffects.DAMAGABLE_COVER_NONE;
     /**
      * Keeps track of the building that provides cover.  This is used
-     * to assign damage for shots that hit cover.  The primary cover is used 
+     * to assign damage for shots that hit cover.  The primary cover is used
      * if there is a sole piece of cover (horizontal cover, 25% cover).
-     * In the case of a primary and secondary, the primary cover protects the 
+     * In the case of a primary and secondary, the primary cover protects the
      * right side.
      */
     Building coverBuildingPrimary = null;
@@ -66,15 +67,15 @@ public class ToHitData extends TargetRoll {
      * Keeps track of the building that provides cover.  This is used
      * to assign damage for shots that hit cover.  The secondary cover is used
      * if there are two buildings that provide cover, like in the case of 75%
-     * cover or two buildings providing 25% cover for a total of horizontal 
+     * cover or two buildings providing 25% cover for a total of horizontal
      * cover.  The secondary cover protects the left side.
      */
     Building coverBuildingSecondary = null;
     /**
      * Keeps track of the grounded Dropship that provides cover.  This is
-     * used to assign damage for shots that hit cover. The primary cover is used 
+     * used to assign damage for shots that hit cover. The primary cover is used
      * if there is a sole piece of cover (horizontal cover, 25% cover).
-     * In the case of a primary and secondary, the primary cover protects the 
+     * In the case of a primary and secondary, the primary cover protects the
      * right side.
      */
     Entity coverDropshipPrimary = null;
@@ -82,10 +83,10 @@ public class ToHitData extends TargetRoll {
      * Keeps track of the grounded Dropship that provides cover.  This is
      * used to assign damage for shots that hit cover. The secondary cover is used
      * if there are two buildings that provide cover, like in the case of 75%
-     * cover or two buildings providing 25% cover for a total of horizontal 
+     * cover or two buildings providing 25% cover for a total of horizontal
      * cover.  The secondary cover protects the left side.
      */
-    Entity coverDropshipSecondary = null;    
+    Entity coverDropshipSecondary = null;
     /**
      * Stores the hex location of the primary cover.
      */
@@ -184,7 +185,7 @@ public class ToHitData extends TargetRoll {
                     tdesc += "Below ";
                     break;
                 case HIT_PARTIAL_COVER:
-                    tdesc += "Partial cover " + 
+                    tdesc += "Partial cover " +
                         "(" + LosEffects.getCoverName(cover,true) + ") ";
                     break;
             }
@@ -210,7 +211,7 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setDamagableCoverTypePrimary(int damagableCoverType) {
-        this.damagableCoverTypePrimary = damagableCoverType;
+        damagableCoverTypePrimary = damagableCoverType;
     }
 
     public int getDamagableCoverTypePrimary() {
@@ -222,7 +223,7 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setCoverDropshipPrimary(Entity coverDropship) {
-        this.coverDropshipPrimary = coverDropship;
+        coverDropshipPrimary = coverDropship;
     }
 
     public Building getCoverBuildingPrimary() {
@@ -230,7 +231,7 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setCoverBuildingPrimary(Building coverBuilding) {
-        this.coverBuildingPrimary = coverBuilding;
+        coverBuildingPrimary = coverBuilding;
     }
 
     public Coords getCoverLocPrimary() {
@@ -238,11 +239,11 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setCoverLocPrimary(Coords coverLoc) {
-        this.coverLocPrimary = coverLoc;
+        coverLocPrimary = coverLoc;
     }
-    
+
     public void setDamagableCoverTypeSecondary(int damagableCoverType) {
-        this.damagableCoverTypeSecondary = damagableCoverType;
+        damagableCoverTypeSecondary = damagableCoverType;
     }
 
     public int getDamagableCoverTypeSecondary() {
@@ -254,7 +255,7 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setCoverDropshipSecondary(Entity coverDropship) {
-        this.coverDropshipSecondary = coverDropship;
+        coverDropshipSecondary = coverDropship;
     }
 
     public Building getCoverBuildingSecondary() {
@@ -262,7 +263,7 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setCoverBuildingSecondary(Building coverBuilding) {
-        this.coverBuildingSecondary = coverBuilding;
+        coverBuildingSecondary = coverBuilding;
     }
 
     public Coords getCoverLocSecondary() {
@@ -270,7 +271,7 @@ public class ToHitData extends TargetRoll {
     }
 
     public void setCoverLocSecondary(Coords coverLoc) {
-        this.coverLocSecondary = coverLoc;
-    }    
+        coverLocSecondary = coverLoc;
+    }
 
 }

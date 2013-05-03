@@ -4544,8 +4544,12 @@ public class Server implements Runnable {
                 // damage in 5pt clusters to front.
                 int damage = ((int) entity.getWeight() + 19) / 20;
                 while (damage > 0) {
+                    int table = ToHitData.HIT_NORMAL;
+                    if (entity instanceof Protomech) {
+                        table = ToHitData.HIT_SPECIAL_PROTO;
+                    }
                     addReport(damageEntity(entity, entity.rollHitLocation(
-                            ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                            table, ToHitData.SIDE_FRONT),
                             Math.min(5, damage)));
                     damage -= 5;
                 }
@@ -5289,8 +5293,6 @@ public class Server implements Runnable {
             if (null != bldg) {
                 collapseBuilding(bldg, game.getPositionMap(), hitCoords, true,
                         vReport);
-                // vReport.addAll(damageBuilding(bldg, orig_crash_damage,
-                // hitCoords));
             }
             if (!damageDealt) {
                 r = new Report(9700, Report.PUBLIC);
@@ -5364,6 +5366,9 @@ public class Server implements Runnable {
                                 hit = victim.rollHitLocation(
                                         ToHitData.HIT_PUNCH,
                                         ToHitData.SIDE_FRONT);
+                            }
+                            if (victim instanceof Protomech) {
+                                hit = victim.rollHitLocation(ToHitData.HIT_SPECIAL_PROTO, ToHitData.SIDE_FRONT);
                             }
                             if (crash_damage > 5) {
                                 vReport.addAll(damageEntity(victim, hit, 5));
@@ -19884,7 +19889,11 @@ public class Server implements Runnable {
 
             while (damage > 0) {
                 int cluster = Math.min(clusterAmt, damage);
-                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
+                int table = ToHitData.HIT_NORMAL;
+                if (entity instanceof Protomech) {
+                    table = ToHitData.HIT_SPECIAL_PROTO;
+                }
+                HitData hit = entity.rollHitLocation(table,
                         Compute.targetSideTable(position, entity));
                 vDesc.addAll(damageEntity(entity, hit, cluster, false,
                         DamageType.IGNORE_PASSENGER, false, true));
@@ -19942,7 +19951,11 @@ public class Server implements Runnable {
 
                 while (damage > 0) {
                     int cluster = Math.min(5, damage);
-                    HitData hit = e.rollHitLocation(ToHitData.HIT_NORMAL,
+                    int table = ToHitData.HIT_NORMAL;
+                    if (e instanceof Protomech) {
+                        table = ToHitData.HIT_SPECIAL_PROTO;
+                    }
+                    HitData hit = e.rollHitLocation(table,
                             ToHitData.SIDE_FRONT);
                     vDesc.addAll(damageEntity(e, hit, cluster, false,
                             DamageType.IGNORE_PASSENGER, false, true));
@@ -23526,7 +23539,9 @@ public class Server implements Runnable {
                     damageTable = ToHitData.HIT_NORMAL;
                 }
             }
-
+        }
+        if (entity instanceof Protomech) {
+            damageTable = ToHitData.HIT_SPECIAL_PROTO;
         }
         // Falling into water instantly destroys most non-mechs
         if ((waterDepth > 0)
@@ -26552,6 +26567,8 @@ public class Server implements Runnable {
                         r.add(entity.getDisplayName());
                         vDesc.addElement(r);
                         // need to adjust damage to conventional infantry
+                        // TW page 217 says left over damage gets treated as direct
+                        // fire ballistic damage
                         if (!(entity instanceof BattleArmor)) {
                             toInf = Compute.directBlowInfantryDamage(toInf, 0,
                                     WeaponType.WEAPON_DIRECT_FIRE, false);
@@ -26995,8 +27012,15 @@ public class Server implements Runnable {
                 }
                 while (remaining > 0) {
                     int next = Math.min(cluster, remaining);
-                    // FIXME: use special hit table for protomechs, looks like it's not yet implemented at all
-                    HitData hit = entity.rollHitLocation(entity.getElevation() == numFloors?ToHitData.HIT_NORMAL:ToHitData.HIT_PUNCH,
+                    int table;
+                    if (entity instanceof Protomech) {
+                        table = ToHitData.HIT_SPECIAL_PROTO;
+                    } else if (entity.getElevation() == numFloors) {
+                        table = ToHitData.HIT_NORMAL;
+                    } else {
+                        table = ToHitData.HIT_PUNCH;
+                    }
+                    HitData hit = entity.rollHitLocation(table,
                             ToHitData.SIDE_FRONT);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     vPhaseReport.addAll(damageEntity(entity, hit, next));
@@ -29338,6 +29362,9 @@ public class Server implements Runnable {
             Entity entity = impactHexHits.nextElement();
             int hits = damage;
             ToHitData toHit = new ToHitData();
+            if (entity instanceof Protomech) {
+                toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
+            }
             int cluster = 5;
 
             // Check: is entity excluded?

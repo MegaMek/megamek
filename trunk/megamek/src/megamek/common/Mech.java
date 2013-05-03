@@ -1364,23 +1364,6 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * Returns the elevation of this entity. Mechs do funny stuff in the middle
-     * of a DFA.
-     */
-    @Override
-    public int getElevation() {
-        int cElev = super.getElevation();
-        if (!isMakingDfa()) {
-            return cElev;
-        }
-        // otherwise, we are one elevation above our hex or the target's hex,
-        // whichever is higher
-        int tElev = game.getBoard().getHex(displacementAttack.getTargetPos())
-                .floor();
-        return Math.max(cElev, tElev) + 1;
-    }
-
-    /**
      * Return the height of this mech above the terrain.
      */
     @Override
@@ -5404,13 +5387,13 @@ public abstract class Mech extends Entity {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mech.LOC_LARM) || 
+                    && ((location == Mech.LOC_LARM) ||
                         (location == Mech.LOC_LT) ||
                         (location == Mech.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mech.LOC_RARM) || 
+                    && ((location == Mech.LOC_RARM) ||
                         (location == Mech.LOC_RT) ||
                         (location == Mech.LOC_RLEG))) {
                 return true;
@@ -5425,13 +5408,13 @@ public abstract class Mech extends Entity {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mech.LOC_LARM) || 
+                    && ((location == Mech.LOC_LARM) ||
                             (location == Mech.LOC_LT) ||
                             (location == Mech.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mech.LOC_LARM) || 
+                    && ((location == Mech.LOC_LARM) ||
                             (location == Mech.LOC_LT) ||
                             (location == Mech.LOC_LLEG))) {
                 return true;

@@ -118,7 +118,7 @@ public class Protomech extends Entity {
     private int edpChargeTurns = 0;
 
     private boolean isQuad = false;
-    
+
     //for MHQ
     private boolean engineHit = false;
 
@@ -404,7 +404,7 @@ public class Protomech extends Entity {
             return applyGravityEffectsOnMP(jump);
         }
     }
-    
+
     public int getJumpJets() {
         return jumpMP;
     }
@@ -650,21 +650,44 @@ public class Protomech extends Entity {
                 return new HitData(Protomech.LOC_MAINGUN);
             case 3:
             case 11:
+                if (table == ToHitData.HIT_SPECIAL_PROTO) {
+                    return new HitData(Protomech.LOC_LEG);
+                }
                 return new HitData(Protomech.LOC_NMISS);
             case 4:
+                if (table == ToHitData.HIT_SPECIAL_PROTO) {
+                    return new HitData(Protomech.LOC_LEG);
+                }
                 if (!isQuad()) {
                     return new HitData(Protomech.LOC_RARM);
                 } else {
                     return new HitData(Protomech.LOC_LEG);
                 }
             case 5:
+                if (table == ToHitData.HIT_SPECIAL_PROTO) {
+                    if (!isQuad()) {
+                        return new HitData(Protomech.LOC_RARM);
+                    } else {
+                        return new HitData(Protomech.LOC_LEG);
+                    }
+                }
             case 9:
+                if (table == ToHitData.HIT_SPECIAL_PROTO) {
+                    if (!isQuad()) {
+                        return new HitData(Protomech.LOC_LARM);
+                    } else {
+                        return new HitData(Protomech.LOC_LEG);
+                    }
+                }
                 return new HitData(Protomech.LOC_LEG);
             case 6:
             case 7:
             case 8:
                 return new HitData(Protomech.LOC_TORSO);
             case 10:
+                if (table == ToHitData.HIT_SPECIAL_PROTO) {
+                    return new HitData(Protomech.LOC_LEG);
+                }
                 if (!isQuad()) {
                     return new HitData(Protomech.LOC_LARM);
                 } else {
@@ -1726,7 +1749,7 @@ public class Protomech extends Entity {
         }
         return ((double) totalInoperable / totalWeapons) >= 0.25;
     }
-    
+
     @Override
     public String getLocationDamage(int loc) {
         int hits = getCritsHit(loc);
@@ -1739,11 +1762,11 @@ public class Protomech extends Entity {
         }
         return "";
     }
-    
+
     public boolean isEngineHit() {
         return engineHit;
     }
-    
+
     public void setEngineHit(boolean b) {
         engineHit = b;
     }

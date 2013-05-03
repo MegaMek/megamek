@@ -18,10 +18,14 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
+import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
+import megamek.common.LosEffects;
+import megamek.common.Mech;
 import megamek.common.NarcPod;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -103,6 +107,7 @@ public class NarcHandler extends MissileWeaponHandler {
         return 0;
     }
 
+    
     /*
      * (non-Javadoc)
      *
@@ -118,14 +123,9 @@ public class NarcHandler extends MissileWeaponHandler {
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-            // Weapon strikes Partial Cover.
-            Report r = new Report(3460);
-            r.subject = subjectId;
-            r.add(entityTarget.getShortName());
-            r.add(entityTarget.getLocationAbbr(hit));
-            r.indent(2);
-            vPhaseReport.addElement(r);
-            missed = true;
+            // Weapon strikes Partial Cover.            
+            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
+                    nCluster, bldgAbsorbs);
             return;
         }
 

@@ -16890,7 +16890,7 @@ public class Server implements Runnable {
         checkForIndustrialWaterDeath();
         checkForIndustrialUnstall();
         checkForIndustrialCrit(); // This might hit an actuator or gyro, so...
-        addReport(resolvePilotingRolls()); 
+        addReport(resolvePilotingRolls());
     }
 
     private void checkForIndustrialUnstall() {
@@ -26554,7 +26554,7 @@ public class Server implements Runnable {
                         // need to adjust damage to conventional infantry
                         if (!(entity instanceof BattleArmor)) {
                             toInf = Compute.directBlowInfantryDamage(toInf, 0,
-                                    infDamageClass, false);
+                                    WeaponType.WEAPON_DIRECT_FIRE, false);
                         }
                         int remaining = toInf;
                         int cluster = toInf;

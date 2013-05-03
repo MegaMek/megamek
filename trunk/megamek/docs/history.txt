@@ -32,6 +32,7 @@ v0.35.38-dev (SVN)
 + Data: Clean up of Aerospace Duplicate units and more unit fixes.
 + Bug 3715: Plasma weapon damage vs. buildings
 + Bug 3716: Jumping over buildings causes collapse and fall
++ Bug: Burst-fire weapons deal too much damage against conventional infantry in buildings
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

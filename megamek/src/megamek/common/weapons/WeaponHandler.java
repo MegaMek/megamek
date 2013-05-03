@@ -542,6 +542,23 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return 0;
     }
 
+    /**
+     * Handles potential damage to partial cover that absorbs a shot.  The 
+     * <code>ToHitData</code> is checked to what if there is any damagable 
+     * cover to be hit, and if so which cover gets hit (there are two 
+     * possibilities in some cases, such as 75% partial cover).  The method
+     * then takes care of assigning damage to the cover.  Buildings are
+     * damaged directly, while dropships call the 
+     * <code>handleEntityDamage</code> method.
+     * 
+     * @param entityTarget  The target Entity
+     * @param vPhaseReport  
+     * @param hit
+     * @param bldg
+     * @param hits
+     * @param nCluster
+     * @param bldgAbsorbs
+     */
     protected void handlePartialCoverHit(Entity entityTarget,
             Vector<Report> vPhaseReport, HitData hit, Building bldg, int hits, int nCluster,
             int bldgAbsorbs){

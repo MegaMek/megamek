@@ -179,6 +179,17 @@ public class MechDisplay extends JPanel {
 
         ((CardLayout) displayP.getLayout()).show(displayP, "movement"); //$NON-NLS-1$
     }
+    
+    @Override
+    protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
+            int condition, boolean pressed) {
+        clientgui.curPanel.dispatchEvent(e);
+        if (!e.isConsumed()){
+            return super.processKeyBinding(ks,e,condition,pressed);
+        }else{
+            return true;
+        }              
+    }
 
     private void addBag(JComponent comp, GridBagConstraints c) {
         ((GridBagLayout) getLayout()).setConstraints(comp, c);

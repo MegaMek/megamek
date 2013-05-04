@@ -109,6 +109,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.BuildingTarget;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
@@ -8599,23 +8600,6 @@ public class Server implements Runnable {
                 break;
             case Targetable.TYPE_BLDG_IGNITE:
             case Targetable.TYPE_BUILDING:
-                for (Enumeration<Entity> entities = game.getEntities(t
-                        .getPosition()); entities.hasMoreElements();) {
-                    Entity e = entities.nextElement();
-                    if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                        continue;
-                    }
-                    int roll = Compute.d6();
-                    r = new Report(3570);
-                    r.subject = e.getId();
-                    r.addDesc(e);
-                    r.add(roll);
-                    vPhaseReport.add(r);
-                    if (roll >= 5) {
-                        vPhaseReport.addAll(deliverInfernoMissiles(ae, e,
-                                missiles, called));
-                    }
-                }
                 Vector<Report> vBuildingReport = damageBuilding(game.getBoard()
                         .getBuildingAt(t.getPosition()), 2 * missiles,
                         t.getPosition());
@@ -8623,28 +8607,122 @@ public class Server implements Runnable {
                     report.subject = ae.getId();
                 }
                 vPhaseReport.addAll(vBuildingReport);
+                
+                // For each missile, check to see if it hits a unit in this hex
+                for (Enumeration<Entity> entities = game.getEntities(t
+                        .getPosition()); entities.hasMoreElements();) {
+                    Entity e = entities.nextElement();
+                    if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
+                        continue;
+                    }
+                    for (int m = 0; m < missiles; m++)
+                    {
+                        int roll = Compute.d6();
+                        r = new Report(3570);
+                        r.subject = e.getId();
+                        r.indent(3);
+                        r.addDesc(e);
+                        r.add(roll);
+                        vPhaseReport.add(r);
+                        if (roll >= 5) {
+                            Vector<Report> dmgReports = deliverInfernoMissiles(
+                                    ae, e, 1, called);
+                            for (Report rep : dmgReports){
+                                rep.indent(4);
+                            }
+                            vPhaseReport.addAll(dmgReports);
+                        }
+                    }
+                }
+               
                 break;
             case Targetable.TYPE_ENTITY:
                 Entity te = (Entity) t;
                 if (te instanceof Mech) {
                     // Bug #1585497: Check for partial cover
                     int m = missiles;
+                    LosEffects le = LosEffects.calculateLos(game,ae.getId(),t);
+                    int cover = le.getTargetCover();
+                    Vector<Report> coverDamageReports = new Vector<Report>();
                     for (int i = 0; i < m; i++) {
-                        int roll = Compute.d6(2);
-                        LosEffects le = LosEffects.calculateLos(game,
-                                ae.getId(), t);
+                        int roll = Compute.d6(2);                                                
                         if (te.removePartialCoverHits(roll,
-                                le.getTargetCover(),
+                                cover,
                                 Compute.targetSideTable(ae, t, called))) {
                             missiles--;
+                            //Determine if damagable cover is hit
+                            int damagableCoverType = 
+                                LosEffects.DAMAGABLE_COVER_NONE;
+                            Entity coverDropship = null;
+                            Coords coverLoc = null;
+                            
+                            //Determine if there is primary and secondary cover, 
+                            // and then determine which one gets hit
+                            if ((cover == LosEffects.COVER_75RIGHT || 
+                                    cover == LosEffects.COVER_75LEFT) ||
+                                //75% cover has a primary and secondary           
+                                    (cover == LosEffects.COVER_HORIZONTAL &&
+                                            le.getDamagableCoverTypeSecondary() != 
+                                        LosEffects.DAMAGABLE_COVER_NONE)){
+                                //Horiztonal cover provided by two 25%'s, 
+                                // so primary and secondary
+                                int hitLoc = roll;
+                                //Primary stores the left side, from the 
+                                //  perspective of the attacker
+                                if (hitLoc == Mech.LOC_RLEG || 
+                                        hitLoc == Mech.LOC_RT || 
+                                        hitLoc == Mech.LOC_RARM){
+                                    //Left side is primary
+                                    damagableCoverType = 
+                                        le.getDamagableCoverTypePrimary();
+                                    coverDropship = 
+                                        le.getCoverDropshipPrimary();
+                                    coverLoc = le.getCoverLocPrimary();
+                                }else{
+                                    //If not left side, then right side, 
+                                    // which is secondary
+                                    damagableCoverType = 
+                                        le.getDamagableCoverTypeSecondary();
+                                    coverDropship = 
+                                        le.getCoverDropshipSecondary();
+                                    coverLoc = le.getCoverLocSecondary();
+                                }            
+                            } else{ //Only primary cover exists
+                                damagableCoverType = 
+                                    le.getDamagableCoverTypePrimary();                               
+                                coverDropship = le.getCoverDropshipPrimary();
+                                coverLoc = le.getCoverLocPrimary();                
+                            }
+                            
+                            //Check if we need to damage the cover that absorbed 
+                            // the hit.
+                            Vector<Report> coverDamageReport = 
+                                new Vector<Report>();
+                            if (damagableCoverType == 
+                                    LosEffects.DAMAGABLE_COVER_DROPSHIP){
+                                r = new Report(3465);
+                                r.addDesc(coverDropship);
+                                r.indent(1);                                
+                                coverDamageReport  = deliverInfernoMissiles(
+                                        ae,coverDropship,1,
+                                        CalledShot.CALLED_NONE);
+                                coverDamageReport.insertElementAt(r, 0);
+                                for (Report report : coverDamageReport)
+                                    report.indent(1);
+                            } else if (damagableCoverType == 
+                                    LosEffects.DAMAGABLE_COVER_BUILDING){
+                                BuildingTarget bldgTrgt = new 
+                                        BuildingTarget
+                                        (coverLoc,game.getBoard(),false);
+                                coverDamageReport = 
+                                    deliverInfernoMissiles
+                                        (ae,bldgTrgt,1,CalledShot.CALLED_NONE);
+                            }
+                            for (Report report : coverDamageReport){
+                                report.indent(1);
+                            }
+                            coverDamageReports.addAll(coverDamageReport);                                                     
                         }
-                    }
-                    if (missiles != m) {
-                        r = new Report(3403);
-                        r.add(m - missiles);
-                        r.indent(2);
-                        r.subject = te.getId();
-                        vPhaseReport.add(r);
                     }
                     r = new Report(3400);
                     r.add(2 * missiles);
@@ -8652,7 +8730,27 @@ public class Server implements Runnable {
                     r.indent(2);
                     r.choose(true);
                     vPhaseReport.add(r);
+                    Report.addNewline(vPhaseReport);
                     te.heatFromExternal += 2 * missiles;
+                    
+                    if (missiles != m) {
+                        r = new Report(3403);
+                        r.add(m - missiles);
+                        r.indent(2);
+                        r.subject = te.getId();
+                        vPhaseReport.add(r);
+                    }
+                    vPhaseReport.addAll(coverDamageReports);    
+                    Report.addNewline(vPhaseReport);
+                } else if (te instanceof Aero) {
+                    r = new Report(3400);
+                    r.add(2 * missiles);
+                    r.subject = te.getId();
+                    r.indent(2);
+                    r.choose(true);
+                    vPhaseReport.add(r);
+                    te.heatFromExternal += 2 * missiles;
+                    Report.addNewline(vPhaseReport);
                 } else if (te instanceof Tank) {
                     boolean targetIsSupportVee = (te instanceof SupportTank)
                             || (te instanceof LargeSupportTank)
@@ -8744,10 +8842,11 @@ public class Server implements Runnable {
                         r.newlines = 0;
                         r.subject = te.getId();
                         vPhaseReport.add(r);
+                        Report.addNewline(vPhaseReport);
                         r = new Report(6095);
                         r.add(te.getInternal(hit));
                         r.subject = te.getId();
-                        r.indent(2);
+                        r.indent(3);
                         vPhaseReport.add(r);
                     } else {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
@@ -8762,7 +8861,7 @@ public class Server implements Runnable {
                         vPhaseReport.addAll(damageEntity(te, hit, 2));
                     }
                 }
-        }
+        }        
         return vPhaseReport;
     }
 

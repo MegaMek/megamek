@@ -36,6 +36,8 @@ v0.35.38-dev (SVN)
 + Bug 3712: implement protomech special hit location table
 + Bug: bug with DFA elevation and buildings
 + Bug: climbing backwards on building should require PSR with tacops backwards movement 
++ Bug 3717: Inferno's don't properly deal damage to units in the same hex as a targeted building 
++ Bug 3718: Inferno's don't properly deal heat damage to Aeros 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

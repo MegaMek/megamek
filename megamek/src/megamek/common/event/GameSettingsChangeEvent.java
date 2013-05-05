@@ -19,6 +19,8 @@ package megamek.common.event;
  */
 public class GameSettingsChangeEvent extends GameEvent {
 
+    protected boolean mapSettingsOnlyChange  = false;
+    
     /**
      *
      */
@@ -39,5 +41,13 @@ public class GameSettingsChangeEvent extends GameEvent {
     @Override
     public String getEventName() {
         return "New Settings";
+    }
+
+    public boolean isMapSettingsOnlyChange() {
+        return mapSettingsOnlyChange;
+    }
+
+    public void setMapSettingsOnlyChange(boolean mapSettingsOnlyChange) {
+        this.mapSettingsOnlyChange = mapSettingsOnlyChange;
     }
 }

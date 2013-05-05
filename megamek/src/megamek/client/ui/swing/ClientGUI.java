@@ -1490,7 +1490,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
         @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible()) {
+            if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible() && 
+                    !e.isMapSettingsOnlyChange()) {
                 gameOptionsDialog.update(getClient().game.getOptions());
             }
             if (curPanel instanceof ChatLounge) {

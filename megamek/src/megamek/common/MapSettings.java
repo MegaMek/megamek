@@ -1329,6 +1329,10 @@ public class MapSettings implements Serializable {
             output.write("<ENVIRONMENT>"); //$NON-NLS-1$
             output.write(CommonConstants.NL);
 
+            // size
+            saveParameter(output,"WIDTH",boardWidth);
+            saveParameter(output,"HEIGHT",boardHeight);
+            
             // theme
             saveParameter(output, "THEME", theme);
 
@@ -1511,6 +1515,10 @@ public class MapSettings implements Serializable {
         // theme
         if (key.equals("THEME")) {
             theme = param;
+        } else if (key.equals("WIDTH")) {
+            boardWidth = Integer.valueOf(param);
+        } else if (key.equals("HEIGHT")) {
+            boardHeight = Integer.valueOf(param);
         } else if (key.equals("INVERTNEGATIVETERRAIN")) {
             invertNegativeTerrain = Integer.valueOf(param);
         } else if (key.equals("HILLYNESS")) {

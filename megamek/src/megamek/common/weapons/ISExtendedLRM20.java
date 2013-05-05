@@ -37,7 +37,7 @@ public class ISExtendedLRM20 extends ExtendedLRMWeapon {
         addLookupName("ISExtendedLRM20");
         addLookupName("IS Extended LRM 20");
         addLookupName("ELRM-20 (THB)");
-        heat = 10;
+        heat = 12;
         rackSize = 20;
         tonnage = 18.0f;
         criticals = 8;

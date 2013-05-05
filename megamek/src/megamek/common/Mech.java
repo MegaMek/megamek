@@ -3112,9 +3112,9 @@ public abstract class Mech extends Entity {
                     continue;
                 }
             } else {
-                if ((loc == LOC_LARM) && (hasCASEII(LOC_LT))) {
+                if (((loc == LOC_LARM) || (loc == LOC_LLEG)) && (hasCASEII(LOC_LT))) {
                     continue;
-                } else if ((loc == LOC_RARM) && (hasCASEII(LOC_RT))) {
+                } else if (((loc == LOC_RARM) || (loc == LOC_RLEG)) && (hasCASEII(LOC_RT))) {
                     continue;
                 }
                 // inner sphere with XL or XXL counts everywhere

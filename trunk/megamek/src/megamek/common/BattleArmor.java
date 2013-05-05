@@ -1599,7 +1599,8 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * return if this BA has laser reflective armor
+     * return if this BA has laser reflective armo
+     * TODO: implement game rules
      *
      * @return
      */
@@ -1614,7 +1615,7 @@ public class BattleArmor extends Infantry {
 
     /**
      * return if this BA has reactive armor
-     *
+     *TODO: implement game rules
      * @return
      */
     public boolean isReactive() {

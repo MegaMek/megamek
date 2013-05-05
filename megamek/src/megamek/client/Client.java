@@ -1212,7 +1212,9 @@ public class Client implements IClientCommandHandler {
             break;
         case Packet.COMMAND_SENDING_MAP_SETTINGS:
             mapSettings = (MapSettings) c.getObject(0);
-            game.processGameEvent(new GameSettingsChangeEvent(this));
+            GameSettingsChangeEvent evt = new GameSettingsChangeEvent(this);
+            evt.setMapSettingsOnlyChange(true);
+            game.processGameEvent(evt);
             break;
         case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
             game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));

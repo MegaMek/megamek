@@ -407,6 +407,10 @@ public class RandomMapDialog extends JDialog implements ActionListener,
                 setVisible(false);
             }
         } else if (e.getSource().equals(butSave)) {
+            // Apply changes before saving
+            if (!applyValues()) {
+                return;
+            }
             JFileChooser fc = new JFileChooser("data" + File.separator
                     + "boards");
             fc.setLocation(frame.getLocation().x + 150,

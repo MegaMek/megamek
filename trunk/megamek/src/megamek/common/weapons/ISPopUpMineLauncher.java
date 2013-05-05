@@ -73,6 +73,6 @@ public class ISPopUpMineLauncher extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        return new MineLauncherHandler(toHit, waa, game, server);
+        return new PopUpMineLauncherHandler(toHit, waa, game, server);
     }
 }

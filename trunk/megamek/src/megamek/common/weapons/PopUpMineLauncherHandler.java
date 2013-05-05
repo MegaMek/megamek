@@ -31,7 +31,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
-public class MineLauncherHandler extends AmmoWeaponHandler {
+public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     /**
      *
      */
@@ -42,7 +42,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public MineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
+    public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
     }

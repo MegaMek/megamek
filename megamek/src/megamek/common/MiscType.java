@@ -1001,7 +1001,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createArtemisV());
         EquipmentType.addType(MiscType.createISAngelECM());
         EquipmentType.addType(MiscType.createISTHBAngelECM());
-        EquipmentType.addType(MiscType.createCLgelECM());
+        EquipmentType.addType(MiscType.createCLAngelECM());
         EquipmentType.addType(MiscType.createWatchdogECM());
         EquipmentType.addType(MiscType.createTHBMace());
         EquipmentType.addType(MiscType.createMace());
@@ -2019,7 +2019,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createCLgelECM() {
+    public static MiscType createCLAngelECM() {
         MiscType misc = new MiscType();
 
         // Don't forget, this will eventually count double for ECCM.
@@ -2520,13 +2520,13 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_ADVANCED;
-        misc.name = "Mine Dispenser";
+        misc.name = "Vehicular Mine Dispenser";
         misc.setInternalName("ISVehicularMineDispenser");
         misc.cost = 20000;
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         // TODO: implement game rules for this, analog to the mine for BAs
-        misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.introDate = 3062;
         misc.techRating = RATING_B;
@@ -2538,7 +2538,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_CLAN_ADVANCED;
-        misc.name = "Mine Dispenser";
+        misc.name = "Vehicular Mine Dispenser";
         misc.setInternalName("CLVehicularMineDispenser");
         misc.cost = 20000;
         misc.tonnage = 0.5f;
@@ -2546,8 +2546,40 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_B;
         misc.availRating = new int[]{ RATING_E, RATING_E, RATING_F };
         // TODO: implement game rules for this, analog to the mine for BAs
-        misc.flags = misc.flags.or(F_MINE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
+
+        return misc;
+    }
+
+    public static MiscType createCLSpaceMineDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_ADVANCED;
+        misc.name = "Space Mine Dispenser";
+        misc.setInternalName("CLSpaceMineDispenser");
+        misc.cost = 15000;
+        misc.tonnage = 10f;
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{ RATING_E, RATING_E, RATING_F };
+        // TODO: implement game rules for this, analog to the mine for BAs
+        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+
+        return misc;
+    }
+
+    public static MiscType createISSpaceMineDispenser() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_ADVANCED;
+        misc.name = "Space Mine Dispenser";
+        misc.setInternalName("CLSpaceMineDispenser");
+        misc.cost = 15000;
+        misc.tonnage = 10f;
+        misc.techRating = RATING_D;
+        misc.availRating = new int[]{ RATING_E, RATING_E, RATING_F };
+        // TODO: implement game rules for this, analog to the mine for BAs
+        misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 
         return misc;
     }
@@ -6603,9 +6635,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
         return misc;
     }
-
-
-
 
     @Override
     public String toString() {

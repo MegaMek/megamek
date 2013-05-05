@@ -775,7 +775,7 @@ public class BattleArmor extends Infantry {
             }
             double dBV = 0;
             double armorBV = 2.5;
-            if (isFireResistant()) {
+            if (isFireResistant() || isReflective() || isReactive()) {
                 armorBV = 3.5;
             }
             dBV += (getArmor(i) * armorBV) + 1;
@@ -1592,6 +1592,34 @@ public class BattleArmor extends Infantry {
     public boolean isFireResistant() {
         for (Mounted equip : getMisc()) {
             if (equip.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * return if this BA has laser reflective armor
+     *
+     * @return
+     */
+    public boolean isReflective() {
+        for (Mounted equip : getMisc()) {
+            if (equip.getType().hasFlag(MiscType.F_REFLECTIVE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * return if this BA has reactive armor
+     *
+     * @return
+     */
+    public boolean isReactive() {
+        for (Mounted equip : getMisc()) {
+            if (equip.getType().hasFlag(MiscType.F_REACTIVE)) {
                 return true;
             }
         }

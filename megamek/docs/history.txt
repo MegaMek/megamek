@@ -40,6 +40,7 @@ v0.35.38-dev (SVN)
 + Bug 3718: Inferno's don't properly deal heat damage to Aeros 
 + Bug 3496: Hotkeys failing to work
 + Bug 3487: Problems generating random maps 
++ Bug 3243: changing map settings resets options
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

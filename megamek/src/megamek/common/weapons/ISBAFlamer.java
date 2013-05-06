@@ -34,7 +34,7 @@ public class ISBAFlamer extends BAFlamerWeapon {
      */
     public ISBAFlamer() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "Flamer";
         setInternalName("IS BA Flamer");
         addLookupName("ISBAFlamer");
@@ -53,6 +53,7 @@ public class ISBAFlamer extends BAFlamerWeapon {
         maxRange = RANGE_SHORT;
         flags = flags.or(F_BA_WEAPON);
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_B};
         techRating = RATING_C;
     }

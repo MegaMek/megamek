@@ -35,7 +35,7 @@ public class ISMediumRecoillessRifle extends Weapon {
      */
     public ISMediumRecoillessRifle() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Medium Recoilless Rifle";
         setInternalName(name);
         addLookupName("ISMedium Recoilless Rifle");
@@ -51,6 +51,7 @@ public class ISMediumRecoillessRifle extends Weapon {
                 .or(F_BURST_FIRE);
         cost = 3000;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
     }

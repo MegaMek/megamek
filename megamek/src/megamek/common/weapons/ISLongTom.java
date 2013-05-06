@@ -35,7 +35,7 @@ public class ISLongTom extends ArtilleryWeapon {
      */
     public ISLongTom() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Long Tom";
         setInternalName("ISLongTom");
         addLookupName("ISLongTomArtillery");

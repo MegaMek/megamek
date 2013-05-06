@@ -29,7 +29,7 @@ public class CLFussilade extends ATMWeapon {
 
     public CLFussilade() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         flags = flags.or(WeaponType.F_PROTO_WEAPON);
         rackSize = 3;
         minimumRange = 4;

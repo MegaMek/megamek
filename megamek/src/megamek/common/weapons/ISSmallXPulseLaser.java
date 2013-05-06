@@ -34,7 +34,7 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
      */
     public ISSmallXPulseLaser() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Small X-Pulse Laser";
         setInternalName("ISSmallXPulseLaser");
         addLookupName("IS X-Pulse Small Laser");
@@ -61,5 +61,6 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
     }
 }

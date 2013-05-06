@@ -30,7 +30,7 @@ public class ISMRM3 extends MRMWeapon {
      */
     public ISMRM3() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "MRM 3";
         this.setInternalName(this.name);
         this.addLookupName("MRM-3");
@@ -43,6 +43,7 @@ public class ISMRM3 extends MRMWeapon {
         this.extremeRange = 16;
         this.bv = 18;
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

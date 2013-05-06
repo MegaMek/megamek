@@ -37,7 +37,7 @@ public class KillerWhaleTWeapon extends CapitalMissileWeapon {
      */
     public KillerWhaleTWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Killer Whale-T";
         this.setInternalName(this.name);
         this.addLookupName("KillerWhaleT");
@@ -57,6 +57,7 @@ public class KillerWhaleTWeapon extends CapitalMissileWeapon {
         this.extAV =4;
         this.maxRange = RANGE_EXT;
         introDate = 3056;
+        techLevel.put(3056,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
     }

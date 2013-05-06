@@ -33,7 +33,7 @@ public class MediumNPPCWeapon extends NavalPPCWeapon {
     */
    public MediumNPPCWeapon() {
        super();
-       this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+       this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
        this.name = "Medium NPPC";
        this.setInternalName(this.name);
        this.addLookupName("MediumNPPC");

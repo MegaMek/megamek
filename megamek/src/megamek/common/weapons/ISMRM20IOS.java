@@ -30,7 +30,7 @@ public class ISMRM20IOS extends MRMWeapon {
      */
     public ISMRM20IOS() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "MRM 20 (I-OS)";
         setInternalName(name);
         addLookupName("IOS MRM-20");
@@ -53,5 +53,6 @@ public class ISMRM20IOS extends MRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3056;
+        techLevel.put(3056,techLevel.get(3071));
     }
 }

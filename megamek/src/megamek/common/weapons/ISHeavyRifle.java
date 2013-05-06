@@ -34,7 +34,7 @@ public class ISHeavyRifle extends RifleWeapon {
      */
     public ISHeavyRifle() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Heavy Rifle";
         setInternalName(name);
         addLookupName("IS Heavy Rifle");

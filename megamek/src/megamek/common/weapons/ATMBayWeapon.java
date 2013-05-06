@@ -33,7 +33,7 @@ public class ATMBayWeapon extends AmmoBayWeapon {
     public ATMBayWeapon() {
         super();
         //tech levels are a little tricky
-        this.techLevel = TechConstants.T_ALL;
+        this.techLevel.put(3071,TechConstants.T_ALL);
         this.name = "ATM Bay";
         this.setInternalName(this.name);
         this.heat = 0;

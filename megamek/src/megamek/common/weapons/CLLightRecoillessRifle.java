@@ -35,7 +35,7 @@ public class CLLightRecoillessRifle extends Weapon {
      */
     public CLLightRecoillessRifle() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Light Recoilless Rifle";
         setInternalName("CLLight Recoilless Rifle");
         addLookupName("CLLight Recoilless Rifle");
@@ -52,6 +52,7 @@ public class CLLightRecoillessRifle extends Weapon {
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
         cost = 1000;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_A};
         techRating = RATING_C;
     }

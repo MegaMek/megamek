@@ -27,7 +27,7 @@ public class ISLAC20 extends LACWeapon {
 
     public ISLAC20() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "LAC/20";
         setInternalName("Light Auto Cannon/20");
         addLookupName("IS Light AutoCannon/20");

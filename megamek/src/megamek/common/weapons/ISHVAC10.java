@@ -51,6 +51,7 @@ public class ISHVAC10 extends HVACWeapon {
         techRating = RATING_D;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3060;
+        techLevel.put(3060,techLevel.get(3071));
     }
 
 }

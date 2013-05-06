@@ -37,7 +37,7 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
      */
     public BarracudaTWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Barracuda-T";
         this.setInternalName(this.name);
         this.addLookupName("BarracudaT");
@@ -59,6 +59,7 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
         introDate = 3056;
+        techLevel.put(3056,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
     }

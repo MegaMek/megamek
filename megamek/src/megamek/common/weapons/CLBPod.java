@@ -34,11 +34,12 @@ public class CLBPod extends BPodWeapon {
      */
     public CLBPod() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "B-Pod";
         this.setInternalName("CLBPod");
         this.addLookupName("CLB-Pod");
         introDate = 3068;
+        techLevel.put(3068,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

@@ -32,7 +32,7 @@ public class ISSRM2Primitive extends SRMWeapon {
 
     public ISSRM2Primitive() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "SRM 2p";
         setInternalName(name);
         addLookupName("IS SRM-2 Primitive");

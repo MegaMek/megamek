@@ -34,7 +34,7 @@ public class CLLB2XAC extends LBXACWeapon {
      */
     public CLLB2XAC() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "LB 2-X AC";
         this.setInternalName("CLLBXAC2");
         this.addLookupName("Clan LB 2-X AC");
@@ -57,6 +57,7 @@ public class CLLB2XAC extends LBXACWeapon {
         this.maxRange = RANGE_EXT;
         this.techRating = RATING_F;
         introDate = 2826;
+        techLevel.put(2826,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         
     }

@@ -27,7 +27,7 @@ public class ISMediumLaserPrimitive extends LaserWeapon {
 
     public ISMediumLaserPrimitive() {
         super();
-        this.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        this.techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         this.name = "Medium Laser Prototype";
         this.setInternalName(this.name);
         this.addLookupName("IS Medium Laser Prototype");

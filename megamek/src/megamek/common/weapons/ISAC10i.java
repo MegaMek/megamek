@@ -34,7 +34,7 @@ public class ISAC10i extends ACWeapon {
      */
     public ISAC10i() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "AC/10i";
         setInternalName("ISAutocannon10i");
         addLookupName("ISAC10i");

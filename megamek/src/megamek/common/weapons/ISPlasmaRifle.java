@@ -36,7 +36,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
     private static final long serialVersionUID = -7919371014161089388L;
 
     public ISPlasmaRifle() {
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Plasma Rifle";
         setInternalName("ISPlasmaRifle");
         heat = 10;
@@ -58,6 +58,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
         introDate = 3068;
+        techLevel.put(3068,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
         }

@@ -35,7 +35,7 @@ public class CLThumper extends ArtilleryWeapon {
      */
     public CLThumper() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "Thumper";
         setInternalName("CLThumper");
         addLookupName("CLThumperArtillery");

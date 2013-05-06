@@ -37,7 +37,7 @@ public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
      */
     public ISMediumPulseLaserPrototype() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Medium Pulse Laser Prototype";
         setInternalName("ISMediumPulseLaserPrototype");
         addLookupName("IS Pulse Med Laser Prototype");

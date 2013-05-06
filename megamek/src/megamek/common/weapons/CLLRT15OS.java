@@ -30,7 +30,7 @@ public class CLLRT15OS extends LRTWeapon {
      */
     public CLLRT15OS() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "LRT 15 (OS)";
         setInternalName("CLLRTorpedo15 (OS)");
         addLookupName("Clan OS LRT-15");
@@ -49,6 +49,7 @@ public class CLLRT15OS extends LRTWeapon {
         flags = flags.or(F_ONESHOT);
         cost = 87500;
         introDate = 2676;
+        techLevel.put(2676,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_C;
         

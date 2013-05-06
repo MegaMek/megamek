@@ -37,7 +37,7 @@ public class WhiteSharkWeapon extends CapitalMissileWeapon {
      */
     public WhiteSharkWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "White Shark";
         this.setInternalName(this.name);
         this.addLookupName("WhiteShark");
@@ -57,6 +57,7 @@ public class WhiteSharkWeapon extends CapitalMissileWeapon {
         this.extAV = 3;
         this.maxRange = RANGE_EXT;
         introDate = 2305;
+        techLevel.put(2305,techLevel.get(3071));
         extinctDate = 2854;
         reintroDate = 3051;
         availRating = new int[]{RATING_D,RATING_X,RATING_D};

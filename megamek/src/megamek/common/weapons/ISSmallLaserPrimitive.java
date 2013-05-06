@@ -27,7 +27,7 @@ public class ISSmallLaserPrimitive extends LaserWeapon {
 
     public ISSmallLaserPrimitive() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Small Laser Prototype";
         setInternalName(name);
         addLookupName("ISSmall Laser Prototype");

@@ -30,7 +30,7 @@ public class CLAdvancedSRM5 extends AdvancedSRMWeapon {
      */
     public CLAdvancedSRM5() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Advanced SRM 5";
         setInternalName("CLAdvancedSRM5");
         addLookupName("Clan Advanced SRM-5");
@@ -44,6 +44,7 @@ public class CLAdvancedSRM5 extends AdvancedSRMWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 75000;
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
     }

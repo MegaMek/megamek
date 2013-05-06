@@ -39,7 +39,7 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      */
     public CLPrototypeUACWeapon() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
     }
 
     /*

@@ -30,7 +30,7 @@ public class CLLRT20IOS extends LRTWeapon {
      */
     public CLLRT20IOS() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "LRT 20 (I-OS)";
         setInternalName("CLLRTorpedo20 (IOS)");
         addLookupName("Clan IOS LRT-20");
@@ -51,5 +51,6 @@ public class CLLRT20IOS extends LRTWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
     }
 }

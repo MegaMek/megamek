@@ -39,7 +39,7 @@ public class ISLGaussRifle extends GaussWeapon {
      */
     public ISLGaussRifle() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Light Gauss Rifle";
         this.setInternalName("ISLightGaussRifle");
         this.addLookupName("IS Light Gauss Rifle");
@@ -62,6 +62,7 @@ public class ISLGaussRifle extends GaussWeapon {
         this.maxRange = RANGE_EXT;
         this.explosionDamage = 16;
         introDate = 3056;
+        techLevel.put(3056,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

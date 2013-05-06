@@ -37,7 +37,7 @@ public class SwordfishWeapon extends SubCapitalMissileWeapon {
      */
     public SwordfishWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
+        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         this.name = "Swordfish";
         this.setInternalName(this.name);
         this.addLookupName("Swordfish");

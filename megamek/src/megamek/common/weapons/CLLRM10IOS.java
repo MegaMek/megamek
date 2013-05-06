@@ -30,7 +30,7 @@ public class CLLRM10IOS extends LRMWeapon {
      */
     public CLLRM10IOS() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "LRM 10 (I-OS)";
         setInternalName("CLLRM10 (IOS)");
         addLookupName("Clan IOS LRM-10");
@@ -50,5 +50,6 @@ public class CLLRM10IOS extends LRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
     }
 }

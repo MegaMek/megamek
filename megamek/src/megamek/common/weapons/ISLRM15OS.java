@@ -30,7 +30,7 @@ public class ISLRM15OS extends LRMWeapon {
      */
     public ISLRM15OS() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "LRM 15 (OS)";
         setInternalName(name);
         addLookupName("IS OS LRM-15");

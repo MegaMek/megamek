@@ -33,7 +33,7 @@ public class CLHeavyMGA extends AmmoWeapon {
 
     public CLHeavyMGA() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Heavy Machine Gun Array";
         setInternalName("CLHMGA");
         heat = 0;
@@ -57,6 +57,7 @@ public class CLHeavyMGA extends AmmoWeapon {
         setModes(modeStrings);
         instantModeSwitch = false;
         introDate = 3069;
+        techLevel.put(3069,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_E;
     }

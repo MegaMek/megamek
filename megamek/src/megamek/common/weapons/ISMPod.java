@@ -34,7 +34,7 @@ public class ISMPod extends MPodWeapon {
      */
     public ISMPod() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
+        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         this.name = "M-Pod";
         this.setInternalName("ISMPod");
         this.addLookupName("ISM-Pod");

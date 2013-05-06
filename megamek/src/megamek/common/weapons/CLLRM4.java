@@ -30,7 +30,7 @@ public class CLLRM4 extends LRMWeapon {
      */
     public CLLRM4() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "LRM 4";
         setInternalName("CLLRM4");
         heat = 0;
@@ -40,6 +40,7 @@ public class CLLRM4 extends LRMWeapon {
         criticals = 0;
         bv = 46;
         introDate = 3060;
+        techLevel.put(3060,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
     }

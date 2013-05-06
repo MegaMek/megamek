@@ -31,7 +31,7 @@ public class ISTAG extends TAGWeapon {
 
     public ISTAG() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "TAG";
         setInternalName("ISTAG");
         addLookupName("IS TAG");
@@ -48,6 +48,7 @@ public class ISTAG extends TAGWeapon {
         bv = 0;
         cost = 50000;
         introDate = 2600;
+        techLevel.put(2600,techLevel.get(3071));
         extinctDate = 2835;
         reintroDate = 3044;
         availRating = new int[]{RATING_E,RATING_F,RATING_D};

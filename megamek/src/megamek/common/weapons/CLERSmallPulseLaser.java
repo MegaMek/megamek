@@ -34,7 +34,7 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
      */
     public CLERSmallPulseLaser() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Small Pulse Laser";
         setInternalName("CLERSmallPulseLaser");
         addLookupName("Clan ER Pulse Small Laser");
@@ -59,5 +59,6 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         techRating = RATING_F;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
     }
 }

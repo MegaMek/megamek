@@ -30,7 +30,7 @@ public class CLLRT2 extends LRTWeapon {
      */
     public CLLRT2() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "LRT 2";
         setInternalName("CLLRTorpedo2");
         setInternalName("CLLRT2");
@@ -45,6 +45,7 @@ public class CLLRT2 extends LRTWeapon {
         criticals = 0;
         bv = 24;
         introDate = 3060;
+        techLevel.put(3060,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_C;
     }

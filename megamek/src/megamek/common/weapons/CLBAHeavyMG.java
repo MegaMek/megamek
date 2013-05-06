@@ -35,7 +35,7 @@ public class CLBAHeavyMG extends BAMGWeapon {
      */
     public CLBAHeavyMG() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "Heavy Machine Gun";
         this.setInternalName("CLBAHeavyMG");
         this.addLookupName("Clan BA Heavy Machine Gun");
@@ -52,6 +52,7 @@ public class CLBAHeavyMG extends BAMGWeapon {
         this.bv = 6;
         this.cost = 7500;
         introDate = 3059;
+        techLevel.put(3059,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_C;
     }

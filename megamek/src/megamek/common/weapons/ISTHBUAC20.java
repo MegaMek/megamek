@@ -34,7 +34,7 @@ public class ISTHBUAC20 extends UACWeapon {
      */
     public ISTHBUAC20() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "Ultra AC/20 (THB)";
         setInternalName("ISUltraAC20 (THB)");
         addLookupName("IS Ultra AC/20 (THB)");

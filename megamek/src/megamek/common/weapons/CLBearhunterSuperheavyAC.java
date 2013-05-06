@@ -35,7 +35,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
      */
     public CLBearhunterSuperheavyAC() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Bearhunter Superheavy AC";
         setInternalName(name);
         addLookupName("CLBearhunter Superheavy AC");
@@ -54,6 +54,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE);
         introDate = 3062;
+        techLevel.put(3062,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_D;
     }

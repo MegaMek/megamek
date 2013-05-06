@@ -35,7 +35,7 @@ public class ISMekTaser extends AmmoWeapon {
      */
     public ISMekTaser() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Mech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");

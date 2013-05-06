@@ -2138,7 +2138,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         refreshDoneButton();
         clientgui.getClient().game.setupTeams();
         refreshPlayerInfo();
-        refreshCamos();
+        // Update cammo info, unless the player is currently making changes
+        if (camoDialog != null && !camoDialog.isVisible()){
+            refreshCamos();
+        }
         refreshEntities();
     }
 

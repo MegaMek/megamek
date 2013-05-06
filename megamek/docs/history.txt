@@ -44,6 +44,7 @@ v0.35.38-dev (SVN)
 + Bug: extended LRM 20 should have heat 12
 + Bug: clan artillery ammo BV wrong
 + Bug: CASE II in torso should prevent explosive BV reduction in adjacent leg
++ Bug 3702: changing game settings resets camo selection dialog 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

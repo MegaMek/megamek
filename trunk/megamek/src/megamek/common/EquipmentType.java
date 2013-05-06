@@ -21,8 +21,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.options.GameOptions;
@@ -137,7 +142,8 @@ public class EquipmentType {
     /** can the crits for this be spread over locations? */
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
-    protected int techLevel = TechConstants.T_TECH_UNKNOWN;
+
+    protected Map<Integer,Integer> techLevel = new HashMap<Integer,Integer>();
 
     protected BigInteger flags = BigInteger.valueOf(0);
 
@@ -212,7 +218,28 @@ public class EquipmentType {
     }
 
     public int getTechLevel() {
-        return techLevel;
+        return getTechLevel(3071);
+    }
+
+    public int getTechLevel(int date) {
+        if (techLevel.containsKey(date)) {
+            return techLevel.get(date);
+        } else {
+            List<Integer> introdates = new ArrayList<Integer>(techLevel.keySet());
+            Collections.sort(introdates);
+            Collections.reverse(introdates);
+            for (Integer introdate : introdates) {
+                if (introdate <= date) {
+
+                    if (techLevel.get(introdate) == null) {
+                        System.out.println(name);
+                        return 0;
+                    }
+                    return techLevel.get(introdate);
+                }
+            }
+        }
+        return TechConstants.T_TECH_UNKNOWN;
     }
 
     public float getTonnage(Entity entity) {

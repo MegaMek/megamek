@@ -175,7 +175,7 @@ public class BombType extends AmmoType {
     private static BombType createHighExplosiveBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_TW_ALL;
+        bomb.techLevel.put(3071,TechConstants.T_TW_ALL);
         bomb.name = "HE Bomb";
         bomb.shortName = "HEBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_HE));
@@ -188,6 +188,7 @@ public class BombType extends AmmoType {
         bomb.bv = 12;
         bomb.cost = 0;
         bomb.introDate = 1950;
+        bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
         bomb.techRating = RATING_B;
 
@@ -197,7 +198,7 @@ public class BombType extends AmmoType {
     private static BombType createClusterBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_TW_ALL;
+        bomb.techLevel.put(3071,TechConstants.T_TW_ALL);
         bomb.name = "Cluster Bomb";
         bomb.shortName = "ClusterBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_CLUSTER));
@@ -210,6 +211,7 @@ public class BombType extends AmmoType {
         bomb.bv = 13;
         bomb.cost = 0;
         bomb.introDate = 1950;
+        bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
         bomb.techRating = RATING_B;
 
@@ -219,7 +221,7 @@ public class BombType extends AmmoType {
     private static BombType createLaserGuidedBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_TW_ALL;
+        bomb.techLevel.put(3071,TechConstants.T_TW_ALL);
         bomb.name = "Laser-Guided Bomb";
         bomb.shortName = "LGBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_LG));
@@ -232,6 +234,7 @@ public class BombType extends AmmoType {
         bomb.bv = 20;
         bomb.cost = 0;
         bomb.introDate = 1950;
+        bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.extinctDate = 2800;
         bomb.reintroDate = 3060;
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
@@ -243,7 +246,7 @@ public class BombType extends AmmoType {
     private static BombType createTAGBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_TW_ALL;
+        bomb.techLevel.put(3071,TechConstants.T_TW_ALL);
         bomb.name = "TAGBomb";
         bomb.shortName = "TAGBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_TAG));
@@ -255,6 +258,7 @@ public class BombType extends AmmoType {
         bomb.bv = 0;
         bomb.cost = 0;
         bomb.introDate = 2605;
+        bomb.techLevel.put(2605,bomb.techLevel.get(3071));
         bomb.extinctDate = 2835;
         bomb.reintroDate = 3035;
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_D};
@@ -266,7 +270,7 @@ public class BombType extends AmmoType {
     private static BombType createRocketBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        bomb.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         bomb.name = "RL 10 Ammo (bomb)";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
         bomb.damagePerShot = 1;
@@ -277,6 +281,7 @@ public class BombType extends AmmoType {
         bomb.bv = 18;
         bomb.cost = 0;
         bomb.introDate = 3064;
+        bomb.techLevel.put(3064,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_B};
         bomb.techRating = RATING_C;
         
@@ -286,7 +291,7 @@ public class BombType extends AmmoType {
     private static BombType createAAAMissileBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "AAA Missile Ammo";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_AAA));
         bomb.damagePerShot = 20;
@@ -297,6 +302,7 @@ public class BombType extends AmmoType {
         bomb.bv = 57;
         bomb.cost = 0;
         bomb.introDate = 3072;
+        bomb.techLevel.put(3072,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
         bomb.techRating = RATING_E;
        
@@ -307,7 +313,7 @@ public class BombType extends AmmoType {
     private static BombType createASMissileBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        bomb.techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         bomb.name = "Anti-Ship Missile Ammo";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_AS));
         bomb.damagePerShot = 20;
@@ -318,6 +324,7 @@ public class BombType extends AmmoType {
         bomb.bv = 114;
         bomb.cost = 0;
         bomb.introDate = 3071;
+        bomb.techLevel.put(3071,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
         bomb.techRating = RATING_D;
 
@@ -327,7 +334,7 @@ public class BombType extends AmmoType {
     private static BombType createASEWMissileBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "Anti-Ship (EW) Missile Ammo";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_ASEW));
         bomb.damagePerShot = 0;
@@ -338,6 +345,7 @@ public class BombType extends AmmoType {
         bomb.bv = 75;
         bomb.cost = 0;
         bomb.introDate = 3067;
+        bomb.techLevel.put(3067,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_E};
         bomb.techRating = RATING_E;
 
@@ -347,7 +355,7 @@ public class BombType extends AmmoType {
     private static BombType createArrowIVBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "Arrow IV Ammo (Bomb)";
         bomb.shortName = "Arrow IV (Bomb)";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_ARROW));
@@ -360,6 +368,7 @@ public class BombType extends AmmoType {
         bomb.bv = 34;
         bomb.cost = 0;
         bomb.introDate = 2623;
+        bomb.techLevel.put(2623,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
         bomb.techRating = RATING_E;
        
@@ -369,7 +378,7 @@ public class BombType extends AmmoType {
     private static BombType createArrowIVHomingBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "Arrow IV Homing Ammo (Bomb)";
         bomb.shortName = "Arrow IV Homing (Bomb)";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_HOMING));
@@ -383,6 +392,7 @@ public class BombType extends AmmoType {
         bomb.bv = 0;
         bomb.cost = 0;
         bomb.introDate = 2600;
+        bomb.techLevel.put(2600,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F, EquipmentType.RATING_E};
         bomb.techRating = RATING_E;
 
@@ -392,7 +402,7 @@ public class BombType extends AmmoType {
     private static BombType createInfernoBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "Inferno Bomb";
         bomb.shortName = "InfernoBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_INFERNO));
@@ -405,6 +415,7 @@ public class BombType extends AmmoType {
         bomb.bv = 16;
         bomb.cost = 0;
         bomb.introDate = 1950;
+        bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_D, EquipmentType.RATING_D, EquipmentType.RATING_D};
         bomb.techRating = RATING_B;
 
@@ -414,7 +425,7 @@ public class BombType extends AmmoType {
     private static BombType createLAAMissileBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "LAA Missile Ammo";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_LAA));
         bomb.damagePerShot = 6;
@@ -425,6 +436,7 @@ public class BombType extends AmmoType {
         bomb.bv = 17;
         bomb.cost = 0;
         bomb.introDate = 3072;
+        bomb.techLevel.put(3072,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X, EquipmentType.RATING_F};
         bomb.techRating = RATING_E;
 
@@ -434,7 +446,7 @@ public class BombType extends AmmoType {
     private static BombType createThunderBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "Thunder Bomb";
         bomb.shortName = "ThunderBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_THUNDER));
@@ -447,6 +459,7 @@ public class BombType extends AmmoType {
         bomb.bv = 0;
         bomb.cost = 0;
         bomb.introDate = 3052;
+        bomb.techLevel.put(3052,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_X, EquipmentType.RATING_E};
         bomb.techRating = RATING_C;
 
@@ -456,7 +469,7 @@ public class BombType extends AmmoType {
     private static BombType createTorpedoBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_ADVANCED;
+        bomb.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         bomb.name = "Torpedo Bomb";
         bomb.shortName = "TorpedoBomb";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_TORPEDO));
@@ -469,6 +482,7 @@ public class BombType extends AmmoType {
         bomb.cost = 0;
         bomb.techRating = RATING_C;
         bomb.introDate = 1950;
+        bomb.techLevel.put(1950,bomb.techLevel.get(3071));
         bomb.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C, EquipmentType.RATING_C};
         bomb.techRating = RATING_B;
 
@@ -478,7 +492,7 @@ public class BombType extends AmmoType {
     private static BombType createAlamoBomb() {
         BombType bomb = new BombType();
 
-        bomb.techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        bomb.techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         bomb.name = "Alamo Missile Ammo";
         bomb.setInternalName(BombType.getBombInternalName(BombType.B_ALAMO));
         bomb.damagePerShot = 10;

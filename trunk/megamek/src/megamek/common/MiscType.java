@@ -2576,7 +2576,7 @@ public class MiscType extends EquipmentType {
 
         misc.techLevel = TechConstants.T_IS_ADVANCED;
         misc.name = "Space Mine Dispenser";
-        misc.setInternalName("CLSpaceMineDispenser");
+        misc.setInternalName("ISSpaceMineDispenser");
         misc.cost = 15000;
         misc.tonnage = 10f;
         misc.techRating = RATING_D;

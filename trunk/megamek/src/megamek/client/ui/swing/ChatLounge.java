@@ -723,6 +723,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         buttonBoardPreview = new JButton(
                 Messages.getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
         buttonBoardPreview.addActionListener(this);
+        buttonBoardPreview.setToolTipText(
+                Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));//$NON-NLS-1$
 
         butChange = new JButton("<<"); //$NON-NLS-1$
         butChange.addActionListener(this);

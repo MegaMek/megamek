@@ -1153,6 +1153,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLLargeNavalCommScannerSuite());
         EquipmentType.addType(MiscType.createCLNavalTugAdaptor());
         EquipmentType.addType(MiscType.createISNavalTugAdaptor());
+        EquipmentType.addType(MiscType.createISSpaceMineDispenser());
+        EquipmentType.addType(MiscType.createCLSpaceMineDispenser());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -2565,6 +2567,7 @@ public class MiscType extends EquipmentType {
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 
+        misc.bv = 200; // because it includes 2 mines. 100 for each mine, becaues it deals a max potential damage of 100
         return misc;
     }
 
@@ -2580,7 +2583,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[]{ RATING_E, RATING_E, RATING_F };
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
-
+        misc.bv = 200; // because it includes 2 mines. 100 for each mine, becaues it deals a max potential damage of 100
         return misc;
     }
 

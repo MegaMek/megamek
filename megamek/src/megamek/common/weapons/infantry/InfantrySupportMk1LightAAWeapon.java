@@ -32,7 +32,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 
     public InfantrySupportMk1LightAAWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Mk 1 Light AA Weapon";
         setInternalName(name);
         addLookupName("InfantryMk1LightAA");
@@ -44,6 +44,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 1;
         introDate = 2500;
+        techLevel.put(2500,techLevel.get(3071));
         extinctDate = 2790;
         reintroDate = 3056;
         availRating = new int[]{RATING_E,RATING_F,RATING_D};

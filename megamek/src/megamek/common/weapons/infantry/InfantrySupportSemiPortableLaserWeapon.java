@@ -32,7 +32,7 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
 
     public InfantrySupportSemiPortableLaserWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Semi-Portable Laser";
         setInternalName(name);
         addLookupName("InfantrySemiPortableLaser");
@@ -44,6 +44,7 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
         infantryRange = 3;
         crew = 2;
         introDate = 2400;
+        techLevel.put(2400,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_D,RATING_C};
         techRating = RATING_D;
     }

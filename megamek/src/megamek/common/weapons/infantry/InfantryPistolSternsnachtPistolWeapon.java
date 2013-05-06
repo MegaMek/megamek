@@ -32,7 +32,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSternsnachtPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Sternsnacht Heavy Pistol";
         setInternalName(name);
         addLookupName("InfantrySternsnachtpistol");
@@ -44,6 +44,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.09;
         infantryRange = 0;
         introDate = 2885;
+        techLevel.put(2885,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_E,RATING_D};
         techRating = RATING_C;
     }

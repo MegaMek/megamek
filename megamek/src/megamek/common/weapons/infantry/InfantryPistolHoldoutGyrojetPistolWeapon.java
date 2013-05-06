@@ -55,7 +55,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHoldoutGyrojetPistolWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Holdout Gyrojet Pistol";
         setInternalName(name);
         addLookupName("InfantryHoldoutGyrojetpistol");
@@ -66,6 +66,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         introDate = 2630;
+        techLevel.put(2630,techLevel.get(3071));
         availRating = new int[]{RATING_D,RATING_D,RATING_C};
         techRating = RATING_D;
     }

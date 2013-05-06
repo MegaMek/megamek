@@ -32,7 +32,7 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
 
     public InfantryShotgunCeresCrowdbusterWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Ceres Arms Crowdbuster";
         setInternalName(name);
         addLookupName("InfantryCeresCrowdbuster");
@@ -43,6 +43,7 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
         infantryDamage = 0.09;
         infantryRange = 0;
         introDate = 3030;
+        techLevel.put(3030,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_D};
         techRating = RATING_D;
     }

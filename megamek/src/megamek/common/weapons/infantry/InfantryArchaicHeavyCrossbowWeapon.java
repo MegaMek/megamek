@@ -32,7 +32,7 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
 
     public InfantryArchaicHeavyCrossbowWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Heavy Crossbow";
         setInternalName(name);
         addLookupName("InfantryHeavyCrossbow");
@@ -43,6 +43,7 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_A;
     }

@@ -32,7 +32,7 @@ public class InfantryLRMWeapon extends InfantryWeapon {
 
     public InfantryLRMWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "LRM Launcher";
         setInternalName(name);
         addLookupName("InfantryLRM");
@@ -44,6 +44,7 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         infantryDamage = 0.19;
         infantryRange = 3;
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_D;
     }

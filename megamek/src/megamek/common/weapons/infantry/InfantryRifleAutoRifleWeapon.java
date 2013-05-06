@@ -32,7 +32,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
 
     public InfantryRifleAutoRifleWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Auto Rifle";
         setInternalName(name);
         addLookupName("InfantryAssaultRifle");
@@ -51,6 +51,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         longRange = 3;
         extremeRange = 4;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
     }

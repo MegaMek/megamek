@@ -32,7 +32,7 @@ public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSunbeamNovaLaserPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Sunbeam Nova Laser Pistol";
         setInternalName(name);
         addLookupName("InfantrySunbeamNovapistol");
@@ -43,6 +43,7 @@ public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.26;
         infantryRange = 0;
         introDate = 3053;
+        techLevel.put(3053,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_E;
     }

@@ -32,7 +32,7 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
     public InfantryTWFlamerWeapon() {
         super();
         //Range 1, reduced damage flamer for TW Platoon support
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "Total Warfare Flamer";
         setInternalName(name);
         addLookupName("InfantryTWFlamer");
@@ -46,6 +46,7 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 1;
         introDate = 2100;
+        techLevel.put(2100,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
     }

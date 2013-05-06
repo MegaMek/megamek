@@ -32,7 +32,7 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
 
     public InfantryGrenadeMicroWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Micro Grenades";
         setInternalName(name);
         addLookupName("InfantryMicroGrenade");
@@ -43,6 +43,7 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
         infantryDamage = 0.10;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_C,RATING_C};
         techRating = RATING_C;
     }

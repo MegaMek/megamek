@@ -32,7 +32,7 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 
     public InfantryRifleMauser1200LSSWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Mauser 1200 LSS";
         setInternalName(name);
         addLookupName("InfantryMauser1200");
@@ -43,6 +43,7 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
         infantryDamage = 0.65;
         infantryRange = 2;
         introDate = 3055;
+        techLevel.put(3055,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

@@ -32,7 +32,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolTKEnforcerAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "TK Enforcer Auto Pistol";
         setInternalName(name);
         addLookupName("InfantryTKEnforcerAutopistol");
@@ -43,6 +43,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.20;
         infantryRange = 0;
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_B};
         techRating = RATING_C;
     }

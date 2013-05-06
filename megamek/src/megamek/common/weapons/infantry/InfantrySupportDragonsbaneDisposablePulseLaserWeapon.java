@@ -32,7 +32,7 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
 
     public InfantrySupportDragonsbaneDisposablePulseLaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Infantry Dragonsbane Disposable Pulse Laser";
         setInternalName(name);
         addLookupName("InfantryDragonsbane");
@@ -45,6 +45,7 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
         infantryRange = 3;
         crew = 1;
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_E;
     }

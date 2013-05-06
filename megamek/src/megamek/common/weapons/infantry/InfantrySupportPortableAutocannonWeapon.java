@@ -32,7 +32,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
 
     public InfantrySupportPortableAutocannonWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Semi Portable Autocannon";
         setInternalName(name);
         addLookupName("InfantryPortableAutocannon");
@@ -45,6 +45,7 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 2;
         introDate = 2255;
+        techLevel.put(2255,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_D,RATING_D};
         techRating = RATING_C;
     }

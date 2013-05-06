@@ -32,7 +32,7 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
 
     public InfantryRifleMauser960LaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Mauser 960 Assault System";
         setInternalName(name);
         addLookupName("InfantryMauser960");
@@ -43,6 +43,7 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 2;
         introDate = 2700;
+        techLevel.put(2700,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_F,RATING_D};
         techRating = RATING_E;
     }

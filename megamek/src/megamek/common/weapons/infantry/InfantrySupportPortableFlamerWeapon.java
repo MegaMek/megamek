@@ -36,7 +36,7 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
 
     public InfantrySupportPortableFlamerWeapon() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "Flamer (Man Portable)";
         setInternalName(name);
         addLookupName("InfantryPortableFlamer");
@@ -51,6 +51,7 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
         infantryRange = 0;
         crew = 1;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
     }

@@ -32,7 +32,7 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
 
     public InfantryArchaicClanVibroSwordWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Clan Vibro Sword";
         setInternalName(name);
         addLookupName("InfantryClanVibroSword");
@@ -43,6 +43,7 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
         infantryDamage = 0.32;
         infantryRange = 0;
         introDate = 2800;
+        techLevel.put(2800,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_F;
     }

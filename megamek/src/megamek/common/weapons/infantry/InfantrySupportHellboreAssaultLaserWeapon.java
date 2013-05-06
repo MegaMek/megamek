@@ -32,7 +32,7 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
 
     public InfantrySupportHellboreAssaultLaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Infantry Hellbore Assault Laser";
         setInternalName(name);
         addLookupName("InfantryHellbore");
@@ -45,6 +45,7 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 1;
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

@@ -32,7 +32,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
 
     public InfantrySMGRorynexRM3XXIWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Rorynex RM-3/XXI";
         setInternalName(name);
         addLookupName("InfantryRorynexRM3XXI");
@@ -43,6 +43,7 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
         infantryDamage = 0.20;
         infantryRange = 0;
         introDate = 2660;
+        techLevel.put(2660,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_B,RATING_C};
         techRating = RATING_D;
     }

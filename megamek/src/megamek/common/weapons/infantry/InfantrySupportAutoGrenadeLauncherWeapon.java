@@ -32,7 +32,7 @@ public class InfantrySupportAutoGrenadeLauncherWeapon extends InfantryWeapon {
 
     public InfantrySupportAutoGrenadeLauncherWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Auto Grenade Launcher";
         setInternalName(name);
         addLookupName("InfantryAutoGL");
@@ -44,6 +44,7 @@ public class InfantrySupportAutoGrenadeLauncherWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 1;
         introDate = 2100;
+        techLevel.put(2100,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
     }

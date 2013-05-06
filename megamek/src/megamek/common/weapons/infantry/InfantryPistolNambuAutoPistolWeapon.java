@@ -32,7 +32,7 @@ public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolNambuAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Nambu Auto Pistol";
         setInternalName(name);
         addLookupName("InfantryNambuAutopistol");
@@ -43,6 +43,7 @@ public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.21;
         infantryRange = 0;
         introDate = 2540;
+        techLevel.put(2540,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_C,RATING_C};
         techRating = RATING_C;
     }

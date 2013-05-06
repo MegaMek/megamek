@@ -32,7 +32,7 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
 
     public InfantryArchaicBokkenWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Bokken";
         setInternalName(name);
         addLookupName("InfantryBokken");
@@ -43,6 +43,7 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_A;
     }

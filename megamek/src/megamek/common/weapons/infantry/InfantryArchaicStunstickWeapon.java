@@ -32,7 +32,7 @@ public class InfantryArchaicStunstickWeapon extends InfantryWeapon {
 
     public InfantryArchaicStunstickWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Stun Stick";
         setInternalName(name);
         addLookupName("InfantryStunstick");
@@ -43,6 +43,7 @@ public class InfantryArchaicStunstickWeapon extends InfantryWeapon {
         infantryDamage = 0.07;
         infantryRange = 0;
         introDate = 2100;
+        techLevel.put(2100,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
     }

@@ -32,7 +32,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
 
     public InfantryRifleFederatedBarrettM61ALaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Federated Barrett M61A";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM61A");
@@ -43,6 +43,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
         infantryDamage = 0.56;
         infantryRange = 2;
         introDate = 3062;
+        techLevel.put(3062,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_D;
     }

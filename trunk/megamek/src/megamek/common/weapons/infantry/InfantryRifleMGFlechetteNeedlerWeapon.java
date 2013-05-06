@@ -32,7 +32,7 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
 
     public InfantryRifleMGFlechetteNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "M&G Flechette Rifle";
         setInternalName(name);
         addLookupName("InfantryMGFlechette");
@@ -43,6 +43,7 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 0;
         introDate = 2325;
+        techLevel.put(2325,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_D;
     }

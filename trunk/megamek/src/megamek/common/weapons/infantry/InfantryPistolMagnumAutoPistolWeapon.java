@@ -32,7 +32,7 @@ public class InfantryPistolMagnumAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolMagnumAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Magnum Auto Pistol";
         setInternalName(name);
         addLookupName("InfantryMagnumAutopistol");
@@ -43,6 +43,7 @@ public class InfantryPistolMagnumAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.21;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_B};
         techRating = RATING_C;
     }

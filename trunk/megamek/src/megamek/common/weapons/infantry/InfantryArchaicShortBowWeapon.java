@@ -32,7 +32,7 @@ public class InfantryArchaicShortBowWeapon extends InfantryWeapon {
 
     public InfantryArchaicShortBowWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Short Bow";
         setInternalName(name);
         addLookupName("InfantryShortbow");
@@ -43,6 +43,7 @@ public class InfantryArchaicShortBowWeapon extends InfantryWeapon {
         infantryDamage = 0.0;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_A;
     }

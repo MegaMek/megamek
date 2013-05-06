@@ -32,7 +32,7 @@ public class InfantrySupportLaserWeapon extends InfantryWeapon {
 
     public InfantrySupportLaserWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Support Laser";
         setInternalName(name);
         addLookupName("InfantrySupportLaser");
@@ -51,6 +51,7 @@ public class InfantrySupportLaserWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         introDate = 2380;
+        techLevel.put(2380,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_C,RATING_D};
         techRating = RATING_D;
     }

@@ -32,7 +32,7 @@ public class InfantryRifleNeedlerWeapon extends InfantryWeapon {
 
     public InfantryRifleNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Needler Rifle";
         setInternalName(name);
         addLookupName("InfantryNeedlerRifle");
@@ -43,6 +43,7 @@ public class InfantryRifleNeedlerWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 0;
         introDate = 2100;
+        techLevel.put(2100,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_D;
     }

@@ -32,7 +32,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
 
     public InfantrySupportKingDavidLightGaussRifleWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Infantry King David Light Gauss Rifle";
         setInternalName(name);
         addLookupName("InfantryKingDavid");
@@ -45,6 +45,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
         infantryRange = 3;
         crew = 2;
         introDate = 3063;
+        techLevel.put(3063,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

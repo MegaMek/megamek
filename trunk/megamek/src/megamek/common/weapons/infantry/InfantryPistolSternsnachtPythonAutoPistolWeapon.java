@@ -32,7 +32,7 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
 
     public InfantryPistolSternsnachtPythonAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Sternsnacht Python AutoPistol";
         setInternalName(name);
         addLookupName("InfantrySternsnachtPython");
@@ -43,6 +43,7 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
         infantryDamage = 0.28;
         infantryRange = 0;
         introDate = 3051;
+        techLevel.put(3051,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_C;
     }

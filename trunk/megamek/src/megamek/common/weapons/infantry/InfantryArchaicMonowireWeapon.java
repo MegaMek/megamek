@@ -32,7 +32,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
 
     public InfantryArchaicMonowireWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Monowire";
         setInternalName(name);
         addLookupName("InfantryMonowire");
@@ -43,6 +43,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 0;
         introDate = 2200;
+        techLevel.put(2200,techLevel.get(3071));
         availRating = new int[]{RATING_E,RATING_F,RATING_E};
         techRating = RATING_E;
     }

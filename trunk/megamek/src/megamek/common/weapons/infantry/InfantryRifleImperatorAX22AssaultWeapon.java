@@ -32,7 +32,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 
     public InfantryRifleImperatorAX22AssaultWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Imperator AX-22 Assault Rifle";
         setInternalName(name);
         addLookupName("InfantryImperatorAX22");
@@ -43,6 +43,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
         infantryDamage = 0.52;
         infantryRange = 1;
         introDate = 3060;
+        techLevel.put(3060,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_B};
         techRating = RATING_C;
     }

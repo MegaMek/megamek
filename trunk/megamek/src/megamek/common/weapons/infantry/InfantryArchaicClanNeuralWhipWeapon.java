@@ -32,7 +32,7 @@ public class InfantryArchaicClanNeuralWhipWeapon extends InfantryWeapon {
 
     public InfantryArchaicClanNeuralWhipWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Clan Neural Whip";
         setInternalName(name);
         addLookupName("CLInfantryNeuralWhip");
@@ -43,6 +43,7 @@ public class InfantryArchaicClanNeuralWhipWeapon extends InfantryWeapon {
         infantryDamage = 0.09;
         infantryRange = 0;
         introDate = 2215;
+        techLevel.put(2215,techLevel.get(3071));
         extinctDate = 2786;
         availRating = new int[]{RATING_X,RATING_F,RATING_F};
         techRating = RATING_D;        

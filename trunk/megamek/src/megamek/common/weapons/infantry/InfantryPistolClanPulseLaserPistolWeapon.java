@@ -32,7 +32,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolClanPulseLaserPistolWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Clan Pulse Laser Pistol";
         setInternalName(name);
         addLookupName("InfantryClanPulseLaserPistol");
@@ -43,6 +43,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.20;
         infantryRange = 1;
         introDate = 2840;
+        techLevel.put(2840,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_F;
     }

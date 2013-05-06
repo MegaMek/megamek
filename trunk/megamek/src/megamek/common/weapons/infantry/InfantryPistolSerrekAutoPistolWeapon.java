@@ -32,7 +32,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSerrekAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Serrek 7875D AutoPistol";
         setInternalName(name);
         addLookupName("InfantrySerrekAutopistol");
@@ -43,6 +43,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.16;
         infantryRange = 0;
         introDate = 2810;
+        techLevel.put(2810,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_C,RATING_B};
         techRating = RATING_C;
     }

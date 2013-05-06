@@ -32,7 +32,7 @@ public class InfantryRifleClanMauser960LaserWeapon extends InfantryWeapon {
 
     public InfantryRifleClanMauser960LaserWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Mauser 960 Assault System(Clan)";
         setInternalName(name);
         addLookupName("ClanInfantryMauser960");
@@ -43,6 +43,7 @@ public class InfantryRifleClanMauser960LaserWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 2;
         introDate = 2700;
+        techLevel.put(2700,techLevel.get(3071));
         extinctDate = 3040;
         availRating = new int[]{RATING_X,RATING_E,RATING_F};
         techRating = RATING_E;

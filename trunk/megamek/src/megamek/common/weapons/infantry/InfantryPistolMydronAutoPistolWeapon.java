@@ -32,7 +32,7 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolMydronAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Mydron Auto Pistol";
         setInternalName(name);
         addLookupName("InfantryMydronAutopistol");
@@ -43,6 +43,7 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.14;
         infantryRange = 0;
         introDate = 2612;
+        techLevel.put(2612,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_B,RATING_B};
         techRating = RATING_C;
     }

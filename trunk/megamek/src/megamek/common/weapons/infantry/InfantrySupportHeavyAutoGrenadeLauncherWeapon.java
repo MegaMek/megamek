@@ -32,7 +32,7 @@ public class InfantrySupportHeavyAutoGrenadeLauncherWeapon extends InfantryWeapo
 
     public InfantrySupportHeavyAutoGrenadeLauncherWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Infantry Heavy Auto Grenade Launcher";
         setInternalName(name);
         addLookupName("InfantryHeavyAutoGrenadeLauncher");
@@ -44,6 +44,7 @@ public class InfantrySupportHeavyAutoGrenadeLauncherWeapon extends InfantryWeapo
         infantryRange = 1;
         crew = 1;
         introDate = 2900;
+        techLevel.put(2900,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_D,RATING_C};
         techRating = RATING_D;
     }

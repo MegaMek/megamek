@@ -32,7 +32,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolClanGaussPistolWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Gauss Pistol";
         setInternalName(name);
         addLookupName("InfantryGausspistol");
@@ -43,6 +43,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.14;
         infantryRange = 0;
         introDate = 2850;
+        techLevel.put(2850,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_F;
     }

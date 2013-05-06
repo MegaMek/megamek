@@ -32,7 +32,7 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
 
     public InfantrySupportOneShotMRMWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Infantry One-Shot MRM Launcher";
         setInternalName(name);
         addLookupName("InfantryMRM");
@@ -45,6 +45,7 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 1;
         introDate = 3065;
+        techLevel.put(3065,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_D;
     }

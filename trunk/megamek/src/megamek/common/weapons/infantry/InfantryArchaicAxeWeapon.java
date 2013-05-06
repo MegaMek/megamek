@@ -32,7 +32,7 @@ public class InfantryArchaicAxeWeapon extends InfantryWeapon {
 
     public InfantryArchaicAxeWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Axe";
         setInternalName(name);
         addLookupName("InfantryAxe");
@@ -44,6 +44,7 @@ public class InfantryArchaicAxeWeapon extends InfantryWeapon {
         infantryDamage = 0.07;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_A,RATING_A};
         techRating = RATING_A;
     }

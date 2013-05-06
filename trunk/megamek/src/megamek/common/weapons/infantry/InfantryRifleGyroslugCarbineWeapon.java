@@ -32,7 +32,7 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
 
     public InfantryRifleGyroslugCarbineWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Gyroslug Carbine";
         setInternalName(name);
         addLookupName("InfantryGyroslugCarbine");
@@ -43,6 +43,7 @@ public class InfantryRifleGyroslugCarbineWeapon extends InfantryWeapon {
         infantryDamage = 0.28;
         infantryRange = 1;
         introDate = 2580;
+        techLevel.put(2580,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_D,RATING_C};
         techRating = RATING_D;
     }

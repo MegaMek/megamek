@@ -32,7 +32,7 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
 
     public InfantryArchaicVibroAxeWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Vibro Axe";
         setInternalName(name);
         addLookupName("InfantryVibroAxe");
@@ -43,6 +43,7 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 0;
         introDate = 2445;
+        techLevel.put(2445,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_D,RATING_D};
         techRating = RATING_E;
     }

@@ -32,7 +32,7 @@ public class InfantrySupportLightMortarInfernoWeapon extends InfantryWeapon {
 
     public InfantrySupportLightMortarInfernoWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Light Inferno Mortar";
         setInternalName(name);
         addLookupName("InfantryLightMortarInferno");
@@ -46,6 +46,7 @@ public class InfantrySupportLightMortarInfernoWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 2;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_B;
     }

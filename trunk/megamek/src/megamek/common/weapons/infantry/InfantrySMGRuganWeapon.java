@@ -32,7 +32,7 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
 
     public InfantrySMGRuganWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Rugan SMG";
         setInternalName(name);
         addLookupName("InfantryRuganSMG");
@@ -43,6 +43,7 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
         infantryDamage = 0.20;
         infantryRange = 0;
         introDate = 2720;
+        techLevel.put(2720,techLevel.get(3071));
         availRating = new int[]{RATING_D,RATING_B,RATING_C};
         techRating = RATING_C;
     }

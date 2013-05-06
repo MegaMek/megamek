@@ -30,7 +30,7 @@ public class ISNarcOS extends NarcWeapon {
      */
     public ISNarcOS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Narc (OS)";
         setInternalName("ISNarcBeacon (OS)");
         addLookupName("IS OS Narc Beacon");

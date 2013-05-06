@@ -31,7 +31,7 @@ public class ISC3M extends TAGWeapon {
 
     public ISC3M() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "C3 Master with TAG";
         setInternalName("ISC3MasterUnit");
         addLookupName("IS C3 Computer");

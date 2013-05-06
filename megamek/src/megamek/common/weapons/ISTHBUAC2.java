@@ -34,7 +34,7 @@ public class ISTHBUAC2 extends UACWeapon {
      */
     public ISTHBUAC2() {
         super();
-        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         this.name = "Ultra AC/2 (THB)";
         this.setInternalName("ISUltraAC2 (THB)");
         this.addLookupName("IS Ultra AC/2 (THB)");

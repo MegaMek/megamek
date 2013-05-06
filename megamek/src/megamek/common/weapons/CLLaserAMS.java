@@ -34,7 +34,7 @@ public class CLLaserAMS extends LaserWeapon {
      */
     public CLLaserAMS() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Laser AMS";
         setInternalName("CLLaserAntiMissileSystem");
         addLookupName("Clan Laser Anti-Missile Sys");
@@ -54,5 +54,6 @@ public class CLLaserAMS extends LaserWeapon {
         techRating = RATING_F;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3048;
+        techLevel.put(3048,techLevel.get(3071));
     }
 }

@@ -35,7 +35,7 @@ public class ISBATaser extends AmmoWeapon {
      */
     public ISBATaser() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Battle Armor Taser";
         setInternalName(name);
         addLookupName("ISBATaser");

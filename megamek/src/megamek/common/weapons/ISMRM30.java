@@ -30,7 +30,7 @@ public class ISMRM30 extends MRMWeapon {
      */
     public ISMRM30() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "MRM 30";
         this.setInternalName(this.name);
         this.addLookupName("MRM-30");
@@ -50,6 +50,7 @@ public class ISMRM30 extends MRMWeapon {
         this.medAV = 18;
         this.maxRange = RANGE_MED;
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_C;
     }

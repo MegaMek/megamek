@@ -37,7 +37,7 @@ public class KrakenWeapon extends CapitalMissileWeapon {
      */
     public KrakenWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         this.name = "Kraken";
         this.setInternalName(this.name);
         this.addLookupName("Kraken");

@@ -35,7 +35,7 @@ public class CLLongTom extends ArtilleryWeapon {
      */
     public CLLongTom() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "Long Tom";
         setInternalName("CLLongTom");
         addLookupName("CLLongTomArtillery");

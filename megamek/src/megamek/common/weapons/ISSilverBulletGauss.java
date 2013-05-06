@@ -38,7 +38,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     public ISSilverBulletGauss() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Silver Bullet Gauss Rifle";
         setInternalName("ISSBGR");
         addLookupName("IS Silver Bullet Gauss Rifle");
@@ -66,6 +66,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3051;
+        techLevel.put(3051,techLevel.get(3071));
    }
 
     /*

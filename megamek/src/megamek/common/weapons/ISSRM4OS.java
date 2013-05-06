@@ -30,7 +30,7 @@ public class ISSRM4OS extends SRMWeapon {
      */
     public ISSRM4OS() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "SRM 4 (OS)";
         setInternalName("ISSRM4OS");
         addLookupName("ISSRM4 (OS)"); // mtf

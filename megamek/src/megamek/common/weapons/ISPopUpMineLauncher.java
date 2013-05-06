@@ -39,7 +39,7 @@ public class ISPopUpMineLauncher extends Weapon {
      */
     public ISPopUpMineLauncher() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Pop-up Mine";
         setInternalName(BattleArmor.MINE_LAUNCHER);
         addLookupName("ISMine Launcher");
@@ -59,6 +59,7 @@ public class ISPopUpMineLauncher extends Weapon {
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
         introDate = 3062;
+        techLevel.put(3062,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_D;
     }

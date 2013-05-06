@@ -33,7 +33,7 @@ public class CLImprovedHeavyMediumLaser extends LaserWeapon {
      */
     public CLImprovedHeavyMediumLaser() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Improved Heavy Medium Laser";
         shortName = "Imp. Heavy Medium Laser";
         setInternalName("CLImprovedMediumHeavyLaser");
@@ -60,5 +60,6 @@ public class CLImprovedHeavyMediumLaser extends LaserWeapon {
         techRating = RATING_F;	
         availRating = new int[]{RATING_X, RATING_X, RATING_F};	
         introDate = 3069;
+        techLevel.put(3069,techLevel.get(3071));
         }
 }

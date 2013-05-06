@@ -33,7 +33,7 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
      */
     public CLProtoMechAC4() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "ProtoMech AC/4";
         setInternalName("CLProtoMechAC4");
         addLookupName("Clan ProtoMech AC/4");
@@ -57,5 +57,6 @@ public class CLProtoMechAC4 extends ProtoMechACWeapon {
         techRating = RATING_F;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};	
         introDate = 3073;
+        techLevel.put(3073,techLevel.get(3071));
         }
 }

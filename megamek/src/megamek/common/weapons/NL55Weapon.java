@@ -32,7 +32,7 @@ public class NL55Weapon extends NavalLaserWeapon {
      */
     public NL55Weapon() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Naval Laser 55";
         this.setInternalName(this.name);
         this.addLookupName("NL55");

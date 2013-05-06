@@ -33,7 +33,7 @@ public class ISHERPPC extends PPCWeapon {
      */
     public ISHERPPC() {
         super();
-        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         this.name = "Kinslaughter H ER PPC";
         this.setInternalName("ISHERPPC");
         this.addLookupName("IS Kinslaughter H ER PPC");

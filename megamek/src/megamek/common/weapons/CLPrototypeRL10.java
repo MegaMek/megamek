@@ -30,7 +30,7 @@ public class CLPrototypeRL10 extends PrototypeRLWeapon {
      */
     public CLPrototypeRL10() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Rocket Launcher 10 (PP)";
         setInternalName("CLRL10Prototype");
         heat = 3;

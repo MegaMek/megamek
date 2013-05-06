@@ -30,7 +30,7 @@ public class ISStreakSRM6IOS extends StreakSRMWeapon {
      */
     public ISStreakSRM6IOS() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Streak SRM 6 (I-OS)";
         setInternalName("ISStreakSRM6IOS");
         addLookupName("ISStreakSRM6 (IOS)"); // mtf
@@ -52,5 +52,6 @@ public class ISStreakSRM6IOS extends StreakSRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3056;
+        techLevel.put(3056,techLevel.get(3071));
     }
 }

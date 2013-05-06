@@ -34,7 +34,7 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
      */
     public CLHeavyFlamer() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "Heavy Flamer";
         setInternalName("CLHeavyFlamer");
         addLookupName("Clan Heavy Flamer");
@@ -57,5 +57,6 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         techRating = RATING_C;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3067;
+        techLevel.put(3067,techLevel.get(3071));
     }
 }

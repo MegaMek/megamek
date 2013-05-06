@@ -34,7 +34,7 @@ public class ISERSmallLaser extends LaserWeapon {
      */
     public ISERSmallLaser() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "ER Small Laser";
         setInternalName("ISERSmallLaser");
         addLookupName("IS ER Small Laser");

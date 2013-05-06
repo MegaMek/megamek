@@ -31,7 +31,7 @@ public class ISThunderBolt20 extends ThunderBoltWeapon {
      */
     public ISThunderBolt20() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
+        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         this.name = "Thunderbolt 20";
         this.setInternalName(this.name);
         this.addLookupName("IS Thunderbolt-20");
@@ -55,5 +55,6 @@ public class ISThunderBolt20 extends ThunderBoltWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3072;
+        techLevel.put(3072,techLevel.get(3071));
     }
 }

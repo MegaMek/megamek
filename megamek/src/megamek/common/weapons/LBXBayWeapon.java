@@ -33,7 +33,7 @@ public class LBXBayWeapon extends AmmoBayWeapon {
     public LBXBayWeapon() {
         super();
         //tech levels are a little tricky
-        this.techLevel = TechConstants.T_ALL;
+        this.techLevel.put(3071,TechConstants.T_ALL);
         this.name = "LBX AC Bay";
         this.setInternalName(this.name);
         this.heat = 0;

@@ -37,7 +37,7 @@ public class StingrayWeapon extends SubCapitalMissileWeapon {
      */
     public StingrayWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
+        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         this.name = "Stingray";
         this.setInternalName(this.name);
         this.addLookupName("Stingray");

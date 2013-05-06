@@ -38,7 +38,7 @@ public class ISIHGaussRifle extends GaussWeapon {
      */
     public ISIHGaussRifle() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Improved Heavy Gauss Rifle";
         shortName = "Imp. Heavy Gauss Rifle";
         setInternalName("ISImprovedHeavyGaussRifle");
@@ -63,6 +63,7 @@ public class ISIHGaussRifle extends GaussWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3065;
+        techLevel.put(3065,techLevel.get(3071));
     }
 
     /*

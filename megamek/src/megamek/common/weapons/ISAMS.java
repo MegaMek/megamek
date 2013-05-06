@@ -34,7 +34,7 @@ public class ISAMS extends AmmoWeapon {
      */
     public ISAMS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "AMS";
         setInternalName("ISAntiMissileSystem");
         addLookupName("IS Anti-Missile System");
@@ -51,6 +51,7 @@ public class ISAMS extends AmmoWeapon {
         setInstantModeSwitch(false);
         cost = 100000;
         introDate = 2617;
+        techLevel.put(2617,techLevel.get(3071));
         extinctDate = 2796;
         reintroDate = 3040;
         availRating = new int[]{RATING_E,RATING_F,RATING_D};

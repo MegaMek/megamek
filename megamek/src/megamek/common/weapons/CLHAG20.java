@@ -31,7 +31,7 @@ public class CLHAG20 extends HAGWeapon {
 
     public CLHAG20() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "HAG/20";
         setInternalName("CLHAG20");
         addLookupName("Clan HAG/20");
@@ -52,6 +52,7 @@ public class CLHAG20 extends HAGWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = rackSize/2;
         introDate = 3068;
+        techLevel.put(3068,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
 

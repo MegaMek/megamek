@@ -32,7 +32,7 @@ public class ISAC20Primitive extends ACWeapon {
 
     public ISAC20Primitive() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "AC/20p";
         setInternalName("Autocannon/20 Primitive");
         addLookupName("IS Auto Cannon/20 Primitive");

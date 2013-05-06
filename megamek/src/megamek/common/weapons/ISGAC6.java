@@ -34,7 +34,7 @@ public class ISGAC6 extends ACWeapon {
      */
     public ISGAC6() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "GAC/6";
         setInternalName(name);
         addLookupName("IS Gatling Auto Cannon/6");

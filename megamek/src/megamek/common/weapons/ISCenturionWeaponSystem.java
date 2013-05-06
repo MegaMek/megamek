@@ -34,7 +34,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
      */
     public ISCenturionWeaponSystem() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Centurion Weapon System";
         setInternalName(name);
         heat = 4;

@@ -30,7 +30,7 @@ public class CLSRT2OS extends SRTWeapon {
      */
     public CLSRT2OS() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "SRT 2 (OS)";
         setInternalName("CLSRT2 (OS)");
         addLookupName("Clan OS SRT-2");

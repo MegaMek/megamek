@@ -34,7 +34,7 @@ public class ISLB2XAC extends LBXACWeapon {
      */
     public ISLB2XAC() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "LB 2-X AC";
         this.setInternalName("ISLBXAC2");
         this.addLookupName("IS LB 2-X AC");
@@ -56,6 +56,7 @@ public class ISLB2XAC extends LBXACWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

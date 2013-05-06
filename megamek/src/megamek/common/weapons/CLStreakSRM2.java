@@ -29,7 +29,7 @@ public class CLStreakSRM2 extends StreakSRMWeapon {
      *
      */
     public CLStreakSRM2() {
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Streak SRM 2";
         setInternalName("CLStreakSRM2");
         addLookupName("Clan Streak SRM-2");

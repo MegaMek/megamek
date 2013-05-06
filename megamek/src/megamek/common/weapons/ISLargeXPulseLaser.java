@@ -33,7 +33,7 @@ public class ISLargeXPulseLaser extends PulseLaserWeapon {
      */
     public ISLargeXPulseLaser() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Large X-Pulse Laser";
         setInternalName("ISLargeXPulseLaser");
         addLookupName("IS X-Pulse Large Laser");
@@ -59,5 +59,6 @@ public class ISLargeXPulseLaser extends PulseLaserWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
     }
 }

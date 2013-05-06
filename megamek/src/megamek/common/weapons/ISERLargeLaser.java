@@ -34,7 +34,7 @@ public class ISERLargeLaser extends LaserWeapon {
 
     public ISERLargeLaser() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "ER Large Laser";
         this.setInternalName("ISERLargeLaser");
         this.addLookupName("IS ER Large Laser");
@@ -57,6 +57,7 @@ public class ISERLargeLaser extends LaserWeapon {
         this.longAV = 8;
         this.maxRange = RANGE_LONG;
         introDate = 2620;
+        techLevel.put(2620,techLevel.get(3071));
         extinctDate = 2950;
         reintroDate = 3037;
         availRating = new int[]{RATING_E,RATING_F,RATING_D};

@@ -36,7 +36,7 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
 
     public ISERLargeLaserPrototype() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "ER Large Laser Prototype";
         setInternalName("ISERLargeLaserPrototype");
         addLookupName("IS ER Large Laser Prototype");

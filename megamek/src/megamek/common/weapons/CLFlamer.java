@@ -34,7 +34,7 @@ public class CLFlamer extends FlamerWeapon {
      */
     public CLFlamer() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "Flamer";
         this.setInternalName("CLFlamer");
         this.addLookupName("Clan Flamer");
@@ -53,6 +53,7 @@ public class CLFlamer extends FlamerWeapon {
         this.maxRange = RANGE_SHORT;
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         introDate = 2827;
+        techLevel.put(2827,techLevel.get(3071));
         techRating = RATING_C;
     }
     

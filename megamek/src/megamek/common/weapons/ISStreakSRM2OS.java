@@ -30,7 +30,7 @@ public class ISStreakSRM2OS extends StreakSRMWeapon {
      */
     public ISStreakSRM2OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Streak SRM 2 (OS)";
         setInternalName("ISStreakSRM2OS");
         addLookupName("ISStreakSRM2 (OS)"); // mtf

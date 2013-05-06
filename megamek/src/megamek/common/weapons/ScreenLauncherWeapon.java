@@ -37,7 +37,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
      */
     public ScreenLauncherWeapon() {
 
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Screen Launcher";
         this.setInternalName(this.name);
         this.addLookupName("ScreenLauncher");
@@ -56,6 +56,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.capital = false;
         this.atClass = CLASS_SCREEN;
         introDate = 3055;
+        techLevel.put(3055,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
     }

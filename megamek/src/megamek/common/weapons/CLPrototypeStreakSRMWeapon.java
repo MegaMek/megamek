@@ -35,7 +35,7 @@ public abstract class CLPrototypeStreakSRMWeapon extends SRMWeapon {
         super();
         ammoType = AmmoType.T_SRM_STREAK;
         toHitModifier = -1;
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
     }
 
     /*

@@ -34,7 +34,7 @@ public class ISTHBLB20XAC extends LBXACWeapon {
      */
     public ISTHBLB20XAC() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "LB 20-X AC (THB)";
         setInternalName("ISTHBLBXAC20");
         addLookupName("IS LB 20-X AC (THB)");

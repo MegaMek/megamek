@@ -30,7 +30,7 @@ public class CLSRM4OS extends SRMWeapon {
      */
     public CLSRM4OS() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "SRM 4 (OS)";
         setInternalName("CLSRM4 (OS)");
         addLookupName("Clan OS SRM-4");

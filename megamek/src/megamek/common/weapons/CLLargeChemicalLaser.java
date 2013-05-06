@@ -53,5 +53,6 @@ public class CLLargeChemicalLaser extends CLChemicalLaserWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3059;
+        techLevel.put(3059,techLevel.get(3071));
     }
 }

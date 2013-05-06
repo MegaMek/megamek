@@ -30,7 +30,7 @@ public class CLLRM5OS extends LRMWeapon {
      */
     public CLLRM5OS() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "LRM 5 (OS)";
         setInternalName("CLLRM5 (OS)");
         addLookupName("CLLRM5OS");

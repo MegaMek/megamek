@@ -37,7 +37,7 @@ public class PiranhaWeapon extends SubCapitalMissileWeapon {
      */
     public PiranhaWeapon() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Piranha";
         setInternalName(name);
         addLookupName("Piranha");

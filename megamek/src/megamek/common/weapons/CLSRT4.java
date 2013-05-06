@@ -30,7 +30,7 @@ public class CLSRT4 extends SRTWeapon {
      */
     public CLSRT4() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "SRT 4";
         setInternalName("CLSRT4");
         addLookupName("Clan SRT-4");
@@ -48,6 +48,7 @@ public class CLSRT4 extends SRTWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 60000;
         introDate = 2824;
+        techLevel.put(2824,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_F;
     }

@@ -37,7 +37,7 @@ public class CLLightMG extends MGWeapon {
      */
     public CLLightMG() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "Light Machine Gun";
         this.setInternalName("CLLightMG");
         this.addLookupName("Clan Light Machine Gun");
@@ -58,6 +58,7 @@ public class CLLightMG extends MGWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AC;
         introDate = 3060;
+        techLevel.put(3060,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_F;
     }

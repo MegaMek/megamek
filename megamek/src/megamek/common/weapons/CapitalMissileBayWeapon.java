@@ -37,7 +37,7 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
     public CapitalMissileBayWeapon() {
         super();
         //tech levels are a little tricky
-        this.techLevel = TechConstants.T_ALL;
+        this.techLevel.put(3071,TechConstants.T_ALL);
         this.name = "Capital Missile Bay";
         this.setInternalName(this.name);
         this.heat = 0;

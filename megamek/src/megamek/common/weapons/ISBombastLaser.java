@@ -35,7 +35,7 @@ public class ISBombastLaser extends LaserWeapon {
 
     public ISBombastLaser() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Bombast Laser";
         setInternalName(name);
         addLookupName("IS Bombast Laser");
@@ -61,6 +61,7 @@ public class ISBombastLaser extends LaserWeapon {
         techRating = RATING_E;	
         availRating = new int[]{RATING_X, RATING_X, RATING_E};	
         introDate = 3064;
+        techLevel.put(3064,techLevel.get(3071));
     }
 
     /*

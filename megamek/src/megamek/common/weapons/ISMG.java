@@ -32,7 +32,7 @@ public class ISMG extends MGWeapon {
      */
     public ISMG() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
+        this.techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         this.name = "Machine Gun";
         this.setInternalName(this.name);
         this.addLookupName("IS Machine Gun");

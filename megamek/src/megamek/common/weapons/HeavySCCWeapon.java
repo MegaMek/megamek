@@ -32,7 +32,7 @@ public class HeavySCCWeapon extends SubCapitalCannonWeapon {
      */
     public HeavySCCWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
+        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         this.name = "Heavy Sub-Capital Cannon";
         this.setInternalName(this.name);
         this.addLookupName("HeavySCC");

@@ -33,7 +33,7 @@ public class ISLRM15Primitive extends LRMWeapon {
 
     public ISLRM15Primitive() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "LRM 15p";
         setInternalName(name);
         addLookupName("IS LRM-15 Primitive");

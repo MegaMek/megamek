@@ -31,7 +31,7 @@ public class ISC3MBS extends TAGWeapon {
 
     public ISC3MBS() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "C3 Master Boosted with TAG";
         setInternalName("ISC3MasterBoostedSystemUnit");
         addLookupName("IS C3 Computer Boosted");
@@ -53,5 +53,6 @@ public class ISC3MBS extends TAGWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3073;
+        techLevel.put(3073,techLevel.get(3071));
     }
 }

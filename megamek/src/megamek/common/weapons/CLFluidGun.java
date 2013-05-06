@@ -30,7 +30,7 @@ public class CLFluidGun extends FluidGunWeapon{
      */
     public CLFluidGun() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "Fluid Gun";
         setInternalName("Clan Fluid Gun");
         addLookupName("CLFluidGun");

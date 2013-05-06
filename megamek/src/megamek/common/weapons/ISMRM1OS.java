@@ -30,7 +30,7 @@ public class ISMRM1OS extends MRMWeapon {
      */
     public ISMRM1OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "MRM 1 (OS)";
         setInternalName(name);
         addLookupName("ISMRM1OS");

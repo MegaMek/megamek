@@ -30,7 +30,7 @@ public class CLNarcOS extends NarcWeapon {
      */
     public CLNarcOS() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Narc (OS)";
         setInternalName("CLNarcBeacon (OS)");
         addLookupName("Clan OS Narc Beacon");
@@ -47,6 +47,7 @@ public class CLNarcOS extends NarcWeapon {
         bv = 6;
         cost = 100000;
         introDate = 2587;
+        techLevel.put(2587,techLevel.get(3071));
         availRating = new int[]{RATING_E,RATING_F,RATING_D};
         techRating = RATING_F;
     }

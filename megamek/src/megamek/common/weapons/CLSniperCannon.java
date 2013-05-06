@@ -32,7 +32,7 @@ public class CLSniperCannon extends ArtilleryCannonWeapon {
 
     public CLSniperCannon() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Sniper Cannon";
         setInternalName("CLSniper Cannon");
         addLookupName("CLSniperArtilleryCannon");
@@ -56,6 +56,7 @@ public class CLSniperCannon extends ArtilleryCannonWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_F, RATING_E};
         introDate = 3032;
+        techLevel.put(3032,techLevel.get(3071));
     }
 
 }

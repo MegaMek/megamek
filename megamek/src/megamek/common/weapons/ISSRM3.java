@@ -30,7 +30,7 @@ public class ISSRM3 extends SRMWeapon {
      */
     public ISSRM3() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "SRM 3";
         setInternalName(name);
         addLookupName("IS SRM-3");

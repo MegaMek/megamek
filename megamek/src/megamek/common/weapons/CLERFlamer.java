@@ -34,7 +34,7 @@ public class CLERFlamer extends FlamerWeapon {
      */
     public CLERFlamer() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "ER Flamer";
         setInternalName("CLERFlamer");
         addLookupName("CL ER Flamer");
@@ -54,5 +54,6 @@ public class CLERFlamer extends FlamerWeapon {
         techRating = RATING_D;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3067;
+        techLevel.put(3067,techLevel.get(3071));
     }
 }

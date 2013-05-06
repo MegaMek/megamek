@@ -35,7 +35,7 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
     private static final long serialVersionUID = -854810886500324094L;
 
     public CLChemicalLaserWeapon() {
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         ammoType = AmmoType.T_CHEMICAL_LASER;
         minimumRange = WEAPON_NA;
         flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);

@@ -34,7 +34,7 @@ public class ISTHBLB5XAC extends LBXACWeapon {
      */
     public ISTHBLB5XAC() {
         super();
-        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         this.name = "LB 5-X AC (THB)";
         this.setInternalName("ISTHBLBXAC5");
         this.addLookupName("IS LB 5-X AC (THB)");

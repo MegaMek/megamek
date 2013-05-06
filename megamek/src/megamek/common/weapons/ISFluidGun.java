@@ -30,7 +30,7 @@ public class ISFluidGun extends FluidGunWeapon{
      */
     public ISFluidGun() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Fluid Gun";
         setInternalName("IS Fluid Gun");
         addLookupName("ISFluidGun");

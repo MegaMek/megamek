@@ -34,7 +34,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
      */
     public ISVehicleFlamer() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
+        this.techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         this.name = "Vehicle Flamer";
         this.setInternalName(this.name);
         this.addLookupName("IS Vehicle Flamer");
@@ -54,6 +54,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_B};
         techRating = RATING_B;
     }

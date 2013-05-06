@@ -32,7 +32,7 @@ public class MediumSCCWeapon extends SubCapitalCannonWeapon {
      */
     public MediumSCCWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_ADVANCED;
+        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         this.name = "Medium Sub-Capital Cannon";
         this.setInternalName(this.name);
         this.addLookupName("MediumSCC");

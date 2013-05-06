@@ -32,7 +32,7 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHoldOutLaserPistolWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Holdout Laser Pistol";
         setInternalName(name);
         addLookupName("InfantryHoldoutLaserpistol");
@@ -43,6 +43,7 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.14;
         infantryRange = 0;
         introDate = 2320;
+        techLevel.put(2320,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_D;
     }

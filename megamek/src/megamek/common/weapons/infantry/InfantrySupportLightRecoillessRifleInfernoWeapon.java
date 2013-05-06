@@ -32,7 +32,7 @@ public class InfantrySupportLightRecoillessRifleInfernoWeapon extends InfantryWe
 
     public InfantrySupportLightRecoillessRifleInfernoWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Inferno Light Recoilless Rifle";
         setInternalName(name);
         addLookupName("InfantryInfernoLRR");
@@ -47,6 +47,7 @@ public class InfantrySupportLightRecoillessRifleInfernoWeapon extends InfantryWe
         infantryRange = 2;
         crew = 1;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
     }

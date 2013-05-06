@@ -32,7 +32,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
 
     public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Federated Barrett M42B Inferno";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM42BInferno");
@@ -43,6 +43,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         infantryDamage = 0.82;
         infantryRange = 1;
         introDate = 3064;
+        techLevel.put(3064,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_C;
     }

@@ -32,7 +32,7 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolFlamerPistolWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Flamer Pistol";
         setInternalName(name);
         addLookupName("InfantryFlamerpistol");
@@ -43,6 +43,7 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.27;
         infantryRange = 0;
         introDate = 2100;
+        techLevel.put(2100,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
     }

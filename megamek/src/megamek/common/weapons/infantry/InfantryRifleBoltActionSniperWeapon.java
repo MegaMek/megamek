@@ -32,7 +32,7 @@ public class InfantryRifleBoltActionSniperWeapon extends InfantryWeapon {
 
     public InfantryRifleBoltActionSniperWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Sniper Rifle";
         setInternalName(name);
         addLookupName("InfantryBoltActionSniperRifle");
@@ -43,6 +43,7 @@ public class InfantryRifleBoltActionSniperWeapon extends InfantryWeapon {
         infantryDamage = 0.18;
         infantryRange = 2;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_B;
     }

@@ -32,7 +32,7 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolMandrakeGaussPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Mandrake Holdout Gauss Pistol";
         setInternalName(name);
         addLookupName("InfantryMandrakeGaussPistol");
@@ -43,6 +43,7 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         introDate = 3052;
+        techLevel.put(3052,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

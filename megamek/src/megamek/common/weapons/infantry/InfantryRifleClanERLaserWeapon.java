@@ -32,7 +32,7 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
 
     public InfantryRifleClanERLaserWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Infantry Clan ER Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryClanERLaserRifle");
@@ -43,6 +43,7 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.28;
         infantryRange = 3;
         introDate = 2845;
+        techLevel.put(2845,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_F;
     }

@@ -32,7 +32,7 @@ public class InfantrySupportStandardSRMWeapon extends InfantryWeapon {
 
     public InfantrySupportStandardSRMWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Two-Shot SRM Launcher";
         setInternalName(name);
         addLookupName("InfantryStandardSRM");
@@ -45,6 +45,7 @@ public class InfantrySupportStandardSRMWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 1;
         introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_D};
         techRating = RATING_C;
     }

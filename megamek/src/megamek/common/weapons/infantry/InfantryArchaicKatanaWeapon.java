@@ -32,7 +32,7 @@ public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
 
     public InfantryArchaicKatanaWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Katana";
         setInternalName(name);
         addLookupName("InfantryKatana");
@@ -43,6 +43,7 @@ public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_D};
         techRating = RATING_A;
     }

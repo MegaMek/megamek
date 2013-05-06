@@ -32,7 +32,7 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyRecoillessRifleWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Heavy Recoilless Rifle";
         setInternalName(name);
         addLookupName("InfantryHRR");
@@ -45,6 +45,7 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 3;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
     }

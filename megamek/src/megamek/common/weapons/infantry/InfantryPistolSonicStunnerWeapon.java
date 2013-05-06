@@ -32,7 +32,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 
     public InfantryPistolSonicStunnerWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Sonic Stunner";
         setInternalName(name);
         addLookupName("InfantrySonicStunnerpistol");
@@ -43,6 +43,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
         infantryDamage = 0.07;
         infantryRange = 0;
         introDate = 2375;
+        techLevel.put(2375,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_C,RATING_B};
         techRating = RATING_D;
     }

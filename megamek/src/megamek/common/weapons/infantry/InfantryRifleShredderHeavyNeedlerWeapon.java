@@ -32,7 +32,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
 
     public InfantryRifleShredderHeavyNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Shredder Heavy Needler";
         setInternalName(name);
         addLookupName("InfantryShredder");
@@ -43,6 +43,7 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
         infantryDamage = 0.23;
         infantryRange = 0;
         introDate = 3054;
+        techLevel.put(3054,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_D;
     }

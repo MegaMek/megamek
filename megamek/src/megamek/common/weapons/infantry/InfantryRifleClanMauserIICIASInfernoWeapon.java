@@ -32,7 +32,7 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
 
     public InfantryRifleClanMauserIICIASInfernoWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Infantry Clan Mauser IIC Inferno";
         setInternalName(name);
         addLookupName("InfantryClanMauserIICIASInferno");
@@ -43,6 +43,7 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
         infantryDamage = 0.62;
         infantryRange = 3;
         introDate = 3015;
+        techLevel.put(3015,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_F;
     }

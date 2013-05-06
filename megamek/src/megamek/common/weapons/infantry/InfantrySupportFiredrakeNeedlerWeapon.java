@@ -32,7 +32,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 
     public InfantrySupportFiredrakeNeedlerWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Infantry Firedrake Needler";
         setInternalName(name);
         addLookupName("InfantryFiredrake");
@@ -49,6 +49,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 2;
         introDate = 3061;
+        techLevel.put(3061,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_D;
     }

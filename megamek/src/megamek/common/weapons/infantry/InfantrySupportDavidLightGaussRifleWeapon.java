@@ -32,7 +32,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
 
     public InfantrySupportDavidLightGaussRifleWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Infantry David Light Gauss Rifle";
         setInternalName(name);
         ammoType = AmmoType.T_NA;
@@ -49,6 +49,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         introDate = 3063;
+        techLevel.put(3063,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

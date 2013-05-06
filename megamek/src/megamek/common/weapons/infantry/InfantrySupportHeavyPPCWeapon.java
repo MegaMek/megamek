@@ -32,7 +32,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyPPCWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Support PPC";
         setInternalName(name);
         addLookupName("InfantrySupportPPC");
@@ -45,6 +45,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
         infantryRange = 3;
         crew = 5;
         introDate = 2470;
+        techLevel.put(2470,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_D,RATING_C};
         techRating = RATING_E;
     }

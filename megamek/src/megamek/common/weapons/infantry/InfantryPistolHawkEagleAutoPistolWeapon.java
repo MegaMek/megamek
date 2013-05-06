@@ -32,7 +32,7 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHawkEagleAutoPistolWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Hawk Eagle Auto Pistol";
         setInternalName(name);
         addLookupName("InfantryHawkEagleAutopistol");
@@ -43,6 +43,7 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.27;
         infantryRange = 0;
         introDate = 3035;
+        techLevel.put(3035,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_C};
         techRating = RATING_C;
     }

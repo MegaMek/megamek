@@ -32,7 +32,7 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
 
     public InfantryRifleFederatedLongWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Federated Long Rifle";
         setInternalName(name);
         addLookupName("InfantryFederatedLongRifle");
@@ -43,6 +43,7 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 1;
         introDate = 2870;
+        techLevel.put(2870,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_C,RATING_A};
         techRating = RATING_C;
     }

@@ -32,7 +32,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 
     public InfantrySMGGuntherMP20Weapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Gunther MP-20";
         setInternalName(name);
         addLookupName("InfantryGuntherMP20");
@@ -43,6 +43,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
         infantryDamage = 0.27;
         infantryRange = 0;
         introDate = 3007;
+        techLevel.put(3007,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_E,RATING_C};
         techRating = RATING_C;
     }

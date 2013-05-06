@@ -32,7 +32,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
 
     public InfantryRifleHeavyGyrojetGunWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Heavy Gyrojet Gun";
         setInternalName(name);
         addLookupName("InfantryHeavyGyrojetGun");
@@ -43,6 +43,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
         infantryDamage = 0.21;
         infantryRange = 2;
         introDate = 2590;
+        techLevel.put(2590,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_D,RATING_C};
         techRating = RATING_D;
     }

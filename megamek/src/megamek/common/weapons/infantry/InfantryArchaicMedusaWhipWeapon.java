@@ -32,7 +32,7 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
 
     public InfantryArchaicMedusaWhipWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Medusa Whip";
         setInternalName(name);
         addLookupName("InfantryClanMedusaWhip");
@@ -43,6 +43,7 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         infantryDamage = 0.16;
         infantryRange = 0;
         introDate = 2820;
+        techLevel.put(2820,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_F,RATING_E};
         techRating = RATING_E;
     }

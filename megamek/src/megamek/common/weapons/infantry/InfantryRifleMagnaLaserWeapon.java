@@ -32,7 +32,7 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
 
     public InfantryRifleMagnaLaserWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Magna Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryMagnaLaser");
@@ -43,6 +43,7 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.26;
         infantryRange = 2;
         introDate = 2465;
+        techLevel.put(2465,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_D};
         techRating = RATING_D;
     }

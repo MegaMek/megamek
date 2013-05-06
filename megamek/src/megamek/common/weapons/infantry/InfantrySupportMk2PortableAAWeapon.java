@@ -32,7 +32,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 
     public InfantrySupportMk2PortableAAWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Infantry Mk 2 Man-Portable AA Weapon";
         setInternalName(name);
         addLookupName("InfantryMk2PortableAA");
@@ -50,6 +50,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
         longRange = 6;
         extremeRange = 8;
         introDate = 2510;
+        techLevel.put(2510,techLevel.get(3071));
         extinctDate = 2790;
         reintroDate = 3058;
         availRating = new int[]{RATING_E,RATING_F,RATING_D};

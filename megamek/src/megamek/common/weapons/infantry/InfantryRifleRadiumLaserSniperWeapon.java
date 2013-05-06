@@ -32,7 +32,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 
     public InfantryRifleRadiumLaserSniperWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Radium Sniper Rifle";
         setInternalName(name);
         addLookupName("InfantryRadiumSniper");
@@ -43,6 +43,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
         infantryDamage = 0.42;
         infantryRange = 3;
         introDate = 2583;
+        techLevel.put(2583,techLevel.get(3071));
         extinctDate = 2607;
         reintroDate = 3062;
         availRating = new int[]{RATING_F,RATING_X,RATING_F};

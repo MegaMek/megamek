@@ -32,7 +32,7 @@ public class InfantryRifleMakeshiftWeapon extends InfantryWeapon {
 
     public InfantryRifleMakeshiftWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Makeshift Rifle";
         setInternalName(name);
         addLookupName("InfantryMakeshiftRifle");
@@ -43,6 +43,7 @@ public class InfantryRifleMakeshiftWeapon extends InfantryWeapon {
         infantryDamage = 0.03;
         infantryRange = 1;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_B;
     }

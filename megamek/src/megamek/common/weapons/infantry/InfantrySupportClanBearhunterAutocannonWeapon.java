@@ -32,7 +32,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
 
     public InfantrySupportClanBearhunterAutocannonWeapon() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Infantry Bearhunter Super-Heavy Autocannon";
         setInternalName(name);
         addLookupName("InfantryBearhunter");
@@ -45,6 +45,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         infantryRange = 0;
         crew = 2;
         introDate = 3062;
+        techLevel.put(3062,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_D;
     }

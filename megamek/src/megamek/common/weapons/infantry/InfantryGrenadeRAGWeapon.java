@@ -32,7 +32,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
 
     public InfantryGrenadeRAGWeapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Rocket Assisted Grenade";
         setInternalName(name);
         addLookupName("InfantryRAG");
@@ -44,6 +44,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         infantryDamage = 0.38;
         infantryRange = 1;
         introDate = 3065;
+        techLevel.put(3065,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_C;
     }

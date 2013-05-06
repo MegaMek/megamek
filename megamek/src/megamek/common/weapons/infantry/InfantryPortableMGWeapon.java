@@ -31,7 +31,7 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
 
     public InfantryPortableMGWeapon() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "Infantry Portable MG";
         setInternalName(name);
         addLookupName("InfantryMGPortable");
@@ -49,6 +49,7 @@ public class InfantryPortableMGWeapon extends InfantryWeapon {
         longRange = 3;
         extremeRange = 4;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
     }

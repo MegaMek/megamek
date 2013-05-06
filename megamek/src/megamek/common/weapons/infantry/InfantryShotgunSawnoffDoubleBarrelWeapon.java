@@ -32,7 +32,7 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
 
     public InfantryShotgunSawnoffDoubleBarrelWeapon() {
         super();
-        techLevel = TechConstants.T_ALLOWED_ALL;
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Double Barrel Sawed-off Shotgun";
         setInternalName(name);
         addLookupName("InfantryDoubleSawnOff");
@@ -43,6 +43,7 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
         infantryDamage = 0.03;
         infantryRange = 0;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_B;
     }

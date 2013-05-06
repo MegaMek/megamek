@@ -32,7 +32,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 
     public InfantryRifleMauserG150Weapon() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Mauser and Grey G-150";
         setInternalName(name);
         addLookupName("InfantryM&GG150");
@@ -43,6 +43,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
         infantryDamage = 0.32;
         infantryRange = 2;
         introDate = 3060;
+        techLevel.put(3060,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_C;
     }

@@ -44,7 +44,9 @@ v0.35.38-dev (SVN)
 + Bug: extended LRM 20 should have heat 12
 + Bug: clan artillery ammo BV wrong
 + Bug: CASE II in torso should prevent explosive BV reduction in adjacent leg
-+ Bug 3702: changing game settings resets camo selection dialog 
++ Bug 3702: changing game settings resets camo selection dialog
++ Start to allow multiple techlevels per equipment, based on year, for TRO:Prototypes tech progression
+ 
 
 v0.35.37 (2013-04-27, 00:35 UTC+2)
 + Bug 3458: Imaging stacking error 

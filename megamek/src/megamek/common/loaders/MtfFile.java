@@ -261,8 +261,11 @@ public class MtfFile implements IMechLoader {
                 }
             } else if (techBase.substring(9).trim().equals("Mixed (IS Chassis)")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+                        break;
                     case 3:
-                        throw new EntityLoadingException("Mixed tech units must be experimental");
+                        mech.setTechLevel(TechConstants.T_IS_ADVANCED);
                     case 4:
                         mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
                         break;
@@ -275,8 +278,11 @@ public class MtfFile implements IMechLoader {
                 mech.setMixedTech(true);
             } else if (techBase.substring(9).trim().equals("Mixed (Clan Chassis)")) {
                 switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_CLAN_TW);
+                        break;
                     case 3:
-                        throw new EntityLoadingException("Mixed tech units must be experimental");
+                        mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
                     case 4:
                         mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
                         break;

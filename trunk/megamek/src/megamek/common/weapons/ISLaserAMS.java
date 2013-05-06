@@ -30,7 +30,7 @@ public class ISLaserAMS extends LaserWeapon {
 
     public ISLaserAMS() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Laser AMS";
         setInternalName("ISLaserAntiMissileSystem");
         addLookupName("IS Laser Anti-Missile System");
@@ -50,5 +50,6 @@ public class ISLaserAMS extends LaserWeapon {
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3059;
+        techLevel.put(3059,techLevel.get(3071));
     }
 }

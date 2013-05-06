@@ -36,7 +36,7 @@ public class CLAPGaussRifle extends GaussWeapon {
      */
     public CLAPGaussRifle() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "AP Gauss Rifle";
         setInternalName("CLAPGaussRifle");
         addLookupName("Clan AP Gauss Rifle");

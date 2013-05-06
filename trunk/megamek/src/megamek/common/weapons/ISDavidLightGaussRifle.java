@@ -34,7 +34,7 @@ public class ISDavidLightGaussRifle extends Weapon {
      */
     public ISDavidLightGaussRifle() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "David Light Gauss Rifle";
         setInternalName(name);
         addLookupName("ISDavidLightGaussRifle");
@@ -48,6 +48,7 @@ public class ISDavidLightGaussRifle extends Weapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON);
         cost = 22500;
         introDate = 3063;
+        techLevel.put(3063,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

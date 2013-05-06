@@ -30,7 +30,7 @@ public class CLLRT15 extends LRTWeapon {
      */
     public CLLRT15() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "LRT 15";
         this.setInternalName("CLLRTorpedo15");
         this.addLookupName("Clan LRT-15");
@@ -48,6 +48,7 @@ public class CLLRT15 extends LRTWeapon {
         this.bv = 164;
         this.cost = 175000;
         introDate = 2824;
+        techLevel.put(2824,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_C;
     }

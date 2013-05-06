@@ -35,7 +35,7 @@ public class ISHeavyMortar extends Weapon {
      */
     public ISHeavyMortar() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Heavy Mortar";
         setInternalName(name);
         addLookupName("ISHeavyMortar");
@@ -50,6 +50,7 @@ public class ISHeavyMortar extends Weapon {
         bv = 17;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE);
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_C};
         techRating = RATING_B;
     }

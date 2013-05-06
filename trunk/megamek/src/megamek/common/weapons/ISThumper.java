@@ -35,7 +35,7 @@ public class ISThumper extends ArtilleryWeapon {
      */
     public ISThumper() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Thumper";
         setInternalName("ISThumper");
         addLookupName("ISThumperArtillery");

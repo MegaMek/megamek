@@ -30,7 +30,7 @@ public class ISMRM3OS extends MRMWeapon {
      */
     public ISMRM3OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "MRM 3 (OS)";
         setInternalName(name);
         addLookupName("ISMRM3OS");
@@ -42,6 +42,7 @@ public class ISMRM3OS extends MRMWeapon {
         bv = 4;
         flags = flags.or(F_ONESHOT);
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

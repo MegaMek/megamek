@@ -34,7 +34,7 @@ public class ISRailGun extends GaussWeapon {
      */
     public ISRailGun() {
         super();
-        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         this.name = "Rail Gun";
         this.setInternalName("ISRailGun");
         this.addLookupName("IS Rail Gun");

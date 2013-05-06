@@ -35,7 +35,7 @@ public class ISFiredrakeNeedler extends Weapon {
      */
     public ISFiredrakeNeedler() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Firedrake Needler";
         setInternalName(name);
         addLookupName("ISFiredrakeIncendiaryNeedler");

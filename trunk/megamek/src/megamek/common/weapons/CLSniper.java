@@ -35,7 +35,7 @@ public class CLSniper extends ArtilleryWeapon {
      */
     public CLSniper() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "Sniper";
         setInternalName("CLSniper");
         addLookupName("CLSniperArtillery");

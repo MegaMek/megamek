@@ -33,7 +33,7 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
      */
     public ISMediumVariableSpeedPulseLaser() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Medium VSP Laser";
         setInternalName("ISMediumVSPLaser");
         setInternalName("ISMVSPL");
@@ -61,6 +61,7 @@ public class ISMediumVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeap
         techRating = RATING_E;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3070;
+        techLevel.put(3070,techLevel.get(3071));
     }
 
 }

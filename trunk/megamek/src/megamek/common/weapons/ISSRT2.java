@@ -30,7 +30,7 @@ public class ISSRT2 extends SRTWeapon {
      */
     public ISSRT2() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "SRT 2";
         setInternalName(name);
         addLookupName("IS SRT-2");
@@ -48,6 +48,7 @@ public class ISSRT2 extends SRTWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 10000;
         introDate = 2380;
+        techLevel.put(2380,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_C;
     }

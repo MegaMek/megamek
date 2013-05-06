@@ -30,7 +30,7 @@ public class ISMML5 extends MMLWeapon {
      */
     public ISMML5() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "MML 5";
         setInternalName("ISMML5");
         addLookupName("IS MML-5");
@@ -45,6 +45,7 @@ public class ISMML5 extends MMLWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         introDate = 3068;
+        techLevel.put(3068,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

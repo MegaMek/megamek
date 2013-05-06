@@ -30,7 +30,7 @@ public class ISSRT2OS extends SRTWeapon {
      */
     public ISSRT2OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "SRT 2 (OS)";
         setInternalName("ISSRT2OS");
         addLookupName("ISSRT2 (OS)"); // mtf

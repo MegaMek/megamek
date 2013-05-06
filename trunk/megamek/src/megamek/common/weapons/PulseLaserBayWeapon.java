@@ -33,7 +33,7 @@ public class PulseLaserBayWeapon extends BayWeapon {
     public PulseLaserBayWeapon() {
         super();
         //tech levels are a little tricky
-        this.techLevel = TechConstants.T_ALL;
+        this.techLevel.put(3071,TechConstants.T_ALL);
         this.name = "Pulse Laser Bay";
         this.setInternalName(this.name);
         this.heat = 0;

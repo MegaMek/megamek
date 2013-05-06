@@ -30,7 +30,7 @@ public class CLATM12 extends ATMWeapon {
      */
     public CLATM12() {
         super();
-        this.techLevel = TechConstants.T_CLAN_TW;
+        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
         this.name = "ATM 12";
         this.setInternalName("CLATM12");
         this.addLookupName("Clan ATM-12");
@@ -49,6 +49,7 @@ public class CLATM12 extends ATMWeapon {
         this.medAV = 20;
         this.maxRange = RANGE_MED;
         introDate = 3054;
+        techLevel.put(3054,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_F;
         }

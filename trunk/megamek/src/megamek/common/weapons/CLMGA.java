@@ -32,7 +32,7 @@ public class CLMGA extends AmmoWeapon {
 
     public CLMGA() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Machine Gun Array";
         addLookupName("Clan Machine Gun Array");
         setInternalName("CLMGA");
@@ -56,6 +56,7 @@ public class CLMGA extends AmmoWeapon {
         setModes(modeStrings);
         instantModeSwitch = false;
         introDate = 3069;
+        techLevel.put(3069,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_E;
     }

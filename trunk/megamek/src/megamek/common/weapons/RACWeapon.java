@@ -49,6 +49,7 @@ public abstract class RACWeapon extends UACWeapon {
         atClass = CLASS_AC;
         availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
         introDate = 3062;
+        techLevel.put(3062,techLevel.get(3071));
     }
 
     /*

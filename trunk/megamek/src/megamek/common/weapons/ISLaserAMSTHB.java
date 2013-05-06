@@ -34,7 +34,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
      */
     public ISLaserAMSTHB() {
         super();
-        techLevel = TechConstants.T_IS_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         name = "Laser AMS (THB)";
         setInternalName("ISLaserAntiMissileSystemTHB");
         addLookupName("IS Laser Anti-Missile System (THB)");

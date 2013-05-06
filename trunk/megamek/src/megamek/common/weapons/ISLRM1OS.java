@@ -30,7 +30,7 @@ public class ISLRM1OS extends LRMWeapon {
      */
     public ISLRM1OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "LRM 1 (OS)";
         setInternalName(name);
         addLookupName("ISLRM1OS");

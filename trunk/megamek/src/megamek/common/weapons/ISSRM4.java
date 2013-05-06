@@ -30,7 +30,7 @@ public class ISSRM4 extends SRMWeapon {
      */
     public ISSRM4() {
         super();
-        this.techLevel = TechConstants.T_INTRO_BOXSET;
+        this.techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         this.name = "SRM 4";
         this.setInternalName(this.name);
         this.addLookupName("IS SRM-4");
@@ -49,6 +49,7 @@ public class ISSRM4 extends SRMWeapon {
         this.shortAV = 4;
         this.maxRange = RANGE_SHORT;
         introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
         techRating = RATING_C;
     }

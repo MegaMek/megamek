@@ -34,12 +34,13 @@ public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
      */
     public ISVehicularGrenadeLauncher() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "Vehicular Grenade Launcher";
         setInternalName("ISVehicularGrenadeLauncher");
         techRating = RATING_C;	
         availRating = new int[]{RATING_D, RATING_E, RATING_F};
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_A,RATING_B,RATING_B};
     }
 }

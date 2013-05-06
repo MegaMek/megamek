@@ -35,7 +35,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLPlasmaCannon() {
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Plasma Cannon";
         setInternalName("CLPlasmaCannon");
         heat = 7;
@@ -57,6 +57,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
         introDate = 3069;
+        techLevel.put(3069,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_F;
 

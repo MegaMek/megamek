@@ -34,7 +34,7 @@ public class CLSupportPPC extends PPCWeapon {
      */
     public CLSupportPPC() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Support PPC";
         setInternalName(name);
         addLookupName("CLSupportPPC");
@@ -49,6 +49,7 @@ public class CLSupportPPC extends PPCWeapon {
                 "Field Inhibitor OFF" });
         cost = 14000;
         introDate = 2470;
+        techLevel.put(2470,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_B,RATING_A};
         techRating = RATING_D;
     }

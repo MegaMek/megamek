@@ -35,7 +35,7 @@ public class CLBearhunterSuperheavyACi extends Weapon {
      */
     public CLBearhunterSuperheavyACi() {
         super();
-        techLevel = TechConstants.T_CLAN_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_CLAN_UNOFFICIAL);
         name = "Bearhunter Superheavy ACi";
         setInternalName(name);
         addLookupName("CLBearhunter Superheavy ACi");

@@ -30,7 +30,7 @@ public class ISSRM6IOS extends SRMWeapon {
      */
     public ISSRM6IOS() {
         super();
-        techLevel = TechConstants.T_IS_ADVANCED;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         name = "SRM 6 (I-OS)";
         setInternalName("ISSRM6IOS");
         addLookupName("ISSRM6 (IOS)"); // mtf
@@ -52,5 +52,6 @@ public class ISSRM6IOS extends SRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3056;
+        techLevel.put(3056,techLevel.get(3071));
     }
 }

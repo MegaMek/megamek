@@ -38,7 +38,7 @@ public class CLMicroBomb extends Weapon {
      */
     public CLMicroBomb() {
         super();
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Micro Bomb";
         setInternalName("CLMicroBomb");
         addLookupName("CLMicro Bomb");

@@ -37,7 +37,7 @@ public class ISLightMG extends MGWeapon {
      */
     public ISLightMG() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Light Machine Gun";
         this.setInternalName(this.name);
         this.addLookupName("IS Light Machine Gun");

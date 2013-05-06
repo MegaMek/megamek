@@ -30,7 +30,7 @@ public class ISLRT10OS extends LRTWeapon {
      */
     public ISLRT10OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "LRT 10 (OS)";
         setInternalName(name);
         addLookupName("IS OS LRT-10");

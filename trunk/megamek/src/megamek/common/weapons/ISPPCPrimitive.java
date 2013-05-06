@@ -27,7 +27,7 @@ public class ISPPCPrimitive extends PPCWeapon {
 
     public ISPPCPrimitive() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "PPCp";
         setInternalName(name);
         addLookupName("Particle Cannon Primitive");

@@ -33,7 +33,7 @@ public class ISRAC5 extends RACWeapon {
      */
     public ISRAC5() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Rotary AC/5";
         this.setInternalName("ISRotaryAC5");
         this.addLookupName("IS Rotary AC/5");
@@ -53,6 +53,7 @@ public class ISRAC5 extends RACWeapon {
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
         introDate = 3062;
+        techLevel.put(3062,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_E;
     }

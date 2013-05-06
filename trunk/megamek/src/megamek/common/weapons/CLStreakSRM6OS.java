@@ -29,7 +29,7 @@ public class CLStreakSRM6OS extends StreakSRMWeapon {
      *
      */
     public CLStreakSRM6OS() {
-        techLevel = TechConstants.T_CLAN_TW;
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
         name = "Streak SRM 6 (OS)";
         setInternalName("CLStreakSRM6 (OS)");
         addLookupName("Clan Improved OS Streak SRM-6");
@@ -49,6 +49,7 @@ public class CLStreakSRM6OS extends StreakSRMWeapon {
         medAV = 12;
         maxRange = RANGE_MED;
         introDate = 2826;
+        techLevel.put(2826,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_E};
         techRating = RATING_F;
     }

@@ -30,7 +30,7 @@ public class ISSRM1OS extends SRMWeapon {
      */
     public ISSRM1OS() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "SRM 1 (OS)";
         setInternalName(name);
         addLookupName("ISSRM1OS");
@@ -42,6 +42,7 @@ public class ISSRM1OS extends SRMWeapon {
         bv = 3;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         introDate = 3050;
+        techLevel.put(3050,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_D};
         techRating = RATING_E;
     }

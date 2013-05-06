@@ -34,7 +34,7 @@ public class CLERMediumPulseLaser extends PulseLaserWeapon {
      */
     public CLERMediumPulseLaser() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Medium Pulse Laser";
         setInternalName("CLERMediumPulseLaser");
         addLookupName("Clan ER Pulse Med Laser");
@@ -57,5 +57,6 @@ public class CLERMediumPulseLaser extends PulseLaserWeapon {
         techRating = RATING_F;
         availRating = new int[]{RATING_X, RATING_X, RATING_E};
         introDate = 3057;
+        techLevel.put(3057,techLevel.get(3071));
         }
 }

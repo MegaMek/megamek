@@ -35,7 +35,7 @@ public class ISLightRecoillessRifle extends Weapon {
      */
     public ISLightRecoillessRifle() {
         super();
-        techLevel = TechConstants.T_IS_TW_NON_BOX;
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         name = "Light Recoilless Rifle";
         setInternalName(name);
         addLookupName("ISLight Recoilless Rifle");
@@ -54,6 +54,7 @@ public class ISLightRecoillessRifle extends Weapon {
                 .or(F_BURST_FIRE);
         cost = 1000;
         introDate = 1950;
+        techLevel.put(1950,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_A};
         techRating = RATING_C;
     }

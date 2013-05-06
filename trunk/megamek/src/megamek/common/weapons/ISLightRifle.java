@@ -34,7 +34,7 @@ public class ISLightRifle extends RifleWeapon {
      */
     public ISLightRifle() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Light Rifle";
         setInternalName(name);
         addLookupName("IS Light Rifle");

@@ -33,7 +33,7 @@ public class ISAC5 extends ACWeapon {
      */
     public ISAC5() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "AC/5";
         setInternalName("Autocannon/5");
         addLookupName("IS Auto Cannon/5");
@@ -60,6 +60,7 @@ public class ISAC5 extends ACWeapon {
         explosionDamage = damage;
         availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C,EquipmentType.RATING_D};
         introDate = 2250;
+        techLevel.put(2250,techLevel.get(3071));
         techRating = RATING_C;
     }
 }

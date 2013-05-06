@@ -33,7 +33,7 @@ public class CLRAC20 extends RACWeapon {
      */
     public CLRAC20() {
         super();
-        techLevel = TechConstants.T_CLAN_UNOFFICIAL;
+        techLevel.put(3071,TechConstants.T_CLAN_UNOFFICIAL);
         name = "Rotary AC/20";
         setInternalName("CLRotaryAC20");
         addLookupName("Clan Rotary AC/20");

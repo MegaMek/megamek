@@ -37,7 +37,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
     public AR10BayWeapon() {
         super();
         //tech levels are a little tricky
-        this.techLevel = TechConstants.T_ALL;
+        this.techLevel.put(3071,TechConstants.T_ALL);
         this.name = "AR10 Bay";
         this.setInternalName(this.name);
         this.heat = 0;
@@ -53,6 +53,7 @@ public class AR10BayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_AR10;
         this.capital = true;
         introDate = 2100;
+        techLevel.put(2100,techLevel.get(3071));
         extinctDate = 2850;
         reintroDate = 3051;
         availRating = new int[]{RATING_E,RATING_X,RATING_E};

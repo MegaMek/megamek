@@ -30,7 +30,7 @@ public class ISLRM5 extends LRMWeapon {
      */
     public ISLRM5() {
         super();
-        techLevel = TechConstants.T_INTRO_BOXSET;
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
         name = "LRM 5";
         setInternalName(name);
         addLookupName("IS LRM-5");
@@ -48,6 +48,7 @@ public class ISLRM5 extends LRMWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         introDate = 2300;
+        techLevel.put(2300,techLevel.get(3071));
         availRating = new int[]{RATING_C,RATING_C,RATING_C};
     }
 }

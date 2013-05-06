@@ -30,7 +30,7 @@ public class CLSRM6IOS extends SRMWeapon {
      */
     public CLSRM6IOS() {
         super();
-        techLevel = TechConstants.T_CLAN_ADVANCED;
+        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
         name = "SRM 6 (I-OS)";
         setInternalName("CLSRM6 (IOS)");
         addLookupName("Clan IOS SRM-6");
@@ -51,5 +51,6 @@ public class CLSRM6IOS extends SRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
     }
 }

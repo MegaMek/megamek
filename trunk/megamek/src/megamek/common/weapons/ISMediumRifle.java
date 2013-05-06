@@ -34,7 +34,7 @@ public class ISMediumRifle extends RifleWeapon {
      */
     public ISMediumRifle() {
         super();
-        techLevel = TechConstants.T_IS_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
         name = "Medium Rifle";
         setInternalName(name);
         addLookupName("IS Medium Rifle");

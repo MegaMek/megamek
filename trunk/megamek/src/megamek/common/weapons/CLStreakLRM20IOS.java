@@ -30,7 +30,7 @@ public class CLStreakLRM20IOS extends StreakLRMWeapon {
      */
     public CLStreakLRM20IOS() {
         super();
-        techLevel = TechConstants.T_CLAN_EXPERIMENTAL;
+        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Streak LRM 20 (I-OS)";
         setInternalName("CLIOSStreakLRM20");
         addLookupName("Clan Streak LRM-20 (IOS)");
@@ -54,5 +54,6 @@ public class CLStreakLRM20IOS extends StreakLRMWeapon {
         techRating = RATING_B;
         availRating = new int[]{RATING_X, RATING_X, RATING_F};
         introDate = 3058;
+        techLevel.put(3058,techLevel.get(3071));
     }
 }

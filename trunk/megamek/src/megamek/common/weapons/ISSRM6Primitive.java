@@ -32,7 +32,7 @@ public class ISSRM6Primitive extends SRMWeapon {
 
     public ISSRM6Primitive() {
         super();
-        this.techLevel = TechConstants.T_IS_UNOFFICIAL;
+        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
         this.name = "SRM 6p";
         this.setInternalName(this.name);
         this.addLookupName("IS SRM-6 Primitive");

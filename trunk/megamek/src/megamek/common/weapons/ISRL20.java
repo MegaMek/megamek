@@ -30,7 +30,7 @@ public class ISRL20 extends RLWeapon {
      */
     public ISRL20() {
         super();
-        this.techLevel = TechConstants.T_IS_TW_NON_BOX;
+        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
         this.name = "Rocket Launcher 20";
         this.setInternalName("RL20");
         this.addLookupName("ISRocketLauncher20");
@@ -50,6 +50,7 @@ public class ISRL20 extends RLWeapon {
         this.medAV = 12;
         this.maxRange = RANGE_MED;
         introDate = 3050;
+        techLevel.put(3050,techLevel.get(3071));
         availRating = new int[]{RATING_X,RATING_X,RATING_B};
         techRating = RATING_B;
     }

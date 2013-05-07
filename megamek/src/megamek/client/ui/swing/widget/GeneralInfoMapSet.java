@@ -49,11 +49,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
-            weightL, bvL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
+            weightL, bvL, mpL0, mpL1, mpL2, mpL3, mpL4, curMoveL, heatL,
             movementTypeL, ejectL, elevationL, fuelL, curSensorsL,
             visualRangeL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, mpR0, mpR1,
-            mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR, elevationR,
+            mpR2, mpR3, mpR4, curMoveR, heatR, movementTypeR, ejectR, elevationR,
             fuelR, curSensorsR, visualRangeR;
     private PMSimpleLabel[] quirksR;
     private PMSimpleLabel[] partRepsR;
@@ -167,6 +167,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         mpR3 = createLabel(STAR3, fm, mpL0.getSize().width + 10, getYCoord());
         content.addArea(mpR3);
+        
+        mpL4 = createLabel(
+                Messages.getString("GeneralInfoMapSet.mpL4"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        mpL4.moveTo(mpL0.getSize().width - mpL3.getSize().width, getYCoord());
+        content.addArea(mpL4);
+        
+        mpR4 = createLabel("", fm, mpL0.getSize().width + 10, getYCoord());
+        content.addArea(mpR4);
 
         curMoveL = createLabel(
                 Messages.getString("GeneralInfoMapSet.curMoveL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
@@ -364,10 +372,15 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                     + ")");
         }
 
+        mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
+        
         if (en.hasUMU()) {
-            mpR3.setString(Integer.toString(en.getActiveUMUCount()));
+            mpL4.setVisible(true);
+            mpR4.setVisible(true);
+            mpR4.setString(Integer.toString(en.getActiveUMUCount()));
         } else {
-            mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
+            mpL4.setVisible(false);
+            mpR4.setVisible(false);
         }
 
         if (en instanceof Aero) {

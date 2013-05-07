@@ -38,7 +38,7 @@ import megamek.common.weapons.GaussWeapon;
  * @author Ben
  * @version
  */
-public class Mounted implements Serializable, RoundUpdated {
+public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     private static final long serialVersionUID = 6438017987074691566L;
     private boolean usedThisRound = false;
@@ -46,7 +46,7 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean hit = false;
     private boolean missing = false;
     private boolean jammed = false;
-    private boolean jammedThisTurn = false;
+    private boolean jammedThisPhase = false;
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff.
     private boolean rapidfire = false; // MGs in rapid-fire mode
@@ -330,12 +330,16 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public void newRound(int roundNumber) {
         setUsedThisRound(false);
-        jammed = jammedThisTurn;
+
         if ((type != null) && (type.hasModes() && (pendingMode != -1))) {
             mode = pendingMode;
             pendingMode = -1;
         }
         called.reset();
+    }
+
+    public void newPhase(IGame.Phase phase) {
+        jammed = jammedThisPhase;
     }
 
     /**
@@ -505,7 +509,7 @@ public class Mounted implements Serializable, RoundUpdated {
     }
 
     public void setJammed(boolean j) {
-        jammedThisTurn = j;
+        jammedThisPhase = j;
     }
 
     /**

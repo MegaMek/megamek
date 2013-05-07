@@ -1291,7 +1291,6 @@ public class Dropship extends SmallCraft {
      */
     @Override
     public int getECMRange() {
-        boolean test = game.getOptions().booleanOption("stratops_ecm");
         if (!game.getOptions().booleanOption("stratops_ecm")
                 || !game.getBoard().inSpace()) {
             return super.getECMRange();

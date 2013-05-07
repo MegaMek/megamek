@@ -4,6 +4,7 @@ v0.35.39-dev (SVN)
 + Bug 3720: defaultQuirks.xml is missing the Rifleman C 2 entry
 + Bug 3719: defaultQuirks.xml is missing the Quickdraw QKD-8P entry
 + Bug 3714: defaultQuirks.xml is missing the Mongoose MON-69 entry
++ Bug 3628: tank weapon malfunction crit only works after one round 
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

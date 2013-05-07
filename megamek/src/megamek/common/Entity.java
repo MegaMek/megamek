@@ -64,7 +64,7 @@ import megamek.common.weapons.WeaponHandler;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter,
-        Targetable, RoundUpdated {
+        Targetable, RoundUpdated, PhaseUpdated {
     /**
      *
      */
@@ -11907,5 +11907,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
             // System.out.println("Loaded.");
         }
+    }
+
+    public void newPhase(IGame.Phase phase) {
+        for (Mounted m : getEquipment()) {
+            m.newPhase(phase);
+        }
+        if (getCrew().isDoomed()) {
+            getCrew().setDoomed(false);
+            getCrew().setDead(true);
+            if (this instanceof Tank) {
+                setCarcass(true);
+                ((Tank)this).immobilize();
+            } else {
+                setDestroyed(true);
+            }
+        }
+
     }
 }

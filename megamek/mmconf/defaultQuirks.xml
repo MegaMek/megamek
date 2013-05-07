@@ -1307,6 +1307,11 @@
     </unit>
     <unit>
         <chassis>Mongoose</chassis>
+        <model>MON-69</model>
+        <quirk>command_mech</quirk>
+    </unit>
+    <unit>
+        <chassis>Mongoose</chassis>
         <model>MON-70</model>
         <quirk>command_mech</quirk>
     </unit>
@@ -1353,6 +1358,11 @@
     <unit>
         <chassis>Quickdraw</chassis>
         <model>QKD-8K</model>
+        <quirk>hyper_actuator</quirk>
+    </unit>
+    <unit>
+        <chassis>Quickdraw</chassis>
+        <model>QKD-8P</model>
         <quirk>hyper_actuator</quirk>
     </unit>
     <unit>
@@ -1458,6 +1468,11 @@
     <unit>
         <chassis>Rifleman</chassis>
         <model>C</model>
+        <quirk>searchlight</quirk>
+    </unit>
+    <unit>
+        <chassis>Rifleman</chassis>
+        <model>C 2</model>
         <quirk>searchlight</quirk>
     </unit>
     <unit>

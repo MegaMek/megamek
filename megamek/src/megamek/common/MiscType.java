@@ -328,6 +328,8 @@ public class MiscType extends EquipmentType {
             .shiftLeft(148);
     public static final BigInteger F_ULTRA_LIGHT = BigInteger.valueOf(1)
             .shiftLeft(149);
+    public static final BigInteger F_SPACE_MINE_DISPENSER = BigInteger.valueOf(1)
+            .shiftLeft(150);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -2884,7 +2886,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_E, RATING_E, RATING_F };
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(
-                F_AERO_EQUIPMENT);
+                F_AERO_EQUIPMENT).or(F_SPACE_MINE_DISPENSER);
 
         misc.bv = 200; // because it includes 2 mines. 100 for each mine,
                        // becaues it deals a max potential damage of 100
@@ -2903,7 +2905,7 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_E, RATING_E, RATING_F };
         // TODO: implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(
-                F_AERO_EQUIPMENT);
+                F_AERO_EQUIPMENT).or(F_SPACE_MINE_DISPENSER);
         misc.bv = 200; // because it includes 2 mines. 100 for each mine,
                        // becaues it deals a max potential damage of 100
         return misc;

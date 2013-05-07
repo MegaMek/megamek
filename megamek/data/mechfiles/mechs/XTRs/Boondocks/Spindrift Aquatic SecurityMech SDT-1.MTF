@@ -26,9 +26,9 @@ CT Armor:Heavy Industrial(Inner Sphere):10
 HD Armor:Heavy Industrial(Inner Sphere):5
 LL Armor:Heavy Industrial(Inner Sphere):7
 RL Armor:Heavy Industrial(Inner Sphere):7
-RTL Armor:Reflective(Inner Sphere):2
-RTR Armor:Reflective(Inner Sphere):2
-RTC Armor:Heavy Industrial(Inner Sphere):3
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
 
 Weapons:2
 ER Small Laser, Left Torso

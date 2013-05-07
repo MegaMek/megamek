@@ -284,12 +284,12 @@ public abstract class TestEntity implements TestEntityOption {
                     getWeightCeilingArmor());
         } else {
             for (int i = 0; i < armor.length; i++) {
-                armorWeight += armor[i].getWeightArmor(
-                        getEntity().getOArmor(i), getWeightCeilingArmor());
+                int points = getEntity().getOArmor(i);
                 if (getEntity().getOArmor(i, true) > 0 ) {
-                    armorWeight += armor[i].getWeightArmor(
-                            getEntity().getOArmor(i, true), getWeightCeilingArmor());
+                    points += getEntity().getOArmor(i, true);
                 }
+                armorWeight += armor[i].getWeightArmor(
+                        points, getWeightCeilingArmor());
             }
         }
         return armorWeight;

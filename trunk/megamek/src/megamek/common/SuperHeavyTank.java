@@ -24,26 +24,21 @@ public class SuperHeavyTank extends Tank {
     // locations
     public static final int LOC_FRONTRIGHT = 2;
     public static final int LOC_FRONTLEFT = 3;
-    public static final int LOC_REARRIGHT = 4;
-    public static final int LOC_REARLEFT = 5;
-    public static final int LOC_REAR = 6;
-    /** for dual turret tanks, this is the rear turret **/
-    public static final int LOC_TURRET = 7;
-    /** for dual turret tanks, this is the front turret **/
-    public static final int LOC_TURRET_2 = 8;
+    public static final int LOC_REARRIGHT = 7;
+    public static final int LOC_REARLEFT = 8;
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS =
         { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RRRS", "RRLS", "RR", "TU", "TU2" };
+        "RR", "TU", "TU2","RRRS", "RRLS", };
 
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+        "Front Left", "Rear", "Turret", "", "Rear Right", "Rear Left"};
 
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
+        "Front Left", "Rear", "Rear Turret", "Front Turret", "Rear Right", "Rear Left" };
 
     @Override
     public String[] getLocationAbbrs() {

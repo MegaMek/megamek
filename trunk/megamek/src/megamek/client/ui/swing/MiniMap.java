@@ -14,8 +14,10 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
@@ -27,9 +29,14 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -138,11 +145,16 @@ public class MiniMap extends JPanel {
 
     private Client m_client;
 
-    private ClientGUI clientgui;
+    private ClientGUI clientgui = null;
 
     boolean dirtyMap = true;
     boolean[][] dirty;
     private Image terrainBuffer;
+    
+    private int scrollXDifference = 0;
+    private int scrollYDifference = 0;
+    // are we drag-scrolling?
+    private boolean dragging = false;
 
     /**
      * Creates and lays out a new mech display.
@@ -181,6 +193,8 @@ public class MiniMap extends JPanel {
     private void initialize() throws IOException {
         initializeColors();
         addMouseListener(mouseListener);
+        addMouseMotionListener(mouseMotionListener);
+        addMouseWheelListener(mouseWheelListener);
         addComponentListener(componentListener);
         m_dialog.addComponentListener(componentListener);
         if (m_dialog instanceof JDialog) {
@@ -1346,7 +1360,7 @@ public class MiniMap extends JPanel {
     public void setZoom(int z) {
         zoom = z;
     }
-
+    
     protected BoardListener boardListener = new BoardListenerAdapter() {
         @Override
         public void boardNewBoard(BoardEvent b) {
@@ -1445,12 +1459,53 @@ public class MiniMap extends JPanel {
     MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent me) {
-            // center main map on clicked area
-            if(m_dialog instanceof JDialog) {
+            scrollXDifference = me.getX();
+            scrollYDifference = me.getY();
+        }
+        
+        public void mouseReleased(MouseEvent me) {
+            // center main map on clicked area, if there was no dragging
+            if(m_dialog instanceof JDialog && !dragging) {
                 processMouseClick(me.getX(), me.getY(), me);
             }
+            // Clear up variables related to draggin
+            scrollXDifference = 0;
+            scrollYDifference = 0;
+            dragging = false;
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));            
         }
+        
     };
+    
+    MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
+ 
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            //if we have not yet been dragging, set the var so popups don't
+            // appear when we stop scrolling
+            if (!dragging) {
+                dragging = true;
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            }
+            processMouseClick(e.getX(), e.getY(), e);
+        }
+    };   
+    
+    MouseWheelListener mouseWheelListener = new MouseWheelListener() {
+        public void mouseWheelMoved(MouseWheelEvent we) {      
+            if (we.getWheelRotation() < 0) {
+                //Zoom Out: The processMouseClick method uses absolute
+                // positions within the minimap to determine what the click
+                // does.  These parameters should activate the zoom-out features
+                processMouseClick(getSize().width-12, getSize().height-12, we);               
+            } else {
+                //Zoom In: The processMouseClick method uses absolute
+                // positions within the minimap to determine what the click
+                // does.  These parameters should activate the zoom-in features
+                processMouseClick(0, getSize().height - 12, we);
+            }           
+        }
+    };    
 
     ComponentListener componentListener = new ComponentAdapter() {
         @Override

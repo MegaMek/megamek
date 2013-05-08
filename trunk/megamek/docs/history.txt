@@ -6,6 +6,10 @@ v0.35.39-dev (SVN)
 + Bug 3714: defaultQuirks.xml is missing the Mongoose MON-69 entry
 + Bug 3628: tank weapon malfunction crit only works after one round
 + Bug: patchwork armor weight incorrect 
++ Bug 2646: mech with UMU and mechanical jump boosters shows UMU Mp
++ Patch 447: Mouse wheel to control minimap zoom level 
++ Patch 445: Allow dragging in minimap
++ Patch 444: Additional Mouse Wheel Behavior using CTRL/SHIFT
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

@@ -10,6 +10,7 @@ v0.35.39-dev (SVN)
 + Patch 447: Mouse wheel to control minimap zoom level 
 + Patch 445: Allow dragging in minimap
 + Patch 444: Additional Mouse Wheel Behavior using CTRL/SHIFT
++ Bug 3724: MechSelectorDialog unit table cannot be resized 
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

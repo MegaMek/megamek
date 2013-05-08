@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -102,7 +103,9 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     JTextField txtFilter;
     private MechViewPanel panelMekView;
     private JLabel lblPlayer;
-    private JComboBox comboPlayer;
+    private JComboBox comboPlayer;  
+    private JPanel selectionPanel;
+    private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
     private long lastSearch = 0;
@@ -136,8 +139,15 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     }
 
     private void initComponents() {
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        
         GridBagConstraints c;
-
+        
+        selectionPanel = new JPanel(new GridBagLayout());
+        selectionPanel.setMinimumSize(new java.awt.Dimension(500, 600));
+        selectionPanel.setPreferredSize(new java.awt.Dimension(500, 600));
+        
+        
         panelFilterBtns = new JPanel();
         panelSearchBtns = new JPanel();
         panelOKBtns = new JPanel();
@@ -146,6 +156,9 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         tableUnits = new JTable();
         tableUnits.addKeyListener(this);
         panelMekView = new MechViewPanel();
+        panelMekView.setMinimumSize(new java.awt.Dimension(300, 600));
+        panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
+        
 
         comboType = new JComboBox();
         comboWeight = new JComboBox();
@@ -167,7 +180,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         lblPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
         comboPlayer = new JComboBox();
 
-        getContentPane().setLayout(new GridBagLayout());
+        getContentPane().setLayout(new GridBagLayout());        
 
         scrTableUnits.setMinimumSize(new java.awt.Dimension(500, 400));
         scrTableUnits.setPreferredSize(new java.awt.Dimension(500, 400));
@@ -208,20 +221,11 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
-        c.fill = GridBagConstraints.VERTICAL;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.weightx = 0.0;
-        c.weighty = 1.0;
-        getContentPane().add(scrTableUnits, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridheight = 3;
         c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        getContentPane().add(panelMekView, c);
+        selectionPanel.add(scrTableUnits, c);
 
         panelFilterBtns.setMinimumSize(new java.awt.Dimension(300, 120));
         panelFilterBtns.setPreferredSize(new java.awt.Dimension(300, 120));
@@ -339,10 +343,10 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
         c.insets = new java.awt.Insets(10, 10, 10, 0);
-        getContentPane().add(panelFilterBtns, c);
+        selectionPanel.add(panelFilterBtns, c);
 
         panelSearchBtns.setLayout(new GridBagLayout());
-
+        
         btnAdvSearch.setText(Messages.getString("MechSelectorDialog.AdvSearch")); //$NON-NLS-1$
         btnAdvSearch.addActionListener(this);
         c = new GridBagConstraints();
@@ -350,7 +354,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.gridwidth = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.WEST;
-        panelSearchBtns.add(btnAdvSearch, c);
+        panelSearchBtns.add(btnAdvSearch, c);        
 
         btnResetSearch.setText(Messages.getString("MechSelectorDialog.Reset")); //$NON-NLS-1$
         btnResetSearch.addActionListener(this);
@@ -369,7 +373,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
         c.insets = new java.awt.Insets(10, 10, 10, 0);
-        getContentPane().add(panelSearchBtns, c);
+        selectionPanel.add(panelSearchBtns, c);
 
 
         panelOKBtns.setLayout(new GridBagLayout());
@@ -400,8 +404,18 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.gridy = 3;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
-        getContentPane().add(panelOKBtns, c);
+        c.insets = new java.awt.Insets(10,0,0,0);
+        selectionPanel.add(panelOKBtns, c);
 
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                selectionPanel, panelMekView);
+        splitPane.setResizeWeight(.7);
+        c = new GridBagConstraints();
+        c.gridx = c.gridy = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.weightx = c.weighty = 1;
+        getContentPane().add(splitPane,c);
+        
         pack();
     }
 

@@ -5820,7 +5820,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = 1;
         }
 
-        if ((waterLevel > 0) && !hasUMU()) {
+        if (waterLevel > 0) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Depth "
                     + waterLevel + " Water"));

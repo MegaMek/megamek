@@ -1428,7 +1428,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:
-                maxAlt = hex.surface();
+                //UMU's won't allow the 'mech to break the surface of the water
+                maxAlt = hex.surface() - 2;
                 break;
             case WIGE:
                 maxAlt = hex.surface() + 1;
@@ -11925,4 +11926,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
     }
+    
+    /**
+     * Checks to see if the entities' elevation is below the surface of a water
+     * hex.
+     * @return  True if the entity is underwater, else false.
+     */
+    public boolean isUnderwater(){
+        IHex occupiedHex = game.getBoard().getHex(getPosition());
+        if (occupiedHex.containsTerrain(Terrains.WATER)
+                && absHeight() < occupiedHex.surface()) {
+            return true;
+        }
+        return false;
+    }    
 }
+

@@ -1209,10 +1209,6 @@ public class Tank extends Entity {
                 bvText.append(endColumn);
                 bvText.append(endRow);
             }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
         }
         if (amsAmmoBV > 0) {
             bvText.append(startRow);

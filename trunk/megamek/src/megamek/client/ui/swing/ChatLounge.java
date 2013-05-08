@@ -1183,25 +1183,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         .getOwnerId());// a.getOwner();
                 final Player p_b = clientgui.getClient().game.getPlayer(b
                         .getOwnerId());// b.getOwner();
+                final Player localPlayer = 
+                    clientgui.getClient().getLocalPlayer();
                 final int t_a = p_a.getTeam();
                 final int t_b = p_b.getTeam();
                 final int tr_a = a.getTransportId();
                 final int tr_b = b.getTransportId();
-                if (p_a.equals(clientgui.getClient().getLocalPlayer())
-                        && !p_b.equals(clientgui.getClient().getLocalPlayer())) {
+                if (p_a.equals(localPlayer) && !p_b.equals(localPlayer)) {
                     return -1;
-                } else if (p_b.equals(clientgui.getClient().getLocalPlayer())
-                        && !p_a.equals(clientgui.getClient().getLocalPlayer())) {
+                } else if (!p_a.equals(localPlayer) && p_b.equals(localPlayer)){
                     return 1;
-                } else if ((t_a == clientgui.getClient().getLocalPlayer()
-                        .getTeam())
-                        && (t_b != clientgui.getClient().getLocalPlayer()
-                                .getTeam())) {
+                } else if ((t_a == localPlayer.getTeam())
+                        && (t_b != localPlayer.getTeam())) {
                     return -1;
-                } else if ((t_b == clientgui.getClient().getLocalPlayer()
-                        .getTeam())
-                        && (t_a != clientgui.getClient().getLocalPlayer()
-                                .getTeam())) {
+                } else if ((t_b == localPlayer.getTeam())
+                        && (t_a != localPlayer.getTeam())) {
                     return 1;
                 } else if (t_a != t_b) {
                     return t_a - t_b;
@@ -1227,7 +1223,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             return -1;
                         }
                         b_id = tr_b;
-                    } else if (tr_a != Entity.NONE) {
+                    }
+                    if (tr_a != Entity.NONE) {
                         if (tr_a == b_id) {
                             // a is loaded on b
                             return 1;

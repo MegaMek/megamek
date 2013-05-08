@@ -4622,6 +4622,12 @@ public abstract class Mech extends Entity {
         if (hasUMU()) {
             costs[i++] = Math.pow(getAllUMUCount(), 2.0) * weight
                     * jumpBaseCost;
+            // We could have Jump boosters
+            if (getJumpType() == Mech.JUMP_BOOSTER) {
+                jumpBaseCost = 150;
+                costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight
+                * jumpBaseCost;
+            }
         } else {
             if (getJumpType() == Mech.JUMP_BOOSTER) {
                 jumpBaseCost = 150;

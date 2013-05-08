@@ -610,6 +610,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         buttonsMech.add(butReckless);
         buttonsMech.add(butSwim);
+        buttonsMech.add(butRaise);
+        buttonsMech.add(butLower);
         buttonsMech.add(butEject);
         buttonsMech.add(butFlee);
         buttonsMech.add(butRAC);
@@ -912,8 +914,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setSwimEnabled(!isAero
                 && !ce.isImmobile()
                 && ce.hasUMU()
-                && clientgui.getClient().game.getBoard().getHex(
-                        ce.getPosition()).containsTerrain(Terrains.WATER));
+                && ce.isUnderwater());
         setBackUpEnabled(!isAero && butWalk.isEnabled());
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());

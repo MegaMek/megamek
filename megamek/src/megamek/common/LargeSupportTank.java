@@ -28,20 +28,21 @@ public class LargeSupportTank extends SupportTank {
     // locations
     public static final int LOC_FRONTRIGHT = 2;
     public static final int LOC_FRONTLEFT = 3;
-    public static final int LOC_REARRIGHT = 4;
-    public static final int LOC_REARLEFT = 5;
-    public static final int LOC_REAR = 6;
-    public static final int LOC_TURRET = 7;
-
-    private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RRRS", "RRLS", "RR", "TU" };
-
-    private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-        "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
+    public static final int LOC_REARRIGHT = 7;
+    public static final int LOC_REARLEFT = 8;
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS =
-        { 25, 25, 25, 25, 25, 25, 25, 25};
+        { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
+
+    private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
+        "RR", "TU", "TU2","RRRS", "RRLS", };
+
+    private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
+        "Front Left", "Rear", "Turret", "", "Rear Right", "Rear Left"};
+
+    private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
+        "Front Left", "Rear", "Rear Turret", "Front Turret", "Rear Right", "Rear Left" };
 
 
     @Override
@@ -51,6 +52,9 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public String[] getLocationNames() {
+        if (!hasNoDualTurret()) {
+            return LOCATION_NAMES_DUAL_TURRET;
+        }
         return LOCATION_NAMES;
     }
 

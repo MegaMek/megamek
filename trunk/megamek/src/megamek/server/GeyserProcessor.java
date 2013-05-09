@@ -66,7 +66,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                     vPhaseReport.add(r);
                     hex.removeTerrain(Terrains.GEYSER);
                     hex.addTerrain(tf.createTerrain(Terrains.GEYSER, 1));
-                    server.sendChangedHex(g.position);
+                    server.getHexUpdateSet().add(g.position);
                 } else if (Compute.d6() == 1) {
                     if (hex.terrainLevel(Terrains.GEYSER) == 3) {
                         r = new Report(5285);
@@ -74,7 +74,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         vPhaseReport.add(r);
                         hex.removeAllTerrains();
                         hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
-                        server.sendChangedHex(g.position);
+                        server.getHexUpdateSet().add(g.position);
                         gs.remove();
                         for (Enumeration<Entity> e = server.getGame()
                                 .getEntities(g.position); e.hasMoreElements();) {
@@ -86,7 +86,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         vPhaseReport.add(r);
                         hex.removeTerrain(Terrains.GEYSER);
                         hex.addTerrain(tf.createTerrain(Terrains.GEYSER, 2));
-                        server.sendChangedHex(g.position);
+                        server.getHexUpdateSet().add(g.position);
                         g.turnsToGo = Compute.d6() - 1;
                     }
                 }

@@ -90,7 +90,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
                         vPhaseReport.addElement(r);
 
                         currentHex.removeTerrain(Terrains.SCREEN);
-                        server.sendChangedHex(currentCoords);
+                        server.getHexUpdateSet().add(currentCoords);
                     }
                 }
             }

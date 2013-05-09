@@ -157,7 +157,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
                 }
             }
-        }
+        }        
 
         //Cycle through all hexes again, reporting new fires, spreading smoke, and incrementing the fire turn.
         //Can't do this in first loop because new fires may be spread
@@ -199,10 +199,10 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
                     //increment the fire turn counter
                     currentHex.incrementFireTurn();
-                    server.sendChangedHex(currentCoords);
+                    server.getHexUpdateSet().add(currentCoords);
                 }
             }
-        }
+        }        
 
     } // End the ResolveFire() method
 

@@ -98,7 +98,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                 else if (currentHex.terrainLevel(Terrains.SWAMP) == 2){
                     currentHex.removeTerrain(Terrains.SWAMP);
                     currentHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SWAMP, 3));
-                    server.sendChangedHex(currentCoords);
+                    server.getHexUpdateSet().add(currentCoords);
                 }
             }
 

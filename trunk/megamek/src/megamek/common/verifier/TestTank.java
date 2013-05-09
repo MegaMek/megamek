@@ -286,7 +286,7 @@ public class TestTank extends TestEntity {
         }
         for (Mounted m : tank.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
-                if (m.getLocation() != Tank.LOC_REAR) {
+                if (m.getLocation() != (tank instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:Tank.LOC_REAR)) {
                     buff.append("combat vehicle escape pod must be placed in rear");
                     correct = false;
                 }

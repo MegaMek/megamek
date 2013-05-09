@@ -1,49 +1,56 @@
 Version:1.0
-Stiletto
-STO-4A
+Mad Cat III
+Dark Age
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3061
-Source:RS 3067U
+TechBase:Clan
+Era:3132
 Rules Level:2
 
-Mass:35
-Engine:280 Light Engine(IS)
+Mass:55
+Engine:330 XL (Clan) Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
+Heat Sinks:16 Double
+Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:16
+Armor:Ferro-Fibrous(Clan)
+LA Armor:17
+RA Armor:17
+LT Armor:18
+RT Armor:18
+CT Armor:25
 HD Armor:9
-LL Armor:14
-RL Armor:14
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+LL Armor:24
+RL Armor:24
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
 
-Weapons:3
-Streak SRM 2, Left Arm
-Streak SRM 2, Right Arm
-LRM 5, Center Torso
+Weapons:11
+ER Medium Laser, Left Arm
+ER Small Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Small Laser, Right Arm
+LRM 20, Left Torso
+ER Micro Laser, Left Torso
+ER Micro Laser, Left Torso
+LRM 20, Right Torso
+ER Micro Laser, Right Torso
+ER Micro Laser, Right Torso
+AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISStreakSRM2
+Lower Arm Actuator
+CLERMediumLaser
+CLERSmallLaser
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
-Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -52,27 +59,27 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISStreakSRM2
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumLaser
+CLERSmallLaser
 Endo Steel
 Endo Steel
 Endo Steel
 Endo Steel
--Empty-
--Empty-
--Empty-
--Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISGuardianECMSuite
-ISGuardianECMSuite
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20
+CLERMicroLaser
+CLERMicroLaser
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -80,13 +87,13 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-IS Streak SRM 2 Ammo
-IS Ammo LRM-5
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20
+CLERMicroLaser
+CLERMicroLaser
 Endo Steel
 Endo Steel
 Endo Steel
@@ -102,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 5
-Endo Steel
+CLAMS Ammo
+Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+CLAntiMissileSystem
 Sensors
 Life Support
 -Empty-
@@ -124,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-

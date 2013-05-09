@@ -4,11 +4,11 @@ STO-4B
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3062
+Era:3063
 Rules Level:2
 
 Mass:35
-Engine:280 Light Engine
+Engine:280 Light Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
@@ -16,12 +16,12 @@ Heat Sinks:10 Double
 Walk MP:8
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:10
 RT Armor:10
-CT Armor:14
+CT Armor:13
 HD Armor:9
 LL Armor:13
 RL Armor:13
@@ -29,12 +29,11 @@ RTL Armor:3
 RTR Armor:3
 RTC Armor:4
 
-Weapons:5
-1 ISERMediumLaser, Right Arm
-1 ISERMediumLaser, Left Arm
-1 ISERLargeLaser, Right Torso
-1 ISGuardianECM, Left Torso
-1 ISFlamer, Center Torso
+Weapons:4
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Large Laser, Right Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
@@ -54,10 +53,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -67,8 +66,8 @@ Endo-Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISGuardianECM
-ISGuardianECM
+ISGuardianECMSuite
+ISGuardianECMSuite
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -83,13 +82,13 @@ Fusion Engine
 Fusion Engine
 ISERLargeLaser
 ISERLargeLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 
 Center Torso:
@@ -103,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISFlamer
-Endo-Steel
+Flamer
+Endo Steel
 
 Head:
 Life Support
@@ -139,12 +138,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

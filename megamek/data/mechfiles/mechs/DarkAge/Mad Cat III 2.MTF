@@ -1,49 +1,49 @@
 Version:1.0
-Stiletto
-STO-4A
+Mad Cat III
+2
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3061
-Source:RS 3067U
+TechBase:Clan
+Era:3132
 Rules Level:2
 
-Mass:35
-Engine:280 Light Engine(IS)
+Mass:55
+Engine:330 XL Engine
 Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:0
+Heat Sinks:16 Double
+Walk MP:6
+Jump MP:5
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:16
+Armor:Ferro-Fibrous
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:27
 HD Armor:9
-LL Armor:14
-RL Armor:14
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+LL Armor:26
+RL Armor:26
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
 
-Weapons:3
-Streak SRM 2, Left Arm
-Streak SRM 2, Right Arm
-LRM 5, Center Torso
+Weapons:4
+1 CLHeavyMediumLaser, Right Arm
+1 CLHeavyMediumLaser, Left Arm
+1 CLLRM20, Right Torso, Ammo:12
+1 CLLRM20, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISStreakSRM2
+Lower Arm Actuator
+CLHeavyMediumLaser
+CLHeavyMediumLaser
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
-Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -52,27 +52,27 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISStreakSRM2
+Lower Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLHeavyMediumLaser
+CLHeavyMediumLaser
 Endo Steel
 Endo Steel
 Endo Steel
 Endo Steel
--Empty-
--Empty-
--Empty-
--Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISGuardianECMSuite
-ISGuardianECMSuite
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Jump Jet
+Jump Jet
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20 Ammo
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -80,13 +80,13 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-IS Streak SRM 2 Ammo
-IS Ammo LRM-5
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet
+Jump Jet
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20 Ammo
 Endo Steel
 Endo Steel
 Endo Steel
@@ -102,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 5
-Endo Steel
+Jump Jet
+Ferro-Fibrous
 
 Head:
 Life Support
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+CLDouble Heat Sink
+CLDouble Heat Sink
 -Empty-
 -Empty-
 -Empty-
@@ -138,13 +138,12 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+CLDouble Heat Sink
+CLDouble Heat Sink
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-
 

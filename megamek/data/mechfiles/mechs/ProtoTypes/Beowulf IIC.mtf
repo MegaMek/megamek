@@ -1,22 +1,23 @@
-Version:1.1
+Version:1.0
 Beowulf
 IIC
 
 Config:Biped
 TechBase:Clan
-Era:3085
+Era:3084
+Source:TRO:Prototypes
 Rules Level:4
 
 Mass:45
-Engine:270 XL Fusion Engine
+Engine:270 XL (Clan) Engine(IS)
 Structure:Standard
-Myomer:CLMASC
+Myomer:Standard
 
 Heat Sinks:12 Double
 Walk MP:6
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:14
 RA Armor:14
 LT Armor:16
@@ -29,22 +30,21 @@ RTL Armor:6
 RTR Armor:6
 RTC Armor:8
 
-Weapons:5
-1 CLERLargeLaser, Right Arm
-1 CLLightTAG, Head
-1 CLERMediumLaser, Left Arm
-1 CLERMediumLaser, Left Arm
-1 CLWatchdogECM, Center Torso
+Weapons:4
+ER Large Pulse Laser, Right Arm
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
+Light TAG, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
 -Empty-
 -Empty-
 -Empty-
@@ -55,9 +55,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-CLERLargeLaser
-CLERLargeLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
 Ferro-Fibrous
 -Empty-
 -Empty-
@@ -65,8 +65,8 @@ Ferro-Fibrous
 -Empty-
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
@@ -79,8 +79,8 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
@@ -93,18 +93,18 @@ Ferro-Fibrous
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLWatchdogECM
-CLWatchdogECM
+Fusion Engine
+Fusion Engine
+Fusion Engine
+WatchdogECMSuite
+WatchdogECMSuite
 
 Head:
 Life Support
@@ -113,19 +113,39 @@ Cockpit
 CLLightTAG
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -2,50 +2,81 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Nighthawk PA(L)
 </Name>
+
 <Model>
 Mk. XXI
 </Model>
-<chassis>
-biped
-</chassis>
-<weightclass>
-0
-</weightclass>
-<Trooper Count>
-6
-</Trooper Count>
+
+<year>
+2720
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
 <cruiseMP>
 1
 </cruiseMP>
-<jumpingMP>
-3
-</jumpingMP>
-<Armor>
-2
-</Armor>
+
 <Squad Equipment>
+Mauser 960 Assault System
 Single-Hex ECM
 Standard Stealth
 BAArmoredGlove
 BAArmoredGlove
+BAExtendedLifeSupport
 </Squad Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-2750
-</year>
-<motion_type>
-Jump
-</motion_type>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO 3075
+</source>
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
 

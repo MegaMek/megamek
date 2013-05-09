@@ -1,68 +1,71 @@
 Version:1.0
-DemolitionMech
-WI-DM2
+Thorn
+THE-N
 
 Config:Biped
 TechBase:Inner Sphere
-Era:2513
-Source:Star League
-Rules Level:2
+Era:2490
+Source:Succession Wars
+Rules Level:1
 
-Mass:35
-Engine:105 Fuel Cell Engine(IS)
-Structure:Industrial
+Mass:20
+Engine:120 Fusion Engine(IS)
+Structure:Standard
 Myomer:Standard
 
-Heat Sinks:1 Single
-Walk MP:3
+Heat Sinks:10 Single
+Walk MP:6
 Jump MP:0
 
-Armor:Industrial(Inner Sphere)
-LA Armor:7
-RA Armor:7
-LT Armor:7
-RT Armor:7
-CT Armor:9
+Armor:Standard(Inner Sphere)
+LA Armor:6
+RA Armor:6
+LT Armor:6
+RT Armor:6
+CT Armor:8
 HD Armor:8
-LL Armor:9
-RL Armor:9
-RTL Armor:4
-RTR Armor:4
+LL Armor:7
+RL Armor:7
+RTL Armor:3
+RTR Armor:3
 RTC Armor:4
 
-Weapons:0
+Weapons:3
+Medium Laser, Left Arm
+LRM 5, Right Arm
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-IS Wrecking Ball
-IS Wrecking Ball
-IS Wrecking Ball
-IS Wrecking Ball
-IS Wrecking Ball
+LRM 5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
--Empty-
--Empty-
+Heat Sink
+Heat Sink
 -Empty-
 -Empty-
 -Empty-
@@ -75,9 +78,9 @@ Left Torso:
 -Empty-
 
 Right Torso:
--Empty-
--Empty-
--Empty-
+Heat Sink
+Heat Sink
+IS Ammo LRM-5
 -Empty-
 -Empty-
 -Empty-
@@ -99,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (0.5 tons)
--Empty-
+Heat Sink
+Heat Sink
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+Medium Laser
 Sensors
 Life Support
 -Empty-

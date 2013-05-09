@@ -233,7 +233,10 @@ public class LargeSupportTank extends SupportTank {
      */
     @Override
     public int locations() {
-        return m_bHasNoTurret ? 7 : 8;
+        if (m_bHasNoDualTurret) {
+            return m_bHasNoTurret ? 7 : 8;
+        }
+        return 9;
     }
 
     @Override

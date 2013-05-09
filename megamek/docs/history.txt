@@ -18,6 +18,7 @@ v0.35.39-dev (SVN)
 + Bug: superheavy tank and support tank locations not working correctly
 + Data: New Maps see Unofficial Folder Aokarasu (Thanks)
 + Data: Various Unit fixes
++ Bug: ArrayIndexOutOfBoundsException when loading large support vees
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

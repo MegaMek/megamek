@@ -132,11 +132,12 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if ((armor.length < 6) || (armor.length > 7)) {
+        if ((armor.length < 6) || (armor.length > 8)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
         t.setHasNoTurret(armor.length == 6);
+        t.setHasNoDualTurret(armor.length == 6 || armor.length == 7);
 
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];

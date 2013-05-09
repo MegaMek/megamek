@@ -301,6 +301,11 @@ public class Server implements Runnable {
     private String serverAccessKey = null;
 
     private Timer t = new Timer(true);
+    
+    /**
+     *  Stores a set of <code>Coords</code> that have changed during this phase. 
+     */
+    private HashSet<Coords> hexUpdateSet = new HashSet<Coords>();
 
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
@@ -2008,11 +2013,17 @@ public class Server implements Runnable {
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
                 checkForSuffocation();
-                game.getPlanetaryConditions().determineWind();
+                game.getPlanetaryConditions().determineWind();                
                 send(createPlanetaryConditionsPacket());
+                
+                hexUpdateSet.clear();
                 for (DynamicTerrainProcessor tp : terrainProcessors) {
                     tp.doEndPhaseChanges(vPhaseReport);
                 }
+                for (Coords c : hexUpdateSet){
+                    sendChangedHex(c);
+                }
+                
                 applyBuildingDamage();
                 addReport(game.ageFlares());
                 send(createFlarePacket());
@@ -30316,5 +30327,13 @@ public class Server implements Runnable {
             printout.close();
         } catch (Exception e) {
         }
+    }
+
+    public HashSet<Coords> getHexUpdateSet() {
+        return hexUpdateSet;
+    }
+
+    public void setHexUpdateSet(HashSet<Coords> hexUpdateSet) {
+        this.hexUpdateSet = hexUpdateSet;
     }
 }

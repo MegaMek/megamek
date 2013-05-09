@@ -24,21 +24,26 @@ public class SuperHeavyTank extends Tank {
     // locations
     public static final int LOC_FRONTRIGHT = 2;
     public static final int LOC_FRONTLEFT = 3;
-    public static final int LOC_REARRIGHT = 7;
-    public static final int LOC_REARLEFT = 8;
+    public static final int LOC_REARRIGHT = 4;
+    public static final int LOC_REARLEFT = 5;
+    public static final int LOC_REAR = 6;
+    /** for dual turret tanks, this is the rear turret **/
+    public static final int LOC_TURRET = 7;
+    /** for dual turret tanks, this is the front turret **/
+    public static final int LOC_TURRET_2 = 8;
 
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS =
         { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RR", "TU", "TU2","RRRS", "RRLS", };
+        "RRRS", "RRLS", "RR", "TU", "TU2" };
 
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-        "Front Left", "Rear", "Turret", "", "Rear Right", "Rear Left"};
+        "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
 
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-        "Front Left", "Rear", "Rear Turret", "Front Turret", "Rear Right", "Rear Left" };
+        "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret", "Front Turret" };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -322,6 +327,57 @@ public class SuperHeavyTank extends Tank {
             default:
                 return Compute.ARC_360;
         }
+    }
+
+    @Override
+    public boolean isCrippled() {
+        if (getArmor(LOC_FRONT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_FRONTRIGHT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_FRONTLEFT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_REARRIGHT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_REARLEFT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            return true;
+        }
+        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Turret armor destroyed.");
+            return true;
+        }
+        if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_REAR) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            return true;
+        }
+
+        // If this is not a military vehicle, we don't need to do a weapon
+        // check.
+        if (!isMilitary()) {
+            return false;
+        }
+
+        // no weapons can fire anymore, can cause no more than 5 points of
+        // combined weapons damage,
+        // or has no weapons with range greater than 5 hexes
+        if (!hasViableWeapons()) {
+            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            return true;
+        }
+        return false;
     }
 
 }

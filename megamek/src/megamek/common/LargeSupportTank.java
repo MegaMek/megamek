@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 /**
  * This is a large support vehicle
+ *
  * @author beerockxs
  */
 public class LargeSupportTank extends SupportTank {
@@ -28,22 +29,21 @@ public class LargeSupportTank extends SupportTank {
     // locations
     public static final int LOC_FRONTRIGHT = 2;
     public static final int LOC_FRONTLEFT = 3;
-    public static final int LOC_REARRIGHT = 7;
-    public static final int LOC_REARLEFT = 8;
-
-    // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS =
-        { 25, 25, 25, 25, 25, 25, 25, 25, 25 };
+    public static final int LOC_REARRIGHT = 4;
+    public static final int LOC_REARLEFT = 5;
+    public static final int LOC_REAR = 6;
+    public static final int LOC_TURRET = 7;
+    public static final int LOC_TURRET_2 = 8;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
-        "RR", "TU", "TU2","RRRS", "RRLS", };
+            "RRRS", "RRLS", "RR", "TU", "TU2" };
 
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
-        "Front Left", "Rear", "Turret", "", "Rear Right", "Rear Left"};
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
+            "Front Turret" };
 
-    private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
-        "Front Left", "Rear", "Rear Turret", "Front Turret", "Rear Right", "Rear Left" };
-
+    // tanks have no critical slot limitations
+    private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25, 25 };
 
     @Override
     public String[] getLocationAbbrs() {
@@ -52,9 +52,6 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public String[] getLocationNames() {
-        if (!hasNoDualTurret()) {
-            return LOCATION_NAMES_DUAL_TURRET;
-        }
         return LOCATION_NAMES;
     }
 
@@ -104,64 +101,68 @@ public class LargeSupportTank extends SupportTank {
         }
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
-            case 2:
-                rv.setEffect(HitData.EFFECT_CRITICAL);
-                break;
-            case 3:
-                if (bSide) {
-                    rv = new HitData(LOC_FRONT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                } else if (bRear) {
-                    rv = new HitData(LOC_REARLEFT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                } else if (bRearSide) {
-                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                } else {
-                    rv = new HitData(LOC_FRONTRIGHT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                }
-                rv.setMotiveMod(motiveMod);
-                break;
-            case 4:
-                rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                rv.setMotiveMod(motiveMod);
-                break;
-            case 5:
-                if (bRear || !(bSide || bRearSide)) {
+                case 2:
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                    break;
+                case 3:
+                    if (bSide) {
+                        rv = new HitData(LOC_FRONT, false,
+                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else if (bRear) {
+                        rv = new HitData(LOC_REARLEFT, false,
+                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else if (bRearSide) {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv = new HitData(LOC_FRONTRIGHT, false,
+                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
+                    rv.setMotiveMod(motiveMod);
+                    break;
+                case 4:
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     rv.setMotiveMod(motiveMod);
-                }
-                break;
-            case 6:
-            case 7:
-                break;
-            case 8:
-                if ((bSide || bRearSide) && !game.getOptions().booleanOption("tacops_vehicle_effective")) {
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
-                }
-                break;
-            case 9:
-                if (!game.getOptions().booleanOption("tacops_vehicle_effective")) {
-                    rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                    rv.setMotiveMod(motiveMod);
-                }
-                break;
-            case 10:
-                if (!m_bHasNoTurret) {
-                    rv = new HitData(LOC_TURRET);
-                }
-                break;
-            case 11:
-                if (!m_bHasNoTurret) {
-                    rv = new HitData(LOC_TURRET);
-                }
-                break;
-            case 12:
-                if (m_bHasNoTurret) {
-                    rv.setEffect(HitData.EFFECT_CRITICAL);
-                } else {
-                    rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
-                }
+                    break;
+                case 5:
+                    if (bRear || !(bSide || bRearSide)) {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        rv.setMotiveMod(motiveMod);
+                    }
+                    break;
+                case 6:
+                case 7:
+                    break;
+                case 8:
+                    if ((bSide || bRearSide)
+                            && !game.getOptions().booleanOption(
+                                    "tacops_vehicle_effective")) {
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                    }
+                    break;
+                case 9:
+                    if (!game.getOptions().booleanOption(
+                            "tacops_vehicle_effective")) {
+                        rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        rv.setMotiveMod(motiveMod);
+                    }
+                    break;
+                case 10:
+                    if (!m_bHasNoTurret) {
+                        rv = new HitData(LOC_TURRET);
+                    }
+                    break;
+                case 11:
+                    if (!m_bHasNoTurret) {
+                        rv = new HitData(LOC_TURRET);
+                    }
+                    break;
+                case 12:
+                    if (m_bHasNoTurret) {
+                        rv.setEffect(HitData.EFFECT_CRITICAL);
+                    } else {
+                        rv = new HitData(LOC_TURRET, false,
+                                HitData.EFFECT_CRITICAL);
+                    }
             }
         }
         if (table == ToHitData.HIT_SWARM) {
@@ -192,10 +193,11 @@ public class LargeSupportTank extends SupportTank {
             IHex srcHex = game.getBoard().getHex(src);
             IHex curHex = game.getBoard().getHex(getPosition());
             if ((srcHex != null) && (curHex != null)) {
-                LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src, getPosition(),
-                        1, getElevation(), srcHex.floor(), curHex.floor());
-                ArrayList<Coords> in = Coords.intervening(ai.attackPos, ai.targetPos,
-                        true);
+                LosEffects.AttackInfo ai = LosEffects.buildAttackInfo(src,
+                        getPosition(), 1, getElevation(), srcHex.floor(),
+                        curHex.floor());
+                ArrayList<Coords> in = Coords.intervening(ai.attackPos,
+                        ai.targetPos, true);
                 leftBetter = LosEffects.dividedLeftBetter(in, game, ai,
                         Compute.isInBuilding(game, this), new LosEffects());
             }
@@ -206,7 +208,7 @@ public class LargeSupportTank extends SupportTank {
         } else if ((fa == 270) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARLEFT;
         } else if ((fa == 210) && (leftBetter == 0)) {
-            return  ToHitData.SIDE_REAR;
+            return ToHitData.SIDE_REAR;
         } else if ((fa == 150) && (leftBetter == 0)) {
             return ToHitData.SIDE_REARRIGHT;
         } else if ((fa == 90) && (leftBetter == 1)) {
@@ -257,7 +259,8 @@ public class LargeSupportTank extends SupportTank {
         final Mounted mounted = getEquipment(wn);
 
         // B-Pods need to be special-cased, the have 360 firing arc
-        if ((mounted.getType() instanceof WeaponType) && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
+        if ((mounted.getType() instanceof WeaponType)
+                && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
         switch (mounted.getLocation()) {
@@ -312,5 +315,56 @@ public class LargeSupportTank extends SupportTank {
             default:
                 return Compute.ARC_360;
         }
+    }
+
+    @Override
+    public boolean isCrippled() {
+        if (getArmor(LOC_FRONT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_FRONTRIGHT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front Right armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_FRONTLEFT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front Left armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_REARRIGHT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear Right armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_REARLEFT) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear Left armor destroyed.");
+            return true;
+        }
+        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Turret armor destroyed.");
+            return true;
+        }
+        if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1)) {
+            System.out.println(getDisplayName() + " CRIPPLED: Front Turret armor destroyed.");
+            return true;
+        }
+        if (getArmor(LOC_REAR) < 1) {
+            System.out.println(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            return true;
+        }
+
+        // If this is not a military vehicle, we don't need to do a weapon
+        // check.
+        if (!isMilitary()) {
+            return false;
+        }
+
+        // no weapons can fire anymore, can cause no more than 5 points of
+        // combined weapons damage,
+        // or has no weapons with range greater than 5 hexes
+        if (!hasViableWeapons()) {
+            System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            return true;
+        }
+        return false;
     }
 }

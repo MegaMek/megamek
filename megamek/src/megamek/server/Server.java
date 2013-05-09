@@ -123,6 +123,7 @@ import megamek.common.Roll;
 import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.SpecialHexDisplay;
+import megamek.common.SuperHeavyTank;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
@@ -301,9 +302,9 @@ public class Server implements Runnable {
     private String serverAccessKey = null;
 
     private Timer t = new Timer(true);
-    
+
     /**
-     *  Stores a set of <code>Coords</code> that have changed during this phase. 
+     *  Stores a set of <code>Coords</code> that have changed during this phase.
      */
     private HashSet<Coords> hexUpdateSet = new HashSet<Coords>();
 
@@ -2013,9 +2014,9 @@ public class Server implements Runnable {
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
                 checkForSuffocation();
-                game.getPlanetaryConditions().determineWind();                
+                game.getPlanetaryConditions().determineWind();
                 send(createPlanetaryConditionsPacket());
-                
+
                 hexUpdateSet.clear();
                 for (DynamicTerrainProcessor tp : terrainProcessors) {
                     tp.doEndPhaseChanges(vPhaseReport);
@@ -2023,7 +2024,7 @@ public class Server implements Runnable {
                 for (Coords c : hexUpdateSet){
                     sendChangedHex(c);
                 }
-                
+
                 applyBuildingDamage();
                 addReport(game.ageFlares());
                 send(createFlarePacket());
@@ -18716,7 +18717,7 @@ public class Server implements Runnable {
 
                 // is this a mech/tank dumping ammo being hit in the rear torso?
                 if (((te instanceof Mech) && hit.isRear() && bTorso)
-                        || ((te instanceof Tank) && (hit.getLocation() == Tank.LOC_REAR))) {
+                        || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:Tank.LOC_REAR)))) {
                     for (Mounted mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed()
                                 && !mAmmo.isHit()) {
@@ -19105,14 +19106,14 @@ public class Server implements Runnable {
                     r.indent(2);
                     r.add(damage);
                     vDesc.add(r);
-                    if (damage > te.getArmor(Tank.LOC_REAR)) {
-                        te.setArmor(IArmorState.ARMOR_DESTROYED, Tank.LOC_REAR);
+                    if (damage > te.getArmor(te instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:te instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:Tank.LOC_REAR)) {
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, te instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:te instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:Tank.LOC_REAR);
                         r = new Report(6090);
                     } else {
-                        te.setArmor(te.getArmor(Tank.LOC_REAR) - damage,
-                                Tank.LOC_REAR);
+                        te.setArmor(te.getArmor(te instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:te instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:Tank.LOC_REAR) - damage,
+                                te instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:te instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:Tank.LOC_REAR);
                         r = new Report(6085);
-                        r.add(te.getArmor(Tank.LOC_REAR));
+                        r.add(te.getArmor(te instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:te instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:Tank.LOC_REAR));
                     }
                     r.subject = te_n;
                     r.indent(2);
@@ -22067,7 +22068,7 @@ public class Server implements Runnable {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
                 hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                int ISBefore[] = { en.getInternal(Tank.LOC_FRONT),
+                int isBefore[] = { en.getInternal(Tank.LOC_FRONT),
                         en.getInternal(Tank.LOC_RIGHT),
                         en.getInternal(Tank.LOC_LEFT),
                         en.getInternal(Tank.LOC_REAR) };// hack?
@@ -22077,7 +22078,7 @@ public class Server implements Runnable {
                         en.getInternal(Tank.LOC_LEFT),
                         en.getInternal(Tank.LOC_REAR) };
                 for (int x = 0; x <= 3; x++) {
-                    if (ISBefore[x] != ISAfter[x]) {
+                    if (isBefore[x] != ISAfter[x]) {
                         exploded = true;
                     }
                 }

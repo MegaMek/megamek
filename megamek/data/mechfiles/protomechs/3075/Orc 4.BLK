@@ -14,7 +14,7 @@ Orc
 </Name>
 
 <Model>
-3
+4
 </Model>
 
 <Tonnage>
@@ -24,16 +24,16 @@ Orc
 <cruiseMP>
 6
 </cruiseMP>
-
 <Armor>
 3
 5
 2
 2
-5
+4
 </Armor>
 <Torso Equipment>
 CLSRM3
+CLSRM3 Ammo (3)
 CLMG Ammo (12)
 </Torso Equipment>
 <Right Arm Equipment>
@@ -46,7 +46,7 @@ CLMG
 Clan
 </type>
 <year>
-3071
+3072
 </year>
 <internal_type>
 0

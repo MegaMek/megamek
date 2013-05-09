@@ -1462,7 +1462,7 @@ public class Tank extends Entity {
             }
             bvText.append(endColumn);
             bvText.append(startColumn);
-            if (mounted.getLocation() == LOC_REAR) {
+            if (mounted.getLocation() == (this instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:this instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:LOC_REAR)) {
                 weaponsBVRear += dBV;
                 bvText.append(" Rear");
             } else if (mounted.getLocation() == LOC_FRONT) {

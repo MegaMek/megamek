@@ -73,7 +73,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
             hex.removeTerrain(Terrains.ELEVATOR);
             hex.addTerrain(tf.createTerrain(Terrains.ELEVATOR, elevation, true,
                     terr.getExits()));
-            server.sendChangedHex(c);
+            server.getHexUpdateSet().add(c);
         }
     }
 

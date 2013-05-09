@@ -9,7 +9,7 @@ Source:Star League
 Rules Level:2
 
 Mass:35
-Engine:105 Fuel Cell Engine
+Engine:105 Fuel Cell Engine(IS)
 Structure:Industrial
 Myomer:Standard
 Cockpit:Industrial Cockpit
@@ -103,7 +103,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Small Laser
-Cargo (1 ton)
+Cargo (0.5 tons)
 
 Head:
 Life Support

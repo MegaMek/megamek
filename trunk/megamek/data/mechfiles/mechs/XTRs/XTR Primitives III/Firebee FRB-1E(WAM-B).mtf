@@ -1,48 +1,54 @@
-Version:1.0
-DemolitionMech
-WI-DM2
+Version:1.1
+Firebee
+FRB-1E(WAM-B)
 
 Config:Biped
 TechBase:Inner Sphere
-Era:2513
+Era:2483
 Source:Star League
-Rules Level:2
+Rules Level:4
 
 Mass:35
-Engine:105 Fuel Cell Engine(IS)
-Structure:Industrial
+Engine:210 Fusion Engine(IS)
+Structure:Standard
 Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:3
+Heat Sinks:10 Single
+Walk MP:5
 Jump MP:0
 
-Armor:Industrial(Inner Sphere)
+Armor:Primitive(Inner Sphere)
 LA Armor:7
 RA Armor:7
 LT Armor:7
 RT Armor:7
-CT Armor:9
+CT Armor:8
 HD Armor:8
 LL Armor:9
 RL Armor:9
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
 
-Weapons:0
+Weapons:4
+SRM 2, Left Arm
+LRM 5, Right Arm
+SRM 2, Left Torso
+SRM 2, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
+Hand Actuator
+SRM 2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -50,20 +56,20 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-IS Wrecking Ball
-IS Wrecking Ball
-IS Wrecking Ball
-IS Wrecking Ball
-IS Wrecking Ball
+Hand Actuator
+LRM 5
+IS Ammo LRM-5
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
--Empty-
--Empty-
--Empty-
+SRM 2
+IS Ammo SRM-2
+IS Ammo SRM-2
 -Empty-
 -Empty-
 -Empty-
@@ -75,9 +81,9 @@ Left Torso:
 -Empty-
 
 Right Torso:
--Empty-
--Empty-
--Empty-
+Heat Sink
+Heat Sink
+SRM 2
 -Empty-
 -Empty-
 -Empty-
@@ -99,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (0.5 tons)
+-Empty-
 -Empty-
 
 Head:

@@ -9,7 +9,7 @@ Source:Jihad
 Rules Level:2
 
 Mass:65
-Engine:260 XL Engine
+Engine:260 XL Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
@@ -26,18 +26,18 @@ CT Armor:34
 HD Armor:9
 LL Armor:30
 RL Armor:30
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
 
 Weapons:7
 Large Pulse Laser, Left Arm
 Light Gauss Rifle, Right Arm
 ER Small Laser, Right Arm
 Streak SRM 6, Left Torso
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 ER Medium Laser, Head
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder

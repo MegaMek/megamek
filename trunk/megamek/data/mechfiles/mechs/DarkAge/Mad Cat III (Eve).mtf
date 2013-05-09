@@ -1,6 +1,6 @@
 Version:1.0
-Mad Cat
-III (Eve)
+Mad Cat III
+(Eve)
 
 Config:Biped
 TechBase:Clan
@@ -31,12 +31,12 @@ RTR Armor:4
 RTC Armor:6
 
 Weapons:6
-Clan TAG, Center Torso
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER PPC, Right Arm
 LRM 10, Left Torso
 LRM 10, Right Torso
-ER PPC, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
+Clan TAG, Center Torso
 
 Left Arm:
 Shoulder

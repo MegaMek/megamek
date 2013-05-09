@@ -1,14 +1,15 @@
-Version:1.1
-Mad Cat
-III
+Version:1.0
+Mad Cat III
+(Standard)
 
 Config:Biped
 TechBase:Clan
 Era:3086
+Source:TRO Prototypes
 Rules Level:4
 
 Mass:55
-Engine:330 XL Fusion Engine
+Engine:330 XL (Clan) Engine(IS)
 Structure:Endo-Composite
 Myomer:Standard
 
@@ -16,7 +17,7 @@ Heat Sinks:10 Double
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:15
 RA Armor:15
 LT Armor:19
@@ -30,29 +31,29 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:12
-1 CLERMicroLaser, Center Torso
-1 CLERMicroLaser, Center Torso
-1 CLERMicroLaser, Left Torso
-1 CLERMicroLaser, Left Torso
-1 CLERMicroLaser, Right Torso
-1 CLERMicroLaser, Right Torso
-1 CLLRM20, Right Torso, Ammo:24
-1 CLLRM20, Left Torso
-1 CLERMediumLaser, Left Arm
-1 CLERMediumLaser, Left Arm
-1 CLERMediumLaser, Right Arm
-1 CLERMediumLaser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+LRM 20, Left Torso
+ER Micro Laser, Right Torso
+ER Micro Laser, Right Torso
+LRM 20, Right Torso
+ER Micro Laser, Left Torso
+ER Micro Laser, Center Torso
+ER Micro Laser, Left Torso
+ER Micro Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
 CLERMediumLaser
 CLERMediumLaser
 Endo-Composite
 Endo-Composite
 Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -61,7 +62,6 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
 CLERMediumLaser
 CLERMediumLaser
 Endo-Composite
@@ -70,10 +70,11 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+-Empty-
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLLRM20
 CLLRM20
 CLLRM20
@@ -82,12 +83,12 @@ CLArtemisV
 CLArtemisV
 CLERMicroLaser
 CLERMicroLaser
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLLRM20
 CLLRM20
 CLLRM20
@@ -96,20 +97,20 @@ CLArtemisV
 CLArtemisV
 CLERMicroLaser
 CLERMicroLaser
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 CLERMicroLaser
 CLERMicroLaser
 
@@ -120,6 +121,12 @@ Cockpit
 Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -128,6 +135,12 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -136,3 +149,11 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

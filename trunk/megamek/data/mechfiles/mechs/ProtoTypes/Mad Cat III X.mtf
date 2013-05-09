@@ -1,44 +1,46 @@
 Version:1.0
 Mad Cat III
-3
+X
 
 Config:Biped
 TechBase:Clan
-Era:3132
-Rules Level:2
+Era:3076
+Source:XTRO Clans
+Rules Level:4
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL (Clan) Engine(IS)
+Structure:Endo-Composite
 Myomer:Standard
 
-Heat Sinks:16 Double
+Heat Sinks:10 Double
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
-LA Armor:17
-RA Armor:17
-LT Armor:18
-RT Armor:18
-CT Armor:26
+Armor:Ferro-Lamellor(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:15
+RT Armor:15
+CT Armor:19
 HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
+LL Armor:18
+RL Armor:18
+RTL Armor:7
+RTR Armor:7
 RTC Armor:8
 
-Weapons:9
-1 CLERMediumLaser, Right Arm
-1 CLERSmallLaser, Right Arm
-1 CLERMediumLaser, Left Arm
-1 CLERSmallLaser, Left Arm
-1 CLLRM20, Right Torso, Ammo:12
-2 CLERMicroLaser, Right Torso
-1 CLLRM20, Left Torso
-2 CLERMicroLaser, Left Torso
-1 CLAntiMissileSystem, Head, Ammo:24
+Weapons:10
+ER Micro Laser, Right Torso
+ER Micro Laser, Right Torso
+ER Micro Laser, Left Torso
+ER Micro Laser, Left Torso
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Small Laser, Right Arm
+ER Small Laser, Left Arm
+LRM 20, Left Torso
+LRM 20, Right Torso
 
 Left Arm:
 Shoulder
@@ -46,26 +48,26 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLERMediumLaser
 CLERSmallLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
--Empty-
--Empty-
--Empty-
+Endo-Composite
+Endo-Composite
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
 CLERMediumLaser
 CLERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Endo-Composite
+Endo-Composite
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
+Ferro-Lamellor
 -Empty-
 
 Left Torso:
@@ -75,12 +77,12 @@ CLLRM20
 CLLRM20
 CLLRM20
 CLLRM20
-CLLRM20 Ammo
+CLArtemisV
+CLArtemisV
 CLERMicroLaser
 CLERMicroLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
 
 Right Torso:
 Fusion Engine
@@ -89,12 +91,12 @@ CLLRM20
 CLLRM20
 CLLRM20
 CLLRM20
-CLLRM20 Ammo
+CLArtemisV
+CLArtemisV
 CLERMicroLaser
 CLERMicroLaser
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
 
 Center Torso:
 Fusion Engine
@@ -107,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLAMS Ammo
-Ferro-Fibrous
+-Empty-
+-Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLAntiMissileSystem
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -129,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+Ferro-Lamellor
+Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-
@@ -143,12 +145,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+Ferro-Lamellor
+Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

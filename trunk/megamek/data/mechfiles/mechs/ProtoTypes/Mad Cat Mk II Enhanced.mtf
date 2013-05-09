@@ -1,55 +1,52 @@
 Version:1.0
 Mad Cat Mk II
-(Standard)
+Enhanced
 
 Config:Biped
 TechBase:Clan
-Era:3066
-Source:TRO3067
-Rules Level:2
+Era:3083
+Rules Level:4
 
 Mass:90
 Engine:360 XL (Clan) Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:14 Double
+Heat Sinks:18 Double
 Walk MP:4
-Jump MP:3
+Jump MP:4
 
-Armor:Ferro-Fibrous(Clan)
-LA Armor:27
-RA Armor:27
-LT Armor:26
-RT Armor:26
-CT Armor:38
+Armor:Hardened(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:30
 HD Armor:9
-LL Armor:34
-RL Armor:34
+LL Armor:23
+RL Armor:23
 RTL Armor:8
 RTR Armor:8
-RTC Armor:12
+RTC Armor:15
 
-Weapons:8
-Gauss Rifle, Left Arm
-Gauss Rifle, Right Arm
-ER Medium Laser, Left Torso
-ER Medium Laser, Left Torso
+Weapons:6
+ER Large Pulse Laser, Left Arm
+ER Large Pulse Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
 LRM 10, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Torso
 LRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Endo Steel
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -57,13 +54,13 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Ferro-Fibrous
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -71,30 +68,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 Jump Jet
 CLLRM10
 Clan Ammo LRM-10
-Clan Gauss Ammo
-Clan Gauss Ammo
 Endo Steel
-Endo Steel
-Endo Steel
+-Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 Jump Jet
 CLLRM10
 Clan Ammo LRM-10
-Clan Gauss Ammo
-Clan Gauss Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Endo Steel
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -107,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Endo Steel
+-Empty-
+-Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -143,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Endo Steel
+Endo Steel
 -Empty-
 -Empty-
 -Empty-

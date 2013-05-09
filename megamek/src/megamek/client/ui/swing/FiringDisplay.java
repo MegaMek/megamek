@@ -65,6 +65,7 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -1757,7 +1758,7 @@ KeyListener, ItemListener, ListSelectionListener {
                         aimingAt = Tank.LOC_RIGHT;
                     }
                     if (side == ToHitData.SIDE_REAR) {
-                       aimingAt = (target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
+                       aimingAt = (target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : target instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:Tank.LOC_REAR;
                     }
                     if (side == ToHitData.SIDE_FRONT) {
                         aimingAt = Tank.LOC_FRONT;
@@ -1840,6 +1841,43 @@ KeyListener, ItemListener, ListSelectionListener {
                         mask[LargeSupportTank.LOC_FRONTLEFT] = false;
                         mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
                         mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                    }
+                } else if (target instanceof SuperHeavyTank) {
+                    if (side == ToHitData.SIDE_FRONT) {
+                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
+                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
+                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REAR] = false;
+                    }
+                    if (side == ToHitData.SIDE_FRONTLEFT) {
+                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
+                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REAR] = false;
+                    }
+                    if (side == ToHitData.SIDE_FRONTRIGHT) {
+                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
+                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
+                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REAR] = false;
+                    }
+                    if (side == ToHitData.SIDE_REARRIGHT) {
+                        mask[Tank.LOC_FRONT] = false;
+                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
+                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
+                    }
+                    if (side == ToHitData.SIDE_REARLEFT) {
+                        mask[Tank.LOC_FRONT] = false;
+                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
+                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
+                    }
+                    if (side == ToHitData.SIDE_REAR) {
+                        mask[Tank.LOC_FRONT] = false;
+                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
+                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
+                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
                     }
                 } else {
                     if (side == ToHitData.SIDE_LEFT) {

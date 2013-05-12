@@ -794,7 +794,7 @@ public class BattleArmor extends Infantry {
                     break;
                 }
             }
-            int runMP = getWalkMP(false, false, true, false, true);
+            int runMP = getWalkMP(false, false, true, true, true);
             int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
             // get jump MP, ignoring burden
             int rawJump = getJumpMP(false, true, true);
@@ -883,7 +883,7 @@ public class BattleArmor extends Infantry {
                     }
                 }
             }
-            int movement = Math.max(getWalkMP(false, false, true, false, true), getJumpMP(false, true, true));
+            int movement = Math.max(getWalkMP(false, false, true, true, true), getJumpMP(false, true, true));
             double speedFactor = Math.pow(1 + ((double) (movement - 5) / 10), 1.2);
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;

@@ -319,7 +319,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * When comparing <code>AmmoType</code>s, look at the ammoType and rackSize.
-     * 
+     *
      * @param other
      *            the <code>Object</code> to compare to this one.
      * @return <code>true</code> if the other is an <code>AmmoType</code> object
@@ -390,7 +390,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * Returns the first usable ammo type for the given oneshot launcher
-     * 
+     *
      * @param mounted
      * @return
      */
@@ -3251,7 +3251,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Improved Heavy Gauss Ammo";
-        ammo.shortName = "Heavy Gauss";
+        ammo.shortName = "iHeavy Gauss";
         ammo.setInternalName("ISImprovedHeavyGauss Ammo");
         ammo.addLookupName("IS Improved Heavy Gauss Rifle Ammo");
         ammo.damagePerShot = 22;
@@ -10259,7 +10259,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create a mutator that will transform the <code>AmmoType</code> of a
          * base round into one of its muntions.
-         * 
+         *
          * @param munitionName
          *            - the <code>String</code> name of this munition type.
          * @param weightRatio
@@ -10282,7 +10282,7 @@ public class AmmoType extends EquipmentType {
         /**
          * Create the <code>AmmoType</code> for this munition type for the given
          * rack size.
-         * 
+         *
          * @param base
          *            - the <code>AmmoType</code> of the base round.
          * @return this munition's <code>AmmotType</code>.
@@ -10637,7 +10637,7 @@ public class AmmoType extends EquipmentType {
 
     /**
      * get BV for BA loads
-     * 
+     *
      * @return
      */
     public double getBABV() {

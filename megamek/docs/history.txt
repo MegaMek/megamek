@@ -23,6 +23,7 @@ v0.35.39-dev (SVN)
 + Bug: BA BV wrong for units with DWP
 + Bug: The server wasn't being killed when a game fails to load, leaving the socket in use
 + Data: More Unit fixes, Reorganized Vehicles Folder and new image.
++ Partial fix for Bug 3731: Hex class inefficiently stores terrain information
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

@@ -4,11 +4,11 @@ SDR-7M
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3050
+Era:3051
 Rules Level:2
 
 Mass:30
-Engine:240 Fusion Engine
+Engine:240 Fusion Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:10 Single
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:5
 RA Armor:5
 LT Armor:6
@@ -27,10 +27,11 @@ LL Armor:5
 RL Armor:5
 RTL Armor:2
 RTR Armor:2
-RTC Armor:4
+RTC Armor:3
 
-Weapons:1
-2 ISMediumPulseLaser, Center Torso
+Weapons:2
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -65,13 +66,13 @@ Jump Jet
 Jump Jet
 Jump Jet
 Jump Jet
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 
 Right Torso:
@@ -79,13 +80,13 @@ Jump Jet
 Jump Jet
 Jump Jet
 Jump Jet
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 
 Center Torso:
@@ -143,4 +144,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

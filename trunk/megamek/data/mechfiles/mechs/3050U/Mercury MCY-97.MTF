@@ -4,24 +4,24 @@ MCY-97
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3050
+Era:3049
 Rules Level:2
 
 Mass:20
-Engine:160 Fusion Engine
+Engine:160 Fusion Engine(IS)
 Structure:Standard
-Myomer:MASC
+Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:8
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:5
 RA Armor:5
 LT Armor:6
 RT Armor:6
-CT Armor:7
+CT Armor:6
 HD Armor:5
 LL Armor:6
 RL Armor:6
@@ -29,10 +29,9 @@ RTL Armor:2
 RTR Armor:2
 RTC Armor:4
 
-Weapons:3
-1 ISMediumLaser, Right Arm
-1 ISSmallLaser, Center Torso
-1 ISBeagleActiveProbe, Left Torso
+Weapons:2
+Medium Laser, Right Arm
+Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -53,7 +52,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -63,8 +62,8 @@ ISMediumLaser
 -Empty-
 
 Left Torso:
-ISBeagleActiveProbe
-ISBeagleActiveProbe
+BeagleActiveProbe
+BeagleActiveProbe
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -102,7 +101,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISMASC
-ISSmallLaser
+Small Laser
 
 Head:
 Life Support
@@ -145,4 +144,5 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
 

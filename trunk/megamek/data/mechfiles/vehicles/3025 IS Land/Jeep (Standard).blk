@@ -13,15 +13,15 @@ Tank
 </UnitType>
 
 <Name>
-Ajax Assault Tank
+Jeep
 </Name>
 
 <Model>
-D
+(Standard)
 </Model>
 
 <year>
-3075
+2000
 </year>
 
 <type>
@@ -29,74 +29,45 @@ IS Level 3
 </type>
 
 <motion_type>
-Tracked
+Wheeled
 </motion_type>
 
 <transporters>
-troopspace:4.0
+troopspace:2.0
 </transporters>
 
 <cruiseMP>
-3
+7
 </cruiseMP>
 
 <engine_type>
-2
+1
 </engine_type>
 
-<omni>
-1
-</omni>
-
 <armor>
-76
-60
-60
-40
-68
+4
+4
+4
+4
 </armor>
 
 <Body Equipment>
-ISDroneCarrierControlSystem
-ISGuardianECMSuite
-ISArrowIVHomingAmmo
-ISArrowIVHomingAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
-IS Light Machine Gun Ammo - Half
-ISCASE
+ISOffRoadChassis
 </Body Equipment>
 
 <Front Equipment>
 </Front Equipment>
 
 <Right Equipment>
-Light Machine Gun
 </Right Equipment>
 
 <Left Equipment>
-Light Machine Gun
 </Left Equipment>
 
 <Rear Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Light Machine Gun
 </Rear Equipment>
 
-<Turret Equipment>
-ISArrowIV
-ISERMediumLaser
-ISERMediumLaser
-</Turret Equipment>
-
 <tonnage>
-90.0
+5.0
 </tonnage>
 

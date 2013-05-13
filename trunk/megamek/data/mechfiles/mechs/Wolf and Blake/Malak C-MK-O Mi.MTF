@@ -1,24 +1,25 @@
-Version:1.0
+Version:1.1
 Malak
 C-MK-O Mi
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3067
-Rules Level:3
+Rules Level:4
 
 Mass:30
-Engine:210 Light Engine
+Engine:210 Light Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
-Gyro:XL Gyro
 Cockpit:Small Cockpit
+Gyro:XL Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:7
 Jump MP:0
 
-Armor:Light Ferro-Fibrous
+Armor:Light Ferro-Fibrous(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:11
@@ -31,20 +32,19 @@ RTL Armor:3
 RTR Armor:3
 RTC Armor:4
 
-Weapons:4
-1 ISMediumVSPLaser, Right Arm
-1 ISMediumVSPLaser, Left Arm
-1 ISImprovedC3CPU, Left Torso
-1 ISERSmallLaser, Head
+Weapons:3
+Medium VSP Laser, Left Arm
+Medium VSP Laser, Right Arm
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMediumVariableSpeedLaser
+ISMediumVariableSpeedLaser
 Light Ferro-Fibrous
 Light Ferro-Fibrous
 -Empty-
@@ -54,8 +54,8 @@ Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISMediumVariableSpeedLaser
+ISMediumVariableSpeedLaser
 Endo Steel
 Endo Steel
 Endo Steel
@@ -68,11 +68,11 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISImprovedC3CPU
-ISImprovedC3CPU
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISC3iUnit
+ISC3iUnit
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Supercharger
 Endo Steel
 Endo Steel
@@ -148,3 +148,5 @@ Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
+

@@ -4,11 +4,11 @@ OSR-4D
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3063
+Era:3067
 Rules Level:2
 
 Mass:30
-Engine:240 XL Engine
+Engine:240 XL Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
@@ -16,12 +16,12 @@ Heat Sinks:10 Double
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:9
 RA Armor:9
 LT Armor:10
 RT Armor:10
-CT Armor:15
+CT Armor:14
 HD Armor:9
 LL Armor:13
 RL Armor:13
@@ -29,34 +29,36 @@ RTL Armor:3
 RTR Armor:3
 RTC Armor:5
 
-Weapons:4
-2 ISERMediumLaser, Right Arm
-1 ISERMediumLaser, Right Torso
-1 ISMediumPulseLaser, Right Torso
-2 ISERMediumLaser, Center Torso
+Weapons:6
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Torso
+Medium Pulse Laser, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Ferro-Fibrous
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 ISERMediumLaser
 ISERMediumLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -71,11 +73,11 @@ Jump Jet
 Jump Jet
 Jump Jet
 Jump Jet
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -146,4 +148,5 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -1,70 +1,58 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 Tank
 </UnitType>
 
-<blockversion>
-1
-</blockversion>
-
 <Name>
 Turhan Urban Combat Vehicle
 </Name>
+
+<Model>
+(Standard Armor)
+</Model>
 
 <year>
 2530
 </year>
 
-<source>
-Star League
-</source>
-
 <type>
 IS Level 2
 </type>
-
-<tonnage>
-50.0
-</tonnage>
 
 <motion_type>
 Wheeled
 </motion_type>
 
 <transporters>
-TroopSpace: 5
+troopspace:5.0
 </transporters>
-
-<engine_type>
-0
-</engine_type>
 
 <cruiseMP>
 4
 </cruiseMP>
 
-<armor_type>
-1
-</armor_type>
-
-<armor_tech>
-1
-</armor_tech>
+<engine_type>
+0
+</engine_type>
 
 <internal_type>
 -1
 </internal_type>
 
 <armor>
-30
-29
-29
-26
+28
+25
+25
+22
 20
 </armor>
 
@@ -91,4 +79,12 @@ Large Laser
 Large Laser
 Machine Gun
 </Turret Equipment>
+
+<source>
+Star League
+</source>
+
+<tonnage>
+50.0
+</tonnage>
 

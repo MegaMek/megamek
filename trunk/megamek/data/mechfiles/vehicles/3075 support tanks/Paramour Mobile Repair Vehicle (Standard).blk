@@ -9,31 +9,36 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
-Morrigu Fire Support Vehicle
+Paramour Mobile Repair Vehicle
 </Name>
 
 <Model>
-[HAG]
+(Standard)
 </Model>
 
 <year>
-3083
+2557
 </year>
 
 <type>
-Clan Level 2
+IS Level 2
 </type>
 
 <motion_type>
 Tracked
 </motion_type>
 
+<transporters>
+troopspace:5.0
+cargobay:15:1
+</transporters>
+
 <cruiseMP>
-3
+4
 </cruiseMP>
 
 <engine_type>
@@ -41,53 +46,45 @@ Tracked
 </engine_type>
 
 <armor>
-63
-41
-41
-28
-35
+27
+20
+20
+25
 </armor>
 
+<barrating>
+6
+</barrating>
+
+<armor_type>
+14
+</armor_type>
+
 <Body Equipment>
-CLECMSuite
-Clan Ammo SRM-2
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-CLCASE
+IS Machine Gun Ammo - Half
+Armored Chassis
 </Body Equipment>
 
 <Front Equipment>
+Machine Gun
 </Front Equipment>
 
 <Right Equipment>
-CLSRM2
 </Right Equipment>
 
 <Left Equipment>
-CLSRM2
 </Left Equipment>
 
 <Rear Equipment>
+Lift Hoist
+Lift Hoist
 </Rear Equipment>
 
-<Turret Equipment>
-CLHAG40
-CLLRM15
-CLLRM15
-</Turret Equipment>
-
 <source>
-RS 3067U
+TRO 3075
 </source>
 
 <tonnage>
-80.0
+60.0
 </tonnage>
 

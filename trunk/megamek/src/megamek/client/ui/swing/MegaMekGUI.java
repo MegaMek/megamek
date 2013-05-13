@@ -421,6 +421,7 @@ public class MegaMekGUI implements IMegaMekGUI {
                     .showMessageDialog(
                             frame,
                             Messages.getString("MegaMek.LoadGameAlert.message"), Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            server.die();
             server = null;
             return;
         }

@@ -8,7 +8,7 @@ Era:3050
 Rules Level:2
 
 Mass:35
-Engine:210 XL Engine
+Engine:210 XL Engine(IS)
 Structure:Standard
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:11 Single
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:8
 RA Armor:8
 LT Armor:11
@@ -27,15 +27,14 @@ LL Armor:8
 RL Armor:8
 RTL Armor:3
 RTR Armor:3
-RTC Armor:4
+RTC Armor:3
 
-Weapons:6
-1 ISSRM6, Right Torso, Ammo:15
-2 ISMediumLaser, Right Arm
-1 ISBeagleActiveProbe, Center Torso
-1 ISNarcBeacon, Left Arm, Ammo:12
-1 ISTAG, Right Torso
-1 ISGuardianECM, Left Torso
+Weapons:5
+Narc, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+SRM 6, Right Torso
+TAG, Right Torso
 
 Left Arm:
 Shoulder
@@ -54,8 +53,8 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -69,9 +68,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGuardianECM
-ISGuardianECM
-ISSRM6 Ammo Narc-capable
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Ammo SRM-6 Narc-capable
 ISNarc Pods
 ISNarc Pods
 ISCASE
@@ -83,8 +82,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISSRM6
-ISSRM6
+SRM 6
+SRM 6
 ISTAG
 -Empty-
 -Empty-
@@ -104,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISBeagleActiveProbe
-ISBeagleActiveProbe
+BeagleActiveProbe
+BeagleActiveProbe
 
 Head:
 Life Support
@@ -148,4 +147,5 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
 

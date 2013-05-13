@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,26 +20,51 @@ Condor Heavy Hover Tank
 (Flamer)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+2800
+</year>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:0.5
+</transporters>
 
 <cruiseMP>
 8
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+1
+</engine_type>
+
+<armor>
 40
 25
 25
 21
 25
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Vehicle Flamer Ammo
+</Body Equipment>
 
 <Front Equipment>
 Vehicle Flamer
 </Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
 
 <Rear Equipment>
 Vehicle Flamer
@@ -53,39 +78,11 @@ Machine Gun
 Machine Gun
 </Turret Equipment>
 
-<Body Equipment>
-IS Vehicle Flamer Ammo
-IS Ammo MG - Full
-</Body Equipment>
-
-<type>
-IS Level 1
-</type>
-
-<year>
-2800
-</year>
-
 <source>
 Succession Wars
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-1
-</engine_type>
-
-<motion_type>
-Hover
-</motion_type>
-
-<transporters>
-TroopSpace:0.2
-</transporters>

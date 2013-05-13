@@ -2,53 +2,75 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Falcon Hover Tank
 </Name>
-<Tonnage>
-50
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+3023
+</year>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
 <cruiseMP>
 9
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 24
 16
 16
 16
 16
-</Armor>
-<Turret Equipment>
-ISMediumLaser
-ISSRM6
-ISSRM6
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-ISSRM6 Ammo
-ISSRM6 Ammo
+IS Ammo SRM-6
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3025
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+SRM 6
+SRM 6
+</Turret Equipment>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -9,31 +9,31 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
-Stygian Strike Tank
+Paramour Mobile Repair Vehicle
 </Name>
 
 <Model>
-(WOB)
+(MFB)
 </Model>
 
 <year>
-3068
+3074
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
-Hover
+Tracked
 </motion_type>
 
 <cruiseMP>
-9
+4
 </cruiseMP>
 
 <engine_type>
@@ -41,21 +41,28 @@ Hover
 </engine_type>
 
 <armor>
-18
-18
-18
-18
-16
+27
+20
+20
+25
 </armor>
 
+<barrating>
+6
+</barrating>
+
+<armor_type>
+14
+</armor_type>
+
 <Body Equipment>
-ISC3iUnit
-IS Ammo LRM-10
+Armored Chassis
+ISMobileFieldBase
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
+Machine Gun
 </Front Equipment>
 
 <Right Equipment>
@@ -65,17 +72,15 @@ ISMediumPulseLaser
 </Left Equipment>
 
 <Rear Equipment>
+Lift Hoist
+Lift Hoist
 </Rear Equipment>
 
-<Turret Equipment>
-LRM 10
-</Turret Equipment>
-
 <source>
-RS:3067U
+TRO 3074
 </source>
 
 <tonnage>
-40.0
+60.0
 </tonnage>
 

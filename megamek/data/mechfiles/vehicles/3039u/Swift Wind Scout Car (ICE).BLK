@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Swift Wind Scout Car
@@ -24,33 +24,21 @@ Swift Wind Scout Car
 2841
 </year>
 
-<source>
-Succession Wars
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-8.0
-</tonnage>
 
 <motion_type>
 Wheeled
 </motion_type>
 
-<transporters>
-TroopSpace: 2
-</transporters>
+<cruiseMP>
+10
+</cruiseMP>
 
 <engine_type>
 1
 </engine_type>
-
-<cruiseMP>
-10
-</cruiseMP>
 
 <armor>
 6
@@ -74,4 +62,12 @@ Communications Equipment (2 ton)
 
 <Rear Equipment>
 </Rear Equipment>
+
+<source>
+Succession Wars
+</source>
+
+<tonnage>
+8.0
+</tonnage>
 

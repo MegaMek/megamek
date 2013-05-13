@@ -4,7 +4,7 @@ IIC 2
 
 Config:Biped
 TechBase:Clan
-Era:3085
+Era:3086
 Rules Level:4
 
 Mass:20
@@ -14,7 +14,7 @@ Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:5
-Jump MP:6
+Jump MP:5
 
 Armor:Ferro-Fibrous(Clan)
 LA Armor:6
@@ -68,10 +68,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-Jump Jet
 Endo Steel
 Endo Steel
 Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 
@@ -82,10 +82,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-Jump Jet
 Endo Steel
 Endo Steel
 Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 
@@ -100,8 +100,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
+Jump Jet
 Ferro-Fibrous
--Empty-
 
 Head:
 Life Support

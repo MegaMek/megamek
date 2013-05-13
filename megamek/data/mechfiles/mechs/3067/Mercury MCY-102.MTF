@@ -4,24 +4,24 @@ MCY-102
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3062
+Era:3067
 Rules Level:2
 
 Mass:20
-Engine:160 Fusion Engine
+Engine:160 Fusion Engine(IS)
 Structure:Endo Steel
-Myomer:MASC
+Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:8
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:5
 RA Armor:5
 LT Armor:6
 RT Armor:6
-CT Armor:7
+CT Armor:6
 HD Armor:5
 LL Armor:6
 RL Armor:6
@@ -29,23 +29,22 @@ RTL Armor:2
 RTR Armor:2
 RTC Armor:4
 
-Weapons:3
-1 ISERMediumLaser, Right Arm
-1 ISERSmallLaser, Head
-1 ISImprovedC3CPU, Left Torso
+Weapons:2
+ER Medium Laser, Right Arm
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 
 Right Arm:
@@ -54,17 +53,17 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Left Torso:
-ISImprovedC3CPU
-ISImprovedC3CPU
+ISC3iUnit
+ISC3iUnit
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -145,4 +144,5 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
 

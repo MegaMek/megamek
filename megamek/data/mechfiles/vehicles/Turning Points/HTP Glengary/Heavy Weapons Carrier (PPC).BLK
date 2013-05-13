@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Heavy Weapons Carrier
@@ -21,72 +21,24 @@ Heavy Weapons Carrier
 </Model>
 
 <year>
-3050
+3056
 </year>
 
 <type>
 IS Level 1
 </type>
 
-<tonnage>
-20.0
-</tonnage>
-
 <motion_type>
 Hover
 </motion_type>
-
-<engine_type>
-0
-</engine_type>
 
 <cruiseMP>
 8
 </cruiseMP>
 
-<armor_type>
-7
-</armor_type>
-
-<Front_armor_type>
+<engine_type>
 0
-</Front_armor_type>
-
-<Front_armor_tech>
-Inner Sphere
-</Front_armor_tech>
-
-<Right_armor_type>
-0
-</Right_armor_type>
-
-<Right_armor_tech>
-Inner Sphere
-</Right_armor_tech>
-
-<Left_armor_type>
-0
-</Left_armor_type>
-
-<Left_armor_tech>
-Inner Sphere
-</Left_armor_tech>
-
-<Rear_armor_type>
-0
-</Rear_armor_type>
-
-<Rear_armor_tech>
-Inner Sphere
-</Rear_armor_tech>
-
-<Turret_armor_type>
--1
-</Turret_armor_type>
-
-<Turret_armor_tech>
-(Unknown Technology Base)
-</Turret_armor_tech>
+</engine_type>
 
 <armor>
 8
@@ -114,4 +66,12 @@ Inner Sphere
 <Turret Equipment>
 PPC
 </Turret Equipment>
+
+<source>
+HTP: Glengarry
+</source>
+
+<tonnage>
+20.0
+</tonnage>
 

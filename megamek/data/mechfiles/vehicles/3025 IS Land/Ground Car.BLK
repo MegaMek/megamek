@@ -2,46 +2,75 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ground Car
 </Name>
-<Tonnage>
-3
-</Tonnage>
-<cruiseMP>
-10
-</cruiseMP>
-<Armor>
-4
-4
-4
-4
-</Armor>
-<transporters>
-TroopSpace:1
-</transporters>
-<type>
-IS
-</type>
+
+<Model>
+
+</Model>
+
 <year>
-3025
+2000
 </year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
+
+<type>
+IS Level 1
+</type>
+
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+troopspace:0.5
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+2
+2
+2
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+3.0
+</tonnage>
+
+<bv>
+55
+</bv>
+

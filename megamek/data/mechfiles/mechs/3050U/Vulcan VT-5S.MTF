@@ -8,15 +8,15 @@ Era:3050
 Rules Level:2
 
 Mass:40
-Engine:240 XL Engine
+Engine:240 XL Engine(IS)
 Structure:Standard
-Myomer:MASC
+Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:6
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:6
 RA Armor:6
 LT Armor:10
@@ -27,19 +27,19 @@ LL Armor:12
 RL Armor:12
 RTL Armor:5
 RTR Armor:5
-RTC Armor:6
+RTC Armor:5
 
 Weapons:4
-1 ISUltraAC5, Right Torso, Ammo:20
-1 ISMediumLaser, Left Torso
-1 ISFlamer, Right Arm
-1 ISMachine Gun, Left Arm, Ammo:200
+Machine Gun, Left Arm
+Flamer, Right Arm
+Medium Laser, Left Torso
+Ultra AC/5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMachine Gun
+Machine Gun
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -53,7 +53,7 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISFlamer
+Flamer
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -72,8 +72,8 @@ Jump Jet
 Jump Jet
 ISMASC
 ISMASC
-ISMediumLaser
-ISMG Ammo (200)
+Medium Laser
+IS Ammo MG - Full
 -Empty-
 -Empty-
 
@@ -88,7 +88,7 @@ ISUltraAC5
 ISUltraAC5
 ISUltraAC5
 ISUltraAC5
-ISUltraAC5 Ammo
+IS Ultra AC/5 Ammo
 ISCASE
 
 Center Torso:
@@ -146,4 +146,5 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
 

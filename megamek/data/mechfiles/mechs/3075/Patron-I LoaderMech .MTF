@@ -1,25 +1,25 @@
 Version:1.1
-Patron-I LoaderMech
-
+Patron LoaderMech
+I
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2470
 Source:Star League
-Rules Level:2
+Rules Level:4
 
 Mass:15
-Engine:40 Fusion Engine
+Engine:40 Fuel Cell Engine(IS)
 Structure:Industrial
 Myomer:Standard
 Cockpit:Primitive Cockpit
 Gyro:Standard Gyro
 
-Heat Sinks:10 Single
+Heat Sinks:1 Single
 Walk MP:2
 Jump MP:0
 
-Armor: Commercial
+Armor:Commercial(Inner Sphere)
 LA Armor:2
 RA Armor:2
 LT Armor:2
@@ -63,7 +63,7 @@ Hand Actuator
 -Empty-
 
 Left Torso:
--Empty-
+MechSprayer
 -Empty-
 -Empty-
 -Empty-

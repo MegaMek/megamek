@@ -8,37 +8,36 @@ Era:3050
 Rules Level:2
 
 Mass:30
-Engine:270 Fusion Engine
+Engine:270 Fusion Engine(IS)
 Structure:Endo Steel
-Myomer:MASC
+Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:9
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:4
 RA Armor:4
 LT Armor:6
 RT Armor:6
 CT Armor:6
-HD Armor:5
+HD Armor:4
 LL Armor:4
 RL Armor:4
 RTL Armor:2
 RTR Armor:2
 RTC Armor:2
 
-Weapons:3
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Arm
-1 ISBeagleActiveProbe, Right Torso
+Weapons:2
+Medium Laser, Left Arm
+Medium Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumLaser
+Medium Laser
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -53,7 +52,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
+Medium Laser
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -65,27 +64,27 @@ Ferro-Fibrous
 Left Torso:
 ISMASC
 ISMASC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-ISBeagleActiveProbe
-ISBeagleActiveProbe
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+BeagleActiveProbe
+BeagleActiveProbe
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -145,4 +144,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

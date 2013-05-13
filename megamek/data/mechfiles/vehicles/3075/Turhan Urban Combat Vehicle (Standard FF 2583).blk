@@ -13,15 +13,15 @@ Tank
 </UnitType>
 
 <Name>
-Tyr Infantry Support Tank
+Turhan Urban Combat Vehicle
 </Name>
 
 <Model>
-(Kurita)
+(Standard)
 </Model>
 
 <year>
-3070
+2583
 </year>
 
 <type>
@@ -29,37 +29,48 @@ IS Level 2
 </type>
 
 <motion_type>
-Hover
+Wheeled
 </motion_type>
 
 <transporters>
-troopspace:4.0
+troopspace:5.0
 </transporters>
 
 <cruiseMP>
-9
+4
 </cruiseMP>
 
 <engine_type>
 0
 </engine_type>
 
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
 <armor>
-21
-21
-21
-21
+30
+29
+29
+26
 20
 </armor>
 
 <Body Equipment>
-CLCASE
-Clan Light Machine Gun Ammo - Half
-IS Ammo MML-7 LRM
-IS Ammo MML-7 SRM
+IS Machine Gun Ammo - Half
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
+Machine Gun
 </Front Equipment>
 
 <Right Equipment>
@@ -72,17 +83,16 @@ IS Ammo MML-7 SRM
 </Rear Equipment>
 
 <Turret Equipment>
-CLLightMG
-CLLightMG
-ISMML7
-ISMML7
+Large Laser
+Large Laser
+Machine Gun
 </Turret Equipment>
 
 <source>
-RS 3067U
+Star League
 </source>
 
 <tonnage>
-45.0
+50.0
 </tonnage>
 

@@ -55,14 +55,14 @@ ISArtemisIV
 <Body Equipment>
 ISC3SlaveUnit
 ISCASE
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
-ISLRM20 Ammo
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
 </Body Equipment>
 
 <type>

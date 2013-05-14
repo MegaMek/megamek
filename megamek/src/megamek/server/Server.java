@@ -15212,6 +15212,7 @@ public class Server implements Runnable {
 
             } else {
                 // same effect as successful DFA
+                ae.setElevation(ae.elevationOccupied(game.getBoard().getHex(daa.getTargetPos())));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
                         daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
                                 "executed death from above")));
@@ -15494,11 +15495,11 @@ public class Server implements Runnable {
         addNewLines();
 
         // That's it for target buildings.
-        // TODO: where do I put the attacker?!?
         if ((target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
         }
+        ae.setElevation(ae.elevationOccupied(game.getBoard().getHex(daa.getTargetPos())));
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(
                 ae,

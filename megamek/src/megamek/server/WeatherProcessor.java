@@ -165,14 +165,14 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         //inferno fires should become regular fires
                         currentHex.removeTerrain(Terrains.FIRE);
                         currentHex.addTerrain(tf.createTerrain(Terrains.FIRE,1));
-                        server.sendChangedHex(currentCoords);
+                        server.getHexUpdateSet().add(currentCoords);
                     }
                 }
 
                 if(ice && !currentHex.containsTerrain(Terrains.ICE)
                         && currentHex.containsTerrain(Terrains.WATER)) {
                     currentHex.addTerrain(tf.createTerrain(Terrains.ICE, 1));
-                    server.sendChangedHex(currentCoords);
+                    server.getHexUpdateSet().add(currentCoords);
                 }
 
                 if(lightSnow
@@ -180,14 +180,14 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         && !(currentHex.containsTerrain(Terrains.WATER) && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(tf.createTerrain(Terrains.SNOW, 1));
-                    server.sendChangedHex(currentCoords);
+                    server.getHexUpdateSet().add(currentCoords);
                 }
 
                 if(deepSnow && !(currentHex.terrainLevel(Terrains.SNOW) > 1)
                         && !(currentHex.containsTerrain(Terrains.WATER) && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(tf.createTerrain(Terrains.SNOW, 2));
-                    server.sendChangedHex(currentCoords);
+                    server.getHexUpdateSet().add(currentCoords);
                 }
 
                 //check for the melting of any snow or ice

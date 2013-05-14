@@ -26,6 +26,7 @@ v0.35.39-dev (SVN)
 + Partial fix for Bug 3731: Hex class inefficiently stores terrain information
 + Data: Fixes to Narc-/Artemis-equipped units lacking compatible missile ammo
 + Bug: units at wrong elevation after successfull DFA
++ Bug 3732: Okinawa DropShip should have aft Streak SRM2s
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

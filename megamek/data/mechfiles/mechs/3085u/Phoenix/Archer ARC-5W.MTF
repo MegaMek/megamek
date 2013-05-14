@@ -43,7 +43,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 SRM 4
-IS Ammo SRM-4
+IS Ammo SRM-4 Narc-capable
 -Empty-
 -Empty-
 -Empty-
@@ -57,7 +57,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 SRM 4
-IS Ammo SRM-4
+IS Ammo SRM-4 Narc-capable
 -Empty-
 -Empty-
 -Empty-
@@ -74,8 +74,8 @@ LRM 20
 LRM 20
 LRM 20
 LRM 20
-IS Ammo LRM-20
-IS Ammo LRM-20
+IS Ammo LRM-20 Narc-capable
+IS Ammo LRM-20 Narc-capable
 ISNarc Pods
 ISCASE
 
@@ -88,8 +88,8 @@ LRM 20
 LRM 20
 LRM 20
 LRM 20
-IS Ammo LRM-20
-IS Ammo LRM-20
+IS Ammo LRM-20 Narc-capable
+IS Ammo LRM-20 Narc-capable
 ISNarc Pods
 ISCASE
 

@@ -67,6 +67,8 @@ public class RandomNameGenerator implements Serializable {
     private static final long serialVersionUID = 5765118329881301375L;
 
     private static RandomNameGenerator rng;
+    private static boolean interrupted;
+    private static boolean dispose;
 
     Map<String, Vector<String>> firstm;
     Map<String, Vector<String>> firstf;
@@ -113,6 +115,13 @@ public class RandomNameGenerator implements Serializable {
             input = new Scanner(fnms, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
+                // Check to see if we've been interrupted
+                if (interrupted){
+                    if (dispose){
+                        clear();
+                    }
+                    return;
+                }
                 String line = input.nextLine();
                 linen++;
                 String[] values = line.split(",");
@@ -150,6 +159,13 @@ public class RandomNameGenerator implements Serializable {
             input = new Scanner(fnfs, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
+                // Check to see if we've been interrupted
+                if (interrupted){
+                    if (dispose){
+                        clear();
+                    }
+                    return;
+                }
                 String line = input.nextLine();
                 linen++;
                 String[] values = line.split(",");
@@ -186,6 +202,13 @@ public class RandomNameGenerator implements Serializable {
             input = new Scanner(lns, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
+                // Check to see if we've been interrupted
+                if (interrupted){
+                    if (dispose){
+                        clear();
+                    }
+                    return;
+                }                
                 String line = input.nextLine();
                 linen++;
                 String[] values = line.split(",");
@@ -224,6 +247,13 @@ public class RandomNameGenerator implements Serializable {
         	return;
         }
         for(int filen = 0; filen<filenames.length; filen++) {
+            // Check to see if we've been interrupted
+            if (interrupted){
+                if (dispose){
+                    clear();
+                }
+                return;
+            }
             String filename = filenames[filen];
             String key = filename.split("\\.txt")[0];
             if((key.length() < 1) || factionLast.containsKey(key)) {
@@ -241,6 +271,13 @@ public class RandomNameGenerator implements Serializable {
             }
             Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
             while (input.hasNextLine()) {
+                // Check to see if we've been interrupted
+                if (interrupted){
+                    if (dispose){
+                        clear();
+                    }
+                    return;
+                }                
                 String line = input.nextLine();
                 String[] values = line.split(",");
                 String ethnicity = values[0];
@@ -342,14 +379,22 @@ public class RandomNameGenerator implements Serializable {
         return Compute.randomInt(100) < percentFemale;
     }
 
-    public void clear() {
+    public void dispose(){
+        interrupted = true;
+        dispose = true;
+    }
+    
+    public void clear() {        
+        rng = null; 
         firstm = null;
         firstf = null;
         last = null;
         factionFirst = null;
         factionLast = null;
         initialized = false;
-        initializing = false;
+        initializing = false;  
+        interrupted = false;
+        dispose = false;
     }
 
     public static void initialize() {
@@ -364,7 +409,9 @@ public class RandomNameGenerator implements Serializable {
                 public void run() {
                     rng.initializing = true;
                     rng.populateNames();
-                    rng.initialized = true;
+                    if (rng != null){
+                        rng.initialized = true;
+                    }
                 }
             }, "Random Name Generator name populator");
             rng.loader.setPriority(Thread.NORM_PRIORITY - 1);

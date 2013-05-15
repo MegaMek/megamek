@@ -14,10 +14,14 @@
 
 package megamek.common;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -41,6 +45,9 @@ import megamek.common.verifier.TestTank;
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
  * and server running in the same process can share it
+ * 
+ * @author Arlith
+ * @author Others...
  */
 public class MechSummaryCache {
 
@@ -49,9 +56,12 @@ public class MechSummaryCache {
     }
 
     static MechSummaryCache m_instance;
+    private static boolean disposeInstance = false;
+    private static boolean interrupted = false;
 
     private boolean initialized = false;
     private boolean initializing = false;
+    
     private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
     private StringBuffer loadReport = new StringBuffer();
@@ -68,6 +78,9 @@ public class MechSummaryCache {
         }
         if (!m_instance.initialized && !m_instance.initializing) {
             m_instance.initializing = true;
+            m_instance.initialized = false;
+            interrupted = false;
+            disposeInstance = false;
             m_instance.loader = new Thread(new Runnable() {
                 public void run() {
                     m_instance.loadMechData();
@@ -82,8 +95,11 @@ public class MechSummaryCache {
     public static void dispose() {
         if (m_instance != null) {
             synchronized (m_instance) {
+                interrupted = true;
                 m_instance.loader.interrupt();
-                m_instance = null;
+                // We can't do this, otherwise we can't notifyAll() 
+                //m_instance = null;
+                disposeInstance = true;                
             }
         }
     }
@@ -112,7 +128,6 @@ public class MechSummaryCache {
     private int fileCount;
     private int zipCount;
 
-    private static final char SEPARATOR = '|';
     private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
     private static final File CACHE = new File(ROOT, "units.cache");
 
@@ -168,32 +183,27 @@ public class MechSummaryCache {
             if (CACHE.exists() && (CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
                 loadReport.append("  Reading from unit cache file...\n");
                 lLastCheck = CACHE.lastModified();
-                BufferedReader br = new BufferedReader(new FileReader(CACHE));
-                String s;
-                while ((s = br.readLine()) != null) {
-                    if (Thread.interrupted()) {
+                InputStream istream = new BufferedInputStream(new FileInputStream(CACHE));
+                ObjectInputStream fin = new ObjectInputStream(istream);
+                Integer num_units = (Integer)fin.readObject();
+                for (int i = 0; i < num_units; i++){
+                    if (interrupted) {
                         done();
                         return;
-                    }
-                    
-                    try {
-                        MechSummary ms = parseMechCacheLine(s);
-                        // Verify that this file still exists and is older than
-                        // the cache.
-                        File fSource = ms.getSourceFile();
-                        if (fSource.exists()) {
-                            vMechs.addElement(ms);
-                            if(null == ms.getEntryName()) {
-                                sKnownFiles.add(fSource.toString());
-                            } else {
-                                sKnownFiles.add(ms.getEntryName());
-                            }                        
-                            cacheCount++;
-                        }
-                    } catch(StringIndexOutOfBoundsException e) {
-                        loadReport.append("  The following line in the mech cache could not be read in:\n   ").append(s).append("\n");
-                        continue;
-                    }                   
+                    }                    
+                    MechSummary ms = (MechSummary)fin.readObject();
+                    // Verify that this file still exists and is older than
+                    // the cache.
+                    File fSource = ms.getSourceFile();
+                    if (fSource.exists()) {
+                        vMechs.addElement(ms);
+                        if(null == ms.getEntryName()) {
+                            sKnownFiles.add(fSource.toString());
+                        } else {
+                            sKnownFiles.add(ms.getEntryName());
+                        }                        
+                        cacheCount++;
+                    }                 
                 }
             }
         } catch (Exception e) {
@@ -210,6 +220,10 @@ public class MechSummaryCache {
 
         // store map references
         for (MechSummary element : m_data) {
+            if (interrupted) {
+                done();
+                return;
+            } 
             m_nameMap.put(element.getName(), element);
             String entryName = element.getEntryName();
             if (entryName == null) {
@@ -257,23 +271,31 @@ public class MechSummaryCache {
         done();
     }
 
-    private void done() {
-        initialized = true;
-        synchronized (m_instance) {
+    private synchronized void done() {
+        if (m_instance != null){
             m_instance.notifyAll();
         }
-        synchronized (listeners) {
-            for (int i = 0; i < listeners.size(); i++) {
-                listeners.get(i).doneLoading();
-            }
+        
+        for (int i = 0; i < listeners.size(); i++) {
+            listeners.get(i).doneLoading();
         }
+        
+        if (disposeInstance){                       
+            m_instance = null;
+            initialized = false;
+        }
+        else{
+            initialized = true; 
+        }                
     }
 
     private void saveCache() throws Exception {
         loadReport.append("Saving unit cache.\n");
-        FileWriter wr = new FileWriter(CACHE);
+        ObjectOutputStream wr = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(CACHE)));
+        Integer length = new Integer(m_data.length);
+        wr.writeObject(length);
         for (MechSummary element : m_data) {
-            wr.write(element.getName() + SEPARATOR + element.getChassis() + SEPARATOR + element.getModel() + SEPARATOR + element.getUnitType() + SEPARATOR + element.getSourceFile().getPath() + SEPARATOR + element.getEntryName() + SEPARATOR + element.getYear() + SEPARATOR + element.getType() + SEPARATOR + element.getTons() + SEPARATOR + element.getBV() + SEPARATOR + element.getLevel() + SEPARATOR + element.getCost() + SEPARATOR + (element.isCanon() ? 'T' : 'F') + SEPARATOR + element.getWalkMp() + SEPARATOR + element.getRunMp() + SEPARATOR + element.getJumpMp() + SEPARATOR + element.getUnitSubType() + SEPARATOR + element.getUnloadedCost() + SEPARATOR + element.getAlternateCost() + "\r\n");
+            wr.writeObject(element);
         }
         wr.flush();
         wr.close();
@@ -347,7 +369,7 @@ public class MechSummaryCache {
 
         if (sa != null) {
             for (String element : sa) {
-                if (Thread.interrupted()) {
+                if (interrupted) {
                     done();
                     return false;
                 }
@@ -447,7 +469,7 @@ public class MechSummaryCache {
         loadReport.append("  Looking in zip file ").append(fZipFile.getPath()).append("...\n");
         
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
-            if (Thread.interrupted()) {
+            if (interrupted) {
                 done();
                 return false;
             }
@@ -519,66 +541,4 @@ public class MechSummaryCache {
         return zipCount;
     }
     
-    private static MechSummary parseMechCacheLine(String s) throws StringIndexOutOfBoundsException {
-        MechSummary ms = new MechSummary();
-        // manually do a string tokenizer. Much faster
-        int nIndex1 = s.indexOf(SEPARATOR);
-        ms.setName(s.substring(0, nIndex1));
-        int nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setChassis(s.substring(nIndex1 + 1, nIndex2));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setModel(s.substring(nIndex1 + 1, nIndex2));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setUnitType(s.substring(nIndex1 + 1, nIndex2));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
-        // have to translate "null" to null
-        if (ms.getEntryName().equals("null")) {
-            ms.setEntryName(null);
-        }
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setType(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setTons(Float.parseFloat(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setBV(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setLevel(s.substring(nIndex1 + 1, nIndex2));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setCanon(s.charAt(nIndex1 + 1) == 'T' ? true : false);
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setWalkMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setRunMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setJumpMp(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-        ms.setUnitSubType(s.substring(nIndex1 + 1, nIndex2));
-        nIndex1 = nIndex2;
-        nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);                    
-        ms.setUnloadedCost(Long.parseLong(s.substring(nIndex1 + 1, nIndex2)));
-        ms.setAlternateCost(Integer.parseInt(s.substring(nIndex2 + 1)));
-        return ms;
-    }
 }

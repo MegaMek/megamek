@@ -3688,7 +3688,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech)) {
+        if (!(this instanceof Mech) && !(this instanceof BattleArmor)) {
             return false;
         }
 
@@ -3705,6 +3705,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getActiveUMUCount() {
         int count = 0;
 
+        if (this instanceof BattleArmor && 
+                getMovementMode() == EntityMovementMode.INF_UMU){
+            //UMU MP for BA is stored in jumpMP
+            return jumpMP;
+        }
+        
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }

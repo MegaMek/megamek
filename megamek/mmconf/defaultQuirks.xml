@@ -1632,6 +1632,12 @@
     </unit>
     <unit>
         <chassis>Stalker</chassis>
+        <model>STK-4P</model>
+        <quirk>combat_computer</quirk>
+        <quirk>no_arms</quirk>
+    </unit>
+    <unit>
+        <chassis>Stalker</chassis>
         <model>STK-5M</model>
         <quirk>combat_computer</quirk>
         <quirk>no_arms</quirk>
@@ -1639,6 +1645,12 @@
     <unit>
         <chassis>Stalker</chassis>
         <model>STK-5S</model>
+        <quirk>combat_computer</quirk>
+        <quirk>no_arms</quirk>
+    </unit>
+    <unit>
+        <chassis>Stalker</chassis>
+        <model>STK-6M</model>
         <quirk>combat_computer</quirk>
         <quirk>no_arms</quirk>
     </unit>

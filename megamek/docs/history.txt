@@ -29,6 +29,7 @@ v0.35.39-dev (SVN)
 + Bug: units at wrong elevation after successfull DFA
 + Bug 3732: Okinawa DropShip should have aft Streak SRM2s
 + Bug: no collapse check when moving in building
++ Bug 3723: defaultQuirks.xml missing STK-4P and STK-6M Stalker models
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

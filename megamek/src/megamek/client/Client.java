@@ -406,10 +406,12 @@ public class Client implements IClientCommandHandler {
             break;
         case PHASE_DEPLOYMENT:
             // free some memory thats only needed in lounge
-            MechSummaryCache.dispose();
             MechFileParser.dispose();
-            RandomUnitGenerator.getInstance().clear();
-            getRandomNameGenerator().clear();
+            RandomUnitGenerator.getInstance().dispose();
+            getRandomNameGenerator().dispose();
+            //We must do this last, as the name and unit generators can create
+            // a new instance if they are running
+            MechSummaryCache.dispose();
             memDump("entering deployment phase"); //$NON-NLS-1$
             break;
         case PHASE_TARGETING:

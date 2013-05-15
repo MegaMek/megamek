@@ -389,9 +389,12 @@ public class BoardEditor extends JComponent implements ItemListener,
             IHex newHex = curHex.duplicate();
             IHex oldHex = board.getHex(c);
             newHex.setElevation(oldHex.getElevation());
-            for (int i = 0; i < Terrains.SIZE; i++) {
-                if (!newHex.containsTerrain(i) && oldHex.containsTerrain(i)) {
-                    newHex.addTerrain(oldHex.getTerrain(i));
+            int terrainTypes[] = oldHex.getTerrainTypes();
+            for (int i = 0; i < terrainTypes.length; i++) {
+                int terrainID = terrainTypes[i];
+                if (!newHex.containsTerrain(terrainID) && 
+                        oldHex.containsTerrain(terrainID)) {
+                    newHex.addTerrain(oldHex.getTerrain(terrainID));
                 }
             }
             board.resetStoredElevation();
@@ -431,8 +434,9 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     private void refreshTerrainList() {
         ((DefaultListModel) lisTerrain.getModel()).removeAllElements();
-        for (int i = 0; i < Terrains.SIZE; i++) {
-            ITerrain terrain = curHex.getTerrain(i);
+        int terrainTypes[] = curHex.getTerrainTypes();
+        for (int i = 0; i < terrainTypes.length; i++) {            
+            ITerrain terrain = curHex.getTerrain(terrainTypes[i]);
             if (terrain != null) {
                 ((DefaultListModel) lisTerrain.getModel()).addElement(terrain
                         .toString());

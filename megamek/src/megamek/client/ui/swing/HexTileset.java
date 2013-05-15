@@ -50,9 +50,12 @@ public class HexTileset {
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> ortho = new ArrayList<HexEntry>();
-    private ImageCache<IHex, Image> hexToImageCache = new ImageCache<IHex, Image>();
-    private ImageCache<IHex, List<Image>> hexToImageListCache = new ImageCache<IHex, List<Image>>();
-    private ImageCache<IHex, List<Image>> orthoListCache = new ImageCache<IHex, List<Image>>();
+    private ImageCache<IHex, Image> hexToImageCache = 
+        new ImageCache<IHex, Image>();
+    private ImageCache<IHex, List<Image>> hexToImageListCache = 
+        new ImageCache<IHex, List<Image>>();
+    private ImageCache<IHex, List<Image>> orthoListCache = 
+        new ImageCache<IHex, List<Image>>();
 
     /**
      * Creates new HexTileset
@@ -139,9 +142,7 @@ public class HexTileset {
                 }
             }
         }
-
-        // assign null, or the matching images to the hex
-        return matches.size() > 0 ? matches : null;
+        return matches;
     }
 
     /**
@@ -167,9 +168,7 @@ public class HexTileset {
                 }
             }
         }
-
-        // assign null, or the matching images to the hex
-        return matches.size() > 0 ? matches : null;
+        return matches;
     }
 
     /**
@@ -229,7 +228,8 @@ public class HexTileset {
             String theme = null;
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
-                    && (st.sval.equals("base") || st.sval.equals("super") || st.sval.equals("ortho"))) { //$NON-NLS-1$ //$NON-NLS-2$
+                    && (st.sval.equals("base") || st.sval.equals("super") || 
+                        st.sval.equals("ortho"))) { //$NON-NLS-1$ //$NON-NLS-2$
                 boolean bas = st.sval.equals("base"); //$NON-NLS-1$
                 boolean sup = st.sval.equals("super"); //$NON-NLS-1$
                 boolean ort = st.sval.equals("ortho"); //$NON-NLS-1$
@@ -265,11 +265,14 @@ public class HexTileset {
         r.close();
 
         System.out
-                .println("hexTileset: loaded " + bases.size() + " base images"); //$NON-NLS-1$ //$NON-NLS-2$
+                .println("hexTileset: loaded " + bases.size() + 
+                        " base images"); //$NON-NLS-1$ //$NON-NLS-2$
         System.out
-                .println("hexTileset: loaded " + supers.size() + " super images"); //$NON-NLS-1$ //$NON-NLS-2$
+                .println("hexTileset: loaded " + supers.size() + 
+                        " super images"); //$NON-NLS-1$ //$NON-NLS-2$
         System.out
-                .println("hexTileset: loaded " + ortho.size() + " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
+                .println("hexTileset: loaded " + ortho.size() + 
+                        " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

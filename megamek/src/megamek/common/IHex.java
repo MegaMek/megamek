@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.Set;
+
 /**
  * IHex represents a single hex on the board.
  */
@@ -155,6 +157,13 @@ public interface IHex extends Cloneable {
      *         terrain is not present in the hex
      */
     public abstract ITerrain getTerrain(int type);
+    
+    /**
+     * Returns a collection of terrain ids for all terrains present in this hex.
+     * 
+     * @return A set that contains an id for each terrain present in this hex.
+     */
+    public abstract int[] getTerrainTypes();
 
     /**
      * Adds the specified terrain

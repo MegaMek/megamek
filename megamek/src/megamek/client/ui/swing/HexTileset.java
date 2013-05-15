@@ -131,9 +131,10 @@ public class HexTileset {
             if (orthoMatch(hex, entry.getHex()) >= 1.0) {
                 matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
                 // remove involved terrain from consideration
-                for (int j = 0; j < Terrains.SIZE; j++) {
-                    if (entry.getHex().containsTerrain(j)) {
-                        hex.removeTerrain(j);
+                int terrTypes[] = entry.getHex().getTerrainTypes();
+                for (int j = 0; j < terrTypes.length; j++) {
+                    if (entry.getHex().containsTerrain(terrTypes[j])) {
+                        hex.removeTerrain(terrTypes[j]);
                     }
                 }
             }
@@ -158,9 +159,10 @@ public class HexTileset {
             if (superMatch(hex, entry.getHex()) >= 1.0) {
                 matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
                 // remove involved terrain from consideration
-                for (int j = 0; j < Terrains.SIZE; j++) {
-                    if (entry.getHex().containsTerrain(j)) {
-                        hex.removeTerrain(j);
+                int terrTypes[] = entry.getHex().getTerrainTypes();
+                for (int j = 0; j < terrTypes.length; j++) {
+                    if (entry.getHex().containsTerrain(terrTypes[j])) {
+                        hex.removeTerrain(terrTypes[j]);
                     }
                 }
             }
@@ -348,10 +350,23 @@ public class HexTileset {
                 && (org.getElevation() != com.getElevation())) {
             return 0;
         }
+        
+        // A themed original matches any unthemed comparison.
+        if ((com.getTheme() != null)
+                && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
+            return 0.0;
+        }
+        
+        // org terrains must match com terrains
+        if (org.terrainsPresent() < com.terrainsPresent())
+            return 0.0;
+        
         // check terrain
-        for (int i = 0; i < Terrains.SIZE; i++) {
-            ITerrain cTerr = com.getTerrain(i);
-            ITerrain oTerr = org.getTerrain(i);
+        int cTerrainTypes[] = com.getTerrainTypes();
+        for (int i = 0; i < cTerrainTypes.length; i++) {
+            int cTerrType = cTerrainTypes[i];
+            ITerrain cTerr = com.getTerrain(cTerrType);
+            ITerrain oTerr = org.getTerrain(cTerrType);
             if (cTerr == null) {
                 continue;
             } else if ((oTerr == null)
@@ -361,11 +376,6 @@ public class HexTileset {
                             .getExits()))) {
                 return 0;
             }
-        }
-        // A themed original matches any unthemed comparason.
-        if ((com.getTheme() != null)
-                && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
-            return 0.0;
         }
 
         return 1.0;
@@ -384,10 +394,23 @@ public class HexTileset {
                 && (org.getElevation() != com.getElevation())) {
             return 0;
         }
+        
+        // A themed original matches any unthemed comparison.
+        if ((com.getTheme() != null)
+                && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
+            return 0.0;
+        }
+        
+        // org terrains must match com terrains
+        if (org.terrainsPresent() < com.terrainsPresent())
+            return 0.0;
+       
         // check terrain
-        for (int i = 0; i < Terrains.SIZE; i++) {
-            ITerrain cTerr = com.getTerrain(i);
-            ITerrain oTerr = org.getTerrain(i);
+        int cTerrainTypes[] = com.getTerrainTypes();
+        for (int i = 0; i < cTerrainTypes.length; i++) {
+            int cTerrType = cTerrainTypes[i];
+            ITerrain cTerr = com.getTerrain(cTerrType);
+            ITerrain oTerr = org.getTerrain(cTerrType);
             if (cTerr == null) {
                 continue;
             } else if ((oTerr == null)
@@ -398,11 +421,7 @@ public class HexTileset {
                 return 0;
             }
         }
-        // A themed original matches any unthemed comparison.
-        if ((com.getTheme() != null)
-                && !com.getTheme().equalsIgnoreCase(org.getTheme())) {
-            return 0.0;
-        }
+
 
         return 1.0;
     }
@@ -431,9 +450,13 @@ public class HexTileset {
         double maxTerrains = Math.max(org.terrainsPresent(),
                 com.terrainsPresent());
         double matches = 0.0;
-        for (int i = 0; i < Terrains.SIZE; i++) {
-            ITerrain cTerr = com.getTerrain(i);
-            ITerrain oTerr = org.getTerrain(i);
+        
+        int[] orgTerrains = org.getTerrainTypes();
+        
+        for (int i = 0; i < orgTerrains.length; i++){
+            int terrType = orgTerrains[i];
+            ITerrain cTerr = com.getTerrain(terrType);
+            ITerrain oTerr = org.getTerrain(terrType);
             if ((cTerr == null) || (oTerr == null)) {
                 continue;
             }

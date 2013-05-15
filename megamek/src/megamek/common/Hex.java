@@ -15,7 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import megamek.common.Building.BasementType;
@@ -29,7 +29,7 @@ public class Hex implements IHex, Serializable {
     /**
      *
      */
-    private static final long serialVersionUID = 82483704768044697L;
+    private static final long serialVersionUID = 82483704768044698L;
     private int elevation;
     /**
      * An array to store the terrain types present in this hex.  The array 
@@ -42,7 +42,7 @@ public class Hex implements IHex, Serializable {
      *  efficient way to access all present terrains.
      *  
      */
-    private HashMap<Integer,ITerrain> hmTerrains;
+    private HashSet<Integer> hsTerrains;
     private String theme;
     private int fireTurn;
     private Coords coords;
@@ -67,11 +67,12 @@ public class Hex implements IHex, Serializable {
         this.terrains = terrains;
         // Creates a HM with a capacity that is 25% larger than the number of 
         //  terrain types.  This should prevent us from every having to resize
-        hmTerrains = new HashMap<Integer,ITerrain>(
+        hsTerrains = new HashSet<Integer>(
                 (int)(Terrains.SIZE * 1.25 + 0.5), 0.75f);
+        
         for (int i = 0; i < terrains.length; i++){
             if (terrains[i] != null){
-                hmTerrains.put(i, terrains[i]);
+                hsTerrains.add(i);
             }
         }
         
@@ -94,6 +95,20 @@ public class Hex implements IHex, Serializable {
             addTerrain(Terrains.getTerrainFactory().createTerrain(
                     st.nextToken()));
         }
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.IHex#getTerrainTypes()
+     */
+    public int[] getTerrainTypes(){
+        int []rv = new int[hsTerrains.size()];
+        int tdx = 0;
+        for (Integer i : hsTerrains){
+            rv[tdx++] = i;
+        }
+        return rv;
     }
 
     /*
@@ -138,7 +153,8 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#clearExits()
      */
     public void clearExits() {
-        for (ITerrain t : hmTerrains.values()){
+        for (Integer i : hsTerrains){
+            ITerrain t = terrains[i];
             if (t != null && !t.hasExitsSpecified())
                 t.setExits(0);
         }
@@ -159,7 +175,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#setExits(megamek.common.IHex, int, boolean)
      */
     public void setExits(IHex other, int direction, boolean roadsAutoExit) {
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             ITerrain cTerr = getTerrain(i);
             ITerrain oTerr;
 
@@ -378,7 +394,7 @@ public class Hex implements IHex, Serializable {
      */
     public void addTerrain(ITerrain terrain) {
         terrains[terrain.getType()] = terrain;
-        hmTerrains.put(terrain.getType(), terrain);
+        hsTerrains.add(terrain.getType());
     }
 
     /*
@@ -388,7 +404,7 @@ public class Hex implements IHex, Serializable {
      */
     public void removeTerrain(int type) {
         terrains[type] = null;
-        hmTerrains.remove(type);
+        hsTerrains.remove(type);
     }
 
     /*
@@ -400,7 +416,7 @@ public class Hex implements IHex, Serializable {
         for (int i = 0; i < terrains.length; i++) {
             terrains[i] = null;
         }
-        hmTerrains.clear();
+        hsTerrains.clear();
     }
 
     /*
@@ -410,7 +426,7 @@ public class Hex implements IHex, Serializable {
      */
     public int displayableTerrainsPresent() {
         int present = 0;
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if ((null != terrains[i]) && 
                     null != Terrains.getDisplayName(i,terrains[i].getLevel())){
                 present++;
@@ -423,7 +439,7 @@ public class Hex implements IHex, Serializable {
      * report the number of terrains present for the tooltips.
      */
     public int terrainsPresent() {
-        return hmTerrains.size();
+        return hsTerrains.size();
     }
 
     /*
@@ -434,7 +450,7 @@ public class Hex implements IHex, Serializable {
     public IHex duplicate() {
         ITerrain[] tcopy = new ITerrain[terrains.length];
         ITerrainFactory f = Terrains.getTerrainFactory();
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if (terrains[i] != null) {
                 tcopy[i] = f.createTerrain(terrains[i]);
             }
@@ -444,7 +460,7 @@ public class Hex implements IHex, Serializable {
 
     public int terrainPilotingModifier(EntityMovementMode moveMode) {
         int rv = 0;
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if (terrains[i] != null) {
                 rv += terrains[i].pilotingModifier(moveMode);
             }
@@ -454,7 +470,7 @@ public class Hex implements IHex, Serializable {
 
     public int movementCost(Entity entity) {
         int rv = 0;
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if (terrains[i] != null) {
                 rv += terrains[i].movementCost(entity);
             }
@@ -467,7 +483,8 @@ public class Hex implements IHex, Serializable {
         String temp;
         temp = "Elevation: " + getElevation();
         temp = temp + "  Features: ";
-        for (ITerrain terrain : hmTerrains.values()) {
+        for (Integer i : hsTerrains) {
+            ITerrain terrain = terrains[i];
             if (terrain != null) {
                 switch (terrain.getType()) {
                     case Terrains.WOODS:
@@ -516,7 +533,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getIgnitionModifier() {
         int mod = 0;
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if (terrains[i] != null) {
                 mod += terrains[i].ignitionModifier();
             }
@@ -538,7 +555,7 @@ public class Hex implements IHex, Serializable {
     }
 
     public boolean isClearForTakeoff() {
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if(containsTerrain(i) && (i != Terrains.PAVEMENT) && 
                     (i!=Terrains.ROAD)  && (i != Terrains.FLUFF) && 
                     (i != Terrains.ARMS) && (i != Terrains.LEGS)) {
@@ -549,7 +566,7 @@ public class Hex implements IHex, Serializable {
     }
 
     public boolean isClearForLanding() {
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if(containsTerrain(i) && (i != Terrains.PAVEMENT) && 
                     (i!=Terrains.ROAD) && (i != Terrains.ROUGH) && 
                     (i != Terrains.RUBBLE) && (i != Terrains.WOODS) && 
@@ -582,7 +599,7 @@ public class Hex implements IHex, Serializable {
     public int getBogDownModifier(EntityMovementMode moveMode, 
             boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if ((terrains[i] != null) && 
                     (mod < terrains[i].getBogDownModifier(moveMode,largeVee))){
                 mod = terrains[i].getBogDownModifier(moveMode, largeVee);
@@ -596,7 +613,7 @@ public class Hex implements IHex, Serializable {
      */
     public int getUnstuckModifier(int elev) {
         int mod = 0;
-        for (Integer i : hmTerrains.keySet()){
+        for (Integer i : hsTerrains){
             if (terrains[i] != null) {
                 mod += terrains[i].getUnstuckModifier(elev);
             }
@@ -606,10 +623,6 @@ public class Hex implements IHex, Serializable {
 
     public Coords getCoords() {
         return coords;
-    }
-
-    public HashMap<Integer, ITerrain> getHmTerrains() {
-        return hmTerrains;
     }
 
 }

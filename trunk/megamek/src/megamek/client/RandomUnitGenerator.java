@@ -31,19 +31,19 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 
 /**
- * Author: Jay Lawson
- * This class sets up a random unit generator that can then be used
- * to read in user-created input files of random assignment tables
- *
- * Files should be located in data/rat/
- * All files should comma-delimited text files.
- *
- * The first line of the file should contain the title of the RAT
- * The second line of the file should give the unit type number corresponding to UnitType.java
- * The remaining lines should be comma split. The first field should give the frequency of that unit
- * and the second line should give the name of that unit written as <Model> <Chassis>
- * Comment lines can also be added with "#"
- *
+ * Author: Jay Lawson This class sets up a random unit generator that can then
+ * be used to read in user-created input files of random assignment tables
+ * 
+ * Files should be located in data/rat/ All files should comma-delimited text
+ * files.
+ * 
+ * The first line of the file should contain the title of the RAT The second
+ * line of the file should give the unit type number corresponding to
+ * UnitType.java The remaining lines should be comma split. The first field
+ * should give the frequency of that unit and the second line should give the
+ * name of that unit written as <Model> <Chassis> Comment lines can also be
+ * added with "#"
+ * 
  */
 
 public class RandomUnitGenerator implements Serializable {
@@ -53,9 +53,11 @@ public class RandomUnitGenerator implements Serializable {
      */
     private static final long serialVersionUID = 5765118329881301375L;
 
-    //The RATs are stored in a hashmap of string vectors. The keys are the RAT names
-    //and the vectors just contain the unit names listed a number of times equal to
-    //the frequency
+    // The RATs are stored in a hashmap of string vectors. The keys are the RAT
+    // names
+    // and the vectors just contain the unit names listed a number of times
+    // equal to
+    // the frequency
     Map<String, Vector<String>> rats;
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
@@ -64,12 +66,11 @@ public class RandomUnitGenerator implements Serializable {
     private boolean initialized;
     private boolean initializing;
 
-
     /**
-    * Plain old data class used to represent nodes in a Random Assignment Table tree.
-    * RATs are grouped into categories based on directory structure, and will be
-    * displayed hierarchically to the user.
-    */
+     * Plain old data class used to represent nodes in a Random Assignment Table
+     * tree. RATs are grouped into categories based on directory structure, and
+     * will be displayed hierarchically to the user.
+     */
     public static class RatTreeNode implements Comparable<RatTreeNode> {
         public RatTreeNode(String name) {
             this.name = name;
@@ -99,22 +100,22 @@ public class RandomUnitGenerator implements Serializable {
 
         File dir = new File("./data/rat/");
         loadRatsFromDirectory(dir);
-        if (!interrupted){        
+        if (!interrupted) {
             rug.initialized = true;
         }
-        
-        if (dispose){      
+
+        if (dispose) {
             clear();
             dispose = false;
         }
     }
 
     private void loadRatsFromDirectory(File dir) {
-        
-        if (interrupted){
+
+        if (interrupted) {
             return;
-        } 
-        
+        }
+
         if (null == dir) {
             return;
         }
@@ -134,14 +135,15 @@ public class RandomUnitGenerator implements Serializable {
 
         for (int i = 0; i < files.length; i++) {
             // Check to see if we've been interrupted
-            if (interrupted){
+            if (interrupted) {
                 return;
             }
-                
+
             // READ IN RATS
             File file = files[i];
             if (file.isDirectory()) {
-                if (file.getName().toLowerCase().equals("_svn") || file.getName().toLowerCase().equals(".svn")) {
+                if (file.getName().toLowerCase().equals("_svn")
+                        || file.getName().toLowerCase().equals(".svn")) {
                     // This is a Subversion work directory. Lets ignore it.
                     continue;
                 }
@@ -158,7 +160,8 @@ public class RandomUnitGenerator implements Serializable {
                 // recursion is fun
                 loadRatsFromDirectory(file);
 
-                // Prune empty nodes (this removes the "Unofficial" place holder)
+                // Prune empty nodes (this removes the "Unofficial" place
+                // holder)
                 if (currentNode.children.size() == 0) {
                     oldParentNode.children.remove(currentNode);
                 }
@@ -176,7 +179,7 @@ public class RandomUnitGenerator implements Serializable {
                 String key = "Huh";
                 Vector<String> v = new Vector<String>();
                 while (input.hasNextLine()) {
-                    if (interrupted){
+                    if (interrupted) {
                         return;
                     }
                     String line = input.nextLine();
@@ -189,7 +192,8 @@ public class RandomUnitGenerator implements Serializable {
                     } else {
                         String[] values = line.split(",");
                         if (values.length < 2) {
-                            System.err.println("Not enough fields in " + file.getName() + " on " + linen);
+                            System.err.println("Not enough fields in "
+                                    + file.getName() + " on " + linen);
                             continue;
                         }
                         String name = values[0];
@@ -197,12 +201,17 @@ public class RandomUnitGenerator implements Serializable {
                         try {
                             weight = Integer.parseInt(values[1].trim());
                         } catch (NumberFormatException nef) {
-                            System.err.println("the frequency field could not be interpreted on line "  + linen + " of " + file.getName());
+                            System.err
+                                    .println("the frequency field could not be interpreted on line "
+                                            + linen + " of " + file.getName());
                             continue;
                         }
-                        MechSummary unit = MechSummaryCache.getInstance().getMech(name);
-                        if(null == unit) {
-                            System.err.println("The unit " + name + " could not be found in the " + key + " RAT");
+                        MechSummary unit = MechSummaryCache.getInstance()
+                                .getMech(name);
+                        if (null == unit) {
+                            System.err.println("The unit " + name
+                                    + " could not be found in the " + key
+                                    + " RAT");
                         } else {
                             int j = 0;
                             while (j < weight) {
@@ -228,6 +237,7 @@ public class RandomUnitGenerator implements Serializable {
 
     /**
      * Generate a single random name
+     * 
      * @return - a string giving the name
      */
     public ArrayList<MechSummary> generate(int n) {
@@ -238,7 +248,8 @@ public class RandomUnitGenerator implements Serializable {
             if ((null != rat) && (rat.size() > 0)) {
                 for (int i = 0; i < n; i++) {
                     String name = rat.get(Compute.randomInt(rat.size()));
-                    MechSummary unit = MechSummaryCache.getInstance().getMech(name);
+                    MechSummary unit = MechSummaryCache.getInstance().getMech(
+                            name);
                     if (null != unit) {
                         units.add(unit);
                     }
@@ -267,20 +278,21 @@ public class RandomUnitGenerator implements Serializable {
         return ratTree;
     }
 
-    public void dispose(){
+    public void dispose() {
         interrupted = true;
-        dispose = true;        
+        dispose = true;
     }
+
     public void clear() {
-            rug = null;  
-            rats = null;
-            ratTree = null;
-            initialized = false;
-            initializing = false;     
+        rug = null;
+        rats = null;
+        ratTree = null;
+        initialized = false;
+        initializing = false;
     }
 
     public static synchronized RandomUnitGenerator getInstance() {
-        if(null == rug) {
+        if (null == rug) {
             rug = new RandomUnitGenerator();
         }
         if (!rug.initialized && !rug.initializing) {

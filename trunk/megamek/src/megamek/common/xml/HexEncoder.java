@@ -50,7 +50,6 @@ public class HexEncoder {
      */
     public static void encode(IHex hex, Writer out) throws IOException {
         ITerrain terrain = null;
-        int loop = 0;
 
         // First, validate our input.
         if (null == hex) {
@@ -74,10 +73,13 @@ public class HexEncoder {
             out.write(hex.getTheme());
         }
         out.write("\" >");
-        for (loop = 0; loop < Terrains.SIZE; loop++) {
+        
+        int terrainTypes[] = hex.getTerrainTypes();
+        for (int i = 0; i < terrainTypes.length; i++) {   
+            int terrType = terrainTypes[i];
             // If the hex has this kind of terrain, encode it.
-            if (hex.containsTerrain(loop)) {
-                terrain = hex.getTerrain(loop);
+            if (hex.containsTerrain(terrType)) {
+                terrain = hex.getTerrain(terrType);
                 out.write("<terrain type=\"");
                 out.write(Integer.toString(terrain.getType()));
                 out.write("\" level=\"");

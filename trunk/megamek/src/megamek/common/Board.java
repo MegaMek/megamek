@@ -761,15 +761,18 @@ public class Board implements Serializable, IBoard {
                 hexBuff.append(" ");
                 hexBuff.append(hex.getElevation());
                 hexBuff.append(" \"");
-                for (int j = 0; j < Terrains.SIZE; j++) {
-                    ITerrain terrain = hex.getTerrain(j);
+                int terrainTypes[] = hex.getTerrainTypes();
+                for (int j = 0; j < terrainTypes.length; j++) {   
+                    int terrType = terrainTypes[j];
+                    ITerrain terrain = hex.getTerrain(terrType);
                     if (terrain != null) {
                         if (!firstTerrain) {
                             hexBuff.append(";");
                         }
                         hexBuff.append(terrain.toString());
                         // Do something funky to save building exits.
-                        if (((Terrains.BUILDING == j) || (j == Terrains.FUEL_TANK))
+                        if (((Terrains.BUILDING == terrType) || 
+                                (terrType == Terrains.FUEL_TANK))
                                 && !terrain.hasExitsSpecified()
                                 && (terrain.getExits() != 0)) {
                             hexBuff.append(":").append(terrain.getExits());

@@ -6373,11 +6373,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // cycle through the terrains and report types found
             // this will skip buildings and other constructed units
-            for (int i = 0; i < Terrains.SIZE; i++) {
-                if (mhex.containsTerrain(i)) {
-                    int tf = mhex.getTerrain(i).getTerrainFactor();
-                    int ttl = mhex.getTerrain(i).getLevel();
-                    String name = Terrains.getDisplayName(i, ttl);
+            int terrainTypes[] = mhex.getTerrainTypes();
+            for (int i = 0; i < terrainTypes.length; i++) {
+                int terType = terrainTypes[i];
+                if (mhex.containsTerrain(terType)) {
+                    int tf = mhex.getTerrain(terType).getTerrainFactor();
+                    int ttl = mhex.getTerrain(terType).getLevel();
+                    String name = Terrains.getDisplayName(terType, ttl);
                     if (tf > 0) {
                         name = name + " (" + tf + ")";
                     }

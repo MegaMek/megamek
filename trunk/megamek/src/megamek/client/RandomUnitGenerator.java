@@ -58,6 +58,8 @@ public class RandomUnitGenerator implements Serializable {
     //the frequency
     Map<String, Vector<String>> rats;
     private static RandomUnitGenerator rug;
+    private static boolean interrupted = false;
+    private static boolean dispose = false;
     private Thread loader;
     private boolean initialized;
     private boolean initializing;
@@ -97,10 +99,22 @@ public class RandomUnitGenerator implements Serializable {
 
         File dir = new File("./data/rat/");
         loadRatsFromDirectory(dir);
-        rug.initialized = true;
+        if (!interrupted){        
+            rug.initialized = true;
+        }
+        
+        if (dispose){      
+            clear();
+            dispose = false;
+        }
     }
 
     private void loadRatsFromDirectory(File dir) {
+        
+        if (interrupted){
+            return;
+        } 
+        
         if (null == dir) {
             return;
         }
@@ -119,6 +133,11 @@ public class RandomUnitGenerator implements Serializable {
         Scanner input = null;
 
         for (int i = 0; i < files.length; i++) {
+            // Check to see if we've been interrupted
+            if (interrupted){
+                return;
+            }
+                
             // READ IN RATS
             File file = files[i];
             if (file.isDirectory()) {
@@ -157,6 +176,9 @@ public class RandomUnitGenerator implements Serializable {
                 String key = "Huh";
                 Vector<String> v = new Vector<String>();
                 while (input.hasNextLine()) {
+                    if (interrupted){
+                        return;
+                    }
                     String line = input.nextLine();
                     if (line.startsWith("#")) {
                         continue;
@@ -245,11 +267,16 @@ public class RandomUnitGenerator implements Serializable {
         return ratTree;
     }
 
+    public void dispose(){
+        interrupted = true;
+        dispose = true;        
+    }
     public void clear() {
-        rats = null;
-        ratTree = null;
-        initialized = false;
-        initializing = false;
+            rug = null;  
+            rats = null;
+            ratTree = null;
+            initialized = false;
+            initializing = false;     
     }
 
     public static synchronized RandomUnitGenerator getInstance() {
@@ -258,6 +285,7 @@ public class RandomUnitGenerator implements Serializable {
         }
         if (!rug.initialized && !rug.initializing) {
             rug.initializing = true;
+            interrupted = false;
             rug.loader = new Thread(new Runnable() {
                 public void run() {
                     rug.populateUnits();

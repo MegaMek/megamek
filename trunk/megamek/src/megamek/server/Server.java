@@ -7268,7 +7268,7 @@ public class Server implements Runnable {
                 // TODO: what if a building collapses into rubble?
             }
 
-            if (isOnGround && curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            if ((isOnGround || (curElevation <= curHex.terrainLevel(Terrains.BLDG_ELEV)) || (curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) && curHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 addAffectedBldg(bldg,
                         checkBuildingCollapseWhileMoving(bldg, entity, curPos));

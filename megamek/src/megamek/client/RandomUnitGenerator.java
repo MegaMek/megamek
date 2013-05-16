@@ -281,6 +281,9 @@ public class RandomUnitGenerator implements Serializable {
     public void dispose() {
         interrupted = true;
         dispose = true;
+        if (initialized){
+            clear();
+        }
     }
 
     public void clear() {
@@ -298,6 +301,7 @@ public class RandomUnitGenerator implements Serializable {
         if (!rug.initialized && !rug.initializing) {
             rug.initializing = true;
             interrupted = false;
+            dispose = false;
             rug.loader = new Thread(new Runnable() {
                 public void run() {
                     rug.populateUnits();

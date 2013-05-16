@@ -256,6 +256,13 @@ public class RandomNameGenerator implements Serializable {
                 }
                 return;
             }
+            // Check to see if we've been interrupted
+            if (interrupted){
+                if (dispose){
+                    clear();
+                }
+                return;
+            }
             String filename = filenames[filen];
             String key = filename.split("\\.txt")[0];
             if ((key.length() < 1) || factionLast.containsKey(key)) {
@@ -405,6 +412,8 @@ public class RandomNameGenerator implements Serializable {
         factionLast = null;
         initialized = false;
         initializing = false;
+        interrupted = false;
+        dispose = false;
         interrupted = false;
         dispose = false;
     }

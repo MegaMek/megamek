@@ -401,6 +401,9 @@ public class RandomNameGenerator implements Serializable {
     public void dispose() {
         interrupted = true;
         dispose = true;
+        if (initialized){
+            clear();
+        }
     }
 
     public void clear() {
@@ -429,6 +432,8 @@ public class RandomNameGenerator implements Serializable {
             rng.loader = new Thread(new Runnable() {
                 public void run() {
                     rng.initializing = true;
+                    dispose = false;
+                    interrupted = false;
                     rng.populateNames();
                     if (rng != null) {
                         rng.initialized = true;

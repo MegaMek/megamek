@@ -1277,7 +1277,10 @@ public class Game implements Serializable, IGame {
         entityIds.clear();
 
         vOutOfGame.removeAllElements();
-
+        
+        turnVector.clear();
+        turnIndex = 0;
+        
         resetActions();
         resetCharges();
         resetRams();

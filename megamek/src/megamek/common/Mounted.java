@@ -84,6 +84,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     // ammo-specific stuff. Probably should be a subclass
     private int shotsLeft;
+    // how many shots did we have originally?
+    // only used for by-shot ammo
+    private int originalShots;
     private boolean m_bPendingDump;
     private boolean m_bDumping;
 
@@ -1469,5 +1472,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setKindRapidFire(boolean kindRapidFire) {
         this.kindRapidFire = kindRapidFire;
+    }
+
+    public int getOriginalShots() {
+        return originalShots;
+    }
+
+    public void setOriginalShots(int shots) {
+        originalShots = shots;
     }
 }

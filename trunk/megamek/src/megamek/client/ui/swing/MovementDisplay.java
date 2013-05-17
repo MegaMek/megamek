@@ -960,6 +960,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateRecoveryButton();
         updateDumpButton();
         updateEvadeButton();
+        
+        updateStartupButton();
+        updateShutdownButton();
 
         if (ce instanceof Aero) {
             butThrust.setEnabled(true);
@@ -1856,7 +1859,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if(ce.isAirborne()) {
                 setTakeOffEnabled(false);
                 setVTakeOffEnabled(false);
-            } else {
+            } else  if (!ce.isShutDown()){
                 setTakeOffEnabled(((Aero)ce).canTakeOffHorizontally());
                 setVTakeOffEnabled(((Aero)ce).canTakeOffVertically());
             }
@@ -2989,7 +2992,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         Aero a = (Aero) ce;
 
-        if (a.isOutControlTotal()) {
+        if (a.isOutControlTotal() && a.isAirborne()) {
             disableButtons();
             butDone.setEnabled(true);
             butNext.setEnabled(true);

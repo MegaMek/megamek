@@ -2622,6 +2622,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((mounted.getType() instanceof AmmoType) && (nAmmo > 1)) {
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
+            mounted.setOriginalShots(nAmmo);
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -3705,12 +3706,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getActiveUMUCount() {
         int count = 0;
 
-        if (this instanceof BattleArmor && 
-                getMovementMode() == EntityMovementMode.INF_UMU){
+        if ((this instanceof BattleArmor) &&
+                (getMovementMode() == EntityMovementMode.INF_UMU)){
             //UMU MP for BA is stored in jumpMP
             return jumpMP;
         }
-        
+
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
@@ -11932,7 +11933,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
     }
-    
+
     /**
      * Checks to see if the entities' elevation is below the surface of a water
      * hex.
@@ -11941,10 +11942,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isUnderwater(){
         IHex occupiedHex = game.getBoard().getHex(getPosition());
         if (occupiedHex.containsTerrain(Terrains.WATER)
-                && absHeight() < occupiedHex.surface()) {
+                && (absHeight() < occupiedHex.surface())) {
             return true;
         }
         return false;
-    }    
+    }
 }
 

@@ -34,6 +34,7 @@ v0.35.39-dev (SVN)
 + Bug 3730: Potential Race condition in RandomNameGenerator when loading a saved game before units are done loading
 + Patch : I changed how the MechSummaryCache is written.  It's now a binary file instead of a text file.  This is part of the code in Patch #450
 + Bug 3037: "Done" button failes to work after reset 
++ Bug 3738: Startup button disabled for shutdown dropships 
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

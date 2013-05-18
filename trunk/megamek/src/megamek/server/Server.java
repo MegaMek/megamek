@@ -6487,7 +6487,7 @@ public class Server implements Runnable {
             // of basement it has
             if (isOnGround && curHex.containsTerrain(Terrains.BLDG_ELEV)) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
-                if (bldg.rollBasement(game.getBoard().getHex(curPos),
+                if (bldg.rollBasement(curPos, game.getBoard(),
                         vPhaseReport)) {
                     sendChangedHex(curPos);
                     Vector<Building> buildings = new Vector<Building>();
@@ -10425,7 +10425,7 @@ public class Server implements Runnable {
                 entity.getElevation()));
         if (destHex.containsTerrain(Terrains.BLDG_ELEV) && (entity.getElevation() == 0)) {
             bldg = game.getBoard().getBuildingAt(dest);
-            if (bldg.rollBasement(game.getBoard().getHex(dest),
+            if (bldg.rollBasement(dest, game.getBoard(),
                     vPhaseReport)) {
                 sendChangedHex(dest);
                 Vector<Building> buildings = new Vector<Building>();
@@ -10682,7 +10682,7 @@ public class Server implements Runnable {
         // of basement it has
         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
         if ((bldg != null)) {
-            if (bldg.rollBasement(game.getBoard().getHex(entity.getPosition()),
+            if (bldg.rollBasement(entity.getPosition(), game.getBoard(),
                     vPhaseReport)) {
                 sendChangedHex(entity.getPosition());
                 Vector<Building> buildings = new Vector<Building>();

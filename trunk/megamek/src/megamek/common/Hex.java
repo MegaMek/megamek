@@ -32,7 +32,7 @@ public class Hex implements IHex, Serializable {
     private static final long serialVersionUID = 82483704768044698L;
     private int elevation;
     /**
-     * An array to store the terrain types present in this hex.  The array 
+     * An array to store the terrain types present in this hex.  The array
      * allows for constant access to the terrain type given a terrain id.
      */
     private ITerrain[] terrains;
@@ -40,7 +40,7 @@ public class Hex implements IHex, Serializable {
      * A HashMap analog to <code>terrains</code>.  It contains the exact
      *  same terrain types as <code>terrains</code>, however it allows an
      *  efficient way to access all present terrains.
-     *  
+     *
      */
     private HashSet<Integer> hsTerrains;
     private String theme;
@@ -65,17 +65,17 @@ public class Hex implements IHex, Serializable {
         this.elevation = elevation;
         coords = c;
         this.terrains = terrains;
-        // Creates a HM with a capacity that is 25% larger than the number of 
+        // Creates a HM with a capacity that is 25% larger than the number of
         //  terrain types.  This should prevent us from every having to resize
         hsTerrains = new HashSet<Integer>(
-                (int)(Terrains.SIZE * 1.25 + 0.5), 0.75f);
-        
+                (int)((Terrains.SIZE * 1.25) + 0.5), 0.75f);
+
         for (int i = 0; i < terrains.length; i++){
             if (terrains[i] != null){
                 hsTerrains.add(i);
             }
         }
-        
+
         if ((theme == null) || (theme.length() > 0)) {
             this.theme = theme;
         } else {
@@ -96,7 +96,7 @@ public class Hex implements IHex, Serializable {
                     st.nextToken()));
         }
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -155,8 +155,9 @@ public class Hex implements IHex, Serializable {
     public void clearExits() {
         for (Integer i : hsTerrains){
             ITerrain t = terrains[i];
-            if (t != null && !t.hasExitsSpecified())
+            if ((t != null) && !t.hasExitsSpecified()) {
                 t.setExits(0);
+            }
         }
     }
 
@@ -200,14 +201,14 @@ public class Hex implements IHex, Serializable {
 
             //buildings must have the same building class
             if((other != null) && (cTerr.getType() == Terrains.BUILDING)
-                    && (terrainLevel(Terrains.BLDG_CLASS) != 
+                    && (terrainLevel(Terrains.BLDG_CLASS) !=
                         other.terrainLevel(Terrains.BLDG_CLASS))) {
                 cTerr.setExit(direction, false);
             }
 
             //gun emplacements can only be single hex buildings
             if((cTerr.getType() == Terrains.BUILDING)
-                    && (terrainLevel(Terrains.BLDG_CLASS) == 
+                    && (terrainLevel(Terrains.BLDG_CLASS) ==
                         Building.GUN_EMPLACEMENT)) {
                 cTerr.setExit(direction, false);
             }
@@ -255,12 +256,12 @@ public class Hex implements IHex, Serializable {
 
         // Account for woods. They are 2 levels high
         // N.B. VTOLs are allowed to enter smoke.
-        if (containsTerrain(Terrains.WOODS) || 
+        if (containsTerrain(Terrains.WOODS) ||
                 containsTerrain(Terrains.JUNGLE)) {
             maxFeature = 2;
         }
         //not so fast ultra jungles and woods are three levels high
-        if((terrainLevel(Terrains.WOODS) > 2) || 
+        if((terrainLevel(Terrains.WOODS) > 2) ||
                 (terrainLevel(Terrains.JUNGLE) > 2)) {
             maxFeature = 3;
         }
@@ -427,8 +428,8 @@ public class Hex implements IHex, Serializable {
     public int displayableTerrainsPresent() {
         int present = 0;
         for (Integer i : hsTerrains){
-            if ((null != terrains[i]) && 
-                    null != Terrains.getDisplayName(i,terrains[i].getLevel())){
+            if ((null != terrains[i]) &&
+                    (null != Terrains.getDisplayName(i,terrains[i].getLevel()))){
                 present++;
             }
         }
@@ -556,8 +557,8 @@ public class Hex implements IHex, Serializable {
 
     public boolean isClearForTakeoff() {
         for (Integer i : hsTerrains){
-            if(containsTerrain(i) && (i != Terrains.PAVEMENT) && 
-                    (i!=Terrains.ROAD)  && (i != Terrains.FLUFF) && 
+            if(containsTerrain(i) && (i != Terrains.PAVEMENT) &&
+                    (i!=Terrains.ROAD)  && (i != Terrains.FLUFF) &&
                     (i != Terrains.ARMS) && (i != Terrains.LEGS)) {
                 return false;
             }
@@ -567,10 +568,10 @@ public class Hex implements IHex, Serializable {
 
     public boolean isClearForLanding() {
         for (Integer i : hsTerrains){
-            if(containsTerrain(i) && (i != Terrains.PAVEMENT) && 
-                    (i!=Terrains.ROAD) && (i != Terrains.ROUGH) && 
-                    (i != Terrains.RUBBLE) && (i != Terrains.WOODS) && 
-                    (i != Terrains.FLUFF) && (i != Terrains.ARMS) && 
+            if(containsTerrain(i) && (i != Terrains.PAVEMENT) &&
+                    (i!=Terrains.ROAD) && (i != Terrains.ROUGH) &&
+                    (i != Terrains.RUBBLE) && (i != Terrains.WOODS) &&
+                    (i != Terrains.FLUFF) && (i != Terrains.ARMS) &&
                     (i != Terrains.LEGS)) {
                 return false;
             }
@@ -591,16 +592,16 @@ public class Hex implements IHex, Serializable {
     }
 
     /**
-     * get any modifiers to a bog-down roll in this hex. Takes the worst 
+     * get any modifiers to a bog-down roll in this hex. Takes the worst
      * modifier.
-     * If there is no bog-down chance in this hex, then it returns 
+     * If there is no bog-down chance in this hex, then it returns
      * TargetRoll.AUTOMATIC_SUCCESS
      */
-    public int getBogDownModifier(EntityMovementMode moveMode, 
+    public int getBogDownModifier(EntityMovementMode moveMode,
             boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
         for (Integer i : hsTerrains){
-            if ((terrains[i] != null) && 
+            if ((terrains[i] != null) &&
                     (mod < terrains[i].getBogDownModifier(moveMode,largeVee))){
                 mod = terrains[i].getBogDownModifier(moveMode, largeVee);
             }
@@ -622,24 +623,12 @@ public class Hex implements IHex, Serializable {
     }
 
     /** The notional position of this {@code Hex}, as set upon creation.
-     * 
-     * @return the {@code Coords} object representing the coordinates this {@code 
-     *      Hex} was created with.
-     * @deprecated This value is never updated again after creation and not even
-     *      guaranteed to be unique (because it may have been simply copied from
-     *      another {@code Hex}) and thus cannot be relied on to actually contain
-     *      the {@code Hex}'s position on the board. Since client code will
-     *      generally already <em>know</em> a given {@code Hex}'s coordinates
-     *      (having used them to find it in the first place), it is strongly
-     *      suggested to simply use those directly instead of relying on this
-     *      method.
+     *
+     * @return the {@code Coords} object representing the coordinates this {@code
+     *      Hex} was created with. NOTE: this is only used so that a certain hex
+     *      will always use the same image to represent terrain. DO NOT USE FOR
+     *      OTHER PURPOSES
      */
-    //TODO: either make sure coordinates are in fact kept accurate during the
-    // lifetime of a given Hex or drop the notion that a Hex needs to *know* its
-    // own coordinates in the first place altogether. As of 2013/05/19, the way
-    // it's being handled is b0rked.
-    @Override
-    @Deprecated
     public Coords getCoords() {
         return coords;
     }

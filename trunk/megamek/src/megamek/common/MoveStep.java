@@ -2885,7 +2885,7 @@ public class MoveStep implements Serializable {
                 terrainInvalid = true;
             } else {
                 System.err.println("isElevationValid failed destHex is " +
-                destHex.getCoords().toString());
+                dest.toString());
                 return false;
             }
         }

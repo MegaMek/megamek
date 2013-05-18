@@ -2544,19 +2544,19 @@ public class MoveStep implements Serializable {
 
         // super-easy
         if (entity.isImmobile()) {
-            System.err.println("illegal - immobile");
+            //System.err.println("illegal - immobile");
             return false;
         }
 
         // another easy check
         if (!game.getBoard().contains(dest)) {
-            System.err.println("board doesn't contain destination");
+            //System.err.println("board doesn't contain destination");
             return false;
         }
 
         // can't enter impassable hex
         if (destHex.containsTerrain(Terrains.IMPASSABLE)) {
-            System.err.println("can't enter impassable hex");
+            //System.err.println("can't enter impassable hex");
 
             return false;
         }
@@ -2569,8 +2569,8 @@ public class MoveStep implements Serializable {
             // they can only jump onto a building or out of it
             if (src.equals(dest) && (entity instanceof Protomech)
                     && (getMovementType() == EntityMovementType.MOVE_JUMP)) {
-                System.err
-                        .println("no jumping inside buildings to change levels");
+                //System.err
+                //        .println("no jumping inside buildings to change levels");
                 return false;
             }
             IHex hex = game.getBoard().getHex(getPosition());
@@ -2580,7 +2580,7 @@ public class MoveStep implements Serializable {
 
             if ((bld.getType() == Building.WALL)
                     && (maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV))) {
-                System.err.println("soemthing about walls");
+                //System.err.println("soemthing about walls");
                 return false;
             }
 
@@ -2588,7 +2588,7 @@ public class MoveStep implements Serializable {
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV))
                     && (bld.getArmor(dest) > 0)
                     && !(entity instanceof Infantry)) {
-                System.err.println("no entering armored buildings for non-inf");
+                //System.err.println("no entering armored buildings for non-inf");
                 return false;
             }
 
@@ -2596,7 +2596,7 @@ public class MoveStep implements Serializable {
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV))
                     && (bld.getBldgClass() == Building.GUN_EMPLACEMENT)
                     && !(entity instanceof Infantry)) {
-                System.err.println("no entering gun-emplacements for non-inf");
+                //System.err.println("no entering gun-emplacements for non-inf");
                 return false;
             }
         }
@@ -2611,13 +2611,13 @@ public class MoveStep implements Serializable {
                         "tacops_walk_backwards")) || (game.getOptions()
                         .booleanOption("tacops_walk_backwards") && (Math
                         .abs(destAlt - srcAlt) > 1)))) {
-            System.err.println("Can't back up across an elevation change.");
+            //System.err.println("Can't back up across an elevation change.");
             return false;
         }
 
         // Swarming entities can't move.
         if (Entity.NONE != entity.getSwarmTargetId()) {
-            System.err.println("no moving for swarming infantry");
+            //System.err.println("no moving for swarming infantry");
             return false;
         }
 
@@ -2700,7 +2700,7 @@ public class MoveStep implements Serializable {
                     .getMaxElevationDown()))
                     || (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity
                             .getMaxElevationChange()))) {
-                System.err.println("jump VTOL check failed");
+                //System.err.println("jump VTOL check failed");
                 return false;
             }
         }
@@ -2884,8 +2884,8 @@ public class MoveStep implements Serializable {
             if (parent.isJumping()) {
                 terrainInvalid = true;
             } else {
-                System.err.println("isElevationValid failed destHex is " +
-                dest.toString());
+                //System.err.println("isElevationValid failed destHex is " +
+                //dest.toString());
                 return false;
             }
         }

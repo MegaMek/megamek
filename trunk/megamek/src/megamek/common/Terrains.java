@@ -84,6 +84,12 @@ public class Terrains implements ITerrainFactory {
     public static final int METAL_CONTENT = 42; // Is there metal content that will block magscan sensors?
     public static final int BLDG_BASE_COLLAPSED = 43; //1 means collapsed
 
+    /**
+     * Keeps track of the different type of terrains that can have exits.
+     */
+    public static final int[] exitableTerrains = {PAVEMENT, ROAD, BUILDING, 
+        FUEL_TANK, BRIDGE};
+    
     private static final String[] names = { "none", "woods", "water", "rough",
         "rubble", "jungle", "sand", "tundra", "magma", "planted_fields",
         "heavy_industrial", "space",
@@ -100,6 +106,19 @@ public class Terrains implements ITerrainFactory {
 
     private static ITerrainFactory factory;
 
+    /**
+     * Checks to see if the given terrain type can have exits.
+     * 
+     * @param terrType The terrain type to test
+     * @return True if the input terrain type can have exits, else false.
+     */
+    public static boolean exitableTerrain(int terrType){
+        boolean exitableTerrainType = false;
+        for (int i = 0; i < Terrains.exitableTerrains.length; i++){
+            exitableTerrainType |= terrType == Terrains.exitableTerrains[i];
+        }
+        return exitableTerrainType;
+    }
     /**
      * @param type
      * @return

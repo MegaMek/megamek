@@ -229,7 +229,10 @@ public class Terrain implements ITerrain, Serializable {
         if (other == null) {
             return false;
         }
-        return (type == other.getType()) && (level == other.getLevel());
+        // Check to see if we've got a type that can have exits
+        boolean exitableTerrainType = Terrains.exitableTerrain(type);
+        return (type == other.getType()) && exitableTerrainType &&
+                (level == other.getLevel());
     }
 
     /**

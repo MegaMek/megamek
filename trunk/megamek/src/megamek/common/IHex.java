@@ -98,6 +98,27 @@ public interface IHex extends Cloneable {
      * @see IHex#setExits(IHex, int, boolean)
      */
     public abstract boolean containsTerrainExit(int terrType, int direction);
+    
+    /**
+     * Determines if this <code>Hex</code> contains any exists in the specified
+     * direction.
+     * 
+     * @param direction the <code>int</code> direction of the exit. This
+     *            value should be between 0 and 5 (inclusive).
+     * @return <code>true</code> if this <code>Hex</code> contains any terrain 
+     *         that exits in the specified direction.
+     *         <code>false</code> if bad input is supplied, if no terrain
+     *         exits in that direction.
+     * @see IHex#setExits(IHex, int, boolean)
+     */
+    public abstract boolean containsExit(int direction);
+    
+    /**
+     * Returns true if this hex contains a terrain type that can have exits,
+     * else false.
+     * 
+     */
+    public abstract boolean hasExitableTerrain();
 
     /**
      * @return the highest level that features in this hex extend to. Above this

@@ -238,6 +238,32 @@ public class Hex implements IHex, Serializable {
         }
         return result;
     }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.IHex#containsExit(int)
+     */
+    public boolean containsExit(int direction){
+        boolean rv = false;
+        for (Integer terrType : hsTerrains){
+            rv |= containsTerrainExit(terrType, direction);           
+        }
+        return rv;
+    }
+    
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.IHex#hasExitableTerrain()
+     */
+    public boolean hasExitableTerrain(){
+        boolean rv = false;
+        for (Integer terrType : hsTerrains){
+            rv |= Terrains.exitableTerrain(terrType);           
+        }
+        return rv;
+    }
 
     /*
      * (non-Javadoc)

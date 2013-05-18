@@ -38,6 +38,7 @@ v0.35.39-dev (SVN)
 + Bug 3737: Jumping over buildings causes collapse and fall -- again
 + Bug 3740: Units loaded in the lobby cannot be unloaded in the first movement phase
 + Bug: NPE when entering buildings on mapsheets beyond the first
++ Patch 448: Allow a user to change the owner of units he controls in the ChatLounge
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

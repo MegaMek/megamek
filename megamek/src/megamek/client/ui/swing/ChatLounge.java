@@ -1891,6 +1891,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.sendUpdateEntity(swapee);
         c.sendUpdateEntity(swapper);
     }
+    
+    /**
+     * Change the entities controller from one player to another
+     *
+     * @param e
+     *            - an Entity that should that will have its owner changed
+     * @param player_id
+     *            - the id of the player that should now own the entity
+     */
+    private void changeEntityOwner(Entity e, int player_id) {
+        Client c = clientgui.getClient();
+        Player new_owner = c.game.getPlayer(player_id);
+        e.setOwner(new_owner);
+        c.sendUpdateEntity(e);
+    }    
 
     /**
      * Delete an entity from the lobby
@@ -2057,16 +2072,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weightx = 0.0;
         c.weighty = 0.0;
         dialog.getContentPane().add(btn, c);
-        /*
-         * I don't want to set this anymore because this dialog can get quite
-         * large dialog.setLocation(clientgui.frame.getLocation().x +
-         * clientgui.frame.getSize().width / 2 - dialog.getSize().width / 2,
-         * clientgui.frame.getLocation().y + clientgui.frame.getSize().height /
-         * 5 - dialog.getSize().height / 2);
-         */
-        // TODO: this seems hacky but it does more or less get the window
-        // dimension right
-        // there must be a better way?
         dialog.setSize(mvp.getBestWidth(), mvp.getBestHeight() + 75);
         dialog.validate();
         dialog.setVisible(true);
@@ -3107,7 +3112,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else if (command.equalsIgnoreCase("SWAP")) {
                 int id = Integer.parseInt(st.nextToken());
                 swapPilots(entity, id);
+            } else if (command.equalsIgnoreCase("CHANGE_OWNER")) {
+                //Code to swap entities to a player.
+                int id = Integer.parseInt(st.nextToken());
+                for (Entity e : entities) {
+                    changeEntityOwner(e, id);
+                }
             }
+             
 
         }
 
@@ -3218,8 +3230,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 menuItem.addActionListener(this);
                 menuItem.setEnabled(isOwner || isBot);
                 menuItem.setMnemonic(KeyEvent.VK_S);
-                menu.add(menuItem);
+                menu.add(menuItem);              
                 popup.add(menu);
+                //Change Owner Menu Item
+                menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
+                menu.setEnabled(isOwner || isBot);
+                Enumeration<Player> players = clientgui.getClient().getPlayers();
+                while (players.hasMoreElements() && (isOwner || isBot)){
+                    Player p = players.nextElement();
+                    // 
+                    if (!entity.getOwner().equals(p)){
+                        menuItem = new JMenuItem(p.getName());
+                        menuItem.setActionCommand("CHANGE_OWNER|"+ p.getId());
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled((isOwner || isBot));
+                        menu.add(menuItem);
+                    }
+                }
+                popup.add(menu);
+
                 if (allUnloaded) {
                     menu = new JMenu("Load into");
                     boolean canLoad = false;

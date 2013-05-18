@@ -7535,10 +7535,16 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        if (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD) > 0) {
-            System.out.println(getDisplayName()
+        if (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD) > 1) {
+            // If the cockpit isn't torso-mounted, we're done; if it is, we
+            // need to look at the CT sensor slot as well.
+            if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
+                || (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS,
+                    LOC_CT) > 0)) {
+                System.out.println(getDisplayName()
                     + " CRIPPLED: Sensors destroyed.");
-            return true;
+                return true;
+            }
         }
 
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {

@@ -2265,7 +2265,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_BA_EQUIPMENT);
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -2319,7 +2319,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 750000;
         misc.flags = misc.flags.or(F_ECM).or(F_ANGEL_ECM).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_BA_EQUIPMENT);
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);

@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class ImageCache<K, V> {
 
-    public static int MAX_SIZE = 2000;
+    public static int MAX_SIZE = 20000;
     private int maxSize;
     private Hashtable<K, V> cache;
     private LinkedList<K> lru = new LinkedList<K>();

@@ -54,7 +54,7 @@ public class NonCombatUnitList {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
             while ((line = reader.readLine()) != null) {
-                if ((line.trim() == "") || line.startsWith(";")) {
+                if ((line.trim().equals("")) || line.startsWith(";")) {
                     continue;
                 }
                 int commentStart = line.indexOf(";");
@@ -64,7 +64,7 @@ public class NonCombatUnitList {
                 String[] lineParts = line.split(",");
                 String unitName = lineParts[0];
                 if ((lineParts.length > 1) && !StringUtil.isNullOrEmpty(lineParts[1])) {
-                    unitName += lineParts[1].trim();
+                    unitName += " " + lineParts[1].trim();
                 }
                 unitList.add(unitName);
             }

@@ -29,6 +29,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -1141,6 +1142,15 @@ public class Client implements IClientCommandHandler {
         case Packet.COMMAND_CHANGE_HEX:
             game.getBoard().setHex((Coords) c.getObject(0),
                     (IHex) c.getObject(1));
+            break;
+        case Packet.COMMAND_CHANGE_HEXES:
+            @SuppressWarnings("rawtypes")
+            List<Coords> coords = new ArrayList((Set<Coords>)c.getObject(0));
+            @SuppressWarnings("rawtypes")
+            List<IHex> hexes = new ArrayList((Set<IHex>)c.getObject(1));
+            for (Coords coord:coords) {
+                game.getBoard().setHex(coord, hexes.get(coords.indexOf(coord)));
+            }
             break;
         case Packet.COMMAND_BLDG_UPDATE:
             receiveBuildingUpdate(c);

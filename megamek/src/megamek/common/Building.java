@@ -499,16 +499,16 @@ public class Building implements Serializable {
 
     /**
      * Roll what kind of basement this building has
-     * @param hex the <code>IHex</code> of theb building to roll for
+     * @param coords the <code>Coords</code> of theb building to roll for
      * @param vPhaseReport the <code>Vector<Report></code> containing the phasereport
      * @return a <code>boolean</code> indicating wether the hex and building was changed or not
      */
-    public boolean rollBasement(IHex hex, Vector<Report> vPhaseReport) {
-        Coords coords = hex.getCoords();
+    public boolean rollBasement(Coords coords, IBoard board, Vector<Report> vPhaseReport) {
         if (basement.get(coords) == BasementType.UNKNOWN) {
+            IHex hex = board.getHex(coords);
             Report r = new Report(2111);
             r.add(getName());
-            r.add(hex.getCoords().getBoardNum());
+            r.add(coords.getBoardNum());
             int basementRoll = Compute.d6(2);
             r.add(basementRoll);
             if (basementRoll == 2) {

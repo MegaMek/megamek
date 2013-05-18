@@ -41,6 +41,7 @@ v0.35.39-dev (SVN)
 + Patch 448: Allow a user to change the owner of units he controls in the ChatLounge
 + Bug: Minor updates to NonCombatUnitList.java, see Bug #3671
 + Bug 3739: Hexes misreport their own coordinates 
++ Bug: Angel ECM mounted on BA has range 2
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

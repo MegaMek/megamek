@@ -46,6 +46,7 @@ public class Packet {
 
     public static final int COMMAND_ENTITY_VISIBILITY_INDICATOR = 180;
     public static final int COMMAND_CHANGE_HEX = 190;
+    public static final int COMMAND_CHANGE_HEXES= 195;
 
     public static final int COMMAND_BLDG_ADD = 200;
     public static final int COMMAND_BLDG_REMOVE = 210;
@@ -101,7 +102,7 @@ public class Packet {
 
     public static final int COMMAND_ENTITY_LOAD = 580;
 
-    
+
     private int command;
 
     private Object[] data;

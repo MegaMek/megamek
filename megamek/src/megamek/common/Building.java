@@ -475,8 +475,8 @@ public class Building implements Serializable {
         return basementCollapsed.get(coords);
     }
 
-    public void collapseBasement(IHex hex, Vector<Report> vPhaseReport) {
-        Coords coords = hex.getCoords();
+    public void collapseBasement(Coords coords, IBoard board,
+            Vector<Report> vPhaseReport) {
         if ((basement.get(coords) == BasementType.NONE) || (basement.get(coords) == BasementType.ONE_DEEP_NORMALINFONLY)) {
             System.err.println("hex has no basement to collapse");
             return;
@@ -487,11 +487,11 @@ public class Building implements Serializable {
         }
         Report r = new Report(2112);
         r.add(getName());
-        r.add(hex.getCoords().getBoardNum());
+        r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         System.err.println("basement " + basement + "is collapsing, hex:"
-                + hex.getCoords().toString() + " set terrain!");
-        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                + coords.toString() + " set terrain!");
+        board.getHex(coords).addTerrain(Terrains.getTerrainFactory().createTerrain(
                 Terrains.BLDG_BASE_COLLAPSED, 1));
         basementCollapsed.put(coords, true);
 

@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -306,7 +307,7 @@ public class Server implements Runnable {
     /**
      *  Stores a set of <code>Coords</code> that have changed during this phase.
      */
-    private HashSet<Coords> hexUpdateSet = new HashSet<Coords>();
+    private Set<Coords> hexUpdateSet = new LinkedHashSet<Coords>();
 
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
@@ -2021,9 +2022,7 @@ public class Server implements Runnable {
                 for (DynamicTerrainProcessor tp : terrainProcessors) {
                     tp.doEndPhaseChanges(vPhaseReport);
                 }
-                for (Coords c : hexUpdateSet){
-                    sendChangedHex(c);
-                }
+                sendChangedHexes(hexUpdateSet);
 
                 applyBuildingDamage();
                 addReport(game.ageFlares());
@@ -25795,6 +25794,27 @@ public class Server implements Runnable {
     }
 
     /**
+     * Creates a packet containing a hex, and the coordinates it goes at.
+     */
+    private Packet createHexesChangePacket(Set<Coords> coords, Set<IHex> hex) {
+        final Object[] data = new Object[2];
+        data[0] = coords;
+        data[1] = hex;
+        return new Packet(Packet.COMMAND_CHANGE_HEXES, data);
+    }
+
+    /**
+     * Sends notification to clients that the specified hex has changed.
+     */
+    public void sendChangedHexes(Set<Coords> coords) {
+        Set<IHex> hexes = new LinkedHashSet<IHex>();
+        for (Coords coord : coords) {
+            hexes.add(game.getBoard().getHex(coord));
+        }
+        send(createHexesChangePacket(coords, hexes));
+    }
+
+    /**
      * Creates a packet containing a vector of mines.
      */
     private Packet createMineChangePacket(Coords coords) {
@@ -30335,7 +30355,7 @@ public class Server implements Runnable {
         }
     }
 
-    public HashSet<Coords> getHexUpdateSet() {
+    public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
     }
 

@@ -25057,6 +25057,8 @@ public class Server implements Runnable {
                  * message.append(" has been customized.");
                  * sendServerChat(message.toString());
                  */
+                //Set this so units can be unloaded in the first movement phase
+                loadee.setLoadedThisTurn(false);
             }
         } else {
             // hey!

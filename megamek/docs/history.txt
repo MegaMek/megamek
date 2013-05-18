@@ -36,6 +36,7 @@ v0.35.39-dev (SVN)
 + Bug 3037: "Done" button failes to work after reset 
 + Bug 3738: Startup button disabled for shutdown dropships
 + Bug 3737: Jumping over buildings causes collapse and fall -- again
++ Bug 3740: Units loaded in the lobby cannot be unloaded in the first movement phase
 + Bug: NPE when entering buildings on mapsheets beyond the first
  
 v0.35.38 (2013-05-07, 01:44 UTC+2)

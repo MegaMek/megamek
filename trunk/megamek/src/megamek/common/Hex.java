@@ -621,6 +621,25 @@ public class Hex implements IHex, Serializable {
         return mod;
     }
 
+    /** The notional position of this {@code Hex}, as set upon creation.
+     * 
+     * @return the {@code Coords} object representing the coordinates this {@code 
+     *      Hex} was created with.
+     * @deprecated This value is never updated again after creation and not even
+     *      guaranteed to be unique (because it may have been simply copied from
+     *      another {@code Hex}) and thus cannot be relied on to actually contain
+     *      the {@code Hex}'s position on the board. Since client code will
+     *      generally already <em>know</em> a given {@code Hex}'s coordinates
+     *      (having used them to find it in the first place), it is strongly
+     *      suggested to simply use those directly instead of relying on this
+     *      method.
+     */
+    //TODO: either make sure coordinates are in fact kept accurate during the
+    // lifetime of a given Hex or drop the notion that a Hex needs to *know* its
+    // own coordinates in the first place altogether. As of 2013/05/19, the way
+    // it's being handled is b0rked.
+    @Override
+    @Deprecated
     public Coords getCoords() {
         return coords;
     }

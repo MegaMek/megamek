@@ -26923,12 +26923,11 @@ public class Server implements Runnable {
 
         // Get the Vector of Entities at these coordinates.
         final Vector<Entity> entities = positionMap.get(coords);
-        IHex curHex = game.getBoard().getHex(coords);
 
         if (bldg.getBasement(coords) == BasementType.NONE) {
             return;
         } else {
-            bldg.collapseBasement(curHex, vPhaseReport);
+            bldg.collapseBasement(coords, game.getBoard(), vPhaseReport);
         }
 
         // Are there any Entities at these coords?

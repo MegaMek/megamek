@@ -32,7 +32,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
@@ -469,8 +472,71 @@ public class Board implements Serializable, IBoard {
      */
     public void setHex(int x, int y, IHex hex) {
         data[(y * width) + x] = hex;
-        initializeAround(x, y);
+        initializeHex(x, y);
+        // If this hex has exitable terrain, we may need to update the exits in
+        // adjacent hexes
+        if (hex.hasExitableTerrain()){
+            for (int dir = 0; dir < 6; dir++){
+                if (hex.containsExit(dir)){
+                    initializeInDir(x, y, dir);
+                }
+            }
+        }
     }
+    
+    /**
+     * Similar to the setHex function for a collection of coordinates and
+     * hexes.  For each coord/hex pair in the supplied collections, this 
+     * method determines if the Board contains the coords and if so updates the
+     * specified hex into that position and intializes it. 
+     * 
+     * The method ensures that each hex that needs to be updated is only updated
+     * once.  
+     * 
+     * @see setHex
+     * @param coords A list of coordinates to be updated
+     * @param hexes  The hex to be updated for each coordinate
+     */
+    public void setHexes(List<Coords> coords, List<IHex> hexes){
+        //Keeps track of hexes that will need to be reinitialized
+        LinkedHashSet<Coords> needsUpdate = new LinkedHashSet<Coords>(
+                (int)(coords.size() * 1.25 + 0.5));
+        
+        //Sanity check
+        if (coords.size() != hexes.size()){
+            throw new IllegalStateException(
+                    "setHexes received two collections differeing size!");
+        }
+        
+        //Update all input hexes, plus create a set of coords that need updating
+        Iterator<Coords> coordIter = coords.iterator();
+        Iterator<IHex>   hexIter = hexes.iterator();
+        while (coordIter.hasNext() && hexIter.hasNext()){
+            Coords currCoord = coordIter.next();
+            IHex currHex = hexIter.next();
+            int x = currCoord.x;
+            int y = currCoord.y;
+            data[(y * width) + x] = currHex;
+            initializeHex(x, y);
+
+            //Add any adjacent hexes that may need to have exits updated
+            if (currHex.hasExitableTerrain()){
+                for (int dir = 0; dir < 6; dir++){
+                    if (currHex.containsExit(dir)){
+                        needsUpdate.add(new Coords(Coords.xInDir(x, y, dir), 
+                                Coords.yInDir(x, y, dir)));
+                    }
+                }
+            }
+            
+        }
+        
+        for (Coords coord : needsUpdate){
+            initializeHex(coord.x,coord.y);
+        }
+        
+    }
+    
 
     /**
      * Sets the hex into the location specified by the Coords.

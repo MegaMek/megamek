@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.event.BoardListener;
@@ -132,6 +133,22 @@ public interface IBoard {
      * @param hex the hex to be set into position.
      */
     public abstract void setHex(int x, int y, IHex hex);
+    
+    
+    /**
+     * Similar to the setHex function for a collection of coordinates and
+     * hexes.  For each coord/hex pair in the supplied collections, this 
+     * method determines if the Board contains the coords and if so updates the
+     * specified hex into that position and intializes it. 
+     * 
+     * The method ensures that each hex that needs to be updated is only updated
+     * once.  
+     * 
+     * @see setHex
+     * @param coords A list of coordinates to be updated
+     * @param hexes  The hex to be updated for each coordinate
+     */
+    public abstract void setHexes(List<Coords> coords, List<IHex> hexes);
 
     /**
      * Sets the hex into the location specified by the Coords.

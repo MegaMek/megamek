@@ -47,6 +47,7 @@ v0.35.39-dev (SVN)
 + infastructure to send sets of hexes to the client to be updated
 + Bug: Mechs register as crippled after first sensor hit.
 + Bug 3722: NPE error in Princess Precognition in round 2 when Immediate Withdrawal is selected.
++ Bug: Mechs with destroyed side torso not registering as crippled.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

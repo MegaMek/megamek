@@ -7512,13 +7512,13 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        if (isLocationDoomed(LOC_LT)) {
+        if (isLocationBad(LOC_LT)) {
             System.out.println(getDisplayName()
                     + " CRIPPLED: Left Torso destroyed.");
             return true;
         }
 
-        if (isLocationDoomed(LOC_RT)) {
+        if (isLocationBad(LOC_RT)) {
             System.out.println(getDisplayName()
                     + " CRIPPLED: Right Torso destroyed.");
             return true;

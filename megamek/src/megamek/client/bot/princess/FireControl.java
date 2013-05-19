@@ -1920,6 +1920,9 @@ public class FireControl {
      * Makes sure ammo is loaded for each weapon
      */
     public void loadAmmo(Entity shooter, IGame game) {
+        if (shooter == null) {
+            return;
+        }
         Iterator<Mounted> weps = shooter.getWeapons();
         while (weps.hasNext()) {
             Mounted onwep = weps.next();

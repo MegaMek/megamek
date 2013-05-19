@@ -2,62 +2,89 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Mithras Light Tank
 </Name>
+
 <Model>
 (ERLL)
 </Model>
-<Tonnage>
-25
-</Tonnage>
+
+<year>
+3075
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 6
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 16
 14
 14
 9
 14
-</Armor>
-<Turret Equipment>
-CLERLargeLaser
-</Turret Equipment>
-<Front Equipment>
-CLAPGaussRifle
-CLCASE
-</Front Equipment>
+</armor>
+
 <Body Equipment>
 CLAPGaussRifle Ammo
 CLTargeting Computer
 CLCASE
 </Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3060
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+CLAPGaussRifle
+CLCASE
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERLargeLaser
+</Turret Equipment>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+25.0
+</tonnage>
+

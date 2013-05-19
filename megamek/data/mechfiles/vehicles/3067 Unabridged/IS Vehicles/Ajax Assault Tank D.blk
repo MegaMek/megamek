@@ -79,14 +79,6 @@ Light Machine Gun
 </Left Equipment>
 
 <Rear Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 Light Machine Gun
 </Rear Equipment>
 
@@ -95,6 +87,11 @@ ISArrowIV
 ISERMediumLaser
 ISERMediumLaser
 </Turret Equipment>
+
+<transporters>
+cargobay:8:1
+infantrybay:4:1
+</transporters>
 
 <tonnage>
 90.0

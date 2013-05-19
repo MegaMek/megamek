@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+LargeSupportTank
 </UnitType>
 
 <Name>
@@ -41,56 +41,8 @@ Hover
 </engine_type>
 
 <armor_type>
-7
+0
 </armor_type>
-
-<Front_armor_type>
-0
-</Front_armor_type>
-
-<Front_armor_tech>
-Inner Sphere
-</Front_armor_tech>
-
-<Front Right_armor_type>
-0
-</Front Right_armor_type>
-
-<Front Right_armor_tech>
-Inner Sphere
-</Front Right_armor_tech>
-
-<Front Left_armor_type>
-0
-</Front Left_armor_type>
-
-<Front Left_armor_tech>
-Inner Sphere
-</Front Left_armor_tech>
-
-<Rear Right_armor_type>
-0
-</Rear Right_armor_type>
-
-<Rear Right_armor_tech>
-Inner Sphere
-</Rear Right_armor_tech>
-
-<Rear Left_armor_type>
--1
-</Rear Left_armor_type>
-
-<Rear Left_armor_tech>
-Inner Sphere
-</Rear Left_armor_tech>
-
-<Rear_armor_type>
-0
-</Rear_armor_type>
-
-<Rear_armor_tech>
-Inner Sphere
-</Rear_armor_tech>
 
 <armor>
 18
@@ -142,4 +94,8 @@ XTR Succesion Wars
 <tonnage>
 100.0
 </tonnage>
+
+<barrating>
+5
+</barrating>
 

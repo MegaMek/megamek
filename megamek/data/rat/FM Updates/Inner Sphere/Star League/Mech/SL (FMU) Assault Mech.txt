@@ -1,5 +1,5 @@
 SL Assault Mechs 3067 (FMU)
-Mad Cat Mk II,1
+Mad Cat Mk II (Standard),1
 BattleMaster BLR-CM,2
 Tai-sho TSH-7S,3
 Black Watch BKW-7R,4

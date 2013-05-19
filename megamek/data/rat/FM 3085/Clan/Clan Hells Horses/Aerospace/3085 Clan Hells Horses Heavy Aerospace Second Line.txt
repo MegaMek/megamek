@@ -6,7 +6,7 @@ Ahab AHB-443b,4
 Rapier RPR-100b,5
 Hammerhead HMR-HDb,6
 Hydaspes,5
-Xerxes,4
-Xerxes (Gauss),3
-Xerxes,2
+Xerxes 1,4
+Xerxes 2,3
+Xerxes 1,2
 Hydaspes,1

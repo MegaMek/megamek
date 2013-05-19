@@ -7,6 +7,6 @@ Lobo,5
 Sun Cobra,6
 Fenris (Ice Ferret) Prime,5
 Fenris (Ice Ferret) Prime,4
-Black Hawk,3
+Black Hawk (Standard),3
 Phantom Prime,2
 Pouncer Prime,1

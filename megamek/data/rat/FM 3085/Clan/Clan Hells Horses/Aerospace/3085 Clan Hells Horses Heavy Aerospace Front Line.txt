@@ -2,11 +2,11 @@
 Rapier RPR-100b,1
 Hammerhead HMR-HDb,2
 Hydaspes,3
-Xerxes,4
-Xerxes (Gauss),5
-Xerxes,6
+Xerxes 1,4
+Xerxes 2,5
+Xerxes 1,6
 Hydaspes,5
-Xerxes (Gauss),4
+Xerxes 2,4
 Kirghiz Prime,3
 Jengiz Prime,2
 Scytha Prime,1

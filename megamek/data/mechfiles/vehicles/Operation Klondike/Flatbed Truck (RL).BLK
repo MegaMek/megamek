@@ -2,52 +2,71 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Flatbed Truck
 </Name>
+
 <Model>
 (RL)
 </Model>
-<Tonnage>
-10
-</Tonnage>
+
+<year>
+2801
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 12
 10
 10
 8
-</Armor>
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
 <Front Equipment>
 CLRocketLauncher15Prototype
 CLRocketLauncher15Prototype
 CLRocketLauncher15Prototype
 CLRocketLauncher15Prototype
 </Front Equipment>
-<type>
-IS Level 3
-</type>
-<Year>
-2801
-</Year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+10.0
+</tonnage>
+

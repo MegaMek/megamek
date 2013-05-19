@@ -2,68 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Athena Combat Vehicle
 </Name>
-<Tonnage>
-75
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+3008
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 38
 26
 26
 24
 30
-</Armor>
+</armor>
+
+<Body Equipment>
+CLTargeting Computer
+Clan Machine Gun Ammo - Half
+Clan Ammo LRM-10
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+CLGaussRifle
+CLGaussRifle
+CLLRM10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLERMediumLaser
 CLERMediumLaser
 CLMG
 CLMG
 </Turret Equipment>
-<Front Equipment>
-CLGaussRifle
-CLGaussRifle
-CLLRM10
-</Front Equipment>
-<Body Equipment>
-CLGauss Ammo
-CLGauss Ammo
-CLGauss Ammo
-CLGauss Ammo
-CLLRM10 Ammo
-CLMG Ammo (100)
-CLTargeting Computer
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3050
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+75.0
+</tonnage>
+

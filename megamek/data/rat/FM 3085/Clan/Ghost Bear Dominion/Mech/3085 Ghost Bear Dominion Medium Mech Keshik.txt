@@ -7,6 +7,6 @@ Dragonfly (Viper) Prime,5
 Dragonfly (Viper) Prime,6
 Ryoken (Stormcrow) Prime,5
 Ryoken (Stormcrow) Prime,4
-Black Hawk,3
+Black Hawk (Standard),3
 Dasher II 2,2
 Dragonfly (Viper) Prime,1

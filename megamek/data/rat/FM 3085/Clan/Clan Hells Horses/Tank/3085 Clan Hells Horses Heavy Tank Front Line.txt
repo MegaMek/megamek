@@ -1,5 +1,5 @@
 3085 Clan Hell's Horses Heavy Tank Front Line
-Ishtar Heavy Fire Support Tank,1
+Ishtar Heavy Fire Support Tank (Original),1
 Athena Combat Vehicle,2
 Ishtar Heavy Fire Support Tank (Gauss),3
 Oro Heavy Tank,4

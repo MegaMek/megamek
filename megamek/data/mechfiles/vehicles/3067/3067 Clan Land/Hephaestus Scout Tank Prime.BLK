@@ -2,70 +2,96 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Hephaestus Scout Tank
 </Name>
+
 <Model>
 Prime
 </Model>
-<Tonnage>
-30
-</Tonnage>
+
+<year>
+3064
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<transporters>
+
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
-<Armor>
-20
-20
-20
-18
-18
-</Armor>
-<Turret Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLTAG
-</Turret Equipment>
 
-<transporters>
-TroopSpace:4
-</transporters>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+20
+20
+20
+18
+18
+</armor>
 
 <Body Equipment>
 CLActiveProbe
 CLECMSuite
 </Body Equipment>
 
-<type>
-Clan
-</type>
+<Front Equipment>
+</Front Equipment>
 
-<year>
-3064
-</year>
+<Right Equipment>
+</Right Equipment>
 
-<internal_type>
-0
-</internal_type>
+<Left Equipment>
+</Left Equipment>
 
-<armor_type>
-1
-</armor_type>
+<Rear Equipment>
+</Rear Equipment>
 
-<engine_type>
-0
-</engine_type>
+<Turret Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLTAG
+</Turret Equipment>
 
-<motion_type>
-Hover
-</motion_type>
+<tonnage>
+30.0
+</tonnage>
 
-<omni>
-</omni>

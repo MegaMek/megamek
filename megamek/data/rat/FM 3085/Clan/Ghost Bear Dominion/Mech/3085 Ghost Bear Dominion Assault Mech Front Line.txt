@@ -1,6 +1,6 @@
 3085 Ghost Bear Dominion Assault Mech Front Line
 Bruin,1
-Mad Cat II Enhanced,2
+Mad Cat Mk II Enhanced,2
 Marauder IIC 4,3
 Warhammer IIC 6,4
 Kodiak 4,5

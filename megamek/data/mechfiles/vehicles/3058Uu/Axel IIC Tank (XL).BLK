@@ -2,72 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Axel Heavy Tank IIC
 </Name>
+
 <Model>
 (XL)
 </Model>
-<Tonnage>
-65
-</Tonnage>
+
+<year>
+3074
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 65
 45
 45
 30
 35
-</Armor>
+</armor>
+
+<Body Equipment>
+CLTargeting Computer
+CLAPGaussRifle Ammo
+CLAMS Ammo
+CLECMSuite
+</Body Equipment>
+
+<Front Equipment>
+CLAPGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLERLargeLaser
 CLLRM15
-CLArtemisIV
 CLLRM15
 CLArtemisIV
 CLAntiMissileSystem
 </Turret Equipment>
-<Front Equipment>
-CLAPGaussRifle
-</Front Equipment>
-<Body Equipment>
-CLLRM15 (Clan) Artemis-capable Ammo
-CLLRM15 (Clan) Artemis-capable Ammo
-CLLRM15 (Clan) Artemis-capable Ammo
-CLLRM15 (Clan) Artemis-capable Ammo
-Clan AMS Ammo
-CLAPGaussRifle Ammo
-CLTargeting Computer
-CLECMSuite
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3075
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+65.0
+</tonnage>
+

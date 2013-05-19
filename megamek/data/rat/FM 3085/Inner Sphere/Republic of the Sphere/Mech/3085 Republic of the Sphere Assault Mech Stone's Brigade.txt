@@ -7,6 +7,6 @@ Kodiak 2,5
 Kingfisher Prime,6
 Trebaruna TR-XB,5
 Supernova 3,4
-Mad Cat Mk II,3
+Mad Cat Mk II (Standard),3
 Gladiator (Executioner) Prime,2
 Daishi (Dire Wolf) Prime,1

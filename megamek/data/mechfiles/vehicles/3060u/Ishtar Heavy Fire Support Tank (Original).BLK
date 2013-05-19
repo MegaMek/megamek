@@ -2,66 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ishtar Heavy Fire Support Tank
 </Name>
+
 <Model>
 (Original)
 </Model>
-<Tonnage>
-65
-</Tonnage>
+
+<year>
+2842
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
 <cruiseMP>
 4
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 30
 28
 28
 20
 28
-</Armor>
-<Turret Equipment>
-CLLBXAC10
-CLUltraAC10
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan LB 10-X AC Ammo
+Clan LB 10-X Cluster Ammo
+Clan Ammo LRM-10 (Clan) Artemis-capable
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLLRM10
 CLArtemisIV
 </Front Equipment>
-<Body Equipment>
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-CLLBXAC10 Ammo
-CLLBXAC10 CL Ammo
-CLLRM10 Ammo (Clan) Artemis-capable
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3050
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLLBXAC10
+CLUltraAC10
+</Turret Equipment>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+65.0
+</tonnage>
+

@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Thor Artillery Vehicle
@@ -28,21 +28,17 @@ Thor Artillery Vehicle
 Clan Level 3
 </type>
 
-<tonnage>
-55.0
-</tonnage>
-
 <motion_type>
 Wheeled
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
 5
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor_type>
 1
@@ -53,7 +49,7 @@ Wheeled
 </armor_tech>
 
 <armor>
-33
+32
 27
 27
 25
@@ -61,6 +57,7 @@ Wheeled
 </armor>
 
 <Body Equipment>
+CLCASE
 CLThumperAmmo
 CLThumperAmmo
 </Body Equipment>
@@ -76,11 +73,14 @@ CLThumper
 </Left Equipment>
 
 <Rear Equipment>
-CLCASE
 </Rear Equipment>
 
 <Turret Equipment>
 CLERMediumLaser
 CLERMediumLaser
 </Turret Equipment>
+
+<tonnage>
+55.0
+</tonnage>
 

@@ -6,7 +6,7 @@ Hankyu (Arctic Cheetah) Prime,4
 Hankyu (Arctic Cheetah) Prime,5
 Hellion Prime,6
 Puma (Adder) Prime,5
-Koshi,4
+Koshi (Standard),4
 Hellion Prime,3
 Hankyu (Arctic Cheetah) Prime,2
 Puma (Adder) Prime,1

@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Indra Infantry Transport
@@ -25,36 +25,32 @@ Indra Infantry Transport
 </year>
 
 <type>
-Clan Level 2
+Clan Level 3
 </type>
-
-<tonnage>
-35
-</tonnage>
 
 <motion_type>
 Wheeled
 </motion_type>
 
 <transporters>
-TroopSpace: 5
+troopspace:5.0
 </transporters>
-
-<engine_type>
-0
-</engine_type>
 
 <cruiseMP>
 5
 </cruiseMP>
 
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 1
 </armor_type>
+
+<armor_tech>
+6
+</armor_tech>
 
 <armor>
 25
@@ -98,3 +94,8 @@ CLCASE
 <source>
 Jihad
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

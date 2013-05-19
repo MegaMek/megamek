@@ -2,85 +2,108 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Mars Assault Vehicle
 </Name>
+
 <Model>
 (ATM)
 </Model>
-<Tonnage>
-100
-</Tonnage>
+
+<year>
+3065
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 2
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 50
 43
 43
 37
 47
-</Armor>
-<Turret Equipment>
-CLHeavyLargeLaser
-CLGaussRifle
-CLMG
-CLMG
-CLMG Ammo (200)
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Streak SRM 4 Ammo
+Clan Streak SRM 4 Ammo
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9
+Clan Ammo ATM-9 HE
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9
+Clan Ammo ATM-9 HE
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9
+Clan Ammo ATM-9 HE
+CLECMSuite
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLATM9
 CLATM9
 CLATM9
 </Front Equipment>
+
 <Right Equipment>
 CLStreakSRM4
 </Right Equipment>
+
 <Left Equipment>
 CLStreakSRM4
 </Left Equipment>
-<Body Equipment>
-CLGauss Ammo
-CLGauss Ammo
-CLStreakSRM4 Ammo
-CLStreakSRM4 Ammo
-CLATM9 ER Ammo
-CLATM9 Ammo
-CLATM9 HE Ammo
-CLATM9 ER Ammo
-CLATM9 Ammo
-CLATM9 HE Ammo
-CLATM9 ER Ammo
-CLATM9 Ammo
-CLATM9 HE Ammo
-CLECMSuite
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3067
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHeavyLargeLaser
+CLGaussRifle
+CLMG
+CLMG
+Clan Machine Gun Ammo - Full
+</Turret Equipment>
+
 <source>
 Civil War
 </source>
+
+<tonnage>
+100.0
+</tonnage>
+

@@ -8,5 +8,5 @@ Naginata NG-C3A,6
 O-Bakemono OBK-M10,5
 Sunder SD1-O,4
 Naginata NG-C3B,3
-Mad Cat Mk II,2
+Mad Cat Mk II (Standard),2
 Atlas AS7-CM,1

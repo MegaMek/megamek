@@ -2,63 +2,96 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ontos Heavy Tank
 </Name>
+
 <Model>
 X
 </Model>
-<Tonnage>
-95
-</Tonnage>
+
+<year>
+3072
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 30
 25
 25
 25
 20
-</Armor>
-<Turret Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISEnhancedLRM15
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
 ISEnhancedLRM15 Ammo
 ISEnhancedLRM15 Ammo
-ISCombatVehicleEscapePod
+Environmental Sealing
 </Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-3074
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+ISCombatVehicleEscapePod
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Enhanced LRM 15
+</Turret Equipment>
+
+<source>
+XTR Pirates
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

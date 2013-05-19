@@ -52,16 +52,15 @@ Wheeled
 ISVehicularMineDispenser
 ISVehicularMineDispenser
 ISVehicularMineDispenser
-ISVehicularMineDispenser
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
 </Body Equipment>
 
 <Front Equipment>
 ISImprovedHeavyGaussRifle
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
 </Front Equipment>
 
 <Right Equipment>
@@ -75,7 +74,6 @@ ISSponsonTurret
 </Left Equipment>
 
 <Rear Equipment>
-Hitch
 </Rear Equipment>
 
 <Turret Equipment>

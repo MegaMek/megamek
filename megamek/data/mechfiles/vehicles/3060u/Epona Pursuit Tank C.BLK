@@ -2,64 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Epona Pursuit Tank
 </Name>
+
 <Model>
 C
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+2884
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 21
 20
 20
 18
 17
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 6 Ammo
+CLECMSuite
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLTAG
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLERPPC
 CLStreakSRM6
 </Turret Equipment>
-<Front Equipment>
-CLTAG
-</Front Equipment>
-<Body Equipment>
-CLStreakSRM6 Ammo
-CLECMSuite
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3050
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
-<omni>
-</omni>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+

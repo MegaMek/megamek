@@ -1,11 +1,11 @@
 3085 Clan Wolf Light Mech Keshik
 Puma (Adder) Prime,1
 Locust IIC 5,2
-Koshi,3
+Koshi (Standard),3
 Locust IIC 6,4
 Uller (Kit Fox) Prime,5
 Puma (Adder) Prime,6
-Koshi,5
+Koshi (Standard),5
 Puma (Adder) Prime,4
 Uller (Kit Fox) Prime,3
 Puma (Adder) Prime,2

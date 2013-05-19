@@ -8,5 +8,5 @@ Spirit,6
 Crimson Hawk,5
 Spirit 2,4
 Uller (Kit Fox) Prime,3
-Koshi,2
+Koshi (Standard),2
 Locust IIC 9,1

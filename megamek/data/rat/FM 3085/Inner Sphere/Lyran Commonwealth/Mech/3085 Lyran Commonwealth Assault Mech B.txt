@@ -9,4 +9,4 @@ BattleMaster BLR-10S,5
 Thunder Hawk TDK-7X,4
 Atlas AS7-S2,3
 Hauptmann HA1-O,2
-Mad Cat Mk II,1
+Mad Cat Mk II (Standard),1

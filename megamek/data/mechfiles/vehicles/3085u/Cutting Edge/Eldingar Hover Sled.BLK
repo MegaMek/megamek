@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,22 +16,71 @@ Tank
 Eldingar Hover Sled
 </Name>
 
-<Tonnage>
-50
-</Tonnage>
+<Model>
+
+</Model>
+
+<year>
+3081
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:5.0
+</transporters>
 
 <cruiseMP>
 9
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 38
 28
 28
 24
 26
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9 HE
+Clan Streak SRM 2 Ammo
+CLECMSuite
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
 
 <Turret Equipment>
 CLATM9
@@ -40,44 +89,11 @@ CLStreakSRM2
 CLStreakSRM2
 </Turret Equipment>
 
-<Body Equipment>
-CLATM9 Ammo
-CLATM9 Ammo
-CLATM9 ER Ammo
-CLATM9 HE Ammo
-CLStreakSRM2 Ammo
-CLECMSuite
-CLCASE
-</Body Equipment>
-
-<type>
-Clan Level 2
-</type>
-
-<year>
-3081
-</year>
-
 <source>
 Dark Age
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-Hover
-</motion_type>
-
-<transporters>
-TroopSpace:5
-</transporters>

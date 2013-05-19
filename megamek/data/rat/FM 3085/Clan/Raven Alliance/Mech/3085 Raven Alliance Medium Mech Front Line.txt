@@ -4,7 +4,7 @@ Shadow Hawk IIC 7,2
 Clint IIC 2,3
 Phantom Prime,4
 Shadow Cat Prime,5
-Black Hawk,6
+Black Hawk (Standard),6
 Ryoken (Stormcrow) Prime,5
 Dasher II 2,4
 Ryoken (Stormcrow) Prime,3

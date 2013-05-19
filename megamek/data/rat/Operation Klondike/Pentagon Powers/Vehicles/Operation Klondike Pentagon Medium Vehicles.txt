@@ -4,10 +4,10 @@ Chaparral Missile Artillery Tank,2
 Zephyr Hovertank,3
 Thor Artillery Vehicle (AC),4
 Goblin Medium Tank,5
-Turhan Urban Combat Vehicle,6
+Turhan Urban Combat Vehicle (Standard),6
 Maxim Heavy Hover Transport,5
 Kanga Medium Hovertank (AC),4
-Turhan Urban Combat Vehicle,3
+Turhan Urban Combat Vehicle (Standard),3
 Thor Artillery Vehicle,2
 Zephyr Hovertank (Royal),1
 #Edited by Michael Moulden

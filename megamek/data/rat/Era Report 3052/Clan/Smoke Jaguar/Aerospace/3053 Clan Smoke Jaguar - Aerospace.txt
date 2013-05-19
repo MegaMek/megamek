@@ -1,7 +1,7 @@
 3053 Clan Smoke Jaguar - Aerospace
 Kirghiz B,1
 Jagatai A,2
-Xerxes,6
+Xerxes 1,6
 Turk Prime,4
 Sulla Prime,5
 Jagatai Prime,6

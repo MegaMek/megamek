@@ -2,66 +2,100 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Bandit (C) Hovercraft
 </Name>
+
 <Model>
 A
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+2875
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:5.0
+</transporters>
+
+<transporters>
+
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 40
-40
-40
+39
+39
 20
 32
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo SRM-2
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLERLargeLaser
 CLSRM2
 </Turret Equipment>
-<Front Equipment>
-CLSRM2
-</Front Equipment>
-<transporters>
-TroopSpace:5
-</transporters>
-<Body Equipment>
-CLSRM2 Ammo
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-2875
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
-<omni>
-</omni>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -9,6 +9,6 @@ Gladiator (Executioner) Prime,5
 Kingfisher Prime,4
 Gladiator (Executioner) D,3
 Kingfisher B,2
-Mad Cat Mk II,1
+Mad Cat Mk II (Standard),1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

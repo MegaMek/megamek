@@ -2,10 +2,10 @@
 Stuka STU-K5b,1
 Hydaspes,2
 Hammerhead HMR-HDb,3
-Xerxes,4
+Xerxes 1,4
 Rapier RPR-100b,5
 Ahab AHB-443b,6
-Xerxes,5
+Xerxes 1,5
 Lucifer LCF-R16,4
 Scytha Prime,3
 Eisensturm EST-R3,2

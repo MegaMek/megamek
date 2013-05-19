@@ -3,10 +3,10 @@ Griffin IIC 8,1
 Battle Cobra Prime,2
 Hunchback IIC,3
 Shadow Cat Prime,4
-Black Hawk,5
-Black Hawk,6
+Black Hawk (Standard),5
+Black Hawk (Standard),6
 Black Lanner Prime,5
 Ryoken (Stormcrow) Prime,4
-Black Hawk,3
+Black Hawk (Standard),3
 Black Lanner Prime,2
 Ryoken (Stormcrow) Prime,1

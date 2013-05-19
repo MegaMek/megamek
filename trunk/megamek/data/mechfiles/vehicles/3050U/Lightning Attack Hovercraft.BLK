@@ -2,53 +2,79 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Lightning Attack Hovercraft
 </Name>
-<Tonnage>
-35
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+2696
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
 <cruiseMP>
 11
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 20
 16
 16
-11
-</Armor>
+10
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
 <Front Equipment>
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Front Equipment>
+
 <Right Equipment>
-ISSRM4 (OS)
+ISSRM4OS
 </Right Equipment>
+
 <Left Equipment>
-ISSRM4 (OS)
+ISSRM4OS
 </Left Equipment>
-<type>
-IS
-</type>
-<year>
-2696
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+35.0
+</tonnage>
+

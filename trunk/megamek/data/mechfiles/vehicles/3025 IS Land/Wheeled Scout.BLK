@@ -2,49 +2,72 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Wheeled Scout
 </Name>
-<Tonnage>
-20
-</Tonnage>
-<cruiseMP>
-7
-</cruiseMP>
-<Armor>
-22
-15
-15
-12
-</Armor>
-<Front Equipment>
-ISMediumLaser
-</Front Equipment>
-<transporters>
-TroopSpace:1
-</transporters>
-<type>
-IS
-</type>
+
+<Model>
+
+</Model>
+
 <year>
-3025
+2963
 </year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
+
+<type>
+IS Level 1
+</type>
+
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+18
+13
+13
+12
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+Medium Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+20.0
+</tonnage>
+

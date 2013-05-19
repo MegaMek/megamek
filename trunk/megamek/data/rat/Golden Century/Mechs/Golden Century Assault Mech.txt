@@ -1,7 +1,7 @@
 2858 Golden Century Assault Mech
 Shogun C,1
 Marauder IIC,2
-Wakazashi,3
+Wakazashi (Standard),3
 Annihilator C,4
 Kraken (Bane),5
 Marauder IIC,6

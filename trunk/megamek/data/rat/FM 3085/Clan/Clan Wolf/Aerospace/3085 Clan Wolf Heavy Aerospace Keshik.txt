@@ -3,7 +3,7 @@ Hammerhead HMR-HDb,1
 Ahab AHB-443b,2
 Rapier RPR-200,3
 Hydaspes,4
-Xerxes,5
+Xerxes 1,5
 Sabutai Prime,6
 Hydaspes,5
 Jengiz Prime,4

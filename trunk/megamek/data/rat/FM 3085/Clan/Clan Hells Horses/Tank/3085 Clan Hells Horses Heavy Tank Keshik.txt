@@ -9,4 +9,4 @@ Athena Combat Vehicle (HAG),5
 Athena Combat Vehicle,4
 Ishtar Heavy Fire Support Tank (Gauss),3
 Oro Heavy Tank,2
-Ishtar Heavy Fire Support Tank,1
+Ishtar Heavy Fire Support Tank (Original),1

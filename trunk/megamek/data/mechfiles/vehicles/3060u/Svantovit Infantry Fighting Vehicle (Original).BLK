@@ -2,73 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Svantovit Infantry Fighting Vehicle
 </Name>
+
 <Model>
 (Original)
 </Model>
-<Tonnage>
-35
-</Tonnage>
+
+<year>
+2843
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:3.0
+</transporters>
+
 <cruiseMP>
 10
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 14
 11
 11
 10
 11
-</Armor>
-<Turret Equipment>
-CLStreakSRM4
-CLStreakSRM4
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+Clan Machine Gun Ammo - Half
+Clan Ammo LRM-5
+Clan Streak SRM 4 Ammo
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLLRM5
 CLLRM5
 </Front Equipment>
-<Left Equipment>
-CLMG
-</Left Equipment>
+
 <Right Equipment>
 CLMG
 </Right Equipment>
-<transporters>
-TroopSpace:3
-</transporters>
-<Body Equipment>
-CLMG Ammo (100)
-CLLRM5 Ammo
-CLStreakSRM4 Ammo
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3050
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
+
+<Left Equipment>
+CLMG
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLStreakSRM4
+CLStreakSRM4
+</Turret Equipment>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

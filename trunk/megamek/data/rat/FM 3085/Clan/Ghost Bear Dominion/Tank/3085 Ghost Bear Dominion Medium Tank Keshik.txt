@@ -2,7 +2,7 @@
 Bellona Hover Tank (Laser),1
 Hachiman Fire Support Tank (AAA),2
 Ares Medium Tank (Plasma),3
-Ares Medium Tank,4
+Ares Medium Tank (Standard),4
 Eldingar Hover Sled,5
 Tyr Infantry Support Tank,6
 Hachiman Fire Support Tank 'Huey',5

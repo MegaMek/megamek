@@ -3,7 +3,7 @@ Mongoose II MON-267,1
 Thunder Fox TFT-A9,2
 Blackjack BJ2-O,3
 Raptor II RPT-3X,4
-Black Hawk,5
+Black Hawk (Standard),5
 Shadow Hawk IIC 8,6
 Dragonfly (Viper) Prime,5
 Hellhound (Conjurer) 5,4

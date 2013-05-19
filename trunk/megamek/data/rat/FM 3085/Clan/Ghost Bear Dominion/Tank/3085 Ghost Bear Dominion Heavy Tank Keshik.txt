@@ -1,7 +1,7 @@
 3085 Ghost Bear Dominion Heavy Tank Keshik
 Tokugawa Heavy Tank,1
 Shoden Assault Vehicle,2
-Ishtar Heavy Fire Support Tank,3
+Ishtar Heavy Fire Support Tank (Original),3
 Oro Heavy Tank,4
 Vidar Heavy Defense Tank,5
 Axel Heavy Tank IIC,6

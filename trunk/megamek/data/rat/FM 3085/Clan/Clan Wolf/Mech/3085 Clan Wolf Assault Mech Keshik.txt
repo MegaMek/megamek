@@ -1,7 +1,7 @@
 3085 Clan Wolf Assault Mech Keshik
 Highlander IIC 2,1
 Daishi (Dire Wolf) Prime,2
-Mad Cat Mk II,3
+Mad Cat Mk II (Standard),3
 Man O' War (Gargoyle) Prime,4
 Man O' War (Gargoyle) Prime,5
 Daishi (Dire Wolf) Prime,6

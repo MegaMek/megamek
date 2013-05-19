@@ -6,7 +6,7 @@ Arctic Wolf Prime,4
 Fenris (Ice Ferret) Prime,5
 Fenris (Ice Ferret) Prime,6
 Phantom Prime,5
-Black Hawk,4
+Black Hawk (Standard),4
 Pouncer Prime,3
 Ryoken (Stormcrow) Prime,2
 Fenris (Ice Ferret) Prime,1

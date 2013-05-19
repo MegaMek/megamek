@@ -2,10 +2,10 @@ Clan Vehicle Heavy
 Demon Tank,1
 Burke Defense Tank,2
 Shoden Assault Vehicle,3
-Ishtar Heavy Fire Support Tank,4
+Ishtar Heavy Fire Support Tank (Standard),4
 Athena Combat Vehicle,5
 Oro Heavy Tank,6
-Ishtar Heavy Fire Support Tank,5
+Ishtar Heavy Fire Support Tank (Standard),5
 Athena Combat Vehicle,4
 Shoden Assault Vehicle,3
 Oro Heavy Tank,2

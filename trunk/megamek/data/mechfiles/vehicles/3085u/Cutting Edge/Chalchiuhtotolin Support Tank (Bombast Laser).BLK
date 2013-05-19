@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,76 +20,76 @@ Chalchiuhtotolin Support Tank
 (Bombast Laser)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3085
+</year>
+
+<type>
+Mixed (Clan Chassis) Experimental
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
 
 <cruiseMP>
 5
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 39
 27
 27
 16
 25
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 4 Ammo
+CLCASE
+CLTargeting Computer
+Clan Light Machine Gun Ammo - Half
+</Body Equipment>
 
 <Front Equipment>
 CLLightMG
 </Front Equipment>
 
-<Left Equipment>
-CLLightMG
-</Left Equipment>
-
 <Right Equipment>
 CLLightMG
 </Right Equipment>
+
+<Left Equipment>
+CLLightMG
+</Left Equipment>
 
 <Rear Equipment>
 CLLightMG
 </Rear Equipment>
 
 <Turret Equipment>
-ISBombastLaser
+Bombast Laser
 CLStreakSRM4
 CLStreakSRM4
 </Turret Equipment>
-
-<Body Equipment>
-CLStreakSRM4 Ammo
-CLLightMG Ammo (200)
-CLCASE
-CLTargeting Computer
-</Body Equipment>
-
-<type>
-Mixed (Clan Chassis) Experimental
-</type>
-
-<year>
-3085
-</year>
 
 <source>
 Dark Age
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Wheeled
-</motion_type>

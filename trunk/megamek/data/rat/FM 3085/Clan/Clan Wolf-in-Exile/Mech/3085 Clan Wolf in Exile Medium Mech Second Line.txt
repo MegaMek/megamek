@@ -7,6 +7,6 @@ Ursus II,5
 Arctic Wolf,6
 Arctic Wolf 2,5
 Firestarter FS9-O,4
-Black Hawk,3
+Black Hawk (Standard),3
 Ursus II,2
 Fenris (Ice Ferret) Prime,1

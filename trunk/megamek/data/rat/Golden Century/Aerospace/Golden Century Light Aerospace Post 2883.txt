@@ -2,11 +2,11 @@
 Avar Prime,1
 Zero ZRO-116b,2
 Chaeronea,3
-Chaeronea (ERML),4
+Chaeronea 2,4
 Chaeronea,5
 Swift C,6
 Avar Prime,5
 Issus,4
 Tomahawk C,3
 Spad SPD-502,2
-Chaeronea (ERML),1
+Chaeronea 2,1

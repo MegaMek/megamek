@@ -7,6 +7,6 @@ Hachiman Fire Support Tank 'Huey',5
 Vedette Medium Tank,6
 Hachiman Fire Support Tank (AAA),5
 Hachiman Fire Support Tank (AAA),4
-Ares Medium Tank,3
+Ares Medium Tank (Standard),3
 Hachiman Fire Support Tank 'Huey',2
 Enyo Strike Tank,1

@@ -1,11 +1,11 @@
 3085 Clan Diamond Shark Heavy Aerospace Second Line
-Xerxes,1
+Xerxes 1,1
 Riever F-700b,2
 Rapier RPR-100b,3
 Hammerhead HMR-HDb,4
 Ahab AHB-443b,5
 Hydaspes,6
-Xerxes,5
+Xerxes 1,5
 Hydaspes 3,4
 Huscarl HSCL-1-O,3
 Eisensturm EST-O,2

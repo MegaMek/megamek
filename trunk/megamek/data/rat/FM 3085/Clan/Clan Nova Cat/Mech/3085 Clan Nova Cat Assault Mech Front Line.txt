@@ -3,7 +3,7 @@ Supernova 2,1
 Marauder IIC 4,2
 Supernova,3
 Deimos Prime,4
-Mad Cat Mk II,5
+Mad Cat Mk II (Standard),5
 Supernova 3,6
 Supernova 2,5
 Supernova 4,4

@@ -2,56 +2,85 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Thor Artillery Vehicle
 </Name>
-<Tonnage>
-55
-</Tonnage>
-<cruiseMP>
-5
-</cruiseMP>
-<Armor>
-30
-25
-25
-24
-30
-</Armor>
-<Turret Equipment>
-ISMediumLaser
-ISMediumLaser
-</Turret Equipment>
-<Front Equipment>
-ISThumperArtillery
-</Front Equipment>
-<Body Equipment>
-ISThumperArtillery Ammo
-ISThumperArtillery Ammo
-ISCASE
-</Body Equipment>
-<type>
-IS Level 3
-</type>
+
+<Model>
+
+</Model>
+
 <year>
 2680
 </year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
+
+<type>
+IS Level 3
+</type>
+
 <motion_type>
 Wheeled
 </motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+29
+23
+23
+22
+28
+</armor>
+
+<Body Equipment>
+ISThumperAmmo
+ISThumperAmmo
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+ISThumper
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Medium Laser
+</Turret Equipment>
+
+<tonnage>
+55.0
+</tonnage>
+

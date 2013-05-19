@@ -1,52 +1,44 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 Tank
 </UnitType>
 
-<blockversion>
-1
-</blockversion>
-
 <Name>
 MIT23 MASH Vehicle
 </Name>
 
+<Model>
+
+</Model>
+
 <year>
-3059
+3067
 </year>
-
-<source>
-Clan Invasion
-</source>
-
-<source>
-Clan Invasion
-</source>
 
 <type>
 IS Level 3
 </type>
 
-<tonnage>
-20.0
-</tonnage>
-
 <motion_type>
 Wheeled
 </motion_type>
 
+<cruiseMP>
+5
+</cruiseMP>
+
 <engine_type>
 0
 </engine_type>
-
-<cruiseMP>
-6
-</cruiseMP>
 
 <internal_type>
 -1
@@ -60,14 +52,6 @@ Wheeled
 </armor>
 
 <Body Equipment>
-MASH core component
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
 </Body Equipment>
 
 <Front Equipment>
@@ -81,4 +65,12 @@ MASH Operation Theater
 
 <Rear Equipment>
 </Rear Equipment>
+
+<source>
+Clan Invasion
+</source>
+
+<tonnage>
+20.0
+</tonnage>
 

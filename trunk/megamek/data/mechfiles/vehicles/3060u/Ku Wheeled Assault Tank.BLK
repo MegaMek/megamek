@@ -2,61 +2,91 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ku Wheeled Assault Tank
 </Name>
-<Tonnage>
-50
-</Tonnage>
-<CruiseMP>
+
+<Model>
+
+</Model>
+
+<year>
+2842
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
 4
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 30
 29
 29
 26
 20
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 4 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLStreakSRM4
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLERLargeLaser
 CLERSmallLaser
 CLUltraAC10
 </Turret Equipment>
-<Front Equipment>
-CLStreakSRM4
-</Front Equipment>
-<Body Equipment>
-CLStreakSRM4 Ammo
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3050
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -6,7 +6,7 @@ Ahab AHB-443b,4
 Slayer SL-15K,5
 Huscarl HSCL-1-O,6
 Hydaspes,5
-Xerxes,4
+Xerxes 1,4
 Jengiz Prime,3
 Huscarl HSCL-1-O,2
 Kirghiz Prime,1

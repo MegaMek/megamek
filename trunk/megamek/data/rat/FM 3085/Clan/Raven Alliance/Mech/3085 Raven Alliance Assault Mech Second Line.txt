@@ -9,4 +9,4 @@ Phoenix Hawk IIC 3,5
 Kodiak 3,4
 Kraken (Bane),3
 Warhammer IIC 7,2
-Mad Cat II Enhanced,1
+Mad Cat Mk II Enhanced,1

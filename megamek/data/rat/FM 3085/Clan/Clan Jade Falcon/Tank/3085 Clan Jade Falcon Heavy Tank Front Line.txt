@@ -1,11 +1,11 @@
 3085 Clan Jade Falcon Heavy Tank Front Line
 Oro Heavy Tank,1
-Ishtar Heavy Fire Support Tank,2
+Ishtar Heavy Fire Support Tank (Original),2
 Burke Defense Tank,3
 Oro Heavy Tank,4
-Ishtar Heavy Fire Support Tank,5
+Ishtar Heavy Fire Support Tank (Original),5
 Athena Combat Vehicle,6
-Ishtar Heavy Fire Support Tank,5
+Ishtar Heavy Fire Support Tank (Original),5
 Oro Heavy Tank,4
 Pike Support Vehicle (Clan),3
 Ishtar Heavy Fire Support Tank (Gauss),2

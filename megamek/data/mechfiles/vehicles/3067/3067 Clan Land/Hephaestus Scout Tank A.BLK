@@ -2,62 +2,97 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Hephaestus Scout Tank
 </Name>
+
 <Model>
 A
 </Model>
-<Tonnage>
-30
-</Tonnage>
+
+<year>
+3064
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<transporters>
+
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 20
 20
 20
 18
 18
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLActiveProbe
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLLRM15
 CLArtemisIV
 CLERSmallLaser
 </Turret Equipment>
-<transporters>
-TroopSpace:4
-</transporters>
-<Body Equipment>
-CLLRM15 Ammo (Clan) Artemis-capable
-CLActiveProbe
-CLCASE
-</Body Equipment>
-<type>
-Clan
-</type>
-<year>
-3064
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
-<omni>
-</omni>
+
+<tonnage>
+30.0
+</tonnage>
+

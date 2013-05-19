@@ -5,8 +5,8 @@ Chippewa CHP-W8,3
 Thunderbird TRB-D36,4
 Hammerhead HMR-HDb,5
 Hydaspes,6
-Xerxes,5
+Xerxes 1,5
 Chippewa CHP-W8,4
 Eisensturm EST-R3,3
-Xerxes,2
+Xerxes 1,2
 Eisensturm EST-O,1

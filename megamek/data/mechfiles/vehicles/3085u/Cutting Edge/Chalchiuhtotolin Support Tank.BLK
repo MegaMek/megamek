@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,36 +16,67 @@ Tank
 Chalchiuhtotolin Support Tank
 </Name>
 
-<Tonnage>
-50
-</Tonnage>
+<Model>
+
+</Model>
+
+<year>
+3084
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
 
 <cruiseMP>
 5
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 37
 25
 25
 15
 22
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 4 Ammo
+Clan Vehicle Flamer Ammo
+Clan Vehicle Flamer Ammo
+CLCASE
+Clan Light Machine Gun Ammo - Half
+</Body Equipment>
 
 <Front Equipment>
-CLMicroPulseLaser
-CLMicroPulseLaser
 CLLightMG
+CLMicroPulseLaser
+CLMicroPulseLaser
 </Front Equipment>
-
-<Left Equipment>
-CLLightMG
-</Left Equipment>
 
 <Right Equipment>
 CLLightMG
 </Right Equipment>
+
+<Left Equipment>
+CLLightMG
+</Left Equipment>
 
 <Rear Equipment>
 CLLightMG
@@ -53,43 +84,16 @@ CLLightMG
 
 <Turret Equipment>
 CLLargePulseLaser
-CLStreakSRM4
-CLStreakSRM4
 CLVehicleFlamer
+CLStreakSRM4
+CLStreakSRM4
 </Turret Equipment>
-
-<Body Equipment>
-CLStreakSRM4 Ammo
-CLVehicleFlamer Ammo
-CLVehicleFlamer Ammo
-CLLightMG Ammo (200)
-CLCASE
-</Body Equipment>
-
-<type>
-Clan Level 2
-</type>
-
-<year>
-3084
-</year>
 
 <source>
 Dark Age
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Wheeled
-</motion_type>

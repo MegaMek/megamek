@@ -1,6 +1,6 @@
 3085 Clan Jade Falcon Light Mech Front Line
 Uller (Kit Fox) Prime,1
-Koshi,2
+Koshi (Standard),2
 Locust IIC 9,3
 Hellion Prime,4
 Dasher (Fire Moth) Prime,5

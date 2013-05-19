@@ -2,65 +2,89 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Enyo Strike Tank
 </Name>
-<Tonnage>
-55
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+3063
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 6
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 30
 29
 29
 29
 27
-</Armor>
-<Turret Equipment>
-CLLargePulseLaser
-CLStreakSRM6
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+CLMG
+CLMG
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo
+Clan Machine Gun Ammo - Half
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLStreakSRM6
 CLStreakSRM6
 </Front Equipment>
+
 <Right Equipment>
-CLMG
 </Right Equipment>
+
 <Left Equipment>
-CLMG
 </Left Equipment>
-<Body Equipment>
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
-CLMG Ammo (100)
-CLCASE
-</Body Equipment>
-<type>
-Clan
-</type>
-<year>
-3063
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLStreakSRM6
+CLLargePulseLaser
+</Turret Equipment>
+
+<tonnage>
+55.0
+</tonnage>
+

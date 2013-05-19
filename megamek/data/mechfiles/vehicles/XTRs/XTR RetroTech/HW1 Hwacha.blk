@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
@@ -88,3 +88,6 @@ XTR RetroTech
 50.0
 </tonnage>
 
+<barrating>
+6
+</barrating>

@@ -53,10 +53,9 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-CLCASE
-Clan Light Machine Gun Ammo - Half
 IS Ammo MML-7 LRM
 IS Ammo MML-7 SRM
+IS Light Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -72,10 +71,10 @@ IS Ammo MML-7 SRM
 </Rear Equipment>
 
 <Turret Equipment>
-CLLightMG
-CLLightMG
 ISMML7
 ISMML7
+Light Machine Gun
+Light Machine Gun
 </Turret Equipment>
 
 <source>

@@ -8,5 +8,5 @@ Parash 2,6
 Dasher (Fire Moth) Prime,5
 Fire Falcon Prime,4
 Hankyu (Arctic Cheetah) Prime,3
-Koshi,2
+Koshi (Standard),2
 Puma (Adder) Prime,1

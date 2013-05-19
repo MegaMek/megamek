@@ -1,10 +1,10 @@
 Medium Vehicle (2766) RWR
-Turhan Urban Combat Vehicle,2
+Turhan Urban Combat Vehicle (Standard),2
 Kanga Medium Hovertank,3
 Zephyr Hovertank,4
 Thor Artillery Vehicle,5
 T-12 Tiger Medium Tank,6
-Turhan Urban Combat Vehicle,7
+Turhan Urban Combat Vehicle (Standard),7
 Maxim Heavy Hover Transport,6
 Chaparral Missile Artillery Tank,5
 Zephyr Hovertank,4

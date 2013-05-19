@@ -2,69 +2,96 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Ishtar Heavy Fire Support Tank
 </Name>
+
 <Model>
 (Gauss)
 </Model>
-<Tonnage>
-65
-</Tonnage>
+
+<year>
+3068
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
 32
 30
 30
 24
 28
-</Armor>
-<Turret Equipment>
-CLHAG20
-CLGaussRifle
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+HAG/20 Ammo
+HAG/20 Ammo
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLERMediumLaser
 CLERMediumLaser
 CLLRM15
 CLArtemisIV
 </Front Equipment>
-<Body Equipment>
-CLHAG20 Ammo
-CLHAG20 Ammo
-CLGauss Ammo
-CLGauss Ammo
-CLLRM15 Ammo (Clan) Artemis-capable
-CLLRM15 Ammo (Clan) Artemis-capable
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3068
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHAG20
+CLGaussRifle
+</Turret Equipment>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+65.0
+</tonnage>
+

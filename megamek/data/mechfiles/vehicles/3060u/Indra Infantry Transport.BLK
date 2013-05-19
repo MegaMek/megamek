@@ -2,63 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Indra Infantry Transport
 </Name>
-<Tonnage>
-35
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+2842
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:3.0
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 25
 20
 20
 14
 17
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Machine Gun Ammo - Half
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLERPPC
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLMG
 CLMG
 CLMG
 CLMG
 </Turret Equipment>
-<Front Equipment>
-CLERPPC
-</Front Equipment>
-<transporters>
-TroopSpace:3
-</transporters>
-<Body Equipment>
-CLMG Ammo (100)
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3050
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+35.0
+</tonnage>
+

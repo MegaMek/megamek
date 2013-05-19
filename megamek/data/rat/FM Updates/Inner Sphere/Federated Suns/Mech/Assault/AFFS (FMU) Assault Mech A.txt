@@ -9,4 +9,4 @@ Gunslinger GUN-1ERD,5
 Templar TLR1-O,4
 Longbow LGB-12C,3
 Marauder II MAD-4S,2
-Mad Cat Mk II,1
+Mad Cat Mk II (Standard),1

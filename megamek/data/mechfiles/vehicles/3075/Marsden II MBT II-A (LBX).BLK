@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Marsden II MBT
@@ -21,43 +21,35 @@ II-A (LB-X)
 </Model>
 
 <year>
-3075
+3068
 </year>
-
-<source>
-Jihad
-</source>
 
 <type>
 IS Level 2
 </type>
 
-<tonnage>
-60.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <internal_type>
 -1
 </internal_type>
 
 <armor>
-65
-56
-56
-56
-47
+52
+52
+52
+51
+41
 </armor>
 
 <Body Equipment>
@@ -86,6 +78,11 @@ Machine Gun
 ISLBXAC10
 </Turret Equipment>
 
-<armor_type>
-0
-</armor_type>
+<source>
+Jihad
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

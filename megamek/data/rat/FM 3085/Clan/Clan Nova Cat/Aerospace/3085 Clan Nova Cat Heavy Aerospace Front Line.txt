@@ -1,6 +1,6 @@
 3085 Clan Nova Cat Heavy Aerospace Front Line
 Slayer SL-15K,1
-Xerxes,2
+Xerxes 1,2
 Slayer SL-15K,3
 Ahab AHB-443b,4
 Sabutai Prime,5

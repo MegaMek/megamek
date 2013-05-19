@@ -4,5 +4,5 @@
 ########################################################
 3053-3062 Clan Heavy Vehicles
 Athena Combat Vehicle,28
-Ishtar Heavy Fire Support Tank,417
+Ishtar Heavy Fire Support Tank (Standard),417
 Oro Heavy Tank,556

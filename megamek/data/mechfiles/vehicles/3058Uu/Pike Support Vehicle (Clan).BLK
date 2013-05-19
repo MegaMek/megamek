@@ -2,32 +2,81 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Pike Support Vehicle
 </Name>
+
 <Model>
 (Clan)
 </Model>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3055
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 45
 26
 26
 26
 40
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLERSmallLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLUltraAC2
 CLUltraAC2
@@ -35,34 +84,12 @@ CLUltraAC2
 CLUltraAC2
 CLUltraAC2
 </Turret Equipment>
-<Front Equipment>
-CLERSmallLaser
-</Front Equipment>
-<Body Equipment>
-CLUltraAC2 Ammo
-CLUltraAC2 Ammo
-CLUltraAC2 Ammo
-CLUltraAC2 Ammo
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3060
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
 <source>
 Clan Invasion
 </source>
+
+<tonnage>
+60.0
+</tonnage>
+

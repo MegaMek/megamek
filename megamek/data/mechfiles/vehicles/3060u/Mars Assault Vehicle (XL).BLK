@@ -2,36 +2,74 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Mars Assault Vehicle
 </Name>
+
 <Model>
 (XL)
 </Model>
-<Tonnage>
-100
-</Tonnage>
+
+<year>
+3061
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 48
 42
 42
 34
 45
-</Armor>
-<Turret Equipment>
-CLERLargeLaser
-CLGaussRifle
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan LB 10-X Cluster Ammo
+Clan LB 10-X AC Ammo
+CLECMSuite
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLLBXAC10
 CLLRM15
@@ -41,43 +79,28 @@ CLArtemisIV
 CLLRM15
 CLArtemisIV
 </Front Equipment>
+
 <Right Equipment>
 CLStreakSRM6
 </Right Equipment>
+
 <Left Equipment>
 CLStreakSRM6
 </Left Equipment>
-<Body Equipment>
-CLGauss Ammo
-CLGauss Ammo
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
-CLLRM15 Ammo (Clan) Artemis-capable
-CLLRM15 Ammo (Clan) Artemis-capable
-CLLRM15 Ammo (Clan) Artemis-capable
-CLLBXAC10 CL Ammo
-CLLBXAC10 Ammo
-CLECMSuite
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3060
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERLargeLaser
+CLGaussRifle
+</Turret Equipment>
+
 <source>
 Civil War
 </source>
+
+<tonnage>
+100.0
+</tonnage>
+

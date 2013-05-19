@@ -2,10 +2,10 @@
 Burke Defense Tank,1
 Demon Tank,2
 Tokugawa Heavy Tank,3
-Ishtar Heavy Fire Support Tank,4
+Ishtar Heavy Fire Support Tank (Original),4
 Shoden Assault Vehicle (SSRM),5
 Shoden Assault Vehicle,6
-Ishtar Heavy Fire Support Tank,5
+Ishtar Heavy Fire Support Tank (Original),5
 Shoden Assault Vehicle,4
 Shoden Assault Vehicle,3
 Tokugawa Heavy Tank (Streak),2

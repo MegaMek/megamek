@@ -4,7 +4,7 @@
 ########################################################
 3053-3062 Clan Light Vehicles
 Anhur Transport,28
-Asshur Artillery Spotter,56
+Asshur Artillery Spotter (Standard),56
 Donar Assault Helicopter,194
 Indra Infantry Transport,56
 Mithras Light Tank,139

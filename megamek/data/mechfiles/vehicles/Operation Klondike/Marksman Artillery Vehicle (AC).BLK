@@ -2,63 +2,81 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Marksman Artillery Vehicle
 </Name>
+
 <Model>
 (AC)
 </Model>
-<Tonnage>
-55
-</Tonnage>
+
+<year>
+2801
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 4
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 54
 20
 20
 20
 22
-</Armor>
-<Turret Equipment>
-ISLargeLaser
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+</Body Equipment>
+
 <Front Equipment>
-ISAC20
+Autocannon/20
 CLRL10Prototype
 CLRL10Prototype
 CLRL10Prototype
 CLRocketLauncher15Prototype
 CLRocketLauncher15Prototype
 </Front Equipment>
-<Body Equipment>
-ISAC20 Ammo
-ISAC20 Ammo
-ISAC20 Ammo
-</Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-2801
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Large Laser
+</Turret Equipment>
+
+<tonnage>
+65.0
+</tonnage>
+

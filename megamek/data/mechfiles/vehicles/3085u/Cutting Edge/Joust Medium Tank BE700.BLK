@@ -2,32 +2,81 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Joust Medium Tank
 </Name>
+
 <Model>
 BE700
 </Model>
-<Tonnage>
-40
-</Tonnage>
+
+<year>
+3077
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 46
 38
 38
 28
 30
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9 HE
+Clan Light Machine Gun Ammo - Full
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLLightActiveProbe
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 CLERLargeLaser
 CLATM9
@@ -36,34 +85,12 @@ CLLightMG
 CLLightMG
 CLLightMG
 </Turret Equipment>
-<Front Equipment>
-CLLightActiveProbe
-</Front Equipment>
-<Body Equipment>
-CLATM9 Ammo
-CLATM9 ER Ammo
-CLATM9 HE Ammo
-CLLightMG Ammo (200)
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3077
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+40.0
+</tonnage>
+

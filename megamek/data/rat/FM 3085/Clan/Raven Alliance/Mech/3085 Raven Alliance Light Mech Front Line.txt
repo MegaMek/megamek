@@ -8,5 +8,5 @@ Uller (Kit Fox) Prime,6
 Uller (Kit Fox) Prime,5
 Uller (Kit Fox) Prime,4
 Dasher (Fire Moth) Prime,3
-Koshi,2
+Koshi (Standard),2
 Puma (Adder) Prime,1

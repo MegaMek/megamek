@@ -1937,7 +1937,15 @@ public class MoveStep implements Serializable {
         }
 
         int tmpWalkMP = entity.getWalkMP();
-
+        
+        IHex currHex = game.getBoard().getHex(curPos);
+        if ((parent.getEntity().getMovementMode() == 
+                EntityMovementMode.INF_UMU) && 
+            (currHex.containsTerrain(Terrains.WATER)
+                && (entity.absHeight() < currHex.surface()))){
+            tmpWalkMP = entity.getActiveUMUCount();
+        }
+        
         if ((parent.getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (parent.getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             tmpWalkMP = entity.getActiveUMUCount();

@@ -49,6 +49,7 @@ v0.35.39-dev (SVN)
 + Bug 3722: NPE error in Princess Precognition in round 2 when Immediate Withdrawal is selected.
 + Bug: Mechs with destroyed side torso not registering as crippled.
 + Data: Vehicle file fixes,new images,fixed RAT's
++ Bug 3733: Battlearmor with UMUs can't use all of their UMU MP
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

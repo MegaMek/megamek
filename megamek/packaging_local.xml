@@ -241,7 +241,7 @@
 	<!-- Produce an EXE file -->
 	<target name="exe" description="Generate an EXE wrapper for MegaMek.jar">
 		<delete file="${localdir}/MegaMek.exe"/>
-		<launch4j configFile="${util}/megamek.4j.xml" />	 
+		<launch4j configFile="${util}/megamek.4j_local.xml" />
 	</target>
 	
 	<target name="win-bundle" depends="exe" description="Bundle the project built from local sources into a Windows distribution">

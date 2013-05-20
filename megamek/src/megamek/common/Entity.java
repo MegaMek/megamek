@@ -1224,9 +1224,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return retVal;
         }
         if ((getMovementMode() == EntityMovementMode.SUBMARINE)
-                || ((getMovementMode() == EntityMovementMode.INF_UMU) && (current
-                        .containsTerrain(Terrains.WATER) || next
-                        .containsTerrain(Terrains.WATER)))
+                || ((getMovementMode() == EntityMovementMode.INF_UMU) && 
+                        (next.containsTerrain(Terrains.WATER)))
                 || (getMovementMode() == EntityMovementMode.VTOL)
                 // a WIGE in climb mode or that ended climb mode in the previous
                 // hex stays at the same flight level, like a VTOL
@@ -1428,8 +1427,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case INF_UMU:
             case BIPED_SWIM:
             case QUAD_SWIM:
-                //UMU's won't allow the 'mech to break the surface of the water
-                maxAlt = hex.surface() - 2;
+                //UMU's won't allow the entity to break the surface of the water
+                maxAlt = hex.surface() - (getHeight() + 1);
                 break;
             case WIGE:
                 maxAlt = hex.surface() + 1;

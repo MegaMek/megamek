@@ -69,10 +69,32 @@
 		<os family="windows" />
 	</condition>
 	
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar"/>
-	<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
+	<condition property="isOsUnixNotMac">
+		<and>
+			<os family="unix" />
+			<not>
+				<os family="mac"/>
+			</not>
+		</and>
+	</condition>
 
-	<target name="svndev-init">
+	<condition property="isOsMac">
+		<os family="mac" />
+	</condition>
+	
+	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar"/>
+
+	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
+	<target name="checkOSMac" if="isOsMac">
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
+	</target>
+
+	<!-- if we're using UNIX or Linux then we'll use the launch4j for Linux -->
+	<target name="checkOSUNIX" if="isOsUnixNotMac">
+		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/linux/launch4j/launch4j.jar:${util}/linux/launch4j/lib/xstream.jar" />
+	</target>
+
+	<target name="svndev-init" depends="checkOSMac, checkOSUNIX">
 		<tstamp />
 		<delete dir="${svndir}" />
 		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>

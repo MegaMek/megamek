@@ -122,6 +122,19 @@ public class MechView {
                 sBasic.append("<font color='red'> (" + entity.damagedJumpJets()
                         + " damaged jump jets)</font>");
             }
+            if (entity.getAllUMUCount() > 0){
+                // Add in Jump MP if it wasn't already printed
+                if (entity.getJumpMP() == 0){
+                    sBasic.append("/0"); //$NON-NLS-1$ 
+                }
+                sBasic.append("/") //$NON-NLS-1$
+                .append(entity.getActiveUMUCount());
+                if (entity.getAllUMUCount() - entity.getActiveUMUCount() != 0){
+                    sBasic.append("<font color='red'> (" + 
+                          (entity.getAllUMUCount() - entity.getActiveUMUCount())
+                          + " damaged UMUs)</font>");
+                }                
+            }
         }
         if (isBA && ((BattleArmor) entity).isBurdened()) {
             sBasic.append("<br><i>(").append(Messages.getString("MechView.Burdened")).append(")</i>"); //$NON-NLS-1$

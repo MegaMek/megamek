@@ -51,6 +51,7 @@ v0.35.39-dev (SVN)
 + Data: Vehicle file fixes,new images,fixed RAT's
 + Bug 3733: Battlearmor with UMUs can't use all of their UMU MP
 + Bug 3741: Movement path decals aren't removed with /reset command
++ Updated MechView to display UMU MP separately.  Now uses #/#/#/# for Walk/Cruis/Jump/UMU
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

@@ -6056,6 +6056,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 case PHASE_END:
                 case PHASE_VICTORY:
                     clearSprites();
+                case PHASE_LOUNGE:
+                    clearAllMoveVectors();
+                    clearAllAttacks();
+                    clearSprites();
+                    select(null);
+                    cursor(null);
+                    highlight(null);
                 default:
             }
         }

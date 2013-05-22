@@ -42,7 +42,7 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
         tonnage = 6.0f;
         criticals = 1;
         bv = 67;
-        cost = 110000;
+        cost = 60000;
         shortAV = 3;
         medAV = 3;
         longAV = 3;

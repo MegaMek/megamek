@@ -286,7 +286,8 @@ public class VTOL extends Tank {
                     case 7:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()) {
+                                    && !m.isJammed() && !m.isHit()
+                                    && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -329,7 +330,8 @@ public class VTOL extends Tank {
                     case 7:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()) {
+                                    && !m.isJammed() && !m.isHit()
+                                    && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -389,7 +391,8 @@ public class VTOL extends Tank {
                     case 8:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()) {
+                                    && !m.isJammed() && !m.isHit()
+                                    && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }
@@ -416,7 +419,8 @@ public class VTOL extends Tank {
                     case 6:
                         for (Mounted m : getWeaponList()) {
                             if ((m.getLocation() == loc) && !m.isDestroyed()
-                                    && !m.isJammed() && !m.isHit()) {
+                                    && !m.isJammed() && !m.isHit()
+                                    && !m.jammedThisPhase()) {
                                 return CRIT_WEAPON_JAM;
                             }
                         }

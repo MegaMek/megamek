@@ -20953,6 +20953,7 @@ public class Server implements Runnable {
                     ArrayList<Mounted> weapons = new ArrayList<Mounted>();
                     for (Mounted weap : t.getWeaponList()) {
                         if ((weap.getLocation() == loc) && !weap.isJammed()
+                                && !weap.jammedThisPhase()
                                 && !weap.isHit() && !weap.isDestroyed()) {
                             weapons.add(weap);
                         }
@@ -27475,7 +27476,8 @@ public class Server implements Runnable {
             Vector<Mounted> wpns = new Vector<Mounted>();
             for (GunEmplacement gun : guns) {
                 for (Mounted wpn : gun.getWeaponList()) {
-                    if (!wpn.isHit() && !wpn.isJammed()) {
+                    if (!wpn.isHit() && !wpn.isJammed()
+                            && !wpn.jammedThisPhase()) {
                         wpns.add(wpn);
                     }
                 }

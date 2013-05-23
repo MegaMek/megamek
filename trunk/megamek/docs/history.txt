@@ -53,6 +53,7 @@ v0.35.39-dev (SVN)
 + Bug 3741: Movement path decals aren't removed with /reset command
 + Updated MechView to display UMU MP separately.  Now uses #/#/#/# for Walk/Cruis/Jump/UMU
 + Applied 2013/05/21 ELRM20 heat errata, some C-bill cost fixes
++ Bug: Multiple "Weapon Malfunction" vehicle critical hits in one phase striking the same weapon.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

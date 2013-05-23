@@ -514,6 +514,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setJammed(boolean j) {
         jammedThisPhase = j;
     }
+    
+    public boolean jammedThisPhase() {
+        return jammedThisPhase;
+    }
 
     /**
      * The number of shots of ammunition currently stored in this Mounted

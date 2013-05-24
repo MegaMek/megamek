@@ -55,6 +55,7 @@ v0.35.39-dev (SVN)
 + Applied 2013/05/21 ELRM20 heat errata, some C-bill cost fixes
 + Bug: Multiple "Weapon Malfunction" vehicle critical hits in one phase striking the same weapon.
 + Data: More Vehicle file fixes
++ Bug: ClassCastException when selecting sword-equipped infantry
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

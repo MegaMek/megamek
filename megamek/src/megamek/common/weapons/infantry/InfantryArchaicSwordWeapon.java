@@ -33,7 +33,7 @@ public class InfantryArchaicSwordWeapon extends InfantryWeapon {
     public InfantryArchaicSwordWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Sword";
+        name = "Infantry Sword";
         setInternalName(name);
         addLookupName("InfantrySword");
         ammoType = AmmoType.T_NA;

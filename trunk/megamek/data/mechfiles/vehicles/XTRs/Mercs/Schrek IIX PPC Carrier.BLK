@@ -2,64 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Schrek II-X PPC Carrier
 </Name>
+
 <Model>
 (Prototype)
 </Model>
-<Tonnage>
-95
-</Tonnage>
+
+<year>
+3076
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+3
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 35
 34
 34
 32
 33
-</Armor>
-<Turret Equipment>
-ISLPPC
-ISLightPPCCapacitor
-ISLPPC
-ISLightPPCCapacitor
-ISLPPC
-ISLightPPCCapacitor
-ISLPPC
-ISLPPC
-ISLPPC
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-IS Targeting Computer
+ISTargeting Computer
 </Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-3076
-</year>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light PPC
+PPC Capacitor
+Light PPC
+PPC Capacitor
+Light PPC
+PPC Capacitor
+Light PPC
+Light PPC
+Light PPC
+</Turret Equipment>
+
 <source>
 Jihad
 </source>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-3
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<tonnage>
+95.0
+</tonnage>
+

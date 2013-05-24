@@ -25,7 +25,7 @@ Thor Artillery Vehicle
 </year>
 
 <type>
-Clan Level 3
+Clan Level 4
 </type>
 
 <motion_type>
@@ -45,11 +45,11 @@ Wheeled
 </armor_type>
 
 <armor_tech>
--1
+8
 </armor_tech>
 
 <armor>
-32
+33
 27
 27
 25
@@ -57,9 +57,9 @@ Wheeled
 </armor>
 
 <Body Equipment>
+CLThumperAmmo
+CLThumperAmmo
 CLCASE
-CLThumperAmmo
-CLThumperAmmo
 </Body Equipment>
 
 <Front Equipment>

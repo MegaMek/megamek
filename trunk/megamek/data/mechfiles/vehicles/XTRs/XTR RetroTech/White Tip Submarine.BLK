@@ -5,7 +5,7 @@
 </BlockVersion>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <blockversion>
@@ -55,6 +55,10 @@ Submarine
 <barrating>
 8
 </barrating>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Body Equipment>
 Advanced Fire Control

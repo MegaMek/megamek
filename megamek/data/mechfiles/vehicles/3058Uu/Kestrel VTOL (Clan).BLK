@@ -2,60 +2,90 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Kestrel VTOL
 </Name>
+
 <Model>
 (Clan)
 </Model>
-<Tonnage>
-25
-</Tonnage>
+
+<year>
+2880
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
 <cruiseMP>
 12
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 9
 6
 6
 5
 2
-</Armor>
-<Front Equipment>
-Clan Machine Gun
-Clan Machine Gun
-</Front Equipment>
-<transporters>
-TroopSpace:4
-</transporters>
+</armor>
+
 <Body Equipment>
 Clan Machine Gun Ammo - Half
 </Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-2880
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Front Equipment>
+CLMG
+CLMG
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+25.0
+</tonnage>
+

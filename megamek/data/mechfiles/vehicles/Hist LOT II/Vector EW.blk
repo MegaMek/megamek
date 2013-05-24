@@ -57,14 +57,13 @@ VTOL
 </armor>
 
 <Body Equipment>
-ISGuardianECM
+ISGuardianECMSuite
 </Body Equipment>
 
 <Front Equipment>
 ISSmallPulseLaser
 Medium Laser
 Medium Laser
-Small Laser
 </Front Equipment>
 
 <Right Equipment>

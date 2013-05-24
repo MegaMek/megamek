@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,22 +20,44 @@ Donar Assault Helicopter
 (Close Support)
 </Model>
 
-<Tonnage>
-21
-</Tonnage>
+<year>
+3066
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
 
 <cruiseMP>
 9
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
 16
 14
 14
 11
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+</Body Equipment>
 
 <Front Equipment>
 CLHeavyMediumLaser
@@ -43,58 +65,27 @@ CLHeavyMediumLaser
 CLStreakSRM2 (IOS)
 CLStreakSRM2 (IOS)
 CLLightTAG
-CLCASE
 </Front Equipment>
 
-<Left Equipment>
-
-</Left Equipment>
-
 <Right Equipment>
-
 </Right Equipment>
 
-<Rear Equipment>
+<Left Equipment>
+</Left Equipment>
 
+<Rear Equipment>
 </Rear Equipment>
 
-<Turret Equipment>
-
-</Turret Equipment>
-
 <Rotor Equipment>
-CLMastMount
 CLActiveProbe
+CLMastMount
 </Rotor Equipment>
-
-<Body Equipment>
-
-</Body Equipment>
-
-<type>
-Clan Level 3
-</type>
-
-<year>
-3066
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-VTOL
-</motion_type>
 
 <source>
 Civil War
 </source>
+
+<tonnage>
+21.0
+</tonnage>
+

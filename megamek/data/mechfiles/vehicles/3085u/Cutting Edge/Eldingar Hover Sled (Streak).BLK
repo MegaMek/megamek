@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,60 +20,72 @@ Eldingar Hover Sled
 (Streak)
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3085
+</year>
+
+<type>
+Clan Level 5
+</type>
+
+<motion_type>
+Hover
+</motion_type>
 
 <cruiseMP>
 9
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+10
+</armor_tech>
+
+<armor>
 38
 28
 28
 18
 22
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+CLAngelECMSuite
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
 
 <Turret Equipment>
 CLStreakLRM15
 CLStreakLRM15
 </Turret Equipment>
 
-<Body Equipment>
-CLStreakLRM15 Ammo
-CLStreakLRM15 Ammo
-CLStreakLRM15 Ammo
-CLAngelECMSuite
-CLCASE
-</Body Equipment>
-
-<type>
-Clan Level 4
-</type>
-
-<year>
-3085
-</year>
-
 <source>
 Dark Age
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-Hover
-</motion_type>

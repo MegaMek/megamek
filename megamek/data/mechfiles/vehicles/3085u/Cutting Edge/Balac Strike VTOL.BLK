@@ -2,59 +2,91 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Balac Strike VTOL
 </Name>
-<Tonnage>
-25
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+3079
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
 <cruiseMP>
 11
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
 15
 12
 12
 7
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+Clan Ammo ATM-6
+Clan Ammo ATM-6
+Clan Ammo ATM-6 ER
+Clan Ammo ATM-6 HE
+CLCASE
+</Body Equipment>
+
 <Front Equipment>
 CLERMediumLaser
 CLATM6
 CLATM6
 </Front Equipment>
-<Body Equipment>
-CLATM6 Ammo
-CLATM6 Ammo
-CLATM6 ER Ammo
-CLATM6 HE Ammo
-CLCASE
-</Body Equipment>
-<type>
-Clan Level 2
-</type>
-<year>
-3079
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+25.0
+</tonnage>
+

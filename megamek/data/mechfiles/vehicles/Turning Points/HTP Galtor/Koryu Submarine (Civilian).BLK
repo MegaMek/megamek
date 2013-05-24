@@ -21,37 +21,44 @@ Koryu Submarine
 <cruiseMP>
 6
 </cruiseMP>
+
 <Armor>
 8
 7
 7
 4
 </Armor>
+
 <Front Equipment>
 </Front Equipment>
+
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (0.5 tons)
 </Body Equipment>
+
+<transporters>
+cargobay:5.5:1
+</transporters>
+
 <type>
 IS Level 1
 </type>
+
 <year>
 3025
 </year>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 1
 </engine_type>
+
 <motion_type>
 Submarine
 </motion_type>

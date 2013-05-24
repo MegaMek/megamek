@@ -2,64 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Cavalry Attack Helicopter
 </Name>
+
 <Model>
 (Infantry)
 </Model>
-<Tonnage>
-25
-</Tonnage>
+
+<year>
+3063
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:3.5
+</transporters>
+
 <cruiseMP>
 10
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 26
 20
 20
 12
 2
-</Armor>
-<Front Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMachine Gun
-ISMachine Gun
-ISMachine Gun
-</Front Equipment>
-<transporters>
-TroopSpace:4
-</transporters>
+</armor>
+
 <Body Equipment>
-ISMG Ammo (100)
+IS Machine Gun Ammo - Half
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3063
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Front Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Machine Gun
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
 Civil War
 </source>
+
+<tonnage>
+25.0
+</tonnage>
+

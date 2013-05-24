@@ -2,61 +2,94 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Pinto Attack VTOL
 </Name>
-<Tonnage>
-30
-</Tonnage>
+
+<Model>
+
+</Model>
+
+<year>
+3060
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
 <cruiseMP>
 10
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 20
 18
 18
 13
 2
-</Armor>
-<Front Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISLRM5
-ISArtemisIV
-ISBeagleActiveProbe
-</Front Equipment>
-<transporters>
-TroopSpace:1
-</transporters>
+</armor>
+
 <Body Equipment>
-ISLRM5 Ammo Artemis-capable
+IS Ammo LRM-5 Artemis-capable
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3060
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Front Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+LRM 5
+ISArtemisIV
+BeagleActiveProbe
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
 Clan Invasion
 </source>
+
+<tonnage>
+30.0
+</tonnage>
+

@@ -56,6 +56,7 @@ v0.35.39-dev (SVN)
 + Bug: Multiple "Weapon Malfunction" vehicle critical hits in one phase striking the same weapon.
 + Data: More Vehicle file fixes
 + Bug: ClassCastException when selecting sword-equipped infantry
++ Bug 3722: Updated Precognition to (hopefully) eliminate all the potential concurrency issues.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

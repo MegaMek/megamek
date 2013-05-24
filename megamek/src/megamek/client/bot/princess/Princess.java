@@ -415,8 +415,7 @@ public class Princess extends BotClient {
 
             // precognition.path_enumerator.debugPrintContents();
 
-            ArrayList<MovePath> paths = precognition.path_enumerator.unit_paths
-                    .get(entity.getId());
+            ArrayList<MovePath> paths = precognition.getPathEnumerator().unit_paths.get(entity.getId());
 
             if (paths == null) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
@@ -574,7 +573,7 @@ public class Princess extends BotClient {
             path_ranker.firecontrol = fire_control;
             precognition = new Precognition(this);
             precognition.setGame(game);
-            path_ranker.path_enumerator = precognition.path_enumerator;
+            path_ranker.path_enumerator = precognition.getPathEnumerator();
 
             precognition_thread = new Thread(precognition,
                     "Princess-precognition");

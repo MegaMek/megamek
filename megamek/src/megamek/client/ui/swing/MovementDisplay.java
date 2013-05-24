@@ -1144,16 +1144,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public void clear() {
         final Entity ce = ce();
 
+        // clear board cursors
+        clientgui.getBoardView().select(null);
+        clientgui.getBoardView().cursor(null);
+        
+        if (ce == null){
+            return;
+        }
+        
         // switch back from swimming to normal mode.
         if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {
             ce.setMovementMode(EntityMovementMode.BIPED);
         } else if (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM) {
             ce.setMovementMode(EntityMovementMode.QUAD);
         }
-
-        // clear board cursors
-        clientgui.getBoardView().select(null);
-        clientgui.getBoardView().cursor(null);
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().game, ce);
@@ -3299,6 +3303,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     //
     public synchronized void actionPerformed(ActionEvent ev) {
         final Entity ce = ce();
+        
+        if (ce == null){
+            return;
+        }
 
         // Are we ignoring events?
         if (isIgnoringEvents()) {

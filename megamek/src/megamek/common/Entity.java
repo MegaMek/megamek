@@ -1223,9 +1223,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (this instanceof Aero) {
             return retVal;
         }
-        if ((getMovementMode() == EntityMovementMode.SUBMARINE)
-                || ((getMovementMode() == EntityMovementMode.INF_UMU) && 
-                        (next.containsTerrain(Terrains.WATER)))
+        if ((getMovementMode() == EntityMovementMode.SUBMARINE)            
+                || (getMovementMode() == EntityMovementMode.INF_UMU && 
+                        next.containsTerrain(Terrains.WATER) &&
+                        current.containsTerrain(Terrains.WATER))
                 || (getMovementMode() == EntityMovementMode.VTOL)
                 // a WIGE in climb mode or that ended climb mode in the previous
                 // hex stays at the same flight level, like a VTOL
@@ -1490,6 +1491,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (assumedAlt == hex.floor()) {
                 return true;
             }
+            
             if (hex.containsTerrain(Terrains.BRIDGE)) {
                 // can move on top of a bridge
                 if (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
@@ -3733,7 +3735,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getAllUMUCount() {
         int count = 0;
-
+        
+        if ((this instanceof BattleArmor) &&
+                (getMovementMode() == EntityMovementMode.INF_UMU)){
+            //UMU MP for BA is stored in jumpMP
+            return jumpMP;
+        }
+        
         if (!(this instanceof Mech)) {
             return 0;
         }

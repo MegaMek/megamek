@@ -14,8 +14,6 @@
 
 package megamek.common;
 
-import java.util.Set;
-
 /**
  * IHex represents a single hex on the board.
  */

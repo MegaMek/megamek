@@ -33,7 +33,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-battlearmorbay:1:1
+troopspace:4.0
 </transporters>
 
 <cruiseMP>
@@ -63,6 +63,7 @@ battlearmorbay:1:1
 Stealth
 ISAngelECMSuite
 BloodhoundActiveProbe
+Environmental Sealing
 ISLimitedAmphibiousChassis
 </Body Equipment>
 
@@ -77,10 +78,6 @@ ISLimitedAmphibiousChassis
 
 <Rear Equipment>
 </Rear Equipment>
-
-<source>
-XTR:Phantoms
-</source>
 
 <tonnage>
 20.0

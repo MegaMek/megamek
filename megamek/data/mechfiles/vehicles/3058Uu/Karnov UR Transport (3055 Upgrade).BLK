@@ -2,62 +2,90 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Karnov UR Transport
 </Name>
+
 <Model>
 (3055 Upgrade)
 </Model>
-<Tonnage>
-30
-</Tonnage>
+
+<year>
+3055
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:7.0
+</transporters>
+
 <cruiseMP>
 10
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 6
 6
 6
 6
 2
-</Armor>
-<Right Equipment>
-ISMachine Gun
-</Right Equipment>
-<Left Equipment>
-ISMachine Gun
-</Left Equipment>
-<transporters>
-TroopSpace:7
-</transporters>
+</armor>
+
 <Body Equipment>
-ISMG Ammo (200)
+IS Ammo MG - Full
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3055
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
 Clan Invasion
 </source>
+
+<tonnage>
+30.0
+</tonnage>
+

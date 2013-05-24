@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Huitzilopochtli Assault Tank 'Huey'
@@ -21,33 +21,32 @@ Huitzilopochtli Assault Tank 'Huey'
 </Model>
 
 <year>
-3075
+3070
 </year>
 
 <type>
-Clan Level 3
+Clan Level 4
 </type>
-
-<tonnage>
-85
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-6
-</engine_type>
 
 <cruiseMP>
 2
 </cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
 
 <armor>
 28
@@ -66,11 +65,11 @@ CLArrowIVAmmo
 CLArrowIVHomingAmmo
 CLArrowIVHomingAmmo
 CLArrowIVHomingAmmo
-CLHAG20 Ammo
-CLHAG20 Ammo
-CLHAG20 Ammo
-CLHAG20 Ammo
-CLMG Ammo (100)
+HAG/20 Ammo
+HAG/20 Ammo
+HAG/20 Ammo
+HAG/20 Ammo
+Clan Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -98,3 +97,8 @@ CLCASE
 <source>
 Jihad
 </source>
+
+<tonnage>
+85.0
+</tonnage>
+

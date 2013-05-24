@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,64 +20,76 @@ Zephyros Infantry Support Vehicle
 (Dual Turret)
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3086
+</year>
+
+<type>
+Clan Level 5
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
 
 <cruiseMP>
 8
 </cruiseMP>
 
-#Order is Tank/VTOL/LST
-<Armor>
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+10
+</armor_tech>
+
+<armor>
 23
 18
 18
 14
 16
 16
-</Armor>
-
-<Front Turret Equipment>
-Clan ER Medium Laser
-Clan ER Medium Laser
-</Front Turret Equipment>
-
-<Rear Turret Equipment>
-Clan Light Machine Gun
-Clan Light Machine Gun
-</Rear Turret Equipment>
+</armor>
 
 <Body Equipment>
 Clan Light Machine Gun Ammo - Half
-Clan ECM Suite
-Clan CASE
+CLECMSuite
+CLCASE
 </Body Equipment>
 
-<type>
-Clan Level 4
-</type>
+<Front Equipment>
+</Front Equipment>
 
-<year>
-3086
-</year>
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rear Turret Equipment>
+CLLightMG
+CLLightMG
+</Rear Turret Equipment>
+
+<Front Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Front Turret Equipment>
 
 <source>
 Dark Age
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+25.0
+</tonnage>
 
-<armor_type>
-1
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-Wheeled
-</motion_type>

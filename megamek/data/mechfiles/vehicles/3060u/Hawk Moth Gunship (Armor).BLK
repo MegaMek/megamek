@@ -2,56 +2,85 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Hawk Moth Gunship
 </Name>
+
 <Model>
 (Armor)
 </Model>
-<Tonnage>
-25
-</Tonnage>
+
+<year>
+3060
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
 <cruiseMP>
 8
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 15
 10
 10
 7
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Light Gauss Ammo
+</Body Equipment>
+
 <Front Equipment>
 ISLightGaussRifle
 </Front Equipment>
-<Body Equipment>
-ISLightGauss Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3060
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
 Clan Invasion
 </source>
+
+<tonnage>
+25.0
+</tonnage>
+

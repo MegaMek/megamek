@@ -2425,7 +2425,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
             if (e.getPosition() != null) {
-                if (e.getId() == en.getId()) {
+                if (en != null && e.getId() == en.getId()) {
                     movementSprites.add(new MovementSprite(e, md
                             .getFinalVectors(), col, true));
                 } else {

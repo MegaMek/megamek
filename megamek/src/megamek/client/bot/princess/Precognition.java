@@ -94,7 +94,7 @@ public class Precognition implements Runnable {
         }
     }
 
-    public synchronized void pause() {
+    public void pause() {
         final String METHOD_NAME = "pause()";
         owner.methodBegin(getClass(), METHOD_NAME);
 

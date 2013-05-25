@@ -1901,7 +1901,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      *            - the id of the player that should now own the entity
      */
     private void changeEntityOwner(Entity e, int player_id) {
-        Client c = clientgui.getClient();
+    	Client c = clientgui.getBots().get(e.getOwner().getName());
+        if (c == null) {
+            c = clientgui.getClient();
+        }
         Player new_owner = c.game.getPlayer(player_id);
         e.setOwner(new_owner);
         c.sendUpdateEntity(e);

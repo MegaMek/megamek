@@ -39,11 +39,11 @@ public class InfantrySupportLightRecoillessRifleInfernoWeapon extends InfantryWe
         addLookupName("InfantryLightRecoillessRifleInferno");
         ammoType = AmmoType.T_NA;
         cost = 300;
-        bv = 1.13;
+        bv = 0.97;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.15;
+        infantryDamage = 0.19;
         infantryRange = 2;
         crew = 1;
         introDate = 1950;

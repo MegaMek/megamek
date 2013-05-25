@@ -58,6 +58,8 @@ v0.35.39-dev (SVN)
 + Bug: ClassCastException when selecting sword-equipped infantry
 + Bug 3722: Updated Precognition to (hopefully) eliminate all the potential concurrency issues.
 + Bug 3643: Dropping Troops From Aerospace Unit Movement Error 
++ Infantry weapon damage/BV update to most recent list values.
++ Added inferno heavy and standard infantry SRM.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

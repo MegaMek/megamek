@@ -38,9 +38,9 @@ public class InfantrySupportHeavyAutoGrenadeLauncherWeapon extends InfantryWeapo
         addLookupName("InfantryHeavyAutoGrenadeLauncher");
         ammoType = AmmoType.T_NA;
         cost = 4500;
-        bv = 2.85;
+        bv = 5.90;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 1.16;
+        infantryDamage = 1.93;
         infantryRange = 1;
         crew = 1;
         introDate = 2900;

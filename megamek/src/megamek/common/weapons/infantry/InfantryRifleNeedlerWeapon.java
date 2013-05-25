@@ -38,9 +38,9 @@ public class InfantryRifleNeedlerWeapon extends InfantryWeapon {
         addLookupName("InfantryNeedlerRifle");
         ammoType = AmmoType.T_NA;
         cost = 75;
-        bv = 0.09;
+        bv = 0.21;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
-        infantryDamage = 0.11;
+        infantryDamage = 0.23;
         infantryRange = 0;
         introDate = 2100;
         techLevel.put(2100,techLevel.get(3071));

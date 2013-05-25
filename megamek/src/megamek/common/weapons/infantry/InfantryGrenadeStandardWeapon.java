@@ -38,9 +38,9 @@ public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
         addLookupName("InfantryGrenade");
         ammoType = AmmoType.T_NA;
         cost = 16;
-        bv = 0.22;
+        bv = 0.44;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.27;
+        infantryDamage = 0.48;
         infantryRange = 0;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));

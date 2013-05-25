@@ -23,28 +23,28 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
+public class InfantrySMGStettaAutoPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolMydronAutoPistolWeapon() {
+    public InfantrySMGStettaAutoPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Mydron Auto Pistol";
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        name = "Stetta AutoPistol";
         setInternalName(name);
-        addLookupName("InfantryMydronAutopistol");
+        addLookupName("InfantryStettaAutopistol");
         ammoType = AmmoType.T_AC;
-        cost = 100;
-        bv = 0.11;
+        cost = 150;
+        bv = 0.16;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.14;
+        infantryDamage = 0.17;
         infantryRange = 0;
-        introDate = 2612;
-        techLevel.put(2612,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_B,RATING_B};
-        techRating = RATING_C;
+        introDate = 3010;
+        techLevel.put(3010,techLevel.get(3071));
+        availRating = new int[]{RATING_X,RATING_F,RATING_C};
+        techRating = RATING_D;
     }
 }

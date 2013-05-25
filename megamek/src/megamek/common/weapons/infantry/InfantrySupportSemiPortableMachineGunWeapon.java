@@ -40,7 +40,7 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
         addLookupName("InfantryMachineGun");
         ammoType = AmmoType.T_NA;
         cost = 1100;
-        bv = 1.84;
+        bv = 2.29;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT);
         infantryDamage = 0.75;
         infantryRange = 1;

@@ -38,7 +38,7 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
         addLookupName("InfantryNakjimalaserpistol");
         ammoType = AmmoType.T_NA;
         cost = 750;
-        bv = 0.44;
+        bv = 0.55;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.18;
         infantryRange = 1;

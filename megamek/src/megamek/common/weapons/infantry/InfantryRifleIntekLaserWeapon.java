@@ -38,7 +38,7 @@ public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
         addLookupName("InfantryIntekLaser");
         ammoType = AmmoType.T_NA;
         cost = 1250;
-        bv = 1.27;
+        bv = 1.51;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.21;
         infantryRange = 3;

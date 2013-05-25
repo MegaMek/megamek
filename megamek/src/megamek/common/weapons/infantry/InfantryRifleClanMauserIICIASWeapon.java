@@ -38,9 +38,9 @@ public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
         addLookupName("InfantryClanMauserIICIAS");
         ammoType = AmmoType.T_NA;
         cost = 18000;
-        bv = 2.12;
+        bv = 9.82;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
-        infantryDamage = 0.92;
+        infantryDamage = 1.37;
         infantryRange = 3;
         introDate = 3015;
         techLevel.put(3015,techLevel.get(3071));

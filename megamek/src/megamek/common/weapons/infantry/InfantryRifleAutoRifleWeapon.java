@@ -40,7 +40,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         addLookupName("Infantry Automatic Rifle");
         ammoType = AmmoType.T_NA;
         cost = 80;
-        bv = 1.28;
+        bv = 1.59;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.52;
         infantryRange = 1;

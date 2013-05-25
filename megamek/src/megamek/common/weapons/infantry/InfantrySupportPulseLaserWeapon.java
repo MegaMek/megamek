@@ -39,7 +39,7 @@ public class InfantrySupportPulseLaserWeapon extends InfantryWeapon {
         addLookupName("InfantrySmallPulseLaser");
         ammoType = AmmoType.T_NA;
         cost = 16000;
-        bv = 4.9;
+        bv = 5.81;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
         infantryDamage = 0.81;
         infantryRange = 3;

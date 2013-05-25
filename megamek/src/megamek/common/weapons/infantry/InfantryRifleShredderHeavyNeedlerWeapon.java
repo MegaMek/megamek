@@ -38,9 +38,9 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
         addLookupName("InfantryShredder");
         ammoType = AmmoType.T_NA;
         cost = 150;
-        bv = 0.18;
+        bv = 0.31;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
-        infantryDamage = 0.23;
+        infantryDamage = 0.34;
         infantryRange = 0;
         introDate = 3054;
         techLevel.put(3054,techLevel.get(3071));

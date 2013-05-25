@@ -39,9 +39,9 @@ public class InfantrySupportMediumRecoillessRifleWeapon extends InfantryWeapon {
         addLookupName("InfantryMediumRecoillessRifle");
         ammoType = AmmoType.T_NA;
         cost = 2000;
-        bv = 1.25;
+        bv = 2.71;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.30;
+        infantryDamage = 0.53;
         infantryRange = 2;
         crew = 2;
         introDate = 1950;

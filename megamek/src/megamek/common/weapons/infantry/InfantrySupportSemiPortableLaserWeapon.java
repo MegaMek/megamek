@@ -38,7 +38,7 @@ public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
         addLookupName("InfantrySemiPortableLaser");
         ammoType = AmmoType.T_NA;
         cost = 5000;
-        bv = 3.69;
+        bv = 4.37;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 0.61;
         infantryRange = 3;

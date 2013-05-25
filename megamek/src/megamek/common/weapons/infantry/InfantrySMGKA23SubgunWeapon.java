@@ -38,7 +38,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
         addLookupName("InfantryKA23");
         ammoType = AmmoType.T_NA;
         cost = 350;
-        bv = 0.18;
+        bv = 0.20;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.22;
         infantryRange = 0;

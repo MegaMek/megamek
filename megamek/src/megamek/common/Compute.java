@@ -936,6 +936,7 @@ public class Compute {
                 else if(distance == 0) {
                     mod = 0;
                 }
+                break;
             case 1:
                 if(distance > 3) {
                     return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
@@ -1068,7 +1069,7 @@ public class Compute {
 
 
             if(wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
-                mod +=3;
+                mod++;
             }
             if(wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
                 mod++;

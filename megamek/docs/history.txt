@@ -60,6 +60,7 @@ v0.35.39-dev (SVN)
 + Bug 3643: Dropping Troops From Aerospace Unit Movement Error 
 + Infantry weapon damage/BV update to most recent list values.
 + Added inferno heavy and standard infantry SRM.
++ Bug: Wrong to-hit modifier for base range 0 infantry attacks.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

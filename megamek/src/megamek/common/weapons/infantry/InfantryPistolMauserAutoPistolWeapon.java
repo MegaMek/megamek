@@ -38,7 +38,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         addLookupName("InfantryMauserAutopistol");
         ammoType = AmmoType.T_AC;
         cost = 60;
-        bv = 0.14;
+        bv = 0.16;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;

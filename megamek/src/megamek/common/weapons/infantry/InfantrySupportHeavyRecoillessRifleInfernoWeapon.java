@@ -39,11 +39,11 @@ public class InfantrySupportHeavyRecoillessRifleInfernoWeapon extends InfantryWe
         addLookupName("InfantryHeavyRecoillessRifleInferno");
         ammoType = AmmoType.T_NA;
         cost = 3000;
-        bv = 1.42;
+        bv = 1.74;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.27;
+        infantryDamage = 0.34;
         infantryRange = 2;
         crew = 3;
         introDate = 1950;

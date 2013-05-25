@@ -38,7 +38,7 @@ public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
         addLookupName("InfantrySunbeamNovapistol");
         ammoType = AmmoType.T_NA;
         cost = 1250;
-        bv = 0.21;
+        bv = 0.24;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.26;
         infantryRange = 0;

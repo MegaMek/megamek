@@ -38,7 +38,7 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
         addLookupName("InfantryTKAssaultRifle");
         ammoType = AmmoType.T_NA;
         cost = 150;
-        bv = 1.08;
+        bv = 1.34;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.44;
         infantryRange = 1;

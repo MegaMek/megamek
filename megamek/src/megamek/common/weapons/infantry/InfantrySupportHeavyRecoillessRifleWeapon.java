@@ -39,9 +39,9 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavyRecoillessRifle");
         ammoType = AmmoType.T_NA;
         cost = 3000;
-        bv = 1.42;
+        bv = 2.91;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.34;
+        infantryDamage = 0.57;
         infantryRange = 2;
         crew = 3;
         introDate = 1950;

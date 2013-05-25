@@ -38,7 +38,7 @@ public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
         addLookupName("InfantrySerrekAutopistol");
         ammoType = AmmoType.T_AC;
         cost = 185;
-        bv = 0.13;
+        bv = 0.15;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.16;
         infantryRange = 0;

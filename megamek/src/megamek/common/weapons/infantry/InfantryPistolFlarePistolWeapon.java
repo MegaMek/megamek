@@ -38,9 +38,9 @@ public class InfantryPistolFlarePistolWeapon extends InfantryWeapon {
         addLookupName("InfantryFlarepistol");
         ammoType = AmmoType.T_NA;
         cost = 25;
-        bv = 0.03;
+        bv = 0.08;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.04;
+        infantryDamage = 0.09;
         infantryRange = 0;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));

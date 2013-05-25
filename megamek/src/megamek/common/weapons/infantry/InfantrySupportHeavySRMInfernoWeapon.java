@@ -20,31 +20,34 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
+
 /**
- * @author Ben Grills
+ * @author Klaus Mittag
  */
-public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapon {
+public class InfantrySupportHeavySRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 1563575288967582942L;
 
-    public InfantryPistolMartialEagleMachinePistolWeapon() {
+    public InfantrySupportHeavySRMInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Martial Eagle Machine Pistol";
+        name = "Infantry Heavy SRM Launcher (Inferno)";
         setInternalName(name);
-        addLookupName("InfantryMartialEaglepistol");
-        ammoType = AmmoType.T_AC;
-        cost = 180;
-        bv = 0.16;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.25;
-        infantryRange = 0;
-        introDate = 3045;
-        techLevel.put(3045,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_D};
-        techRating = RATING_D;
+        addLookupName("InfantryHeavySRMInferno");
+        ammoType = AmmoType.T_SRM;
+        cost = 3000;
+        bv = 1.74;
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.34;
+        infantryRange = 2;
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
+        introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_C;
     }
 }

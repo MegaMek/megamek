@@ -37,7 +37,7 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
         setInternalName(name);
         ammoType = AmmoType.T_NA;
         cost = 6000;
-        bv = 3.39;
+        bv = 4.01;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.56;
         infantryRange = 3;

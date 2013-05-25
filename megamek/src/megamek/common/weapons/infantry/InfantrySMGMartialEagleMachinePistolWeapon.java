@@ -23,28 +23,28 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
+public class InfantrySMGMartialEagleMachinePistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolStettaAutoPistolWeapon() {
+    public InfantrySMGMartialEagleMachinePistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Stetta AutoPistol";
+        name = "Martial Eagle Machine Pistol";
         setInternalName(name);
-        addLookupName("InfantryStettaAutopistol");
+        addLookupName("InfantryMartialEaglepistol");
         ammoType = AmmoType.T_AC;
-        cost = 150;
-        bv = 0.14;
+        cost = 180;
+        bv = 0.23;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.17;
+        infantryDamage = 0.25;
         infantryRange = 0;
-        introDate = 3010;
-        techLevel.put(3010,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_C};
+        introDate = 3045;
+        techLevel.put(3045,techLevel.get(3071));
+        availRating = new int[]{RATING_X,RATING_F,RATING_D};
         techRating = RATING_D;
     }
 }

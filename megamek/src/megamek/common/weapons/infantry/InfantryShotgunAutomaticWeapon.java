@@ -38,9 +38,9 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
         addLookupName("InfantryAutoShotgun");
         ammoType = AmmoType.T_NA;
         cost = 200;
-        bv = 0.11;
+        bv = 0.21;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.14;
+        infantryDamage = 0.23;
         infantryRange = 0;
         introDate = 2100;
         techLevel.put(2100,techLevel.get(3071));

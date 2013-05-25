@@ -38,9 +38,9 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
         addLookupName("InfantryGuntherMP20");
         ammoType = AmmoType.T_NA;
         cost = 125;
-        bv = 0.22;
+        bv = 0.30;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.27;
+        infantryDamage = 0.33;
         infantryRange = 0;
         introDate = 3007;
         techLevel.put(3007,techLevel.get(3071));

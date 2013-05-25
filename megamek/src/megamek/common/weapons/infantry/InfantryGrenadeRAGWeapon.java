@@ -39,9 +39,9 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         addLookupName("InfantryRPG");
         ammoType = AmmoType.T_NA;
         cost = 50;
-        bv = 0.93;
+        bv = 0.92;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.38;
+        infantryDamage = 0.30;
         infantryRange = 1;
         introDate = 3065;
         techLevel.put(3065,techLevel.get(3071));

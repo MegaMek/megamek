@@ -38,9 +38,9 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
         addLookupName("InfantryHoldoutNeedlerpistol");
         ammoType = AmmoType.T_AC;
         cost = 20;
-        bv = 0.03;
+        bv = 0.10;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
-        infantryDamage = 0.06;
+        infantryDamage = 0.11;
         infantryRange = 0;
         introDate = 2515;
         techLevel.put(2515,techLevel.get(3071));

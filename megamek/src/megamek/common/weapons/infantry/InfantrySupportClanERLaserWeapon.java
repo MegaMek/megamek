@@ -39,7 +39,7 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
         addLookupName("InfantryClanERSmallLaser");
         ammoType = AmmoType.T_NA;
         cost = 11250;
-        bv = 8.4;
+        bv = 10.27;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 1.05;
         infantryRange = 4;

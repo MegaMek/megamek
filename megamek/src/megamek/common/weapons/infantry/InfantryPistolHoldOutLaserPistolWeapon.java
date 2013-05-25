@@ -38,7 +38,7 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
         addLookupName("InfantryHoldoutLaserpistol");
         ammoType = AmmoType.T_NA;
         cost = 100;
-        bv = 0.11;
+        bv = 0.13;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.14;
         infantryRange = 0;

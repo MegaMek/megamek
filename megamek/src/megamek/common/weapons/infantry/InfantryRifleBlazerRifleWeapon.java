@@ -38,7 +38,7 @@ public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
         addLookupName("InfantryBlazerRifle");
         ammoType = AmmoType.T_NA;
         cost = 2190;
-        bv = 1.46;
+        bv = 1.79;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.35;
         infantryRange = 2;

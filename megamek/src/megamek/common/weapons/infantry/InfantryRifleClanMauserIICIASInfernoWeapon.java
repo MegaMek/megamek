@@ -38,9 +38,9 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
         addLookupName("InfantryClanMauserIICIASInferno");
         ammoType = AmmoType.T_NA;
         cost = 18000;
-        bv = 2.12;
+        bv = 6.45;
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
-        infantryDamage = 0.62;
+        infantryDamage = 0.90;
         infantryRange = 3;
         introDate = 3015;
         techLevel.put(3015,techLevel.get(3071));

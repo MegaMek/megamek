@@ -38,7 +38,7 @@ public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
         addLookupName("InfantryMinolta9000");
         ammoType = AmmoType.T_NA;
         cost = 1000;
-        bv = 1.46;
+        bv = 1.79;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.35;
         infantryRange = 2;

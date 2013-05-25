@@ -39,7 +39,7 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
         addLookupName("InfantryClanHeavySmallLaser");
         ammoType = AmmoType.T_NA;
         cost = 20000;
-        bv = 6.35;
+        bv = 7.53;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 1.05;
         infantryRange = 3;

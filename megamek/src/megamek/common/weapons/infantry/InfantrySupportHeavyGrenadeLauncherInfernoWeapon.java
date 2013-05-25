@@ -38,11 +38,11 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
         addLookupName("InfantryHeavyGrenadeLauncherInferno");
         ammoType = AmmoType.T_NA;
         cost = 1500;
-        bv = 2.41;
+        bv = 2.11;
         flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.55;
+        infantryDamage = 0.69;
         infantryRange = 1;
         crew = 1;
         introDate = 3050;

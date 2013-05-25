@@ -38,11 +38,11 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
         addLookupName("InfantryInfernoGrenade");
         ammoType = AmmoType.T_NA;
         cost = 16;
-        bv = 0.22;
+        bv = 0.17;
         flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.15;
+        infantryDamage = 0.19;
         infantryRange = 0;
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;

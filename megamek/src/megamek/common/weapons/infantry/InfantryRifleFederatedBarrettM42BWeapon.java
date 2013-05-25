@@ -38,9 +38,9 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         addLookupName("InfantryFederatedBarrettM42B");
         ammoType = AmmoType.T_NA;
         cost = 1385;
-        bv = 2.3;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 1.11;
+        bv = 3.12;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
+        infantryDamage = 1.02;
         infantryRange = 1;
         introDate = 3064;
         techLevel.put(3064,techLevel.get(3071));

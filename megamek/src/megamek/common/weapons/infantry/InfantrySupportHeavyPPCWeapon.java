@@ -39,7 +39,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavyPPC");
         ammoType = AmmoType.T_NA;
         cost = 45000;
-        bv = 9.56;
+        bv = 11.32;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
         infantryDamage = 1.58;
         infantryRange = 3;

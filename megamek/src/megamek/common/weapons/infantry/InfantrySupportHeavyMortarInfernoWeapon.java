@@ -38,11 +38,11 @@ public class InfantrySupportHeavyMortarInfernoWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavyMortarInferno");
         ammoType = AmmoType.T_NA;
         cost = 5000;
-        bv = 2.06;
+        bv = 2.44;
         flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.27;
+        infantryDamage = 0.34;
         infantryRange = 3;
         crew = 3;
         introDate = 1950;

@@ -38,9 +38,9 @@ public class InfantryPistolTranqGunWeapon extends InfantryWeapon {
         addLookupName("InfantryTranquilizerGun");
         ammoType = AmmoType.T_AC;
         cost = 30;
-        bv = 0.09;
+        bv = 0.13;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.11;
+        infantryDamage = 0.14;
         infantryRange = 0;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));

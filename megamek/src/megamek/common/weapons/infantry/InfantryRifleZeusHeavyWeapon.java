@@ -38,7 +38,7 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
         addLookupName("InfantryZeusHeavyRifle");
         ammoType = AmmoType.T_NA;
         cost = 200;
-        bv = 0.54;
+        bv = 0.67;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.22;
         infantryRange = 1;

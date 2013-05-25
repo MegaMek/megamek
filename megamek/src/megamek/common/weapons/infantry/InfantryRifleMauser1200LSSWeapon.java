@@ -38,9 +38,9 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
         addLookupName("InfantryMauser1200");
         ammoType = AmmoType.T_NA;
         cost = 10000;
-        bv = 1.5;
+        bv = 5.32;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.65;
+        infantryDamage = 1.04;
         infantryRange = 2;
         introDate = 3055;
         techLevel.put(3055,techLevel.get(3071));

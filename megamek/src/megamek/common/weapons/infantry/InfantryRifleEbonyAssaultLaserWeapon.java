@@ -38,7 +38,7 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
         addLookupName("InfantryEbonyAssaultLaser");
         ammoType = AmmoType.T_NA;
         cost = 8500;
-        bv = 0.88;
+        bv = 1.07;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.21;
         infantryRange = 2;

@@ -38,9 +38,9 @@ public class InfantrySupportHeavySRMWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavySRM");
         ammoType = AmmoType.T_NA;
         cost = 3000;
-        bv = 1.71;
+        bv = 2.91;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.41;
+        infantryDamage = 0.57;
         infantryRange = 2;
         introDate = 2370;
         techLevel.put(2370,techLevel.get(3071));

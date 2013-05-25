@@ -39,9 +39,9 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
         addLookupName("InfantryOneShotMRM");
         ammoType = AmmoType.T_NA;
         cost = 2500;
-        bv = 1.25;
+        bv = 2.71;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.30;
+        infantryDamage = 0.53;
         infantryRange = 2;
         crew = 1;
         introDate = 3065;

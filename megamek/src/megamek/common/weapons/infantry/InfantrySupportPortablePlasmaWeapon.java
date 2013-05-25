@@ -39,7 +39,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
         addLookupName("InfantryMPPR");
         // Plasma Rifle (man-portable), TM p. 351
         cost = 7500;
-        bv = 6.6;
+        bv = 8.08;
         flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);

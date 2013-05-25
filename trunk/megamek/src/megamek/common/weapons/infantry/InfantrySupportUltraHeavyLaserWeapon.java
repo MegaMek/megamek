@@ -39,7 +39,7 @@ public class InfantrySupportUltraHeavyLaserWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavyMediumLaser");
         ammoType = AmmoType.T_NA;
         cost = 100000;
-        bv = 16.94;
+        bv = 20.31;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 1.72;
         infantryRange = 5;

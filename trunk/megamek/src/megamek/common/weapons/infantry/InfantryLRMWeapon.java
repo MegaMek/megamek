@@ -38,10 +38,10 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         addLookupName("InfantryLRM");
         ammoType = AmmoType.T_LRM;
         cost = 2000;
-        bv = 1.15;
+        bv = 3.44;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         setModes(new String[] { "", "Indirect" });
-        infantryDamage = 0.19;
+        infantryDamage = 0.48;
         infantryRange = 3;
         introDate = 3057;
         techLevel.put(3057,techLevel.get(3071));

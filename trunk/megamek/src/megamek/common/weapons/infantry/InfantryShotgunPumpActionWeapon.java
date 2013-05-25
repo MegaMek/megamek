@@ -38,7 +38,7 @@ public class InfantryShotgunPumpActionWeapon extends InfantryWeapon {
         addLookupName("InfantryPumpShotgun");
         ammoType = AmmoType.T_NA;
         cost = 40;
-        bv = 0.06;
+        bv = 0.07;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.08;
         infantryRange = 0;

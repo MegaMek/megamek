@@ -38,9 +38,9 @@ public class InfantryArchaicSwordWeapon extends InfantryWeapon {
         addLookupName("InfantrySword");
         ammoType = AmmoType.T_NA;
         cost = 30;
-        bv = 0.03;
+        bv = 0.06;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.04;
+        infantryDamage = 0.07;
         infantryRange = 0;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));

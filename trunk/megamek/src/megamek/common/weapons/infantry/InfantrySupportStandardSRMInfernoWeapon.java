@@ -20,32 +20,35 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
+
 /**
- * @author Ben Grills
+ * @author Klaus Mittag
  */
-public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
+public class InfantrySupportStandardSRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -8624375390758959949L;
 
-    public InfantrySupportHeavyGrenadeLauncherWeapon() {
+    public InfantrySupportStandardSRMInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Heavy Grenade Launcher";
+        name = "Infantry Two-Shot SRM Launcher (Inferno)";
         setInternalName(name);
-        addLookupName("InfantryHeavyGrenadeLauncher");
-        ammoType = AmmoType.T_NA;
+        addLookupName("InfantryStandardSRMInferno");
+        addLookupName("Infantry2ShotSRMInferno");
+        ammoType = AmmoType.T_SRM;
         cost = 1500;
-        bv = 5.38;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 1.76;
-        infantryRange = 1;
-        crew = 1;
-        introDate = 3050;
-        techLevel.put(3050,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        bv = 3.48;
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.68;
+        infantryRange = 2;
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
+        introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
         techRating = RATING_C;
     }
 }

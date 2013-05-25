@@ -38,9 +38,9 @@ public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
         addLookupName("InfantryCeresCrowdbuster");
         ammoType = AmmoType.T_NA;
         cost = 150;
-        bv = 0.07;
+        bv = 0.10;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.09;
+        infantryDamage = 0.11;
         infantryRange = 0;
         introDate = 3030;
         techLevel.put(3030,techLevel.get(3071));

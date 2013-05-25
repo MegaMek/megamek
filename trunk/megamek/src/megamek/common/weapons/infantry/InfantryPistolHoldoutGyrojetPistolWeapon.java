@@ -61,7 +61,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         addLookupName("InfantryHoldoutGyrojetpistol");
         ammoType = AmmoType.T_AC;
         cost = 30;
-        bv = 0.03;
+        bv = 0.04;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.04;
         infantryRange = 0;

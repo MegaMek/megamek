@@ -40,7 +40,7 @@ public class InfantrySupportHeavyMachineGunWeapon extends InfantryWeapon {
         addLookupName("InfantrySupportMachineGun");
         ammoType = AmmoType.T_NA;
         cost = 1750;
-        bv = 3.93;
+        bv = 4.80;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT);
         infantryDamage = 0.94;
         infantryRange = 2;

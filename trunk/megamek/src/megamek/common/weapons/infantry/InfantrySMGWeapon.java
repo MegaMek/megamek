@@ -38,7 +38,7 @@ public class InfantrySMGWeapon extends InfantryWeapon {
         addLookupName("InfantrySMG");
         ammoType = AmmoType.T_NA;
         cost = 80;
-        bv = 0.2;
+        bv = 0.23;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.25;
         infantryRange = 0;

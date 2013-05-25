@@ -39,9 +39,9 @@ public class InfantrySupportLAWWeapon extends InfantryWeapon {
         addLookupName("InfantryLightAntitankWeapon");
         ammoType = AmmoType.T_NA;
         cost = 350;
-        bv = 0.96;
+        bv = 2.71;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.23;
+        infantryDamage = 0.53;
         infantryRange = 2;
         crew = 1;
         introDate = 1950;

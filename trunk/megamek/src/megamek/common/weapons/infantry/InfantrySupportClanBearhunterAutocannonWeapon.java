@@ -39,7 +39,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         addLookupName("InfantryBearhunterAutocannon");
         ammoType = AmmoType.T_NA;
         cost = 3000;
-        bv = 1.87;
+        bv = 2.13;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT);
         infantryDamage = 2.33;
         infantryRange = 0;

@@ -39,7 +39,7 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
         addLookupName("InfantryTsunamiGauss");
         ammoType = AmmoType.T_NA;
         cost = 5500;
-        bv = 2.63;
+        bv = 3.22;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.63;
         infantryRange = 2;

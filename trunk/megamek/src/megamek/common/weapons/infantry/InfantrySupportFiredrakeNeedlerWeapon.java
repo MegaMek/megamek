@@ -39,13 +39,13 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
         addLookupName("InfantrySupportNeedler");
         ammoType = AmmoType.T_NA;
         cost = 500;
-        bv = 2.24;
+        bv = 6.13;
         // TM and its errata don't say this has the (N) property, but the fluff text does, as does its original entry in Combat Equipment, so I have included it here.
         //Taharqa: I think we should ask on the forums about this before we make assumptions, removing
         flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.91;
+        infantryDamage = 1.2;
         infantryRange = 1;
         crew = 2;
         introDate = 3061;

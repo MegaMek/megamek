@@ -43,11 +43,11 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
         addLookupName("Portable Flamer");
         // Flamer (man-portable), TM p. 300
         cost = 100;
-        bv = 0.36;
+        bv = 0.50;
         flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.45;
+        infantryDamage = 0.55;
         infantryRange = 0;
         crew = 1;
         introDate = 1950;

@@ -20,31 +20,34 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
+
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantryPistolClanERLaserPistolWeapon extends InfantryWeapon {
+public class InfantryLightSRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 7788576728727248931L;
 
-    public InfantryPistolClanERLaserPistolWeapon() {
+    public InfantryLightSRMInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Clan ER Laser Pistol";
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        name = "Light SRM (Inferno)";
         setInternalName(name);
-        addLookupName("InfantryClanERLaserpistol");
-        ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 0.61;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.21;
-        infantryRange = 1;
-        introDate = 2835;
-        techLevel.put(2835,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
-        techRating = RATING_F;
+        addLookupName("InfantrySRMLightInferno");
+        ammoType = AmmoType.T_SRM;
+        cost = 1500;
+        bv = 1.74;
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.34;
+        infantryRange = 2;
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
+        introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_C;
     }
 }

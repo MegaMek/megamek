@@ -38,7 +38,7 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavyGyrojetGun");
         ammoType = AmmoType.T_NA;
         cost = 2500;
-        bv = 0.88;
+        bv = 1.07;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.21;
         infantryRange = 2;

@@ -38,8 +38,8 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         addLookupName("InfantryMonowire");
         ammoType = AmmoType.T_NA;
         cost = 200;
-        bv = 0.28;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        bv = 0.32;
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.35;
         infantryRange = 0;
         introDate = 2200;

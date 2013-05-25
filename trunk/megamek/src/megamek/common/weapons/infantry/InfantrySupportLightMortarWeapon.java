@@ -38,9 +38,9 @@ public class InfantrySupportLightMortarWeapon extends InfantryWeapon {
         addLookupName("InfantryLightMortar");
         ammoType = AmmoType.T_NA;
         cost = 1400;
-        bv = 0.74;
+        bv = 1.62;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.30;
+        infantryDamage = 0.53;
         infantryRange = 1;
         crew = 2;
         introDate = 1950;

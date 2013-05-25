@@ -38,7 +38,7 @@ public class InfantryRifleBoltActionSniperWeapon extends InfantryWeapon {
         addLookupName("InfantryBoltActionSniperRifle");
         ammoType = AmmoType.T_NA;
         cost = 350;
-        bv = 0.75;
+        bv = 0.92;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.18;
         infantryRange = 2;

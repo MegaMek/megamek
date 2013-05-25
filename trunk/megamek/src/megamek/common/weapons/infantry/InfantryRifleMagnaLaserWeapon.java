@@ -38,7 +38,7 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
         addLookupName("InfantryMagnaLaser");
         ammoType = AmmoType.T_NA;
         cost = 1500;
-        bv = 1.09;
+        bv = 1.33;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.26;
         infantryRange = 2;

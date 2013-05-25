@@ -39,7 +39,7 @@ public class InfantrySupportPortablePPCWeapon extends InfantryWeapon {
         addLookupName("InfantryManPackPPC");
         ammoType = AmmoType.T_NA;
         cost = 7000;
-        bv = 3.01;
+        bv = 3.68;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
         infantryDamage = 0.72;
         infantryRange = 2;

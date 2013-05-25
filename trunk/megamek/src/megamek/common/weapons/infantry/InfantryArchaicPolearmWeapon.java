@@ -38,7 +38,7 @@ public class InfantryArchaicPolearmWeapon extends InfantryWeapon {
         addLookupName("InfantryPolearm");
         ammoType = AmmoType.T_NA;
         cost = 50;
-        bv = 0.03;
+        bv = 0.04;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;

@@ -39,9 +39,9 @@ public class InfantrySupportVLAWWeapon extends InfantryWeapon {
         addLookupName("InfantryVLAW");
         ammoType = AmmoType.T_NA;
         cost = 75;
-        bv = 0.44;
+        bv = 1.47;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.18;
+        infantryDamage = 0.48;
         infantryRange = 1;
         crew = 1;
         introDate = 1950;

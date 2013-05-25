@@ -38,9 +38,9 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
         addLookupName("InfantryVibroAxe");
         ammoType = AmmoType.T_NA;
         cost = 150;
-        bv = 0.28;
+        bv = 0.39;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.35;
+        infantryDamage = 0.42;
         infantryRange = 0;
         introDate = 2445;
         techLevel.put(2445,techLevel.get(3071));

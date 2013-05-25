@@ -38,7 +38,7 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
         addLookupName("InfantryClanERLaserRifle");
         ammoType = AmmoType.T_NA;
         cost = 2000;
-        bv = 1.69;
+        bv = 2.01;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.28;
         infantryRange = 3;

@@ -39,7 +39,7 @@ public class InfantryArchaicBlackjackWeapon extends InfantryWeapon {
         addLookupName("InfantrySap");
         ammoType = AmmoType.T_NA;
         cost = 5;
-        bv = 0;
+        bv = 0.05;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
         infantryDamage = 0.05;
         infantryRange = 0;

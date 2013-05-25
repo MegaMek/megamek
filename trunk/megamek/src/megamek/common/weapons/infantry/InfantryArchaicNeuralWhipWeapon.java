@@ -38,7 +38,7 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
         addLookupName("InfantryNeuralWhip");
         ammoType = AmmoType.T_NA;
         cost = 500;
-        bv = 0.07;
+        bv = 0.08;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.09;
         infantryRange = 0;

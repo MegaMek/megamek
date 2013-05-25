@@ -38,9 +38,9 @@ public class InfantryGrenadeMicroWeapon extends InfantryWeapon {
         addLookupName("InfantryMicroGrenade");
         ammoType = AmmoType.T_NA;
         cost = 2;
-        bv = 0.08;
+        bv = 0.15;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.10;
+        infantryDamage = 0.16;
         infantryRange = 0;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));

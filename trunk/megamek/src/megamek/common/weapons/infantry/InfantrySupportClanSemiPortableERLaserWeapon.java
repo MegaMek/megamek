@@ -39,10 +39,10 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
         addLookupName("InfantryClanSemiPortableERLaser");
         ammoType = AmmoType.T_NA;
         cost = 10000;
-        bv = 4.24;
+        bv = 5.02;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
         infantryDamage = 0.70;
-        infantryRange = 1;
+        infantryRange = 3;
         crew = 2;
         introDate = 3060;
         techLevel.put(3060,techLevel.get(3071));

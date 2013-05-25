@@ -39,7 +39,7 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
         addLookupName("InfantryClanGaussSMG");
         ammoType = AmmoType.T_NA;
         cost = 2000;
-        bv = 1.11;
+        bv = 1.38;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.45;
         infantryRange = 1;

@@ -38,9 +38,9 @@ public class InfantrySupportHeavyMortarWeapon extends InfantryWeapon {
         addLookupName("InfantryHeavyMortar");
         ammoType = AmmoType.T_NA;
         cost = 5000;
-        bv = 2.06;
+        bv = 4.09;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.34;
+        infantryDamage = 0.57;
         infantryRange = 3;
         crew = 3;
         introDate = 1950;

@@ -39,9 +39,9 @@ public class InfantrySupportCompactGrenadeLauncherWeapon extends InfantryWeapon 
         addLookupName("InfantryCompactGrenadeLauncher");
         ammoType = AmmoType.T_NA;
         cost = 290;
-        bv = 0.25;
+        bv = 0.49;
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.10;
+        infantryDamage = 0.16;
         infantryRange = 1;
         crew = 1;
         introDate = 2100;

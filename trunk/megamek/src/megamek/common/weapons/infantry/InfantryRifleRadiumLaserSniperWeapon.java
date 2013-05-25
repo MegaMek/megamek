@@ -38,9 +38,9 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
         addLookupName("InfantryRadiumSniper");
         ammoType = AmmoType.T_NA;
         cost = 9500;
-        bv = 1.09;
+        bv = 2.58;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.42;
+        infantryDamage = 0.36;
         infantryRange = 3;
         introDate = 2583;
         techLevel.put(2583,techLevel.get(3071));

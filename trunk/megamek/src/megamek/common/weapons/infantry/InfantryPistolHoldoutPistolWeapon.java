@@ -38,7 +38,7 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
         addLookupName("InfantryHoldoutpistol");
         ammoType = AmmoType.T_AC;
         cost = 20;
-        bv = 0.02;
+        bv = 0.03;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.03;
         infantryRange = 0;

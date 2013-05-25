@@ -36,7 +36,7 @@ public class InfantryRifleLaserWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryLaserRifle");
         cost = 1250;
-        bv = 0.88;
+        bv = 1.43;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.28;
         infantryRange = 2;

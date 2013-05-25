@@ -39,7 +39,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
         addLookupName("InfantryKingDavidLightGaussRifle");
         ammoType = AmmoType.T_NA;
         cost = 8000;
-        bv = 4.12;
+        bv = 4.87;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
         infantryDamage = 0.68;
         infantryRange = 3;

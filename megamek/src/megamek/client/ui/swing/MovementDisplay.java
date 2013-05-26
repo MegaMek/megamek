@@ -1235,6 +1235,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     @Override
     public synchronized void ready() {
 
+        if (ce() == null){
+            return;
+        }
+        
         cmd.clipToPossible();
         if ((cmd.length() == 0) && !ce().isAirborne()
                 && GUIPreferences.getInstance().getNagForNoAction()) {

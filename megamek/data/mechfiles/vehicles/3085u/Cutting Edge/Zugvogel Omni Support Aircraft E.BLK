@@ -67,7 +67,7 @@ STOLChassisMod
 </Body Equipment>
 
 <transporters>
-TroopSpace:48
+InfantryBay:48:1
 </transporters>
 
 <heatsinks>

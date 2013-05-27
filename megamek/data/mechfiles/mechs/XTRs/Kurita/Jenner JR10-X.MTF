@@ -4,21 +4,21 @@ JR10-X
 
 Config:Biped
 TechBase:Inner Sphere
-Era:0
+Era:3072
 Rules Level:4
 
 Mass:35
-Engine:245 XL Fusion Engine
+Engine:245 XL Engine(IS)
 Structure:Composite
-Gyro:Compact Gyro
-Cockpit:Torso-Mounted Cockpit
 Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Compact Gyro
 
 Heat Sinks:10 Double
 Walk MP:7
 Jump MP:7
 
-Armor:Light Ferro-Fibrous
+Armor:Light Ferro-Fibrous(Inner Sphere)
 LA Armor:12
 RA Armor:12
 LT Armor:12
@@ -31,91 +31,96 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:5
 
-Weapons:7
-1 ISMediumLaser, Head
-1 ISMediumLaser, Head
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Right Arm
-1 ISAngelECM, Right Torso
+Weapons:6
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Head
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 Light Ferro-Fibrous
 Light Ferro-Fibrous
+Mek Null Signature System
 -Empty-
 -Empty-
 -Empty-
-NullSignatureSystem
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 Light Ferro-Fibrous
 Light Ferro-Fibrous
+Mek Null Signature System
 -Empty-
 -Empty-
 -Empty-
-NullSignatureSystem
 
 Left Torso:
 Life Support
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
 Light Ferro-Fibrous
-NullSignatureSystem
+Mek Null Signature System
 
 Right Torso:
 Life Support
-Engine
-Engine
-Engine
-ISAngelECM
-ISAngelECM
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAngelECMSuite
+ISAngelECMSuite
 Jump Jet
 Jump Jet
 Jump Jet
 Light Ferro-Fibrous
+Mek Null Signature System
 -Empty-
-NullSignatureSystem
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Cockpit
 Sensors
 Jump Jet
-NullSignatureSystem
+Mek Null Signature System
 
 Head:
 Sensors
 Sensors
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 
 Left Leg:
@@ -123,13 +128,27 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Mek Null Signature System
 -Empty-
-NullSignatureSystem
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Mek Null Signature System
 -Empty-
-NullSignatureSystem
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

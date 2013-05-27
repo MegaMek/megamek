@@ -9,7 +9,7 @@ Source:DTP:Liao/TRO:VA
 Rules Level:2
 
 Mass:30
-Engine:120 ICE
+Engine:120 ICE Engine(IS)
 Structure:Industrial
 Myomer:Standard
 Cockpit:Industrial Cockpit
@@ -19,7 +19,7 @@ Heat Sinks:0 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Industrial(Inner Sphere)
+Armor:Heavy Industrial(Inner Sphere)
 LA Armor:8
 RA Armor:8
 LT Armor:9
@@ -77,12 +77,12 @@ Left Torso:
 -Empty-
 
 Right Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

@@ -1,14 +1,14 @@
-Version:1.1
+Version:1.0
 Zeus
 (Leonidas)
 
 Config:Biped
 TechBase:Inner Sphere
-Era:0
+Era:3056
 Rules Level:2
 
 Mass:80
-Engine:320 XL Fusion Engine
+Engine:320 XL Engine(IS)
 Structure:Standard
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:12 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:25
 RA Armor:25
 LT Armor:25
@@ -30,11 +30,11 @@ RTR Armor:7
 RTC Armor:10
 
 Weapons:5
-1 ISGaussRifle, Left Arm, Ammo:16
-1 ISMediumPulseLaser (R), Left Torso (R)
-1 ISMediumPulseLaser, Center Torso
-1 ISERLargeLaser, Left Torso
-1 ISLRM20, Right Arm, Ammo:12
+Gauss Rifle, Left Arm
+LRM 20, Right Arm
+Medium Pulse Laser, Left Torso
+ER Large Laser, Left Torso
+Medium Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -47,27 +47,27 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
 ISArtemisIV
-ISLRM20 Ammo Artemis-capable
-ISLRM20 Ammo Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
 Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMediumPulseLaser (R)
 ISERLargeLaser
 ISERLargeLaser
@@ -79,9 +79,9 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -93,16 +93,16 @@ Ferro-Fibrous
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMediumPulseLaser
 Ferro-Fibrous
 
@@ -113,6 +113,12 @@ Cockpit
 Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -121,6 +127,12 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -129,3 +141,11 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

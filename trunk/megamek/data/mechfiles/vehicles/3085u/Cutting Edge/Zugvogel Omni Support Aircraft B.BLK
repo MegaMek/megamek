@@ -70,7 +70,7 @@ STOLChassisMod
 </Body Equipment>
 
 <transporters>
-TroopSpace:4
+InfantryBay:4:1
 LightVehicleBay:1:1
 </transporters>
 

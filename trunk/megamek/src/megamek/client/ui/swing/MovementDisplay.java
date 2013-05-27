@@ -1183,7 +1183,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         loadedUnits = ce.getLoadedUnits();
         if(ce instanceof Aero) {
-            loadedUnits = ce.getUnitsUnloadableFromBays();
+            loadedUnits.addAll(ce.getUnitsUnloadableFromBays());
         }
 
         updateLoadButtons();

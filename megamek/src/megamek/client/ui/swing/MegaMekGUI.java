@@ -48,6 +48,8 @@ import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.client.RandomNameGenerator;
+import megamek.client.RandomUnitGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
@@ -56,6 +58,7 @@ import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.IGame;
+import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
 import megamek.common.options.GameOptions;
@@ -443,6 +446,17 @@ public class MegaMekGUI implements IMegaMekGUI {
             client.die();
         }
         optdlg = null;
+        
+        // free some memory thats only needed in lounge
+        //  This normally happens in the deployment phase in Client, but 
+        //  if we are loading a game, this phase may not be reached
+        MechFileParser.dispose();
+        RandomUnitGenerator.getInstance().dispose();
+        RandomNameGenerator.getInstance().dispose();
+        //We must do this last, as the name and unit generators can create
+        // a new instance if they are running
+        MechSummaryCache.dispose();
+        
         launch(gui.getFrame());
     }
 

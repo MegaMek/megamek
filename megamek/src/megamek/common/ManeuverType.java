@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.MovePath.MoveStepType;
+
 /**
  * Maneuver types for Aeros
  */
@@ -46,8 +48,9 @@ public class ManeuverType {
     /**
      * determines whether the maneuver can be performed
      */
-    public static boolean canPerform(int type, int velocity, int altitude, int ceiling,
-                                     boolean isVTOL, int distance) {
+    public static boolean canPerform(int type, int velocity, int altitude, 
+                                     int ceiling, boolean isVTOL, int distance, 
+                                     IGame game, MovePath mp) {
 
         //if the Aero has moved to any hexes, then it can no longer perform
         //any maneuver except side slip
@@ -89,7 +92,24 @@ public class ManeuverType {
         case (MAN_SIDE_SLIP_LEFT):
         case (MAN_SIDE_SLIP_RIGHT):
             if(velocity > 0) {
-                return true;
+                // If we're on a ground map, we need to make sure we can move
+                //  all 16 hexes
+                if (game.getBoard().getType() == Board.T_GROUND){
+                    MovePath tmpMp = mp.clone();                    
+                    for (int i = 0; i < 8; i++){
+                        if (type == MAN_SIDE_SLIP_LEFT){
+                            tmpMp.addStep(MoveStepType.LATERAL_LEFT,true,true);
+                        } else {
+                            tmpMp.addStep(MoveStepType.LATERAL_RIGHT,true,true);
+                        }
+                    }
+                    for (int i = 0; i < 8; i++){
+                        tmpMp.addStep(MoveStepType.FORWARDS,true,true);
+                    }                    
+                    return tmpMp.isMoveLegal();
+                }else{
+                    return true;
+                }
             } else {
                 return false;
             }

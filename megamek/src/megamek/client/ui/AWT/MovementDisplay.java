@@ -2823,7 +2823,7 @@ DoneButtoned, KeyListener {
                 distance = last.getDistance();
             }
             int ceil = client.game.getBoard().getHex(pos).ceiling();
-            choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(), distance);
+            choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(), distance, clientgui.getClient().game,cmd);
             choiceDialog.setVisible(true);
             int manType = choiceDialog.getChoice();
             if ((manType > ManeuverType.MAN_NONE) && addManeuver(manType)) {

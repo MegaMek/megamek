@@ -32,7 +32,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import megamek.client.ui.Messages;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.ManeuverType;
+import megamek.common.MovePath;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
@@ -276,9 +280,11 @@ public class ManeuverChoiceDialog extends Dialog implements ActionListener {
         return -1;
     }
     
-    public void checkPerformability(int velocity, int altitude, int ceiling, boolean isVTOL, int distance) {
+    public void checkPerformability(int velocity, int altitude, int ceiling, 
+            boolean isVTOL, int distance, IGame game, MovePath mp) {
         for(int type = 0; type < ManeuverType.MAN_SIZE; type++ ) {
-            checkboxes[type].setEnabled(ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance));
+            checkboxes[type].setEnabled(ManeuverType.canPerform(type, velocity, 
+                    altitude, ceiling, isVTOL, distance, game, mp));
         }
     }
 

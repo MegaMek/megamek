@@ -34,7 +34,12 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import megamek.client.ui.Messages;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.IBoard;
+import megamek.common.IGame;
 import megamek.common.ManeuverType;
+import megamek.common.MovePath;
 
 /**
  * A (somewhat primitive) dialog that asks a question and lets the player select
@@ -270,9 +275,12 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
         return retval[0];
     }
     
-    public void checkPerformability(int velocity, int altitude, int ceiling, boolean isVTOL, int distance) {
+    public void checkPerformability(int velocity, int altitude, int ceiling, 
+            boolean isVTOL, int distance, IGame game, MovePath mp) {
         for(int type = 0; type < ManeuverType.MAN_SIZE; type++ ) {
-            checkboxes[type].setEnabled(ManeuverType.canPerform(type, velocity, altitude, ceiling, isVTOL, distance));
+            checkboxes[type].setEnabled(
+                    ManeuverType.canPerform(type, velocity, altitude, ceiling, 
+                                            isVTOL, distance,game,mp));
         }
     }
 

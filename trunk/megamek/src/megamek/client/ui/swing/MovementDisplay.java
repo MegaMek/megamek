@@ -40,6 +40,7 @@ import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.BipedMech;
+import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
@@ -3238,10 +3239,36 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             cmd.addStep(MoveStepType.UP);
             return true;
         case (ManeuverType.MAN_SIDE_SLIP_LEFT):
-            cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
+            // If we are on a ground map, slide slip works slightly differently
+            //  See Total Warfare pg 85
+            if (clientgui.getClient().game.getBoard().getType() == 
+                Board.T_GROUND)
+            {
+                for (int i = 0; i < 8; i++){
+                    cmd.addStep(MoveStepType.LATERAL_LEFT,true,true);
+                }
+                for (int i = 0; i < 8; i++){
+                    cmd.addStep(MoveStepType.FORWARDS,true,true);
+                }                
+            }else{
+                cmd.addStep(MoveStepType.LATERAL_LEFT, true, true);
+            }
             return true;
         case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
-            cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
+            // If we are on a ground map, slide slip works slightly differently
+            //  See Total Warfare pg 85
+            if (clientgui.getClient().game.getBoard().getType() == 
+                Board.T_GROUND)
+            {
+                for (int i = 0; i < 8; i++){
+                    cmd.addStep(MoveStepType.LATERAL_RIGHT,true,true);
+                }
+                for (int i = 0; i < 8; i++){
+                    cmd.addStep(MoveStepType.FORWARDS,true,true);
+                }                
+            }else{            
+                cmd.addStep(MoveStepType.LATERAL_RIGHT, true, true);
+            }
             return true;
         case (ManeuverType.MAN_LOOP):
             cmd.addStep(MoveStepType.LOOP, true, true);
@@ -3705,7 +3732,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             int ceil = clientgui.getClient().game.getBoard().getHex(pos)
                     .ceiling();
             choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(),
-                    distance);
+                    distance,clientgui.getClient().game,cmd);
             choiceDialog.setVisible(true);
             int manType = choiceDialog.getChoice();
             if ((manType > ManeuverType.MAN_NONE) && addManeuver(manType)) {

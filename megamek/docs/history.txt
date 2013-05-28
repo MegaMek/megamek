@@ -65,6 +65,7 @@ v0.35.39-dev (SVN)
 + Bug 3559: Conventional Aircraft cannot deploy troops
 + Data: Beginning of Date corrections for all units.
 + Bug: 3614 (Aero) Side-Slip Rules Incorrect on Ground Maps 
++ Bug: 3625 "no units to move" after assault drop; dropped unit frozen at altitude after skip
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

@@ -594,7 +594,7 @@ public abstract class TurnOrdered implements Serializable {
                     ntm = (int) Math.ceil(((double) num_dropship_turns[index]) / (double) minDS);
                 } else {
                     ntm = num_dropship_turns[index] / minDS;
-        }
+                }
                 for (int j = 0; j < ntm; j++) {
                     turns.addDropship(order[index]);
                     num_dropship_turns[index]--;

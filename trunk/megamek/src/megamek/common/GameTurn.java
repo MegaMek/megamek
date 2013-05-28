@@ -263,7 +263,9 @@ public class GameTurn implements Serializable {
      */
     public static int getClassCode(Entity entity) {
         int classCode = 0;
-        if ( entity instanceof SpaceStation ) {
+        if (entity.isAirborne()) {
+            classCode = GameTurn.CLASS_AERO;
+        } else if ( entity instanceof SpaceStation ) {
             classCode = GameTurn.CLASS_SPACE_STATION;
         } else if ( entity instanceof Warship ) {
             classCode = GameTurn.CLASS_WARSHIP;
@@ -276,13 +278,7 @@ public class GameTurn implements Serializable {
                 classCode = GameTurn.CLASS_TANK;
             }
         } else if ( entity instanceof SmallCraft && entity.isAirborne()) {
-            if(entity.isAirborne()) {
-                classCode = GameTurn.CLASS_SMALL_CRAFT;
-            } else {
-                classCode = GameTurn.CLASS_TANK;
-            }
-        } else if ( entity.isAirborne() ) {
-            classCode = GameTurn.CLASS_AERO;
+            classCode = GameTurn.CLASS_SMALL_CRAFT;    
         } else if (entity instanceof Infantry) {
             classCode = GameTurn.CLASS_INFANTRY;
         } else if (entity instanceof Protomech) {

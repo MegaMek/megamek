@@ -3047,7 +3047,10 @@ public class Server implements Runnable {
             final Entity entity = loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
-                if ((entity instanceof Infantry)) {
+                if (entity.isAirborne()
+                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                    player.incrementAeroTurns();
+                } else if ((entity instanceof Infantry)) {
                     if (infMoveEven) {
                         player.incrementEvenTurns();
                     } else if (infMoveMulti) {
@@ -3082,10 +3085,7 @@ public class Server implements Runnable {
                 } else if ((entity instanceof SmallCraft)
                         && entity.isAirborne()
                         && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementSmallCraftTurns();
-                } else if (entity.isAirborne()
-                        && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementAeroTurns();
+                    player.incrementSmallCraftTurns();                
                 } else {
                     player.incrementOtherTurns();
                 }

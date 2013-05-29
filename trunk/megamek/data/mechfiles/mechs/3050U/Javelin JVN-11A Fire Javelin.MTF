@@ -1,53 +1,54 @@
 Version:1.0
-Legacy
-LGC-03
+Javelin
+JVN-11A "Fire Javelin"
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3067
+Era:3053
 Rules Level:2
 
-Mass:80
-Engine:320 Light Engine
-Structure:Endo Steel
+Mass:30
+Engine:180 Fusion Engine(IS)
+Structure:Standard
 Myomer:Standard
 
-Heat Sinks:14 Double
-Walk MP:4
-Jump MP:3
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
 
-Armor:Standard
-LA Armor:26
-RA Armor:26
-LT Armor:27
-RT Armor:27
-CT Armor:40
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:9
+RA Armor:9
+LT Armor:9
+RT Armor:9
+CT Armor:11
 HD Armor:9
-LL Armor:34
-RL Armor:34
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+LL Armor:12
+RL Armor:12
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
 
-Weapons:6
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Small Laser, Left Arm
-ISHPPC, Right Torso
-Streak SRM 4, Right Torso
-ISHPPC, Left Torso
+Weapons:7
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -56,42 +57,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISERMediumLaser
-ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Medium Laser
+Medium Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Fusion Engine
-Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISHPPC
-ISHPPC
-ISHPPC
-ISHPPC
-ISC3iUnit
-ISC3iUnit
-Endo Steel
+Medium Laser
+Medium Laser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
 
 Right Torso:
-Fusion Engine
-Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISHPPC
-ISHPPC
-ISHPPC
-ISHPPC
-ISStreakSRM4
-IS Streak SRM 4 Ammo
-ISCASE
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+Medium Laser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -105,13 +106,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Jump Jet
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -127,7 +128,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo Steel
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +142,12 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Endo Steel
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

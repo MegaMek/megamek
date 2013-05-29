@@ -8,15 +8,15 @@ Era:3025
 Rules Level:1
 
 Mass:100
-Engine:300 Fusion Engine
+Engine:300 Fusion Engine(IS)
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:21 Single
+Heat Sinks:20 Single
 Walk MP:3
 Jump MP:3
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:34
 RA Armor:34
 LT Armor:30
@@ -29,22 +29,23 @@ RTL Armor:12
 RTR Armor:12
 RTC Armor:12
 
-Weapons:8
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Arm
-1 ISLargeLaser, Right Torso
-2 ISMediumLaser, Right Torso
-1 ISMediumLaser, Right Torso (R)
-1 ISLRM10, Right Torso, Ammo:12
-1 ISAC10, Left Torso
-1 ISMediumLaser, Head
+Weapons:9
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+AC/10, Left Torso
+Large Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+LRM 10, Right Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -58,7 +59,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -68,31 +69,31 @@ ISMediumLaser
 -Empty-
 
 Left Torso:
-ISAC10
-ISAC10
-ISAC10
-ISAC10
-ISAC10
-ISAC10
-ISAC10
-ISLRM10 Ammo
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/10
 Heat Sink
 Heat Sink
 Heat Sink
 -Empty-
 
 Right Torso:
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser (R)
-ISLRM10
-ISLRM10
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser (R)
+LRM 10
+LRM 10
+IS Ammo LRM-10
 Heat Sink
 Heat Sink
 Heat Sink
--Empty-
 -Empty-
 
 Center Torso:
@@ -113,7 +114,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISMediumLaser
+Medium Laser
 Sensors
 Life Support
 -Empty-
@@ -128,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
 Jump Jet
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +151,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -1,75 +1,78 @@
 Version:1.0
-Mad Cat (Timber Wolf)
-B
+Pouncer
+F
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:2945
-Rules Level:2
+Era:3068
+Source:Clan Invasion
+Rules Level:3
 
-Mass:75
-Engine:375 XL Engine
+Mass:40
+Engine:240 XL (Clan) Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:15 Double
-Walk MP:5
-Jump MP:0
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:9
+Walk MP:6
+Jump MP:5
 
-Armor:Ferro-Fibrous
-LA Armor:24
-RA Armor:24
-LT Armor:25
-RT Armor:25
-CT Armor:36
+Armor:Ferro-Fibrous(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:11
+RT Armor:11
+CT Armor:12
 HD Armor:9
-LL Armor:32
-RL Armor:32
+LL Armor:13
+RL Armor:13
 RTL Armor:7
 RTR Armor:7
-RTC Armor:9
+RTC Armor:8
 
-Weapons:5
-1 CLLargePulseLaser, Left Arm
-1 CLSmallPulseLaser, Left Arm
-1 CLLRM10, Left Torso, Ammo:12
-1 CLGaussRifle, Right Arm, Ammo:8
-1 CLSRM4, Right Torso, Ammo:25
+Weapons:6
+ER Medium Laser, Right Torso
+Plasma Cannon, Right Arm
+ER Flamer, Left Arm
+ER Flamer, Left Arm
+Heavy Flamer, Left Arm
+Heavy Flamer, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLSmallPulseLaser
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLHeavyFlamer
+CLHeavyFlamer
+CLERFlamer
+CLERFlamer
+CL Heavy Flamer Ammo
+CL Heavy Flamer Ammo
+CL Heavy Flamer Ammo
 Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGauss Ammo
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
 Ferro-Fibrous
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLArtemisIV
-CLLRM10 Ammo (Clan) Artemis-capable
+Jump Jet
+Jump Jet
+RemoteSensorDispenser
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
@@ -81,15 +84,15 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLSRM4
-CLArtemisIV
-CLSRM4 Ammo (Clan) Artemis-capable
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLERMediumLaser
+CLActiveProbe
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
--Empty-
--Empty-
--Empty-
 -Empty-
 
 Center Torso:
@@ -103,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
+Jump Jet
 Endo Steel
--Empty-
 
 Head:
 Life Support
@@ -147,4 +150,5 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
 

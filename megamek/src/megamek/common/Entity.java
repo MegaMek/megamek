@@ -7858,6 +7858,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case EAST:
                 setFacing(4);
                 break;
+            default:
+                break;
         }
         offBoardDistance = distance;
         offBoardDirection = direction;

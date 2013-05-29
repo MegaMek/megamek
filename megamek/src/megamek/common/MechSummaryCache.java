@@ -189,6 +189,8 @@ public class MechSummaryCache {
                 for (int i = 0; i < num_units; i++){
                     if (interrupted) {
                         done();
+                        fin.close();
+                        istream.close();
                         return;
                     }                    
                     MechSummary ms = (MechSummary)fin.readObject();
@@ -205,6 +207,8 @@ public class MechSummaryCache {
                         cacheCount++;
                     }                 
                 }
+                fin.close();
+                istream.close();
             }
         } catch (Exception e) {
             loadReport.append("  Unable to load unit cache: ").append(e.getMessage()).append("\n");

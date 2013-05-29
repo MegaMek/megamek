@@ -470,6 +470,7 @@ public class HexTileset {
             return image;
         }
 
+        @SuppressWarnings("unused")
         public String getImageFileName() {
             return "data/images/hexes/" + imageFile; //$NON-NLS-1$
         }

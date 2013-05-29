@@ -81,6 +81,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                     superheavy = true;
                 }
                 break;
+            default:
+                break;
         }
 
         t.setWeight(weight);

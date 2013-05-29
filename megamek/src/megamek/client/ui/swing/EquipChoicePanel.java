@@ -81,8 +81,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private BombChoicePanel m_bombs;
     private JPanel panBombs = new JPanel();
 
-    private EquipChoicePanel m_equip;
-    private JPanel panEquip = new JPanel(new GridBagLayout());
+//    private EquipChoicePanel m_equip;
+//    private JPanel panEquip = new JPanel(new GridBagLayout());
 
     private JLabel labAutoEject = new JLabel(
             Messages.getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -122,7 +122,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         GridBagLayout g = new GridBagLayout();
         setLayout(g);
-        GridBagConstraints c = new GridBagConstraints();
+//        GridBagConstraints c = new GridBagConstraints();
 
         // **EQUIPMENT TAB**//
         // Auto-eject checkbox and conditional ejections.

@@ -278,9 +278,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private HashMap<Integer, WeaponQuirks> h_wpnQuirks = new HashMap<Integer, WeaponQuirks>();
 
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
-    private ArrayList<DialogOptionComponent> quirkComps = new ArrayList<DialogOptionComponent>();
+//    private ArrayList<DialogOptionComponent> quirkComps = new ArrayList<DialogOptionComponent>();
     private ArrayList<DialogOptionComponent> partRepsComps = new ArrayList<DialogOptionComponent>();
-    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer, ArrayList<DialogOptionComponent>>();
+//    private HashMap<Integer, ArrayList<DialogOptionComponent>> h_wpnQuirkComps = new HashMap<Integer, ArrayList<DialogOptionComponent>>();
 
     private boolean editable;
 

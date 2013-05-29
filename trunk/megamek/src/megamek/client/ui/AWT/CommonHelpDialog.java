@@ -127,6 +127,7 @@ public class CommonHelpDialog extends Dialog {
                     buff.append(line);
                     line = input.readLine();
                 }
+                input.close();
             } catch (IOException exp) {
                 if (!firstLine) {
                     buff.append("\n \n"); //$NON-NLS-1$

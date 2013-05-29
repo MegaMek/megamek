@@ -1,53 +1,53 @@
 Version:1.0
-Kintaro
-KTO-19-RS
+Phantom
+F
 
-Config:Biped
-TechBase:Inner Sphere
-Era:2750
-Rules Level:2
+Config:Biped Omnimech
+TechBase:Clan
+Era:3068
+Source:Clan Invasion
+Rules Level:3
 
-Mass:55
-Engine:275 Fusion Engine
-Structure:Standard
+Mass:40
+Engine:360 XL (Clan) Engine(IS)
+Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:5
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
+Walk MP:9
 Jump MP:0
 
-Armor:Ferro-Fibrous
-LA Armor:18
-RA Armor:18
-LT Armor:18
-RT Armor:18
-CT Armor:26
+Armor:Ferro-Fibrous(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:11
+RT Armor:11
+CT Armor:12
 HD Armor:9
-LL Armor:23
-RL Armor:23
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+LL Armor:13
+RL Armor:13
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
 
-Weapons:6
-1 ISMediumLaser, Right Arm
-1 ISLRM5, Left Arm, Ammo:24
-1 ISSRM6, Left Arm, Ammo:30
-1 ISMediumLaser, Left Arm
-1 ISSRM6, Right Torso
-1 ISNarcBeacon, Center Torso, Ammo:12
+Weapons:4
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+Heavy Medium Laser, Right Arm
+Heavy Flamer, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-ISLRM5
-ISSRM6
-ISSRM6
-ISMediumLaser
+CLHeavyFlamer
+CL Heavy Flamer Ammo
+Endo Steel
 Ferro-Fibrous
-Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -56,9 +56,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+Endo Steel
 Ferro-Fibrous
 -Empty-
 -Empty-
@@ -66,11 +66,11 @@ Ferro-Fibrous
 -Empty-
 
 Left Torso:
-ISLRM5 Ammo Narc-capable
-ISSRM6 Ammo Narc-capable
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Endo Steel
 Ferro-Fibrous
-Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -80,13 +80,13 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-ISSRM6
-ISSRM6
-ISSRM6 Ammo Narc-capable
-ISNarc Pods
-ISNarc Pods
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+Endo Steel
 Ferro-Fibrous
-Ferro-Fibrous
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISNarcBeacon
-ISNarcBeacon
+CLECMSuite
+Endo Steel
 
 Head:
 Life Support
@@ -126,7 +126,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Endo Steel
 Ferro-Fibrous
 -Empty-
 -Empty-
@@ -140,12 +140,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Endo Steel
 Ferro-Fibrous
-Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

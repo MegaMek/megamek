@@ -72,6 +72,7 @@ v0.35.39-dev (SVN)
 + Cleaned up a bunch of unclosed handlers creating memory leaks. Added some warning suppression to a few unused things.
   Added default cases to several switch statements to get rid of warnings.
 + Bug: Entity.isPermanentlyImmobilized counting MP reductions from heat as permanent damage.
++ Bug: shields get less DA and DC when constructed without hands/LA
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

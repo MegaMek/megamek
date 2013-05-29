@@ -4393,10 +4393,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         protected int entityId;
         protected int masterId;
+        protected int netId;
         protected Entity entityE;
         protected Entity entityM;
-
-        protected int netId;
 
         Color spriteColor;
 
@@ -4405,7 +4404,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             entityM = m;
             entityId = e.getId();
             masterId = m.getId();
-            int netId = Integer.parseInt(e.getC3NetId().replace("C3", "").replace("i", "").replace(".", ""));
+            netId = Integer.parseInt(e.getC3NetId().replace("C3", "").replace("i", "").replace(".", ""));
             spriteColor = PlayerColors.getAdvColor(netId, e.getOwner().getColorIndex());
 
             if ((e.getPosition() == null) || (m.getPosition() == null)) {
@@ -5369,19 +5368,21 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             refreshAttacks();
             switch (e.getNewPhase()) {
-            case PHASE_MOVEMENT:
-                refreshMoveVectors();
-            case PHASE_FIRING:
-                clearAllMoveVectors();
-            case PHASE_PHYSICAL:
-                refreshAttacks();
-                break;
-            case PHASE_INITIATIVE:
-                clearAllAttacks();
-                break;
-            case PHASE_END:
-            case PHASE_VICTORY:
-                clearSprites();
+                case PHASE_MOVEMENT:
+                    refreshMoveVectors();
+                case PHASE_FIRING:
+                    clearAllMoveVectors();
+                case PHASE_PHYSICAL:
+                    refreshAttacks();
+                    break;
+                case PHASE_INITIATIVE:
+                    clearAllAttacks();
+                    break;
+                case PHASE_END:
+                case PHASE_VICTORY:
+                    clearSprites();
+                default:
+                    break;
             }
         }
     };

@@ -166,56 +166,58 @@ public abstract class BotClient extends Client {
 
         try {
             switch (phase) {
-            case PHASE_LOUNGE:
-                sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
-                break;
-            case PHASE_DEPLOYMENT:
-                initialize();
-                break;
-            case PHASE_MOVEMENT:
-                if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
-                    sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
-                    die();
-                }
-                // if the game is not double blind and I can't see anyone
-                // else on the board I should kill myself.
-                if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
-                        && ((game.getEntitiesOwnedBy(getLocalPlayer())
-                                - game.getNoOfEntities()) == 0)) {
-                    die();
-                }
-
-                if (Compute.randomInt(4) == 1) {
-                    String message = getRandomBotMessage();
-                    if (message != null) {
-                        sendChat(message);
+                case PHASE_LOUNGE:
+                    sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
+                    break;
+                case PHASE_DEPLOYMENT:
+                    initialize();
+                    break;
+                case PHASE_MOVEMENT:
+                    if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
+                        sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
+                        die();
                     }
-                }
-                initMovement();
-                break;
-            case PHASE_FIRING:
-                initFiring();
-                break;
-            case PHASE_PHYSICAL:
-                break;
-            case PHASE_END_REPORT:
-                // Check if stealth armor should be switched on/off
-                // Kinda cheap leaving this until the end phase, players
-                // can't do this
-                toggleStealth();
-            case PHASE_INITIATIVE_REPORT:
-            case PHASE_TARGETING_REPORT:
-            case PHASE_MOVEMENT_REPORT:
-            case PHASE_OFFBOARD_REPORT:
-            case PHASE_FIRING_REPORT:
-            case PHASE_PHYSICAL_REPORT:
-                sendDone(true);
-                break;
-            case PHASE_VICTORY:
-                runEndGame();
-                sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
-                die();
-                break;
+                    // if the game is not double blind and I can't see anyone
+                    // else on the board I should kill myself.
+                    if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
+                            && ((game.getEntitiesOwnedBy(getLocalPlayer())
+                                    - game.getNoOfEntities()) == 0)) {
+                        die();
+                    }
+    
+                    if (Compute.randomInt(4) == 1) {
+                        String message = getRandomBotMessage();
+                        if (message != null) {
+                            sendChat(message);
+                        }
+                    }
+                    initMovement();
+                    break;
+                case PHASE_FIRING:
+                    initFiring();
+                    break;
+                case PHASE_PHYSICAL:
+                    break;
+                case PHASE_END_REPORT:
+                    // Check if stealth armor should be switched on/off
+                    // Kinda cheap leaving this until the end phase, players
+                    // can't do this
+                    toggleStealth();
+                case PHASE_INITIATIVE_REPORT:
+                case PHASE_TARGETING_REPORT:
+                case PHASE_MOVEMENT_REPORT:
+                case PHASE_OFFBOARD_REPORT:
+                case PHASE_FIRING_REPORT:
+                case PHASE_PHYSICAL_REPORT:
+                    sendDone(true);
+                    break;
+                case PHASE_VICTORY:
+                    runEndGame();
+                    sendChat(Messages.getString("BotClient.Bye")); //$NON-NLS-1$
+                    die();
+                    break;
+                default:
+                    break;
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -968,6 +970,8 @@ public abstract class BotClient extends Client {
                     break;
                 }
             }
+            dis.close();
+            fis.close();
         }// File not found don't do anything just return a null and allow the
         // bot to remain silent
         catch (FileNotFoundException fnfe) {

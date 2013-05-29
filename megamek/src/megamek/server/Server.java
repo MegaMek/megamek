@@ -28953,6 +28953,8 @@ public class Server implements Runnable {
             case WHEELED:
                 penalty = 2;
                 break;
+            default:
+                break;
         }
         if (inferno) {
             boomroll = 12;
@@ -29082,6 +29084,8 @@ public class Server implements Runnable {
                     vDesc.addAll(crashVTOLorWiGE(te));
                 }
                 return vDesc;
+                default:
+                    break;
         }
         if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
             modifier = Math.max(modifier - 1, 0);

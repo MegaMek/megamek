@@ -1083,8 +1083,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isPermanentlyImmobilized() {
         if ((getCrew() == null) || getCrew().isDead()) {
             return true;
-        } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
-                && ((getWalkMP() == 0) && (getRunMP() == 0) && (getJumpMP() == 0))) {
+        } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0)
+                        || (getOriginalJumpMP() > 0))
+                    /* Need to make sure here that we're ignoring heat because
+                     * that's not actually "permanent": */
+                    && ((getWalkMP(true, true, false) == 0)
+                        && (getRunMP(true, true, false) == 0)
+                        && (getJumpMP() == 0))) {
             return true;
         } else {
             return false;

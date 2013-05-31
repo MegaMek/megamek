@@ -364,27 +364,22 @@ public class BattleArmor extends Infantry {
                 return 0;
             }
         }
-        int mp = getOriginalJumpMP();
-
-        // partial wing gives extra MP in atmosphere
-        if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING) && ((game == null) || !game.getPlanetaryConditions().isVacuum())) {
-            mp++;
-        } else if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
-            // jump booster gives an extra MP
-            mp++;
-        }
-        if (getMovementMode() == EntityMovementMode.INF_UMU) {
-            mp = 0;
+        int mp = 0;
+        if (getMovementMode() != EntityMovementMode.INF_UMU) {
+            mp = getOriginalJumpMP();
         }
         // if we have no normal jump jets, we get 1 jump MP from mechanical jump
         // boosters, if we have them.
-        // we do this after the UMU check, because jump boosters work underwater
         if ((mp == 0) && hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
             mp++;
-            // partial wing gives extra MP in atmosphere
-            if (hasWorkingMisc(MiscType.F_PARTIAL_WING) && ((game == null) || (!game.getPlanetaryConditions().isVacuum()))) {
-                mp++;
-            }
+        }
+        // partial wing gives extra MP in atmosphere
+        if ((mp > 0) && hasWorkingMisc(MiscType.F_PARTIAL_WING) && ((game == null) || !game.getPlanetaryConditions().isVacuum())) {
+            mp++;
+        }
+        if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+            // jump booster gives an extra MP
+            mp++;
         }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);

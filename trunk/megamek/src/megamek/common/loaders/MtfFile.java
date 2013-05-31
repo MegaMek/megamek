@@ -266,6 +266,7 @@ public class MtfFile implements IMechLoader {
                         break;
                     case 3:
                         mech.setTechLevel(TechConstants.T_IS_ADVANCED);
+                        break;
                     case 4:
                         mech.setTechLevel(TechConstants.T_IS_EXPERIMENTAL);
                         break;
@@ -283,6 +284,7 @@ public class MtfFile implements IMechLoader {
                         break;
                     case 3:
                         mech.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+                        break;
                     case 4:
                         mech.setTechLevel(TechConstants.T_CLAN_EXPERIMENTAL);
                         break;

@@ -512,6 +512,7 @@ public class LosEffects {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.deadZone = true;
+            los.hasLoS = false;
             return los;
         }
 

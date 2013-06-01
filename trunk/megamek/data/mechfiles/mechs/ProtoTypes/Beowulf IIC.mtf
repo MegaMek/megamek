@@ -6,7 +6,7 @@ Config:Biped
 TechBase:Clan
 Era:3084
 Source:TRO:Prototypes
-Rules Level:3
+Rules Level:4
 
 Mass:45
 Engine:270 XL (Clan) Engine(IS)
@@ -31,9 +31,9 @@ RTR Armor:6
 RTC Armor:8
 
 Weapons:4
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
 ER Large Pulse Laser, Right Arm
-ER Medium Pulse Laser, Left Arm
-ER Medium Pulse Laser, Left Arm
 Light TAG, Head
 
 Left Arm:

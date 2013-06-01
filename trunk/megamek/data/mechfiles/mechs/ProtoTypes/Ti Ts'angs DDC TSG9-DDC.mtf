@@ -8,16 +8,17 @@ Era:3083
 Rules Level:4
 
 Mass:60
-Engine:360 XL Fusion Engine
-Structure:Endo-Steel
+Engine:360 XL Engine(IS)
+Structure:Endo Steel
+Myomer:Triple-Strength
 Cockpit:Small Cockpit
-Myomer:Triple Strength Myomer
+Gyro:Standard Gyro
 
 Heat Sinks:10 Double
 Walk MP:6
 Jump MP:6
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:20
 RA Armor:20
 LT Armor:20
@@ -30,17 +31,16 @@ RTL Armor:6
 RTR Armor:6
 RTC Armor:9
 
-Weapons:10
-1 Lance, Right Arm
-1 ISERMediumLaser, Left Torso
-1 ISERMediumLaser, Left Arm
-1 ISERMediumLaser, Left Torso
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Right Torso
-1 ISSmallXPulseLaser, Left Arm
-1 ISSmallXPulseLaser, Left Arm
-1 ISSmallXPulseLaser, Left Arm
-1 ISSmallXPulseLaser, Left Arm
+Weapons:9
+ER Medium Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -52,73 +52,79 @@ ISSmallXPulseLaser
 ISSmallXPulseLaser
 ISSmallXPulseLaser
 ISSmallXPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Lance
-Lance
-Lance
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+IS Lance
+IS Lance
+IS Lance
+TSM
+TSM
+TSM
+TSM
+TSM
 
 Left Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 ISERMediumLaser
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 ISERMediumLaser
 ISERMediumLaser
 ISTargeting Computer
 ISTargeting Computer
 ISTargeting Computer
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-IS Super Charger
-Triple Strength Myomer
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger
+TSM
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -127,6 +133,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -135,3 +147,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -13,6 +13,7 @@ BattleArmor
 Clan Medium Battle Armor
 </Name>
 <Model>
+"Rabid"
 </Model>
 <chassis>
 biped
@@ -45,7 +46,7 @@ BABasicManipulator
 Clan Level 2
 </type>
 <year>
-3074
+3067
 </year>
 <motion_type>
 Jump

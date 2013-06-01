@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Stinger
 IIC
 
@@ -8,15 +8,15 @@ Era:3085
 Rules Level:4
 
 Mass:20
-Engine:120 Fusion Engine
-Structure:Endo-Steel
+Engine:120 Fusion (Clan) Engine(IS)
+Structure:Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:6
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:6
 RA Armor:6
 LT Armor:7
@@ -30,18 +30,18 @@ RTR Armor:3
 RTC Armor:4
 
 Weapons:3
-1 CLAPGaussRifle, Right Arm, Ammo:40
-1 CLImprovedHeavyMediumLaser, Right Arm
-1 CLImprovedHeavyMediumLaser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+AP Gauss Rifle, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
-Endo-Steel
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
 -Empty-
@@ -53,55 +53,55 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
 CLAPGaussRifle
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
 -Empty-
 
 Left Torso:
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
 Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
 Ferro-Fibrous
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-Clan AP Gauss Rifle Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLAPGaussRifle Ammo
 Ferro-Fibrous
 
 Head:
@@ -111,19 +111,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

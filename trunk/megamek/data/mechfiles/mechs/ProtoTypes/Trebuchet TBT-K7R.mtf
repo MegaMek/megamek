@@ -1,22 +1,22 @@
-Version:1.1
+Version:1.0
 Trebuchet
 TBT-K7R
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3132
+Era:3088
 Rules Level:4
 
 Mass:50
-Engine:250 Light Fusion Engine
-Structure:Endo-Steel
-Myomer:Triple Strength Myomer
+Engine:250 Light Engine(IS)
+Structure:Endo Steel
+Myomer:Triple-Strength
 
 Heat Sinks:10 Double
 Walk MP:5
 Jump MP:5
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:16
 RA Armor:16
 LT Armor:19
@@ -29,14 +29,13 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:7
 
-Weapons:7
-1 Chain Whip, Right Arm
-1 ISStreakSRM6, Right Torso, Ammo:15
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Left Arm
-1 ISERFlamer, Left Torso
-1 ISERFlamer, Left Torso
-1 ISMekTaser, Left Arm, Ammo:10
+Weapons:6
+ER Medium Laser, Left Arm
+Mech Taser, Left Arm
+ER Flamer, Left Torso
+ER Flamer, Left Torso
+Streak SRM 6, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -44,13 +43,13 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISERMediumLaser
-ISMekTaser
-ISMekTaser
-ISMekTaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Mek Taser
+Mek Taser
+Mek Taser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Arm:
 Shoulder
@@ -59,52 +58,52 @@ Lower Arm Actuator
 Hand Actuator
 Chain Whip
 Chain Whip
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 
 Left Torso:
-Engine
-Engine
-ISERFlamer
-ISERFlamer
-ISStreakSRM6 Ammo
-MekTaserAmmo
-MekTaserAmmo
+Fusion Engine
+Fusion Engine
+ER Flamer
+ER Flamer
+IS Streak SRM 6 Ammo
+Taser Ammo
+Taser Ammo
 ISCASE
-Endo-Steel
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+Endo Steel
+TSM
+TSM
+TSM
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 ISStreakSRM6
 ISStreakSRM6
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+Endo Steel
+Endo Steel
+Endo Steel
+TSM
+TSM
+TSM
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 -Empty-
 
@@ -112,9 +111,15 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -123,6 +128,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -131,3 +142,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

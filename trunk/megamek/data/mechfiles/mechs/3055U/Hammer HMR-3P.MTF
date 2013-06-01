@@ -1,10 +1,10 @@
 Version:1.1
 Hammer
-HMR-3P
+HMR-3P "Pein-Hammer"
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3058
+Era:3060
 Rules Level:2
 
 Mass:30

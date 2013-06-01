@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Ursus
 3
 
@@ -8,7 +8,7 @@ Era:3079
 Rules Level:4
 
 Mass:50
-Engine:200 Fusion Engine
+Engine:200 Fusion (Clan) Engine(IS)
 Structure:Standard
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:15
 RA Armor:15
 LT Armor:18
@@ -29,16 +29,15 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:7
 
-Weapons:9
-1 CLProtoAC8, Right Arm, Ammo:30
-1 CLProtoAC8, Right Arm
-1 CLImprovedHeavyMediumLaser, Right Torso
-1 CLImprovedHeavyMediumLaser, Left Torso
-1 CLAPGaussRifle, Left Arm, Ammo:80
-1 CLAPGaussRifle, Left Arm
-1 CLAPGaussRifle, Left Arm
-1 CLWatchdogECM, Center Torso
-1 CLERFlamer, Head
+Weapons:8
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+ProtoMech AC/8, Right Arm
+ProtoMech AC/8, Right Arm
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Right Torso
+ER Flamer, Head
 
 Left Arm:
 Shoulder
@@ -48,8 +47,8 @@ Hand Actuator
 CLAPGaussRifle
 CLAPGaussRifle
 CLAPGaussRifle
-Clan AP Gauss Rifle Ammo
-Clan AP Gauss Rifle Ammo
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
 CLCASEII
 Ferro-Fibrous
 Ferro-Fibrous
@@ -69,8 +68,8 @@ CLProtoMechAC8
 Ferro-Fibrous
 
 Left Torso:
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
 Ferro-Fibrous
 Ferro-Fibrous
 -Empty-
@@ -83,11 +82,11 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-CLImprovedHeavyMediumLaser
-CLImprovedHeavyMediumLaser
-CLProtoAC8Ammo
-CLProtoAC8Ammo
-CLProtoAC8Ammo
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan ProtoMech AC/8 Ammo
+Clan ProtoMech AC/8 Ammo
+Clan ProtoMech AC/8 Ammo
 CLCASEII
 Ferro-Fibrous
 Ferro-Fibrous
@@ -97,18 +96,18 @@ Ferro-Fibrous
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLWatchdogECM
-CLWatchdogECM
+Fusion Engine
+Fusion Engine
+Fusion Engine
+WatchdogECMSuite
+WatchdogECMSuite
 
 Head:
 Life Support
@@ -117,19 +116,39 @@ Cockpit
 CLERFlamer
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

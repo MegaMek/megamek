@@ -1,45 +1,44 @@
-Version:1.1
-Wasp
-WSP-1
+Version:1.0
+Hermes II
+HER-6D
 
 Config:Biped
 TechBase:Inner Sphere
-Era:2464
-Source:Star League
+Era:3062
 Rules Level:2
 
-Mass:20
-Engine:120 Fusion Engine
-Structure:Standard
+Mass:40
+Engine:240 Fusion Engine(IS)
+Structure:Endo Steel
 Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:5
-Jump MP:5
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
 
-Armor:Industrial(Inner Sphere)
-LA Armor:3
-RA Armor:3
-LT Armor:4
-RT Armor:4
-CT Armor:6
-HD Armor:4
-LL Armor:3
-RL Armor:3
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+Armor:Standard(Inner Sphere)
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:17
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
 
-Weapons:1
-Medium Laser, Right Arm
+Weapons:3
+ER Medium Laser, Right Arm
+Flamer, Left Arm
+Rotary AC/5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
+Flamer
 -Empty-
 -Empty-
 -Empty-
@@ -54,7 +53,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Medium Laser
+ISERMediumLaser
 -Empty-
 -Empty-
 -Empty-
@@ -64,32 +63,32 @@ Medium Laser
 -Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Jump Jet
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISRotaryAC5 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Jump Jet
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -102,7 +101,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+-Empty-
 -Empty-
 
 Head:
@@ -124,7 +123,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +137,6 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -146,5 +144,4 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
-
-
+-Empty-

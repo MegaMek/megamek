@@ -74,7 +74,8 @@ v0.35.39-dev (SVN)
 + Bug: Entity.isPermanentlyImmobilized counting MP reductions from heat as permanent damage.
 + Bug: shields get less DA and DC when constructed without hands/LA
 + Bug: BA Jump MP not correct for UMU units
-+ Data: More Date and unit fixes 
++ Data: More Date and unit fixes
++ Bug 3750: Indirect LRM fire from a tank isn't being checked correctly for LOS 
 + Bug: Modifier for motive damage check for charged vehicles taken from *attacker*, not target; ClassCastException if "attacker" was a (skidding) 'Mech.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)

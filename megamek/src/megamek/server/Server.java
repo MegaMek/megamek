@@ -15006,7 +15006,7 @@ public class Server implements Runnable {
             addReport(r);
 
             int side = Compute.targetSideTable(ae, te);
-            int mod = ((Tank) ae).getMotiveSideMod(side);
+            int mod = ((Tank) te).getMotiveSideMod(side);
             addReport(vehicleMotiveDamage((Tank) te, mod));
         }
 

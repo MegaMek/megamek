@@ -1,14 +1,14 @@
-Version:1.1
+Version:1.0
 Orion
 ON3-M
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Rules Level:3
+Rules Level:4
 
 Mass:75
-Engine:300 XL Fusion Engine
+Engine:300 XL Engine(IS)
 Structure:Standard
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:22
 RA Armor:22
 LT Armor:22
@@ -30,22 +30,22 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:5
-1 ISERMediumLaser, Right Arm
-1 ISGaussRifle, Right Torso, Ammo:16
-1 ISTAG, Head
-1 ISExtendedLRM15, Left Arm, Ammo:24
-1 ISERMediumLaser, Left Arm
+Extended LRM 15, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Gauss Rifle, Right Torso
+TAG, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
 ISERMediumLaser
 -Empty-
 -Empty-
@@ -65,13 +65,13 @@ ISERMediumLaser
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
 ISCASEII
 -Empty-
 -Empty-
@@ -79,9 +79,9 @@ ISCASEII
 -Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
@@ -93,18 +93,18 @@ ISCASEII
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISGauss Ammo
-ISGauss Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Gauss Ammo
+IS Gauss Ammo
 
 Head:
 Life Support
@@ -113,12 +113,24 @@ Cockpit
 ISTAG
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -129,3 +141,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

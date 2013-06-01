@@ -4,20 +4,21 @@ GHR-7P
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3085
+Era:3081
 Rules Level:4
 
 Mass:70
-Engine:280 Light Fusion Engine
-Structure:Endo-Steel
-Cockpit:Torso-Mounted Cockpit
+Engine:280 Light Engine(IS)
+Structure:Endo Steel
 Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:13 Double
 Walk MP:4
 Jump MP:6
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:22
 RA Armor:22
 LT Armor:22
@@ -30,13 +31,12 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:11
 
-Weapons:6
-1 ISLargeXPulseLaser, Right Arm
-1 ISERMediumLaser, Right Arm
-1 ISERMediumLaser, Left Arm
-1 ISERMediumLaser, Head
-1 ISLargeXPulseLaser, Left Arm
-1 ISBloodhoundActiveProbe, Head
+Weapons:5
+Large X-Pulse Laser, Left Arm
+ER Medium Laser, Left Arm
+Large X-Pulse Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
@@ -46,11 +46,11 @@ Hand Actuator
 ISLargeXPulseLaser
 ISLargeXPulseLaser
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Arm:
 Shoulder
@@ -60,51 +60,51 @@ Hand Actuator
 ISLargeXPulseLaser
 ISLargeXPulseLaser
 ISERMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Life Support
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISImprovedJump Jet
-ISImprovedJump Jet
-ISImprovedJump Jet
-ISImprovedJump Jet
-Endo-Steel
-Endo-Steel
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+Endo Steel
+Endo Steel
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Life Support
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISImprovedJump Jet
-ISImprovedJump Jet
-ISImprovedJump Jet
-ISImprovedJump Jet
-Endo-Steel
-Endo-Steel
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+Endo Steel
+Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Cockpit
 Sensors
 
@@ -112,22 +112,42 @@ Head:
 Sensors
 Sensors
 ISERMediumLaser
-ISBloodhoundActiveProbe
-ISBloodhoundActiveProbe
-ISBloodhoundActiveProbe
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISImprovedJump Jet
-ISImprovedJump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISImprovedJump Jet
-ISImprovedJump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

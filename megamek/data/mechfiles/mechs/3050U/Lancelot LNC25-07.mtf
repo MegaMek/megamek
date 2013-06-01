@@ -1,46 +1,46 @@
 Version:1.0
-Thorn
-THE-N
+Lancelot
+LNC25-07
 
 Config:Biped
 TechBase:Inner Sphere
-Era:2490
-Source:Succession Wars
-Rules Level:1
+Era:3067
+Rules Level:2
 
-Mass:20
-Engine:120 Fusion Engine(IS)
+Mass:60
+Engine:360 XL Engine(IS)
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:10 Single
+Heat Sinks:13 Double
 Walk MP:6
 Jump MP:0
 
 Armor:Standard(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:6
-RT Armor:6
-CT Armor:8
-HD Armor:8
-LL Armor:7
-RL Armor:7
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:21
+HD Armor:7
+LL Armor:14
+RL Armor:14
+RTL Armor:10
+RTR Armor:10
+RTC Armor:16
 
-Weapons:3
-Medium Laser, Left Arm
-LRM 5, Right Arm
-Medium Laser, Head
+Weapons:4
+Large Laser, Right Arm
+Large Laser, Left Arm
+PPC, Right Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
-Medium Laser
+Large Laser
+Large Laser
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -52,8 +52,8 @@ Medium Laser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-LRM 5
--Empty-
+Large Laser
+Large Laser
 -Empty-
 -Empty-
 -Empty-
@@ -64,9 +64,9 @@ LRM 5
 -Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
--Empty-
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 -Empty-
@@ -78,12 +78,12 @@ Heat Sink
 -Empty-
 
 Right Torso:
-Heat Sink
-Heat Sink
-IS Ammo LRM-5
--Empty-
--Empty-
--Empty-
+Fusion Engine
+Fusion Engine
+Fusion Engine
+PPC
+PPC
+PPC
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Heat Sink
-Heat Sink
+Medium Laser
+-Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Medium Laser
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -146,5 +146,4 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
-
 

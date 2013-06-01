@@ -1,14 +1,14 @@
-Version:1.1
+Version:1.0
 Apollo
 APL-4M
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Rules Level:3
+Rules Level:4
 
 Mass:55
-Engine:220 XL Fusion Engine
+Engine:220 XL Engine(IS)
 Structure:Composite
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:17
 RA Armor:17
 LT Armor:20
@@ -30,18 +30,18 @@ RTR Armor:6
 RTC Armor:7
 
 Weapons:3
-1 ISExtendedLRM15, Right Torso, Ammo:24
-1 ISExtendedLRM15, Left Torso
-1 ISERMediumLaser, Head
+Extended LRM 15, Left Torso
+Extended LRM 15, Right Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -53,9 +53,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -63,44 +63,44 @@ Ferro-Fibrous
 Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-Engine
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
 ISCASEII
 
 Right Torso:
-Engine
-Engine
-Engine
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
 ISCASEII
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -111,6 +111,12 @@ Cockpit
 ISERMediumLaser
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -119,6 +125,12 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -127,3 +139,11 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

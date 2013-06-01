@@ -1,10 +1,10 @@
 Version:1.0
 Seraph
-C-SRP-O Caelestis
+C-SRP-OS Caelestis
 
 Config:Biped Omni
 TechBase:Mixed (IS Chassis)
-Era:3067
+Era:3075
 Rules Level:4
 
 Mass:85

@@ -1,22 +1,22 @@
-Version:1.1
+Version:1.0
 Pandarus
 LFA-1A
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Rules Level:3
+Rules Level:4
 
 Mass:75
-Engine:300 Fusion Engine
-Structure:Endo-Steel
+Engine:300 Fusion Engine(IS)
+Structure:Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:22
@@ -30,20 +30,20 @@ RTR Armor:10
 RTC Armor:9
 
 Weapons:4
-1 ISExtendedLRM10, Left Torso, Ammo:54
-1 ISExtendedLRM10, Left Arm
-1 ISExtendedLRM10, Right Torso
-1 ISERMediumLaser, Right Arm
+Extended LRM 10, Left Arm
+ER Medium Laser, Right Arm
+Extended LRM 10, Left Torso
+Extended LRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtendedLRM10
+Extended LRM 10
+Extended LRM 10
+Extended LRM 10
+Extended LRM 10
 -Empty-
 -Empty-
 -Empty-
@@ -64,46 +64,46 @@ ISERMediumLaser
 -Empty-
 
 Left Torso:
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtended LRM10 Ammo
-ISExtended LRM10 Ammo
-ISExtended LRM10 Ammo
+Extended LRM 10
+Extended LRM 10
+Extended LRM 10
+Extended LRM 10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
 ISCASEII
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Torso:
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtendedLRM10
-ISExtended LRM10 Ammo
-ISExtended LRM10 Ammo
-ISExtended LRM10 Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Extended LRM 10
+Extended LRM 10
+Extended LRM 10
+Extended LRM 10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 ISCASEII
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
 
 Head:
 Life Support
@@ -112,19 +112,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

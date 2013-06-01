@@ -1,4 +1,4 @@
-#building block data file
+﻿#building block data file
 <BlockVersion>
 1
 </BlockVersion>
@@ -44,7 +44,7 @@ BABasicManipulator
 Clan Level 2
 </type>
 <year>
-3074
+3070
 </year>
 <motion_type>
 Jump

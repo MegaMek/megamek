@@ -1,11 +1,11 @@
 Version:1.1
-Rook-X
-NH-1B
+Rook
+NH-1X "Rook-X"
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3077
-Rules Level:5
+Rules Level:4
 
 Mass:55
 Engine:200 Primitive Fusion Engine

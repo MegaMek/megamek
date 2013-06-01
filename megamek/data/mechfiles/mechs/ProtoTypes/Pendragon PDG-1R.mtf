@@ -1,14 +1,14 @@
-Version:1.1
+Version:1.0
 Pendragon
 PDG-1R
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3083
-Rules Level:3
+Rules Level:4
 
 Mass:95
-Engine:380 XL Fusion Engine
+Engine:380 XL Engine(IS)
 Structure:Composite
 Myomer:Standard
 
@@ -16,7 +16,7 @@ Heat Sinks:14 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:32
 RA Armor:32
 LT Armor:30
@@ -29,51 +29,50 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:12
 
-Weapons:7
-1 ISExtendedLRM15, Right Arm, Ammo:24
-1 ISExtendedLRM15, Left Arm
-1 ISERPPC, Left Torso
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Right Torso
-1 ISC3SlaveUnit, Head
+Weapons:6
+Extended LRM 15, Left Arm
+Extended LRM 15, Right Arm
+ER PPC, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
 ISCASEII
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtendedLRM15
-ISExtended LRM15 Ammo
-ISExtended LRM15 Ammo
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+Extended LRM 15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
 ISCASEII
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISERPPC
 ISERPPC
 ISERPPC
-ISERPPCCapacitor
+PPC Capacitor
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -81,9 +80,9 @@ Ferro-Fibrous
 Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
@@ -95,16 +94,16 @@ Ferro-Fibrous
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -115,6 +114,12 @@ Cockpit
 ISC3SlaveUnit
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -123,6 +128,12 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -131,3 +142,11 @@ Lower Leg Actuator
 Foot Actuator
 Ferro-Fibrous
 Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -77,6 +77,7 @@ v0.35.39-dev (SVN)
 + Data: More Date and unit fixes
 + Bug 3750: Indirect LRM fire from a tank isn't being checked correctly for LOS 
 + Bug: Modifier for motive damage check for charged vehicles taken from *attacker*, not target; ClassCastException if "attacker" was a (skidding) 'Mech.
++ Bug 3722: Synchronized the copying of the events_to_process LinkedList.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

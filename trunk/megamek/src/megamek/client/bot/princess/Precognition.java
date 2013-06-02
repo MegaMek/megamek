@@ -45,11 +45,9 @@ public class Precognition implements Runnable {
 
     // units who's path I need to update
     private final TreeSet<Integer> dirty_units = new TreeSet<Integer>();
-    private final Object DIRTY_UNIT_LOCK = new Object();
 
     // events that may affect which units are dirty
     private final LinkedList<GameEvent> events_to_process = new LinkedList<GameEvent>();
-    private final Object EVENTS_TO_PROCESS_LOCK = new Object();
 
     private boolean wait_when_done = false; // used for pausing
     private boolean waiting = false;
@@ -74,7 +72,7 @@ public class Precognition implements Runnable {
             game.addGameListener(new GameListenerAdapter() {
                 @Override
                 public void gameEntityChange(GameEntityChangeEvent e) {
-                    synchronized (EVENTS_TO_PROCESS_LOCK) {
+                    synchronized (events_to_process) {
                         events_to_process.addLast(e);
                     }
                     wake_up();
@@ -82,7 +80,7 @@ public class Precognition implements Runnable {
 
                 @Override
                 public void gamePhaseChange(GamePhaseChangeEvent e) {
-                    synchronized (EVENTS_TO_PROCESS_LOCK) {
+                    synchronized (events_to_process) {
                         events_to_process.addLast(e);
                     }
                     wake_up();
@@ -167,7 +165,7 @@ public class Precognition implements Runnable {
             }
             while (!dirty_units.isEmpty()) {
                 Integer entity_id;
-                synchronized (DIRTY_UNIT_LOCK) {
+                synchronized (dirty_units) {
                     entity_id = dirty_units.pollFirst();
                 }
                 Entity e = game.getEntity(entity_id);
@@ -196,7 +194,7 @@ public class Precognition implements Runnable {
                     processGameEvents();
                 } else if (!dirty_units.isEmpty()) {
                     Entity e;
-                    synchronized (DIRTY_UNIT_LOCK) {
+                    synchronized (dirty_units) {
                         e = game.getEntity(dirty_units.pollFirst());
                     }
                     if (e != null) {
@@ -254,7 +252,10 @@ public class Precognition implements Runnable {
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
-            LinkedList<GameEvent> eventsToProcessIterator = new LinkedList<GameEvent>(events_to_process);
+            LinkedList<GameEvent> eventsToProcessIterator;
+            synchronized (events_to_process) {
+                eventsToProcessIterator = new LinkedList<GameEvent>(events_to_process);
+            }
             int numEvents = eventsToProcessIterator.size();
             for (int count = 0; count < numEvents; count++) {
                 owner.log(getClass(), METHOD_NAME, "Processing event " + (count + 1) + " out of " + numEvents);
@@ -263,7 +264,7 @@ public class Precognition implements Runnable {
                     continue;
                 }
                 owner.log(getClass(), METHOD_NAME, "Processing " + event.toString());
-                synchronized (EVENTS_TO_PROCESS_LOCK) {
+                synchronized (events_to_process) {
                     events_to_process.remove(event);
                 }
                 if (event instanceof GameEntityChangeEvent) {
@@ -309,7 +310,7 @@ public class Precognition implements Runnable {
                         for (Enumeration<Entity> ents = game.getEntities(); ents.hasMoreElements();) {
                             Entity e = ents.nextElement();
                             if (e.isActive() && e.isDeployed()) {
-                                synchronized (DIRTY_UNIT_LOCK) {
+                                synchronized (dirty_units) {
                                     dirty_units.add(e.getId());
                                 }
                             }
@@ -382,14 +383,14 @@ public class Precognition implements Runnable {
                     }
                     owner.log(getClass(), METHOD_NAME, msg);
                 }
-                synchronized (DIRTY_UNIT_LOCK) {
+                synchronized (dirty_units) {
                     dirty_units.addAll(to_dirty);
                 }
             }
             Entity e = game.getEntity(id);
             if ((e != null) && (e.isSelectableThisTurn())
                     || (game.getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
-                synchronized (DIRTY_UNIT_LOCK) {
+                synchronized (dirty_units) {
                     dirty_units.add(id);
                 }
             } else if (e != null) {

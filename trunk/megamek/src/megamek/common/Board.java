@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -16,6 +17,7 @@ package megamek.common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +30,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -43,7 +44,6 @@ import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
 
 public class Board implements Serializable, IBoard {
-
     private static final long serialVersionUID = -5744058872091016636L;
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
@@ -549,15 +549,19 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Checks if a file in data/boards is the specified size
+     * Checks if a board file is the specified size.
+     * 
+     * @param filepath The path to the board file.
+     * @param size The dimensions of the board to test.
+     * @return {@code true} if the dimensions match.
      */
-    public static boolean boardIsSize(String filename, int x, int y) {
+    public static boolean boardIsSize(final File filepath, final BoardDimensions size)
+    {
         int boardx = 0;
         int boardy = 0;
         try {
             // make inpustream for board
-            Reader r = new BufferedReader(new FileReader("data/boards"
-                    + File.separator + filename));
+            Reader r = new BufferedReader(new FileReader(filepath));
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -580,16 +584,21 @@ public class Board implements Serializable, IBoard {
         }
 
         // check and return
-        return (boardx == x) && (boardy == y);
+        return (boardx == size.width()) && (boardy == size.height());
     }
 
-    public static ArrayList<Integer> getSize(String filename) {
+    /**
+     * Inspect specified board file and return its dimensions.
+     * 
+     * @param filepath The path to the board file.
+     * @return A {@link BoardDimensions} object containing the dimension.
+     */
+    public static BoardDimensions getSize(final File filepath) {
         int boardx = 0;
         int boardy = 0;
         try {
             // make inpustream for board
-            Reader r = new BufferedReader(new FileReader("data/boards"
-                    + File.separator + filename));
+            Reader r = new BufferedReader(new FileReader(filepath));
             // read board, looking for "size"
             StreamTokenizer st = new StreamTokenizer(r);
             st.eolIsSignificant(true);
@@ -610,10 +619,7 @@ public class Board implements Serializable, IBoard {
         } catch (IOException ex) {
             return null;
         }
-        ArrayList<Integer> size = new ArrayList<Integer>();
-        size.add(boardx);
-        size.add(boardy);
-        return size;
+        return new BoardDimensions(boardx, boardy);
     }
 
     /**
@@ -680,13 +686,21 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Loads this board from a filename in data/boards
+     * {@inheritDoc}
      */
-    public void load(String filename) {
+    @Override
+    public void load(final String filename) {
+        load(new File(Configuration.boardsDir(), filename));
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void load(final File filepath) {
         // load a board
         try {
-            java.io.InputStream is = new java.io.FileInputStream(
-                    new java.io.File("data/boards", filename));
+            java.io.InputStream is = new FileInputStream(filepath);
             // tell the board to load!
             load(is);
             // okay, done!

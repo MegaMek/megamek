@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * ScenarioLoader - Copyright (C) 2002 Josh Yockey
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -30,6 +31,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
@@ -78,8 +80,11 @@ public class ScenarioLoader {
         // Parse the camo directory.
 
         try {
-            camos = new DirectoryItems(new File("data/images/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageFileFactory.getInstance());
+            camos = new DirectoryItems(
+                    Configuration.camoDir(),
+                    "", //$NON-NLS-1$
+                    ImageFileFactory.getInstance()
+            );
         } catch (Exception e) {
             camos = null;
         }
@@ -846,9 +851,8 @@ public class ScenarioLoader {
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
         Vector<String> vBoards = new Vector<String>();
-        File boardDir = new File("data/boards");
-
-        String[] fileList = boardDir.list();
+        
+        String[] fileList = Configuration.boardsDir().list();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].endsWith(".board")) {
                 vBoards.addElement(fileList[i].substring(0,
@@ -881,7 +885,7 @@ public class ScenarioLoader {
                 } else {
                     sBoardFile = sBoard + ".board";
                 }
-                File fBoard = new File(boardDir, sBoardFile);
+                File fBoard = new File(Configuration.boardsDir(), sBoardFile);
                 if (!fBoard.exists()) {
                     throw new Exception("Scenario requires nonexistant board: "
                             + sBoard);

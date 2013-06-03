@@ -1,6 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  *
@@ -16,6 +17,8 @@
  */
 
 package megamek.client.ui.AWT.boardview3d;
+
+import java.io.File;
 
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -35,6 +38,7 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 import megamek.client.ui.AWT.GUIPreferences;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -58,6 +62,8 @@ class BoardModel extends BranchGroup {
     static final BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), Double.POSITIVE_INFINITY);
     static final Color3f SKY = new Color3f(.33f, .5f, 1.0f);
     static final Color3f LAND = new Color3f(.66f, .66f, .5f);
+    
+    static final String FILENAME_CLOUDS_TEXTURE =  "clouds.jpg";
 
     TileTextureManager tileManager;
     SimpleUniverse universe;
@@ -84,7 +90,7 @@ class BoardModel extends BranchGroup {
         Appearance sapp = new Appearance();
         sapp.setColoringAttributes(new ColoringAttributes(SKY, ColoringAttributes.SHADE_FLAT));
         sapp.setPolygonAttributes(C.noCull);
-        sapp.setTexture(tileManager.getTexture("data/images/misc/clouds.jpg"));
+        sapp.setTexture(tileManager.getTexture(new File(Configuration.miscImagesDir(), FILENAME_CLOUDS_TEXTURE).toString()));
         TransformGroup tg = new TransformGroup(new Transform3D(C.mkquat(1, 0, 0, Math.PI/2), new Vector3d(), 1.0));
         tg.addChild(new Sphere(1f, Primitive.GENERATE_TEXTURE_COORDS, 100, sapp));
         back.addChild(tg);

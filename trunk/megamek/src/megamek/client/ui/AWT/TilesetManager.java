@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -40,6 +41,7 @@ import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.RotateFilter;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -62,6 +64,17 @@ import megamek.common.util.DirectoryItems;
  * @version
  */
 public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
+    private static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
+    private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString(); //$NON-NLS-1$
+    private static final String FILENAME_ARTILLERY_AUTOHIT_IMAGE = "artyauto.gif"; //$NON-NLS-1$
+    private static final String FILENAME_ARTILLERY_ADJUSTED_IMAGE = "artyadj.gif"; //$NON-NLS-1$
+    private static final String FILENAME_ARTILLERY_INCOMING_IMAGE = "artyinc.gif"; //$NON-NLS-1$
+    private static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
+
+    public static final int ARTILLERY_AUTOHIT = 0;
+    public static final int ARTILLERY_ADJUSTED = 1;
+    public static final int ARTILLERY_INCOMING = 2;
+
     // component to load images to
     private Component comp;
 
@@ -74,9 +87,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private DirectoryItems camos;
 
     // mech images
-    private MechTileset mechTileset = new MechTileset("data/images/units/"); //$NON-NLS-1$
+    private MechTileset mechTileset = new MechTileset(
+            Configuration.unitImagesDir().toString()
+    );
     private MechTileset wreckTileset = new MechTileset(
-            "data/images/units/wrecks/"); //$NON-NLS-1$
+            new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS).toString()
+    );
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private HashMap<Integer, EntityImage> mechImages = new HashMap<Integer, EntityImage>();
 
@@ -89,15 +105,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
     private HashMap<Integer, Image> ecmShades = new HashMap<Integer, Image>();
-    private static final String NIGHT_IMAGE_FILE = "data/images/hexes/transparent/night.png";
-    private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/images/hexes/artyauto.gif";
-    private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/images/hexes/artyadj.gif";
-    private static final String ARTILLERY_INCOMING_IMAGE_FILE = "data/images/hexes/artyinc.gif";
-
-    public static final int ARTILLERY_AUTOHIT = 0;
-    public static final int ARTILLERY_ADJUSTED = 1;
-    public static final int ARTILLERY_INCOMING = 2;
-
+    
     /**
      * Creates new TilesetManager
      *
@@ -107,8 +115,11 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         this.comp = comp;
         tracker = new MediaTracker(comp);
         try {
-            camos = new DirectoryItems(new File("data/images/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageFileFactory.getInstance());
+            camos = new DirectoryItems(
+                    Configuration.camoDir(),
+                    "", //$NON-NLS-1$
+                    ImageFileFactory.getInstance()
+            );
         } catch (Exception e) {
             camos = null;
         }
@@ -117,10 +128,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         try {
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            if ( !new File("data/images/hexes/defaulthexset.txt").exists() ){
+            if ( !new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists() ){
                 createDefaultHexSet();
             }
-            hexTileset.loadFromFile("defaulthexset.txt");
+            hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
         }
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
@@ -334,18 +345,25 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load minefield sign
-        minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
+        minefieldSign = comp.getToolkit().getImage(
+                new File(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString()
+        );
 
         // load night overlay
-        nightFog = comp.getToolkit().getImage(NIGHT_IMAGE_FILE);
+        nightFog = comp.getToolkit().getImage(
+                new File(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString()
+        );
 
         // load artillery targets
         artilleryAutohit = comp.getToolkit().getImage(
-                ARTILLERY_AUTOHIT_IMAGE_FILE);
+                new File(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString()
+        );
         artilleryAdjusted = comp.getToolkit().getImage(
-                ARTILLERY_ADJUSTED_IMAGE_FILE);
+                new File(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString()
+        );
         artilleryIncoming = comp.getToolkit().getImage(
-                ARTILLERY_INCOMING_IMAGE_FILE);
+                new File(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString()
+        );
 
         started = true;
     }
@@ -636,7 +654,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     private void createDefaultHexSet(){
         try {
-            FileOutputStream fos = new FileOutputStream(new File("data/images/hexes/defaulthexset.txt"));
+            FileOutputStream fos = new FileOutputStream(new File(FILENAME_DEFAULT_HEX_SET));
             PrintStream p = new PrintStream(fos);
 
             p.println("# suggested hex tileset");

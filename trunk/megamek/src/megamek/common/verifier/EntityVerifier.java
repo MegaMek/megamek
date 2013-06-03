@@ -1,6 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -28,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Enumeration;
 
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Mech;
@@ -37,11 +39,11 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Tank;
 
 public class EntityVerifier implements MechSummaryCache.Listener {
-    public final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml";
+    public final static String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
 
-    public final static String BASE_NODE = "entityverifier";
-    public final static String BASE_MECH_NODE = "mech";
-    public final static String BASE_TANK_NODE = "tank";
+    public final static String BASE_NODE = "entityverifier"; //$NON-NLS-1$
+    public final static String BASE_MECH_NODE = "mech"; //$NON-NLS-1$
+    public final static String BASE_TANK_NODE = "tank"; //$NON-NLS-1$
 
     private static MechSummaryCache mechSummaryCache = null;
     public TestXMLOption mechOption = new TestXMLOption();
@@ -53,7 +55,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             root = TinyParser.parseXML(new FileInputStream(config));
             for (Enumeration<?> e = root.elements(); e.hasMoreElements();) {
                 ParsedXML child = (ParsedXML) e.nextElement();
-                if (child.getTypeName().equals("tag")
+                if (child.getTypeName().equals("tag") //$NON-NLS-1$
                         && child.getName().equals(BASE_NODE)) {
                     readOptions(child);
                 }
@@ -165,7 +167,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     }
 
     public static void main(String[] args) {
-        File config = new File(CONFIG_FILENAME);
+        File config = new File(Configuration.unitsDir(), CONFIG_FILENAME);
         File f = null;
         String entityName = null;
         for (int i = 0; i < args.length; i++) {

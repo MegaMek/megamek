@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -40,6 +41,7 @@ import java.io.FilenameFilter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.SimpleLine;
+import megamek.common.Configuration;
 import megamek.common.MapSettings;
 
 public class RandomMapDialog extends Dialog implements ActionListener,
@@ -382,7 +384,7 @@ public class RandomMapDialog extends Dialog implements ActionListener,
             FileDialog fd = new FileDialog(
                     frame,
                     Messages.getString("RandomMapDialog.FileLoadDialog"), FileDialog.LOAD); //$NON-NLS-1$
-            fd.setDirectory("./data/boards/");
+            fd.setDirectory(Configuration.boardsDir().toString());
             fd.setFilenameFilter(new FilenameFilter() {
                 public boolean accept(File f, String s) {
                     return s.endsWith(".xml");

@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -46,6 +47,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
@@ -221,7 +223,8 @@ public class MiniMap extends Canvas {
         int blue;
 
         File coloursFile = new File(
-                "data/images/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
+                Configuration.hexesDir(), GUIPreferences.getInstance().getMinimapColours()
+        );
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {

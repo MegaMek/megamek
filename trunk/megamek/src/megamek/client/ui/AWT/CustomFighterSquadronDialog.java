@@ -1,5 +1,6 @@
 /*
  * MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -47,6 +48,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.common.Aero;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
@@ -165,7 +167,7 @@ public class CustomFighterSquadronDialog extends Dialog implements ActionListene
 
     private boolean includeMaxTech;
 
-    private EntityVerifier entityVerifier = new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml"));
+    private EntityVerifier entityVerifier = new EntityVerifier(new File(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
 
     public CustomFighterSquadronDialog(ClientGUI cl, UnitLoadingDialog uld) {
         super(cl.frame, Messages.getString("CustomFighterSquadronDialog.title"), true); //$NON-NLS-1$

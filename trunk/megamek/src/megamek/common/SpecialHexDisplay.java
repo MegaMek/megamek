@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -15,6 +16,7 @@ package megamek.common;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -28,7 +30,7 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT("data/images/hexes/artyauto.gif") {
+        ARTILLERY_AUTOHIT(new File(Configuration.hexesDir(), "artyauto.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
@@ -39,7 +41,7 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_ADJUSTED("data/images/hexes/artyadj.gif") {
+        ARTILLERY_ADJUSTED(new File(Configuration.hexesDir(), "artyadj.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
@@ -50,14 +52,14 @@ public class SpecialHexDisplay implements Serializable {
                 return true;
             }
         },
-        ARTILLERY_INCOMING("data/images/hexes/artyinc.gif"), ARTILLERY_TARGET(
-                "data/images/hexes/artytarget.gif") {
+        ARTILLERY_INCOMING(new File(Configuration.hexesDir(), "artyinc.gif").toString()), //$NON-NLS-1$
+        ARTILLERY_TARGET(new File(Configuration.hexesDir(), "artytarget.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILLERY_HIT("data/images/hexes/artyhit.gif") {
+        ARTILLERY_HIT(new File(Configuration.hexesDir(), "artyhit.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {
                 return false;

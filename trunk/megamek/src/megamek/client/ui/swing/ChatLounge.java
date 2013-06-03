@@ -1,6 +1,7 @@
 /*
  * MegaMek -
  *  Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ *  Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -42,7 +43,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -79,6 +82,8 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Board;
+import megamek.common.BoardDimensions;
+import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
@@ -172,7 +177,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JCheckBox chkIncludeGround;
     private JCheckBox chkIncludeSpace;
     private JButton butSpaceSize;
-    private ArrayList<ArrayList<Integer>> mapSizes = new ArrayList<ArrayList<Integer>>();
+    private Set<BoardDimensions> mapSizes = new TreeSet<BoardDimensions>();
 
     JPanel mapPreviewPanel;
     MiniMap miniMap = null;
@@ -207,8 +212,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         try {
             portraits = new DirectoryItems(
-                    new File("data/images/portraits"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageFileFactory.getInstance());
+                    Configuration.portraitImagesDir(),
+                    "", //$NON-NLS-1$
+                    ImageFileFactory.getInstance()
+            );
         } catch (Exception e) {
             portraits = null;
         }
@@ -1004,8 +1011,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         mapSizes = clientgui.getClient().getAvailableMapSizes();
         comboMapSizes.removeActionListener(this);
         comboMapSizes.removeAllItems();
-        for (ArrayList<Integer> size : mapSizes) {
-            comboMapSizes.addItem(size.get(0) + "x" + size.get(1));
+        for (BoardDimensions size : mapSizes) {
+            comboMapSizes.addItem(size);
         }
         comboMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
         comboMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
@@ -1085,12 +1092,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         int items = comboMapSizes.getItemCount();
 
         for (int i = 0; i < (items - 1); i++) {
-            String size = (String) comboMapSizes.getItemAt(i);
-            String[] sizes = size.split("x");
-
-            if ((Integer.parseInt(sizes[0]) == mapSettings.getBoardWidth())
-                    && (Integer.parseInt(sizes[1]) == mapSettings
-                            .getBoardHeight())) {
+            BoardDimensions size = (BoardDimensions) comboMapSizes.getItemAt(i);
+            
+            if (size.width() == mapSettings.getBoardWidth() && size.height() == mapSettings.getBoardHeight()) {
                 comboMapSizes.setSelectedIndex(i);
             }
 
@@ -2365,13 +2369,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui);
             mdd.setVisible(true);
         } else if (ev.getSource().equals(comboMapSizes)) {
-            if ((comboMapSizes.getSelectedItem() != null)
-                    && !comboMapSizes.getSelectedItem().equals(
-                            Messages.getString("ChatLounge.CustomMapSize"))) {
-                String[] sizes = comboMapSizes.getSelectedItem().toString()
-                        .split("x");
-                mapSettings.setBoardSize(Integer.parseInt(sizes[0]),
-                        Integer.parseInt(sizes[1]));
+            if (
+                comboMapSizes.getSelectedItem() != null
+                &&
+                !comboMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"))
+            ) {
+                BoardDimensions size = (BoardDimensions) comboMapSizes.getSelectedItem();
+                mapSettings.setBoardSize(size.width(), size.height());
                 clientgui.getClient().sendMapSettings(mapSettings);
             }
         } else if (ev.getSource().equals(chkRotateBoard)
@@ -2867,6 +2871,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         public class Renderer extends MekInfo implements TableCellRenderer {
 
+            private static final String FILENAME_PORTRAIT_DEFAULT = "default.gif";
+            private static final String FILENAME_UNKNOWN_UNIT = "unknown_unit.gif";
             private static final long serialVersionUID = -9154596036677641620L;
 
             public Component getTableCellRendererComponent(JTable table,
@@ -2886,7 +2892,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    "data/images/misc/unknown_unit.gif"); //$NON-NLS-1$
+                                    new File(Configuration.miscImagesDir(), FILENAME_UNKNOWN_UNIT).toString()
+                            );
                             image = image.getScaledInstance(-1, 72,
                                     Image.SCALE_DEFAULT);
                             setImage(image);
@@ -2896,9 +2903,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    "data/images/portraits/default.gif"); //$NON-NLS-1$
-                            image = image.getScaledInstance(-1, 50,
-                                    Image.SCALE_DEFAULT);
+                                    new File(Configuration.portraitImagesDir(), FILENAME_PORTRAIT_DEFAULT).toString()
+                            );
+                            image = image.getScaledInstance(-1, 50,Image.SCALE_DEFAULT);
                             setImage(image);
                         }
                     }

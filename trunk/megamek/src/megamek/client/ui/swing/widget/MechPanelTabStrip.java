@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ */
+/*
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ */
 package megamek.client.ui.swing.widget;
 
 import java.awt.Graphics;
@@ -7,8 +13,10 @@ import java.awt.Polygon;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 import megamek.client.ui.swing.MechDisplay;
+import megamek.common.Configuration;
 
 public class MechPanelTabStrip extends PicMap {
 
@@ -16,8 +24,6 @@ public class MechPanelTabStrip extends PicMap {
      *
      */
     private static final long serialVersionUID = -1282343469769007184L;
-
-    private static final String IMAGE_DIR = "data/images/widgets";
 
     private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[6];
     private static final Image[] idleImage = new Image[6];
@@ -57,20 +63,20 @@ public class MechPanelTabStrip extends PicMap {
     private void setImages() {
         MediaTracker mt = new MediaTracker(this);
         Toolkit tk = getToolkit();
-        idleImage[0] = tk.getImage(IMAGE_DIR + "/tab_general_idle.gif"); //$NON-NLS-1$
-        idleImage[1] = tk.getImage(IMAGE_DIR + "/tab_pilot_idle.gif"); //$NON-NLS-1$
-        idleImage[2] = tk.getImage(IMAGE_DIR + "/tab_armor_idle.gif"); //$NON-NLS-1$
-        idleImage[3] = tk.getImage(IMAGE_DIR + "/tab_systems_idle.gif"); //$NON-NLS-1$
-        idleImage[4] = tk.getImage(IMAGE_DIR + "/tab_weapon_idle.gif"); //$NON-NLS-1$
-        idleImage[5] = tk.getImage(IMAGE_DIR + "/tab_extras_idle.gif"); //$NON-NLS-1$
-        activeImage[0] = tk.getImage(IMAGE_DIR + "/tab_general_active.gif"); //$NON-NLS-1$
-        activeImage[1] = tk.getImage(IMAGE_DIR + "/tab_pilot_active.gif"); //$NON-NLS-1$
-        activeImage[2] = tk.getImage(IMAGE_DIR + "/tab_armor_active.gif"); //$NON-NLS-1$
-        activeImage[3] = tk.getImage(IMAGE_DIR + "/tab_systems_active.gif"); //$NON-NLS-1$
-        activeImage[4] = tk.getImage(IMAGE_DIR + "/tab_weapon_active.gif"); //$NON-NLS-1$
-        activeImage[5] = tk.getImage(IMAGE_DIR + "/tab_extras_active.gif"); //$NON-NLS-1$
-        idleCorner = tk.getImage(IMAGE_DIR + "/idle_corner.gif"); //$NON-NLS-1$
-        selectedCorner = tk.getImage(IMAGE_DIR + "/active_corner.gif"); //$NON-NLS-1$
+        idleImage[0] = tk.getImage(new File(Configuration.widgetsDir(), "tab_general_idle.gif").toString()); //$NON-NLS-1$
+        idleImage[1] = tk.getImage(new File(Configuration.widgetsDir(), "tab_pilot_idle.gif").toString()); //$NON-NLS-1$
+        idleImage[2] = tk.getImage(new File(Configuration.widgetsDir(), "tab_armor_idle.gif").toString()); //$NON-NLS-1$
+        idleImage[3] = tk.getImage(new File(Configuration.widgetsDir(), "tab_systems_idle.gif").toString()); //$NON-NLS-1$
+        idleImage[4] = tk.getImage(new File(Configuration.widgetsDir(), "tab_weapon_idle.gif").toString()); //$NON-NLS-1$
+        idleImage[5] = tk.getImage(new File(Configuration.widgetsDir(), "tab_extras_idle.gif").toString()); //$NON-NLS-1$
+        activeImage[0] = tk.getImage(new File(Configuration.widgetsDir(), "tab_general_active.gif").toString()); //$NON-NLS-1$
+        activeImage[1] = tk.getImage(new File(Configuration.widgetsDir(), "tab_pilot_active.gif").toString()); //$NON-NLS-1$
+        activeImage[2] = tk.getImage(new File(Configuration.widgetsDir(), "tab_armor_active.gif").toString()); //$NON-NLS-1$
+        activeImage[3] = tk.getImage(new File(Configuration.widgetsDir(), "tab_systems_active.gif").toString()); //$NON-NLS-1$
+        activeImage[4] = tk.getImage(new File(Configuration.widgetsDir(), "tab_weapon_active.gif").toString()); //$NON-NLS-1$
+        activeImage[5] = tk.getImage(new File(Configuration.widgetsDir(), "tab_extras_active.gif").toString()); //$NON-NLS-1$
+        idleCorner = tk.getImage(new File(Configuration.widgetsDir(), "idle_corner.gif").toString()); //$NON-NLS-1$
+        selectedCorner = tk.getImage(new File(Configuration.widgetsDir(), "active_corner.gif").toString()); //$NON-NLS-1$
 
         for (int i = 0; i < 6; i++) {
             mt.addImage(idleImage[i], 0);

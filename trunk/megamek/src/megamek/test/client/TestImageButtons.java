@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -32,9 +33,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 
 import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.client.ui.AWT.widget.SizedButton;
+import megamek.common.Configuration;
 
 public class TestImageButtons {
 
@@ -92,17 +95,18 @@ public class TestImageButtons {
 
         // Create a list as the center of the dialog.
         list = new List(5);
-        list.add("data/images/camo/Wood1.jpg");
-        list.add("data/images/camo/Wood2.jpg");
-        list.add("data/images/camo/Urban.jpg");
-        list.add("data/images/camo/Winter.jpg");
+        list.add(new File(Configuration.camoDir(), "Wood1.jpg").toString()); //$NON-NLS-1$
+        list.add(new File(Configuration.camoDir(), "Wood2.jpg").toString()); //$NON-NLS-1$
+        list.add(new File(Configuration.camoDir(), "Urban.jpg").toString()); //$NON-NLS-1$
+        list.add(new File(Configuration.camoDir(), "Winter.jpg").toString()); //$NON-NLS-1$
         list.select(0);
         list.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
-                imgButton.setImage(Toolkit.getDefaultToolkit()
-                        .getImage(
-                                (String) event.getItemSelectable()
-                                        .getSelectedObjects()[0]));
+                imgButton.setImage(
+                        Toolkit.getDefaultToolkit().getImage(
+                                (String) event.getItemSelectable().getSelectedObjects()[0]
+                        )
+                );
             }
         });
         list.addKeyListener(new KeyAdapter() {
@@ -152,7 +156,9 @@ public class TestImageButtons {
             }
         });
         imgButton.setImage(Toolkit.getDefaultToolkit().getImage(
-                "data/images/camo/Wood1.jpg"));
+                new File(Configuration.imagesDir(), "Wood1.jpg").toString() //$NON-NLS-1$
+            )
+        );
         panel.add(imgButton);
 
         // Create a "no camo" button on the panel.

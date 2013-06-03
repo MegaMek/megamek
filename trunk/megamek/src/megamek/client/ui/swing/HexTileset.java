@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -24,6 +25,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
+import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
@@ -214,7 +217,8 @@ public class HexTileset {
     public void loadFromFile(String filename) throws IOException {
         // make input stream for board
         Reader r = new BufferedReader(new FileReader(
-                "data/images/hexes/" + filename)); //$NON-NLS-1$
+                new File(Configuration.hexesDir(), filename)
+        ));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -539,7 +543,8 @@ public class HexTileset {
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
                 images.addElement(comp.getToolkit().getImage(
-                        "data/images/hexes/" + filename)); //$NON-NLS-1$
+                        new File(Configuration.hexesDir(), filename).toString()
+                ));
             }
         }
     }

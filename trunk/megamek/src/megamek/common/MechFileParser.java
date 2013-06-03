@@ -1,5 +1,6 @@
 /*
  * MechFileParser.java - Copyright (C) 2002,2003,2004 Josh Yockey
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -54,7 +55,6 @@ import megamek.common.loaders.IMechLoader;
 import megamek.common.loaders.MepFile;
 import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;
@@ -69,10 +69,7 @@ import megamek.common.weapons.ISSnubNosePPC;
 public class MechFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
-    private static final File ROOT = new File(PreferenceManager
-            .getClientPreferences().getMechDirectory());
-    private static final File OFFICIALUNITS = new File(ROOT,
-            "OfficialUnitList.txt");
+    private static final String FILENAME_OFFICIAL_UNITS = "OfficialUnitList.txt"; //$NON-NLS-1$
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
@@ -729,7 +726,7 @@ public class MechFileParser {
                 // init the list.
                 BufferedReader br = null;
                 try {
-                    br = new BufferedReader(new FileReader(OFFICIALUNITS));
+                    br = new BufferedReader(new FileReader(new File(Configuration.unitsDir(), FILENAME_OFFICIAL_UNITS)));
                     String s;
                     String name;
                     while ((s = br.readLine()) != null) {

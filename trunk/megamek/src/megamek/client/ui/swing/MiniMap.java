@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -14,7 +15,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -29,7 +29,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -57,6 +56,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
@@ -276,7 +276,8 @@ public class MiniMap extends JPanel {
         int blue;
 
         File coloursFile = new File(
-                "data/images/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
+                Configuration.hexesDir(), GUIPreferences.getInstance().getMinimapColours()
+        );
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {

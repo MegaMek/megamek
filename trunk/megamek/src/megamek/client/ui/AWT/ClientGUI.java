@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -58,6 +59,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.BackGroundDrawer;
 import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
@@ -80,6 +82,11 @@ import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends Panel implements WindowListener, ActionListener, BoardViewListener {
+    private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
+    private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
+    private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
+    private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+    
     /**
      *
      */
@@ -278,10 +285,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         frame.setForeground(SystemColor.menuText);
 
         List<Image> iconList = new ArrayList<Image>();
-        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-16x16.png")); //$NON-NLS-1$
-        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-32x32.png")); //$NON-NLS-1$
-        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-48x48.png")); //$NON-NLS-1$
-        iconList.add(frame.getToolkit().getImage("data/images/misc/megamek-icon-256x256.png")); //$NON-NLS-1$
+        iconList.add(frame.getToolkit().getImage(new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()));
+        iconList.add(frame.getToolkit().getImage(new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()));
+        iconList.add(frame.getToolkit().getImage(new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()));
+        iconList.add(frame.getToolkit().getImage(new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()));
         frame.setIconImages(iconList);
     }
 

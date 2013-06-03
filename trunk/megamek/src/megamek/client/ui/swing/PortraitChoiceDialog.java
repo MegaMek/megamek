@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -21,7 +22,6 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -44,13 +44,14 @@ import javax.swing.table.TableCellRenderer;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.util.DirectoryItems;
 
 /**
  * This dialog allows players to select a portrait for your pilot.
  *  It automatically fills itself with all of the images in the
- * "data/iamges/portraits" directory tree.
+ * {@link Configuration#portraitImagesDir()} directory tree.
  * <p/>
  * Created on September 17, 2009
  *
@@ -87,8 +88,11 @@ public class PortraitChoiceDialog extends JDialog {
      
        // Parse the camo directory.
        try {
-           portraits = new DirectoryItems(new File("data/images/portraits"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                   ImageFileFactory.getInstance());
+           portraits = new DirectoryItems(
+                   Configuration.portraitImagesDir(),
+                   "", //$NON-NLS-1$
+                   ImageFileFactory.getInstance()
+           );
        } catch (Exception e) {
            portraits = null;
        }

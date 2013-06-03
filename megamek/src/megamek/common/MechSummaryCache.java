@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -36,7 +37,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
@@ -55,20 +55,18 @@ public class MechSummaryCache {
         void doneLoading();
     }
 
+    private static final String FILENAME_UNITS_CACHE = "units.cache";
+
     static MechSummaryCache m_instance;
     private static boolean disposeInstance = false;
     private static boolean interrupted = false;
 
     private boolean initialized = false;
     private boolean initializing = false;
-    
+
     private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
     private StringBuffer loadReport = new StringBuffer();
-    private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; // should
-    // be a
-    // client
-    // option?
     private EntityVerifier entityVerifier = null;
     private Thread loader;
 
@@ -97,11 +95,25 @@ public class MechSummaryCache {
             synchronized (m_instance) {
                 interrupted = true;
                 m_instance.loader.interrupt();
-                // We can't do this, otherwise we can't notifyAll() 
-                //m_instance = null;
-                disposeInstance = true;                
+                // We can't do this, otherwise we can't notifyAll()
+                // m_instance = null;
+                disposeInstance = true;
             }
         }
+    }
+
+    /**
+     * Get the directory for the unit cache file.<br />
+     * TODO: Move this path so that the file loader doesn't need to explicitly
+     * exclude it!!!
+     * 
+     * @deprecated Inserted as a hack; the path should be passed-in from the
+     *             application during initialisation.
+     * @return The path to the directory containing the unit cache.
+     */
+    @Deprecated
+    public static File getUnitCacheDir() {
+        return Configuration.unitsDir();
     }
 
     public boolean isInitialized() {
@@ -127,9 +139,6 @@ public class MechSummaryCache {
     private int cacheCount;
     private int fileCount;
     private int zipCount;
-
-    private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
-    private static final File CACHE = new File(ROOT, "units.cache");
 
     private MechSummaryCache() {
         m_nameMap = new HashMap<String, MechSummary>();
@@ -170,7 +179,8 @@ public class MechSummaryCache {
         Vector<MechSummary> vMechs = new Vector<MechSummary>();
         Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;
-        entityVerifier = new EntityVerifier(new File(CONFIG_FILENAME));
+        entityVerifier = new EntityVerifier(new File(getUnitCacheDir(),
+                EntityVerifier.CONFIG_FILENAME));
         hFailedFiles = new HashMap<String, String>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
@@ -178,45 +188,50 @@ public class MechSummaryCache {
         loadReport.append("\n");
         loadReport.append("Reading unit files:\n");
 
+        File unit_cache_path = new File(getUnitCacheDir(), FILENAME_UNITS_CACHE);
         // check the cache
         try {
-            if (CACHE.exists() && (CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
+            if (unit_cache_path.exists()
+                    && (unit_cache_path.lastModified() >= megamek.MegaMek.TIMESTAMP)) {
                 loadReport.append("  Reading from unit cache file...\n");
-                lLastCheck = CACHE.lastModified();
-                InputStream istream = new BufferedInputStream(new FileInputStream(CACHE));
+                lLastCheck = unit_cache_path.lastModified();
+                InputStream istream = new BufferedInputStream(
+                        new FileInputStream(unit_cache_path));
                 ObjectInputStream fin = new ObjectInputStream(istream);
-                Integer num_units = (Integer)fin.readObject();
-                for (int i = 0; i < num_units; i++){
+                Integer num_units = (Integer) fin.readObject();
+                for (int i = 0; i < num_units; i++) {
                     if (interrupted) {
                         done();
                         fin.close();
                         istream.close();
                         return;
-                    }                    
-                    MechSummary ms = (MechSummary)fin.readObject();
+                    }
+                    MechSummary ms = (MechSummary) fin.readObject();
                     // Verify that this file still exists and is older than
                     // the cache.
                     File fSource = ms.getSourceFile();
                     if (fSource.exists()) {
                         vMechs.addElement(ms);
-                        if(null == ms.getEntryName()) {
+                        if (null == ms.getEntryName()) {
                             sKnownFiles.add(fSource.toString());
                         } else {
                             sKnownFiles.add(ms.getEntryName());
-                        }                        
+                        }
                         cacheCount++;
-                    }                 
+                    }
                 }
                 fin.close();
                 istream.close();
             }
         } catch (Exception e) {
-            loadReport.append("  Unable to load unit cache: ").append(e.getMessage()).append("\n");
+            loadReport.append("  Unable to load unit cache: ")
+                    .append(e.getMessage()).append("\n");
             e.printStackTrace();
         }
 
         // load any changes since the last check time
-        boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, ROOT);
+        boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
+                lLastCheck, Configuration.unitsDir());
 
         // convert to array
         m_data = new MechSummary[vMechs.size()];
@@ -227,7 +242,7 @@ public class MechSummaryCache {
             if (interrupted) {
                 done();
                 return;
-            } 
+            }
             m_nameMap.put(element.getName(), element);
             String entryName = element.getEntryName();
             if (entryName == null) {
@@ -236,11 +251,13 @@ public class MechSummaryCache {
                 String unitName = entryName;
 
                 if (unitName.indexOf("\\") > -1) {
-                    unitName = unitName.substring(unitName.lastIndexOf("\\") + 1);
+                    unitName = unitName
+                            .substring(unitName.lastIndexOf("\\") + 1);
                 }
 
                 if (unitName.indexOf("/") > -1) {
-                    unitName = unitName.substring(unitName.lastIndexOf("/") + 1);
+                    unitName = unitName
+                            .substring(unitName.lastIndexOf("/") + 1);
                 }
 
                 m_fileNameMap.put(unitName, element);
@@ -259,7 +276,8 @@ public class MechSummaryCache {
         loadReport.append(m_data.length).append(" units loaded.\n");
 
         if (hFailedFiles.size() > 0) {
-            loadReport.append("  ").append(hFailedFiles.size()).append(" units failed to load...\n");
+            loadReport.append("  ").append(hFailedFiles.size())
+                    .append(" units failed to load...\n");
         }
         /*
          * Enumeration failedUnits = hFailedFiles.keys(); Enumeration
@@ -276,26 +294,27 @@ public class MechSummaryCache {
     }
 
     private synchronized void done() {
-        if (m_instance != null){
+        if (m_instance != null) {
             m_instance.notifyAll();
         }
-        
+
         for (int i = 0; i < listeners.size(); i++) {
             listeners.get(i).doneLoading();
         }
-        
-        if (disposeInstance){                       
+
+        if (disposeInstance) {
             m_instance = null;
             initialized = false;
+        } else {
+            initialized = true;
         }
-        else{
-            initialized = true; 
-        }                
     }
 
     private void saveCache() throws Exception {
         loadReport.append("Saving unit cache.\n");
-        ObjectOutputStream wr = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(CACHE)));
+        File unit_cache_path = new File(getUnitCacheDir(), FILENAME_UNITS_CACHE);
+        ObjectOutputStream wr = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
         Integer length = new Integer(m_data.length);
         wr.writeObject(length);
         for (MechSummary element : m_data) {
@@ -315,7 +334,7 @@ public class MechSummaryCache {
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());
-        if(e instanceof BattleArmor) {
+        if (e instanceof BattleArmor) {
             ms.setTons(((BattleArmor) e).getTrooperWeight());
         } else {
             ms.setTons(e.getWeight());
@@ -342,12 +361,15 @@ public class MechSummaryCache {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
         // we can only test meks and vehicles right now
-        if ((e instanceof Mech) || ((e instanceof Tank) && !(e instanceof GunEmplacement))) {
+        if ((e instanceof Mech)
+                || ((e instanceof Tank) && !(e instanceof GunEmplacement))) {
             TestEntity testEntity = null;
             if (e instanceof Mech) {
-                testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);
+                testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
+                        null);
             } else {
-                testEntity = new TestTank((Tank) e, entityVerifier.tankOption, null);
+                testEntity = new TestTank((Tank) e, entityVerifier.tankOption,
+                        null);
             }
             if (!testEntity.correctEntity(new StringBuffer())) {
                 ms.setLevel("F");
@@ -357,17 +379,20 @@ public class MechSummaryCache {
     }
 
     /**
-     *  Loading a complete mech object for each summary is a bear and should be
-     *  changed, but it lets me use the existing parsers
+     * Loading a complete mech object for each summary is a bear and should be
+     * changed, but it lets me use the existing parsers
+     * 
      * @param vMechs
      * @param sKnownFiles
      * @param lLastCheck
      * @param fDir
      * @return
      */
-    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fDir) {
+    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
+            Set<String> sKnownFiles, long lLastCheck, File fDir) {
         boolean bNeedsUpdate = false;
-        loadReport.append("  Looking in ").append(fDir.getPath()).append("...\n");
+        loadReport.append("  Looking in ").append(fDir.getPath())
+                .append("...\n");
         int thisDirectoriesFileCount = 0;
         String[] sa = fDir.list();
 
@@ -378,7 +403,7 @@ public class MechSummaryCache {
                     return false;
                 }
                 File f = new File(fDir, element);
-                if (f.equals(CACHE)) {
+                if (f.equals(new File(getUnitCacheDir(), FILENAME_UNITS_CACHE))) {
                     continue;
                 }
                 if (f.isDirectory()) {
@@ -386,12 +411,14 @@ public class MechSummaryCache {
                         // Mechs in this directory are ignored because
                         // they have features not implemented in MM yet.
                         continue;
-                    } else if (f.getName().toLowerCase().equals("_svn") || f.getName().toLowerCase().equals(".svn")) {
+                    } else if (f.getName().toLowerCase().equals("_svn")
+                            || f.getName().toLowerCase().equals(".svn")) {
                         // This is a Subversion work directory. Lets ignore it.
                         continue;
                     }
                     // recursion is fun
-                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f);
+                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles,
+                            lLastCheck, f);
                     continue;
                 }
                 if (f.getName().indexOf('.') == -1) {
@@ -416,10 +443,12 @@ public class MechSummaryCache {
                     continue;
                 }
                 if (f.getName().toLowerCase().endsWith(".zip")) {
-                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
+                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles,
+                            lLastCheck, f);
                     continue;
                 }
-                if ((f.lastModified() < lLastCheck) && sKnownFiles.contains(f.toString())) {
+                if ((f.lastModified() < lLastCheck)
+                        && sKnownFiles.contains(f.toString())) {
                     continue;
                 }
                 try {
@@ -433,13 +462,18 @@ public class MechSummaryCache {
                     fileCount++;
                     Iterator<String> failedEquipment = e.getFailedEquipment();
                     if (failedEquipment.hasNext()) {
-                        loadReport.append("    Loading from ").append(f).append("\n");
+                        loadReport.append("    Loading from ").append(f)
+                                .append("\n");
                         while (failedEquipment.hasNext()) {
-                            loadReport.append("      Failed to load equipment: ").append(failedEquipment.next()).append("\n");
+                            loadReport
+                                    .append("      Failed to load equipment: ")
+                                    .append(failedEquipment.next())
+                                    .append("\n");
                         }
                     }
                 } catch (EntityLoadingException ex) {
-                    loadReport.append("    Loading from ").append(f).append("\n");
+                    loadReport.append("    Loading from ").append(f)
+                            .append("\n");
                     loadReport.append("***   Unable to load file: ");
                     StringWriter stringWriter = new StringWriter();
                     PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -451,27 +485,31 @@ public class MechSummaryCache {
             }
         }
 
-        loadReport.append("  ...loaded ").append(thisDirectoriesFileCount).append(" files.\n");
+        loadReport.append("  ...loaded ").append(thisDirectoriesFileCount)
+                .append(" files.\n");
 
         return bNeedsUpdate;
     }
 
-    private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
+    private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs,
+            Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
         boolean bNeedsUpdate = false;
         ZipFile zFile;
         int thisZipFileCount = 0;
         try {
             zFile = new ZipFile(fZipFile);
         } catch (Exception ex) {
-            loadReport.append("  Unable to load file ").append(fZipFile.getName()).append(": ");
+            loadReport.append("  Unable to load file ")
+                    .append(fZipFile.getName()).append(": ");
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
             ex.printStackTrace(printWriter);
             loadReport.append(stringWriter.getBuffer()).append("\n");
             return false;
         }
-        loadReport.append("  Looking in zip file ").append(fZipFile.getPath()).append("...\n");
-        
+        loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
+                .append("...\n");
+
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
             if (interrupted) {
                 done();
@@ -481,19 +519,22 @@ public class MechSummaryCache {
 
             if (zEntry.isDirectory()) {
                 if (zEntry.getName().toLowerCase().equals("unsupported")) {
-                    loadReport.append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
+                    loadReport
+                            .append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }
             if (zEntry.getName().toLowerCase().endsWith(".txt")) {
                 continue;
             }
-            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck) && sKnownFiles.contains(zEntry.getName())) {
+            if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck)
+                    && sKnownFiles.contains(zEntry.getName())) {
                 continue;
             }
 
             try {
-                MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
+                MechFileParser mfp = new MechFileParser(
+                        zFile.getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
                 MechSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMechs.addElement(ms);
@@ -503,13 +544,17 @@ public class MechSummaryCache {
                 zipCount++;
                 Iterator<String> failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasNext()) {
-                    loadReport.append("    Loading from zip file").append(" >> ").append(zEntry.getName()).append("\n");
+                    loadReport.append("    Loading from zip file")
+                            .append(" >> ").append(zEntry.getName())
+                            .append("\n");
                     while (failedEquipment.hasNext()) {
-                        loadReport.append("      Failed to load equipment: ").append(failedEquipment.next()).append("\n");
+                        loadReport.append("      Failed to load equipment: ")
+                                .append(failedEquipment.next()).append("\n");
                     }
                 }
             } catch (Exception ex) {
-                loadReport.append("    Loading from zip file").append(" >> ").append(zEntry.getName()).append("\n");
+                loadReport.append("    Loading from zip file").append(" >> ")
+                        .append(zEntry.getName()).append("\n");
                 loadReport.append("      Unable to load file: ");
                 StringWriter stringWriter = new StringWriter();
                 PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -528,7 +573,8 @@ public class MechSummaryCache {
             // whatever.
         }
 
-        loadReport.append("  ...loaded ").append(thisZipFileCount).append(" files.\n");
+        loadReport.append("  ...loaded ").append(thisZipFileCount)
+                .append(" files.\n");
 
         return bNeedsUpdate;
     }
@@ -544,5 +590,5 @@ public class MechSummaryCache {
     public int getZipCount() {
         return zipCount;
     }
-    
+
 }

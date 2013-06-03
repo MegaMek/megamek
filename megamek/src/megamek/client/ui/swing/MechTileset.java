@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -23,6 +24,7 @@ package megamek.client.ui.swing;
 import java.awt.Component;
 import java.awt.Image;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -49,7 +51,7 @@ import megamek.common.Warship;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
- * with the appropriate image. It requires data/images/units/mechset.txt, the
+ * with the appropriate image. It requires mechset.txt (in the unit images directory), the
  * format of which is explained in that file.
  *
  * @author Ben
@@ -148,13 +150,33 @@ public class MechTileset {
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
 
-    String dir;
+    File dir;
 
     /**
-     * Creates new MechTileset
+     * Creates new MechTileset.
+     * 
+     * @deprecated Use {@link MechTileset(File)} instead.
      */
-    public MechTileset(String dir) {
-        this.dir = dir;
+    @Deprecated
+    public MechTileset(String dir_path)
+    {
+        if (dir_path == null) {
+            throw new IllegalArgumentException("must provide dir_path");
+        }
+        dir = new File(dir_path);
+    }
+    
+    /**
+     * Creates new MechTileset.
+     * 
+     * @param dir_path Path to the tileset directory.
+     */
+    public MechTileset(File dir_path)
+    {
+        if (dir_path == null) {
+            throw new IllegalArgumentException("must provide dir_path");
+        }
+        dir = dir_path;
     }
 
     public Image imageFor(Entity entity, Component comp, int secondaryPos) {
@@ -351,7 +373,7 @@ public class MechTileset {
 
     public void loadFromFile(String filename) throws IOException {
         // make inpustream for board
-        Reader r = new BufferedReader(new FileReader(dir + filename));
+        Reader r = new BufferedReader(new FileReader(new File(dir, filename)));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -465,7 +487,7 @@ public class MechTileset {
 
         public void loadImage(Component comp) {
             // System.out.println("loading mech image...");
-            image = comp.getToolkit().getImage(dir + imageFile);
+            image = comp.getToolkit().getImage(new File(dir, imageFile).toString());
         }
     }
 }

@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -31,10 +32,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import megamek.common.CommonConstants;
+import megamek.common.Configuration;
 
 public class PreferenceManager {
 
-    public static final String DEFAULT_CFG_FILE_NAME = "mmconf/clientsettings.xml";
+    public static final String DEFAULT_CFG_FILE_NAME = "clientsettings.xml";
     public static final String CFG_FILE_OPTION_NAME = "cfgfilename";
     public static final String ROOT_NODE_NAME = "MegaMekSettings";
     public static final String CLIENT_SETTINGS_STORE_NAME = "ClientSettings";
@@ -76,8 +78,10 @@ public class PreferenceManager {
     protected void load() {
         stores = new Hashtable<String, IPreferenceStore>();
         clientPreferenceStore = new PreferenceStore();
-        String cfgName = System.getProperty(CFG_FILE_OPTION_NAME,
-                DEFAULT_CFG_FILE_NAME);
+        String cfgName = System.getProperty(
+                CFG_FILE_OPTION_NAME,
+                new File(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString()
+        );
         load(cfgName);
         clientPreferences = new ClientPreferences(clientPreferenceStore);
     }

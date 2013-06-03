@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -11,7 +12,6 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.client.ui.AWT;
 
 import java.awt.BorderLayout;
@@ -33,7 +33,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -42,6 +41,7 @@ import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.client.ui.AWT.widget.ImageButton;
+import megamek.common.Configuration;
 import megamek.common.Player;
 import megamek.common.util.DirectoryItems;
 
@@ -49,7 +49,7 @@ import megamek.common.util.DirectoryItems;
  * This dialog allows players to select the camo pattern (or color) used by
  * their units during the game. It automatically fills itself with all the color
  * choices in <code>Settings</code> and all the camo patterns in the
- * "data/iamges/camo" directory tree. Created on January 19, 2004
+ * {@link Configuration#configDir()} directory tree. Created on January 19, 2004
  * 
  * @author James Damour
  * @version 1
@@ -246,8 +246,11 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
         // Parse the camo directory.
         try {
-            camos = new DirectoryItems(new File("data/images/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageFileFactory.getInstance());
+            camos = new DirectoryItems(
+                    Configuration.camoDir(),
+                    "", //$NON-NLS-1$
+                    ImageFileFactory.getInstance()
+            );
         } catch (Exception e) {
             camos = null;
         }

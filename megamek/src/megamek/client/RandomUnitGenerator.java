@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -27,25 +28,28 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 
 /**
- * Author: Jay Lawson This class sets up a random unit generator that can then
+ * This class sets up a random unit generator that can then
  * be used to read in user-created input files of random assignment tables
- * 
- * Files should be located in data/rat/ All files should comma-delimited text
- * files.
- * 
+ * <p>
+ * Files must be located in in the directory defined by {@link Configuration#armyTablesDir()}.
+ * All files should comma-delimited text files.
+ * </p>
+ * <p>
  * The first line of the file should contain the title of the RAT The second
  * line of the file should give the unit type number corresponding to
  * UnitType.java The remaining lines should be comma split. The first field
  * should give the frequency of that unit and the second line should give the
  * name of that unit written as <Model> <Chassis> Comment lines can also be
  * added with "#"
+ * </p>
  * 
+ * @author Jay Lawson
  */
-
 public class RandomUnitGenerator implements Serializable {
 
     /**
@@ -98,8 +102,7 @@ public class RandomUnitGenerator implements Serializable {
         rats = new HashMap<String, Vector<String>>();
         ratTree = new RatTreeNode("Random Assignment Tables");
 
-        File dir = new File("./data/rat/");
-        loadRatsFromDirectory(dir);
+        loadRatsFromDirectory(Configuration.armyTablesDir());
         if (!interrupted) {
             rug.initialized = true;
         }

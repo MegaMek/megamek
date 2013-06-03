@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -26,7 +27,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -49,6 +49,7 @@ import javax.swing.table.TableCellRenderer;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.util.DirectoryItems;
@@ -57,7 +58,7 @@ import megamek.common.util.DirectoryItems;
  * This dialog allows players to select the camo pattern (or color) used by
  * their units during the game. It automatically fills itself with all the color
  * choices in <code>Settings</code> and all the camo patterns in the
- * "data/iamges/camo" directory tree.
+ * {@link Configuration#camoDir()} directory tree.
  * <p/>
  * Created on January 19, 2004
  * 
@@ -102,8 +103,11 @@ public class CamoChoiceDialog extends JDialog {
 
         // Parse the camo directory.
         try {
-            camos = new DirectoryItems(new File("data/images/camo"), "", //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageFileFactory.getInstance());
+            camos = new DirectoryItems(
+                    Configuration.camoDir(),
+                    "", //$NON-NLS-1$
+                    ImageFileFactory.getInstance()
+            );
         } catch (Exception e) {
             camos = null;
         }

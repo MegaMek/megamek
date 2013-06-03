@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -14,30 +15,28 @@
 
 package megamek.test.client;
 
-import java.io.File;
 import java.util.Iterator;
 
 import megamek.client.ui.AWT.util.ImageFileFactory;
-import megamek.common.preference.PreferenceManager;
+import megamek.common.Configuration;
 import megamek.common.util.DirectoryItems;
 
 /**
- * This class will list all of the camo files under "data/images/camo",
- * according to their categories. Created on January 18, 2004
+ * This class will list all of the camo files under "{@link Configuration#camoDir()}",
+ * according to their categories.
  * 
  * @author James Damour
- * @version 1
  */
 public class ListCamoFiles {
 
     public static void main(String[] args) {
 
         try {
-            String rootDir = PreferenceManager.getClientPreferences()
-                    .getDataDirectory();
-            File camoLib = new File(rootDir + "/images/camo");
-            DirectoryItems images = new DirectoryItems(camoLib, "",
-                    ImageFileFactory.getInstance());
+            DirectoryItems images = new DirectoryItems(
+                    Configuration.camoDir(),
+                    "", //$NON-NLS-1$
+                    ImageFileFactory.getInstance()
+            );
             Iterator<String> categories = images.getCategoryNames();
             Iterator<String> names = null;
             String catName = null;
@@ -66,7 +65,5 @@ public class ListCamoFiles {
         } catch (Throwable err) {
             err.printStackTrace();
         }
-
     }
-
 }

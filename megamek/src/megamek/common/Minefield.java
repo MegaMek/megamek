@@ -1,5 +1,6 @@
 /**
  * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -42,7 +43,7 @@ public class Minefield implements Serializable, Cloneable {
 
     public static final int MAX_DAMAGE = 30;
 
-    public static final String IMAGE_FILE = "data/images/hexes/minefieldsign.gif";
+    public static final String FILENAME_IMAGE = "minefieldsign.gif";
 
     private static String[] names = { "Conventional", "Command-detonated",
             "Vibrabomb", "Active", "EMP", "Inferno"};

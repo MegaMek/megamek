@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -31,6 +32,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
+import megamek.common.Configuration;
 import megamek.common.IBoard;
 import megamek.common.IHex;
 import megamek.common.Terrains;
@@ -150,7 +152,9 @@ public class MapPreview extends Canvas {
         int blue;
 
         File coloursFile = new File(
-                "data/images/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
+                Configuration.hexesDir(),
+                GUIPreferences.getInstance().getMinimapColours()
+        );
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {

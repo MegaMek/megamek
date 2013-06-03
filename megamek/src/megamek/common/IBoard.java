@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -14,6 +15,7 @@
 
 package megamek.common;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -355,12 +357,21 @@ public interface IBoard {
     public abstract boolean inSpace();
     
     /**
-     * Loads this board from a filename in data/boards
+     * Load board data from a file in the boards data directory.
      * 
-     * @param filename filename to load from
+     * @deprecated Use {@link #load(File)} instead.
+     * @param filename The path to the file, relative to the board data directory.
      */
-    public abstract void load(String filename);
+    @Deprecated
+    public abstract void load(final String filename);
 
+    /**
+     * Load board data from a file.
+     * 
+     * @param filepath The path to the file.
+     */
+    public abstract void load(final File filepath);
+    
     /**
      * Loads this board from an InputStream
      * 

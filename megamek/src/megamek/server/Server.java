@@ -1,7 +1,8 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- *
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * 
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -51,6 +52,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.MegaMek;
@@ -61,6 +63,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Bay;
 import megamek.common.BipedMech;
 import megamek.common.Board;
+import megamek.common.BoardDimensions;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Building.BasementType;
@@ -111,6 +114,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Configuration;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
@@ -246,8 +250,6 @@ public class Server implements Runnable {
     // public final static String LEGAL_CHARS =
     // "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
     public final static String DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
-
-    private final static String VERIFIER_CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml";
 
     // server setup
     private String password;
@@ -24266,95 +24268,134 @@ public class Server implements Runnable {
     /**
      * Scans the boards directory for map boards of the appropriate size and
      * returns them.
+     * 
+     * @return A list of relative paths to the board files, without the '.board' extension.
      */
-    private ArrayList<String> scanForBoardsInDir(String addPath,
-            String basePath, int w, int h) {
-        File dir = new File(addPath);
-        String fileList[] = dir.list();
-        ArrayList<String> tempList = new ArrayList<String>();
-        for (String element : fileList) {
-            File x = new File(addPath.concat(File.separator).concat(element));
-            if (x.isDirectory()) {
-                tempList.addAll(scanForBoardsInDir(
-                        addPath.concat(File.separator).concat(element),
-                        basePath.concat(File.separator).concat(element), w, h));
-                continue;
-            }
-            if (element.indexOf(".svn") != -1) {
-                continue; // Ignore Subversion directories
-            }
-            if (element.indexOf(".board") == -1) {
-                continue;
-            }
-            if (Board.boardIsSize(
-                    basePath.concat(File.separator).concat(element), w, h)) {
-                tempList.add(basePath.concat(File.separator).concat(
-                        element.substring(0, element.lastIndexOf(".board"))));
-            }
+    private ArrayList<String> scanForBoardsInDir(
+            final File boardDir,
+            final String basePath,
+            final BoardDimensions dimensions,
+            ArrayList<String> boards
+    ) {
+        if (boardDir == null)
+        {
+            throw new IllegalArgumentException("must provide searchDir");
         }
-        return tempList;
-    }
-
-    private ArrayList<ArrayList<Integer>> getBoardSizesInDir(String addPath,
-            String basePath) {
-        File dir = new File(addPath);
-        String fileList[] = dir.list();
-        ArrayList<ArrayList<Integer>> tempList = new ArrayList<ArrayList<Integer>>();
-        for (String element : fileList) {
-            File x = new File(addPath.concat("/").concat(element));
-            if (x.isDirectory()) {
-                ArrayList<ArrayList<Integer>> tempList2 = getBoardSizesInDir(
-                        addPath.concat(File.separator).concat(element),
-                        basePath.concat(File.separator).concat(element));
-                for (ArrayList<Integer> size : tempList2) {
-                    if (!tempList.contains(size)) {
-                        tempList.add(size);
-                    }
-                }
-                continue;
-            }
-            if (element.indexOf(".svn") != -1) {
-                continue; // Ignore Subversion directories
-            }
-            if (element.indexOf(".board") == -1) {
-                continue;
-            }
-            ArrayList<Integer> temp = Board.getSize(basePath.concat(
-                    File.separator).concat(element));
-            if ((temp != null) && !tempList.contains(temp)) {
-                tempList.add(temp);
-            }
+        
+        if (basePath == null)
+        {
+            throw new IllegalArgumentException("must provide basePath");
         }
-        return tempList;
-    }
-
-    private ArrayList<ArrayList<Integer>> getBoardSizes() {
-        ArrayList<ArrayList<Integer>> sizes = new ArrayList<ArrayList<Integer>>();
-
-        File boardDir = new File("data/boards");
-        // just a check...
-        if (!boardDir.isDirectory()) {
-            return sizes;
+        
+        if (dimensions == null)
+        {
+            throw new IllegalArgumentException("must provide dimensions");
         }
-
-        // scan files
-        ArrayList<ArrayList<Integer>> tempList = new ArrayList<ArrayList<Integer>>();
-        tempList = getBoardSizesInDir("data/boards", "");
-        if (tempList.size() > 0) {
-            for (ArrayList<Integer> size : tempList) {
-                if (!sizes.contains(size)) {
-                    sizes.add(size);
+        
+        if (boards == null)
+        {
+            throw new IllegalArgumentException("must provide boards");
+        }
+        
+        String fileList[] = boardDir.list();
+        for (String filename : fileList) {
+            File filepath = new File(boardDir, filename);
+            if (filepath.isDirectory()) {
+                scanForBoardsInDir(
+                        new File(boardDir, filename),
+                        basePath.concat(File.separator).concat(filename),
+                        dimensions,
+                        boards
+                );
+            } else {
+                if (filename.endsWith(".board")) { //$NON-NLS-1$
+                    if (Board.boardIsSize(filepath, dimensions)) {
+                        boards.add(basePath.concat(File.separator).concat(filename.substring(0, filename.lastIndexOf("."))));
+                    }                
                 }
             }
         }
-        return sizes;
-
+        return boards;
     }
 
-    private ArrayList<String> scanForBoards(int boardWidth, int boardHeight) {
+    /**
+     * Recursively scan the specified path to determine the board sizes available.
+     * 
+     * @param basePath The base path to search.
+     * @param dir The directory to search below this path (may be null for all in base path).
+     * @return
+     */
+    private void getBoardSizesInDir(
+            final File searchDir,
+            TreeSet<BoardDimensions> sizes
+    )
+    {
+        if (searchDir == null)
+        {
+            throw new IllegalArgumentException("must provide searchDir");
+        }
+        
+        if (sizes == null)
+        {
+            throw new IllegalArgumentException("must provide sizes");
+        }
+                        
+        String file_list[] = searchDir.list();
+
+        for (String filename : file_list) {
+            File query_file = new File(searchDir, filename);
+            
+            if (query_file.isDirectory()) {
+                getBoardSizesInDir(query_file, sizes);
+            } else {
+                if (filename.endsWith(".board")) { //$NON-NLS-1$
+                    sizes.add(Board.getSize(query_file));
+                }
+            }
+        }
+    }
+
+    /**
+     * Get a list of the available board sizes from the boards data directory.
+     * 
+     * @return A Set containing all the available board sizes.
+     */
+    private Set<BoardDimensions> getBoardSizes() {        
+        TreeSet<BoardDimensions> board_sizes = new TreeSet<BoardDimensions>();
+        
+        File boards_dir = Configuration.boardsDir();
+        // Slightly overkill sanity check...
+        if (boards_dir.isDirectory()) {
+            getBoardSizesInDir(boards_dir, board_sizes);
+        }
+        
+        return board_sizes;
+    }
+
+    /**
+     * Scan for map boards with the specified dimensions.
+     * 
+     * @deprecated Use {@link #scanForBoards(BoardDimensions)} instead.
+     * 
+     * @param boardWidth The desired board width.
+     * @param boardHeight The desired board height.
+     * @return A list of path names, minus the '.board' extension, relative to the boards data directory.
+     */
+    @Deprecated
+    private ArrayList<String> scanForBoards(final int boardWidth, final int boardHeight) {
+        return scanForBoards(new BoardDimensions(boardWidth, boardHeight));
+    }
+    
+    /**
+     * Scan for map boards with the specified dimensions.
+     * 
+     * @param dimensions The desired board dimensions.
+     * @return A list of path names, minus the '.board' extension, relative to the boards data directory.
+     */
+    private ArrayList<String> scanForBoards(final BoardDimensions dimensions) {
         ArrayList<String> boards = new ArrayList<String>();
 
-        File boardDir = new File("data/boards");
+        File boardDir = Configuration.boardsDir();
         boards.add(MapSettings.BOARD_GENERATED);
         // just a check...
         if (!boardDir.isDirectory()) {
@@ -24364,8 +24405,7 @@ public class Server implements Runnable {
         // scan files
         ArrayList<String> tempList = new ArrayList<String>();
         Comparator<String> sortComp = StringUtil.stringComparator();
-        tempList = scanForBoardsInDir("data/boards", "", boardWidth,
-                boardHeight);
+        scanForBoardsInDir(boardDir, "", dimensions, tempList);
         // if there are any boards, add these:
         if (tempList.size() > 0) {
             boards.add(MapSettings.BOARD_RANDOM);
@@ -24838,8 +24878,9 @@ public class Server implements Runnable {
 
         // Verify the entity's design
         if (Server.entityVerifier == null) {
-            Server.entityVerifier = new EntityVerifier(new File(
-                    VERIFIER_CONFIG_FILENAME));
+            Server.entityVerifier = new EntityVerifier(
+                    new File(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME)
+            );
         }
         // we can only test meks and vehicles right now
         if ((entity instanceof Mech)
@@ -25571,7 +25612,7 @@ public class Server implements Runnable {
     }
 
     private Packet createMapSizesPacket() {
-        ArrayList<ArrayList<Integer>> sizes = getBoardSizes();
+        Set<BoardDimensions> sizes = getBoardSizes();
         return new Packet(Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES, sizes);
     }
 

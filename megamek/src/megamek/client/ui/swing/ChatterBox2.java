@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -28,6 +29,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -36,6 +38,7 @@ import megamek.client.Client;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.widget.PMUtil;
+import megamek.common.Configuration;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListenerAdapter;
@@ -50,7 +53,12 @@ import megamek.common.util.StringUtil;
  */
 public class ChatterBox2 implements KeyListener, IDisplayable {
 
-    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
+    private static final String FILENAME_BUTTON_UP = "upbutton.gif"; //$NON-NLS-1$
+    private static final String FILENAME_BUTTON_DOWN = "downbutton.gif"; //$NON-NLS-1$
+    private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif"; //$NON-NLS-1$
+    private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif"; //$NON-NLS-1$
+    private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif"; //$NON-NLS-1$
+    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));  //$NON-NLS-2$
     private static final Color COLOR_TEXT_BACK = Color.black;
     private static final Color COLOR_TEXT_FRONT = Color.white;
     private static final Color COLOR_BACKGROUND;
@@ -59,8 +67,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     static {
         Color temp;
         try {
-            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor");
-            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy"));
+            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor"); //$NON-NLS-1$
+            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy")); //$NON-NLS-1$
         } catch (Throwable err) {
             temp = Color.gray;
         }
@@ -124,7 +132,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             public void gameEntityNew(GameEntityNewEvent e) {
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
-                    addChatMessage("MegaMek: "+e.getNumberOfEntities() + " Entities added.");
+                    addChatMessage("MegaMek: " + e.getNumberOfEntities() + " Entities added.");
                 }
             }
 
@@ -132,7 +140,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             public void gameEntityChange(GameEntityChangeEvent e) {
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
-                    addChatMessage("Megamek: "+e.toString());
+                    addChatMessage("Megamek: " + e.toString());
                 }
             }
         });
@@ -141,15 +149,15 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         fm = bv.getFontMetrics(FONT_CHAT);
 
         Toolkit toolkit = bv.getToolkit();
-        upbutton = toolkit.getImage("data/images/widgets/upbutton.gif");
+        upbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, client);
-        downbutton = toolkit.getImage("data/images/widgets/downbutton.gif");
+        downbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_DOWN).toString());
         PMUtil.setImage(downbutton, client);
-        minbutton = toolkit.getImage("data/images/widgets/minbutton.gif");
+        minbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_MINIMISE).toString());
         PMUtil.setImage(minbutton, client);
-        maxbutton = toolkit.getImage("data/images/widgets/maxbutton.gif");
+        maxbutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_MAXIMISE).toString());
         PMUtil.setImage(maxbutton, client);
-        resizebutton = toolkit.getImage("data/images/widgets/resizebutton.gif");
+        resizebutton = toolkit.getImage(new File(Configuration.widgetsDir(), FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, client);
     }
 

@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -31,6 +32,7 @@ import java.util.HashMap;
 
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Configuration;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -49,7 +51,7 @@ import megamek.common.Warship;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
- * with the appropriate image. It requires data/images/units/mechset.txt, the
+ * with the appropriate image. It requires mechset.txt (found in {@link Configuration#unitImagesDir()}), the
  * format of which is explained in that file.
  * 
  * @author Ben

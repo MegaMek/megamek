@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -26,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
@@ -36,11 +38,13 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
+import megamek.common.Configuration;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */
 public class CommonAboutDialog extends JDialog {
+    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif"; //$NON-NLS-1$
     /**
      * 
      */
@@ -62,7 +66,8 @@ public class CommonAboutDialog extends JDialog {
         if (imgTitleImage == null) {
             // Nope. Load it.
             Image image = frame.getToolkit().getImage(
-                    "data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
+                    new File(Configuration.miscImagesDir(), FILENAME_MEGAMEK_SPLASH2).toString()
+            );
             MediaTracker tracker = new MediaTracker(frame);
             tracker.addImage(image, 0);
             try {

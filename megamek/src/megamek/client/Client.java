@@ -1,6 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.SwingUtilities;
@@ -49,6 +51,7 @@ import megamek.client.commands.ShowEntityCommand;
 import megamek.client.commands.ShowTileCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
+import megamek.common.BoardDimensions;
 import megamek.common.Building;
 import megamek.common.Coords;
 import megamek.common.DefaultQuirksHandler;
@@ -133,7 +136,7 @@ public class Client implements IClientCommandHandler {
     // we might want to keep a game log...
     private GameLog log;
 
-    private ArrayList<ArrayList<Integer>> availableSizes = new ArrayList<ArrayList<Integer>>();
+    private Set<BoardDimensions> availableSizes = new TreeSet<BoardDimensions>();
 
     private Vector<Coords> artilleryAutoHitHexes = null;
 
@@ -1283,7 +1286,7 @@ public class Client implements IClientCommandHandler {
                             .getObject(0));
             break;
         case Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES:
-            availableSizes = (ArrayList<ArrayList<Integer>>)c.getObject(0);
+            availableSizes = (Set<BoardDimensions>)c.getObject(0);
             game.processGameEvent(new GameSettingsChangeEvent(this));
             break;
         }
@@ -1448,7 +1451,7 @@ public class Client implements IClientCommandHandler {
         return RandomNameGenerator.getInstance();
     }
 
-    public ArrayList<ArrayList<Integer>> getAvailableMapSizes() {
+    public Set<BoardDimensions> getAvailableMapSizes() {
         return availableSizes;
     }
 }

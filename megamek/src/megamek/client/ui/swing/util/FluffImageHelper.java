@@ -1,5 +1,6 @@
 /*
  * MechSelectorDialog.java - Copyright (C) 2009 Jay Lawson
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -21,130 +22,123 @@ import javax.swing.ImageIcon;
 
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Tank;
 
 /**
  * 
- * @author Jay Lawson
- * Looks for a fluff image for an entity based on model and chassis
- * Heavily based on code from MegaMekLab#ImageHelper
+ * @author Jay Lawson Looks for a fluff image for an entity based on model and
+ *         chassis. Heavily based on code from {@link MegaMekLab#ImageHelper}.
  */
 public class FluffImageHelper {
-    
-    public static String fluffPath = "data/images/fluff/";
+    public static final String DIR_NAME_MECH = "mech";
+    public static final String DIR_NAME_AERO = "aero";
+    public static final String DIR_NAME_BA = "BattleArmor";
+    public static final String DIR_NAME_VEHICLE = "vehicle";
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png",
+            ".jpg", ".gif" };
 
-    public static String imageMech = "mech";
-    public static String imageAero = "aero";
-    public static String imageBA = "BattleArmor";
-    public static String imageVehicle = "vehicle";
-
-    public static Image getFluffImage(Entity unit) {
-        String path = unit.getFluff().getMMLImagePath();
+    /**
+     * Get the fluff image for the specified unit, if available.
+     * 
+     * @param unit
+     *            The unit.
+     * @return An image file, if one is available, else {@code null}.
+     */
+    public static Image getFluffImage(final Entity unit) {
         Image fluff = null;
+
+        fluff = loadFluffImage(unit);
+
+        if (fluff == null) {
+            fluff = loadFluffImageHeuristic(unit);
+        }
+
+        return fluff;
+    }
+
+    /**
+     * Attempt to load the fluff image specified in the Entity data.
+     * 
+     * @param unit
+     *            The unit.
+     * @return An image or {@code null}.
+     */
+    protected static Image loadFluffImage(final Entity unit) {
+        Image fluff = null;
+        String path = unit.getFluff().getMMLImagePath();
         if (new File(path).isFile()) {
             fluff = new ImageIcon(path).getImage();
         }
-        if(null != fluff) {
-            return fluff;
-        }
-        
-        String dir = imageMech;
-        if(unit instanceof Aero) {
-            dir = imageAero;
-        } 
-        else if(unit instanceof BattleArmor) {
-            dir = imageBA;
-        }
-        else if(unit instanceof Tank) {
-            dir = imageVehicle;
-        }
-        
-        path = new File(fluffPath).getAbsolutePath() + File.separatorChar + dir + File.separatorChar;
-        fluff = getFluffPNG(unit, path);
-
-        if (fluff == null) {
-            fluff = getFluffJPG(unit, path);
-        }
-
-        if (fluff == null) {
-            fluff = getFluffGIF(unit, path);
-        }
         return fluff;
     }
 
-    public static Image getFluffPNG(Entity unit, String path) {
+    /**
+     * Attempt to load a fluff image by combining elements of type and name.
+     * 
+     * @param unit
+     *            The unit.
+     * @return An image or {@code null}.
+     */
+    protected static Image loadFluffImageHeuristic(final Entity unit) {
         Image fluff = null;
 
-        String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".png";
-        if (new File(fluffFile).isFile()) {
-            fluff = new ImageIcon(fluffFile).getImage();
+        String dir = DIR_NAME_MECH;
+        if (unit instanceof Aero) {
+            dir = DIR_NAME_AERO;
+        } else if (unit instanceof BattleArmor) {
+            dir = DIR_NAME_BA;
+        } else if (unit instanceof Tank) {
+            dir = DIR_NAME_VEHICLE;
         }
 
-        if (fluff == null) {
-            fluffFile = path + unit.getModel() + ".png";
-            if (new File(fluffFile).isFile()) {
-                fluff = new ImageIcon(fluffFile).getImage();
-            }
-        }
-
-        if (fluff == null) {
-            fluffFile = path + unit.getChassis() + ".png";
-            if (new File(fluffFile).isFile()) {
-                fluff = new ImageIcon(fluffFile).getImage();
-            }
+        File fluff_image_file = findFluffImage(
+                new File(Configuration.fluffImagesDir(), dir), unit);
+        if (fluff_image_file != null) {
+            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
         }
 
         return fluff;
     }
 
-    public static Image getFluffJPG(Entity unit, String path) {
-        Image fluff = null;
+    /**
+     * Find a fluff image file for the unit.
+     * 
+     * @param directory
+     *            Directory to search.
+     * @param unit
+     *            The unit.
+     * @return Path to an appropriate file or {@code null} if none is found.
+     */
+    protected static File findFluffImage(final File directory, final Entity unit) {
+        // Search for a file in the specified directory.
+        // Searches for each supported extension on each of the following
+        // combinations:
+        // Chassis + model
+        // Model only
+        // Chassis only
+        File fluff_file = null;
 
-        String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".jpg";
-        if (new File(fluffFile).isFile()) {
-            fluff = new ImageIcon(fluffFile).getImage();
-        }
+        String[] basenames = {
+                new File(directory, unit.getChassis() + " " + unit.getModel())
+                        .toString(),
+                new File(directory, unit.getModel()).toString(),
+                new File(directory, unit.getChassis()).toString(), };
 
-        if (fluff == null) {
-            fluffFile = path + unit.getModel() + ".jpg";
-            if (new File(fluffFile).isFile()) {
-                fluff = new ImageIcon(fluffFile).getImage();
+        for (String basename : basenames) {
+            for (String extension : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
+                File filepath = new File(basename + extension);
+                if (filepath.isFile()) {
+                    fluff_file = filepath;
+                    break;
+                }
+            }
+            if (fluff_file != null) {
+                break;
             }
         }
 
-        if (fluff == null) {
-            fluffFile = path + unit.getChassis() + ".jpg";
-            if (new File(fluffFile).isFile()) {
-                fluff = new ImageIcon(fluffFile).getImage();
-            }
-        }
-
-        return fluff;
-    }
-
-    public static Image getFluffGIF(Entity unit, String path) {
-        Image fluff = null;
-
-        String fluffFile = path + unit.getChassis() + " " + unit.getModel() + ".gif";
-        if (new File(fluffFile).isFile()) {
-            fluff = new ImageIcon(fluffFile).getImage();
-        }
-
-        if (fluff == null) {
-            fluffFile = path + unit.getModel() + ".gif";
-            if (new File(fluffFile).isFile()) {
-                fluff = new ImageIcon(fluffFile).getImage();
-            }
-        }
-
-        if (fluff == null) {
-            fluffFile = path + unit.getChassis() + ".gif";
-            if (new File(fluffFile).isFile()) {
-                fluff = new ImageIcon(fluffFile).getImage();
-            }
-        }
-
-        return fluff;
+        return fluff_file;
     }
 }

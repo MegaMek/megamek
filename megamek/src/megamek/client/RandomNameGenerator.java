@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * 
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -25,40 +26,64 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import megamek.common.Compute;
+import megamek.common.Configuration;
 
-/**
- * Author: Jay Lawson This class sets up a random name generator that can then
+/** 
+ * This class sets up a random name generator that can then
  * be used to generate random pilot names. it will have a couple different
  * settings and flexible input files
- * 
- * Files are located in data/names/ All files are comma-delimited text files.
- * 
+ * <p>
+ * Files are located in {@link Configuration#namesDir()}. All files are comma-delimited text files.
+ * </p>
+ * <p>
  * The masterancestry.txt file shows the correspondence between the different ethnic names and their numeric
  * code in the database. This file is currently not actually read in by MM, but is provided as a reference. The same
  * numeric code must be used across all of the files listed below. Currently the numeric codes must be listed in exact
- * sequential order (i.e. no skipping numbers) for the program to work correctly.
- *
+ * sequential order (i.e. no skipping numbers) for the program to work correctly.</p>
+ * <p>
  * The name database is located in three files: firstname_males.txt, firstname_females.txt, and surnames.txt.
  * There ar three comma-delimited fields in each of these data files: fld1,fld2,fld3
- *    fld1 - The name itself, either a male/female first name or a surname
- *    fld2 - a frequency weight to account for some names being more common than others. Currently this is
- *           not being used.
- *    fld3 - the numeric code identifying the "ethnic" group this name belongs to
- *
- * Faction files are located in data/names/factions. The name that is given before ".txt" is used as the key for the
- * faction. The faction files will have varying number of fields depending on how many ethnic groups exist. The faction
- * file does two things. First, it identifies the relative frequency of different ethnic surnames for a faction. Second,
- * it identifies the correspondence between first names and surnames. This allows, for example, for more Japanese first
- * names regardless of surname in the Draconis Combine. There should be a line in the Faction file for each ethnic group.
- *     fld1 - the id for the ethnic group
- *     fld2 - the ethnic group name. Not currently read in, just for easy reference.
- *     fld3 - The relative frequency of this ethnic surname in the faction.
- *     fld4-fldn - These fields identify the relative frequency of first names from an ethnic group given the surname
+ * <ul>
+ * <li>fld1 - The name itself, either a male/female first name or a surname.</li>
+ * <li>fld2 - a frequency weight to account for some names being more common than others. Currently this is
+ *           not being used.</li>
+ * <li>fld3 - the numeric code identifying the "ethnic" group this name belongs to.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Faction files are located in {@link Configuration#namesDir()}{@code /factions}.
+ * The name that is given before ".txt" is used as the key for the faction.
+ * The faction files will have varying number of fields depending on how many
+ * ethnic groups exist. The faction file does two things. First, it identifies
+ * the relative frequency of different ethnic surnames for a faction.
+ * Second, it identifies the correspondence between first names and surnames.
+ * This allows, for example, for more Japanese first names regardless of surname
+ * in the Draconis Combine. There should be a line in the Faction file for each
+ * ethnic group.
+ * <ul>
+ * <li>fld1 - the id for the ethnic group
+ * <li>fld2 - the ethnic group name. Not currently read in, just for easy reference.
+ * <li>fld3 - The relative frequency of this ethnic surname in the faction.
+ * <li>fld4-fldn - These fields identify the relative frequency of first names from an ethnic group given the surname
  *                 listed in fld1.
- * 
+ * </ul>
+ * </p>
+ * @author Jay Lawson
  */
 public class RandomNameGenerator implements Serializable {
+    /** Default directory containing the faction-specific name files. */
+    private static final String DIR_NAME_FACTIONS = "factions"; //$NON-NLS-1$
 
+    /** Default filename for the list of male first names. */
+    private static final String FILENAME_FIRSTNAMES_MALE = "firstnames_male.txt"; //$NON-NLS-1$
+    
+    /** Default filename for the list of female first names. */
+    private static final String FILENAME_FIRSTNAMES_FEMALE = "firstnames_female.txt"; //$NON-NLS-1$
+
+    /** Default filename for the list of surnames names. */
+    private static final String FILENAME_SURNAMES = "surnames.txt"; //$NON-NLS-1$
+
+    
     /**
      *
      */
@@ -108,9 +133,9 @@ public class RandomNameGenerator implements Serializable {
         Scanner input = null;
 
         // READ IN MALE FIRST NAMES
-        try {
-            File fnmf = new File("./data/names/firstnames_male.txt");
-            FileInputStream fnms = new FileInputStream(fnmf);
+        File male_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE);
+        try {            
+            FileInputStream fnms = new FileInputStream(male_firstnames_path);
             input = new Scanner(fnms, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
@@ -125,9 +150,9 @@ public class RandomNameGenerator implements Serializable {
                 linen++;
                 String[] values = line.split(",");
                 if (values.length < 3) {
-                    System.err
-                            .println("Not enough fields in firstnames_male.txt on "
-                                    + linen);
+                    System.err.println(
+                            "Not enough fields in '" + male_firstnames_path.toString() + "' on " + linen
+                    );
                     continue;
                 }
                 String name = values[0];
@@ -149,13 +174,13 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (FileNotFoundException fne) {
-            System.err.println("Unable to find firstnames_male.txt");
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + male_firstnames_path + "'");
         }
 
         // READ IN FEMALE FIRST NAMES
+        File female_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE);
         try {
-            File fnff = new File("./data/names/firstnames_female.txt");
-            FileInputStream fnfs = new FileInputStream(fnff);
+            FileInputStream fnfs = new FileInputStream(female_firstnames_path);
             input = new Scanner(fnfs, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
@@ -170,9 +195,9 @@ public class RandomNameGenerator implements Serializable {
                 linen++;
                 String[] values = line.split(",");
                 if (values.length < 3) {
-                    System.err
-                            .println("Not enough fields in firstnames_female.txt on "
-                                    + linen);
+                    System.err.println(
+                            "RandomNameGenerator.populateNames(): Not enough fields in '" + female_firstnames_path.toString() + "' on " + linen
+                    );
                     continue;
                 }
                 String name = values[0];
@@ -194,13 +219,13 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (FileNotFoundException fne) {
-            System.err.println("Unable to find firstnames_female.txt");
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'");
         }
 
         // READ IN SURNAMES
+        File surnames_path = new File(Configuration.namesDir(), FILENAME_SURNAMES);
         try {
-            File lnf = new File("./data/names/surnames.txt");
-            FileInputStream lns = new FileInputStream(lnf);
+            FileInputStream lns = new FileInputStream(surnames_path);
             input = new Scanner(lns, "UTF-8");
             int linen = 0;
             while (input.hasNextLine()) {
@@ -215,8 +240,9 @@ public class RandomNameGenerator implements Serializable {
                 linen++;
                 String[] values = line.split(",");
                 if (values.length < 3) {
-                    System.err.println("Not enough fields in surnames.txt on "
-                            + linen);
+                    System.err.println(
+                            "Not enough fields in '" + surnames_path + "' on " + linen
+                    );
                     continue;
                 }
                 String name = values[0];
@@ -238,13 +264,13 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (FileNotFoundException fne) {
-            System.err.println("Unable to find surnames.txt");
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'");
         }
 
         // READ IN FACTION FILES
         // all faction files should be in the faction directory
-        File dir = new File("./data/names/factions/");
-        String[] filenames = dir.list();
+        File factions_dir_path = new File(Configuration.namesDir(), DIR_NAME_FACTIONS);
+        String[] filenames = factions_dir_path.list();
         if (null == filenames) {
             return;
         }
@@ -270,12 +296,12 @@ public class RandomNameGenerator implements Serializable {
             }
             factionLast.put(key, new Vector<String>());
             factionFirst.put(key, new HashMap<String, Vector<String>>());
+            File ff = new File(factions_dir_path, filename);
             try {
-                File ff = new File("./data/names/factions/" + filename);
                 FileInputStream fs = new FileInputStream(ff);
                 input = new Scanner(fs, "UTF-8");
             } catch (FileNotFoundException fne) {
-                System.err.println("Could not find " + filename);
+                System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'");
                 continue;
             }
             Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();

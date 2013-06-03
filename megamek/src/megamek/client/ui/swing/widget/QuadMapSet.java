@@ -1,5 +1,6 @@
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -20,12 +21,14 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mech;
 
@@ -35,8 +38,6 @@ import megamek.common.Mech;
  */
 
 public class QuadMapSet implements DisplayMapSet {
-
-    private static final String IMAGE_DIR = "data/images/widgets";
 
     // Because of keeping all areas of single type in one array
     // some index offset values required
@@ -359,11 +360,11 @@ public class QuadMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        Image tile = comp.getToolkit().getImage(IMAGE_DIR + "/tile.gif"); //$NON-NLS-1$
+        Image tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "tile.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-        tile = comp.getToolkit().getImage(IMAGE_DIR + "/bg_mech.gif"); //$NON-NLS-1$
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "bg_mech.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER
                 | BackGroundDrawer.HALIGN_CENTER;

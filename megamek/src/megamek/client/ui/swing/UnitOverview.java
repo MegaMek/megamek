@@ -1,5 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -23,6 +24,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -32,6 +34,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IArmorState;
@@ -42,9 +45,6 @@ import megamek.common.Tank;
 import megamek.common.util.StringUtil;
 
 public class UnitOverview implements IDisplayable {
-
-    private static final String IMAGE_DIR = "data/images/widgets";
-
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;
 
     /**
@@ -83,13 +83,13 @@ public class UnitOverview implements IDisplayable {
         fm = clientgui.getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getToolkit();
-        scrollUp = toolkit.getImage(IMAGE_DIR + "/scrollUp.gif"); //$NON-NLS-1$
+        scrollUp = toolkit.getImage(new File(Configuration.widgetsDir(), "scrollUp.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
-        scrollDown = toolkit.getImage(IMAGE_DIR + "/scrollDown.gif"); //$NON-NLS-1$
+        scrollDown = toolkit.getImage(new File(Configuration.widgetsDir(), "scrollDown.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(scrollDown, clientgui);
-        pageUp = toolkit.getImage(IMAGE_DIR + "/pageUp.gif"); //$NON-NLS-1$
+        pageUp = toolkit.getImage(new File(Configuration.widgetsDir(), "pageUp.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageUp, clientgui);
-        pageDown = toolkit.getImage(IMAGE_DIR + "/pageDown.gif"); //$NON-NLS-1$
+        pageDown = toolkit.getImage(new File(Configuration.widgetsDir(), "pageDown.gif").toString()); //$NON-NLS-1$
         PMUtil.setImage(pageDown, clientgui);
     }
 

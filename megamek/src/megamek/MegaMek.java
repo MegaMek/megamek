@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2005, 2006 Ben Mazur (bmazur@sev.org)
- *
+ * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * 
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -28,6 +29,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.Mech;
@@ -472,7 +474,9 @@ public class MegaMek {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                         System.err.println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                        EntityVerifier entityVerifier = new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml")); //$NON-NLS-1$
+                        EntityVerifier entityVerifier = new EntityVerifier(
+                                new File(Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME)
+                        );
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(mechView.getMechReadout());
                         if ((entity instanceof Mech) || (entity instanceof Tank)) {
@@ -489,18 +493,14 @@ public class MegaMek {
                             }
                         }
                         System.err.println(sb.toString());
-
-                        // new EntityVerifier(new
-                        // File("data/mechfiles/UnitVerifierOptions.xml")).checkEntity(entity,
-                        // ms.getSourceFile().toString(), true);
                     } catch (Exception ex) {
                         // ex.printStackTrace();
-                        error("\"chassie model\" expected as input"); //$NON-NLS-1$
+                        error("\"chassis model\" expected as input"); //$NON-NLS-1$
                     }
                 }
 
             } else {
-                error("\"chassie model\" expected as input"); //$NON-NLS-1$
+                error("\"chassis model\" expected as input"); //$NON-NLS-1$
             }
             System.exit(0);
         }

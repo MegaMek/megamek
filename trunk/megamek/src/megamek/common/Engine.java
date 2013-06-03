@@ -495,17 +495,13 @@ public class Engine implements Serializable {
         }
     }
 
-    /*
-     * TODO: Waiting for a rules clarification on XXL engines. Until then guess 8
-     * http://www.classicbattletech.com/forums/index.php/topic,52221.msg1256924.html#msg1256924
-     */
     public int getSprintHeat() {
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 8;
+                return 9;
             default:
                 return 3;
         }

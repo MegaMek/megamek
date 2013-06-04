@@ -1107,7 +1107,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         String boardName = (String) lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(16, 17);
-            board.load(boardName + ".board");
+            board.load(new File(Configuration.boardsDir(), boardName + ".board"));
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
@@ -1136,7 +1136,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(temp);
             } else {
-                sheetBoards[i].load(name + ".board");
+                sheetBoards[i].load(new File(Configuration.boardsDir(), name + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
         }

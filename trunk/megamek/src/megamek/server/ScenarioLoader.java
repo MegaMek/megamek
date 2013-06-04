@@ -891,7 +891,7 @@ public class ScenarioLoader {
                             + sBoard);
                 }
                 ba[n] = new Board();
-                ba[n].load(sBoardFile);
+                ba[n].load(new File(Configuration.boardsDir(), sBoardFile));
                 if (cf > 0) {
                     ba[n].setBridgeCF(cf);
                 }

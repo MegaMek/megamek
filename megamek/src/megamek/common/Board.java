@@ -689,6 +689,7 @@ public class Board implements Serializable, IBoard {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public void load(final String filename) {
         load(new File(Configuration.boardsDir(), filename));
     }

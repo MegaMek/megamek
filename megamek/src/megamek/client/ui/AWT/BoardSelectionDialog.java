@@ -40,11 +40,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
 import megamek.common.Board;
+import megamek.common.Configuration;
 import megamek.common.IBoard;
 import megamek.common.MapSettings;
 import megamek.common.util.BoardUtilities;
@@ -526,7 +528,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(new Integer(texBoardWidth.getText()),
                     new Integer(texBoardHeight.getText()));
-            board.load(boardName + ".board");
+            board.load(new File(Configuration.boardsDir(), boardName + ".board"));
             if (chkRotateBoard.getState()) {
                 BoardUtilities.flip(board, true, true);
             }

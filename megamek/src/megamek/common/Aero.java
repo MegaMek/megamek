@@ -1328,6 +1328,12 @@ public class Aero extends Entity {
                     continue;
                 }
             }
+            
+            // PPC capacitor does not count separately, it's already counted for
+            // with the PPC
+            if (etype instanceof MiscType && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                continue;
+            }
 
             // don't count oneshot ammo
             if (loc == LOC_NONE) {
@@ -1507,6 +1513,18 @@ public class Aero extends Entity {
             if (weapon.isWeaponGroup()) {
                 continue;
             }
+
+            String name = wtype.getName();
+            // PPC caps bump up the value
+            if (weapon.getLinkedBy() != null) {
+                // check to see if the weapon is a PPC and has a Capacitor
+                // attached to it
+                if (wtype.hasFlag(WeaponType.F_PPC)) {
+                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(
+                            this, weapon);
+                    name = name.concat(" with Capacitor");
+                }
+            }
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
@@ -1520,7 +1538,7 @@ public class Aero extends Entity {
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append(wtype.getName());
+            bvText.append(name);
             if (weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) {
                 bvRear += dBV;
                 bvText.append(" (R)");
@@ -1666,6 +1684,33 @@ public class Aero extends Entity {
                 }
                 dBV = mgaBV * 0.67;
             }
+            // artemis bumps up the value
+            // PPC caps do, too
+            if (mounted.getLinkedBy() != null) {
+                // check to see if the weapon is a PPC and has a Capacitor
+                // attached to it
+                if (wtype.hasFlag(WeaponType.F_PPC)) {
+                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(
+                            this, mounted);
+                    name = name.concat(" with Capacitor");
+                }
+                Mounted mLinker = mounted.getLinkedBy();
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                    name = name.concat(" with Artemis IV");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    dBV *= 1.3;
+                    name = name.concat(" with Artemis V");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
+                    name = name.concat(" with Apollo");
+                }
+            }
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -1673,22 +1718,7 @@ public class Aero extends Entity {
             } else if ((this instanceof FixedWingSupport) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 dBV *= targetingSystemBVMod;
             }
-            // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
-                    weaponName = weaponName.concat(" with Artemis IV");
-                }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                    weaponName = weaponName.concat(" with Artemis V");
-                }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                    weaponName = weaponName.concat(" with Apollo");
-                }
-            }
+            
             // half for being rear mounted (or front mounted, when more rear-
             // than front-mounted un-modded BV
             if (((mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && halveRear) || (!(mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && !halveRear)) {

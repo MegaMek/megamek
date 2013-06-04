@@ -54,7 +54,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -89,7 +89,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -99,7 +99,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -107,23 +107,25 @@ public class NarcHandler extends MissileWeaponHandler {
         return 0;
     }
 
-    
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
-     *      java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
+     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                toHit.getSideTable(), waa.getAimedLocation(),
+                waa.getAimingMode(), toHit.getCover());
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-            // Weapon strikes Partial Cover.            
+                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCalledShot().getCall()))) {
+            // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                     nCluster, bldgAbsorbs);
             return;
@@ -132,8 +134,8 @@ public class NarcHandler extends MissileWeaponHandler {
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getAmmoType() == AmmoType.T_NARC) {
             // narced
-            NarcPod pod = new NarcPod(ae.getOwner().getTeam(), hit
-                    .getLocation());
+            NarcPod pod = new NarcPod(ae.getOwner().getTeam(),
+                    hit.getLocation());
             Report r = new Report(3250);
             r.subject = subjectId;
             r.add(entityTarget.getDisplayName());
@@ -144,8 +146,8 @@ public class NarcHandler extends MissileWeaponHandler {
             // iNarced
             INarcPod pod = null;
             if (atype.getMunitionType() == AmmoType.M_ECM) {
-                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.ECM, hit
-                        .getLocation());
+                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.ECM,
+                        hit.getLocation());
                 Report r = new Report(3251);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());

@@ -35,7 +35,7 @@ public class CLBearhunterSuperheavyACi extends Weapon {
      */
     public CLBearhunterSuperheavyACi() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_UNOFFICIAL);
+        techLevel.put(3071, TechConstants.T_CLAN_UNOFFICIAL);
         name = "Bearhunter Superheavy ACi";
         setInternalName(name);
         addLookupName("CLBearhunter Superheavy ACi");
@@ -52,9 +52,9 @@ public class CLBearhunterSuperheavyACi extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 9;
-        flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC).or(F_BA_WEAPON)
-                .or(F_BURST_FIRE);
-      
+        flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC)
+                .or(F_BA_WEAPON).or(F_BURST_FIRE);
+
     }
 
 }

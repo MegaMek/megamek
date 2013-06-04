@@ -30,7 +30,7 @@ public class CLSRM3 extends SRMWeapon {
      */
     public CLSRM3() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 3";
         setInternalName("CLSRM3");
         addLookupName("Clan SRM-3");
@@ -44,8 +44,8 @@ public class CLSRM3 extends SRMWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 80000;
         introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3060, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
     }
 }

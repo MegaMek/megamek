@@ -30,7 +30,7 @@ public class ISLRM20IOS extends LRMWeapon {
      */
     public ISLRM20IOS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "LRM 20 (I-OS)";
         setInternalName(name);
         addLookupName("IS IOS LRM-20");
@@ -49,8 +49,8 @@ public class ISLRM20IOS extends LRMWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3056;
-        techLevel.put(3056,techLevel.get(3071));
+        techLevel.put(3056, techLevel.get(3071));
     }
 }

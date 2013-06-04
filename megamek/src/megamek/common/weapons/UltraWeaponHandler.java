@@ -46,13 +46,14 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -80,7 +81,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // that fired one, do we need to fire another?
-            ammo.setShotsLeft(ammo.getBaseShotsLeft() - ((howManyShots == 2) ? 1 : 0));
+            ammo.setShotsLeft(ammo.getBaseShotsLeft()
+                    - ((howManyShots == 2) ? 1 : 0));
         } else {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
         }
@@ -89,7 +91,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -102,7 +104,10 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         bSalvo = true;
 
-        if ((howManyShots == 1) || (game.getOptions().booleanOption("unjam_uac") && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
+        if ((howManyShots == 1)
+                || (game.getOptions().booleanOption("unjam_uac") && ((wtype
+                        .getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
+                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
             return 1;
         }
 
@@ -119,7 +124,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             nMod += (toHit.getMoS() / 3) * 2;
         }
 
-        boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+        boolean tacopscluster = game.getOptions().booleanOption(
+                "tacops_clusterhitpen");
 
         int[] ranges = wtype.getRanges(weapon);
         if (tacopscluster) {
@@ -132,11 +138,13 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > ranges[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > ranges[RangeType.RANGE_LONG])) {
             nMod -= 2;
         }
 
-        shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(howManyShots, nMod);
+        shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
+                howManyShots, nMod);
 
         // report number of shots that hit only when weapon doesn't jam
         if (!weapon.isJammed()) {
@@ -167,7 +175,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -177,7 +185,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             weapon.setJammed(true);
             isJammed = true;
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 r.messageId = 3160;
                 if (!game.getOptions().booleanOption("uac_tworolls")) {
                     weapon.setHit(true);
@@ -192,7 +201,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -202,19 +211,23 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = 0;
             for (int i = 0; i < howManyShots; i++) {
-                toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+                toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(),
+                        bDirect ? toHit.getMoS() / 3 : 0,
+                        wtype.getInfantryDamageClass(),
+                        ((Infantry) target).isMechanized());
             }
             // plus 1 for cluster
             toReturn++;
-        } else if ( bDirect ){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+        } else if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         return (int) toReturn;
@@ -227,11 +240,12 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcnClusterAero(Entity entityTarget) {
-    	if(usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null) && !entityTarget.isCapitalScale()) {
-    		return (int)Math.ceil(attackValue / 2.0);
-    	} else {
-    		return 1;
-    	}
+        if (usesClusterTable() && !ae.isCapitalFighter()
+                && (entityTarget != null) && !entityTarget.isCapitalScale()) {
+            return (int) Math.ceil(attackValue / 2.0);
+        } else {
+            return 1;
+        }
     }
 
 }

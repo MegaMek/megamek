@@ -37,7 +37,7 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
      */
     public BarracudaTWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Barracuda-T";
         this.setInternalName(this.name);
         this.addLookupName("BarracudaT");
@@ -59,23 +59,24 @@ public class BarracudaTWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
         introDate = 3056;
-        techLevel.put(3056,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3056, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-        .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if(atype.hasFlag(AmmoType.F_TELE_MISSILE))
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.hasFlag(AmmoType.F_TELE_MISSILE))
             return new BarracudaTHandler(toHit, waa, game, server);
         return new BarracudaHandler(toHit, waa, game, server);
     }

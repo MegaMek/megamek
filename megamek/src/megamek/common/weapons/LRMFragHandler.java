@@ -52,7 +52,7 @@ public class LRMFragHandler extends LRMHandler {
 
     /**
      * Calculate the damage per hit.
-     *
+     * 
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override
@@ -67,8 +67,8 @@ public class LRMFragHandler extends LRMHandler {
         // against infantry, we have 1 hit
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize();
-            if (bDirect ) {
-                toReturn += toHit.getMoS()/3;
+            if (bDirect) {
+                toReturn += toHit.getMoS() / 3;
             }
         }
 
@@ -85,9 +85,10 @@ public class LRMFragHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
-     *      megamek.common.Building, int, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
+     * megamek.common.Building, int, boolean)
      */
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
@@ -113,12 +114,15 @@ public class LRMFragHandler extends LRMHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                        false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        vPhaseReport)) {
             return;
         }
 
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+                nDamage, subjectId);
         if (clearReports.size() > 0) {
             vPhaseReport.lastElement().newlines = 0;
         }
@@ -128,9 +132,10 @@ public class LRMFragHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
-     *      megamek.common.Building, int, boolean, Coords)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector
+     * , megamek.common.Building, int, boolean, Coords)
      */
     @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,

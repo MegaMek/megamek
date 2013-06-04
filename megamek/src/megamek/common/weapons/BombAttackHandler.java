@@ -38,11 +38,11 @@ import megamek.server.Server;
  */
 public class BombAttackHandler extends WeaponHandler {
 
-
     /**
      *
      */
     private static final long serialVersionUID = -2997052348538688888L;
+
     /**
      * @param toHit
      * @param waa
@@ -55,8 +55,8 @@ public class BombAttackHandler extends WeaponHandler {
     }
 
     /**
-     * Does this attack use the cluster hit table?
-     * necessary to determine how Aero damage should be applied
+     * Does this attack use the cluster hit table? necessary to determine how
+     * Aero damage should be applied
      */
     @Override
     protected boolean usesClusterTable() {
@@ -66,15 +66,16 @@ public class BombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if(!(ae instanceof Aero) || (null == payload)) {
+        if (!(ae instanceof Aero) || (null == payload)) {
             return;
         }
-        for(int type = 0; type < payload.length; type++) {
-            for(int i = 0; i < payload[type]; i++) {
-                //find the first mounted bomb of this type and drop it
-                for(Mounted bomb : ae.getBombs()) {
-                    if(!bomb.isDestroyed() && (bomb.getUsableShotsLeft() > 0)
-                           && (((BombType)bomb.getType()).getBombType() == type)) {
+        for (int type = 0; type < payload.length; type++) {
+            for (int i = 0; i < payload[type]; i++) {
+                // find the first mounted bomb of this type and drop it
+                for (Mounted bomb : ae.getBombs()) {
+                    if (!bomb.isDestroyed()
+                            && (bomb.getUsableShotsLeft() > 0)
+                            && (((BombType) bomb.getType()).getBombType() == type)) {
                         bomb.setShotsLeft(0);
                         break;
                     }
@@ -86,12 +87,12 @@ public class BombAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        //Report weapon attack and its to-hit value.
+        // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
         r.indent();
         r.newlines = 0;
@@ -141,7 +142,7 @@ public class BombAttackHandler extends WeaponHandler {
         // do we hit?
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
 
         Coords coords = target.getPosition();
         if (!bMissed) {
@@ -156,14 +157,14 @@ public class BombAttackHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-        //now go through the payload and drop the bombs one at a time
+        // now go through the payload and drop the bombs one at a time
         int[] payload = waa.getBombPayload();
         Coords drop = coords;
-        for(int type = 0; type < payload.length; type++) {
-            for(int i = 0; i < payload[type]; i++) {
+        for (int type = 0; type < payload.length; type++) {
+            for (int i = 0; i < payload[type]; i++) {
                 drop = coords;
-                //each bomb can scatter a different direction
-                if(!bMissed) {
+                // each bomb can scatter a different direction
+                if (!bMissed) {
                     r = new Report(6697);
                     r.indent(1);
                     r.add(BombType.getBombName(type));
@@ -192,17 +193,20 @@ public class BombAttackHandler extends WeaponHandler {
                         continue;
                     }
                 }
-                if(type == BombType.B_INFERNO) {
+                if (type == BombType.B_INFERNO) {
                     server.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
-                    server.deliverThunderMinefield(drop, subjectId, 20, ae.getId());
+                    server.deliverThunderMinefield(drop, subjectId, 20,
+                            ae.getId());
                     ArrayList<Coords> hexes = Compute.coordsAtRange(drop, 1);
                     for (Coords c : hexes) {
-                        server.deliverThunderMinefield(c, subjectId, 20, ae.getId());
+                        server.deliverThunderMinefield(c, subjectId, 20,
+                                ae.getId());
                     }
                 } else {
 
-                    server.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
+                    server.deliverBombDamage(drop, type, subjectId, ae,
+                            vPhaseReport);
                 }
             }
         }

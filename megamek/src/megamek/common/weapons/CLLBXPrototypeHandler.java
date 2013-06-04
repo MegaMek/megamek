@@ -45,15 +45,16 @@ public class CLLBXPrototypeHandler extends LBXHandler {
      * @param g
      * @param s
      */
-    public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CLLBXPrototypeHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
-     *      vPhaseReport)
+     * vPhaseReport)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -68,12 +69,14 @@ public class CLLBXPrototypeHandler extends LBXHandler {
 
         if (allShotsHit()) {
             shotsHit = wtype.getRackSize();
-            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption("tacops_range")
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
         } else {
-            //TacOps Cluster Hit Penalties p. 83
-            boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+            // TacOps Cluster Hit Penalties p. 83
+            boolean tacopscluster = game.getOptions().booleanOption(
+                    "tacops_clusterhitpen");
             if (tacopscluster) {
                 if (nRange <= 1) {
                     nHitsModifier += 1;
@@ -83,7 +86,8 @@ public class CLLBXPrototypeHandler extends LBXHandler {
                     nHitsModifier -= 1;
                 }
             }
-            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption("tacops_range")
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 nHitsModifier -= 2;
             }
 
@@ -91,20 +95,20 @@ public class CLLBXPrototypeHandler extends LBXHandler {
                 nHitsModifier -= 4;
             }
 
-            if ( bDirect ){
-                nHitsModifier += (toHit.getMoS()/3)*2;
+            if (bDirect) {
+                nHitsModifier += (toHit.getMoS() / 3) * 2;
             }
 
-            if(game.getPlanetaryConditions().hasEMI()) {
+            if (game.getPlanetaryConditions().hasEMI()) {
                 nHitsModifier -= 2;
             }
 
             // flat modifier of -1, because of prototype
-            nHitsModifier -=1;
+            nHitsModifier -= 1;
 
-            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, game.getPlanetaryConditions().hasEMI());
+            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier,
+                    game.getPlanetaryConditions().hasEMI());
         }
-
 
         Report r = new Report(3325);
         r.subject = subjectId;

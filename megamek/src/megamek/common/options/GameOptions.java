@@ -73,7 +73,8 @@ public class GameOptions extends AbstractOptions {
         addOption(base, "flamer_heat", true); //$NON-NLS-1$
         addOption(base, "indirect_fire", true); //$NON-NLS-1$
         addOption(base, "breeze", false); //$NON-NLS-1$
-        addOption(base, "show_dmg_level", false);
+        addOption(base, "show_dmg_level", false); //$NON-NLS-1$
+        addOption(base, "year", 3071); //$NON-NLS-1$
 
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, "skip_forced_victory", false); //$NON-NLS-1$

@@ -30,7 +30,7 @@ public class ISSRM1 extends SRMWeapon {
      */
     public ISSRM1() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "SRM 1";
         setInternalName(name);
         addLookupName("IS SRM-1");
@@ -44,8 +44,8 @@ public class ISSRM1 extends SRMWeapon {
         bv = 15;
         flags = flags.or(F_NO_FIRES);
         introDate = 3050;
-        techLevel.put(3050,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techLevel.put(3050, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_D };
         techRating = RATING_E;
     }
 }

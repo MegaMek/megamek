@@ -30,7 +30,7 @@ public class ISNarcIOS extends NarcWeapon {
      */
     public ISNarcIOS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Narc (I-OS)";
         setInternalName("ISNarcBeacon (I-OS)");
         addLookupName("IS I-OS Narc Beacon");
@@ -47,8 +47,8 @@ public class ISNarcIOS extends NarcWeapon {
         bv = 6;
         cost = 100000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3056;
-        techLevel.put(3056,techLevel.get(3071));
+        techLevel.put(3056, techLevel.get(3071));
     }
 }

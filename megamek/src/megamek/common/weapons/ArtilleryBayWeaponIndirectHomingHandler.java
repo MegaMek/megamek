@@ -55,7 +55,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -94,8 +94,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
             convertHomingShotToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
-                    .getTarget(game)
-                    : null;
+                    .getTarget(game) : null;
         } else {
             entityTarget = (Entity) target;
         }
@@ -170,9 +169,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             bGlancing = false;
         }
 
-        //Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -195,9 +195,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         }
         nDamPerHit = wtype.getRackSize();
 
-
         // copperhead gets 10 damage less than standard
-        if (((AmmoType)ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
+        if (((AmmoType) ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
             nDamPerHit -= 10;
         }
 
@@ -278,21 +277,21 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 if (!bMissed) {
                     if (entity == entityTarget) {
                         continue; // don't splash the target unless missile
-                    // missed
+                        // missed
                     }
                 }
                 toHit.setSideTable(entity.sideTable(aaa.getCoords()));
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit
-                        .getSideTable(), waa.getAimedLocation(), waa
-                        .getAimingMode(), toHit.getCover());
+                HitData hit = entity.rollHitLocation(toHit.getHitTable(),
+                        toHit.getSideTable(), waa.getAimedLocation(),
+                        waa.getAimingMode(), toHit.getCover());
                 // BA gets damage to all troopers
                 if (entity instanceof BattleArmor) {
-                    BattleArmor ba = (BattleArmor)entity;
+                    BattleArmor ba = (BattleArmor) entity;
                     for (int loc = 1; loc <= ba.getTroopers(); loc++) {
                         hit.setLocation(loc);
                         vPhaseReport.addAll(server.damageEntity(entity, hit,
-                                ratedDamage, false, DamageType.NONE, false, true,
-                                throughFront, underWater));
+                                ratedDamage, false, DamageType.NONE, false,
+                                true, throughFront, underWater));
                     }
                 } else {
                     vPhaseReport.addAll(server.damageEntity(entity, hit,
@@ -323,19 +322,20 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
         Vector<TagInfo> v = game.getTagInfo();
         Vector<TagInfo> allowed = new Vector<TagInfo>();
-        //get only TagInfo on the same side
+        // get only TagInfo on the same side
         for (TagInfo ti : v) {
-            if (ae.isEnemyOf(game.getEntity(ti.targetId)) || game.getOptions().booleanOption("friendly_fire")) {
+            if (ae.isEnemyOf(game.getEntity(ti.targetId))
+                    || game.getOptions().booleanOption("friendly_fire")) {
                 allowed.add(ti);
             }
         }
         if (allowed.size() == 0) {
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-            "no targets tagged this turn");
+                    "no targets tagged this turn");
             return;
         }
 
-        //get TAGs that hit
+        // get TAGs that hit
         v = new Vector<TagInfo>();
         for (TagInfo ti : allowed) {
             entityTarget = game.getEntity(ti.targetId);
@@ -343,22 +343,22 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 v.add(ti);
             }
         }
-        assert(entityTarget != null);
+        assert (entityTarget != null);
         if (v.size() == 0) {
             aaa.setTargetId(entityTarget.getId());
             aaa.setTargetType(Targetable.TYPE_ENTITY);
             target = entityTarget;
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "tag missed the target");
             return;
         }
-        //get TAGs that are on the same map
+        // get TAGs that are on the same map
         allowed = new Vector<TagInfo>();
         for (TagInfo ti : v) {
             entityTarget = game.getEntity(ti.targetId);
-            //homing target area is 8 hexes
-            if (game.getOptions().booleanOption(
-                                    "a4homing_target_area")) {
-                if (tc.distance(entityTarget.getPosition()) <=8) {
+            // homing target area is 8 hexes
+            if (game.getOptions().booleanOption("a4homing_target_area")) {
+                if (tc.distance(entityTarget.getPosition()) <= 8) {
                     allowed.add(ti);
                 }
             } else if (entityTarget.isOnSameSheet(tc)) {
@@ -369,37 +369,39 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             aaa.setTargetId(entityTarget.getId());
             aaa.setTargetType(entityTarget.getTargetType());
             target = entityTarget;
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no tag on the same mapsheet");
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "no tag on the same mapsheet");
         } else {
-            //find the TAG hit with the most shots left, and closest
+            // find the TAG hit with the most shots left, and closest
             int bestDistance = Integer.MAX_VALUE;
             TagInfo targetTag = allowed.firstElement();
             for (TagInfo ti : allowed) {
                 int distance = tc.distance(entityTarget.getPosition());
 
-                //higher # of shots left
-                if (ti.shots> targetTag.shots) {
+                // higher # of shots left
+                if (ti.shots > targetTag.shots) {
                     bestDistance = distance;
                     targetTag = ti;
                     continue;
                 }
-                //same # of shots left
+                // same # of shots left
                 if (ti.shots == targetTag.shots) {
-                    //higher priority
+                    // higher priority
                     if (ti.priority > targetTag.priority) {
                         bestDistance = distance;
                         targetTag = ti;
                         continue;
                     }
-                    //same priority and closer
-                    if ((ti.priority == targetTag.priority) && (bestDistance > distance)) {
+                    // same priority and closer
+                    if ((ti.priority == targetTag.priority)
+                            && (bestDistance > distance)) {
                         bestDistance = distance;
                         targetTag = ti;
                     }
                 }
             }
 
-            //if the best TAG has no shots left
+            // if the best TAG has no shots left
             if (targetTag.shots == 0) {
                 game.clearTagInfoShots(ae, tc);
             }
@@ -413,9 +415,10 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
-     *      boolean, megamek.common.Building, java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
+     * .Entity, boolean, megamek.common.Building, java.util.Vector)
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,

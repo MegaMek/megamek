@@ -28,7 +28,7 @@ import megamek.server.Server;
  * @author Jay Lawson
  */
 public class ACBayHandler extends AmmoBayWeaponHandler {
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -40,7 +40,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
     public ACBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -48,11 +48,11 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        for(int wId: weapon.getBayWeapons()) {    
+        for (int wId : weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
-            WeaponType bayWType = ((WeaponType)bayW.getType());
+            WeaponType bayWType = ((WeaponType) bayW.getType());
             int ammoUsed = bayW.getCurrentShots();
-            if(bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 boolean jams = false;
                 switch (ammoUsed) {
                     case 6:
@@ -83,8 +83,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                     vPhaseReport.addElement(r);
                     bayW.setJammed(true);
                 }
-            }
-            else if (bayWType.getAmmoType() == AmmoType.T_AC_ULTRA) {
+            } else if (bayWType.getAmmoType() == AmmoType.T_AC_ULTRA) {
                 if (roll == 2 && ammoUsed == 2) {
                     Report r = new Report();
                     r.subject = subjectId;
@@ -96,7 +95,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
                 }
             }
         }
-        
-            return false;
+
+        return false;
     }
 }

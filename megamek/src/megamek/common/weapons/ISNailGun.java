@@ -27,15 +27,15 @@ public class ISNailGun extends NailRivetGunWeapon {
 
     public ISNailGun() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Nail Gun";
         setInternalName(name);
         addLookupName("ISNailRivet Gun");
         addLookupName("ISNail Gun");
         addLookupName("Nail/Rivet Gun");
         introDate = 2310;
-        techLevel.put(2310,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techLevel.put(2310, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
     }
 }

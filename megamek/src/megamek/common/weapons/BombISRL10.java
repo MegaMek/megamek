@@ -22,7 +22,6 @@ import megamek.common.TechConstants;
  */
 public class BombISRL10 extends MissileWeapon {
 
-
     /**
      * 
      */
@@ -30,7 +29,7 @@ public class BombISRL10 extends MissileWeapon {
 
     public BombISRL10() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "RL 10 (Bomb)";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_RL));
         this.heat = 0;

@@ -23,9 +23,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Jay Lawson
- * This is my attempt to get weapon bays treated as normal weapons
- * rather than the current hack in place
+ * @author Jay Lawson This is my attempt to get weapon bays treated as normal
+ *         weapons rather than the current hack in place
  */
 public abstract class BayWeapon extends Weapon {
     /**
@@ -48,8 +47,9 @@ public abstract class BayWeapon extends Weapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

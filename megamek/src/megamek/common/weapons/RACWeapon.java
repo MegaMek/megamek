@@ -30,7 +30,6 @@ import megamek.server.Server;
  */
 public abstract class RACWeapon extends UACWeapon {
 
-
     private static final long serialVersionUID = 659000035767322660L;
 
     /**
@@ -39,25 +38,25 @@ public abstract class RACWeapon extends UACWeapon {
     public RACWeapon() {
         super();
         ammoType = AmmoType.T_AC_ROTARY;
-        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot", "5-shot",
-                "6-shot" };
+        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot",
+                "5-shot", "6-shot" };
         setModes(modeStrings);
         // explosive when jammed
         explosive = true;
         explosionDamage = damage;
         techRating = RATING_E;
         atClass = CLASS_AC;
-        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        introDate = 3062;
-        techLevel.put(3062,techLevel.get(3071));
+        availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_E };
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

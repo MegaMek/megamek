@@ -40,8 +40,9 @@ public abstract class AmmoWeapon extends Weapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#fire(megamek.common.actions.WeaponAttackAction,
-     *      megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#fire(megamek.common.actions.WeaponAttackAction
+     * , megamek.common.IGame)
      */
     @Override
     public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
@@ -68,8 +69,9 @@ public abstract class AmmoWeapon extends Weapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

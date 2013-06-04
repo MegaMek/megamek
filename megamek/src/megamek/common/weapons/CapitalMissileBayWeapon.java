@@ -36,8 +36,8 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
      */
     public CapitalMissileBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Capital Missile Bay";
         this.setInternalName(this.name);
         this.heat = 0;
@@ -52,12 +52,13 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

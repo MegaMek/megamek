@@ -31,7 +31,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
 
     public ISBinaryLaserCannon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        this.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         this.name = "Blazer Cannon";
         this.setInternalName(this.name);
         this.addLookupName("IS Binary Laser Cannon");
@@ -55,9 +55,10 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         this.shortAV = 16;
         this.medAV = 16;
         this.maxRange = RANGE_MED;
-        this.techRating = RATING_D;	
-        this.availRating = new int[]{RATING_X, RATING_E, RATING_E};	
-        this.introDate = 2812;
+        this.techRating = RATING_D;
+        this.availRating = new int[] { RATING_X, RATING_E, RATING_E };
+        introDate = 2812;
+        techLevel.put(2812, techLevel.get(3071));
 
     }
 }

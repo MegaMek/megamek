@@ -40,14 +40,15 @@ public class NailRivetGunHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public NailRivetGunHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public NailRivetGunHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         damageType = DamageType.NAIL_RIVET;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

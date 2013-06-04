@@ -35,7 +35,7 @@ public abstract class CLPrototypeStreakSRMWeapon extends SRMWeapon {
         super();
         ammoType = AmmoType.T_SRM_STREAK;
         toHitModifier = -1;
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
     }
 
     /*
@@ -47,7 +47,8 @@ public abstract class CLPrototypeStreakSRMWeapon extends SRMWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new PrototypeStreakHandler(toHit, waa, game, server);
     }
 

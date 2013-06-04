@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 /**
  * @author Jason Tighe
  */
@@ -52,9 +51,9 @@ public class CLSmallChemicalLaser extends CLChemicalLaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_LASER;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3059;
-        techLevel.put(3059,techLevel.get(3071));
+        techLevel.put(3059, techLevel.get(3071));
     }
 
 }

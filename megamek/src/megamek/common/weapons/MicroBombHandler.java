@@ -51,9 +51,10 @@ public class MicroBombHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     *      megamek.common.Entity, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
@@ -80,9 +81,9 @@ public class MicroBombHandler extends AmmoWeaponHandler {
         }
         Infantry ba = (Infantry) ae;
         int ratedDamage = ba.getShootingStrength();
-        server.artilleryDamageArea(coords, ae.getPosition(), (AmmoType) ammo
-                .getType(), subjectId, ae, ratedDamage * 2, ratedDamage, false,
-                0, vPhaseReport, false);
+        server.artilleryDamageArea(coords, ae.getPosition(),
+                (AmmoType) ammo.getType(), subjectId, ae, ratedDamage * 2,
+                ratedDamage, false, 0, vPhaseReport, false);
         return true;
     }
 }

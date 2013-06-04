@@ -37,7 +37,7 @@ public class ISHeavyMG extends MGWeapon {
      */
     public ISHeavyMG() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Heavy Machine Gun";
         this.setInternalName(this.name);
         this.addLookupName("IS Heavy Machine Gun");
@@ -58,8 +58,8 @@ public class ISHeavyMG extends MGWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         introDate = 3068;
-        techLevel.put(3068,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techLevel.put(3068, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_C };
         techRating = RATING_B;
     }
 

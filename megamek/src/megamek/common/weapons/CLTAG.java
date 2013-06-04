@@ -31,7 +31,7 @@ public class CLTAG extends TAGWeapon {
 
     public CLTAG() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Clan TAG";
         setInternalName("CLTAG");
         addLookupName("Clan TAG");
@@ -48,8 +48,8 @@ public class CLTAG extends TAGWeapon {
         bv = 0;
         cost = 50000;
         introDate = 2600;
-        techLevel.put(2600,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techLevel.put(2600, techLevel.get(3071));
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
     }
 }

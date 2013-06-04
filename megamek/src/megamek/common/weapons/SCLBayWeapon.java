@@ -32,8 +32,8 @@ public class SCLBayWeapon extends BayWeapon {
      */
     public SCLBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Sub-Capital Laser Bay";
         this.setInternalName(this.name);
         this.heat = 0;

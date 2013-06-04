@@ -48,7 +48,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -59,17 +59,22 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             toReturn /= 2;
             toReturn = Math.floor(toReturn);
         }
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)){
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-        } else if (bDirect){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+        } else if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         return (int) Math.ceil(toReturn);
     }
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {

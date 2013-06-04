@@ -32,7 +32,7 @@ public class CLLongTomCannon extends ArtilleryCannonWeapon {
 
     public CLLongTomCannon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Long Tom Cannon";
         setInternalName("CLLongTomCannon");
         addLookupName("CLLongTomArtilleryCannon");
@@ -54,9 +54,9 @@ public class CLLongTomCannon extends ArtilleryCannonWeapon {
         longAV = 20;
         maxRange = RANGE_LONG;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_F, RATING_E};
+        availRating = new int[] { RATING_X, RATING_F, RATING_E };
         introDate = 3032;
-        techLevel.put(3032,techLevel.get(3071));
+        techLevel.put(3032, techLevel.get(3071));
     }
 
 }

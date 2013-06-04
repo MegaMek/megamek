@@ -401,8 +401,18 @@ public class AmmoType extends EquipmentType {
         for (int i = 0; i < vAmmo.size(); i++) {
             at = vAmmo.elementAt(i);
             if ((at.getRackSize() == wt.getRackSize())
-                    && (TechConstants.isLegal(mounted.getType().getTechLevel(),
-                            at.getTechLevel(), false, mounted.getEntity()
+                    && (TechConstants.isLegal(mounted.getType().getTechLevel(mounted.getEntity().getTechLevelYear()),
+                            at.getTechLevel(mounted.getEntity().getTechLevelYear()), false, mounted.getEntity()
+                                    .isMixedTech()))) {
+                return at;
+            }
+        }
+        // found none, let's try again with techlevelyear 3071
+        for (int i = 0; i < vAmmo.size(); i++) {
+            at = vAmmo.elementAt(i);
+            if ((at.getRackSize() == wt.getRackSize())
+                    && (TechConstants.isLegal(mounted.getType().getTechLevel(3071),
+                            at.getTechLevel(3071), false, mounted.getEntity()
                                     .isMixedTech()))) {
                 return at;
             }
@@ -3497,6 +3507,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1000;
+        ammo.introDate = 2801;
+        ammo.techLevel.put(2801, ammo.techLevel.get(3067));
 
         return ammo;
     }
@@ -3513,6 +3525,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1500;
+        ammo.introDate = 2801;
+        ammo.techLevel.put(2801, ammo.techLevel.get(3067));
 
         return ammo;
     }
@@ -3529,6 +3543,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 2000;
+        ammo.introDate = 2801;
+        ammo.techLevel.put(2801, ammo.techLevel.get(3067));
 
         return ammo;
     }
@@ -6916,8 +6932,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 2;
         ammo.kgPerShot = 8.3;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_F;
 
@@ -6940,8 +6956,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 3;
         ammo.kgPerShot = 16.6;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_F;
 
@@ -6964,8 +6980,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 5;
         ammo.kgPerShot = 25;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_F;
 
@@ -6988,8 +7004,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 6;
         ammo.kgPerShot = 33.3;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_F;
 
@@ -7012,8 +7028,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 7;
         ammo.kgPerShot = 41.5;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_F;
 
@@ -7269,8 +7285,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.introDate = 3050;
-        ammo.techLevel.put(3050, ammo.techLevel.get(3067));
+        ammo.introDate = 3064;
+        ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_B };
         ammo.techRating = RATING_B;
@@ -7281,7 +7297,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISBATaserAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         ammo.name = "BA Taser Ammo";
         ammo.shortName = "Taser";
         ammo.setInternalName(ammo.name);
@@ -7292,7 +7308,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.introDate = 3067;
-        ammo.techLevel.put(3067, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3067, ammo.techLevel.get(3071));
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_E };
         ammo.techRating = RATING_E;
@@ -7337,8 +7353,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.introDate = 3050;
-        ammo.techLevel.put(3050, ammo.techLevel.get(3067));
+        ammo.introDate = 3064;
+        ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_B };
         ammo.techRating = RATING_B;
@@ -7360,8 +7376,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.introDate = 3050;
-        ammo.techLevel.put(3050, ammo.techLevel.get(3067));
+        ammo.introDate = 3064;
+        ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_B };
         ammo.techRating = RATING_B;
@@ -7383,8 +7399,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.introDate = 3050;
-        ammo.techLevel.put(3050, ammo.techLevel.get(3067));
+        ammo.introDate = 3064;
+        ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_B };
         ammo.techRating = RATING_B;
@@ -7406,8 +7422,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.introDate = 3050;
-        ammo.techLevel.put(3050, ammo.techLevel.get(3067));
+        ammo.introDate = 3064;
+        ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_B };
         ammo.techRating = RATING_B;
@@ -8368,6 +8384,8 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
+        ammo.introDate = 3064;
+        ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
         return ammo;

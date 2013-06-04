@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -39,7 +38,7 @@ public class SantaAnnaHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
         nukeS2S = true;
     }
-    
+
     /**
      * Calculate the attack value based on range
      * 
@@ -48,18 +47,18 @@ public class SantaAnnaHandler extends AmmoWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 100;
-        if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if(bGlancing) {
+        if (bGlancing) {
             av = (int) Math.floor(av / 2.0);
 
         }
-        av = (int)Math.floor(getBracketingMultiplier() * av);
+        av = (int) Math.floor(getBracketingMultiplier() * av);
         return av;
-        
+
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return 9;

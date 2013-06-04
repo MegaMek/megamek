@@ -50,7 +50,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -68,11 +68,11 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         bSalvo = true;
         if (ae instanceof BattleArmor) {
             if (amsEnganged) {
-                return Compute.missilesHit(((BattleArmor) ae)
-                        .getShootingStrength(), -2);
+                return Compute.missilesHit(
+                        ((BattleArmor) ae).getShootingStrength(), -2);
             }
-            return Compute.missilesHit(((BattleArmor) ae)
-                    .getShootingStrength());
+            return Compute
+                    .missilesHit(((BattleArmor) ae).getShootingStrength());
         }
 
         if (amsEnganged) {
@@ -103,7 +103,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -113,7 +113,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -126,11 +126,15 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             toReturn = 4;
         }
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, WeaponType.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    WeaponType.WEAPON_DIRECT_FIRE,
+                    ((Infantry) target).isMechanized());
             toReturn = Math.ceil(toReturn);
-        } if (bGlancing) {
+        }
+        if (bGlancing) {
             return (int) Math.floor(toReturn / 2.0);
         }
-        return (int)toReturn;
+        return (int) toReturn;
     }
 }

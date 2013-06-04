@@ -31,7 +31,8 @@ public abstract class MissileWeapon extends AmmoWeapon {
     public MissileWeapon() {
         super();
         damage = DAMAGE_BY_CLUSTERTABLE;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BA_WEAPON).or(F_AERO_WEAPON).or(F_MISSILE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BA_WEAPON)
+                .or(F_AERO_WEAPON).or(F_MISSILE);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
@@ -43,7 +44,8 @@ public abstract class MissileWeapon extends AmmoWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
 

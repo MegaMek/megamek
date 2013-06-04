@@ -27,7 +27,7 @@ public class ISPPCPrimitive extends PPCWeapon {
 
     public ISPPCPrimitive() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "PPCp";
         setInternalName(name);
         addLookupName("Particle Cannon Primitive");
@@ -44,8 +44,7 @@ public class ISPPCPrimitive extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON",
-                "Field Inhibitor OFF" });
+        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         tonnage = 7.0f;
         criticals = 3;
         bv = 176;

@@ -37,7 +37,7 @@ public class ISLightMG extends MGWeapon {
      */
     public ISLightMG() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Light Machine Gun";
         this.setInternalName(this.name);
         this.addLookupName("IS Light Machine Gun");
@@ -57,8 +57,10 @@ public class ISLightMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 1;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_C};
-        this.introDate = 3068;
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_C };
+        introDate = 3068;
+        techLevel.put(3068, techLevel.get(3071));
         this.atClass = CLASS_AC;
         techRating = RATING_B;
     }

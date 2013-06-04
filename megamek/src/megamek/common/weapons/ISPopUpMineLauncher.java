@@ -39,7 +39,7 @@ public class ISPopUpMineLauncher extends Weapon {
      */
     public ISPopUpMineLauncher() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Pop-up Mine";
         setInternalName(BattleArmor.MINE_LAUNCHER);
         addLookupName("ISMine Launcher");
@@ -54,26 +54,26 @@ public class ISPopUpMineLauncher extends Weapon {
         tonnage = 0.0f;
         criticals = 0;
         bv = 6;
-        String[] modeStrings =
-            { "Single", "2-shot", "3-shot", "4-shot" };
+        String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
         introDate = 3062;
-        techLevel.put(3062,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3062, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_D;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new PopUpMineLauncherHandler(toHit, waa, game, server);
     }
 }

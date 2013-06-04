@@ -52,7 +52,7 @@ public class LegAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -64,8 +64,9 @@ public class LegAttackHandler extends WeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                toHit.getSideTable(), waa.getAimedLocation(),
+                waa.getAimingMode(), toHit.getCover());
         // If a leg attacks hit a leg that isn't
         // there, then hit the other leg.
         if (entityTarget.getInternal(hit) <= 0) {
@@ -79,8 +80,8 @@ public class LegAttackHandler extends WeaponHandler {
         int damage = 4;
         if (ae instanceof BattleArmor) {
             damage += ((BattleArmor) ae).getVibroClaws();
-            if (((BattleArmor)ae).hasMyomerBooster()) {
-                damage += ((BattleArmor)ae).getTroopers() * 2;
+            if (((BattleArmor) ae).hasMyomerBooster()) {
+                damage += ((BattleArmor) ae).getTroopers() * 2;
             }
         }
 
@@ -89,7 +90,11 @@ public class LegAttackHandler extends WeaponHandler {
                 false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
         // Do criticals.
-        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit
-                .getLocation(), entityTarget.getArmorType(hit.getLocation())==EquipmentType.T_ARMOR_HARDENED?-2:0, damage));
+        vPhaseReport
+                .addAll(server.criticalEntity(
+                        entityTarget,
+                        hit.getLocation(),
+                        entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED ? -2
+                                : 0, damage));
     }
 }

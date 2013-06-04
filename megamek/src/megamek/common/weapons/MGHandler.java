@@ -57,46 +57,53 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         double toReturn = nDamPerHit;
-        if (weapon.isRapidfire() && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+        if (weapon.isRapidfire()
+                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
             if (bGlancing) {
                 toReturn = (int) Math.floor(nDamPerHit / 2.0);
             }
         } else {
-            if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-                toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            if ((target instanceof Infantry)
+                    && !(target instanceof BattleArmor)) {
+                toReturn = Compute.directBlowInfantryDamage(toReturn,
+                        bDirect ? toHit.getMoS() / 3 : 0,
+                        wtype.getInfantryDamageClass(),
+                        ((Infantry) target).isMechanized());
                 if (bGlancing) {
                     toReturn = (int) Math.floor(toReturn / 2.0);
                 }
             } else {
                 toReturn = wtype.getDamage();
                 if (bDirect) {
-                    toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+                    toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
+                            toReturn * 2);
                 }
                 if (bGlancing) {
                     toReturn = (int) Math.floor(toReturn / 2.0);
                 }
             }
         }
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
-        nDamPerHit = (int)toReturn;
+        nDamPerHit = (int) toReturn;
 
         return nDamPerHit;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -112,7 +119,7 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     @Override
@@ -129,24 +136,24 @@ public class MGHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override
     protected void useAmmo() {
         if (weapon.isRapidfire()) {
 
-            //TacOps p.102 Rapid Fire MG Rules
+            // TacOps p.102 Rapid Fire MG Rules
             switch (wtype.getAmmoType()) {
-            case AmmoType.T_MG:
-                nDamPerHit = Compute.d6();
-                break;
-            case AmmoType.T_MG_HEAVY:
-                nDamPerHit = Compute.d6() + 1;
-                break;
-            case AmmoType.T_MG_LIGHT:
-                nDamPerHit = Math.max(1, Compute.d6() - 1);
-                break;
+                case AmmoType.T_MG:
+                    nDamPerHit = Compute.d6();
+                    break;
+                case AmmoType.T_MG_HEAVY:
+                    nDamPerHit = Compute.d6() + 1;
+                    break;
+                case AmmoType.T_MG_LIGHT:
+                    nDamPerHit = Math.max(1, Compute.d6() - 1);
+                    break;
             }
 
             nRapidDamHeatPerHit = nDamPerHit;

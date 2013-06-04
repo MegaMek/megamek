@@ -37,7 +37,7 @@ public class StingrayWeapon extends SubCapitalMissileWeapon {
      */
     public StingrayWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Stingray";
         this.setInternalName(this.name);
         this.addLookupName("Stingray");
@@ -59,8 +59,9 @@ public class StingrayWeapon extends SubCapitalMissileWeapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

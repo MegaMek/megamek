@@ -40,14 +40,15 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new MekMortarHandler(toHit, waa, game, server);
     }
 }

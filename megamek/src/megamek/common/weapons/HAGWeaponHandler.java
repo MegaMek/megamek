@@ -50,7 +50,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -60,16 +60,19 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = wtype.getRackSize();
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-            if ( bGlancing ) {
-                toReturn /=2;
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+            if (bGlancing) {
+                toReturn /= 2;
             }
             toReturn = Math.ceil(toReturn);
             return (int) toReturn;
@@ -79,7 +82,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -97,7 +100,8 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             nHitsModifier -= 2;
         }
 
-        boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+        boolean tacopscluster = game.getOptions().booleanOption(
+                "tacops_clusterhitpen");
         if (tacopscluster) {
             if (nRange <= 1) {
                 nHitsModifier += 1;
@@ -108,11 +112,12 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nHitsModifier -= 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nHitsModifier -= 2;
         }
 
@@ -151,7 +156,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage(){
+    protected boolean canDoDirectBlowDamage() {
         return false;
     }
 }

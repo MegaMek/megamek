@@ -30,7 +30,7 @@ public class CLLRM15OS extends LRMWeapon {
      */
     public CLLRM15OS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 15 (OS)";
         setInternalName("CLLRM15 (OS)");
         addLookupName("Clan OS LRM-15");
@@ -47,8 +47,9 @@ public class CLLRM15OS extends LRMWeapon {
         medAV = 9;
         longAV = 9;
         maxRange = RANGE_LONG;
-        this.introDate = 2676;
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        introDate = 2676;
+        techLevel.put(2676, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_F;
     }
 }

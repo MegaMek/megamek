@@ -36,7 +36,7 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
 
     public ISERLargeLaserPrototype() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "ER Large Laser Prototype";
         setInternalName("ISERLargeLaserPrototype");
         addLookupName("IS ER Large Laser Prototype");
@@ -60,10 +60,11 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

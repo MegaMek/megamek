@@ -30,7 +30,7 @@ public class CLLRM16 extends LRMWeapon {
      */
     public CLLRM16() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 16";
         setInternalName("CLLRM16");
         heat = 0;
@@ -40,8 +40,8 @@ public class CLLRM16 extends LRMWeapon {
         criticals = 0;
         bv = 214;
         introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3060, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
     }
 }

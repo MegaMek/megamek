@@ -33,25 +33,27 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
     /**
      *
      */
-	
+
     private static final long serialVersionUID = -30934685350251837L;
     private int smokeMissilesNowLeft = 0;
-    
+
     /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     *      megamek.common.Entity, boolean)
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
@@ -61,7 +63,6 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
 
         AmmoType atype = (AmmoType) ammo.getType();
 
-        
         if (!bMissed) {
             Report r = new Report(3190);
             r.subject = subjectId;
@@ -86,22 +87,22 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
             }
         }
 
-        smokeMissilesNowLeft = wtype.getRackSize();    
+        smokeMissilesNowLeft = wtype.getRackSize();
 
         // Handle munitions.
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
-        
+
             server.deliverMissileSmoke(center, vPhaseReport);
-            smokeMissilesNowLeft = (smokeMissilesNowLeft - 5);   
+            smokeMissilesNowLeft = (smokeMissilesNowLeft - 5);
             int flight = 0;
-        
+
             while (smokeMissilesNowLeft > 0) {
                 coords = Compute.getSmokeMissileTarget(game, center, flight);
                 server.deliverMissileSmoke(coords, vPhaseReport);
                 smokeMissilesNowLeft = (smokeMissilesNowLeft - 5);
-                flight ++;
-         }
-      }
+                flight++;
+            }
+        }
         return true;
     }
- }
+}

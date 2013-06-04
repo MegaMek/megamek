@@ -36,7 +36,8 @@ public abstract class RifleWeapon extends AmmoWeapon {
     public RifleWeapon() {
         super();
 
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+                .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_RIFLE;
         explosive = false; // when firing incendiary ammo
         techRating = RATING_C;
@@ -52,7 +53,8 @@ public abstract class RifleWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new RifleWeaponHandler(toHit, waa, game, server);
 
     }

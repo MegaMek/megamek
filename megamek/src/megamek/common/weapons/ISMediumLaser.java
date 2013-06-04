@@ -31,7 +31,7 @@ public class ISMediumLaser extends LaserWeapon {
 
     public ISMediumLaser() {
         super();
-        this.techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         this.name = "Medium Laser";
         this.setInternalName(this.name);
         this.addLookupName("IS Medium Laser");
@@ -49,11 +49,13 @@ public class ISMediumLaser extends LaserWeapon {
         this.tonnage = 1.0f;
         this.criticals = 1;
         this.bv = 46;
-        this.cost = 40000; 
+        this.cost = 40000;
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B,EquipmentType.RATING_B};
-        this.introDate = 2300;
+        this.availRating = new int[] { EquipmentType.RATING_B,
+                EquipmentType.RATING_B, EquipmentType.RATING_B };
+        introDate = 2300;
+        techLevel.put(2300, techLevel.get(3071));
         techRating = RATING_C;
     }
 }

@@ -38,24 +38,27 @@ public abstract class UACWeapon extends AmmoWeapon {
      */
     public UACWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_BALLISTIC).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_AC_ULTRA;
         String[] modeStrings = { "Single", "Ultra" };
         setModes(modeStrings);
         techRating = RATING_E;
         atClass = CLASS_AC;
-        availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
+        availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_E };
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new UltraWeaponHandler(toHit, waa, game, server);
     }
 }

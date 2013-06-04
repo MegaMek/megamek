@@ -37,8 +37,8 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
      */
     public ArtilleryBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.flags = flags.or(F_ARTILLERY);
         this.name = "Artillery Bay";
         this.setInternalName(this.name);
@@ -57,24 +57,30 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_HOMING) {
             if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-                return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa, game, server);
+                return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa,
+                        game, server);
             }
-            return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa, game, server);
+            return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa,
+                    game, server);
         } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game,
+                    server);
         } else {
-            return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game,
+                    server);
         }
     }
 }

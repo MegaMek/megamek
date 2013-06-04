@@ -34,7 +34,7 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
      */
     public ISSmallXPulseLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Small X-Pulse Laser";
         setInternalName("ISSmallXPulseLaser");
         addLookupName("IS X-Pulse Small Laser");
@@ -59,8 +59,8 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
         cost = 31000;
         flags = flags.or(F_BURST_FIRE);
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
+        techLevel.put(3057, techLevel.get(3071));
     }
 }

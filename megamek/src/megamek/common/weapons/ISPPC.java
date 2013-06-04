@@ -34,7 +34,7 @@ public class ISPPC extends PPCWeapon {
      */
     public ISPPC() {
         super();
-        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "PPC";
         setInternalName(name);
         addLookupName("Particle Cannon");
@@ -51,8 +51,7 @@ public class ISPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON",
-                "Field Inhibitor OFF" });
+        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         tonnage = 7.0f;
         criticals = 3;
         bv = 176;
@@ -63,8 +62,8 @@ public class ISPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         introDate = 2460;
-        techLevel.put(2460,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techLevel.put(2460, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_D;
     }
 

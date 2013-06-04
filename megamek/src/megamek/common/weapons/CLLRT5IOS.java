@@ -30,7 +30,7 @@ public class CLLRT5IOS extends LRTWeapon {
      */
     public CLLRT5IOS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "LRT 5 (I-OS)";
         setInternalName("CLLRTorpedo5 (IOS)");
         addLookupName("Clan IOS LRT-5");
@@ -49,8 +49,8 @@ public class CLLRT5IOS extends LRTWeapon {
         flags = flags.or(F_ONESHOT);
         cost = 24000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
+        techLevel.put(3058, techLevel.get(3071));
     }
 }

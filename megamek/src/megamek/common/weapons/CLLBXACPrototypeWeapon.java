@@ -47,8 +47,10 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             return new CLLBXPrototypeHandler(toHit, waa, game, server);
         }
@@ -57,6 +59,6 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
 
     public CLLBXACPrototypeWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
     }
 }

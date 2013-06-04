@@ -31,7 +31,7 @@ public class ISSmallLaser extends LaserWeapon {
 
     public ISSmallLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "Small Laser";
         setInternalName(name);
         addLookupName("ISSmall Laser");
@@ -54,8 +54,10 @@ public class ISSmallLaser extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        this.availRating = new int[]{EquipmentType.RATING_B, EquipmentType.RATING_B,EquipmentType.RATING_B};
-        this.introDate = 2400;
+        this.availRating = new int[] { EquipmentType.RATING_B,
+                EquipmentType.RATING_B, EquipmentType.RATING_B };
+        introDate = 2400;
+        techLevel.put(2400, techLevel.get(3071));
         techRating = RATING_C;
     }
 }

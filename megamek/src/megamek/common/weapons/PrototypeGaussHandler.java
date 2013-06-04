@@ -30,7 +30,6 @@ import megamek.server.Server;
  */
 public class PrototypeGaussHandler extends GRHandler {
 
-
     /**
      *
      */
@@ -41,13 +40,14 @@ public class PrototypeGaussHandler extends GRHandler {
      * @param w
      * @param g
      */
-    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

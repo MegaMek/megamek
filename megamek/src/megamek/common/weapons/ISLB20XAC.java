@@ -33,7 +33,7 @@ public class ISLB20XAC extends LBXACWeapon {
      */
     public ISLB20XAC() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "LB 20-X AC";
         setInternalName("ISLBXAC20");
         addLookupName("IS LB 20-X AC");
@@ -52,8 +52,8 @@ public class ISLB20XAC extends LBXACWeapon {
         medAV = 20;
         maxRange = RANGE_MED;
         introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3058, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
     }
 }

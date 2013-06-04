@@ -27,7 +27,7 @@ public class ISLAC2 extends LACWeapon {
 
     public ISLAC2() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "LAC/2";
         setInternalName("Light Auto Cannon/2");
         addLookupName("IS Light AutoCannon/2");
@@ -49,8 +49,8 @@ public class ISLAC2 extends LACWeapon {
         shortAV = 2;
         medAV = 2;
         introDate = 3068;
-        techLevel.put(3068,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3068, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_D;
     }
 }

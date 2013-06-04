@@ -18,7 +18,7 @@ import megamek.common.WeaponType;
 
 /**
  * @author beerockxs
- *
+ * 
  */
 public class CLFussilade extends ATMWeapon {
 
@@ -29,7 +29,7 @@ public class CLFussilade extends ATMWeapon {
 
     public CLFussilade() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.clear();
         flags = flags.or(WeaponType.F_PROTO_WEAPON);
         rackSize = 3;
         minimumRange = 4;
@@ -44,8 +44,10 @@ public class CLFussilade extends ATMWeapon {
         maxRange = RANGE_MED;
         techRating = RATING_F;
         cost = 100000;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         bv = 11;
+        introDate = 3072;
+        techLevel.put(3072, TechConstants.T_CLAN_EXPERIMENTAL);
 
     }
 

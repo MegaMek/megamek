@@ -56,16 +56,22 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if ((entityTarget instanceof Infantry) && !(entityTarget instanceof BattleArmor)) {
+        if ((entityTarget instanceof Infantry)
+                && !(entityTarget instanceof BattleArmor)) {
             // 1 point direct-fire ballistic
-            nDamPerHit = Compute.directBlowInfantryDamage(1, bDirect ? toHit.getMoS()/3 : 0, WeaponType.WEAPON_DIRECT_FIRE, ((Infantry)target).isMechanized());
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+            nDamPerHit = Compute.directBlowInfantryDamage(1,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    WeaponType.WEAPON_DIRECT_FIRE,
+                    ((Infantry) target).isMechanized());
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                    nCluster, bldgAbsorbs);
         }
         Report r = new Report(3390);
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         if (entityTarget.infernos.isStillBurning()
-                || ((target instanceof Tank) && ((Tank) target).isOnFire() && ((Tank)target).isInfernoFire())) {
+                || ((target instanceof Tank) && ((Tank) target).isOnFire() && ((Tank) target)
+                        .isInfernoFire())) {
             r = new Report(3545);
             r.subject = subjectId;
             r.addDesc(entityTarget);
@@ -86,7 +92,7 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
             r.indent(3);
             int roll = Compute.d6(2);
             r.add(roll);
-            if (roll >=4) {
+            if (roll >= 4) {
                 r.choose(true);
                 for (int i = 0; i < entityTarget.locations(); i++) {
                     ((Tank) target).extinguishAll();

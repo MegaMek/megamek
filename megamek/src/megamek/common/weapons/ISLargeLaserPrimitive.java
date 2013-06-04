@@ -28,7 +28,7 @@ public class ISLargeLaserPrimitive extends LaserWeapon {
 
     public ISLargeLaserPrimitive() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        this.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         this.name = "Large Laser Prototype";
         this.setInternalName(this.name);
         this.addLookupName("IS Large Laser Prototype");

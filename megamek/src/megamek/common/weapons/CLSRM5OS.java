@@ -30,7 +30,7 @@ public class CLSRM5OS extends SRMWeapon {
      */
     public CLSRM5OS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 5 (OS)";
         setInternalName("CLSRM5OS");
         rackSize = 5;
@@ -41,8 +41,8 @@ public class CLSRM5OS extends SRMWeapon {
         bv = 9;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3060, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
     }
 }

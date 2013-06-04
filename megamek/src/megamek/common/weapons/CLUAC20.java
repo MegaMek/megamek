@@ -33,7 +33,7 @@ public class CLUAC20 extends UACWeapon {
      */
     public CLUAC20() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Ultra AC/20";
         setInternalName("CLUltraAC20");
         addLookupName("Clan Ultra AC/20");
@@ -54,7 +54,7 @@ public class CLUAC20 extends UACWeapon {
         explosionDamage = damage;
         techRating = RATING_F;
         introDate = 2825;
-        techLevel.put(2825,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(2825, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
     }
 }

@@ -310,14 +310,14 @@ public class TestMech extends TestEntity {
         }
         if (mt.hasFlag(MiscType.F_PARTIAL_WING)) {
             // partial wing needs 3/4 crits in the side torsos
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LT) != ((mt
-                    .getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) ? 3
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_LT) != ((TechConstants.isClan(mt
+                    .getTechLevel(entity.getTechLevelYear()))) ? 3
                     : 4)) {
                 buff.append("incorrect number of partial wing crits in left torso\n");
                 return false;
             }
-            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RT) != ((mt
-                    .getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) ? 3
+            if (countCriticalSlotsFromEquipInLocation(entity, eNum, Mech.LOC_RT) != ((TechConstants.isClan(mt
+                    .getTechLevel(entity.getTechLevelYear()))) ? 3
                     : 4)) {
                 buff.append("incorrect number of partial wing crits in right torso\n");
                 return false;

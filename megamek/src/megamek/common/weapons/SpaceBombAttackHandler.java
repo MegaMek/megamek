@@ -34,18 +34,19 @@ public class SpaceBombAttackHandler extends WeaponHandler {
      * 
      */
     private static final long serialVersionUID = -2439937071168853215L;
-    //int[] payload;
+
+    // int[] payload;
 
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public SpaceBombAttackHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
-        //payload = waa.getBombPayload();
+        // payload = waa.getBombPayload();
     }
 
     /**
@@ -56,44 +57,45 @@ public class SpaceBombAttackHandler extends WeaponHandler {
     @Override
     protected int calcAttackValue() {
         int[] payload = waa.getBombPayload();
-        if(null == payload) {
+        if (null == payload) {
             return 0;
         }
         int nbombs = 0;
-        for(int i = 0; i < payload.length; i++) {
+        for (int i = 0; i < payload.length; i++) {
             nbombs += payload[i];
         }
-        if(bDirect) {
-            nbombs = Math.min(nbombs+(toHit.getMoS()/3), nbombs*2);
+        if (bDirect) {
+            nbombs = Math.min(nbombs + (toHit.getMoS() / 3), nbombs * 2);
         }
-        if(bGlancing) {
+        if (bGlancing) {
             nbombs = (int) Math.floor(nbombs / 2.0);
 
         }
         return nbombs;
     }
-    
+
     /**
-     * Does this attack use the cluster hit table?
-     * necessary to determine how Aero damage should be applied
+     * Does this attack use the cluster hit table? necessary to determine how
+     * Aero damage should be applied
      */
     @Override
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if(!(ae instanceof Aero) || null == payload) {
+        if (!(ae instanceof Aero) || null == payload) {
             return;
         }
-        for(int type = 0; type < payload.length; type++) {
-            for(int i = 0; i < payload[type]; i++) {
-                //find the first mounted bomb of this type and drop it
-                for(Mounted bomb : ae.getBombs()) {
-                    if(!bomb.isDestroyed() && bomb.getUsableShotsLeft() > 0
-                           && ((BombType)bomb.getType()).getBombType() == type) {
+        for (int type = 0; type < payload.length; type++) {
+            for (int i = 0; i < payload[type]; i++) {
+                // find the first mounted bomb of this type and drop it
+                for (Mounted bomb : ae.getBombs()) {
+                    if (!bomb.isDestroyed()
+                            && bomb.getUsableShotsLeft() > 0
+                            && ((BombType) bomb.getType()).getBombType() == type) {
                         bomb.setShotsLeft(0);
                         break;
                     }

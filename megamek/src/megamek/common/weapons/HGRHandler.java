@@ -50,7 +50,7 @@ public class HGRHandler extends GRHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -67,7 +67,8 @@ public class HGRHandler extends GRHandler {
             } else {
                 nMod = -1;
             }
-            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod, "fired HeavyGauss unbraced", false);
+            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
+                    "fired HeavyGauss unbraced", false);
             game.addPSR(psr);
         }
         return false;

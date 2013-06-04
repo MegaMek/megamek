@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -35,10 +34,11 @@ public class WhiteSharkTHandler extends TeleMissileHandler {
      * @param g
      * @param s
      */
-    public WhiteSharkTHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public WhiteSharkTHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return 9;

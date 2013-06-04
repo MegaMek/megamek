@@ -37,7 +37,7 @@ public class KrakenWeapon extends CapitalMissileWeapon {
      */
     public KrakenWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
+        this.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         this.name = "Kraken";
         this.setInternalName(this.name);
         this.addLookupName("Kraken");
@@ -54,20 +54,22 @@ public class KrakenWeapon extends CapitalMissileWeapon {
         this.shortAV = 10;
         this.medAV = 10;
         this.longAV = 10;
-        this.extAV =10;
+        this.extAV = 10;
         this.maxRange = RANGE_EXT;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
             return new SantaAnnaHandler(toHit, waa, game, server);
         }

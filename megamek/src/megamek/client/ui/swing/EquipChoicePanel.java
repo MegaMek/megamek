@@ -401,7 +401,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(
-                        entity.getTechLevel(), atCheck.getTechLevel(), true,
+                        entity.getTechLevel(), atCheck.getTechLevel(entity.getTechLevelYear()), true,
                         entity.isMixedTech());
 
                 // allow all lvl2 IS units to use level 1 ammo
@@ -410,7 +410,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 // need to show up in this display.
                 if (!bTechMatch
                         && (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)
-                        && (atCheck.getTechLevel() == TechConstants.T_INTRO_BOXSET)) {
+                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_INTRO_BOXSET)) {
                     bTechMatch = true;
                 }
 
@@ -418,7 +418,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (!clientgui.getClient().game.getOptions().booleanOption(
                         "is_eq_limits") //$NON-NLS-1$
                         && (entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                        && (atCheck.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)) {
+                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_TW_NON_BOX)) {
                     bTechMatch = true;
                 }
 
@@ -429,22 +429,22 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             "is_eq_limits")) {
                         if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity
                                 .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
-                                && ((atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)
-                                        || (atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL))) {
+                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)
+                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
+                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                         if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
                                 || (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity
                                 .getTechLevel() == TechConstants.T_IS_ADVANCED))
-                                && ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
-                                        || (atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel() == TechConstants.T_IS_UNOFFICIAL))) {
+                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
+                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
+                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                     }
-                } else if ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
-                        || (atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+                } else if ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
+                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)) {
                     bTechMatch = false;
                 }
 

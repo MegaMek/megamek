@@ -33,14 +33,14 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
      * @param waa
      * @param g
      */
-    public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+    public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -48,8 +48,9 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         int[] nRanges = wtype.getRanges(weapon);
         double toReturn = wtype.getDamage(nRange);
 
-        if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
-            toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
+        if (game.getOptions().booleanOption("tacops_energy_weapons")
+                && wtype.hasModes()) {
+            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
@@ -64,19 +65,23 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-            if ( nRange <= nRanges[RangeType.RANGE_SHORT] ){
-                toReturn +=3;
-            }else if ( nRange <= nRanges[RangeType.RANGE_MEDIUM] ){
-                toReturn +=2;
-            }else{
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+            if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
+                toReturn += 3;
+            } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
+                toReturn += 2;
+            } else {
                 toReturn++;
             }
-        } else if (bDirect){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+        } else if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > nRanges[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > nRanges[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn / 2.0);
             toReturn -= 1;
         }

@@ -50,9 +50,9 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
-     *      vPhaseReport)
+     * vPhaseReport)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -66,7 +66,7 @@ public class PrototypeLBXHandler extends LBXHandler {
         if (bGlancing) {
             shotMod -= 4;
         }
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             shotMod -= 2;
         }
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
@@ -88,7 +88,7 @@ public class PrototypeLBXHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

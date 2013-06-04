@@ -52,8 +52,7 @@ public abstract class Weapon extends WeaponType implements Serializable {
         AttackHandler ah = getCorrectHandler(toHit, waa, game, server);
         if (ah instanceof LRMSwarmHandler || ah instanceof LRMSwarmIHandler)
             return ah;
-        return toHit.getValue() == TargetRoll.IMPOSSIBLE ? null
-                : ah;
+        return toHit.getValue() == TargetRoll.IMPOSSIBLE ? null : ah;
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,

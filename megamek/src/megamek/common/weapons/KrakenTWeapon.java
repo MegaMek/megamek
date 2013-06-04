@@ -37,7 +37,7 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
      */
     public KrakenTWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Kraken T";
         this.setInternalName(this.name);
         this.addLookupName("KrakenT");
@@ -54,20 +54,21 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
         this.shortAV = 10;
         this.medAV = 10;
         this.longAV = 10;
-        this.extAV =10;
+        this.extAV = 10;
         this.maxRange = RANGE_EXT;
         introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3057, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

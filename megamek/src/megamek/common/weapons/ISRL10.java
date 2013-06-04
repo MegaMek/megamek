@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -21,37 +21,37 @@ import megamek.common.TechConstants;
 public class ISRL10 extends RLWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3437644808445570760L;
 
     /**
-     * 
+     *
      */
     public ISRL10() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        this.name = "Rocket Launcher 10";
-        this.setInternalName("RL10");
-        this.addLookupName("RL 10");
-        this.addLookupName("ISRocketLauncher10");
-        this.addLookupName("IS RLauncher-10");
-        this.heat = 3;
-        this.rackSize = 10;
-        this.shortRange = 5;
-        this.mediumRange = 11;
-        this.longRange = 18;
-        this.extremeRange = 22;
-        this.tonnage = .5f;
-        this.criticals = 1;
-        this.bv = 18;
-        this.cost = 15000;
-        this.shortAV = 6;
-        this.medAV = 6;
-        this.maxRange = RANGE_MED;
-        introDate = 3050;
-        techLevel.put(3050,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        name = "Rocket Launcher 10";
+        setInternalName("RL10");
+        addLookupName("RL 10");
+        addLookupName("ISRocketLauncher10");
+        addLookupName("IS RLauncher-10");
+        heat = 3;
+        rackSize = 10;
+        shortRange = 5;
+        mediumRange = 11;
+        longRange = 18;
+        extremeRange = 22;
+        tonnage = .5f;
+        criticals = 1;
+        bv = 18;
+        cost = 15000;
+        shortAV = 6;
+        medAV = 6;
+        maxRange = RANGE_MED;
+        introDate = 3064;
+        techLevel.put(3064, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_B };
         techRating = RATING_B;
     }
 }

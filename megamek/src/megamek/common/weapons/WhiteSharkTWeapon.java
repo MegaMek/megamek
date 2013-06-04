@@ -37,7 +37,7 @@ public class WhiteSharkTWeapon extends CapitalMissileWeapon {
      */
     public WhiteSharkTWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "White Shark-T";
         this.setInternalName(this.name);
         this.addLookupName("WhiteSharkT");
@@ -57,23 +57,24 @@ public class WhiteSharkTWeapon extends CapitalMissileWeapon {
         this.extAV = 3;
         this.maxRange = RANGE_EXT;
         introDate = 3056;
-        techLevel.put(3056,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3056, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
-        .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if(atype.hasFlag(AmmoType.F_TELE_MISSILE))
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.hasFlag(AmmoType.F_TELE_MISSILE))
             return new WhiteSharkTHandler(toHit, waa, game, server);
         return new WhiteSharkHandler(toHit, waa, game, server);
     }

@@ -31,7 +31,7 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
      */
     public ISThunderBolt5() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Thunderbolt 5";
         this.setInternalName(this.name);
         this.addLookupName("IS Thunderbolt-5");
@@ -52,8 +52,8 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         this.bv = 64;
         this.cost = 50000;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3072;
-        techLevel.put(3072,techLevel.get(3071));
+        techLevel.put(3072, techLevel.get(3071));
     }
 }

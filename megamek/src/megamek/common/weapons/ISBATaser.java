@@ -35,7 +35,7 @@ public class ISBATaser extends AmmoWeapon {
      */
     public ISBATaser() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Battle Armor Taser";
         setInternalName(name);
         addLookupName("ISBATaser");
@@ -49,19 +49,24 @@ public class ISBATaser extends AmmoWeapon {
         extremeRange = 4;
         bv = 15;
         toHitModifier = 1;
+        introDate = 3067;
+        techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        techRating = RATING_E;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new BATaserHandler(toHit, waa, game, server);
     }
 }

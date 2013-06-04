@@ -34,7 +34,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 1308895663099714573L;
 
     protected MechTaserHandler() {
-        //deserialization only
+        // deserialization only
     }
 
     /**
@@ -42,15 +42,17 @@ public class MechTaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public MechTaserHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public MechTaserHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
@@ -72,13 +74,15 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             r.addDesc(entityTarget);
             // shut down for rest of scenario, so we actually kill it
             // TODO: fix for salvage purposes
-            HitData targetTrooper = entityTarget.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            HitData targetTrooper = entityTarget.rollHitLocation(
+                    ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             r.add(entityTarget.getLocationAbbr(targetTrooper));
             vPhaseReport.add(r);
-            vPhaseReport.addAll(server.criticalEntity(ae, targetTrooper.getLocation(), 0, false, false, 0));
+            vPhaseReport.addAll(server.criticalEntity(ae,
+                    targetTrooper.getLocation(), 0, false, false, 0));
             done = true;
         } else if (entityTarget instanceof Mech) {
-            if (((Mech)entityTarget).isIndustrial()) {
+            if (((Mech) entityTarget).isIndustrial()) {
                 if (taserRoll >= 8) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);

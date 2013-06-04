@@ -39,16 +39,17 @@ public abstract class RLWeapon extends MissileWeapon {
         flags = flags.or(F_ONESHOT);
         toHitModifier = 1;
         atClass = CLASS_ROCKET_LAUNCHER;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_B};
-        this.introDate = 3064;
+        availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_B };
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

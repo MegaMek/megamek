@@ -54,9 +54,10 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
-     *      boolean, megamek.common.Building)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
+     * .Entity, boolean, megamek.common.Building)
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
@@ -71,7 +72,8 @@ public class SRMInfernoHandler extends SRMHandler {
                     vPhaseReport);
         }
 
-        //shots that miss an entity can also potential cause explosions in a heavy industrial hex
+        // shots that miss an entity can also potential cause explosions in a
+        // heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
         // Report any AMS action.
@@ -84,7 +86,8 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if (!targetInBuilding || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
+        if (!targetInBuilding
+                || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
         return true;
@@ -92,7 +95,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -178,9 +181,10 @@ public class SRMInfernoHandler extends SRMHandler {
             bGlancing = false;
         }
 
-        //Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -221,15 +225,18 @@ public class SRMInfernoHandler extends SRMHandler {
         } // End missed-target
 
         // light inferno missiles all at once, if not missed
-        if(!bMissed) {
-            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits, weapon.getCalledShot().getCall()));
+        if (!bMissed) {
+            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits,
+                    weapon.getCalledShot().getCall()));
         }
         return false;
     }
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -245,7 +252,8 @@ public class SRMInfernoHandler extends SRMHandler {
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
-                return ((BattleArmor) ae).getShootingStrength()*wtype.getRackSize();
+                return ((BattleArmor) ae).getShootingStrength()
+                        * wtype.getRackSize();
             }
             Report r = new Report(3325);
             r.subject = subjectId;
@@ -257,7 +265,8 @@ public class SRMInfernoHandler extends SRMHandler {
         }
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
-        boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+        boolean tacopscluster = game.getOptions().booleanOption(
+                "tacops_clusterhitpen");
         if (tacopscluster) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
@@ -268,18 +277,19 @@ public class SRMInfernoHandler extends SRMHandler {
             }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
 
-        if ( bDirect ){
-            nMissilesModifier += (toHit.getMoS()/3)*2;
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
 
@@ -292,10 +302,12 @@ public class SRMInfernoHandler extends SRMHandler {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
             }
         }
 
@@ -345,14 +357,18 @@ public class SRMInfernoHandler extends SRMHandler {
         // Any clear attempt can result in accidental ignition, even
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
-        //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
-        //you do a normal ignition as though for intentional fires
+        // TODO: change this for TacOps - now you roll another 2d6 first and on
+        // a 5 or less
+        // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false, true,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                        true,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+                nDamage, subjectId);
         if (clearReports.size() > 0) {
             vPhaseReport.lastElement().newlines = 0;
         }

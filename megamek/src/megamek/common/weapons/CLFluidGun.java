@@ -18,7 +18,7 @@ import megamek.common.TechConstants;
 /**
  * @author beerockxs
  */
-public class CLFluidGun extends FluidGunWeapon{
+public class CLFluidGun extends FluidGunWeapon {
 
     /**
      *
@@ -30,7 +30,7 @@ public class CLFluidGun extends FluidGunWeapon{
      */
     public CLFluidGun() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Fluid Gun";
         setInternalName("Clan Fluid Gun");
         addLookupName("CLFluidGun");
@@ -45,6 +45,6 @@ public class CLFluidGun extends FluidGunWeapon{
         tonnage = 2;
         cost = 35000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_B, RATING_B, RATING_B};
+        availRating = new int[] { RATING_B, RATING_B, RATING_B };
     }
 }

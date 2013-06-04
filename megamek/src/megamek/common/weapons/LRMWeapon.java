@@ -39,16 +39,17 @@ public abstract class LRMWeapon extends MissileWeapon {
         longRange = 21;
         extremeRange = 28;
         atClass = CLASS_LRM;
-        this.availRating = new int[]{EquipmentType.RATING_C, EquipmentType.RATING_C,EquipmentType.RATING_C};
-        this.introDate = 2400;
+        availRating = new int[] { EquipmentType.RATING_C,
+                EquipmentType.RATING_C, EquipmentType.RATING_C };
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

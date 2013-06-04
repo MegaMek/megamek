@@ -47,13 +47,14 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -62,16 +63,23 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // we default to direct fire weapons for anti-infantry damage
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, wtype.getInfantryDamageClass(), ((Infantry) target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         Entity te = null;
         if (target instanceof Entity) {
-            te = (Entity)target;
-            hit = te.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
-            if (!(te instanceof BattleArmor) && !(te instanceof Infantry) && (!te.hasBARArmor(hit.getLocation()) || (te.getBARRating(hit.getLocation()) >= 8))) {
+            te = (Entity) target;
+            hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
+                    waa.getAimedLocation(), waa.getAimingMode(),
+                    toHit.getCover());
+            if (!(te instanceof BattleArmor)
+                    && !(te instanceof Infantry)
+                    && (!te.hasBARArmor(hit.getLocation()) || (te
+                            .getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }
         }
@@ -80,7 +88,8 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -98,8 +107,9 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         hit.setBoxCars(roll == 12);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
-            // Weapon strikes Partial Cover.            
+                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCalledShot().getCall()))) {
+            // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                     nCluster, bldgAbsorbs);
             return;
@@ -122,15 +132,16 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
-        if ( bDirect ){
-            hit.makeDirectBlow(toHit.getMoS()/3);
+        if (bDirect) {
+            hit.makeDirectBlow(toHit.getMoS() / 3);
         }
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, entityTarget.getPosition());
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -139,9 +150,9 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
-        //some buildings scale remaining damage that is not absorbed
-        //TODO: this isn't quite right for castles brian
-        if(null != bldg) {
+        // some buildings scale remaining damage that is not absorbed
+        // TODO: this isn't quite right for castles brian
+        if (null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 
@@ -162,7 +173,8 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront, underWater, nukeS2S));
+                                    : damageType, false, false, throughFront,
+                            underWater, nukeS2S));
         }
     }
 }

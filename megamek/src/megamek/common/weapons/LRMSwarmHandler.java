@@ -55,7 +55,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -141,9 +141,10 @@ public class LRMSwarmHandler extends LRMHandler {
             bGlancing = false;
         }
 
-        //Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && (entityTarget != null);
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -224,7 +225,8 @@ public class LRMSwarmHandler extends LRMHandler {
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                 // The building takes the full brunt of the attack.
                 nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
+                handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                        target.getPosition());
                 // And we're done!
                 return false;
             }
@@ -237,9 +239,10 @@ public class LRMSwarmHandler extends LRMHandler {
         } // Handle the next cluster.
         Report.addNewline(vPhaseReport);
         if (swarmMissilesNowLeft > 0) {
-            Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
-                    entityTarget, waa.getWeaponId());
-            boolean stoppedByECM = Compute.isAffectedByECM(ae, target.getPosition(), target.getPosition())
+            Entity swarmTarget = Compute.getSwarmMissileTarget(game,
+                    ae.getId(), entityTarget, waa.getWeaponId());
+            boolean stoppedByECM = Compute.isAffectedByECM(ae,
+                    target.getPosition(), target.getPosition())
                     && !(this instanceof LRMSwarmIHandler);
             if (swarmTarget != null && !stoppedByECM) {
                 r = new Report(3420);
@@ -258,7 +261,8 @@ public class LRMSwarmHandler extends LRMHandler {
                 Weapon w = (Weapon) m.getType();
                 // increase ammo by one, we'll use one that we shouldn't use
                 // in the next line
-                weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft()+1);
+                weapon.getLinked().setShotsLeft(
+                        weapon.getLinked().getBaseShotsLeft() + 1);
                 AttackHandler ah = w.fire(newWaa, game, server);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
@@ -271,8 +275,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     r.subject = subjectId;
                     r.indent(2);
                     vPhaseReport.addElement(r);
-                }
-                else {
+                } else {
                     r = new Report(3426);
                     r.add(swarmMissilesNowLeft);
                     r.subject = subjectId;
@@ -281,7 +284,8 @@ public class LRMSwarmHandler extends LRMHandler {
                 }
             }
 
-            // Reset the Swarm Missiles variable to 0 because if we don't it thinks we've already computed this when we fire the next rack.
+            // Reset the Swarm Missiles variable to 0 because if we don't it
+            // thinks we've already computed this when we fire the next rack.
             swarmMissilesNowLeft = 0;
 
         }
@@ -290,9 +294,10 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
-     *      boolean, megamek.common.Building, java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
+     * .Entity, boolean, megamek.common.Building, java.util.Vector)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg,
@@ -307,7 +312,8 @@ public class LRMSwarmHandler extends LRMHandler {
 
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                 entityTarget, waa.getWeaponId());
-        boolean stoppedByECM = Compute.isAffectedByECM(ae, target.getPosition(), target.getPosition())
+        boolean stoppedByECM = Compute.isAffectedByECM(ae,
+                target.getPosition(), target.getPosition())
                 && !(this instanceof LRMSwarmIHandler);
         if (swarmTarget != null && !stoppedByECM) {
             Report r = new Report(3420);
@@ -326,7 +332,8 @@ public class LRMSwarmHandler extends LRMHandler {
             Weapon w = (Weapon) m.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
-            weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft()+1);
+            weapon.getLinked().setShotsLeft(
+                    weapon.getLinked().getBaseShotsLeft() + 1);
             AttackHandler ah = w.fire(newWaa, game, server);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
@@ -339,8 +346,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 r.subject = subjectId;
                 r.indent(2);
                 vPhaseReport.addElement(r);
-            }
-            else {
+            } else {
                 Report r = new Report(3426);
                 r.add(swarmMissilesNowLeft);
                 r.subject = subjectId;
@@ -353,7 +359,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -377,15 +383,16 @@ public class LRMSwarmHandler extends LRMHandler {
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
 
-        if ( bDirect ){
-            nMissilesModifier += (toHit.getMoS()/3)*2;
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
 
@@ -398,20 +405,25 @@ public class LRMSwarmHandler extends LRMHandler {
                 int swarmsForHitTable = 5;
                 if ((swarmMissilesLeft > 5) && (swarmMissilesLeft <= 10)) {
                     swarmsForHitTable = 10;
-                } else if ((swarmMissilesLeft > 10) && (swarmMissilesLeft <= 15)) {
+                } else if ((swarmMissilesLeft > 10)
+                        && (swarmMissilesLeft <= 15)) {
                     swarmsForHitTable = 15;
-                } else if ((swarmMissilesLeft > 15) && (swarmMissilesLeft <= 20)) {
+                } else if ((swarmMissilesLeft > 15)
+                        && (swarmMissilesLeft <= 20)) {
                     swarmsForHitTable = 20;
                 }
                 missilesHit = Compute.missilesHit(swarmsForHitTable,
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
                 if (missilesHit > swarmMissilesLeft) {
                     missilesHit = swarmMissilesLeft;
                 }
             }
         } else {
             missilesHit = allShotsHit() ? wtype.getRackSize() : Compute
-                    .missilesHit(wtype.getRackSize(), nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                    .missilesHit(wtype.getRackSize(), nMissilesModifier,
+                            weapon.isHotLoaded(), false, advancedAMS
+                                    && amsEnganged);
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;

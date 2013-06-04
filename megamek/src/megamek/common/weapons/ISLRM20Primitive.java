@@ -32,7 +32,7 @@ public class ISLRM20Primitive extends LRMWeapon {
 
     public ISLRM20Primitive() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
+        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "LRM 20p";
         setInternalName(name);
         addLookupName("IS LRM-20 Primitive");
@@ -53,7 +53,8 @@ public class ISLRM20Primitive extends LRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new LRMHandler(toHit, waa, game, server, -2);
     }
 }

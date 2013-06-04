@@ -35,7 +35,7 @@ public class ISThumper extends ArtilleryWeapon {
      */
     public ISThumper() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Thumper";
         setInternalName("ISThumper");
         addLookupName("ISThumperArtillery");
@@ -53,7 +53,7 @@ public class ISThumper extends ArtilleryWeapon {
         bv = 43;
         cost = 187500;
         techRating = RATING_B;
-        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
 
     }
 

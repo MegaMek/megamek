@@ -35,7 +35,7 @@ public class ISBombastLaser extends LaserWeapon {
 
     public ISBombastLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Bombast Laser";
         setInternalName(name);
         addLookupName("IS Bombast Laser");
@@ -58,18 +58,19 @@ public class ISBombastLaser extends LaserWeapon {
         medAV = 12;
         maxRange = RANGE_MED;
         flags = flags.or(F_BOMBAST_LASER);
-        techRating = RATING_E;	
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};	
+        techRating = RATING_E;
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3064;
-        techLevel.put(3064,techLevel.get(3071));
+        techLevel.put(3064, techLevel.get(3071));
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

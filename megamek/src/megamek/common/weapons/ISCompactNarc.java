@@ -33,7 +33,7 @@ public class ISCompactNarc extends NarcWeapon {
      */
     public ISCompactNarc() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Compact Narc";
         setInternalName("ISCompactNarc");
         addLookupName("ISCompact Narc");

@@ -52,5 +52,6 @@ public class CLStreakSRM6IOS extends StreakSRMWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3058;
         techLevel.put(3058, techLevel.get(3071));
+        techLevel.put(3081, TechConstants.T_CLAN_TW);
     }
 }

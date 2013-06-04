@@ -57,11 +57,13 @@ public class ISMekTaser extends AmmoWeapon {
         explosive = true;
         flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER);
+        introDate = 3084;
+        techLevel.put(3084, TechConstants.T_IS_ADVANCED);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

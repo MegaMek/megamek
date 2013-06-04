@@ -30,7 +30,7 @@ public class ISSRM2OS extends SRMWeapon {
      */
     public ISSRM2OS() {
         super();
-        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "SRM 2 (OS)";
         setInternalName("ISSRM2OS");
         addLookupName("ISSRM2 (OS)"); // mtf
@@ -49,10 +49,11 @@ public class ISSRM2OS extends SRMWeapon {
         cost = 5000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        this.introDate = 2676;
+        introDate = 2676;
+        techLevel.put(2676, techLevel.get(3071));
         this.extinctDate = 2800;
         this.reintroDate = 3030;
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
     }
 }

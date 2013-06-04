@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -44,10 +43,11 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-    
+
     /**
      * handle this weapons firing
      * 
@@ -59,8 +59,8 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
-     
-        //Report weapon attack and its to-hit value.
+
+        // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
@@ -88,32 +88,37 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
         }
-        
+
         addHeat();
-        
-        //deliver screen
+
+        // deliver screen
         Coords coords = target.getPosition();
         server.deliverScreen(coords, vPhaseReport);
-        
-        //damage any entities in the hex
-        for (Enumeration<Entity> impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+
+        // damage any entities in the hex
+        for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
+                .hasMoreElements();) {
             Entity entity = impactHexHits.nextElement();
-            //if fighter squadron all fighters are damaged
-            if(entity instanceof FighterSquadron) {
-                for(Entity fighter : ((FighterSquadron)entity).getFighters()) {
+            // if fighter squadron all fighters are damaged
+            if (entity instanceof FighterSquadron) {
+                for (Entity fighter : ((FighterSquadron) entity).getFighters()) {
                     ToHitData squadronToHit = new ToHitData();
                     squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
-                    HitData hit = fighter.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    HitData hit = fighter.rollHitLocation(
+                            squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
                     hit.setCapital(false);
-                    vPhaseReport.addAll( server.damageEntity(fighter, hit, attackValue));
+                    vPhaseReport.addAll(server.damageEntity(fighter, hit,
+                            attackValue));
                     server.creditKill(fighter, ae);
                 }
-            } else {  
+            } else {
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                HitData hit = entity.rollHitLocation(hexToHit.getHitTable(),
+                        ToHitData.SIDE_FRONT);
                 hit.setCapital(false);
-                vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
+                vPhaseReport.addAll(server.damageEntity(entity, hit,
+                        attackValue));
                 server.creditKill(entity, ae);
             }
         }

@@ -33,7 +33,7 @@ public class ISUAC2 extends UACWeapon {
      */
     public ISUAC2() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Ultra AC/2";
         this.setInternalName("ISUltraAC2");
         this.addLookupName("IS Ultra AC/2");
@@ -56,8 +56,8 @@ public class ISUAC2 extends UACWeapon {
         this.maxRange = RANGE_EXT;
         this.explosionDamage = damage;
         introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3057, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
     }
 }

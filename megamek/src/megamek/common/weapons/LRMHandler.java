@@ -56,21 +56,24 @@ public class LRMHandler extends MissileWeaponHandler {
         this(t, w, g, s, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s, int salvoMod) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s,
+            int salvoMod) {
         super(t, w, g, s);
         nSalvoBonus = salvoMod;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     *      megamek.common.Entity, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget) {
-        if (!bMissed && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
+        if (!bMissed
+                && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
             // minefield clearance attempt
             Report r = new Report(3255);
             r.indent(1);
@@ -78,16 +81,18 @@ public class LRMHandler extends MissileWeaponHandler {
             vPhaseReport.addElement(r);
             Coords coords = target.getPosition();
 
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            Enumeration<Minefield> minefields = game.getMinefields(coords)
+                    .elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if(server.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (server.clearMinefield(mf, ae,
+                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
-            //we have to do it this way to avoid a concurrent error problem
-            for(Minefield mf : mfRemoved) {
+            // we have to do it this way to avoid a concurrent error problem
+            for (Minefield mf : mfRemoved) {
                 server.removeMinefield(mf);
             }
             return true;
@@ -97,7 +102,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -129,7 +134,8 @@ public class LRMHandler extends MissileWeaponHandler {
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
 
@@ -169,7 +175,8 @@ public class LRMHandler extends MissileWeaponHandler {
             } else {
                 nMissilesModifier += 2;
             }
-        } else if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
+        } else if (((mLinker != null)
+                && (mLinker.getType() instanceof MiscType)
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS_V))
@@ -215,9 +222,9 @@ public class LRMHandler extends MissileWeaponHandler {
             boolean bTargetECMAffected = false;
             bTargetECMAffected = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM) ||
-                 (atype.getAmmoType() == AmmoType.T_MML))
+            if (((atype.getAmmoType() == AmmoType.T_LRM)
+                    || (atype.getAmmoType() == AmmoType.T_SRM) || (atype
+                    .getAmmoType() == AmmoType.T_MML))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     && ((weapon.curMode() == null) || !weapon.curMode().equals(
                             "Indirect"))) {
@@ -236,11 +243,11 @@ public class LRMHandler extends MissileWeaponHandler {
             nMissilesModifier -= 4;
         }
 
-        if ( bDirect ){
-            nMissilesModifier += (toHit.getMoS()/3)*2;
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
 
@@ -253,10 +260,12 @@ public class LRMHandler extends MissileWeaponHandler {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
             }
         }
 

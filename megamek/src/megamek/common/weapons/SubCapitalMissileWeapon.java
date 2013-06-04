@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 /**
  * @author Jay Lawson
  */

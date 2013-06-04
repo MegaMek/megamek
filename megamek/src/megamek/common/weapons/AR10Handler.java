@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
@@ -39,7 +38,7 @@ public class AR10Handler extends AmmoWeaponHandler {
     public AR10Handler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /**
      * Calculate the attack value based on range
      * 
@@ -47,26 +46,26 @@ public class AR10Handler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
-        int av = 0;       
+        int av = 0;
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             av = 4;
         } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             av = 3;
         } else {
-            av =2;
+            av = 2;
         }
-        if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if(bGlancing) {
+        if (bGlancing) {
             av = (int) Math.floor(av / 2.0);
 
         }
-        av = (int)Math.floor(getBracketingMultiplier() * av);
+        av = (int) Math.floor(getBracketingMultiplier() * av);
         return av;
     }
-    
+
     @Override
     protected int getCapMisMod() {
         int mod = 0;

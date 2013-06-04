@@ -38,8 +38,8 @@ public class ArtilleryBayWeaponDirectFireHandler extends
      * @param w
      * @param g
      */
-    public ArtilleryBayWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w,
-            IGame g, Server s) {
+    public ArtilleryBayWeaponDirectFireHandler(ToHitData t,
+            WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
 
     }

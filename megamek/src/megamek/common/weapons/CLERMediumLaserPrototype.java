@@ -34,7 +34,7 @@ public class CLERMediumLaserPrototype extends LaserWeapon {
      */
     public CLERMediumLaserPrototype() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "ER Medium Laser (CP)";
         setInternalName("CLERMediumLaserPrototype");
         heat = 5;

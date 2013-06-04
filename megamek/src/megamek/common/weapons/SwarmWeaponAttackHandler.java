@@ -46,8 +46,8 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public SwarmWeaponAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public SwarmWeaponAttackHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_NONE;
     }
@@ -56,13 +56,13 @@ public class SwarmWeaponAttackHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         int damage = 0;
         if (ae instanceof BattleArmor) {
-            BattleArmor ba = (BattleArmor)ae;
+            BattleArmor ba = (BattleArmor) ae;
             damage = ba.calculateSwarmDamage();
         }
-        //should this be affected by direct blows?
-        //assume so for now
-        if ( bDirect ){
-            damage = Math.min(damage+(toHit.getMoS()/3), damage*2);
+        // should this be affected by direct blows?
+        // assume so for now
+        if (bDirect) {
+            damage = Math.min(damage + (toHit.getMoS() / 3), damage * 2);
         }
         return damage;
     }

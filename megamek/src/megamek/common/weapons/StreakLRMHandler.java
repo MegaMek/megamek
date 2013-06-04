@@ -49,13 +49,16 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            int toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            int toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             return toReturn;
         }
         return 1;
@@ -63,7 +66,7 @@ public class StreakLRMHandler extends StreakHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -71,12 +74,12 @@ public class StreakLRMHandler extends StreakHandler {
         return 5;
     }
 
-
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     *      megamek.common.Entity, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
@@ -88,16 +91,18 @@ public class StreakLRMHandler extends StreakHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
             Coords coords = target.getPosition();
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            Enumeration<Minefield> minefields = game.getMinefields(coords)
+                    .elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if(server.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (server.clearMinefield(mf, ae,
+                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
-            //we have to do it this way to avoid a concurrent error problem
-            for(Minefield mf : mfRemoved) {
+            // we have to do it this way to avoid a concurrent error problem
+            for (Minefield mf : mfRemoved) {
                 server.removeMinefield(mf);
             }
             return true;

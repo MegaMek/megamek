@@ -53,7 +53,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -78,18 +78,18 @@ public class LRMAntiTSMHandler extends LRMHandler {
             nMissilesModifier -= 4;
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
 
-        if ( bDirect ){
-            nMissilesModifier += (toHit.getMoS()/3)*2;
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
-
 
         // AMS mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
@@ -97,8 +97,9 @@ public class LRMAntiTSMHandler extends LRMHandler {
             missilesHit = wtype.getRackSize();
         } else {
             // anti tsm hit with half the normal number, round up
-            missilesHit = Compute
-                    .missilesHit(wtype.getRackSize(), nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged );
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS
+                            && amsEnganged);
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         Report r = new Report(3325);

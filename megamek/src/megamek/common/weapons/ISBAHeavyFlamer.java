@@ -29,7 +29,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
 
     public ISBAHeavyFlamer() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Heavy Flamer";
         setInternalName("IS BA Heavy Flamer");
         heat = 5;
@@ -45,8 +45,8 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         cost = 12250;
         flags = flags.or(F_BA_WEAPON);
         techRating = RATING_C;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3068;
-        techLevel.put(3068,techLevel.get(3071));
+        techLevel.put(3068, techLevel.get(3071));
     }
 }

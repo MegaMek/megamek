@@ -47,7 +47,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -90,7 +90,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     @Override
@@ -102,7 +102,7 @@ public class RACHandler extends UltraWeaponHandler {
             howManyShots = 6;
         } else if (weapon.curMode().equals("5-shot")) {
             howManyShots = 5;
-        }    else if (weapon.curMode().equals("4-shot")) {
+        } else if (weapon.curMode().equals("4-shot")) {
             howManyShots = 4;
         } else if (weapon.curMode().equals("3-shot")) {
             howManyShots = 3;
@@ -149,7 +149,7 @@ public class RACHandler extends UltraWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage(){
+    protected boolean canDoDirectBlowDamage() {
         return false;
     }
 

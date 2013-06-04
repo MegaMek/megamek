@@ -60,7 +60,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -112,9 +112,8 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage(){
+    protected boolean canDoDirectBlowDamage() {
         return false;
     }
-
 
 }

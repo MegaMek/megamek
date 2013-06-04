@@ -32,8 +32,8 @@ public class PlasmaBayWeapon extends AmmoBayWeapon {
      */
     public PlasmaBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Plasma Bay";
         this.setInternalName(this.name);
         this.heat = 0;

@@ -30,7 +30,7 @@ public class CLSRM4OS extends SRMWeapon {
      */
     public CLSRM4OS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 4 (OS)";
         setInternalName("CLSRM4 (OS)");
         addLookupName("Clan OS SRM-4");
@@ -48,8 +48,9 @@ public class CLSRM4OS extends SRMWeapon {
         cost = 30000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        this.introDate = 2676;
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        introDate = 2676;
+        techLevel.put(2676, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_F;
     }
 }

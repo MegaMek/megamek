@@ -30,7 +30,7 @@ public class ISEnhancedLRM20 extends EnhancedLRMWeapon {
      */
     public ISEnhancedLRM20() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Enhanced LRM 20";
         setInternalName(name);
         addLookupName("ISEnhancedLRM20");
@@ -50,8 +50,8 @@ public class ISEnhancedLRM20 extends EnhancedLRMWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
+        techLevel.put(3058, techLevel.get(3071));
     }
 }

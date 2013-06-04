@@ -52,7 +52,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
@@ -83,7 +83,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -94,23 +94,23 @@ public class MGAWeaponHandler extends MGHandler {
             nMod -= 2;
         }
         switch (howManyShots) {
-        case 1:
-            shotsHit = 1;
-            break;
-        default:
-            shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
-                    howManyShots, nMod);
-            Report r = new Report(3325);
-            r.subject = subjectId;
-            r.add(shotsHit);
-            r.add(" shot(s) ");
-            r.add(toHit.getTableDesc());
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-            r = new Report(3345);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            break;
+            case 1:
+                shotsHit = 1;
+                break;
+            default:
+                shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
+                        howManyShots, nMod);
+                Report r = new Report(3325);
+                r.subject = subjectId;
+                r.add(shotsHit);
+                r.add(" shot(s) ");
+                r.add(toHit.getTableDesc());
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+                r = new Report(3345);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                break;
         }
         bSalvo = true;
         return shotsHit;
@@ -118,7 +118,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -130,7 +130,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -141,14 +141,15 @@ public class MGAWeaponHandler extends MGHandler {
             int bldgAbsorbs) {
         int nDamage;
         if (hit == null) {
-            hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa
-                    .getAimingMode(), toHit.getCover());
+            hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(),
+                    waa.getAimingMode(), toHit.getCover());
         }
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
-            // Weapon strikes Partial Cover.            
+                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCalledShot().getCall()))) {
+            // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                     nCluster, bldgAbsorbs);
             return;
@@ -188,9 +189,9 @@ public class MGAWeaponHandler extends MGHandler {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
-        //some buildings scale remaining damage that is not absorbed
-        //TODO: this isn't quite right for castles brian
-        if(null != bldg) {
+        // some buildings scale remaining damage that is not absorbed
+        // TODO: this isn't quite right for castles brian
+        if (null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 

@@ -36,7 +36,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
     private static final long serialVersionUID = -7919371014161089388L;
 
     public ISPlasmaRifle() {
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Plasma Rifle";
         setInternalName("ISPlasmaRifle");
         heat = 10;
@@ -50,7 +50,8 @@ public class ISPlasmaRifle extends AmmoWeapon {
         extremeRange = 20;
         tonnage = 6.0f;
         criticals = 2;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_PLASMA).or(F_DIRECT_FIRE);
         bv = 210;
         cost = 260000;
         shortAV = 10;
@@ -58,17 +59,18 @@ public class ISPlasmaRifle extends AmmoWeapon {
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
         introDate = 3068;
-        techLevel.put(3068,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3068, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
-        }
+    }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

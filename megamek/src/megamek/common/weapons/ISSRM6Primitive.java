@@ -32,7 +32,7 @@ public class ISSRM6Primitive extends SRMWeapon {
 
     public ISSRM6Primitive() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
+        this.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         this.name = "SRM 6p";
         this.setInternalName(this.name);
         this.addLookupName("IS SRM-6 Primitive");
@@ -54,7 +54,8 @@ public class ISSRM6Primitive extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new SRMHandler(toHit, waa, game, server, -2);
     }
 }

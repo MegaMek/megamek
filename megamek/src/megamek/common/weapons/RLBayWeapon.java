@@ -32,8 +32,8 @@ public class RLBayWeapon extends AmmoBayWeapon {
      */
     public RLBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Rocket Launcher Bay";
         this.setInternalName(this.name);
         this.heat = 0;

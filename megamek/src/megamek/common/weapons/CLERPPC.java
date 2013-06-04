@@ -33,7 +33,7 @@ public class CLERPPC extends PPCWeapon {
      */
     public CLERPPC() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "ER PPC";
         this.setInternalName("CLERPPC");
         this.addLookupName("Clan ER PPC");
@@ -56,8 +56,8 @@ public class CLERPPC extends PPCWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         introDate = 2826;
-        techLevel.put(2826,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techLevel.put(2826, techLevel.get(3071));
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_F;
 
     }

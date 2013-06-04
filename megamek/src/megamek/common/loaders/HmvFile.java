@@ -37,7 +37,7 @@ import megamek.common.WeaponType;
 /**
  * Based on the hmpread.c program and the MtfFile object. This class can not
  * load any Mixed tech or Level 3 vehicles.
- * 
+ *
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
  */
 public class HmvFile implements IMechLoader {
@@ -236,10 +236,10 @@ public class HmvFile implements IMechLoader {
 
                         if (ammoType != null) {
                             // Need to play games for half ton MG ammo.
-                            if ((weaponAmmo < ammoType.getShots()) || (weaponAmmo % ammoType.getShots() > 0)) {
+                            if ((weaponAmmo < ammoType.getShots()) || ((weaponAmmo % ammoType.getShots()) > 0)) {
                                 switch (ammoType.getAmmoType()) {
                                     case AmmoType.T_MG:
-                                        if (ammoType.getTechLevel() == TechConstants.T_INTRO_BOXSET) {
+                                        if (ammoType.getTechLevel(year) == TechConstants.T_INTRO_BOXSET) {
                                             ammoType = (AmmoType) EquipmentType.get("ISMG Ammo (100)");
                                         } else {
                                             ammoType = (AmmoType) EquipmentType.get("CLMG Ammo (100)");
@@ -412,7 +412,7 @@ public class HmvFile implements IMechLoader {
 
     /**
      * Read a single precision float from a file in little endian format
-     * 
+     *
      * @param dis
      * @return
      * @throws IOException
@@ -427,7 +427,7 @@ public class HmvFile implements IMechLoader {
 
     /**
      * Determine if the buffer contains the "is omni" flag.
-     * 
+     *
      * @param buffer
      *            the array of <code>byte</code>s to be scanned.
      * @return <code>true</code> if the buffer contains the "is omni" flag.
@@ -599,11 +599,11 @@ public class HmvFile implements IMechLoader {
                     // for experimental or unofficial equipment, we need
                     // to adjust the mech's techlevel, because HMV only
                     // knows lvl1/2/3
-                    if ((equipmentType.getTechLevel() > tank.getTechLevel()) && (tank.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
+                    if ((equipmentType.getTechLevel(year) > tank.getTechLevel()) && (tank.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
                         boolean isClan = tank.isClan();
-                        if ((equipmentType.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (equipmentType.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+                        if ((equipmentType.getTechLevel(year) == TechConstants.T_IS_EXPERIMENTAL) || (equipmentType.getTechLevel(year) == TechConstants.T_CLAN_EXPERIMENTAL)) {
                             tank.setTechLevel(isClan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL);
-                        } else if ((equipmentType.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) || (equipmentType.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                        } else if ((equipmentType.getTechLevel(year) == TechConstants.T_IS_UNOFFICIAL) || (equipmentType.getTechLevel(year) == TechConstants.T_CLAN_UNOFFICIAL)) {
                             tank.setTechLevel(isClan ? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL);
                         }
                     }
@@ -632,7 +632,7 @@ public class HmvFile implements IMechLoader {
                         }
                         if (artemis != null) {
                             EquipmentType artEq;
-                            if ((equipmentType.getTechLevel() == TechConstants.T_CLAN_TW) || (equipmentType.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+                            if ((equipmentType.getTechLevel(year) == TechConstants.T_CLAN_TW) || (equipmentType.getTechLevel(year) == TechConstants.T_CLAN_ADVANCED)) {
                                 artEq = EquipmentType.get("CL" + artemis);
                             } else {
                                 artEq = EquipmentType.get("IS" + artemis);

@@ -34,7 +34,7 @@ public class ISERSmallLaser extends LaserWeapon {
      */
     public ISERSmallLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "ER Small Laser";
         setInternalName("ISERSmallLaser");
         addLookupName("IS ER Small Laser");
@@ -55,7 +55,9 @@ public class ISERSmallLaser extends LaserWeapon {
         cost = 11250;
         shortAV = 3;
         maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
-        this.introDate = 3058;
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_D };
+        introDate = 3058;
+        techLevel.put(3058, techLevel.get(3071));
     }
 }

@@ -45,7 +45,7 @@ public class SRMDeadFireHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -55,17 +55,20 @@ public class SRMDeadFireHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*3, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            double toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize() * 3, bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }
-            return (int)Math.floor(toReturn);
+            return (int) Math.floor(toReturn);
         }
         return 3;
     }

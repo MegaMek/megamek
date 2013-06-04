@@ -34,7 +34,7 @@ public class ISAMS extends AmmoWeapon {
      */
     public ISAMS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "AMS";
         setInternalName("ISAntiMissileSystem");
         addLookupName("IS Anti-Missile System");
@@ -46,15 +46,16 @@ public class ISAMS extends AmmoWeapon {
         tonnage = 0.5f;
         criticals = 1;
         bv = 32;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
         introDate = 2617;
-        techLevel.put(2617,techLevel.get(3071));
+        techLevel.put(2617, techLevel.get(3071));
         extinctDate = 2796;
         reintroDate = 3040;
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
         atClass = CLASS_POINT_DEFENSE;
     }

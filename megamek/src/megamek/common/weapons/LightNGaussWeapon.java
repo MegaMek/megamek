@@ -33,7 +33,7 @@ public class LightNGaussWeapon extends NavalGaussWeapon {
      */
     public LightNGaussWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Light N-Gauss";
         this.setInternalName(this.name);
         this.addLookupName("LightNGauss");
@@ -46,7 +46,7 @@ public class LightNGaussWeapon extends NavalGaussWeapon {
         this.extremeRange = 56;
         this.tonnage = 4500.0f;
         this.bv = 3024;
-        this.cost = 20300000;       
+        this.cost = 20300000;
         this.shortAV = 15;
         this.medAV = 15;
         this.longAV = 15;

@@ -36,7 +36,8 @@ public class PrimitiveACWeaponHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public PrimitiveACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrimitiveACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 

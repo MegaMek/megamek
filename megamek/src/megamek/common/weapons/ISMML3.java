@@ -30,7 +30,7 @@ public class ISMML3 extends MMLWeapon {
      */
     public ISMML3() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "MML 3";
         setInternalName("ISMML3");
         addLookupName("IS MML-3");
@@ -45,8 +45,8 @@ public class ISMML3 extends MMLWeapon {
         longAV = 2;
         maxRange = RANGE_LONG;
         introDate = 3068;
-        techLevel.put(3068,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3068, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
     }
 }

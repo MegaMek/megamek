@@ -35,7 +35,7 @@ public class CLLongTom extends ArtilleryWeapon {
      */
     public CLLongTom() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Long Tom";
         setInternalName("CLLongTom");
         addLookupName("CLLongTomArtillery");
@@ -52,7 +52,7 @@ public class CLLongTom extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
     }
 
 }

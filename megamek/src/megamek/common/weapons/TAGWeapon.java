@@ -33,9 +33,9 @@ public abstract class TAGWeapon extends Weapon {
 
     public TAGWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BA_WEAPON).or(F_TAG).or(F_NO_FIRES);
-        setModes(new String[]
-            { "1-shot", "2-shot", "3-shot", "4-shot" });
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_BA_WEAPON).or(F_TAG).or(F_NO_FIRES);
+        setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
     }
 
     /*
@@ -47,7 +47,8 @@ public abstract class TAGWeapon extends Weapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new TAGHandler(toHit, waa, game, server);
     }
 }

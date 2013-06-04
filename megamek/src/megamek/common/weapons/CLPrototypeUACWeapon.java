@@ -39,7 +39,7 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      */
     public CLPrototypeUACWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
     }
 
     /*
@@ -50,8 +50,10 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
+                waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
             return new PrototypeCLUltraWeaponHandler(toHit, waa, game, server);
         }

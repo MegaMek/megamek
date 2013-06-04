@@ -18,7 +18,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jason Tighe
  */
-public class CLMekMortar1 extends MekMortarWeapon{
+public class CLMekMortar1 extends MekMortarWeapon {
 
     /**
      *
@@ -30,7 +30,7 @@ public class CLMekMortar1 extends MekMortarWeapon{
      */
     public CLMekMortar1() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Mortar 1";
         setInternalName("Clan Mech Mortar-1");
         addLookupName("CLMekMortar1");
@@ -47,9 +47,9 @@ public class CLMekMortar1 extends MekMortarWeapon{
         tonnage = 1;
         cost = 7000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_D, RATING_F, RATING_E};
+        availRating = new int[] { RATING_D, RATING_F, RATING_E };
         introDate = 2840;
-        techLevel.put(2840,techLevel.get(3071));
+        techLevel.put(2840, techLevel.get(3071));
 
     }
 }

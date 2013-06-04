@@ -32,8 +32,8 @@ public class CapitalGaussBayWeapon extends AmmoBayWeapon {
      */
     public CapitalGaussBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Capital Gauss Bay";
         this.setInternalName(this.name);
         this.heat = 0;

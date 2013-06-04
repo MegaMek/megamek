@@ -37,7 +37,7 @@ public abstract class HVACWeapon extends ACWeapon {
 
     public HVACWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         explosionDamage = damage;
         ammoType = AmmoType.T_HYPER_VELOCITY;
         techRating = RATING_D;
@@ -45,12 +45,17 @@ public abstract class HVACWeapon extends ACWeapon {
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.ACWeapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.IGame, megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.ACWeapon#getCorrectHandler(megamek.common.ToHitData
+     * , megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
+                waa.getWeaponId());
         if (weapon.curMode().equals("Rapid")) {
             return new RapidfireHVACWeaponHandler(toHit, waa, game, server);
         }

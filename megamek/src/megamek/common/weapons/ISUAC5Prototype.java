@@ -38,7 +38,7 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     public ISUAC5Prototype() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Ultra AC/5 Prototype";
         setInternalName("ISUltraAC5Prototype");
         addLookupName("IS Ultra AC/5 Prototype");
@@ -64,9 +64,10 @@ public class ISUAC5Prototype extends UACWeapon {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

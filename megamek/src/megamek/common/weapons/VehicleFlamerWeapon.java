@@ -41,18 +41,20 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_BA_WEAPON).or(F_FLAMER).or(F_ENERGY).or(F_BURST_FIRE);
         ammoType = AmmoType.T_VEHICLE_FLAMER;
-        String[] modeStrings =
-            { "Damage", "Heat"};
+        String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        this.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A,EquipmentType.RATING_B};
-        this.introDate = 1950;
+        availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_B };
         atClass = CLASS_POINT_DEFENSE;
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode().equals("Heat"))) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
+                .curMode().equals("Heat"))) {
             return new VehicleFlamerHeatHandler(toHit, waa, game, server);
         } else if (atype.getMunitionType() == AmmoType.M_COOLANT) {
             return new VehicleFlamerCoolHandler(toHit, waa, game, server);

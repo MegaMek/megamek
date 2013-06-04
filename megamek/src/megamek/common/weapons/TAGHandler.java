@@ -42,7 +42,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -52,9 +52,10 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
-     *      java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
+     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
@@ -94,9 +95,10 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
-     *      boolean, megamek.common.Building, java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
+     * .Entity, boolean, megamek.common.Building, java.util.Vector)
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
@@ -114,7 +116,7 @@ public class TAGHandler extends WeaponHandler {
                 priority = 4;
             }
         }
-        //add even misses, as they waste homing missiles.
+        // add even misses, as they waste homing missiles.
         TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority,
                 true);
         game.addTagInfo(info);
@@ -123,7 +125,7 @@ public class TAGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     @Override

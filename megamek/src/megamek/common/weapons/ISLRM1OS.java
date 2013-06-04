@@ -30,7 +30,7 @@ public class ISLRM1OS extends LRMWeapon {
      */
     public ISLRM1OS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "LRM 1 (OS)";
         setInternalName(name);
         addLookupName("ISLRM1OS");
@@ -38,7 +38,8 @@ public class ISLRM1OS extends LRMWeapon {
         minimumRange = 6;
         bv = 3;
         flags = flags.or(F_ONESHOT);
-        this.introDate = 2676;
+        introDate = 2676;
+        techLevel.put(2676, techLevel.get(3071));
         this.extinctDate = 2800;
         this.reintroDate = 3030;
     }

@@ -33,7 +33,7 @@ public class ISHeavyMGA extends AmmoWeapon {
 
     public ISHeavyMGA() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Heavy Machine Gun Array";
         setInternalName("ISHMGA");
         addLookupName("IS Heavy Machine Gun Array");
@@ -52,23 +52,29 @@ public class ISHeavyMGA extends AmmoWeapon {
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to
         // the MGA
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
         cost = 1250;
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
         introDate = 3068;
-        techLevel.put(3068,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3068, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_E;
     }
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData, megamek.common.actions.WeaponAttackAction, megamek.common.Game, megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new MGAWeaponHandler(toHit, waa, game, server);
     }
 

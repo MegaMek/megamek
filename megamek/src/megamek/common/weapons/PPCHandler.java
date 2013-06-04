@@ -62,21 +62,23 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
             if (weapon.hasChargedCapacitor() == 1) {
                 chargedCapacitor = 1;
-                 weapon.getLinkedBy().setMode("Off");
+                weapon.getLinkedBy().setMode("Off");
             }
         }
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage(nRange);
 
-        if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
-            toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
+        if (game.getOptions().booleanOption("tacops_energy_weapons")
+                && wtype.hasModes()) {
+            toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
         if (chargedCapacitor != 0) {
@@ -100,18 +102,23 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
 
-        if ((target instanceof Entity) && ((Entity)target).hasActiveBlueShield()) {
-            toReturn = (int)Math.max(Math.floor(toReturn/2.0), 1);
+        if ((target instanceof Entity)
+                && ((Entity) target).hasActiveBlueShield()) {
+            toReturn = (int) Math.max(Math.floor(toReturn / 2.0), 1);
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-        } else if (bDirect){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+        } else if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
@@ -120,10 +127,9 @@ public class PPCHandler extends EnergyWeaponHandler {
         return (int) Math.ceil(toReturn);
     }
 
-
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -192,12 +198,13 @@ public class PPCHandler extends EnergyWeaponHandler {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
-                for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
-                    CriticalSlot slot = ae.getCritical (wlocation, i);
-                    if ((slot == null) || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
+                    CriticalSlot slot = ae.getCritical(wlocation, i);
+                    if ((slot == null)
+                            || (slot.getType() == CriticalSlot.TYPE_SYSTEM)) {
                         continue;
                     }
-                    //Only one Crit needs to be damaged.
+                    // Only one Crit needs to be damaged.
                     Mounted mounted = ae.getEquipment(slot.getIndex());
                     if (mounted.equals(weapon)) {
                         slot.setDestroyed(true);

@@ -47,7 +47,7 @@ public class BAMGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -55,31 +55,32 @@ public class BAMGHandler extends WeaponHandler {
         if (weapon.isRapidfire() && !(target instanceof Infantry)) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             switch (wtype.getDamage()) {
-            case 1:
-                nDamPerHit = Math.max(1, Compute.d6() - 1);
-                break;
-            case 3:
-                nDamPerHit = Compute.d6() + 1;
-                break;
-            default:
-                nDamPerHit = Compute.d6();
-                break;
+                case 1:
+                    nDamPerHit = Math.max(1, Compute.d6() - 1);
+                    break;
+                case 3:
+                    nDamPerHit = Compute.d6() + 1;
+                    break;
+                default:
+                    nDamPerHit = Compute.d6();
+                    break;
             }
             if (bDirect) {
-                nDamPerHit = Math.min(nDamPerHit+(toHit.getMoS()/3), nDamPerHit*2);
+                nDamPerHit = Math.min(nDamPerHit + (toHit.getMoS() / 3),
+                        nDamPerHit * 2);
             }
             if (bGlancing) {
-                nDamPerHit =(int) Math.floor(nDamPerHit / 2.0);
+                nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
             }
         } else {
-                nDamPerHit = super.calcDamagePerHit();
+            nDamPerHit = super.calcDamagePerHit();
         }
         return nDamPerHit;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -95,7 +96,7 @@ public class BAMGHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     @Override

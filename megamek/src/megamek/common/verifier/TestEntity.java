@@ -640,7 +640,7 @@ public abstract class TestEntity implements TestEntityOption {
             if ((ignoreAmmo) && (nextE instanceof AmmoType)) {
                 continue;
             } else if (!(TechConstants.isLegal(eTechLevel,
-                    nextE.getTechLevel(), true, getEntity().isMixedTech()))) {
+                    nextE.getTechLevel(getEntity().getTechLevelYear()), true, getEntity().isMixedTech()))) {
                 if (!retVal) {
                     buff.append("Equipment illegal at unit's tech level:\n");
                 }
@@ -1077,12 +1077,12 @@ public abstract class TestEntity implements TestEntityOption {
                     }
                 }
             }
-            
-            if (mech.hasUMU() && mech.getJumpType()  != Mech.JUMP_NONE  && 
-                                 mech.getJumpType()  != Mech.JUMP_BOOSTER){
+
+            if (mech.hasUMU() && (mech.getJumpType()  != Mech.JUMP_NONE)  &&
+                                 (mech.getJumpType()  != Mech.JUMP_BOOSTER)){
                 illegal = true;
                 buff.append("UMUs cannot be mounted with jump jets " +
-                		"(jump boosters are legal)");                
+                		"(jump boosters are legal)");
             }
 
         }

@@ -33,7 +33,7 @@ public class ISMediumXPulseLaser extends PulseLaserWeapon {
      */
     public ISMediumXPulseLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Medium X-Pulse Laser";
         setInternalName("ISMediumXPulseLaser");
         addLookupName("IS X-Pulse Med Laser");
@@ -56,8 +56,8 @@ public class ISMediumXPulseLaser extends PulseLaserWeapon {
         bv = 71;
         cost = 110000;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
+        techLevel.put(3057, techLevel.get(3071));
     }
 }

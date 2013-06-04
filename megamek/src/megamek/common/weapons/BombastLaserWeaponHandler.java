@@ -42,14 +42,14 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
 
-        toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
+        toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         // during a swarm, all damage gets applied as one block to one location
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
@@ -67,14 +67,18 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
             }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
-            toReturn -=1;
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            toReturn -= 1;
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
         } else if (bDirect) {
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);

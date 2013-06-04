@@ -2745,13 +2745,13 @@ public class Tank extends Entity {
         Vector<Transporter> et = new Vector<Transporter>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandlesTank) {
-                removeTransporter(t);System.out.println("Log Testing Remove: Entity ID #"+getId());
+                removeTransporter(t);
             }
         }
         if (game.getOptions().booleanOption("ba_grab_bars")) {
-            addTransporter(new BattleArmorHandlesTank());System.out.println("Log Testing Add: Entity ID #"+getId());
+            addTransporter(new BattleArmorHandlesTank());
         } else {
-            addTransporter(new ClampMountTank());System.out.println("Log Testing Add: Entity ID #"+getId());
+            addTransporter(new ClampMountTank());
         }
     }
 

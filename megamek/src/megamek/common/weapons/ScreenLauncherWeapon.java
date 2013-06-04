@@ -37,7 +37,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
      */
     public ScreenLauncherWeapon() {
 
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Screen Launcher";
         this.setInternalName(this.name);
         this.addLookupName("ScreenLauncher");
@@ -56,17 +56,18 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.capital = false;
         this.atClass = CLASS_SCREEN;
         introDate = 3055;
-        techLevel.put(3055,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techLevel.put(3055, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

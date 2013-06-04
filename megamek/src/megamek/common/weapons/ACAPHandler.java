@@ -53,10 +53,9 @@ public class ACAPHandler extends AmmoWeaponHandler {
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
-
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -64,21 +63,26 @@ public class ACAPHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one
         // location
-        if ((ae instanceof BattleArmor) && (weapon.getLocation() == BattleArmor.LOC_SQUAD) && (ae.getSwarmTargetId() == target.getTargetId())) {
+        if ((ae instanceof BattleArmor)
+                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
+                && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-        } else if (bDirect){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+        } else if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
-
 
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -87,9 +91,10 @@ public class ACAPHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
-     *      java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
+     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
@@ -97,12 +102,14 @@ public class ACAPHandler extends AmmoWeaponHandler {
             int bldgAbsorbs) {
         AmmoType atype = (AmmoType) weapon.getLinked().getType();
         int nDamage;
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
-        hit.setGeneralDamageType(generalDamageType);    
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                toHit.getSideTable(), waa.getAimedLocation(),
+                waa.getAimingMode(), toHit.getCover());
+        hit.setGeneralDamageType(generalDamageType);
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
-            // Weapon strikes Partial Cover.            
+                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCalledShot().getCall()))) {
+            // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                     nCluster, bldgAbsorbs);
             return;
@@ -122,8 +129,9 @@ public class ACAPHandler extends AmmoWeaponHandler {
         }
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
-        if ( bDirect && (!(target instanceof Infantry) || (target instanceof BattleArmor)) ){
-            hit.makeDirectBlow(toHit.getMoS()/3);
+        if (bDirect
+                && (!(target instanceof Infantry) || (target instanceof BattleArmor))) {
+            hit.makeDirectBlow(toHit.getMoS() / 3);
         }
 
         // A building may be damaged, even if the squad is not.
@@ -131,18 +139,19 @@ public class ACAPHandler extends AmmoWeaponHandler {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, entityTarget.getPosition());
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
         }
 
-        nDamage = checkTerrain(nDamage, entityTarget,vPhaseReport);
+        nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
-        //some buildings scale remaining damage that is not absorbed
-        //TODO: this isn't quite right for castles brian
-        if(null != bldg) {
+        // some buildings scale remaining damage that is not absorbed
+        // TODO: this isn't quite right for castles brian
+        if (null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 
@@ -159,15 +168,16 @@ public class ACAPHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
                 critModifer -= 2;
-            }else if (bDirect) {
-                critModifer += toHit.getMoS()/3;
+            } else if (bDirect) {
+                critModifer += toHit.getMoS() / 3;
             }
-            hit.makeArmorPiercing(atype,critModifer);
+            hit.makeArmorPiercing(atype, critModifer);
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront, underWater));
+                                    : damageType, false, false, throughFront,
+                            underWater));
         }
     }
 }

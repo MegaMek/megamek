@@ -32,7 +32,7 @@ public class ISAC20Primitive extends ACWeapon {
 
     public ISAC20Primitive() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "AC/20p";
         setInternalName("Autocannon/20 Primitive");
         addLookupName("IS Auto Cannon/20 Primitive");
@@ -58,7 +58,8 @@ public class ISAC20Primitive extends ACWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new PrimitiveACWeaponHandler(toHit, waa, game, server);
     }
 }

@@ -34,17 +34,20 @@ public abstract class MMLWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_MML;
         this.setModes(new String[] { "", "Indirect" });
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        this.introDate = 3068;
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_E };
+        introDate = 3068;
+        techLevel.put(3068, techLevel.get(3071));
         this.atClass = CLASS_MML;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

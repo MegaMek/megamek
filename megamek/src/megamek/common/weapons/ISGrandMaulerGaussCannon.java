@@ -34,7 +34,7 @@ public class ISGrandMaulerGaussCannon extends Weapon {
      */
     public ISGrandMaulerGaussCannon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Grand Mauler Gauss Cannon";
         setInternalName(name);
         addLookupName("ISGrandMauler");
@@ -50,9 +50,9 @@ public class ISGrandMaulerGaussCannon extends Weapon {
         bv = 6;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         introDate = 3059;
-        techLevel.put(3059,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techLevel.put(3059, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_D };
         techRating = RATING_E;
-      
+
     }
 }

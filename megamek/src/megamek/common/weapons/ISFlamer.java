@@ -34,7 +34,7 @@ public class ISFlamer extends FlamerWeapon {
      */
     public ISFlamer() {
         super();
-        this.techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         this.name = "Flamer";
         this.setInternalName(this.name);
         this.addLookupName("IS Flamer");
@@ -53,8 +53,8 @@ public class ISFlamer extends FlamerWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         introDate = 2025;
-        techLevel.put(2025,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(2025, techLevel.get(3071));
+        availRating = new int[] { RATING_B, RATING_B, RATING_B };
         techRating = RATING_C;
     }
 }

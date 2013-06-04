@@ -37,7 +37,7 @@ public class MantaRayWeapon extends SubCapitalMissileWeapon {
      */
     public MantaRayWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Manta Ray";
         this.setInternalName(this.name);
         this.addLookupName("MantaRay");
@@ -58,8 +58,9 @@ public class MantaRayWeapon extends SubCapitalMissileWeapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

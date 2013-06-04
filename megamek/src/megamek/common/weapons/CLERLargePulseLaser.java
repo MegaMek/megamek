@@ -34,7 +34,7 @@ public class CLERLargePulseLaser extends PulseLaserWeapon {
      */
     public CLERLargePulseLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Large Pulse Laser";
         setInternalName("CLERLargePulseLaser");
         addLookupName("Clan ER Pulse Large Laser");
@@ -55,8 +55,8 @@ public class CLERLargePulseLaser extends PulseLaserWeapon {
         bv = 272;
         cost = 400000;
         techRating = RATING_F;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
+        techLevel.put(3057, techLevel.get(3071));
     }
 }

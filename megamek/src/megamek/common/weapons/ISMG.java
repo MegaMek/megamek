@@ -32,7 +32,7 @@ public class ISMG extends MGWeapon {
      */
     public ISMG() {
         super();
-        this.techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         this.name = "Machine Gun";
         this.setInternalName(this.name);
         this.addLookupName("IS Machine Gun");
@@ -51,8 +51,10 @@ public class ISMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_A, EquipmentType.RATING_A,EquipmentType.RATING_B};
-        this.introDate = 1950;
+        this.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_B };
+        introDate = 1950;
+        techLevel.put(1950, techLevel.get(3071));
     }
 
 }

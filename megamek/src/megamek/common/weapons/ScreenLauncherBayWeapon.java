@@ -36,8 +36,8 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
      */
     public ScreenLauncherBayWeapon() {
         super();
-        //tech levels are a little tricky
-        this.techLevel.put(3071,TechConstants.T_ALL);
+        // tech levels are a little tricky
+        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Screen Launcher Bay";
         this.setInternalName(this.name);
         this.heat = 0;
@@ -52,13 +52,14 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_SCREEN;
         this.capital = false;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

@@ -60,13 +60,14 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -77,12 +78,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
         boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
         boolean asfFlak = target instanceof Aero;
-        if(ae == null) {
+        if (ae == null) {
             System.err.println("Artillery Entity is null!");
             return true;
         }
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
+                .getType();
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -134,7 +136,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // do we hit?
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
@@ -151,25 +153,26 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
 
-            game.getBoard().addSpecialHexDisplay(targetPos,
+            game.getBoard().addSpecialHexDisplay(
+                    targetPos,
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(),
                             "Artilery cannon Hit. everyone should see this."));
 
         } else {
-            targetPos = Compute.scatter(targetPos, (Math.abs(toHit.getMoS())+1)/2);
+            targetPos = Compute.scatter(targetPos,
+                    (Math.abs(toHit.getMoS()) + 1) / 2);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
-                    game.getBoard().addSpecialHexDisplay(
-                        targetPos,
-                        new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILLERY_HIT,
-                                game.getRoundCount(),
-                                "Artillery cannon Scatered Here. everyone should see it."
-                        )
-                    );
+                    game.getBoard()
+                            .addSpecialHexDisplay(
+                                    targetPos,
+                                    new SpecialHexDisplay(
+                                            SpecialHexDisplay.Type.ARTILLERY_HIT,
+                                            game.getRoundCount(),
+                                            "Artillery cannon Scatered Here. everyone should see it."));
                 } else {
                     r = new Report(3192);
                 }
@@ -189,7 +192,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             }
         }
 
-        // According to TacOps eratta, artillery cannons can only fire standard rounds.
+        // According to TacOps eratta, artillery cannons can only fire standard
+        // rounds.
         // But, they're still in as unofficial tech, because they're fun. :)
         if (atype.getMunitionType() == AmmoType.M_FLARE) {
             int radius;
@@ -209,7 +213,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), atype.getRackSize(), ae.getId());
+            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
+                    atype.getRackSize(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
@@ -221,47 +226,53 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             altitude = target.getElevation();
         }
 
-        //check to see if this is a mine clearing attack
-        //According to the RAW you have to hit the right hex to hit even if the scatter hex has minefields
+        // check to see if this is a mine clearing attack
+        // According to the RAW you have to hit the right hex to hit even if the
+        // scatter hex has minefields
         // TODO: Does this apply to arty cannons?
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
-        if (mineClear && game.containsMinefield(targetPos)
-                && !isFlak && !bMissed) {
+        if (mineClear && game.containsMinefield(targetPos) && !isFlak
+                && !bMissed) {
             r = new Report(3255);
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
+            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
+                    .elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if(server.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (server.clearMinefield(mf, ae,
+                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
-            //we have to do it this way to avoid a concurrent error problem
-            for(Minefield mf : mfRemoved) {
+            // we have to do it this way to avoid a concurrent error problem
+            for (Minefield mf : mfRemoved) {
                 server.removeMinefield(mf);
             }
         }
 
         server.artilleryDamageArea(targetPos, ae.getPosition(), atype,
-                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport, asfFlak);
+                subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
+                asfFlak);
 
-        //artillery may unintentionally clear minefields, but only if it wasn't trying to
+        // artillery may unintentionally clear minefields, but only if it wasn't
+        // trying to
         // TODO: Does this apply to arty cannons?
-        if(!mineClear && game.containsMinefield(targetPos)) {
-            Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
+        if (!mineClear && game.containsMinefield(targetPos)) {
+            Enumeration<Minefield> minefields = game.getMinefields(targetPos)
+                    .elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if(server.clearMinefield(mf, ae, 10, vPhaseReport)) {
+                if (server.clearMinefield(mf, ae, 10, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
-            //we have to do it this way to avoid a concurrent error problem
-            for(Minefield mf : mfRemoved) {
+            // we have to do it this way to avoid a concurrent error problem
+            for (Minefield mf : mfRemoved) {
                 server.removeMinefield(mf);
             }
         }
@@ -271,7 +282,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -279,14 +290,14 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         float toReturn = wtype.getDamage();
         // area effect damage is double
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-                toReturn /= 0.5;
+            toReturn /= 0.5;
         }
 
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        //System.err.println("Attack is doing " + toReturn + " damage.");
+        // System.err.println("Attack is doing " + toReturn + " damage.");
 
         return (int) Math.ceil(toReturn);
     }

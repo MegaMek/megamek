@@ -49,9 +49,9 @@ public class MPodHandler extends LBXHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
-     *      vPhaseReport)
+     * vPhaseReport)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -73,11 +73,12 @@ public class MPodHandler extends LBXHandler {
         if (bGlancing) {
             hitMod = 4;
         }
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             hitMod -= 2;
         }
 
-        int shotsHit = allShotsHit() ? shots : Compute.missilesHit(shots,hitMod);
+        int shotsHit = allShotsHit() ? shots : Compute.missilesHit(shots,
+                hitMod);
 
         Report r = new Report(3325);
         r.subject = subjectId;

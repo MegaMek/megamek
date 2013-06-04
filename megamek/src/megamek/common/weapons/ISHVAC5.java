@@ -50,8 +50,8 @@ public class ISHVAC5 extends HVACWeapon {
         extAV = 5;
         maxRange = RANGE_EXT;
         techRating = RATING_D;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3059;
-        techLevel.put(3059,techLevel.get(3071));
+        techLevel.put(3059, techLevel.get(3071));
     }
 }

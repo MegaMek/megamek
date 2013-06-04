@@ -34,7 +34,7 @@ public class ISBAPlasmaRifle extends Weapon {
      */
     public ISBAPlasmaRifle() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Plasma Rifle";
         setInternalName(name);
         addLookupName("ISBAPlasmaRifle");
@@ -45,10 +45,11 @@ public class ISBAPlasmaRifle extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 12;
-        flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PLASMA);
+        flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_ENERGY)
+                .or(F_PLASMA);
         introDate = 3065;
-        techLevel.put(3065,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techLevel.put(3065, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_D };
         techRating = RATING_E;
     }
 }

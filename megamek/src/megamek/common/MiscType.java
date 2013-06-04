@@ -466,9 +466,9 @@ public class MiscType extends EquipmentType {
                 return 2.0f;
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
-            if (getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) {
+            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return (float) (Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0);
-            } else if (getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) {
+            } else {
                 return (float) (Math.ceil((entity.getWeight() * 0.07f * 2.0f)) / 2.0);
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
@@ -545,7 +545,7 @@ public class MiscType extends EquipmentType {
             weaponWeight /= 20;
             return weaponWeight;
         } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
-            if (TechConstants.isClan(getTechLevel())) {
+            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return (entity.getWeight() * 0.1f);
             } else {
                 return (entity.getWeight() * 0.15f);
@@ -559,7 +559,7 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            if (TechConstants.isClan(getTechLevel())) {
+            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return (float) Math.ceil(fTons / 5.0f);
             }
             return (float) Math.ceil(fTons / 4.0f);
@@ -865,7 +865,7 @@ public class MiscType extends EquipmentType {
                     fTons += wt.getTonnage(entity);
                 }
             }
-            if (TechConstants.isClan(getTechLevel())) {
+            if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return (int) Math.ceil(fTons / 5.0f);
             }
             return (int) Math.ceil(fTons / 4.0f);

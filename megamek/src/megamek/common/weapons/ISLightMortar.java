@@ -35,7 +35,7 @@ public class ISLightMortar extends Weapon {
      */
     public ISLightMortar() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Light Mortar";
         setInternalName(name);
         addLookupName("ISLightMortar");
@@ -50,8 +50,8 @@ public class ISLightMortar extends Weapon {
         bv = 9;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE);
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        techLevel.put(1950, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_C };
         techRating = RATING_B;
     }
 

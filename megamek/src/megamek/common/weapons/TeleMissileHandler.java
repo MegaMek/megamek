@@ -38,7 +38,8 @@ public class TeleMissileHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public TeleMissileHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
@@ -50,13 +51,14 @@ public class TeleMissileHandler extends AmmoWeaponHandler {
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        
-        AmmoType atype = (AmmoType)ammo.getType();
-        //just launch the tele-missile
-        server.deployTeleMissile(ae, atype, ae.getEquipmentNum(weapon), getCapMisMod(), vPhaseReport);      
-        
+
+        AmmoType atype = (AmmoType) ammo.getType();
+        // just launch the tele-missile
+        server.deployTeleMissile(ae, atype, ae.getEquipmentNum(weapon),
+                getCapMisMod(), vPhaseReport);
+
         return false;
-        
+
     }
-    
+
 }

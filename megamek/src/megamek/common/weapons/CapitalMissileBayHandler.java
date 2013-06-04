@@ -31,7 +31,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     /**
      * 
      */
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -40,42 +40,43 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param s
      */
-    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
- 
+
     @Override
     protected int getCapMisMod() {
         int mod = 0;
-        for(int wId: weapon.getBayWeapons()) {
+        for (int wId : weapon.getBayWeapons()) {
             int curr_mod = 0;
             Mounted bayW = ae.getEquipment(wId);
-            //check the currently loaded ammo
+            // check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             AmmoType atype = (AmmoType) bayWAmmo.getType();
             curr_mod = getCritMod(atype);
-            if(curr_mod > mod) {
+            if (curr_mod > mod) {
                 mod = curr_mod;
             }
         }
         return mod;
     }
-    
+
     /*
      * get the cap mis mod given a single ammo type
      */
     protected int getCritMod(AmmoType atype) {
-        if(atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA) 
+        if (atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA)
             return 0;
-        if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK 
+        if (atype.getAmmoType() == AmmoType.T_WHITE_SHARK
                 || atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             return 9;
-        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE 
-                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE) 
+        } else if (atype.getAmmoType() == AmmoType.T_KILLER_WHALE
+                || atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)
                 || atype.getAmmoType() == AmmoType.T_MANTA_RAY) {
             return 10;
         } else if (atype.getAmmoType() == AmmoType.T_KRAKEN_T
-        	    || atype.getAmmoType() == AmmoType.T_KRAKENM) {
+                || atype.getAmmoType() == AmmoType.T_KRAKENM) {
             return 8;
         } else if (atype.getAmmoType() == AmmoType.T_STINGRAY) {
             return 12;
@@ -83,19 +84,21 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             return 11;
         }
     }
-    
+
     /**
      * Insert any additionaly attacks that should occur before this attack
      */
     @Override
     protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        for(int wId: insertedAttacks) {
+        for (int wId : insertedAttacks) {
             Mounted bayW = ae.getEquipment(wId);
-            WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),waa.getTargetId(), wId);
+            WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
+                    waa.getTargetId(), wId);
             Weapon w = (Weapon) bayW.getType();
-            //increase ammo by one, we'll use one that we shouldn't use
+            // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
-            bayW.getLinked().setShotsLeft(bayW.getLinked().getBaseShotsLeft()+1);
+            bayW.getLinked().setShotsLeft(
+                    bayW.getLinked().getBaseShotsLeft() + 1);
             (w.fire(newWaa, game, server)).handle(phase, vPhaseReport);
         }
     }

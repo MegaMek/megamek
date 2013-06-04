@@ -33,7 +33,7 @@ public class ISHeavyGrenadeLauncher extends Weapon {
 
     public ISHeavyGrenadeLauncher() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Heavy Grenade Launcher";
         setInternalName(name);
         addLookupName("ISAutoGL");
@@ -51,8 +51,8 @@ public class ISHeavyGrenadeLauncher extends Weapon {
         bv = 1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE);
         introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(2100, techLevel.get(3071));
+        availRating = new int[] { RATING_B, RATING_B, RATING_B };
         techRating = RATING_C;
     }
 

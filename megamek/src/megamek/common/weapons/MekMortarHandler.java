@@ -35,7 +35,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -2073773899108954657L;
-    String sSalvoType =" shell(s) ";
+    String sSalvoType = " shell(s) ";
 
     /**
      * @param t
@@ -49,7 +49,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -61,25 +61,26 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         }
 
         boolean targetHex = (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-                            || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
         int missilesHit;
         int nMissilesModifier = 0;
 
-        if (targetHex){
+        if (targetHex) {
             missilesHit = wtype.getRackSize();
-        }
-        else {
-            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        } else {
+            if (game.getOptions().booleanOption("tacops_range")
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 nMissilesModifier -= 2;
             }
 
             if (bGlancing) {
                 nMissilesModifier -= 4;
-            }else if (bDirect) {
+            } else if (bDirect) {
                 nMissilesModifier += (toHit.getMoS() / 3) * 2;
             }
 
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier);
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier);
         }
 
         if (missilesHit > 0) {
@@ -111,9 +112,9 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the clustering of the hits
-     *
-     * @return a <code>int</code> value saying how much hits are in each
-     *         cluster of damage.
+     * 
+     * @return a <code>int</code> value saying how much hits are in each cluster
+     *         of damage.
      */
     @Override
     protected int calcnCluster() {
@@ -122,20 +123,22 @@ public class MekMortarHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize(), bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            double toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }
-            return (int)Math.floor(toReturn);
+            return (int) Math.floor(toReturn);
         }
         return 2;
     }
-
 
 }

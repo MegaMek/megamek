@@ -46,7 +46,8 @@ public abstract class MPodWeapon extends AmmoWeapon {
         extremeRange = 4;
         tonnage = 1.0f;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_ONESHOT).or(F_M_POD);
+        flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
+                .or(F_ONESHOT).or(F_M_POD);
         explosive = true;
         bv = 5;
         cost = 6000;
@@ -55,13 +56,14 @@ public abstract class MPodWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new MPodHandler(toHit, waa, game, server);
     }
 }

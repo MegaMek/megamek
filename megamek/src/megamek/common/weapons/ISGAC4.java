@@ -34,7 +34,7 @@ public class ISGAC4 extends ACWeapon {
      */
     public ISGAC4() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
+        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "GAC/4";
         setInternalName(name);
         addLookupName("IS Gatling Auto Cannon/4");
@@ -62,7 +62,8 @@ public class ISGAC4 extends ACWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = damage;
         toHitModifier = -1;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_PULSE);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+                .or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_PULSE);
         ammoType = AmmoType.T_AC;
         techRating = RATING_X;
         atClass = CLASS_AC;

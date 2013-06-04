@@ -34,7 +34,7 @@ public class ISMediumRifle extends RifleWeapon {
      */
     public ISMediumRifle() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Medium Rifle";
         setInternalName(name);
         addLookupName("IS Medium Rifle");
@@ -59,6 +59,6 @@ public class ISMediumRifle extends RifleWeapon {
         maxRange = RANGE_MED;
         explosionDamage = 0;
         techRating = RATING_B;
-        availRating = new int[]{RATING_C, RATING_F, RATING_X};
+        availRating = new int[] { RATING_C, RATING_F, RATING_X };
     }
 }

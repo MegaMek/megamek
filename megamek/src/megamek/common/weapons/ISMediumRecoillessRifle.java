@@ -35,7 +35,7 @@ public class ISMediumRecoillessRifle extends Weapon {
      */
     public ISMediumRecoillessRifle() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Medium Recoilless Rifle";
         setInternalName(name);
         addLookupName("ISMedium Recoilless Rifle");
@@ -47,12 +47,12 @@ public class ISMediumRecoillessRifle extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 19;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON)
-                .or(F_BURST_FIRE);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
+                .or(F_BA_WEAPON).or(F_BURST_FIRE);
         cost = 3000;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techLevel.put(1950, techLevel.get(3071));
+        availRating = new int[] { RATING_A, RATING_A, RATING_A };
         techRating = RATING_C;
     }
 

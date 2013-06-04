@@ -34,7 +34,7 @@ public class ISERPPC extends PPCWeapon {
      */
     public ISERPPC() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "ER PPC";
         setInternalName("ISERPPC");
         addLookupName("IS ER PPC");
@@ -59,10 +59,10 @@ public class ISERPPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         introDate = 2751;
-        techLevel.put(2751,techLevel.get(3071));
+        techLevel.put(2751, techLevel.get(3071));
         extinctDate = 2860;
         reintroDate = 3037;
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
     }
 }

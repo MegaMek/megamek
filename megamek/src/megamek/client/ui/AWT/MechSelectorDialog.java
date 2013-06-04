@@ -453,7 +453,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener, ItemLi
         int nUnitType = m_chUnitType.getSelectedIndex();
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType et = e.nextElement();
-            if ((et instanceof WeaponType) && ((et.getTechLevel() == nType) || ((nType == TechConstants.T_TW_ALL) && ((et.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et.getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
+            if ((et instanceof WeaponType) && ((et.getTechLevel(3071) == nType) || ((nType == TechConstants.T_TW_ALL) && ((et.getTechLevel(3071) == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel(3071) == TechConstants.T_IS_TW_NON_BOX) || (et.getTechLevel(3071) == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et.getTechLevel(3071) == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel(3071) == TechConstants.T_IS_TW_NON_BOX))))) {
                 if (!(nUnitType == UnitType.SIZE) && ((UnitType.getTypeName(nUnitType).equals("Mek") || UnitType.getTypeName(nUnitType).equals("Tank")) && (et.hasFlag(WeaponType.F_INFANTRY)))) {
                     continue;
                 }
@@ -462,7 +462,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener, ItemLi
                     equipment.add(et.getName());
                 }
             }
-            if ((et instanceof MiscType) && ((et.getTechLevel() == nType) || ((nType == TechConstants.T_TW_ALL) && ((et.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (et.getTechLevel() == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et.getTechLevel() == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel() == TechConstants.T_IS_TW_NON_BOX))))) {
+            if ((et instanceof MiscType) && ((et.getTechLevel(3071) == nType) || ((nType == TechConstants.T_TW_ALL) && ((et.getTechLevel(3071) == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel(3071) == TechConstants.T_IS_TW_NON_BOX) || (et.getTechLevel(3071) == TechConstants.T_CLAN_TW))) || (((nType == TechConstants.T_IS_TW_ALL) || (nType == TechConstants.T_IS_TW_NON_BOX)) && ((et.getTechLevel(3071) == TechConstants.T_INTRO_BOXSET) || (et.getTechLevel(3071) == TechConstants.T_IS_TW_NON_BOX))))) {
                 equipment.add(et.getName());
             }
         }
@@ -632,7 +632,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener, ItemLi
         int sel = m_cArmor.getSelectedIndex();
         if (sel > 0) {
             int armor = entity.getTotalArmor();
-            int maxArmor = entity.getTotalInternal() * 2 + 3;
+            int maxArmor = (entity.getTotalInternal() * 2) + 3;
             if (sel == 1) {
                 if (armor < (maxArmor * .25)) {
                     return false;
@@ -765,11 +765,11 @@ public class MechSelectorDialog extends Dialog implements ActionListener, ItemLi
     }
 
     private Point computeDesiredLocation() {
-        int desiredX = m_clientgui.frame.getLocation().x + m_clientgui.frame.getSize().width / 2 - getSize().width / 2;
+        int desiredX = (m_clientgui.frame.getLocation().x + (m_clientgui.frame.getSize().width / 2)) - (getSize().width / 2);
         if (desiredX < 0) {
             desiredX = 0;
         }
-        int desiredY = m_clientgui.frame.getLocation().y + m_clientgui.frame.getSize().height / 2 - getSize().height / 2;
+        int desiredY = (m_clientgui.frame.getLocation().y + (m_clientgui.frame.getSize().height / 2)) - (getSize().height / 2);
         if (desiredY < 0) {
             desiredY = 0;
         }
@@ -956,7 +956,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener, ItemLi
             actionPerformed(event);
         }
         long curTime = System.currentTimeMillis();
-        if (curTime - m_nLastSearch > KEY_TIMEOUT) {
+        if ((curTime - m_nLastSearch) > KEY_TIMEOUT) {
             m_sbSearch = new StringBuffer();
         }
         m_nLastSearch = curTime;

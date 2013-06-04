@@ -49,6 +49,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BombType;
+import megamek.common.Crew;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -62,7 +63,6 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
-import megamek.common.Crew;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
@@ -80,7 +80,7 @@ import megamek.common.preference.PreferenceManager;
  * Currently, changing pilots, setting up C3 networks, changing ammunition,
  * deploying artillery offboard, setting MGs to rapidfire, setting auto-eject is
  * supported.
- * 
+ *
  * @author Ben
  * @version
  */
@@ -676,7 +676,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(
-                        entity.getTechLevel(), atCheck.getTechLevel(), true,
+                        entity.getTechLevel(), atCheck.getTechLevel(entity.getTechLevelYear()), true,
                         entity.isMixedTech());
 
                 // allow all lvl2 IS units to use level 1 ammo
@@ -685,7 +685,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 // need to show up in this display.
                 if (!bTechMatch
                         && (entity.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)
-                        && (atCheck.getTechLevel() == TechConstants.T_INTRO_BOXSET)) {
+                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_INTRO_BOXSET)) {
                     bTechMatch = true;
                 }
 
@@ -693,7 +693,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if (!clientgui.getClient().game.getOptions().booleanOption(
                         "is_eq_limits") //$NON-NLS-1$
                         && (entity.getTechLevel() == TechConstants.T_INTRO_BOXSET)
-                        && (atCheck.getTechLevel() == TechConstants.T_IS_TW_NON_BOX)) {
+                        && (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_TW_NON_BOX)) {
                     bTechMatch = true;
                 }
 
@@ -704,22 +704,22 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                             "is_eq_limits")) {
                         if (((entity.getTechLevel() == TechConstants.T_CLAN_TW) || (entity
                                 .getTechLevel() == TechConstants.T_CLAN_ADVANCED))
-                                && ((atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)
-                                        || (atCheck.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL))) {
+                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)
+                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_EXPERIMENTAL) || (atCheck
+                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                         if (((entity.getTechLevel() == TechConstants.T_INTRO_BOXSET) || ((entity
                                 .getTechLevel() == TechConstants.T_IS_TW_NON_BOX) || (entity
                                 .getTechLevel() == TechConstants.T_IS_ADVANCED)))
-                                && ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
-                                        || (atCheck.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
-                                        .getTechLevel() == TechConstants.T_IS_UNOFFICIAL))) {
+                                && ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
+                                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_EXPERIMENTAL) || (atCheck
+                                        .getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_UNOFFICIAL))) {
                             bTechMatch = true;
                         }
                     }
-                } else if ((atCheck.getTechLevel() == TechConstants.T_IS_ADVANCED)
-                        || (atCheck.getTechLevel() == TechConstants.T_CLAN_ADVANCED)) {
+                } else if ((atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_IS_ADVANCED)
+                        || (atCheck.getTechLevel(entity.getTechLevelYear()) == TechConstants.T_CLAN_ADVANCED)) {
                     bTechMatch = false;
                 }
 
@@ -972,7 +972,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         /**
          * Get the number of shots in the mount.
-         * 
+         *
          * @return the <code>int</code> number of shots in the mount.
          */
         /* package */int getShotsLeft() {
@@ -981,7 +981,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         /**
          * Set the number of shots in the mount.
-         * 
+         *
          * @param shots
          *            the <code>int</code> number of shots for the mount.
          */
@@ -1203,7 +1203,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Calculate the number of shots for the new ammo.
             // N.B. Some special ammos are twice as heavy as normal
             // so they have half the number of shots (rounded down).
-            setShotsLeft(Math.round(getShotsLeft() * m_origShotsLeft
+            setShotsLeft(Math.round((getShotsLeft() * m_origShotsLeft)
                     / m_origAmmo.getShots()));
             if (chDump.getState()) {
                 setShotsLeft(0);
@@ -1557,7 +1557,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     /**
      * Populate the list of entities in other units from the given enumeration.
-     * 
+     *
      * @param others
      *            the <code>Enumeration</code> containing entities in other
      *            units.
@@ -1785,7 +1785,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         .size();
                 int choC3nodeCount = client.game.getC3NetworkMembers(chosen)
                         .size();
-                if (entC3nodeCount + choC3nodeCount <= Entity.MAX_C3_NODES) {
+                if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES) {
                     entity.setC3Master(chosen, true);
                 } else {
                     String message = Messages

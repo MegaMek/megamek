@@ -37,7 +37,7 @@ public class PiranhaWeapon extends SubCapitalMissileWeapon {
      */
     public PiranhaWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Piranha";
         setInternalName(name);
         addLookupName("Piranha");
@@ -66,7 +66,8 @@ public class PiranhaWeapon extends SubCapitalMissileWeapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new PiranhaHandler(toHit, waa, game, server);
     }
 }

@@ -52,13 +52,16 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(), bDirect ? toHit.getMoS()/3 : 0, WeaponType.WEAPON_CLUSTER_BALLISTIC, ((Infantry)target).isMechanized());
+            double toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                    WeaponType.WEAPON_CLUSTER_BALLISTIC,
+                    ((Infantry) target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }
@@ -69,33 +72,32 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     *
-     * @return an <code>int</code> representing the attack value at that
-     *         range.
+     * 
+     * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
     protected int calcAttackValue() {
-    	int av = super.calcAttackValue();
-    	if(usesClusterTable()) {
-    		// basically 60% of normal
-    		return (int) Math.floor(0.6 * av);
-    	} 
-    	if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        int av = super.calcAttackValue();
+        if (usesClusterTable()) {
+            // basically 60% of normal
+            return (int) Math.floor(0.6 * av);
         }
-        if(bGlancing) {
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
+        }
+        if (bGlancing) {
             av = (int) Math.floor(av / 2.0);
 
         }
-        av = (int)Math.floor(getBracketingMultiplier() * av);
-    	return av;
+        av = (int) Math.floor(getBracketingMultiplier() * av);
+        return av;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
-     *      vPhaseReport)
+     * vPhaseReport)
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -110,12 +112,14 @@ public class LBXHandler extends AmmoWeaponHandler {
 
         if (allShotsHit()) {
             shotsHit = wtype.getRackSize();
-            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption("tacops_range")
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 shotsHit = (int) Math.ceil(shotsHit * .75);
             }
         } else {
-            //TacOps Cluster Hit Penalties p. 83
-            boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+            // TacOps Cluster Hit Penalties p. 83
+            boolean tacopscluster = game.getOptions().booleanOption(
+                    "tacops_clusterhitpen");
             if (tacopscluster) {
                 if (nRange <= 1) {
                     nHitsModifier += 1;
@@ -125,7 +129,8 @@ public class LBXHandler extends AmmoWeaponHandler {
                     nHitsModifier -= 1;
                 }
             }
-            if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption("tacops_range")
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 nHitsModifier -= 2;
             }
 
@@ -133,15 +138,16 @@ public class LBXHandler extends AmmoWeaponHandler {
                 nHitsModifier -= 4;
             }
 
-            if ( bDirect ){
-                nHitsModifier += (toHit.getMoS()/3)*2;
+            if (bDirect) {
+                nHitsModifier += (toHit.getMoS() / 3) * 2;
             }
 
-            if(game.getPlanetaryConditions().hasEMI()) {
+            if (game.getPlanetaryConditions().hasEMI()) {
                 nHitsModifier -= 2;
             }
 
-            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, game.getPlanetaryConditions().hasEMI());
+            shotsHit = Compute.missilesHit(wtype.getRackSize(), nHitsModifier,
+                    game.getPlanetaryConditions().hasEMI());
         }
 
         Report r = new Report(3325);
@@ -175,7 +181,7 @@ public class LBXHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage(){
+    protected boolean canDoDirectBlowDamage() {
         return false;
     }
 

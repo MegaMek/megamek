@@ -33,7 +33,6 @@ import megamek.server.Server;
  */
 public class BPodHandler extends AmmoWeaponHandler {
 
-
     /**
      *
      */
@@ -51,9 +50,9 @@ public class BPodHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the clustering of the hits
-     *
-     * @return a <code>int</code> value saying how much hits are in each
-     *         cluster of damage.
+     * 
+     * @return a <code>int</code> value saying how much hits are in each cluster
+     *         of damage.
      */
     @Override
     protected int calcnCluster() {
@@ -62,7 +61,7 @@ public class BPodHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -73,10 +72,9 @@ public class BPodHandler extends AmmoWeaponHandler {
         return 1;
     }
 
-
     /**
      * Calculate the damage per hit.
-     *
+     * 
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override
@@ -85,14 +83,14 @@ public class BPodHandler extends AmmoWeaponHandler {
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = Compute.d6();
-            if ( ((Infantry)target).isMechanized() ){
-                toReturn /=3;
-            } else{
-                toReturn /=2;
+            if (((Infantry) target).isMechanized()) {
+                toReturn /= 3;
+            } else {
+                toReturn /= 2;
             }
 
             toReturn = Math.max(1, toReturn);
-        }else if ( target instanceof BattleArmor ){
+        } else if (target instanceof BattleArmor) {
             toReturn = 1;
         }
         return (int) toReturn;

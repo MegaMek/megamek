@@ -39,7 +39,7 @@ public class CLGaussRifle extends GaussWeapon {
      */
     public CLGaussRifle() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Gauss Rifle";
         this.setInternalName("CLGaussRifle");
         this.addLookupName("Clan Gauss Rifle");
@@ -60,17 +60,19 @@ public class CLGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        availRating = new int[]{RATING_D,RATING_F,RATING_D};
-        this.introDate = 2828;
+        availRating = new int[] { RATING_D, RATING_F, RATING_D };
+        introDate = 2828;
+        techLevel.put(2828, techLevel.get(3071));
         techRating = RATING_F;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

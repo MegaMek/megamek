@@ -38,6 +38,7 @@ public abstract class HVACWeapon extends ACWeapon {
     public HVACWeapon() {
         super();
         techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3079, TechConstants.T_IS_ADVANCED);
         explosionDamage = damage;
         ammoType = AmmoType.T_HYPER_VELOCITY;
         techRating = RATING_D;
@@ -45,7 +46,7 @@ public abstract class HVACWeapon extends ACWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.ACWeapon#getCorrectHandler(megamek.common.ToHitData
      * , megamek.common.actions.WeaponAttackAction, megamek.common.IGame,

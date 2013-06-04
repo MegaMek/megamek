@@ -53,5 +53,6 @@ public class ISLRT10IOS extends LRTWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3056;
         techLevel.put(3056, techLevel.get(3071));
+        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
     }
 }

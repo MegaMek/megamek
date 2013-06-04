@@ -41,6 +41,6 @@ public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
         availRating = new int[] { RATING_D, RATING_E, RATING_F };
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));
-        availRating = new int[] { RATING_A, RATING_B, RATING_B };
+        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
     }
 }

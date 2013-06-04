@@ -64,11 +64,12 @@ public class ISIHGaussRifle extends GaussWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3065;
         techLevel.put(3065, techLevel.get(3071));
+        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

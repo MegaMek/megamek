@@ -79,7 +79,8 @@ v0.35.39-dev (SVN)
 + Bug: Modifier for motive damage check for charged vehicles taken from *attacker*, not target; ClassCastException if "attacker" was a (skidding) 'Mech.
 + Bug 3722: Synchronized the copying of the events_to_process LinkedList.
 + Bug: sprinting with XXL should cost 9 heat, not 8
-+ Bug 3743: NPE: Incorrect cross platform support for directory path separator (/ vs. \ depending on OS) 
++ Bug 3743: NPE: Incorrect cross platform support for directory path separator (/ vs. \ depending on OS)
++ Bug: ASF BV wrong when using PPC capacitors 
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

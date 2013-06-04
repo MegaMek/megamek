@@ -35,7 +35,7 @@ public class ISFiredrakeNeedler extends Weapon {
      */
     public ISFiredrakeNeedler() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Firedrake Needler";
         setInternalName(name);
         addLookupName("ISFiredrakeIncendiaryNeedler");
@@ -47,8 +47,8 @@ public class ISFiredrakeNeedler extends Weapon {
         longRange = 3;
         extremeRange = 4;
         bv = 2;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INCENDIARY_NEEDLES)
-                .or(F_BURST_FIRE);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC)
+                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE);
     }
 
 }

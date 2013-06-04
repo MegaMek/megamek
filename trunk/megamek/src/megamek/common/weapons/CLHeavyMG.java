@@ -37,7 +37,7 @@ public class CLHeavyMG extends MGWeapon {
      */
     public CLHeavyMG() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Heavy Machine Gun";
         this.setInternalName("CLHeavyMG");
         this.addLookupName("Clan Heavy Machine Gun");
@@ -56,8 +56,10 @@ public class CLHeavyMG extends MGWeapon {
         this.cost = 7500;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_C};
-        this.introDate = 3059;
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_C };
+        introDate = 3059;
+        techLevel.put(3059, techLevel.get(3071));
         techRating = RATING_C;
     }
 

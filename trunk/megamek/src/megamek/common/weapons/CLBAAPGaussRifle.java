@@ -34,7 +34,7 @@ public class CLBAAPGaussRifle extends Weapon {
      */
     public CLBAAPGaussRifle() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "AP Gauss Rifle";
         setInternalName("CLBAAPGaussRifle");
         heat = 1;
@@ -53,8 +53,8 @@ public class CLBAAPGaussRifle extends Weapon {
         explosionDamage = 3;
         flags = flags.or(F_BA_WEAPON).or(F_BURST_FIRE);
         introDate = 3069;
-        techLevel.put(3069,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3069, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
     }
 

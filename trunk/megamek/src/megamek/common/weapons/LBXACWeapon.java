@@ -36,15 +36,17 @@ public abstract class LBXACWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             return new LBXHandler(toHit, waa, game, server);
         }
@@ -53,7 +55,8 @@ public abstract class LBXACWeapon extends AmmoWeapon {
 
     public LBXACWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_BALLISTIC).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_AC_LBX;
         techRating = RATING_E;
         atClass = CLASS_LBX_AC;

@@ -29,7 +29,7 @@ public class LAAMissileWeapon extends CapitalMissileWeapon {
 
     public LAAMissileWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "LAA Missile";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
         this.heat = 0;

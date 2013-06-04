@@ -23,7 +23,6 @@ import megamek.server.Server;
  */
 public class PrototypeStreakHandler extends SRMHandler {
 
-
     /**
      *
      */
@@ -35,7 +34,8 @@ public class PrototypeStreakHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public PrototypeStreakHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeStreakHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         nSalvoBonus = 4;
     }

@@ -30,7 +30,7 @@ public class ISMRM10OS extends MRMWeapon {
      */
     public ISMRM10OS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "MRM 10 (OS)";
         setInternalName(name);
         addLookupName("OS MRM-10");
@@ -51,8 +51,8 @@ public class ISMRM10OS extends MRMWeapon {
         medAV = 6;
         maxRange = RANGE_MED;
         introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3058, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_C;
     }
 }

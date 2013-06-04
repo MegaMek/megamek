@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -35,10 +34,11 @@ public class KillerWhaleHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public KillerWhaleHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public KillerWhaleHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return 10;

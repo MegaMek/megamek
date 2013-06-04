@@ -37,8 +37,8 @@ public class AR10Weapon extends CapitalMissileWeapon {
      */
     public AR10Weapon() {
         super();
-        //assume a barracuda is loaded
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        // assume a barracuda is loaded
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "AR10";
         this.setInternalName(this.name);
         this.addLookupName("AR10");
@@ -52,7 +52,7 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.tonnage = 250.0f;
         this.bv = 961;
         this.cost = 250000;
-        //assume Barracuda is loaded 
+        // assume Barracuda is loaded
         this.shortAV = 2;
         this.medAV = 2;
         this.longAV = 2;
@@ -60,23 +60,25 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
         introDate = 2550;
-        techLevel.put(2550,techLevel.get(3071));
+        techLevel.put(2550, techLevel.get(3071));
         extinctDate = 2850;
         reintroDate = 3051;
-        techLevel.put(3051,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_X,RATING_E};
+        techLevel.put(3051, techLevel.get(3071));
+        availRating = new int[] { RATING_E, RATING_X, RATING_E };
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.hasFlag(AmmoType.F_NUCLEAR)) {
             return new SantaAnnaHandler(toHit, waa, game, server);
         }

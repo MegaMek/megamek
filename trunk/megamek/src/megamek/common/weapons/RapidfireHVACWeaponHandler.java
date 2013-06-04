@@ -43,21 +43,25 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
      * @param g
      * @param s
      */
-    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
-     *      java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
+     * java.util.Vector)
      */
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
-        if (game.getOptions().booleanOption("tacops_start_fire") && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
-            int rear = (ae.getFacing() + 3+ (weapon.isMechTurretMounted()?weapon.getFacing():0)) % 6;
+        if (game.getOptions().booleanOption("tacops_start_fire")
+                && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
+            int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon
+                    .getFacing() : 0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
             IBoard board = game.getBoard();
@@ -65,20 +69,25 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;
-            } else if (board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4) {
+            } else if (board.getHex(rearCoords).getElevation() > currentHex
+                    .getElevation() + 4) {
                 rearCoords = src;
-            } else if ((board.getBuildingAt(rearCoords) != null) && (board.getHex(rearCoords).terrainLevel(Terrains.BLDG_ELEV) + board.getHex(rearCoords).getElevation() > currentHex.getElevation() + 4)) {
+            } else if ((board.getBuildingAt(rearCoords) != null)
+                    && (board.getHex(rearCoords).terrainLevel(
+                            Terrains.BLDG_ELEV)
+                            + board.getHex(rearCoords).getElevation() > currentHex
+                            .getElevation() + 4)) {
                 rearCoords = src;
             }
 
-            server.createSmoke(rearCoords,2,2);
+            server.createSmoke(rearCoords, 2, 2);
         }
         return super.handle(phase, vPhaseReport);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -91,7 +100,8 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
             int wlocation = weapon.getLocation();
             for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
                 CriticalSlot slot1 = ae.getCritical(wlocation, i);
-                if ((slot1 == null) || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
+                if ((slot1 == null)
+                        || (slot1.getType() != CriticalSlot.TYPE_SYSTEM)) {
                     continue;
                 }
                 Mounted mounted = ae.getEquipment(slot1.getIndex());
@@ -100,7 +110,8 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                     break;
                 }
             }
-            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation), wtype.getDamage(), true, DamageType.NONE, true));
+            vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation),
+                    wtype.getDamage(), true, DamageType.NONE, true));
             r.choose(false);
             vPhaseReport.addElement(r);
             return false;

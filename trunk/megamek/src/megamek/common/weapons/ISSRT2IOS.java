@@ -30,7 +30,7 @@ public class ISSRT2IOS extends SRTWeapon {
      */
     public ISSRT2IOS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "SRT 2 (I-OS)";
         setInternalName("ISSRT2IOS");
         addLookupName("ISSRT2 (IOS)"); // mtf
@@ -48,8 +48,8 @@ public class ISSRT2IOS extends SRTWeapon {
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 8000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3056;
-        techLevel.put(3056,techLevel.get(3071));
+        techLevel.put(3056, techLevel.get(3071));
     }
 }

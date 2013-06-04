@@ -30,7 +30,7 @@ public class ISSRT4 extends SRTWeapon {
      */
     public ISSRT4() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "SRT 4";
         this.setInternalName(this.name);
         this.addLookupName("IS SRT-4");
@@ -47,8 +47,8 @@ public class ISSRT4 extends SRTWeapon {
         this.bv = 39;
         this.cost = 60000;
         introDate = 2380;
-        techLevel.put(2380,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techLevel.put(2380, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
     }
 }

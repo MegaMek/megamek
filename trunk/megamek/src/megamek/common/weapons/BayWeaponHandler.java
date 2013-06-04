@@ -42,7 +42,7 @@ public class BayWeaponHandler extends WeaponHandler {
     Mounted ammo;
 
     protected BayWeaponHandler() {
-        //deserialization only
+        // deserialization only
     }
 
     /**
@@ -57,7 +57,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     *
+     * 
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -65,14 +65,14 @@ public class BayWeaponHandler extends WeaponHandler {
         double av = 0;
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
 
-        for(int wId: weapon.getBayWeapons()) {
+        for (int wId : weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
-            if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = ((WeaponType)m.getType());
-                //need to cycle through weapons and add av
-                if(range == WeaponType.RANGE_SHORT) {
+            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                WeaponType bayWType = ((WeaponType) m.getType());
+                // need to cycle through weapons and add av
+                if (range == WeaponType.RANGE_SHORT) {
                     av = av + bayWType.getShortAV();
-                } else if(range == WeaponType.RANGE_MED) {
+                } else if (range == WeaponType.RANGE_MED) {
                     av = av + bayWType.getMedAV();
                 } else if (range == WeaponType.RANGE_LONG) {
                     av = av + bayWType.getLongAV();
@@ -81,29 +81,29 @@ public class BayWeaponHandler extends WeaponHandler {
                 }
             }
         }
-        if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if(bGlancing) {
+        if (bGlancing) {
             av = (int) Math.floor(av / 2.0);
 
         }
-        av = (int)Math.floor(getBracketingMultiplier() * av);
-        return (int)Math.ceil(av);
+        av = (int) Math.floor(getBracketingMultiplier() * av);
+        return (int) Math.ceil(av);
     }
 
     @Override
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if(game.getOptions().booleanOption("heat_by_bay")) {
-                for(int wId:weapon.getBayWeapons()) {
+            if (game.getOptions().booleanOption("heat_by_bay")) {
+                for (int wId : weapon.getBayWeapons()) {
                     Mounted m = ae.getEquipment(wId);
                     ae.heatBuildup += m.getCurrentHeat();
                 }
             } else {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
-                if(!ae.hasArcFired(loc, rearMount)) {
+                if (!ae.hasArcFired(loc, rearMount)) {
                     ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
                     ae.setArcFired(loc, rearMount);
                 }
@@ -112,10 +112,11 @@ public class BayWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * Sigh, according to the ruling linked below, when weapon bays are fired at ground
-     * targets, they should make one to-hit roll, but the AV of each weapon should be
-     * applied separately as damage - that needs a special handler
-     *
+     * Sigh, according to the ruling linked below, when weapon bays are fired at
+     * ground targets, they should make one to-hit roll, but the AV of each
+     * weapon should be applied separately as damage - that needs a special
+     * handler
+     * 
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
@@ -125,11 +126,13 @@ public class BayWeaponHandler extends WeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
 
-        if((null == entityTarget) || entityTarget.isAirborne() || game.getBoard().inSpace()) {
+        if ((null == entityTarget) || entityTarget.isAirborne()
+                || game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
         }
 
-        //then we have a ground target, so we need to handle it in a special way
+        // then we have a ground target, so we need to handle it in a special
+        // way
 
         insertAttacks(phase, vPhaseReport);
 
@@ -137,7 +140,6 @@ public class BayWeaponHandler extends WeaponHandler {
                 entityTarget);
 
         ae.setLastTarget(entityTarget.getId());
-
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -204,9 +206,10 @@ public class BayWeaponHandler extends WeaponHandler {
             bGlancing = false;
         }
 
-        //Set Margin of Success/Failure.
-        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+                && ((toHit.getMoS() / 3) >= 1);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -250,19 +253,19 @@ public class BayWeaponHandler extends WeaponHandler {
         } // End missed-target
 
         Report.addNewline(vPhaseReport);
-        //loop through weapons in bay and do damage
+        // loop through weapons in bay and do damage
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
         int hits = 1;
         int nCluster = 1;
-        for(int wId: weapon.getBayWeapons()) {
+        for (int wId : weapon.getBayWeapons()) {
             double av = 0;
             Mounted m = ae.getEquipment(wId);
-            if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                WeaponType bayWType = ((WeaponType)m.getType());
-                //need to cycle through weapons and add av
-                if(range == WeaponType.RANGE_SHORT) {
+            if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                WeaponType bayWType = ((WeaponType) m.getType());
+                // need to cycle through weapons and add av
+                if (range == WeaponType.RANGE_SHORT) {
                     av = bayWType.getShortAV();
-                } else if(range == WeaponType.RANGE_MED) {
+                } else if (range == WeaponType.RANGE_MED) {
                     av = bayWType.getMedAV();
                 } else if (range == WeaponType.RANGE_LONG) {
                     av = bayWType.getLongAV();
@@ -270,8 +273,8 @@ public class BayWeaponHandler extends WeaponHandler {
                     av = bayWType.getExtAV();
                 }
             }
-            nDamPerHit = (int)Math.ceil(av);
-            if(nDamPerHit <= 0) {
+            nDamPerHit = (int) Math.ceil(av);
+            if (nDamPerHit <= 0) {
                 continue;
             }
             bSalvo = true;
@@ -284,7 +287,7 @@ public class BayWeaponHandler extends WeaponHandler {
             }
 
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                        nCluster, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
         } // Handle the next weapon in the vay
         Report.addNewline(vPhaseReport);

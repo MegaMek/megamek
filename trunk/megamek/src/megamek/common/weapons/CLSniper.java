@@ -35,7 +35,7 @@ public class CLSniper extends ArtilleryWeapon {
      */
     public CLSniper() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Sniper";
         setInternalName("CLSniper");
         addLookupName("CLSniperArtillery");
@@ -53,7 +53,7 @@ public class CLSniper extends ArtilleryWeapon {
         bv = 85;
         cost = 300000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
     }
 
 }

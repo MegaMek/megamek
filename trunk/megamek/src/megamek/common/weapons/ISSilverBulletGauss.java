@@ -38,7 +38,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     public ISSilverBulletGauss() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Silver Bullet Gauss Rifle";
         setInternalName("ISSBGR");
         addLookupName("IS Silver Bullet Gauss Rifle");
@@ -64,21 +64,22 @@ public class ISSilverBulletGauss extends GaussWeapon {
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3051;
-        techLevel.put(3051,techLevel.get(3071));
-   }
+        techLevel.put(3051, techLevel.get(3071));
+    }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new LBXHandler(toHit, waa, game, server);
     }
-
 
 }

@@ -37,13 +37,14 @@ public class PrototypeACWeaponHandler extends ACWeaponHandler {
      * @param g
      * @param s
      */
-    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override

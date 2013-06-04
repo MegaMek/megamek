@@ -35,7 +35,7 @@ public class CLHeavyRecoillessRifle extends Weapon {
      */
     public CLHeavyRecoillessRifle() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Heavy Recoilless Rifle";
         setInternalName("CLHeavy Recoilless Rifle");
         addLookupName("CLHeavy Recoilless Rifle");
@@ -51,8 +51,8 @@ public class CLHeavyRecoillessRifle extends Weapon {
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
         cost = 5000;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_A};
+        techLevel.put(1950, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_A };
         techRating = RATING_C;
     }
 

@@ -29,7 +29,7 @@ public class CLStreakSRM2IOS extends StreakSRMWeapon {
      *
      */
     public CLStreakSRM2IOS() {
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Streak SRM 2 (I-OS)";
         setInternalName("CLStreakSRM2 (IOS)");
         addLookupName("Clan IOS Streak SRM-2");
@@ -49,8 +49,8 @@ public class CLStreakSRM2IOS extends StreakSRMWeapon {
         medAV = 4;
         maxRange = RANGE_MED;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
+        techLevel.put(3058, techLevel.get(3071));
     }
 }

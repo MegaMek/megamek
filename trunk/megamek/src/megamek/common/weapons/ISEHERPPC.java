@@ -33,7 +33,7 @@ public class ISEHERPPC extends PPCWeapon {
      */
     public ISEHERPPC() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Enhanced ER PPC";
         setInternalName("ISEHERPPC");
         addLookupName("IS EH ER PPC");

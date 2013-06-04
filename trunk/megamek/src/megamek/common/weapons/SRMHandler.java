@@ -41,31 +41,35 @@ public class SRMHandler extends MissileWeaponHandler {
         this(t, w, g, s, 0);
     }
 
-    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s, int salvoMod) {
+    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s,
+            int salvoMod) {
         super(t, w, g, s);
         nSalvoBonus = salvoMod;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            double toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }
-            return (int)Math.floor(toReturn);
+            return (int) Math.floor(toReturn);
         }
         return 2;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override

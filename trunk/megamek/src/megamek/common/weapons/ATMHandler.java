@@ -59,7 +59,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -76,18 +76,21 @@ public class ATMHandler extends MissileWeaponHandler {
             toReturn = 2;
         }
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*toReturn, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()
+                    * toReturn, bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }
         }
 
-        return (int)toReturn;
+        return (int) toReturn;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -97,7 +100,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -109,10 +112,10 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         int hits;
         AmmoType atype = (AmmoType) ammo.getType();
-        //TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
+        // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
             hits = super.calcHits(vPhaseReport);
-        }else {
+        } else {
             hits = calcStandardAndExtendedAmmoHits(vPhaseReport);
         }
         // change to 5 damage clusters here, after AMS has been done
@@ -123,7 +126,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     *
+     * 
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -132,25 +135,25 @@ public class ATMHandler extends MissileWeaponHandler {
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-            if(range == WeaponType.RANGE_SHORT) {
+            if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
-                av = av + av/2;
+                av = av + av / 2;
             }
         } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-            if(range == WeaponType.RANGE_SHORT) {
+            if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
-            } else if(range == WeaponType.RANGE_MED) {
+            } else if (range == WeaponType.RANGE_MED) {
                 av = wtype.getRoundMedAV();
             } else if (range == WeaponType.RANGE_LONG) {
                 av = wtype.getRoundLongAV();
             } else if (range == WeaponType.RANGE_EXT) {
                 av = wtype.getRoundLongAV();
             }
-            av = av/2;
+            av = av / 2;
         } else {
-            if(range == WeaponType.RANGE_SHORT) {
+            if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
-            } else if(range == WeaponType.RANGE_MED) {
+            } else if (range == WeaponType.RANGE_MED) {
                 av = wtype.getRoundMedAV();
             } else if (range == WeaponType.RANGE_LONG) {
                 av = wtype.getRoundLongAV();
@@ -158,20 +161,20 @@ public class ATMHandler extends MissileWeaponHandler {
                 av = wtype.getRoundExtAV();
             }
         }
-        if(bDirect) {
-            av = Math.min(av+(toHit.getMoS()/3), av*2);
+        if (bDirect) {
+            av = Math.min(av + (toHit.getMoS() / 3), av * 2);
         }
-        if(bGlancing) {
+        if (bGlancing) {
             av = (int) Math.floor(av / 2.0);
 
         }
-        av = (int)Math.floor(getBracketingMultiplier() * av);
+        av = (int) Math.floor(getBracketingMultiplier() * av);
         return av;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcStandardAndExtendedAmmoHits(Vector<Report> vPhaseReport) {
@@ -202,7 +205,8 @@ public class ATMHandler extends MissileWeaponHandler {
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
 
@@ -267,11 +271,11 @@ public class ATMHandler extends MissileWeaponHandler {
             boolean bTargetECMAffected = false;
             bTargetECMAffected = Compute.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
-            if (((atype.getAmmoType() == AmmoType.T_LRM) ||
-                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
-                 ((atype.getAmmoType() == AmmoType.T_MML)
-                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
-                    && ((weapon.curMode() == null) || !weapon.curMode().equals(
+            if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype
+                    .getAmmoType() == AmmoType.T_SRM))
+                    || ((atype.getAmmoType() == AmmoType.T_MML)
+                            && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) && ((weapon
+                            .curMode() == null) || !weapon.curMode().equals(
                             "Indirect")))) {
                 if (bTargetECMAffected) {
                     // ECM prevents bonus
@@ -288,11 +292,11 @@ public class ATMHandler extends MissileWeaponHandler {
             nMissilesModifier -= 4;
         }
 
-        if ( bDirect ){
-            nMissilesModifier += (toHit.getMoS()/3)*2;
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
 
@@ -305,10 +309,12 @@ public class ATMHandler extends MissileWeaponHandler {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS && amsEnganged);
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        advancedAMS && amsEnganged);
             }
         }
 
@@ -350,16 +356,18 @@ public class ATMHandler extends MissileWeaponHandler {
             vPhaseReport.addElement(r);
             Coords coords = target.getPosition();
 
-            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            Enumeration<Minefield> minefields = game.getMinefields(coords)
+                    .elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if(server.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (server.clearMinefield(mf, ae,
+                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
-            //we have to do it this way to avoid a concurrent error problem
-            for(Minefield mf : mfRemoved) {
+            // we have to do it this way to avoid a concurrent error problem
+            for (Minefield mf : mfRemoved) {
                 server.removeMinefield(mf);
             }
             return true;

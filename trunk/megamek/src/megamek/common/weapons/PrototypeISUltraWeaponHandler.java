@@ -48,12 +48,13 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (((roll <= 4) && (howManyShots == 2)) || ((roll == 2) && (howManyShots == 1))) {
+        if (((roll <= 4) && (howManyShots == 2))
+                || ((roll == 2) && (howManyShots == 1))) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);

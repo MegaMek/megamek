@@ -38,7 +38,7 @@ public class ISIHGaussRifle extends GaussWeapon {
      */
     public ISIHGaussRifle() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Improved Heavy Gauss Rifle";
         shortName = "Imp. Heavy Gauss Rifle";
         setInternalName("ISImprovedHeavyGaussRifle");
@@ -61,17 +61,18 @@ public class ISIHGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 30;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3065;
-        techLevel.put(3065,techLevel.get(3071));
+        techLevel.put(3065, techLevel.get(3071));
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

@@ -30,7 +30,7 @@ public class CLLRM3OS extends LRMWeapon {
      */
     public CLLRM3OS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 3 (OS)";
         setInternalName("CLLRM3OS");
         heat = 0;
@@ -41,8 +41,8 @@ public class CLLRM3OS extends LRMWeapon {
         bv = 7;
         flags = flags.or(F_ONESHOT);
         introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3060, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
     }
 }

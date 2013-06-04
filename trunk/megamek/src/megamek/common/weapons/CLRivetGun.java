@@ -27,13 +27,13 @@ public class CLRivetGun extends NailRivetGunWeapon {
 
     public CLRivetGun() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Rivet Gun";
         setInternalName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
         introDate = 2310;
-        techLevel.put(2310,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_C,RATING_C};
+        techLevel.put(2310, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_C, RATING_C };
         techRating = RATING_C;
     }
 

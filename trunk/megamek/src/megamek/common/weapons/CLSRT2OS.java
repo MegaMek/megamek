@@ -30,7 +30,7 @@ public class CLSRT2OS extends SRTWeapon {
      */
     public CLSRT2OS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRT 2 (OS)";
         setInternalName("CLSRT2 (OS)");
         addLookupName("Clan OS SRT-2");
@@ -47,8 +47,9 @@ public class CLSRT2OS extends SRTWeapon {
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 5000;
-        this.introDate = 2676;
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        introDate = 2676;
+        techLevel.put(2676, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_F;
     }
 }

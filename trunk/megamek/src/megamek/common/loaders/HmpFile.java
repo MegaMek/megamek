@@ -677,11 +677,11 @@ implements IMechLoader
                             // for experimental or unofficial equipment, we need
                             // to adjust the mech's techlevel, because HMP only
                             // knows lvl1/2/3
-                            if ((equipment.getTechLevel() > mech.getTechLevel()) && (mech.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
+                            if ((equipment.getTechLevel(year) > mech.getTechLevel()) && (mech.getTechLevel() >= TechConstants.T_IS_ADVANCED)) {
                                 boolean isClan = mech.isClan();
-                                if ((equipment.getTechLevel() == TechConstants.T_IS_EXPERIMENTAL) || (equipment.getTechLevel() == TechConstants.T_CLAN_EXPERIMENTAL)) {
+                                if ((equipment.getTechLevel(year) == TechConstants.T_IS_EXPERIMENTAL) || (equipment.getTechLevel(year) == TechConstants.T_CLAN_EXPERIMENTAL)) {
                                     mech.setTechLevel(isClan ? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL);
-                                } else if ((equipment.getTechLevel() == TechConstants.T_IS_UNOFFICIAL) || (equipment.getTechLevel() == TechConstants.T_CLAN_UNOFFICIAL)) {
+                                } else if ((equipment.getTechLevel(year) == TechConstants.T_IS_UNOFFICIAL) || (equipment.getTechLevel(year) == TechConstants.T_CLAN_UNOFFICIAL)) {
                                     mech.setTechLevel(isClan ? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL);
                                 }
                             }

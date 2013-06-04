@@ -36,7 +36,8 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     public LaserWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BA_WEAPON).or(F_LASER).or(F_DIRECT_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_BA_WEAPON).or(F_LASER).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_NA;
 
         atClass = CLASS_LASER;
@@ -51,9 +52,12 @@ public abstract class LaserWeapon extends EnergyWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        Mounted linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
-        if ((linkedBy != null) && !linkedBy.isInoperable() && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        Mounted linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId())
+                .getLinkedBy();
+        if ((linkedBy != null) && !linkedBy.isInoperable()
+                && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
             return new InsulatedLaserWeaponHandler(toHit, waa, game, server);
         }
         return new EnergyWeaponHandler(toHit, waa, game, server);

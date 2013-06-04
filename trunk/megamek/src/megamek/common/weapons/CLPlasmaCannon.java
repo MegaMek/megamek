@@ -35,7 +35,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLPlasmaCannon() {
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Plasma Cannon";
         setInternalName("CLPlasmaCannon");
         heat = 7;
@@ -49,7 +49,8 @@ public class CLPlasmaCannon extends AmmoWeapon {
         extremeRange = 24;
         tonnage = 3.0f;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PLASMA).or(F_DIRECT_FIRE);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_PLASMA).or(F_DIRECT_FIRE);
         bv = 170;
         cost = 320000;
         shortAV = 10;
@@ -57,18 +58,19 @@ public class CLPlasmaCannon extends AmmoWeapon {
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
         introDate = 3069;
-        techLevel.put(3069,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        techLevel.put(3069, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_D };
         techRating = RATING_F;
 
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

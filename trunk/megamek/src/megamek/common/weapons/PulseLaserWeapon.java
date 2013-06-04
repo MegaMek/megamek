@@ -34,16 +34,17 @@ public abstract class PulseLaserWeapon extends LaserWeapon {
         flags = flags.or(F_PULSE);
         atClass = CLASS_PULSE_LASER;
         infDamageClass = WEAPON_PULSE;
-        this.availRating = new int[]{EquipmentType.RATING_E, EquipmentType.RATING_F,EquipmentType.RATING_D};
-        this.introDate = 2609;
+        availRating = new int[] { EquipmentType.RATING_E,
+                EquipmentType.RATING_F, EquipmentType.RATING_D };
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

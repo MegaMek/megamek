@@ -34,7 +34,7 @@ public class ISAC10i extends ACWeapon {
      */
     public ISAC10i() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
+        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "AC/10i";
         setInternalName("ISAutocannon10i");
         addLookupName("ISAC10i");
@@ -57,7 +57,8 @@ public class ISAC10i extends ACWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+                .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_ACi;
         atClass = CLASS_AC;
     }

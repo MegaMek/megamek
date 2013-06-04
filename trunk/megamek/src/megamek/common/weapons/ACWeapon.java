@@ -41,7 +41,8 @@ public abstract class ACWeapon extends AmmoWeapon {
     public ACWeapon() {
         super();
 
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
+                .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_AC;
         explosive = true; // when firing incendiary ammo
         techRating = RATING_C;
@@ -57,11 +58,15 @@ public abstract class ACWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
-        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
+                waa.getWeaponId());
         if (weapon.curMode().equals("Rapid")) {
-            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
+            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit,
+                    waa, game, server);
             if (weapon.isKindRapidFire()) {
                 toHitModifier = 1;
                 ah.setKindRapidFire(true);
@@ -110,6 +115,5 @@ public abstract class ACWeapon extends AmmoWeapon {
         }
         return dmg;
     }
-
 
 }

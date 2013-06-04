@@ -50,9 +50,10 @@ public class FireExtinguisherHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     *      megamek.common.Entity, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
@@ -68,8 +69,8 @@ public class FireExtinguisherHandler extends WeaponHandler {
                 r.add(target.getPosition().getBoardNum());
                 r.indent(3);
                 vPhaseReport.add(r);
-                game.getBoard().getHex(target.getPosition()).removeTerrain(
-                        Terrains.FIRE);
+                game.getBoard().getHex(target.getPosition())
+                        .removeTerrain(Terrains.FIRE);
                 server.sendChangedHex(target.getPosition());
                 game.getBoard().removeInfernoFrom(target.getPosition());
             } else if (target instanceof Entity) {

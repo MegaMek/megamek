@@ -33,7 +33,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
     Mounted ammo;
 
     protected AmmoWeaponHandler() {
-        //deserialization only
+        // deserialization only
     }
 
     /**
@@ -49,7 +49,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#UseAmmo()
      */
     @Override
@@ -77,16 +77,22 @@ public class AmmoWeaponHandler extends WeaponHandler {
     }
 
     /**
-     * For ammo weapons, this number can be less than the full number if the amount of ammo is not high enough
-     * @return the number of weapons of this type firing (for squadron weapon groups)
+     * For ammo weapons, this number can be less than the full number if the
+     * amount of ammo is not high enough
+     * 
+     * @return the number of weapons of this type firing (for squadron weapon
+     *         groups)
      */
     @Override
     protected int getNumberWeapons() {
-        if(ammo == null) {
-            //shouldn't happen
+        if (ammo == null) {
+            // shouldn't happen
             return weapon.getNWeapons();
         }
         int totalShots = ae.getTotalAmmoOfType(ammo.getType());
-        return Math.min(weapon.getNWeapons(), (int)Math.floor((double)totalShots / (double)weapon.getCurrentShots()));
+        return Math.min(
+                weapon.getNWeapons(),
+                (int) Math.floor((double) totalShots
+                        / (double) weapon.getCurrentShots()));
     }
 }

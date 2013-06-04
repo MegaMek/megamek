@@ -30,7 +30,7 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
      */
     public CLPrototypeRL15() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Rocket Launcher 15 (PP)";
         setInternalName("CLRocketLauncher15Prototype");
         heat = 5;
@@ -46,5 +46,7 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
+        introDate = 2801;
+        techLevel.put(2801, techLevel.get(3071));
     }
 }

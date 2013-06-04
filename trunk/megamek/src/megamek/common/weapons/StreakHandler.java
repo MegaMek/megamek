@@ -38,8 +38,8 @@ public class StreakHandler extends MissileWeaponHandler {
      *
      */
     private static final long serialVersionUID = 4122111574368642492L;
-    boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae
-            .getPosition(), target.getPosition());
+    boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae,
+            ae.getPosition(), target.getPosition());
 
     /**
      * @param t
@@ -53,13 +53,16 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            int toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
+            int toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             return toReturn;
         }
         return 2;
@@ -67,7 +70,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -77,7 +80,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -97,16 +100,17 @@ public class StreakHandler extends MissileWeaponHandler {
         }
         int nMissilesModifier = nSalvoBonus;
 
-        if ( game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) ) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
 
-        if(game.getPlanetaryConditions().hasEMI()) {
+        if (game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
         }
 
-        if ( bDirect ){
-            nMissilesModifier += (toHit.getMoS()/3)*2;
+        if (bDirect) {
+            nMissilesModifier += (toHit.getMoS() / 3) * 2;
         }
 
         int missilesHit;
@@ -114,8 +118,9 @@ public class StreakHandler extends MissileWeaponHandler {
         if (amsMod == 0 && allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    amsMod, weapon.isHotLoaded(), allShotsHit(), advancedAMS && amsEnganged);
+            missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod,
+                    weapon.isHotLoaded(), allShotsHit(), advancedAMS
+                            && amsEnganged);
             if (amsMod != 0) {
                 Report r;
                 if (amsMod > 0) {
@@ -147,7 +152,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#UseAmmo()
      */
     @Override
@@ -172,24 +177,24 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
-        //if (!isAngelECMAffected) {
-            // no lock
-            Report r = new Report(3215);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        /*} else {
-            super.reportMiss(vPhaseReport);
-        }*/
+        // if (!isAngelECMAffected) {
+        // no lock
+        Report r = new Report(3215);
+        r.subject = subjectId;
+        vPhaseReport.addElement(r);
+        /*
+         * } else { super.reportMiss(vPhaseReport); }
+         */
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     @Override
@@ -202,7 +207,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#allShotsHit()
      */
     @Override
@@ -212,7 +217,10 @@ public class StreakHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.MissileWeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building, java.util.Vector)
+     * 
+     * @see
+     * megamek.common.weapons.MissileWeaponHandler#handleSpecialMiss(megamek
+     * .common.Entity, boolean, megamek.common.Building, java.util.Vector)
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
@@ -221,7 +229,7 @@ public class StreakHandler extends MissileWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage(){
+    protected boolean canDoDirectBlowDamage() {
         return false;
     }
 }

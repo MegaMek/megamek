@@ -36,13 +36,14 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     @Override
     protected int getCapMisMod() {
-        return getCritMod((AmmoType)ammo.getType());
+        return getCritMod((AmmoType) ammo.getType());
 
     }
 
@@ -50,7 +51,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * get the cap mis mod given a single ammo type
      */
     protected int getCritMod(AmmoType atype) {
-        if(atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA
+        if (atype == null || atype.getAmmoType() == AmmoType.T_PIRANHA
                 || atype.getAmmoType() == AmmoType.T_AAA_MISSILE
                 || atype.getAmmoType() == AmmoType.T_ASEW_MISSILE
                 || atype.getAmmoType() == AmmoType.T_LAA_MISSILE) {

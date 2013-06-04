@@ -23,7 +23,8 @@ import megamek.common.WeaponType;
 /**
  * @author Jason Tighe
  */
-public class ISSmallVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapon {
+public class ISSmallVariableSpeedPulseLaser extends
+        VariableSpeedPulseLaserWeapon {
     /**
      *
      */
@@ -34,7 +35,7 @@ public class ISSmallVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
      */
     public ISSmallVariableSpeedPulseLaser() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Small VSP Laser";
         setInternalName("ISSmallVSPLaser");
         setInternalName("ISSVSPL");
@@ -60,9 +61,9 @@ public class ISSmallVariableSpeedPulseLaser extends VariableSpeedPulseLaserWeapo
         shortAV = 4;
         maxRange = RANGE_SHORT;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3070;
-        techLevel.put(3070,techLevel.get(3071));
+        techLevel.put(3070, techLevel.get(3071));
     }
 
 }

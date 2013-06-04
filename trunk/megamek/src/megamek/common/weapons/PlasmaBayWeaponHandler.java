@@ -36,24 +36,25 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     /**
 	 *
 	 */
-	private static final long serialVersionUID = -4718048077136686433L;
+    private static final long serialVersionUID = -4718048077136686433L;
 
-	/**
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
-     *      java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
+     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
@@ -61,36 +62,36 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
             int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, bldgAbsorbs);
-        if (!missed && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
+        if (!missed
+                && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
             int extraHeat = 0;
-            for(int wId: weapon.getBayWeapons()) {
+            for (int wId : weapon.getBayWeapons()) {
                 Mounted m = ae.getEquipment(wId);
-                if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-                    WeaponType bayWType = ((WeaponType)m.getType());
-                    if(bayWType instanceof ISPlasmaRifle) {
-                    	extraHeat += Compute.d6();
-                    }
-                    else if(bayWType instanceof CLPlasmaCannon) {
-                    	extraHeat += Compute.d6(2);
+                if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                    WeaponType bayWType = ((WeaponType) m.getType());
+                    if (bayWType instanceof ISPlasmaRifle) {
+                        extraHeat += Compute.d6();
+                    } else if (bayWType instanceof CLPlasmaCannon) {
+                        extraHeat += Compute.d6(2);
                     }
                 }
             }
-            if(extraHeat > 0) {
-	        	Report r = new Report(3400);
-	            r.subject = subjectId;
-	            r.indent(2);
-	            r.add(extraHeat);
-	            r.choose(true);
-	            vPhaseReport.addElement(r);
-	            entityTarget.heatFromExternal += extraHeat;
+            if (extraHeat > 0) {
+                Report r = new Report(3400);
+                r.subject = subjectId;
+                r.indent(2);
+                r.add(extraHeat);
+                r.choose(true);
+                vPhaseReport.addElement(r);
+                entityTarget.heatFromExternal += extraHeat;
             }
         }
     }
 
     /**
-     * @return a <code>boolean</code> value indicating wether or not this
-     *         attack needs further calculating, like a missed shot hitting a
-     *         building, or an AMS only shooting down some missiles.
+     * @return a <code>boolean</code> value indicating wether or not this attack
+     *         needs further calculating, like a missed shot hitting a building,
+     *         or an AMS only shooting down some missiles.
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
@@ -100,16 +101,19 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         // and some weapons can't ignite fires.
         if ((entityTarget != null)
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
-                    3, vPhaseReport);
+            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
+                    vPhaseReport);
         }
 
-        //shots that miss an entity can also potential cause explosions in a heavy industrial hex
+        // shots that miss an entity can also potential cause explosions in a
+        // heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
-        if (!targetInBuilding || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
+        if (!targetInBuilding
+                || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
         return true;
@@ -128,8 +132,8 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false, tn,
-                    true, -1, vPhaseReport);
+            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+                    tn, true, -1, vPhaseReport);
         }
     }
 
@@ -155,14 +159,18 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
         // Any clear attempt can result in accidental ignition, even
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
-        //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
-        //you do a normal ignition as though for intentional fires
+        // TODO: change this for TacOps - now you roll another 2d6 first and on
+        // a 5 or less
+        // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                        false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+                nDamage, subjectId);
         if (clearReports.size() > 0) {
             vPhaseReport.lastElement().newlines = 0;
         }

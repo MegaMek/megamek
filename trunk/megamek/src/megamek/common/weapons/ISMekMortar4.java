@@ -18,7 +18,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jason Tighe
  */
-public class ISMekMortar4 extends MekMortarWeapon{
+public class ISMekMortar4 extends MekMortarWeapon {
 
     /**
      * 
@@ -30,7 +30,7 @@ public class ISMekMortar4 extends MekMortarWeapon{
      */
     public ISMekMortar4() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Mortar 4";
         this.setInternalName("IS Mech Mortar-4");
         this.addLookupName("ISMekMortar4");
@@ -47,9 +47,10 @@ public class ISMekMortar4 extends MekMortarWeapon{
         this.tonnage = 7;
         this.cost = 32000;
         this.techRating = RATING_B;
-        this.availRating = new int[]{RATING_D, RATING_F, RATING_E};
-        this.introDate = 2531;	
-        this.extinctDate = 2819;	
+        this.availRating = new int[] { RATING_D, RATING_F, RATING_E };
+        introDate = 2531;
+        techLevel.put(2531, techLevel.get(3071));
+        this.extinctDate = 2819;
         this.reintroDate = 3043;
     }
 }

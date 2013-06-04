@@ -102,7 +102,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean omni = false;
     protected String chassis;
     protected String model;
-    protected int    year;
+    protected int    year = 3071;
     protected int    techLevel;
     protected Engine engine;
     protected boolean mixedTech   = false;
@@ -1228,8 +1228,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (this instanceof Aero) {
             return retVal;
         }
-        if ((getMovementMode() == EntityMovementMode.SUBMARINE)            
-                || (getMovementMode() == EntityMovementMode.INF_UMU && 
+        if ((getMovementMode() == EntityMovementMode.SUBMARINE)
+                || ((getMovementMode() == EntityMovementMode.INF_UMU) &&
                         next.containsTerrain(Terrains.WATER) &&
                         current.containsTerrain(Terrains.WATER))
                 || (getMovementMode() == EntityMovementMode.VTOL)
@@ -1496,7 +1496,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (assumedAlt == hex.floor()) {
                 return true;
             }
-            
+
             if (hex.containsTerrain(Terrains.BRIDGE)) {
                 // can move on top of a bridge
                 if (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
@@ -3740,13 +3740,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getAllUMUCount() {
         int count = 0;
-        
+
         if ((this instanceof BattleArmor) &&
                 (getMovementMode() == EntityMovementMode.INF_UMU)){
             //UMU MP for BA is stored in jumpMP
             return jumpMP;
         }
-        
+
         if (!(this instanceof Mech)) {
             return 0;
         }
@@ -11963,6 +11963,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         return false;
+    }
+
+    public int getTechLevelYear() {
+        if (game != null) {
+            return game.getOptions().intOption("year");
+        }
+        return year;
     }
 }
 

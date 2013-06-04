@@ -25,7 +25,6 @@ import megamek.common.TechConstants;
  */
 public class ISThumperCannon extends ArtilleryCannonWeapon {
 
-
     /**
      *
      */
@@ -33,7 +32,7 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
 
     public ISThumperCannon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Thumper Cannon";
         setInternalName("ISThumperCannon");
         addLookupName("ISThumperArtilleryCannon");
@@ -55,9 +54,9 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         longAV = 5;
         maxRange = RANGE_MED;
         techRating = RATING_B;
-        availRating = new int[]{RATING_X, RATING_F, RATING_E};
+        availRating = new int[] { RATING_X, RATING_F, RATING_E };
         introDate = 3012;
-        techLevel.put(3012,techLevel.get(3071));
+        techLevel.put(3012, techLevel.get(3071));
     }
 
 }

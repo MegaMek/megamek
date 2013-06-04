@@ -37,7 +37,7 @@ public class BarracudaWeapon extends CapitalMissileWeapon {
      */
     public BarracudaWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Barracuda";
         this.setInternalName(this.name);
         this.addLookupName("Barracuda");
@@ -59,19 +59,20 @@ public class BarracudaWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
         introDate = 2305;
-        techLevel.put(2305,techLevel.get(3071));
+        techLevel.put(2305, techLevel.get(3071));
         extinctDate = 2855;
         reintroDate = 3051;
-        availRating = new int[]{RATING_D,RATING_X,RATING_D};
+        availRating = new int[] { RATING_D, RATING_X, RATING_D };
         techRating = RATING_F;
-        
+
     }
-    
+
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

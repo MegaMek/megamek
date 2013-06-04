@@ -28,7 +28,7 @@ public class ISSnubNosePPC extends PPCWeapon {
      *
      */
     private static final long serialVersionUID = -5650794792475465261L;
-	private int reintroduced;
+    private int reintroduced;
 
     /**
      *
@@ -36,7 +36,7 @@ public class ISSnubNosePPC extends PPCWeapon {
     public ISSnubNosePPC() {
         super();
 
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Snub-Nose PPC";
         setInternalName("ISSNPPC");
         addLookupName("ISSnubNosedPPC");
@@ -64,24 +64,24 @@ public class ISSnubNosePPC extends PPCWeapon {
         // with a capacitor
         explosive = true;
         introDate = 2874;
-        techLevel.put(2874,techLevel.get(3071));
+        techLevel.put(2874, techLevel.get(3071));
         extinctDate = 2790;
         reintroduced = 3067;
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_E;
     }
 
     @Override
     public int getDamage(int range) {
-        if ( range <= shortRange ) {
+        if (range <= shortRange) {
             return damageShort;
         }
 
-        if ( range <= mediumRange ) {
+        if (range <= mediumRange) {
             return damageMedium;
         }
 
-            return damageLong;
+        return damageLong;
     }
 
 }

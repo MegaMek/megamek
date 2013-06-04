@@ -28,7 +28,6 @@ import megamek.server.Server;
  */
 public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
 
-
     private static final long serialVersionUID = -6903718412622554494L;
 
     /**
@@ -43,10 +42,11 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

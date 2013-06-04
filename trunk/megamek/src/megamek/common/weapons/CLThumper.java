@@ -35,7 +35,7 @@ public class CLThumper extends ArtilleryWeapon {
      */
     public CLThumper() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Thumper";
         setInternalName("CLThumper");
         addLookupName("CLThumperArtillery");
@@ -53,7 +53,7 @@ public class CLThumper extends ArtilleryWeapon {
         bv = 43;
         cost = 187500;
         techRating = RATING_B;
-        availRating = new int[]{RATING_C, RATING_C, RATING_C};
-	}
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+    }
 
 }

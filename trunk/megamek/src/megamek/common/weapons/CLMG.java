@@ -35,7 +35,7 @@ public class CLMG extends MGWeapon {
      */
     public CLMG() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Machine Gun";
         this.setInternalName("CLMG");
         this.addLookupName("Clan Machine Gun");
@@ -54,10 +54,10 @@ public class CLMG extends MGWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         introDate = 2825;
-        techLevel.put(2825,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_B};
+        techLevel.put(2825, techLevel.get(3071));
+        availRating = new int[] { RATING_A, RATING_A, RATING_B };
         techRating = RATING_B;
-        
+
     }
 
 }

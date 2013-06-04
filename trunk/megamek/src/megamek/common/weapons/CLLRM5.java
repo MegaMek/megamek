@@ -30,7 +30,7 @@ public class CLLRM5 extends LRMWeapon {
      */
     public CLLRM5() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 5";
         setInternalName("CLLRM5");
         addLookupName("Clan LRM-5");
@@ -47,8 +47,8 @@ public class CLLRM5 extends LRMWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         introDate = 2824;
-        techLevel.put(2824,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techLevel.put(2824, techLevel.get(3071));
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_F;
     }
 }

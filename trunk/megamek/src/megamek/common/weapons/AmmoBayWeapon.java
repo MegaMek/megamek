@@ -25,9 +25,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Jay Lawson
- * This is my attempt to get weapon bays treated as normal weapons
- * rather than the current hack in place
+ * @author Jay Lawson This is my attempt to get weapon bays treated as normal
+ *         weapons rather than the current hack in place
  */
 public abstract class AmmoBayWeapon extends BayWeapon {
     /**
@@ -47,14 +46,14 @@ public abstract class AmmoBayWeapon extends BayWeapon {
         checkAmmo(waa, game);
         return super.fire(waa, game, server);
     }
-    
+
     /**
      * 
      */
     protected void checkAmmo(WeaponAttackAction waa, IGame g) {
         Entity ae = waa.getEntity(g);
         Mounted m = ae.getEquipment(waa.getWeaponId());
-        for(int wId: m.getBayWeapons()) {
+        for (int wId : m.getBayWeapons()) {
             Mounted weapon = ae.getEquipment(wId);
             Mounted ammo = weapon.getLinked();
             if (ammo == null || ammo.getUsableShotsLeft() < 1) {
@@ -67,8 +66,9 @@ public abstract class AmmoBayWeapon extends BayWeapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

@@ -30,7 +30,7 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
      */
     public CLStreakLRM5OS() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Streak LRM 5 (OS)";
         setInternalName("CLOSStreakLRM5");
         addLookupName("Clan Streak LRM-5 (OS)");

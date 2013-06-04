@@ -51,20 +51,21 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the damage per hit.
-     *
+     * 
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
 
-        if ( bDirect ){
-            toReturn += toHit.getMoS()/3;
-        }else if (bGlancing) {
+        if (bDirect) {
+            toReturn += toHit.getMoS() / 3;
+        } else if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption("tacops_range") && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 
@@ -73,9 +74,10 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
-     *      megamek.common.Building, int, boolean)
+     * 
+     * @see
+     * megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
+     * megamek.common.Building, int, boolean)
      */
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
@@ -101,12 +103,15 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                        false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        vPhaseReport)) {
             return;
         }
 
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+                nDamage, subjectId);
         if (clearReports.size() > 0) {
             vPhaseReport.lastElement().newlines = 0;
         }

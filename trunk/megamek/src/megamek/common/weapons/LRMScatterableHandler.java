@@ -49,19 +49,20 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
-     *      megamek.common.Entity, boolean)
+     * @see
+     * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     * megamek.common.Entity, boolean)
      */
     @Override
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget) {
         Coords coords = target.getPosition();
         AmmoType atype = (AmmoType) ammo.getType();
-        //only report to player if mine delivery
+        // only report to player if mine delivery
         int whoReport = Report.PLAYER;
-        if(atype.getMunitionType() == AmmoType.M_FLARE) {
+        if (atype.getMunitionType() == AmmoType.M_FLARE) {
             whoReport = Report.PUBLIC;
-        }    
+        }
         if (!bMissed) {
             Report r = new Report(3190, whoReport);
             r.subject = subjectId;
@@ -69,7 +70,8 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            // according to http://www.classicbattletech.com/forums/index.php/topic,41188.0.html
+            // according to
+            // http://www.classicbattletech.com/forums/index.php/topic,41188.0.html
             // scatterable LRMs scatter like dive bombing
             coords = Compute.scatterDiveBombs(coords);
             if (game.getBoard().contains(coords)) {
@@ -92,8 +94,8 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             server.deliverThunderAugMinefield(coords, ae.getOwner().getId(),
                     atype.getRackSize(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
-            server.deliverThunderMinefield(coords, ae.getOwner().getId(), atype
-                    .getRackSize(), ae.getId());
+            server.deliverThunderMinefield(coords, ae.getOwner().getId(),
+                    atype.getRackSize(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
             server.deliverThunderInfernoMinefield(coords,
                     ae.getOwner().getId(), atype.getRackSize(), ae.getId());

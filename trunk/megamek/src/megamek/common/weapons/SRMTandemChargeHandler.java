@@ -53,7 +53,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /**
      * Handle damage against an entity, called once per hit by default.
-     *
+     * 
      * @param entityTarget
      * @param vPhaseReport
      * @param bldg
@@ -68,12 +68,14 @@ public class SRMTandemChargeHandler extends SRMHandler {
         int nDamage;
         missed = false;
 
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                toHit.getSideTable(), waa.getAimedLocation(),
+                waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {           
-            // Weapon strikes Partial Cover.            
+                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
+                .getCalledShot().getCall()))) {
+            // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                     nCluster, bldgAbsorbs);
             return;
@@ -105,9 +107,9 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
-        //some buildings scale remaining damage that is not absorbed
-        //TODO: this isn't quite right for castles brian
-        if(null != bldg) {
+        // some buildings scale remaining damage that is not absorbed
+        // TODO: this isn't quite right for castles brian
+        if (null != bldg) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
 
@@ -157,16 +159,16 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            double toReturn = Compute.directBlowInfantryDamage(wtype
-                    .getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                    wtype.getInfantryDamageClass(), ((Infantry) target)
-                            .isMechanized());
+            double toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
             if (bGlancing) {
                 toReturn /= 2;
             }

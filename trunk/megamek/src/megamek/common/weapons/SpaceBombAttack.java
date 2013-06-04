@@ -25,7 +25,6 @@ import megamek.server.Server;
  */
 public class SpaceBombAttack extends Weapon {
 
-
     /**
      *
      */
@@ -53,9 +52,10 @@ public class SpaceBombAttack extends Weapon {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

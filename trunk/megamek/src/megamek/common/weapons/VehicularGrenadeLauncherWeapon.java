@@ -46,7 +46,8 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         extremeRange = 1;
         tonnage = 0.5f;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC).or(F_ONESHOT).or(F_VGL);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC)
+                .or(F_ONESHOT).or(F_VGL);
         explosive = false;
         bv = 15;
         cost = 10000;
@@ -54,13 +55,14 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         // FIXME: implement handlers for the 4 ammo types:
         // standard (fragmentation), chaff, incendiary, smoke
         return new AmmoWeaponHandler(toHit, waa, game, server);

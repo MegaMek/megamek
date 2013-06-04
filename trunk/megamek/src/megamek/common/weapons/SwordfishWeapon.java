@@ -37,7 +37,7 @@ public class SwordfishWeapon extends SubCapitalMissileWeapon {
      */
     public SwordfishWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Swordfish";
         this.setInternalName(this.name);
         this.addLookupName("Swordfish");
@@ -58,8 +58,9 @@ public class SwordfishWeapon extends SubCapitalMissileWeapon {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

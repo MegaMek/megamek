@@ -34,7 +34,7 @@ public class ISLightPPC extends PPCWeapon {
      */
     public ISLightPPC() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Light PPC";
         setInternalName(name);
         addLookupName("ISLightPPC");
@@ -50,8 +50,7 @@ public class ISLightPPC extends PPCWeapon {
         waterMediumRange = 7;
         waterLongRange = 10;
         waterExtremeRange = 14;
-        setModes(new String[] { "Field Inhibitor ON",
-                "Field Inhibitor OFF" });
+        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         tonnage = 3.0f;
         criticals = 2;
         bv = 88;
@@ -61,9 +60,10 @@ public class ISLightPPC extends PPCWeapon {
         cost = 150000;
         // with a capacitor
         explosive = true;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_E};
-        this.introDate = 3067;
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_E };
+        introDate = 3067;
+        techLevel.put(3067, techLevel.get(3071));
     }
-
 
 }

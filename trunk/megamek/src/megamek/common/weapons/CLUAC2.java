@@ -33,7 +33,7 @@ public class CLUAC2 extends UACWeapon {
      */
     public CLUAC2() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Ultra AC/2";
         this.setInternalName("CLUltraAC2");
         this.addLookupName("Clan Ultra AC/2");
@@ -57,7 +57,7 @@ public class CLUAC2 extends UACWeapon {
         this.explosionDamage = damage;
         this.techRating = RATING_F;
         introDate = 2827;
-        techLevel.put(2827,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(2827, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
     }
 }

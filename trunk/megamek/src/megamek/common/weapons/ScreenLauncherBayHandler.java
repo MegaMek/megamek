@@ -35,7 +35,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
     /**
      * 
      */
-    
+
     private static final long serialVersionUID = -1618484541772117621L;
 
     /**
@@ -44,10 +44,11 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param s
      */
-    public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ScreenLauncherBayHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-    
+
     /**
      * handle this weapons firing
      * 
@@ -59,11 +60,12 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         if (!this.cares(phase)) {
             return true;
         }
-     
-        //same as ScreenLauncher handler, except run multiple times depending on
-        //how many screen launchers in bay
-        
-        //Report weapon attack and its to-hit value.
+
+        // same as ScreenLauncher handler, except run multiple times depending
+        // on
+        // how many screen launchers in bay
+
+        // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
         r.indent();
         r.newlines = 0;
@@ -91,38 +93,45 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
         }
-        
+
         addHeat();
-        
-        //iterate through by number of weapons in bay
-        for(int i = 0; i < weapon.getBayWeapons().size(); i++) {      
-            //deliver screen
+
+        // iterate through by number of weapons in bay
+        for (int i = 0; i < weapon.getBayWeapons().size(); i++) {
+            // deliver screen
             Coords coords = target.getPosition();
-            server.deliverScreen(coords, vPhaseReport);       
-            //damage any entities in the hex
-            for (Enumeration<Entity> impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+            server.deliverScreen(coords, vPhaseReport);
+            // damage any entities in the hex
+            for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
+                    .hasMoreElements();) {
                 Entity entity = impactHexHits.nextElement();
-                //if fighter squadron all fighters are damaged
-                if(entity instanceof FighterSquadron) {
-                    for(Entity fighter : ((FighterSquadron)entity).getFighters()) {
+                // if fighter squadron all fighters are damaged
+                if (entity instanceof FighterSquadron) {
+                    for (Entity fighter : ((FighterSquadron) entity)
+                            .getFighters()) {
                         ToHitData squadronToHit = new ToHitData();
                         squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
-                        HitData hit = fighter.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                        HitData hit = fighter.rollHitLocation(
+                                squadronToHit.getHitTable(),
+                                ToHitData.SIDE_FRONT);
                         hit.setCapital(false);
-                        vPhaseReport.addAll( server.damageEntity(fighter, hit, attackValue));
+                        vPhaseReport.addAll(server.damageEntity(fighter, hit,
+                                attackValue));
                         server.creditKill(fighter, ae);
                     }
-                } else {  
+                } else {
                     ToHitData hexToHit = new ToHitData();
                     hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                    HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    HitData hit = entity.rollHitLocation(
+                            hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                     hit.setCapital(false);
-                    vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
+                    vPhaseReport.addAll(server.damageEntity(entity, hit,
+                            attackValue));
                     server.creditKill(entity, ae);
                 }
             }
         }
         return false;
     }
-    
+
 }

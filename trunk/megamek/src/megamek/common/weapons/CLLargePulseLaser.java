@@ -33,7 +33,7 @@ public class CLLargePulseLaser extends PulseLaserWeapon {
      */
     public CLLargePulseLaser() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Large Pulse Laser";
         this.setInternalName("CLLargePulseLaser");
         this.addLookupName("Clan Pulse Large Laser");
@@ -58,8 +58,8 @@ public class CLLargePulseLaser extends PulseLaserWeapon {
         this.longAV = 10;
         this.maxRange = RANGE_LONG;
         introDate = 2824;
-        techLevel.put(2824,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        techLevel.put(2824, techLevel.get(3071));
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_F;
     }
 }

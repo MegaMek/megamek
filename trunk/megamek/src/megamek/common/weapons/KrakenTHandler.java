@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,7 @@ public class KrakenTHandler extends TeleMissileHandler {
     public KrakenTHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     @Override
     protected int getCapMisMod() {
         return 8;

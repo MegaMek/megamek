@@ -34,7 +34,7 @@ public class CLHeavyMediumLaser extends LaserWeapon {
      */
     public CLHeavyMediumLaser() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Heavy Medium Laser";
         this.setInternalName("CLHeavyMediumLaser");
         this.addLookupName("Clan Medium Heavy Laser");
@@ -55,8 +55,10 @@ public class CLHeavyMediumLaser extends LaserWeapon {
         this.cost = 100000;
         this.shortAV = 10;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_D};
-        this.introDate = 3059;
+        this.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_D };
+        introDate = 3059;
+        techLevel.put(3059, techLevel.get(3071));
         techRating = RATING_F;
     }
 }

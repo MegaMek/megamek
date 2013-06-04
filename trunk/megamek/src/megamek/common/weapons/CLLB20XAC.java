@@ -33,7 +33,7 @@ public class CLLB20XAC extends LBXACWeapon {
      */
     public CLLB20XAC() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LB 20-X AC";
         setInternalName("CLLBXAC20");
         addLookupName("Clan LB 20-X AC");
@@ -52,8 +52,8 @@ public class CLLB20XAC extends LBXACWeapon {
         medAV = 20;
         maxRange = RANGE_MED;
         techRating = RATING_F;
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 2826;
-        techLevel.put(2826,techLevel.get(3071));
+        techLevel.put(2826, techLevel.get(3071));
     }
 }

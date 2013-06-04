@@ -30,7 +30,7 @@ public class ISLaserAMS extends LaserWeapon {
 
     public ISLaserAMS() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Laser AMS";
         setInternalName("ISLaserAntiMissileSystem");
         addLookupName("IS Laser Anti-Missile System");
@@ -42,14 +42,15 @@ public class ISLaserAMS extends LaserWeapon {
         tonnage = 1.5f;
         criticals = 2;
         bv = 45;
-        // we need to remove the direct fire flag again, so TC weight is not affected
+        // we need to remove the direct fire flag again, so TC weight is not
+        // affected
         flags = flags.or(F_AUTO_TARGET).or(F_AMS).and(F_DIRECT_FIRE.not());
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
         techRating = RATING_E;
-        availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3059;
-        techLevel.put(3059,techLevel.get(3071));
+        techLevel.put(3059, techLevel.get(3071));
     }
 }

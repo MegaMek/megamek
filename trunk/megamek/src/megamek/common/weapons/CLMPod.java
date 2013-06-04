@@ -34,7 +34,7 @@ public class CLMPod extends MPodWeapon {
      */
     public CLMPod() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "M-Pod";
         this.setInternalName("CLMPod");
         this.addLookupName("CLM-Pod");

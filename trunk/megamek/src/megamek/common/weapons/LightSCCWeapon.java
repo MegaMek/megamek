@@ -32,7 +32,7 @@ public class LightSCCWeapon extends SubCapitalCannonWeapon {
      */
     public LightSCCWeapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Light Sub-Capital Cannon";
         this.setInternalName(this.name);
         this.addLookupName("LightSCC");

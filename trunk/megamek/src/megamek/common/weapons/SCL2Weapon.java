@@ -32,7 +32,7 @@ public class SCL2Weapon extends SubCapitalLaserWeapon {
      */
     public SCL2Weapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Sub-Capital Laser 2";
         this.setInternalName(this.name);
         this.addLookupName("SCL2");

@@ -35,7 +35,7 @@ public class ISLongTom extends ArtilleryWeapon {
      */
     public ISLongTom() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Long Tom";
         setInternalName("ISLongTom");
         addLookupName("ISLongTomArtillery");
@@ -52,7 +52,7 @@ public class ISLongTom extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         techRating = RATING_B;
-        availRating = new int[]{RATING_C, RATING_C, RATING_C};
+        availRating = new int[] { RATING_C, RATING_C, RATING_C };
 
     }
 

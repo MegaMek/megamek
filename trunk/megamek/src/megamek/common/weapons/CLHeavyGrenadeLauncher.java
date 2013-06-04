@@ -33,7 +33,7 @@ public class CLHeavyGrenadeLauncher extends Weapon {
 
     public CLHeavyGrenadeLauncher() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Heavy Grenade Launcher";
         setInternalName(name);
         addLookupName("CLHeavyGL");
@@ -50,8 +50,8 @@ public class CLHeavyGrenadeLauncher extends Weapon {
         bv = 1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE);
         introDate = 2900;
-        techLevel.put(2900,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        techLevel.put(2900, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_C;
     }
 

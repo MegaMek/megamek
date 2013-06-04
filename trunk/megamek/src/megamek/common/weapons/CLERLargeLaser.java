@@ -33,7 +33,7 @@ public class CLERLargeLaser extends LaserWeapon {
      */
     public CLERLargeLaser() {
         super();
-        this.techLevel.put(3071,TechConstants.T_CLAN_TW);
+        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "ER Large Laser";
         this.setInternalName("CLERLargeLaser");
         this.addLookupName("Clan ER Large Laser");
@@ -57,8 +57,8 @@ public class CLERLargeLaser extends LaserWeapon {
         this.extAV = 10;
         this.maxRange = RANGE_EXT;
         introDate = 2823;
-        techLevel.put(2823,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_D};
+        techLevel.put(2823, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_F, RATING_D };
         techRating = RATING_F;
     }
 }

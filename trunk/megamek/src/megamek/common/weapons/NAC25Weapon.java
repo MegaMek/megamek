@@ -32,7 +32,7 @@ public class NAC25Weapon extends NavalACWeapon {
      */
     public NAC25Weapon() {
         super();
-        this.techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Naval AC 25";
         this.setInternalName(this.name);
         this.addLookupName("NAC25");
@@ -51,8 +51,8 @@ public class NAC25Weapon extends NavalACWeapon {
         this.longAV = 25;
         this.maxRange = RANGE_LONG;
         techRating = RATING_D;
-        availRating = new int[]{RATING_E, RATING_X, RATING_E};
+        availRating = new int[] { RATING_E, RATING_X, RATING_E };
         introDate = 2200;
-        techLevel.put(2200,techLevel.get(3071));
+        techLevel.put(2200, techLevel.get(3071));
     }
 }

@@ -83,26 +83,32 @@ public class EquipmentType {
     public static final int T_STRUCTURE_COMPOSITE = 5;
     public static final int T_STRUCTURE_ENDO_COMPOSITE = 6;
 
-    public static final String[] armorNames =
-        { "Standard", "Ferro-Fibrous", "Reactive", "Reflective", "Hardened",
-          "Light Ferro-Fibrous", "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
-          "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
-          "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial",
-          "Heavy Industrial", "Ferro-Lamellor", "Primitive", "Electric Discharge ProtoMech", "Ferro-Aluminum", "Heavy Ferro-Aluminum", "Light Ferro-Aluminum" };
+    public static final String[] armorNames = { "Standard", "Ferro-Fibrous",
+            "Reactive", "Reflective", "Hardened", "Light Ferro-Fibrous",
+            "Heavy Ferro-Fibrous", "Patchwork", "Stealth",
+            "Ferro-Fibrous Prototype", "Commercial", "Ferro-Carbide",
+            "Lamellor Ferro-Carbide", "Improved Ferro-Aluminum", "Industrial",
+            "Heavy Industrial", "Ferro-Lamellor", "Primitive",
+            "Electric Discharge ProtoMech", "Ferro-Aluminum",
+            "Heavy Ferro-Aluminum", "Light Ferro-Aluminum" };
 
-    public static final String[] structureNames =
-        { "Standard", "Industrial", "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite", "Endo-Composite" };
+    public static final String[] structureNames = { "Standard", "Industrial",
+            "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
+            "Endo-Composite" };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] structureCosts =
-        { 400, 300, 1600, 1600, 6400, 1600, 3200 };
+    public static final double[] structureCosts = { 400, 300, 1600, 1600, 6400,
+            1600, 3200 };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] armorCosts =
-        { 10000, 20000, 30000, 30000, 15000, 15000, 25000, /*patchwork*/0, 50000, 20000, 3000, 75000, 100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000, 25000, 15000};
+    public static final double[] armorCosts = { 10000, 20000, 30000, 30000,
+            15000, 15000, 25000, /* patchwork */0, 50000, 20000, 3000, 75000,
+            100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000,
+            25000, 15000 };
 
-    public static final double[] armorPointMultipliers =
-        { 1, 1.12, 1, 1, 0.5, 1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1, 1.12, 1.24, 1.06 };
+    public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,
+            1.06, 1.24, 1, 1, 1.12, 1.5, 1, 1, 1, 0.67, 1.0, 0.875, 0.67, 1,
+            1.12, 1.24, 1.06 };
     public static final double POINT_MULTIPLIER_UNKNOWN = 1;
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
 
@@ -120,8 +126,8 @@ public class EquipmentType {
 
     public static final int DATE_NONE = -1;
 
-    public static final String[] ratingNames =
-        { "A", "B", "C", "D", "E", "F", "X" };
+    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F",
+            "X" };
 
     protected String name = null;
 
@@ -143,7 +149,7 @@ public class EquipmentType {
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
-    protected Map<Integer,Integer> techLevel = new HashMap<Integer,Integer>();
+    protected Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
 
     protected BigInteger flags = BigInteger.valueOf(0);
 
@@ -154,8 +160,7 @@ public class EquipmentType {
 
     // fluffy stuff
     protected int techRating = RATING_C;
-    protected int[] availRating =
-        { RATING_E, RATING_E, RATING_E };
+    protected int[] availRating = { RATING_E, RATING_E, RATING_E };
     protected int introDate = DATE_NONE;
     protected int extinctDate = DATE_NONE;
     protected int reintroDate = DATE_NONE;
@@ -217,24 +222,20 @@ public class EquipmentType {
         return internalName;
     }
 
-    public int getTechLevel() {
-        return getTechLevel(3071);
+    public Map<Integer,Integer> getTechLevels() {
+        return techLevel;
     }
 
     public int getTechLevel(int date) {
         if (techLevel.containsKey(date)) {
             return techLevel.get(date);
         } else {
-            List<Integer> introdates = new ArrayList<Integer>(techLevel.keySet());
+            List<Integer> introdates = new ArrayList<Integer>(
+                    techLevel.keySet());
             Collections.sort(introdates);
             Collections.reverse(introdates);
             for (Integer introdate : introdates) {
                 if (introdate <= date) {
-
-                    if (techLevel.get(introdate) == null) {
-                        System.out.println(name);
-                        return 0;
-                    }
                     return techLevel.get(introdate);
                 }
             }
@@ -264,7 +265,9 @@ public class EquipmentType {
 
     public boolean isExplosive(Mounted mounted, boolean ignoreCharge) {
         // Special case: discharged M- and B-pods shouldn't explode.
-        if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon)) && ((mounted.getLinked() == null) || (mounted.getLinked().getUsableShotsLeft() == 0))) {
+        if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon))
+                && ((mounted.getLinked() == null) || (mounted.getLinked()
+                        .getUsableShotsLeft() == 0))) {
             return false;
         }
 
@@ -284,50 +287,66 @@ public class EquipmentType {
                 return false;
             }
             Mounted ammo = mounted.getLinked();
-            if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
+            if ((ammo == null)
+                    || !(ammo.getType() instanceof AmmoType)
                     || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
                 return false;
             }
 
             WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
+            if ((wtype.getAmmoType() == AmmoType.T_LRM)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO_COMBO)) {
                 return false;
             }
         }
 
-        //special case. HVACs only explode when there's ammo left
+        // special case. HVACs only explode when there's ammo left
         if (mounted.getType() instanceof HVACWeapon) {
-            if ((mounted.getEntity() == null) || (mounted.getLinked() == null) || (mounted.getEntity().getTotalAmmoOfType(mounted.getLinked().getType()) == 0)) {
+            if ((mounted.getEntity() == null)
+                    || (mounted.getLinked() == null)
+                    || (mounted.getEntity().getTotalAmmoOfType(
+                            mounted.getLinked().getType()) == 0)) {
                 return false;
             }
         }
 
-        // special case. Blue Shield Particle Field Damper only explodes when switched on
-        if ((mounted.getType() instanceof MiscType) && (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted.curMode().equals("Off"))) {
+        // special case. Blue Shield Particle Field Damper only explodes when
+        // switched on
+        if ((mounted.getType() instanceof MiscType)
+                && (mounted.getType().hasFlag(MiscType.F_BLUE_SHIELD) && mounted
+                        .curMode().equals("Off"))) {
             return false;
         }
 
         // special case. PPC with Capacitor only explodes when charged
         if (ignoreCharge) {
-            // for BV purposes, we need to ignore the chargedness and check only if there's a capacitor
-            if ((mounted.getType() instanceof PPCWeapon) && (mounted.getLinkedBy() != null)) {
+            // for BV purposes, we need to ignore the chargedness and check only
+            // if there's a capacitor
+            if ((mounted.getType() instanceof PPCWeapon)
+                    && (mounted.getLinkedBy() != null)) {
                 return true;
             }
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && (mounted.getLinked() != null)) {
+            if ((mounted.getType() instanceof MiscType)
+                    && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && (mounted.getLinked() != null)) {
                 return true;
             }
 
         }
-        if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && !mounted.curMode().equals("Charge")) {
+        if ((mounted.getType() instanceof MiscType)
+                && mounted.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                && !mounted.curMode().equals("Charge")) {
             return false;
         }
-        if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
+        if ((mounted.getType() instanceof PPCWeapon)
+                && (mounted.hasChargedCapacitor() == 0)) {
             return false;
         }
 
-        // If we're here, then none of the special cases apply and we should just return our own explosive status.
+        // If we're here, then none of the special cases apply and we should
+        // just return our own explosive status.
         return explosive;
     }
 
@@ -414,9 +433,10 @@ public class EquipmentType {
     }
 
     /**
-     * Clears the modes that this type of equipment can be in. This is useful where
-     * a subtype such as Streak LRMs has no modes, but the supertype of that type
-     * such as standard LRMs has modes that do not apply to the subtype
+     * Clears the modes that this type of equipment can be in. This is useful
+     * where a subtype such as Streak LRMs has no modes, but the supertype of
+     * that type such as standard LRMs has modes that do not apply to the
+     * subtype
      */
     protected void clearModes() {
         modes = null;
@@ -586,14 +606,14 @@ public class EquipmentType {
     }
 
     public String getFullRatingName() {
-    	String rating = getTechRatingName();
-    	rating += "/";
-    	rating += getAvailabilityName(ERA_SL);
-    	rating += "-";
-    	rating += getAvailabilityName(ERA_SW);
-    	rating += "-";
-    	rating += getAvailabilityName(ERA_CLAN);
-    	return rating;
+        String rating = getTechRatingName();
+        rating += "/";
+        rating += getAvailabilityName(ERA_SL);
+        rating += "-";
+        rating += getAvailabilityName(ERA_SW);
+        rating += "-";
+        rating += getAvailabilityName(ERA_CLAN);
+        return rating;
     }
 
     public int getAvailability(int era) {
@@ -621,11 +641,11 @@ public class EquipmentType {
     }
 
     public static String getEquipDateAsString(int date) {
-    	if(date == DATE_NONE) {
-    		return "-";
-    	} else {
-    		return Integer.toString(date);
-    	}
+        if (date == DATE_NONE) {
+            return "-";
+        } else {
+            return Integer.toString(date);
+        }
 
     }
 
@@ -657,11 +677,17 @@ public class EquipmentType {
     }
 
     public static double getArmorPointMultiplier(int inArmor) {
-        return EquipmentType.getArmorPointMultiplier(inArmor, TechConstants.T_IS_TW_NON_BOX);
+        return EquipmentType.getArmorPointMultiplier(inArmor,
+                TechConstants.T_IS_TW_NON_BOX);
     }
 
     public static double getArmorPointMultiplier(int inArmor, int inTechLevel) {
-        return EquipmentType.getArmorPointMultiplier(inArmor, ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED)) || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL) || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
+        return EquipmentType
+                .getArmorPointMultiplier(
+                        inArmor,
+                        ((inTechLevel == TechConstants.T_CLAN_TW) || (inTechLevel == TechConstants.T_CLAN_ADVANCED))
+                                || (inTechLevel == TechConstants.T_CLAN_EXPERIMENTAL)
+                                || (inTechLevel == TechConstants.T_CLAN_UNOFFICIAL));
     }
 
     public static double getArmorPointMultiplier(int inArmor, boolean clanArmor) {
@@ -699,7 +725,8 @@ public class EquipmentType {
             w.newLine();
             w.write("Type,Tech Base,Rules,Name,Aliases");
             w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
+            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
+                    .hasMoreElements();) {
                 EquipmentType type = e.nextElement();
                 if (type instanceof AmmoType) {
                     w.write("A,");
@@ -708,11 +735,16 @@ public class EquipmentType {
                 } else {
                     w.write("M,");
                 }
-                w.write(TechConstants.getTechName(type.getTechLevel()));
+                for (int year : type.getTechLevels().keySet()) {
+                    w.write(year+"-"+TechConstants.getTechName(type.getTechLevel(year)));
+                }
                 w.write(",");
-                w.write(TechConstants.getLevelName(type.getTechLevel()));
+                for (int year : type.getTechLevels().keySet()) {
+                    w.write(year+"-"+TechConstants.getLevelName(type.getTechLevel(year)));
+                }
                 w.write(",");
-                for (Enumeration<String> names = type.getNames(); names.hasMoreElements();) {
+                for (Enumeration<String> names = type.getNames(); names
+                        .hasMoreElements();) {
                     String name = names.nextElement();
                     w.write(name + ",");
                 }
@@ -735,7 +767,8 @@ public class EquipmentType {
             w.newLine();
             w.write("Type,Name,Tech Base,Rules,Tech Rating,Introduction Date,Extinction Date,Re-Introduction Date,Tonnage,Crits,Cost,BV");
             w.newLine();
-            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
+            for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e
+                    .hasMoreElements();) {
                 EquipmentType type = e.nextElement();
                 if (type instanceof AmmoType) {
                     w.write("A,");
@@ -746,9 +779,13 @@ public class EquipmentType {
                 }
                 w.write(type.getName());
                 w.write(",");
-                w.write(TechConstants.getTechName(type.getTechLevel()));
+                for (int year : type.getTechLevels().keySet()) {
+                    w.write(year+"-"+TechConstants.getTechName(type.getTechLevel(year)));
+                }
                 w.write(",");
-                w.write(TechConstants.getLevelName(type.getTechLevel()));
+                for (int year : type.getTechLevels().keySet()) {
+                    w.write(year+"-"+TechConstants.getLevelName(type.getTechLevel(year)));
+                }
                 w.write(",");
                 w.write(type.getFullRatingName());
                 w.write(",");
@@ -790,10 +827,9 @@ public class EquipmentType {
         }
     }
 
-
     @Override
     public String toString() {
-        return "EquipmentType: "+name;
+        return "EquipmentType: " + name;
     }
 
     protected static GameOptions getGameOptions() {

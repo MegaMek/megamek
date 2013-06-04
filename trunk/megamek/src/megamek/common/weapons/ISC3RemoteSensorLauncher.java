@@ -47,29 +47,30 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         rackSize = 1;
         damage = 0;
         techRating = RATING_E;
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         bv = 30;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        availRating = new int[]
-            { RATING_X, RATING_X, RATING_F };
+        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON);
         introDate = 3072;
-        techLevel.put(3072,techLevel.get(3071));
+        techLevel.put(3072, techLevel.get(3071));
         // suppveeslots = 3;
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return super.getCorrectHandler(toHit, waa, game, server);
         // FIXME: Implement handler
     }

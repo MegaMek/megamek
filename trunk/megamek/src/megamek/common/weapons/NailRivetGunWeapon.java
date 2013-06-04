@@ -36,7 +36,8 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
     public NailRivetGunWeapon() {
         super();
         ammoType = AmmoType.T_NAIL_RIVET_GUN;
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_BALLISTIC);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+                .or(F_BALLISTIC);
         heat = 0;
         damage = 0;
         rackSize = 1;
@@ -52,14 +53,15 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new NailRivetGunHandler(toHit, waa, game, server);
     }
 }

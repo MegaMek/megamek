@@ -32,7 +32,7 @@ public class ISSRM2Primitive extends SRMWeapon {
 
     public ISSRM2Primitive() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_UNOFFICIAL);
+        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "SRM 2p";
         setInternalName(name);
         addLookupName("IS SRM-2 Primitive");
@@ -55,7 +55,8 @@ public class ISSRM2Primitive extends SRMWeapon {
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
         return new SRMHandler(toHit, waa, game, server, -2);
     }
 }

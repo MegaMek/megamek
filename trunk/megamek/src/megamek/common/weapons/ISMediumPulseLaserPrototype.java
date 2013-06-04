@@ -37,7 +37,7 @@ public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
      */
     public ISMediumPulseLaserPrototype() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Medium Pulse Laser Prototype";
         setInternalName("ISMediumPulseLaserPrototype");
         addLookupName("IS Pulse Med Laser Prototype");
@@ -62,10 +62,11 @@ public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     * megamek.server.Server)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,

@@ -52,19 +52,25 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one
         // location
-        if (ae instanceof BattleArmor && weapon.getLocation() == BattleArmor.LOC_SQUAD && (ae.getSwarmTargetId() == target.getTargetId())) {
+        if (ae instanceof BattleArmor
+                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+                && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() : 0, wtype.getInfantryDamageClass(), ((Infantry)target).isMechanized());
-        } else if (bDirect){
-            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+            toReturn = Compute.directBlowInfantryDamage(toReturn,
+                    bDirect ? toHit.getMoS() : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+        } else if (bDirect) {
+            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+        if (game.getOptions().booleanOption("tacops_range")
+                && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
 

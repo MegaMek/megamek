@@ -2846,7 +2846,7 @@ public class Server implements Runnable {
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
-                sheetBoards[i].load(name + ".board");
+                sheetBoards[i].load(new File(Configuration.boardsDir(), name + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
         }

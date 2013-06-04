@@ -89,10 +89,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     private DirectoryItems camos;
 
     // mech images
-    private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir().toString());
+    private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
-            new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS).toString()
-    );
+            new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS));
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private HashMap<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
 

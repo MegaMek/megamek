@@ -81,6 +81,7 @@ v0.35.39-dev (SVN)
 + Bug: sprinting with XXL should cost 9 heat, not 8
 + Bug 3743: NPE: Incorrect cross platform support for directory path separator (/ vs. \ depending on OS)
 + Bug: ASF BV wrong when using PPC capacitors 
++ Fixed some leftover calls to deprecated methods.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

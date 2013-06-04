@@ -58,5 +58,6 @@ public class CLLaserAMS extends LaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3048;
         techLevel.put(3048, techLevel.get(3071));
+        techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
     }
 }

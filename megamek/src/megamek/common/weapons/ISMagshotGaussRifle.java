@@ -50,12 +50,9 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         cost = 8500;
         explosionDamage = 3;
         techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
         introDate = 3072;
         techLevel.put(3072, techLevel.get(3071));
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
+        techLevel.put(3078, TechConstants.T_IS_TW_NON_BOX);
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
     }
 }

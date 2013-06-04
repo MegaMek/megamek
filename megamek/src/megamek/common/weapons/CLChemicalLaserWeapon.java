@@ -41,11 +41,12 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MECH_WEAPON)
                 .or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);
         atClass = CLASS_LASER;
+        techLevel.put(3083, TechConstants.T_CLAN_ADVANCED);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

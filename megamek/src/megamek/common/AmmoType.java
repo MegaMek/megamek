@@ -7335,6 +7335,7 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         ammo.techRating = RATING_E;
+        ammo.techLevel.put(3084, TechConstants.T_IS_ADVANCED);
 
         return ammo;
     }
@@ -7797,6 +7798,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3079, TechConstants.T_IS_ADVANCED);
         ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
         ammo.setInternalName("IS Coolant Pod");
@@ -7819,6 +7821,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
         ammo.name = "Coolant Pod";
         ammo.shortName = "Coolant Pod";
         ammo.setInternalName("Clan Coolant Pod");

@@ -62,11 +62,12 @@ public class ISBombastLaser extends LaserWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3064;
         techLevel.put(3064, techLevel.get(3071));
+        techLevel.put(3085, TechConstants.T_IS_ADVANCED);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

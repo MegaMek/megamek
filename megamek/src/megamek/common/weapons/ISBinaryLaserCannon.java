@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -25,40 +25,41 @@ import megamek.common.TechConstants;
 public class ISBinaryLaserCannon extends LaserWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6849916948609019186L;
 
     public ISBinaryLaserCannon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        this.name = "Blazer Cannon";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Binary Laser Cannon");
-        this.addLookupName("ISBlazer");
-        this.addLookupName("ISBinaryLaserCannon");
-        this.addLookupName("ISBinaryLaser");
-        this.heat = 16;
-        this.damage = 12;
-        this.shortRange = 5;
-        this.mediumRange = 10;
-        this.longRange = 15;
-        this.extremeRange = 20;
-        this.waterShortRange = 3;
-        this.waterMediumRange = 6;
-        this.waterLongRange = 9;
-        this.waterExtremeRange = 12;
-        this.tonnage = 9.0f;
-        this.criticals = 4;
-        this.bv = 222;
-        this.cost = 200000;
-        this.shortAV = 16;
-        this.medAV = 16;
-        this.maxRange = RANGE_MED;
-        this.techRating = RATING_D;
-        this.availRating = new int[] { RATING_X, RATING_E, RATING_E };
+        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        name = "Blazer Cannon";
+        setInternalName(name);
+        addLookupName("IS Binary Laser Cannon");
+        addLookupName("ISBlazer");
+        addLookupName("ISBinaryLaserCannon");
+        addLookupName("ISBinaryLaser");
+        heat = 16;
+        damage = 12;
+        shortRange = 5;
+        mediumRange = 10;
+        longRange = 15;
+        extremeRange = 20;
+        waterShortRange = 3;
+        waterMediumRange = 6;
+        waterLongRange = 9;
+        waterExtremeRange = 12;
+        tonnage = 9.0f;
+        criticals = 4;
+        bv = 222;
+        cost = 200000;
+        shortAV = 16;
+        medAV = 16;
+        maxRange = RANGE_MED;
+        techRating = RATING_D;
+        availRating = new int[] { RATING_X, RATING_E, RATING_E };
         introDate = 2812;
         techLevel.put(2812, techLevel.get(3071));
+        techLevel.put(3077, TechConstants.T_IS_TW_NON_BOX);
 
     }
 }

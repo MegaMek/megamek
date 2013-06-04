@@ -56,5 +56,6 @@ public class ISERFlamer extends FlamerWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3070;
         techLevel.put(3070, techLevel.get(3071));
+        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
     }
 }

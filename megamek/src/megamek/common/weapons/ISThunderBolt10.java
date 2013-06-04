@@ -1,14 +1,14 @@
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 package megamek.common.weapons;
@@ -22,39 +22,40 @@ import megamek.common.TechConstants;
 public class ISThunderBolt10 extends ThunderBoltWeapon {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6781882739979127656L;
 
     /**
-     * 
+     *
      */
     public ISThunderBolt10() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        this.name = "Thunderbolt 10";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Thunderbolt-10");
-        this.addLookupName("ISThunderbolt10");
-        this.addLookupName("IS Thunderbolt 10");
-        this.addLookupName("ISTBolt10");
-        this.ammoType = AmmoType.T_TBOLT_10;
-        this.heat = 5;
-        this.minimumRange = 5;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 18;
-        this.extremeRange = 24;
-        this.shortAV = 10;
-        this.medAV = 10;
-        this.maxRange = RANGE_MED;
-        this.tonnage = 7.0f;
-        this.criticals = 2;
-        this.bv = 127;
-        this.cost = 175000;
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        name = "Thunderbolt 10";
+        setInternalName(name);
+        addLookupName("IS Thunderbolt-10");
+        addLookupName("ISThunderbolt10");
+        addLookupName("IS Thunderbolt 10");
+        addLookupName("ISTBolt10");
+        ammoType = AmmoType.T_TBOLT_10;
+        heat = 5;
+        minimumRange = 5;
+        shortRange = 6;
+        mediumRange = 12;
+        longRange = 18;
+        extremeRange = 24;
+        shortAV = 10;
+        medAV = 10;
+        maxRange = RANGE_MED;
+        tonnage = 7.0f;
+        criticals = 2;
+        bv = 127;
+        cost = 175000;
         techRating = RATING_E;
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3072;
         techLevel.put(3072, techLevel.get(3071));
+        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
     }
 }

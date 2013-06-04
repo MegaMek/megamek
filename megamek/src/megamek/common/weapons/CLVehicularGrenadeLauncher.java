@@ -39,6 +39,9 @@ public class CLVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
         setInternalName("CLVehicularGrenadeLauncher");
         techRating = RATING_C;
         availRating = new int[] { RATING_D, RATING_E, RATING_F };
+        introDate = 1950;
+        techLevel.put(1950, techLevel.get(3071));
+        techLevel.put(3080, TechConstants.T_CLAN_TW);
     }
 
 }

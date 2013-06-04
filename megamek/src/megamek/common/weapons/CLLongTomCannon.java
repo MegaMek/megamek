@@ -57,6 +57,7 @@ public class CLLongTomCannon extends ArtilleryCannonWeapon {
         availRating = new int[] { RATING_X, RATING_F, RATING_E };
         introDate = 3032;
         techLevel.put(3032, techLevel.get(3071));
+        techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
     }
 
 }

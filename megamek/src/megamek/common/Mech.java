@@ -7609,6 +7609,30 @@ public abstract class Mech extends Entity {
     }
 
     @Override
+    public boolean isPermanentlyImmobilized() {
+        // First check for conditions that would permanently immobilize *any*
+        // entity; if we find any, we're already done.
+        if (super.isPermanentlyImmobilized()) {
+            return true;
+        }
+        // If we're prone and base walking MP -- adjusted for gravity and
+        // modular armor since they're reasonably permanent but ignoring heat
+        // effects -- have dropped to 0, we're stuck even if we still have
+        // jump jets because we can't get up anymore to *use* them.
+        if (getWalkMP(true, true, false) <= 0 && isProne()) {
+            return true;
+        }
+        // Gyro destroyed? TW p. 258 at least heavily implies that that counts
+        // as being immobilized as well, which makes sense because the 'Mech
+        // certainly isn't leaving that hex under its own power anymore.
+        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
+        if (getGyroHits() >= hitsToDestroyGyro) {
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
     public boolean isDmgHeavy() {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.33) {
             return true;

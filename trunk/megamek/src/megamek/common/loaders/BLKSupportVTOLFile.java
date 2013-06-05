@@ -125,9 +125,11 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if (armor.length != 5) {
+        if ((armor.length != 5) && (armor.length != 6)) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
+        t.setHasNoTurret(armor.length == 5);
+        t.setHasNoDualTurret(true);
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];
         fullArmor[0] = 0;

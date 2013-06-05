@@ -85,6 +85,8 @@ v0.35.39-dev (SVN)
 + Keep techlevels per year, to allow tech progression as in recent TROs
 + Bug 3755: Armorless second turret added to vehicles loaded from HMV files.
 + Added a couple of 'Mech-specific "permanently immobilized" checks (prone with 0 base walking MP / gyro destroyed).
++ Bug: VTOL rotors not shown in MechView.
++ Removed some more spurious "phantom" locations.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

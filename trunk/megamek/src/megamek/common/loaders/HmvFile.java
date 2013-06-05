@@ -509,6 +509,8 @@ public class HmvFile implements IMechLoader {
 
             // hmmm...
             vehicle.setHasNoTurret(!hasTurret);
+            // HMV vehicles NEVER have dual turrets.
+            vehicle.setHasNoDualTurret(true);
 
             vehicle.autoSetInternal();
             vehicle.setArmorType(armorType.toString());

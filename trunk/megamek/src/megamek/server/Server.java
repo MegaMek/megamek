@@ -4896,7 +4896,14 @@ public class Server implements Runnable {
                 // and add it to the list of affected buildings.
                 if (bldg.getCurrentCF(nextPos) > 0) {
                     stopTheSkid = true;
-                    addAffectedBldg(bldg, false);
+                    if (bldg.rollBasement(nextPos, game.getBoard(),
+                            vPhaseReport)) {
+                        sendChangedHex(nextPos);
+                        Vector<Building> buildings = new Vector<Building>();
+                        buildings.add(bldg);
+                        sendChangedBuildings(buildings);
+                    }
+                    addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg, entity, nextPos));
                 } else {
                     // otherwise it collapses immediately on our head
                     checkForCollapse(bldg, game.getPositionMap(), nextPos,

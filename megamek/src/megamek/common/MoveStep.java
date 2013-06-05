@@ -556,12 +556,12 @@ public class MoveStep implements Serializable {
                         return;
                     }
                 } else {
-                    // System.err.println(" Entity "+ entity.getDisplayName()
-                    // +" moving from elevation " +
-                    // game.getBoard().getHex(prev.getPosition()) + " to " +
-                    // game.getBoard().getHex(getPosition()) +
-                    // " at assumed elevation " +
-                    // elevation + " climb = " + climbMode());
+                     //System.err.println(" Entity "+ entity.getDisplayName()
+                     //+" moving from elevation " +
+                     //game.getBoard().getHex(prev.getPosition()) + " to " +
+                     //game.getBoard().getHex(getPosition()) +
+                     //" at assumed elevation " +
+                     //elevation + " climb = " + climbMode());
                     setElevation(entity
                             .calcElevation(
                                     game.getBoard().getHex(prev.getPosition()),
@@ -570,8 +570,8 @@ public class MoveStep implements Serializable {
                                     climbMode(),
                                     (entity.getMovementMode() == EntityMovementMode.WIGE)
                                             && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
-                    // System.err.println(" Entity "+ entity.getDisplayName()
-                    // +" result was " + elevation);
+                     //System.err.println(" Entity "+ entity.getDisplayName()
+                     //+" result was " + elevation);
 
                 }
             } else {
@@ -1939,17 +1939,17 @@ public class MoveStep implements Serializable {
         }
 
         int tmpWalkMP = entity.getWalkMP();
-        
+
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
-        if ((parent.getEntity().getMovementMode() == 
-                EntityMovementMode.INF_UMU) && 
+        if ((parent.getEntity().getMovementMode() ==
+                EntityMovementMode.INF_UMU) &&
             (currHex.containsTerrain(Terrains.WATER) &&
-             lastHex.containsTerrain(Terrains.WATER)       
+             lastHex.containsTerrain(Terrains.WATER)
                 && (entity.absHeight() < currHex.surface()))){
             tmpWalkMP = entity.getActiveUMUCount();
         }
-        
+
         if ((parent.getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (parent.getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             tmpWalkMP = entity.getActiveUMUCount();

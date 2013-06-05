@@ -1288,6 +1288,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         .surface())) {
                     if (climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
+                    } else if ((assumedElevation == 0) && (next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE.getValue())) {
+                        retVal -= BasementType.getType(next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
                     } else {
                         retVal += current.surface();
                         retVal -= next.surface();

@@ -2,7 +2,7 @@
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
  *  Software Foundation; either version 2 of the License, or (at your option)
@@ -71,6 +71,7 @@ import megamek.common.BuildingTarget;
 import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
@@ -114,7 +115,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.Configuration;
 import megamek.common.MoveStep;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
@@ -3087,7 +3087,7 @@ public class Server implements Runnable {
                 } else if ((entity instanceof SmallCraft)
                         && entity.isAirborne()
                         && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
-                    player.incrementSmallCraftTurns();                
+                    player.incrementSmallCraftTurns();
                 } else {
                     player.incrementOtherTurns();
                 }
@@ -7271,7 +7271,7 @@ public class Server implements Runnable {
 
             if ((isOnGround || ((((step.getMovementType() != EntityMovementType.MOVE_JUMP) && (curElevation <= curHex.terrainLevel(Terrains.BLDG_ELEV))) || (curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) && curHex.containsTerrain(Terrains.BLDG_ELEV)))) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
-                if (bldg != null) {
+                if ((bldg != null) && (entity.getElevation() >= 0)) {
                     addAffectedBldg(bldg,
                             checkBuildingCollapseWhileMoving(bldg, entity, curPos));
                 }
@@ -10216,7 +10216,7 @@ public class Server implements Runnable {
                     PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                     pilotRoll.append(roll);
                     vPhaseReport.addAll(doEntityFall(entity, dest,
-                            fallElevation, 3, pilotRoll));
+                            fallElevation, 3, pilotRoll, false));
                     vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(
                             entity, src, dest, entity.getElevation()));
 
@@ -15212,7 +15212,7 @@ public class Server implements Runnable {
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3,
-                        ae.getBasePilotingRoll()));
+                        ae.getBasePilotingRoll(), false));
 
             } else {
                 // same effect as successful DFA
@@ -15305,7 +15305,7 @@ public class Server implements Runnable {
                         .containsTerrain(Terrains.BLDG_ELEV) ? game.getBoard()
                         .getHex(dest).terrainLevel(Terrains.BLDG_ELEV) : 0);
                 addReport(doEntityFall(ae, dest, height, 3,
-                        ae.getBasePilotingRoll()));
+                        ae.getBasePilotingRoll(), false));
                 Entity violation = Compute.stackingViolation(game, ae.getId(),
                         dest);
                 if (violation != null) {
@@ -23528,7 +23528,7 @@ public class Server implements Runnable {
      * Makes a mech fall.
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
-            int height, int facing, PilotingRollData roll) {
+            int height, int facing, PilotingRollData roll, boolean intoBasement) {
         entity.setFallen(true);
 
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -23593,7 +23593,7 @@ public class Server implements Runnable {
                 + fallHex.depth(true);
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
-        int newElevation = 0;
+        int newElevation = entity.getElevation();
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;
@@ -23620,7 +23620,7 @@ public class Server implements Runnable {
             newElevation = -waterDepth;
         }
         //only do these basement checks if we didn't fall onto the building from above
-        if (fallHex.containsTerrain(Terrains.BLDG_ELEV) && !checkCollapse) {
+        if (intoBasement) {
             Building bldg = game.getBoard().getBuildingAt(fallPos);
             if ((bldg.getBasement(fallPos) != BasementType.NONE)
                     && (bldg.getBasement(fallPos) != BasementType.ONE_DEEP_NORMALINFONLY)
@@ -23912,7 +23912,7 @@ public class Server implements Runnable {
      */
     private Vector<Report> doEntityFall(Entity entity, Coords fallPos,
             int height, PilotingRollData roll) {
-        return doEntityFall(entity, fallPos, height, Compute.d6(1), roll);
+        return doEntityFall(entity, fallPos, height, Compute.d6(1), roll, false);
     }
 
     /**
@@ -24268,7 +24268,7 @@ public class Server implements Runnable {
     /**
      * Scans the boards directory for map boards of the appropriate size and
      * returns them.
-     * 
+     *
      * @return A list of relative paths to the board files, without the '.board' extension.
      */
     private ArrayList<String> scanForBoardsInDir(
@@ -24281,22 +24281,22 @@ public class Server implements Runnable {
         {
             throw new IllegalArgumentException("must provide searchDir");
         }
-        
+
         if (basePath == null)
         {
             throw new IllegalArgumentException("must provide basePath");
         }
-        
+
         if (dimensions == null)
         {
             throw new IllegalArgumentException("must provide dimensions");
         }
-        
+
         if (boards == null)
         {
             throw new IllegalArgumentException("must provide boards");
         }
-        
+
         String fileList[] = boardDir.list();
         for (String filename : fileList) {
             File filepath = new File(boardDir, filename);
@@ -24311,7 +24311,7 @@ public class Server implements Runnable {
                 if (filename.endsWith(".board")) { //$NON-NLS-1$
                     if (Board.boardIsSize(filepath, dimensions)) {
                         boards.add(basePath.concat(File.separator).concat(filename.substring(0, filename.lastIndexOf("."))));
-                    }                
+                    }
                 }
             }
         }
@@ -24320,7 +24320,7 @@ public class Server implements Runnable {
 
     /**
      * Recursively scan the specified path to determine the board sizes available.
-     * 
+     *
      * @param basePath The base path to search.
      * @param dir The directory to search below this path (may be null for all in base path).
      * @return
@@ -24334,17 +24334,17 @@ public class Server implements Runnable {
         {
             throw new IllegalArgumentException("must provide searchDir");
         }
-        
+
         if (sizes == null)
         {
             throw new IllegalArgumentException("must provide sizes");
         }
-                        
+
         String file_list[] = searchDir.list();
 
         for (String filename : file_list) {
             File query_file = new File(searchDir, filename);
-            
+
             if (query_file.isDirectory()) {
                 getBoardSizesInDir(query_file, sizes);
             } else {
@@ -24357,26 +24357,26 @@ public class Server implements Runnable {
 
     /**
      * Get a list of the available board sizes from the boards data directory.
-     * 
+     *
      * @return A Set containing all the available board sizes.
      */
-    private Set<BoardDimensions> getBoardSizes() {        
+    private Set<BoardDimensions> getBoardSizes() {
         TreeSet<BoardDimensions> board_sizes = new TreeSet<BoardDimensions>();
-        
+
         File boards_dir = Configuration.boardsDir();
         // Slightly overkill sanity check...
         if (boards_dir.isDirectory()) {
             getBoardSizesInDir(boards_dir, board_sizes);
         }
-        
+
         return board_sizes;
     }
 
     /**
      * Scan for map boards with the specified dimensions.
-     * 
+     *
      * @deprecated Use {@link #scanForBoards(BoardDimensions)} instead.
-     * 
+     *
      * @param boardWidth The desired board width.
      * @param boardHeight The desired board height.
      * @return A list of path names, minus the '.board' extension, relative to the boards data directory.
@@ -24385,10 +24385,10 @@ public class Server implements Runnable {
     private ArrayList<String> scanForBoards(final int boardWidth, final int boardHeight) {
         return scanForBoards(new BoardDimensions(boardWidth, boardHeight));
     }
-    
+
     /**
      * Scan for map boards with the specified dimensions.
-     * 
+     *
      * @param dimensions The desired board dimensions.
      * @return A list of path names, minus the '.board' extension, relative to the boards data directory.
      */
@@ -27026,16 +27026,15 @@ public class Server implements Runnable {
                         || (bldg.getBasement(coords) == BasementType.TWO_DEEP_FEET)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 2 floors into " + coords.toString());
-                    vPhaseReport.addAll(doEntityFallsInto(entity, coords,
-                            coords, psr, true));
-                    entity.setElevation(floor - 2);
+                    vPhaseReport.addAll(doEntityFall(entity, coords, 0, Compute.d6(),
+                            psr, true));
                     runningCFTotal -= cfDamage * 2;
                 } else if ((bldg.getBasement(coords) != BasementType.NONE)
                         && (bldg.getBasement(coords) != BasementType.ONE_DEEP_NORMALINFONLY)) {
                     System.err.println(entity.getDisplayName()
                             + " is falling 1 floor into " + coords.toString());
-                    vPhaseReport.addAll(doEntityFallsInto(entity, coords,
-                            coords, psr, true));
+                    vPhaseReport.addAll(doEntityFall(entity, coords, 0, Compute.d6(),
+                            psr, true));
                     runningCFTotal -= cfDamage;
                 } else {
                     System.err.println(entity.getDisplayName()

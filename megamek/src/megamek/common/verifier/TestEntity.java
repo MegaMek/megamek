@@ -914,17 +914,17 @@ public abstract class TestEntity implements TestEntityOption {
                             illegal = true;
                         }
                     }
-                    if ((mech.getJumpType() != Mech.JUMP_STANDARD)
-                            && (mech.getJumpType() != Mech.JUMP_NONE)
-                            && (mech.getJumpType() != Mech.JUMP_PROTOTYPE)
-                            && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
-                        buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
-                        illegal = true;
-                    }
-                    if (mech.getGyroType() != Mech.GYRO_STANDARD) {
-                        buff.append("industrial mechs can only mount standard gyros\n");
-                        illegal = true;
-                    }
+                }
+                if ((mech.getJumpType() != Mech.JUMP_STANDARD)
+                        && (mech.getJumpType() != Mech.JUMP_NONE)
+                        && (mech.getJumpType() != Mech.JUMP_PROTOTYPE)
+                        && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
+                    buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
+                    illegal = true;
+                }
+                if (mech.getGyroType() != Mech.GYRO_STANDARD) {
+                    buff.append("industrial mechs can only mount standard gyros\n");
+                    illegal = true;
                 }
             } else {
                 if (mech.hasIndustrialTSM()) {

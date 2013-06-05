@@ -88,6 +88,7 @@ v0.35.39-dev (SVN)
 + Bug: VTOL rotors not shown in MechView.
 + Removed some more spurious "phantom" locations.
 + Bug: more building basement oddities fixed
++ Bug: prototype IJJs failing verifier
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

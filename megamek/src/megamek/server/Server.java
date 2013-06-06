@@ -4505,7 +4505,7 @@ public class Server implements Runnable {
                             break;
                     }
                     elevation = nextElevation;
-                    addReport(crashVTOLorWiGE((VTOL) entity, true, distance,
+                    addReport(crashVTOLorWiGE((VTOL) entity, false, true, distance,
                             curPos, elevation, table));
 
                     if ((nextHex.containsTerrain(Terrains.WATER) && !nextHex
@@ -4602,7 +4602,7 @@ public class Server implements Runnable {
                             break;
                     }
                     elevation = nextElevation;
-                    addReport(crashVTOLorWiGE((VTOL) entity, true, distance,
+                    addReport(crashVTOLorWiGE((VTOL) entity, false, true, distance,
                             curPos, elevation, table));
                     break;
                 }
@@ -18384,7 +18384,8 @@ public class Server implements Runnable {
         }
 
         // adjust VTOL rotor damage
-        if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)) {
+        if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
+                && (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL)) {
             damage = (damage + 9) / 10;
         }
 
@@ -19356,15 +19357,6 @@ public class Server implements Runnable {
                                 damage -= tmpDamageHold % 2;
                             }
                         }
-
-                        if ((te instanceof VTOL)
-                                && (hit.getLocation() == VTOL.LOC_ROTOR)) {
-                            // if rotor is destroyed, movement goes bleh.
-                            // I think this will work?
-                            ((VTOL) te).immobilize();
-                            vDesc.addAll(crashVTOLorWiGE((VTOL) te));
-
-                        }
                     }
                 }
                 if (te.getInternal(hit) <= 0) {
@@ -19391,8 +19383,7 @@ public class Server implements Runnable {
                         boolean engineExploded = checkEngineExplosion(te,
                                 vDesc, te.engineHitsThisPhase);
 
-                        if (!engineExploded
-                                && !((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR))) {
+                        if (!engineExploded) {
                             // Entity destroyed. Ammo explosions are
                             // neither survivable nor salvagable.
                             // Only ammo explosions in the CT are devastating.
@@ -20829,53 +20820,10 @@ public class Server implements Runnable {
                         t.setSelfDestructing(false);
                         t.setSelfDestructInitiated(false);
                     }
-                    if (t.isAirborneVTOLorWIGE()) {
-                        PilotingRollData psr = t.getBasePilotingRoll();
-                        IHex hex = game.getBoard().getHex(t.getPosition());
-                        if (t instanceof VTOL) {
-                            psr.addModifier(4, "VTOL making forced landing");
-                        } else {
-                            psr.addModifier(0, "WiGE making forced landing");
-                        }
-                        int elevation = Math.max(
-                                hex.terrainLevel(Terrains.BLDG_ELEV),
-                                hex.terrainLevel(Terrains.BRIDGE_ELEV));
-                        elevation = Math.max(elevation, 0);
-                        elevation = Math.min(elevation, t.getElevation());
-                        if (t.getElevation() > elevation) {
-                            if (!hex.containsTerrain(Terrains.FUEL_TANK)
-                                    && !hex.containsTerrain(Terrains.JUNGLE)
-                                    && !hex.containsTerrain(Terrains.MAGMA)
-                                    && !hex.containsTerrain(Terrains.MUD)
-                                    && !hex.containsTerrain(Terrains.RUBBLE)
-                                    && !hex.containsTerrain(Terrains.WATER)
-                                    && !hex.containsTerrain(Terrains.WOODS)) {
-                                r = new Report(2180);
-                                r.subject = t.getId();
-                                r.addDesc(t);
-                                r.add(psr.getLastPlainDesc(), true);
-                                vDesc.add(r);
-
-                                // roll
-                                final int diceRoll = Compute.d6(2);
-                                r = new Report(2185);
-                                r.subject = t.getId();
-                                r.add(psr.getValueAsString());
-                                r.add(psr.getDesc());
-                                r.add(diceRoll);
-                                if (diceRoll < psr.getValue()) {
-                                    r.choose(false);
-                                    vDesc.add(r);
-                                    vDesc.addAll(crashVTOLorWiGE(t));
-                                } else {
-                                    r.choose(true);
-                                    vDesc.add(r);
-                                    t.setElevation(elevation);
-                                }
-                            } else {
-                                vDesc.addAll(crashVTOLorWiGE(t));
-                            }
-                        }
+                    if (t.isAirborneVTOLorWIGE() &&
+                            !(t.isDestroyed() || t.isDoomed())) {
+                        t.immobilize();
+                        vDesc.addAll(forceLandVTOLorWiGE(t));
                     }
                     break;
                 case Tank.CRIT_FUEL_TANK:
@@ -21006,29 +20954,54 @@ public class Server implements Runnable {
                     t.setCommanderHit(true);
                     break;
                 case VTOL.CRIT_ROTOR_DAMAGE: {
-                    r = new Report(6660);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.setMotiveDamage(t.getMotiveDamage() + 1);
-                    if (t.getMotiveDamage() >= t.getOriginalWalkMP()) {
-                        t.immobilize();
-                        vDesc.addAll(crashVTOLorWiGE(t));
+                    // Only resolve rotor crits if the rotor was actually still
+                    // there.
+                    if (!(t.isLocationBad(VTOL.LOC_ROTOR)
+                            || t.isLocationDoomed(VTOL.LOC_ROTOR))) {
+                        r = new Report(6660);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setMotiveDamage(t.getMotiveDamage() + 1);
+                        if (t.getMotiveDamage() >= t.getOriginalWalkMP()) {
+                            t.immobilize();
+                            if (t.isAirborneVTOLorWIGE()
+                                    // Don't bother with forcing a landing if
+                                    // we're already otherwise destroyed.
+                                    && !(t.isDestroyed() || t.isDoomed())) {
+                                vDesc.addAll(forceLandVTOLorWiGE(t));
+                            }
+                        }
                     }
                     break;
                 }
                 case VTOL.CRIT_ROTOR_DESTROYED:
-                    r = new Report(6670);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.immobilize();
-                    t.destroyLocation(VTOL.LOC_ROTOR);
-                    vDesc.addAll(crashVTOLorWiGE(t));
+                    // Only resolve rotor crits if the rotor was actually still
+                    // there. Note that despite the name this critical hit does
+                    // not in itself physically destroy the rotor *location*
+                    // (which would simply kill the VTOL).
+                    if (!(t.isLocationBad(VTOL.LOC_ROTOR)
+                            || t.isLocationDoomed(VTOL.LOC_ROTOR))) {
+                        r = new Report(6670);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.immobilize();
+                        // Don't bother to crash if we're already
+                        // destroyed otherwise.
+                        if (!(t.isDestroyed() || t.isDoomed())) {
+                            vDesc.addAll(crashVTOLorWiGE(t, true));
+                        }
+                    }
                     break;
                 case VTOL.CRIT_FLIGHT_STABILIZER:
-                    r = new Report(6665);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.setStabiliserHit(VTOL.LOC_ROTOR);
+                    // Only resolve rotor crits if the rotor was actually still
+                    // there.
+                    if (!(t.isLocationBad(VTOL.LOC_ROTOR)
+                            || t.isLocationDoomed(VTOL.LOC_ROTOR))) {
+                        r = new Report(6665);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setStabiliserHit(VTOL.LOC_ROTOR);
+                    }
                     break;
             }
         } else if (en instanceof Aero) {
@@ -21926,6 +21899,67 @@ public class Server implements Runnable {
         return criticalEntity(en, loc, 0, false, false, damage);
     }
 
+    /** Resolves the forced landing of one airborne {@code VTOL} or {@code WiGE}
+     * in its current hex. As this method is only for internal use and not part
+     * of the exported public API, it simply relies on its client code to only
+     * ever hand it a valid airborne vehicle and does not run any further checks
+     * of its own.
+     * 
+     * @param en
+     * The {@code VTOL} or {@WiGE} in question.
+     * @return The resulting {@code Vector} of {@code Report}s.
+     */
+    private Vector<Report> forceLandVTOLorWiGE(Tank en) {
+        Vector<Report> vDesc = new Vector<Report>();
+        PilotingRollData psr = en.getBasePilotingRoll();
+        IHex hex = game.getBoard().getHex(en.getPosition());
+        if (en instanceof VTOL) {
+            psr.addModifier(4, "VTOL making forced landing");
+        } else {
+            psr.addModifier(0, "WiGE making forced landing");
+        }
+        int elevation = Math.max(
+                hex.terrainLevel(Terrains.BLDG_ELEV),
+                hex.terrainLevel(Terrains.BRIDGE_ELEV));
+        elevation = Math.max(elevation, 0);
+        elevation = Math.min(elevation, en.getElevation());
+        if (en.getElevation() > elevation) {
+            if (!hex.containsTerrain(Terrains.FUEL_TANK)
+                    && !hex.containsTerrain(Terrains.JUNGLE)
+                    && !hex.containsTerrain(Terrains.MAGMA)
+                    && !hex.containsTerrain(Terrains.MUD)
+                    && !hex.containsTerrain(Terrains.RUBBLE)
+                    && !hex.containsTerrain(Terrains.WATER)
+                    && !hex.containsTerrain(Terrains.WOODS)) {
+                Report r = new Report(2180);
+                r.subject = en.getId();
+                r.addDesc(en);
+                r.add(psr.getLastPlainDesc(), true);
+                vDesc.add(r);
+
+                // roll
+                final int diceRoll = Compute.d6(2);
+                r = new Report(2185);
+                r.subject = en.getId();
+                r.add(psr.getValueAsString());
+                r.add(psr.getDesc());
+                r.add(diceRoll);
+                if (diceRoll < psr.getValue()) {
+                    r.choose(false);
+                    vDesc.add(r);
+                    vDesc.addAll(crashVTOLorWiGE(en, true));
+                } else {
+                    r.choose(true);
+                    vDesc.add(r);
+                    en.setElevation(elevation);
+                }
+            } else {
+                vDesc.addAll(crashVTOLorWiGE(en, true));
+            }
+        }
+        return vDesc;
+    }
+    
     /**
      * Crash a VTOL
      *
@@ -21934,31 +21968,50 @@ public class Server implements Runnable {
      * @return the <code>Vector<Report></code> containg phasereports
      */
     private Vector<Report> crashVTOLorWiGE(Tank en) {
-        return crashVTOLorWiGE(en, false, 0, en.getPosition(),
+        return crashVTOLorWiGE(en, false, false, 0, en.getPosition(),
                 en.getElevation(), 0);
     }
-
+    
+    /** Crash a VTOL or WiGE.
+     * 
+     * @param en
+     * The {@code VTOL} or {@code WiGE} to crash.
+     * @param rerollRotorHits
+     * Whether any rotor hits from the crash should be rerolled, typically after
+     * a "rotor destroyed" critical hit.
+     * @return The {@code Vector<Report>} of resulting reports.
+     */
+    private Vector<Report> crashVTOLorWiGE(Tank en, boolean rerollRotorHits) {
+        return crashVTOLorWiGE(en, rerollRotorHits, false, 0, en.getPosition(),
+                en.getElevation(), 0);
+    }
+    
     /**
-     * Crash a VTOL
+     * Crash a VTOL or WiGE.
      *
      * @param en
-     *            The <code>VTOL</code> to crash
+     * The {@code VTOL} or {@code WiGE} to crash.
+     * @param rerollRotorHits
+     * Whether any rotor hits from the crash should be rerolled, typically after
+     * a "rotor destroyed" critical hit.
      * @param sideSlipCrash
-     *            A <code>boolean</code> value indicating wether this is a
-     *            sideslip crash or not.
+     * A <code>boolean</code> value indicating wether this is a
+     * sideslip crash or not.
      * @param hexesMoved
-     *            The <code>int</code> number of hexes moved.
+     * The <code>int</code> number of hexes moved.
      * @param crashPos
-     *            The <code>Coords</code> of the crash
+     * The <code>Coords</code> of the crash
      * @param crashElevation
-     *            The <code>int</code> elevation of the VTOL
+     * The <code>int</code> elevation of the VTOL
      * @param impactSide
-     *            The <code>int</code> describing the side on which the VTOL
-     *            falls
+     * The <code>int</code> describing the side on which the VTOL
+     * falls
      * @return a <code>Vector<Report></code> of Reports.
      */
-    private Vector<Report> crashVTOLorWiGE(Tank en, boolean sideSlipCrash,
-            int hexesMoved, Coords crashPos, int crashElevation, int impactSide) {
+    
+    private Vector<Report> crashVTOLorWiGE(Tank en, boolean rerollRotorHits,
+            boolean sideSlipCrash, int hexesMoved, Coords crashPos,
+            int crashElevation, int impactSide) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -22080,6 +22133,10 @@ public class Server implements Runnable {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
+                if (en instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR
+                        && rerollRotorHits) {
+                    continue;
+                }
                 hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 int isBefore[] = { en.getInternal(Tank.LOC_FRONT),
                         en.getInternal(Tank.LOC_RIGHT),
@@ -29117,22 +29174,35 @@ public class Server implements Runnable {
                 }
                 break;
             case VTOL:
-                // VTOL don't roll, auto -1 MP
-                te.setMotiveDamage(te.getMotiveDamage() + 1);
-                if (te.getOriginalWalkMP() > te.getMotiveDamage()) {
-                    r = new Report(6660);
-                    r.subject = te.getId();
-                    vDesc.add(r);
-                } else {
-                    r = new Report(6670);
-                    r.subject = te.getId();
-                    vDesc.add(r);
-                    te.immobilize();
-                    vDesc.addAll(crashVTOLorWiGE(te));
+                // VTOL don't roll, auto -1 MP as long as the rotor location
+                // still exists (otherwise don't bother reporting).
+                if (!(te.isLocationBad(VTOL.LOC_ROTOR)
+                        || te.isLocationDoomed(VTOL.LOC_ROTOR))) {
+                    te.setMotiveDamage(te.getMotiveDamage() + 1);
+                    if (te.getOriginalWalkMP() > te.getMotiveDamage()) {
+                        r = new Report(6660);
+                        r.subject = te.getId();
+                        vDesc.add(r);
+                    } else {
+                        r = new Report(6670);
+                        r.subject = te.getId();
+                        vDesc.add(r);
+                        te.immobilize();
+                        // Being reduced to 0 MP by rotor damage forces a landing
+                        // like an engine hit...
+                        if (te.isAirborneVTOLorWIGE()
+                                // ...but don't bother to resolve that if we're
+                                // already otherwise destroyed.
+                                && !(te.isDestroyed() || te.isDoomed())) {
+                            vDesc.addAll(forceLandVTOLorWiGE(te));
+                        }
+                    }
                 }
+                // This completes our handling of VTOLs; the rest of the method
+                // doesn't need to worry about them anymore.
                 return vDesc;
-                default:
-                    break;
+            default:
+                break;
         }
         if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
             modifier = Math.max(modifier - 1, 0);
@@ -29220,9 +29290,9 @@ public class Server implements Runnable {
                         .containsTerrain(Terrains.ICE)) {
             vDesc.addAll(destroyEntity(te, "a watery grave", false));
         }
-        // ...while immobile VTOLs or WiGEs crash.
-        if (((te instanceof VTOL) || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te
-                .getElevation() > 0)))
+        // ...while immobile WiGEs crash.
+        if (((te.getMovementMode() == EntityMovementMode.WIGE)
+                && (te.isAirborneVTOLorWIGE()))
                 && (te.isMovementHitPending() || (te.getWalkMP() <= 0))) {
             // report problem: add tab
             vDesc.addAll(crashVTOLorWiGE(te));

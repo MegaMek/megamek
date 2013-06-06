@@ -89,6 +89,8 @@ v0.35.39-dev (SVN)
 + Removed some more spurious "phantom" locations.
 + Bug: more building basement oddities fixed
 + Bug: prototype IJJs failing verifier
++ VTOL rotor damage handling updated to reflect May 2013 rulings/errata (notably, destroying the location by running it out of IS kills the vee again but the "rotors destroyed" critical hit itself doesn't, and VTOLs destroyed in mid-flight don't stick around long enough to crash).
++ Rotor TACs now marked as such.
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

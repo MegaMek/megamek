@@ -2078,8 +2078,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public String getLocationAbbr(HitData hit) {
         return getLocationAbbr(hit.getLocation())
                 + (hit.isRear() && hasRearArmor(hit.getLocation()) ? "R" : "")
-                + (hit.getEffect() == HitData.EFFECT_CRITICAL ? " (critical)"
-                        : "");
+                + (((hit.getEffect() & HitData.EFFECT_CRITICAL)
+                        == HitData.EFFECT_CRITICAL) ? " (critical)" : "");
     }
 
     /**

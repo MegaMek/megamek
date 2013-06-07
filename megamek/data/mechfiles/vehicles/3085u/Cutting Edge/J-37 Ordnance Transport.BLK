@@ -16,6 +16,10 @@ SupportTank
 J-37 Ordnance Transport
 </Name>
 
+<model>
+Standard
+</model>
+
 <Tonnage>
 50
 </Tonnage>
@@ -38,27 +42,14 @@ ISERSmallLaser
 </Turret Equipment>
 
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 Advanced Fire Control
 Armored Chassis
 ISOffRoad
 </Body Equipment>
+
+<transporters>
+cargobay:17:1
+</transporters>
 
 <type>
 IS Level 2

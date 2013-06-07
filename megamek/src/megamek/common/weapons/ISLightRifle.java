@@ -59,7 +59,9 @@ public class ISLightRifle extends RifleWeapon {
         maxRange = RANGE_MED;
         explosionDamage = 0;
         techRating = RATING_B;
-        availRating = new int[] { RATING_C, RATING_F, RATING_X };
-        techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
+                availRating = new int[] { RATING_C, RATING_F, RATING_X };
+        introDate = 1950;
+        techLevel.put(1950, techLevel.get(3071));
+        techLevel.put(3084, TechConstants.T_IS_ADVANCED);
     }
 }

@@ -13,11 +13,11 @@ VTOL
 </UnitType>
 
 <Name>
-Humming Bird
+Humming Bird VTOL
 </Name>
 
 <Model>
-Rescue VTOL
+(Rescue)
 </Model>
 
 <year>

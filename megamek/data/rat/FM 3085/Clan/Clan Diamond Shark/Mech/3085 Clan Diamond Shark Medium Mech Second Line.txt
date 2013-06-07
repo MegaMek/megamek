@@ -9,4 +9,4 @@ Shadow Hawk IIC 3,5
 Griffin IIC 3,4
 Sun Cobra,3
 Men Shen MS1-O,2
-Black Hawk (Standard),1
+Black Hawk,1

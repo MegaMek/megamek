@@ -13,11 +13,10 @@ Tank
 </UnitType>
 
 <Name>
-Vidar
+Vidar Heavy Defense Tank
 </Name>
 
 <Model>
-Heavy Defense Tank
 </Model>
 
 <year>
@@ -25,7 +24,7 @@ Heavy Defense Tank
 </year>
 
 <type>
-Clan Level 4
+Clan Level 3
 </type>
 
 <motion_type>

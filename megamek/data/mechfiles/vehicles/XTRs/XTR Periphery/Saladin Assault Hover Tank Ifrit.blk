@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Saladin Assault Hover Tank
+</Name>
+
+<Model>
+Ifrit
+</Model>
+
+<year>
+3080
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+40
+30
+30
+19
+</armor>
+
+<Body Equipment>
+ISTargeting Computer
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+</Body Equipment>
+
+<Front Equipment>
+ISSNPPC
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+XTR Perifery
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

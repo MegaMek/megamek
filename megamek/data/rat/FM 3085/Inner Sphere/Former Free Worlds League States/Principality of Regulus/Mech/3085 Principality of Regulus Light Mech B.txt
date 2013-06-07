@@ -3,7 +3,7 @@ Jackal JA-KL-1532,1
 Tarantula ZPH-2A,2
 Hammer HMR-3M,3
 Spider SDR-8M,4
-Hammer HMR-3P,5
+Hammer HMR-3P "Pein-Hammer",5
 Locust LCT-6M,6
 Hammer HMR-3C "Claw-Hammer",5
 Scarabus SCB-9T,4

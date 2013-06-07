@@ -3,10 +3,10 @@ Condor Heavy Hover Tank,1
 Hachiman Fire Support Tank 'Huey',2
 Ku Wheeled Assault Tank,3
 Thor Artillery Vehicle,4
-Ares Medium Tank (Standard),5
+Ares Medium Tank,5
 Hachiman Fire Support Tank 'Huey',6
 Ku Wheeled Assault Tank,5
 Chaparral Missile Artillery Tank,4
-Ares Medium Tank (Standard),3
+Ares Medium Tank,3
 Thor Artillery Vehicle (AC),2
 Turhan Urban Combat Vehicle (Standard),1

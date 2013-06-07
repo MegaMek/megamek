@@ -1,6 +1,6 @@
 3085 Clan Diamond Shark Battlearmor Keshik
-Clan Medium Battle Armor,1
-Clan Medium Battle Armor,2
+Clan Medium Battle Armor "Rabid",1
+Clan Medium Battle Armor "Rabid",2
 Elemental Battle Armor [MG],3
 Elemental Battle Armor (Space) [MG],4
 Elemental Battle Armor [MG],5

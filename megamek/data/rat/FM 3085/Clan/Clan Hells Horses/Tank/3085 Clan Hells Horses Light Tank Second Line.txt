@@ -7,6 +7,6 @@ Donar Assault Helicopter,5
 Zephyros Infantry Support Vehicle,6
 Hephaestus Jump Tank,5
 Anhur Transport (BA),4
-Hephaestus (AP) Jump Tank,3
+Hephaestus Jump Tank (AP),3
 Hephaestus Scout Tank Prime,2
 Svantovit Infantry Fighting Vehicle (ATM) "Masada",1

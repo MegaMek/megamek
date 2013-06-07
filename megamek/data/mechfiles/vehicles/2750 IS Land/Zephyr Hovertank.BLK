@@ -12,6 +12,10 @@ Tank
 <Name>
 Zephyr Hovertank
 </Name>
+
+<Model>
+</Model>
+
 <Tonnage>
 40
 </Tonnage>

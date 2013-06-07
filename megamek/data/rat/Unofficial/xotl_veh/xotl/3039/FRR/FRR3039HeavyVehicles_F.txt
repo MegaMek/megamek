@@ -41,8 +41,8 @@ Pike Support Vehicle (AC5),50
 Bulldog Medium Tank (LRM),410
 SRM Carrier,1220
 LRM Carrier,1220
-Axel Mk 2,570
-Axel Mk 1,570
+Axel Heavy Tank Mk 2,570
+Axel Heavy Tank Mk 1,570
 Rommel Tank,320
 Patton Tank,320
 Manticore Heavy Tank,860

@@ -9,23 +9,22 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+LargeSupportTank
 </UnitType>
 
 <Name>
-Barouche
+Barouche Military Transport
 </Name>
 
 <Model>
-Hovercraft
+(Standard)
 </Model>
-
 <year>
 3078
 </year>
 
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <motion_type>
@@ -55,33 +54,8 @@ Hover
 </barrating>
 
 <Body Equipment>
-Advanced Fire Control
-ISLRM5 Ammo
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (0.5 tons)
+IS Light Machine Gun Ammo - Half
+IS Ammo LRM-5
 </Body Equipment>
 
 <Front Equipment>
@@ -104,11 +78,13 @@ Cargo (0.5 tons)
 
 <Turret Equipment>
 LRM 5
+Light Machine Gun
+Light Machine Gun
 </Turret Equipment>
 
-<source>
-XTR RetroTech
-</source>
+<transporters>
+cargobay:24.5:1
+</transporters>
 
 <tonnage>
 80.0

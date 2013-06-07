@@ -12,6 +12,7 @@ Tank
 <Name>
 Glaive Medium Tank
 </Name>
+
 <Tonnage>
 45
 </Tonnage>
@@ -43,7 +44,7 @@ ISLRM15 Ammo Artemis-capable
 IS
 </type>
 <year>
-3067
+3066
 </year>
 <internal_type>
 0

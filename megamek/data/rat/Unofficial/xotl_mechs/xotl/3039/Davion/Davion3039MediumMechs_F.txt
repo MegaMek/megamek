@@ -41,7 +41,7 @@ Enforcer ENF-4R,1680
 Centurion CN9-AL,100
 Phoenix Hawk PXH-1D,340
 Assassin ASN-21,150
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Phoenix Hawk PXH-1K,40
 Shadow Hawk SHD-2K,30
 Wolverine WVR-6K,20

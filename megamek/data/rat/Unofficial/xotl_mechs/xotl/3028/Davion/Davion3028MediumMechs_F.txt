@@ -42,7 +42,7 @@ Centurion CN9-AL,110
 Phoenix Hawk PXH-1D,340
 Kintaro KTO-18,30
 Assassin ASN-21,160
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Phoenix Hawk PXH-1K,50
 Shadow Hawk SHD-2K,30
 Wolverine WVR-6K,20

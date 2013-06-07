@@ -9,15 +9,14 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
-Randolph
+Randolph Support Vehicle
 </Name>
 
 <Model>
-Support Vehicle
 </Model>
 
 <year>
@@ -54,15 +53,6 @@ Tracked
 <Body Equipment>
 Basic Fire Control
 ISMG Ammo (100)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 </Body Equipment>
 
 <Front Equipment>
@@ -83,6 +73,10 @@ Machine Gun
 <source>
 XTR Primitives
 </source>
+
+<transporters>
+cargobay:9:1
+</transporters>
 
 <tonnage>
 35.0

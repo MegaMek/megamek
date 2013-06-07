@@ -8,7 +8,7 @@ Rotunda Scout Vehicle RND-J-1-11 (RL),2
 Rotunda Scout Vehicle RND-J-1-11 (SRM),2
 Galleon Light Tank GAL-200,6
 Flatbed Truck (RL),5
-Galleon Light Tank (RL),4
+Galleon Light Tank GAL-200(RL),4
 Lightning Attack Hovercraft,3
 Ripper Infantry Transport,2
 Lightning Attack Hovercraft (Royal),1

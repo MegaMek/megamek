@@ -2,7 +2,7 @@ WoB Assault Vehicles 3067 (FMU)
 Ontos Heavy Tank (3053 Upgrade),1
 Behemoth Heavy Tank, 2
 Sturmfeur Heavy Tank,3
-Puma Assault Tank PMA-005,4
+Puma Assault Tank PAT-005,4
 Demolisher Heavy Tank,5
 Schrek PPC Carrier,6
 Ontos Heavy Tank,5

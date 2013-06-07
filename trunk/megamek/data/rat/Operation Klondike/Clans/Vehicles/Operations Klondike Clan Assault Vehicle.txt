@@ -1,7 +1,7 @@
 2821 Operations Klondike Clan Assault Vehicle
-Puma Assault Tank PMA-001,1
+Puma Assault Tank PAT-001,1
 Rhino Fire Support Tank (Royal),2
-Puma Assault Tank PMA-001,3
+Puma Assault Tank PAT-001,3
 Fury Command Tank (Royal),4
 Rhino Fire Support Tank (Royal),5
 Fury Command Tank (Royal),6

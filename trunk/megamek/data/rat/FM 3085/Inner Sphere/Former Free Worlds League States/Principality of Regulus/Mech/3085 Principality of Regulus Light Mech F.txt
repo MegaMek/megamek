@@ -9,4 +9,4 @@ Jackal JA-KL-1532,5
 Tarantula ZPH-2A,4
 Hammer HMR-3M,3
 Spider SDR-8M,2
-Hammer HMR-3P,1
+Hammer HMR-3P "Pein-Hammer",1

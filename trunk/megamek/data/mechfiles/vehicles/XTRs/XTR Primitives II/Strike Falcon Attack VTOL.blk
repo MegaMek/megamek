@@ -13,11 +13,11 @@ VTOL
 </UnitType>
 
 <Name>
-Strike Falcon
+Strike Falcon Attack VTOL
 </Name>
 
 <Model>
-Attack VTOL
+(Standard)
 </Model>
 
 <year>

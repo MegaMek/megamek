@@ -1,12 +1,4 @@
 3085 Clan Nova Cat Battlearmor Second Line
-Void Medium Battle Armor (Nova Cat),1
-Void Medium Battle Armor (Nova Cat),2
-Void Medium Battle Armor (Nova Cat),3
-Void Medium Battle Armor (Nova Cat),4
-Void Medium Battle Armor (Nova Cat),5
-Clan Medium Battle Armor,6
-Clan Medium Battle Armor,5
-Clan Medium Battle Armor,4
-Clan Medium Battle Armor,3
-Clan Medium Battle Armor,2
+Void Medium Battle Armor (Nova Cat),15
+Clan Medium Battle Armor "Rabid",20
 Elemental Battle Armor [MG],1

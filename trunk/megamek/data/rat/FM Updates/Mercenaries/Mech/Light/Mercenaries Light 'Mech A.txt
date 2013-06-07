@@ -5,7 +5,7 @@ Hollander BZK-F3,3
 Locust LCT-5M,4
 Dart DRT-4S,5
 Battle Hawk BH-K305,6
-Hammer HMR-3P,5
+Hammer HMR-3P "Pein-Hammer",5
 Wolfhound WLF-2,4
 Spider SDR-8M,3
 Eagle EGL-2M,2

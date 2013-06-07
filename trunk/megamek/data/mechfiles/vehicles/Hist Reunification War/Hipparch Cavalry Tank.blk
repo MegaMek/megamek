@@ -13,11 +13,10 @@ Tank
 </UnitType>
 
 <Name>
-Hipparch
+Hipparch Cavalry Tank
 </Name>
 
 <Model>
-Cavalry Tank
 </Model>
 
 <year>
@@ -25,7 +24,7 @@ Cavalry Tank
 </year>
 
 <type>
-IS Level 2
+IS Level 1
 </type>
 
 <motion_type>

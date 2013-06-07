@@ -13,19 +13,19 @@ Tank
 </UnitType>
 
 <Name>
-Bandit
+Bandit Hovercraft
 </Name>
 
 <Model>
-Mk II
+Mk 2
 </Model>
 
 <year>
-3090
+3084
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>

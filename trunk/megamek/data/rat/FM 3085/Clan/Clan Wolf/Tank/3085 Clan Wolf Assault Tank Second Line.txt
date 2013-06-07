@@ -1,6 +1,6 @@
 3085 Clan Wolf Assault Tank Second Line
 Alacorn Heavy Tank Mk VI,1
-Puma Assault Tank PMA-005,2
+Puma Assault Tank PAT-005,2
 Demolisher Heavy Tank (Clan),3
 Carnivore Assault Tank (Second Line),4
 Rhino Fire Support Tank,5

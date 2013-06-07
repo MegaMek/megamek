@@ -10,7 +10,7 @@ MAM0
 Dropship
 </UnitType>
 <Name>
-DroST
+DroST Light Bulk Transport
 </Name>
 <Model>
 IIA
@@ -68,7 +68,7 @@ Medium Laser
 IS Level 1
 </type>
 <year>
-2537
+2442
 </year>
 <internal_type>
 0

@@ -9,15 +9,15 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
-Iveco Burro II
+Iveco SuperHeavy Cargo Truck 
 </Name>
 
 <Model>
-SuperHeavy Cargo Truck
+(Burro II)
 </Model>
 
 <year>
@@ -47,24 +47,19 @@ Wheeled
 13
 </armor>
 
+<barrating>
+9
+</barrating>
+
 <Body Equipment>
-Cargo (0.5 tons)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 Environmental Sealing
 Armored Chassis
 ISOffRoadChassis
 </Body Equipment>
+
+<transporters>
+cargobay:13:1
+</transporters>
 
 <Front Equipment>
 Searchlight

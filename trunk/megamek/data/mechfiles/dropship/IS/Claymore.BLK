@@ -27,6 +27,10 @@ Claymore
 
 </Name>
 
+<model>
+Standard
+</Model>
+
 <Tonnage>
 
 1400
@@ -177,7 +181,7 @@ IS Level 2
 
 <year>
 
-3053
+3054
 
 </year>
 

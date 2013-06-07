@@ -76,7 +76,7 @@ IS Level 2
 </type>
 
 <year>
-3074
+3076
 </year>
 
 <source>
@@ -102,3 +102,7 @@ Tracked
 <transporters>
 TroopSpace:8
 </transporters>
+
+<history>
+Based of the Trajan Design - Designed original for the Word of Blake Militia, the Palmoni had C3i Computer instead of C3 and Guardian ECM.  See TRO 3085
+</history>

@@ -1,5 +1,5 @@
 3085 Clan Hell's Horses Medium Tank Front Line
-Enyo ER Pulse,1
+Enyo Strike Tank ER Pulse,1
 Bellona Hover Tank (Laser),2
 Bellona Hover Tank,3
 Garuda Heavy VTOL,4

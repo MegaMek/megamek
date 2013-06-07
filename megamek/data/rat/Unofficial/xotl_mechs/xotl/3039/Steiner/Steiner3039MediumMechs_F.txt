@@ -39,7 +39,7 @@ Enforcer ENF-4R,370
 Centurion CN9-AL,210
 Griffin GRF-1S,250
 Whitworth WTH-1S,10
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Trebuchet TBT-7K,10
 Phoenix Hawk PXH-1K,70
 Shadow Hawk SHD-2K,50

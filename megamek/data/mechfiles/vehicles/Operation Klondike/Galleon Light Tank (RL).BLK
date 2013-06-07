@@ -13,7 +13,7 @@ Tank
 Galleon Light Tank
 </Name>
 <Model>
-(RL)
+GAL-200(RL)
 </Model>
 <Tonnage>
 30
@@ -47,7 +47,7 @@ ISMG Ammo (100)
 IS Level 4
 </type>
 <year>
-2812
+2801
 </year>
 <internal_type>
 0

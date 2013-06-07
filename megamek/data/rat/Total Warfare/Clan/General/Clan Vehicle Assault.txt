@@ -9,6 +9,6 @@ Morrigu Fire Support Vehicle,5
 Alacorn Heavy Tank Mk IV,4
 Morrigu Fire Support Vehicle,3
 Heimdall Ground Monitor Tank Prime,2
-Puma Assault Tank PMA-005,1
+Puma Assault Tank PAT-005,1
 #Edited by Harold "BATTLEMASTER" N.
 #3/2/2011

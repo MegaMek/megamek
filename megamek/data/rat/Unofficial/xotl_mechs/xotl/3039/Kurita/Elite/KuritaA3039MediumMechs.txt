@@ -37,7 +37,7 @@ Cicada CDA-2A,20
 Assassin ASN-21,18
 Sentinel STN-3M,35
 Vulcan VL-5T,5
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Whitworth WTH-1,50
 Trebuchet TBT-5S,5
 Trebuchet TBT-7K,5

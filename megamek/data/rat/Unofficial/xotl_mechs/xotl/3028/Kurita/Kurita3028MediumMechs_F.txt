@@ -32,7 +32,7 @@
 #############################################################################
 Kurita3028MediumMechs_F
 Whitworth WTH-1S,60
-Hermes III HER-4K,120
+Hermes II HER-4K "Hermes III",120
 Trebuchet TBT-7K,60
 Phoenix Hawk PXH-1K,610
 Shadow Hawk SHD-2K,430

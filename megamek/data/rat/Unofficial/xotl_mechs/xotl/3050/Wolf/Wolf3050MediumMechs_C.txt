@@ -34,7 +34,7 @@ Wolf3050MediumMechs_C
 Shadow Hawk SHD-2D,30
 Phoenix Hawk PXH-1D,20
 Kintaro KTO-18,10
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Phoenix Hawk PXH-1K,30
 Shadow Hawk SHD-2K,20
 Wolverine WVR-6K,10

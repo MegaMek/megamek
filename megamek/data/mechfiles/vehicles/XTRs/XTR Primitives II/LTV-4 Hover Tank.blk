@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Hover Tank
+LTV-4 Hover Tank
 </Name>
 
 <Model>
-LTV-4
+(Standard)
 </Model>
 
 <year>

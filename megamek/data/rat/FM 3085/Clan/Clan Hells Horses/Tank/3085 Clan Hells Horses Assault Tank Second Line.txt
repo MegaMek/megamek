@@ -1,8 +1,8 @@
 3085 Clan Hell's Horses Assault Tank Second Line
-Puma Assault Tank PMA-005,1
+Puma Assault Tank PAT-005,1
 Fury Command Tank (Royal),2
 Rhino Fire Support Tank,3
-Aithon Assault Transport,4
+Aithon Assault Transport (Standard),4
 Carnivore Assault Tank (Second Line),5
 Mars Assault Vehicle,6
 Demolisher Heavy Tank (Clan),5

@@ -1,24 +1,25 @@
-Version:1.0
+Version:1.1
 Archangel
 C-ANG-O (Berith)
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3072
-Rules Level:3
+Rules Level:4
 
 Mass:100
-Engine:300 Compact Engine
+Engine:300 Compact Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
-Gyro:Compact Gyro
 Cockpit:Small Cockpit
+Gyro:Compact Gyro
 
 Heat Sinks:19 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -31,50 +32,48 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:16
 
-Weapons:7
-1 ISHeavyPPC, Right Arm
-1 ISHeavyPPCCapacitor, Right Arm
-2 ISLightPPC, Left Arm
-2 ISLightPPCCapacitor, Left Arm
-1 ISImprovedC3CPU, Center Torso
-1 ISMediumVSPLaser, Center Torso
-1 ISSNPPC, Head
+Weapons:5
+Light PPC, Left Arm
+Light PPC, Left Arm
+Heavy PPC, Right Arm
+Medium VSP Laser, Center Torso
+Snub-Nose PPC, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLightPPC
-ISLightPPC
-ISLightPPCCapacitor
-ISLightPPC
-ISLightPPC
-ISLightPPCCapacitor
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+PPC Capacitor
+Light PPC
+Light PPC
+PPC Capacitor
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPCCapacitor
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+PPC Capacitor
 -Empty-
 -Empty-
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Endo Steel
 Endo Steel
 Endo Steel
@@ -83,12 +82,12 @@ Endo Steel
 -Empty-
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Endo Steel
 Endo Steel
 Endo Steel
@@ -102,13 +101,13 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISImprovedC3CPU
-ISImprovedC3CPU
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISC3iUnit
+ISC3iUnit
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMediumVariableSpeedLaser
+ISMediumVariableSpeedLaser
 
 Head:
 Life Support
@@ -151,3 +150,5 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+

@@ -42,30 +42,13 @@ ISSmallLaser
 </Turret Equipment>
 
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 Advanced Fire Control
 ISOffRoad
 </Body Equipment>
+
+<transporters>
+cargobay:21:1
+</transporters>
 
 <type>
 IS Level 2

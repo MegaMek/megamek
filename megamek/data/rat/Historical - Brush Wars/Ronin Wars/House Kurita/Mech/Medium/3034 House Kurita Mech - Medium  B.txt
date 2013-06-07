@@ -9,4 +9,4 @@ Wolverine WVR-6R,5
 Trebuchet TBT-5N,4
 Whitworth WTH-1,3
 Hunchback HBK-4P,2
-Hermes III HER-4K,1
+Hermes II HER-4K "Hermes III",1

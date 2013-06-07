@@ -13,7 +13,7 @@ Tank
 </UnitType>
 
 <Name>
-Hunter
+Hunter Light Support Tank
 </Name>
 
 <Model>
@@ -21,7 +21,7 @@ Amphibious
 </Model>
 
 <year>
-3089
+3085
 </year>
 
 <type>

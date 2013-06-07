@@ -5,7 +5,7 @@ Oro Heavy Tank,3
 Nuberu Anti Aircraft Tank 2 "Numantia",4
 Po Heavy Tank,5
 Oro Heavy Tank (HAG),6
-Nuberu Anti Aircraft Tank,5
+Nuberu Anti Aircraft Tank (Standard),5
 Rommel Tank,4
 Oro Heavy Tank (HAG),3
 Oro Heavy Tank,2

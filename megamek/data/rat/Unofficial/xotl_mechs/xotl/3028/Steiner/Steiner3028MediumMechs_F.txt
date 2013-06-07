@@ -38,7 +38,7 @@ Hatchetman HCT-3F,230
 Enforcer ENF-4R,170
 Centurion CN9-AL,170
 Griffin GRF-1S,380
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Phoenix Hawk PXH-1K,50
 Shadow Hawk SHD-2K,30
 Wolverine WVR-6K,20

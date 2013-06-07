@@ -9,4 +9,4 @@ Dragonfly (Viper) Prime,5
 Dragonfly (Viper) Prime,4
 Ryoken (Stormcrow) Prime,3
 Ryoken (Stormcrow) Prime,2
-Black Hawk (Standard),1
+Black Hawk,1

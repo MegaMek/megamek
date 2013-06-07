@@ -13,15 +13,15 @@ Tank
 </blockversion>
 
 <Name>
-K-27 Ordnance Transport
+J-27 Ordnance Transport
 </Name>
 
 <Model>
-"Killjoy"
+K-27 "Killjoy"
 </Model>
 
 <year>
-3060
+2847
 </year>
 
 <source>
@@ -29,7 +29,7 @@ Succession Wars
 </source>
 
 <type>
-IS Level 1
+IS Level 3
 </type>
 
 <tonnage>

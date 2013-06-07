@@ -9,4 +9,4 @@ Chaparral Missile Artillery Tank,5
 Demon Tank,4
 Fury Command Tank (Royal),3
 Kanga Medium Hovertank,2
-Puma Assault Tank PMA-005,1
+Puma Assault Tank PAT-005,1

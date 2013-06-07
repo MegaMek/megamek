@@ -9,4 +9,4 @@ Panther PNT-9R,6
 Mercury MCY-99,5
 Firefly FFL-4A,4
 Mongoose MON-66,3
-Jackrabbit JKR-9R,2
+Jackrabbit JKR-9R "Joker",2

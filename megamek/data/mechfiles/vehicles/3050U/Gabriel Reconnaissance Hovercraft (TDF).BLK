@@ -17,15 +17,15 @@ Gabriel Reconnaissance Hovercraft
 </Name>
 
 <Model>
-
+(TDF)
 </Model>
 
 <year>
-2712
+3065
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -45,7 +45,7 @@ Hover
 </armor_type>
 
 <armor_tech>
--1
+5
 </armor_tech>
 
 <armor>
@@ -72,7 +72,8 @@ Hover
 </Rear Equipment>
 
 <Turret Equipment>
-Medium Laser
+RL10
+RL10
 </Turret Equipment>
 
 <tonnage>

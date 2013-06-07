@@ -21,11 +21,11 @@ V7
 </Model>
 
 <year>
-3090
+3085
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -45,7 +45,7 @@ Tracked
 </armor_type>
 
 <armor_tech>
-7
+5
 </armor_tech>
 
 <armor>

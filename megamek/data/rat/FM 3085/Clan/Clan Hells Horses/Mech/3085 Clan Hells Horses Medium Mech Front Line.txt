@@ -1,11 +1,11 @@
 3085 Clan Hell's Horses Medium Mech Front Line
 Ursus 2,1
-Black Hawk (Standard),2
+Black Hawk,2
 Phantom Prime,3
 Fenris (Ice Ferret) Prime,4
-Black Hawk (Standard),5
-Black Hawk (Standard),6
-Black Hawk (Standard),5
+Black Hawk,5
+Black Hawk,6
+Black Hawk,5
 Ryoken (Stormcrow) Prime,4
 Grendel (Mongrel) Prime,3
 Dragonfly (Viper) Prime,2

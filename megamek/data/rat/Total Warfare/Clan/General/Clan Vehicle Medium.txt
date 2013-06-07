@@ -2,7 +2,7 @@ Clan Vehicle Medium
 Epona Pursuit Tank C,1
 Hachiman Fire Support Tank 'Huey',2
 Ku Wheeled Assault Tank,3
-Ares Medium Tank (Standard),4
+Ares Medium Tank,4
 Enyo Strike Tank,5
 Epona Pursuit Tank Prime,6
 Tyr Infantry Support Tank,5

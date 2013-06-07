@@ -3,7 +3,7 @@ Chaparral Missile Artillery Tank,1
 Zephyr Hovertank,2
 Thor Artillery Vehicle (Clan),3
 Epona Pursuit Tank Prime,4
-Enyo ER Pulse,5
+Enyo Strike Tank ER Pulse,5
 Bellona Hover Tank (Laser),6
 Bellona Hover Tank,5
 Garuda Heavy VTOL,4

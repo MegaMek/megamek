@@ -25,18 +25,17 @@ Flatbed Truck
 2
 </Armor>
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 </Body Equipment>
+
+<transporters>
+cargobay:6:1
+</transporters>
+
 <type>
 IS Level 1
 </type>
 <year>
-3025
+2580
 </year>
 <internal_type>
 0

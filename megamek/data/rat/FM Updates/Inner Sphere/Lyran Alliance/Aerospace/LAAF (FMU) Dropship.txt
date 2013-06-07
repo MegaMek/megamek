@@ -1,5 +1,5 @@
 LAAF Military Dropship 3067 (FMU)
-Claymore,1
+Claymore Standard,1
 Avenger (3048),2
 Excalibur (3056),3
 Hercules,4
@@ -8,5 +8,5 @@ Union (3055),6
 Leopard (3054),5
 Overlord (3056),4
 Intruder (3056),3
-Union X,2
+Union-X (3065),2
 Fortress (3058),1

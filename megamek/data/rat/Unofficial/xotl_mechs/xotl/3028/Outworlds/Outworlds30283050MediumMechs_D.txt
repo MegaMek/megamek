@@ -44,7 +44,7 @@ Clint CLNT-2-3T,70
 Vulcan VL-5T,140
 Centurion CN9-A,60
 Blackjack BJ-1,550
-Hermes III HER-4K,10
+Hermes II HER-4K "Hermes III",10
 Whitworth WTH-1,110
 Trebuchet TBT-5S,70
 Wyvern WVE-6N,80

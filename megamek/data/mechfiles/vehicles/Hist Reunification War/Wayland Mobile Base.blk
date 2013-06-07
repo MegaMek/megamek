@@ -13,11 +13,11 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-Wayland
+Wayland Mobile Base
 </Name>
 
 <Model>
-Mobile Base
+
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ Mobile Base
 </year>
 
 <type>
-IS Level 5
+IS Level 2
 </type>
 
 <motion_type>

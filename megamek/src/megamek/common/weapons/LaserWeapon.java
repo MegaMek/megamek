@@ -36,8 +36,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     public LaserWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BA_WEAPON).or(F_LASER).or(F_DIRECT_FIRE);
+        flags = flags.or(F_BA_WEAPON).or(F_LASER).or(F_DIRECT_FIRE);
         ammoType = AmmoType.T_NA;
 
         atClass = CLASS_LASER;
@@ -45,7 +44,7 @@ public abstract class LaserWeapon extends EnergyWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,

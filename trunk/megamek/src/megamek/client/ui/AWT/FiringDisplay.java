@@ -66,6 +66,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
@@ -1750,7 +1751,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 mask[Tank.LOC_BODY] = false;
                 Tank tank = (Tank) target;
                 if (tank.hasNoTurret()) {
-                    mask[(target instanceof LargeSupportTank) ? LargeSupportTank.LOC_TURRET : Tank.LOC_TURRET] = false;
+                    int turretLoc = Tank.LOC_TURRET;
+                    if (target instanceof LargeSupportTank) {
+                        turretLoc = LargeSupportTank.LOC_TURRET;
+                    }
+                    if (target instanceof VTOL) {
+                        turretLoc = VTOL.LOC_TURRET;
+                    }
+                    mask[turretLoc] = false;
                 }
                 // remove non-visible sides
                 if (target instanceof LargeSupportTank) {

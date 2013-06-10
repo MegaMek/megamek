@@ -84,7 +84,9 @@ public class MechSummary implements Serializable {
             return "Infantry";
         } else if (e instanceof VTOL) { // for now
             return "VTOL";
-        } else if ((mm == EntityMovementMode.NAVAL) || (mm == EntityMovementMode.HYDROFOIL) || (mm == EntityMovementMode.SUBMARINE)) {
+        } else if ((mm == EntityMovementMode.NAVAL)
+                || (mm == EntityMovementMode.HYDROFOIL)
+                || (mm == EntityMovementMode.SUBMARINE)) {
             return "Naval";
         } else if (e instanceof GunEmplacement) {
             return "Gun Emplacement";
@@ -145,7 +147,7 @@ public class MechSummary implements Serializable {
     public long getUnloadedCost() {
         return (m_nUnloadedCost);
     }
-    
+
     public long getAlternateCost() {
         return (m_aCost);
     }
@@ -201,7 +203,7 @@ public class MechSummary implements Serializable {
     public void setUnloadedCost(long m_nCost) {
         m_nUnloadedCost = m_nCost;
     }
-    
+
     public void setAlternateCost(long m_aCost) {
         this.m_aCost = m_aCost;
     }
@@ -256,5 +258,21 @@ public class MechSummary implements Serializable {
 
     public void setJumpMp(int jumpMp) {
         this.jumpMp = jumpMp;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof MechSummary)) {
+            return false;
+        }
+        MechSummary msOther = (MechSummary) other;
+        // we match on chassis + model + unittype + sourcefile
+        if (msOther.getChassis().equals(getChassis())
+                && msOther.getModel().equals(getChassis())
+                && msOther.getUnitType().equals(getUnitType())
+                && msOther.getSourceFile().equals(getSourceFile())) {
+            return true;
+        }
+        return false;
     }
 }

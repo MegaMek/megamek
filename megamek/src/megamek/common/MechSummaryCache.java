@@ -45,7 +45,7 @@ import megamek.common.verifier.TestTank;
 /**
  * Cache of the Mech summary information. Implemented as Singleton so a client
  * and server running in the same process can share it
- * 
+ *
  * @author Arlith
  * @author Others...
  */
@@ -106,7 +106,7 @@ public class MechSummaryCache {
      * Get the directory for the unit cache file.<br />
      * TODO: Move this path so that the file loader doesn't need to explicitly
      * exclude it!!!
-     * 
+     *
      * @deprecated Inserted as a hack; the path should be passed-in from the
      *             application during initialisation.
      * @return The path to the directory containing the unit cache.
@@ -381,7 +381,7 @@ public class MechSummaryCache {
     /**
      * Loading a complete mech object for each summary is a bear and should be
      * changed, but it lets me use the existing parsers
-     * 
+     *
      * @param vMechs
      * @param sKnownFiles
      * @param lLastCheck
@@ -455,6 +455,11 @@ public class MechSummaryCache {
                     MechFileParser mfp = new MechFileParser(f);
                     Entity e = mfp.getEntity();
                     MechSummary ms = getSummary(e, f, null);
+                    // if this is unit's MechSummary is already known,
+                    // remove it first, so we don't get duplicates
+                    if (sKnownFiles.contains(f.toString())) {
+                        vMechs.removeElement(ms);
+                    }
                     vMechs.addElement(ms);
                     sKnownFiles.add(f.toString());
                     bNeedsUpdate = true;

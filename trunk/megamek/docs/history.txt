@@ -95,6 +95,7 @@ v0.35.39-dev (SVN)
 + Bug: Tech Level fixes to Medium and Light Rifles.
 + Bug: Aimed shots at VTOLs allowed aiming at an unarmored phantom "turret" but not the rotor.
 + Bug 3759: NPE going from damage resolution to physicals
++ Bug 3757: units.cache not properly synched 
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

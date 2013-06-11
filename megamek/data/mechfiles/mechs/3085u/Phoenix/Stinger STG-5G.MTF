@@ -6,7 +6,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3076
 Source:Jihad
-Rules Level:3
+Rules Level:4
 
 Mass:20
 Engine:140 XL Engine(IS)
@@ -147,3 +147,4 @@ Endo Steel
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\stinger STG-6L.jpg
+

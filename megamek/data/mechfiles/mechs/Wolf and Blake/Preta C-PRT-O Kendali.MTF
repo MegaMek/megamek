@@ -1,23 +1,25 @@
-Version:1.0
+Version:1.1
 Preta
 C-PRT-O Kendali
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3071
-Rules Level:3
+Rules Level:4
 
 Mass:45
-Engine:270 Light Engine
+Engine:270 Light Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:8
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:13
 RA Armor:13
 LT Armor:16
@@ -30,12 +32,10 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:7
 
-Weapons:5
-1 ISLightPPC, Right Arm
-1 ISLightPPCCapacitor, Right Arm
-1 ISImprovedC3CPU, Center Torso
-1 ISSmallVSPLaser, Head
-1 ISTAG, Head
+Weapons:3
+Light PPC, Right Arm
+Small VSP Laser, Head
+TAG, Head
 
 Left Arm:
 Shoulder
@@ -54,9 +54,9 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLightPPC
-ISLightPPC
-ISLightPPCCapacitor
+Light PPC
+Light PPC
+PPC Capacitor
 Endo Steel
 Endo Steel
 Endo Steel
@@ -68,28 +68,28 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 Endo Steel
 Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 Endo Steel
 Endo Steel
 
@@ -104,15 +104,15 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISImprovedC3CPU
-ISImprovedC3CPU
+ISC3iUnit
+ISC3iUnit
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISSmallVSPLaser
+ISSmallVariableSpeedLaser
 ISTAG
 -Empty-
 -Empty-
@@ -148,3 +148,5 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+

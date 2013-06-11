@@ -9,15 +9,23 @@ MAM0
 <UnitType>
 Warship
 </UnitType>
+
 <Name>
 Feng Huang Cruiser
 </Name>
+
+<model>
+(Upgraded)
+</model>
+
 <Tonnage>
 970000
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 310
 293
@@ -42,6 +50,8 @@ ISERPPC
 NL35
 NL35
 </Nose Equipment>
+
+
 <Front Left Side Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -50,11 +60,17 @@ ISLargePulseLaser
 ISERPPC
 ISERPPC
 NL35
+NL35
+NL45
 NL45
 NL55
+NL55
+LightNPPC
 LightNPPC
 MediumNPPC
+MediumNPPC
 </Front Left Side Equipment>
+
 <Front Right Side Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -63,11 +79,17 @@ ISLargePulseLaser
 ISERPPC
 ISERPPC
 NL35
+NL35
+NL45
 NL45
 NL55
+NL55
+LightNPPC
 LightNPPC
 MediumNPPC
+MediumNPPC
 </Front Right Side Equipment>
+
 <Left Broadside Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -76,8 +98,12 @@ ISLargePulseLaser
 ISERPPC
 ISERPPC
 NL35
+NL35
 NL45
 NL45
+NL45
+NL45
+NL55
 NL55
 LightNPPC
 LightNPPC
@@ -85,6 +111,7 @@ MediumNPPC
 HeavyNPPC
 HeavyNPPC
 </Left Broadside Equipment>
+
 <Right Broadside Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -93,8 +120,12 @@ ISLargePulseLaser
 ISERPPC
 ISERPPC
 NL35
+NL35
 NL45
 NL45
+NL45
+NL45
+NL55
 NL55
 LightNPPC
 LightNPPC
@@ -102,6 +133,7 @@ MediumNPPC
 HeavyNPPC
 HeavyNPPC
 </Right Broadside Equipment>
+
 <Aft Left Side Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -110,11 +142,17 @@ ISLargePulseLaser
 ISERPPC
 ISERPPC
 NL35
+NL35
+NL45
 NL45
 NL55
+NL55
+LightNPPC
 LightNPPC
 MediumNPPC
+MediumNPPC
 </Aft Left Side Equipment>
+
 <Aft Right Side Equipment> 
 ISERLargeLaser
 ISERLargeLaser
@@ -123,11 +161,17 @@ ISLargePulseLaser
 ISERPPC
 ISERPPC
 NL35
+NL35
+NL45
 NL45
 NL55
+NL55
+LightNPPC
 LightNPPC
 MediumNPPC
+MediumNPPC
 </Aft Right Side Equipment>
+
 <Aft Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -144,6 +188,7 @@ ISERPPC
 NL35
 NL35
 </Aft Equipment>
+
 <structural_integrity>
 90
 </structural_integrity>
@@ -160,7 +205,7 @@ NL35
 IS Level 3
 </type>
 <year>
-3058
+3070
 </year>
 <internal_type>
 0
@@ -171,13 +216,18 @@ IS Level 3
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
-ASFBay:26:6
-CargoBay:107233:16
+ASFBay:123:7
+CargoBay:19443:4
+SmallCraftBay:26:6
+CargoBat:20196:4
 </transporters>
+
 <docking_collar>
 6
 </docking_collar>
@@ -185,10 +235,10 @@ CargoBay:107233:16
 2
 </grav_deck>
 <escape_pod>
-24
+110
 </escape_pod>
 <life_boat>
-24
+110
 </life_boat>
 <crew>
 1240

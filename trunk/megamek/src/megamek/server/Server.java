@@ -11245,6 +11245,7 @@ public class Server implements Runnable {
             Entity ent = e.nextElement();
             if (ent.isDeployed() && ent.hasGhostTargets(false)) {
                 r = new Report(3630);
+                r.subject = ent.getId();
                 r.addDesc(ent);
                 int target = ent.getCrew().getPiloting() + 2;
                 int roll = ent.getGhostTargetRoll();
@@ -21904,7 +21905,7 @@ public class Server implements Runnable {
      * of the exported public API, it simply relies on its client code to only
      * ever hand it a valid airborne vehicle and does not run any further checks
      * of its own.
-     * 
+     *
      * @param en
      * The {@code VTOL} or {@WiGE} in question.
      * @return The resulting {@code Vector} of {@code Report}s.
@@ -21959,7 +21960,7 @@ public class Server implements Runnable {
         }
         return vDesc;
     }
-    
+
     /**
      * Crash a VTOL
      *
@@ -21971,9 +21972,9 @@ public class Server implements Runnable {
         return crashVTOLorWiGE(en, false, false, 0, en.getPosition(),
                 en.getElevation(), 0);
     }
-    
+
     /** Crash a VTOL or WiGE.
-     * 
+     *
      * @param en
      * The {@code VTOL} or {@code WiGE} to crash.
      * @param rerollRotorHits
@@ -21985,7 +21986,7 @@ public class Server implements Runnable {
         return crashVTOLorWiGE(en, rerollRotorHits, false, 0, en.getPosition(),
                 en.getElevation(), 0);
     }
-    
+
     /**
      * Crash a VTOL or WiGE.
      *
@@ -22008,7 +22009,7 @@ public class Server implements Runnable {
      * falls
      * @return a <code>Vector<Report></code> of Reports.
      */
-    
+
     private Vector<Report> crashVTOLorWiGE(Tank en, boolean rerollRotorHits,
             boolean sideSlipCrash, int hexesMoved, Coords crashPos,
             int crashElevation, int impactSide) {
@@ -22133,7 +22134,7 @@ public class Server implements Runnable {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
-                if (en instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR
+                if ((en instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
                         && rerollRotorHits) {
                     continue;
                 }

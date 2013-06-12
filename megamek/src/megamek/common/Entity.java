@@ -4692,7 +4692,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns whether there is CASE protecting the location.
+     * Returns whether there is CASE anywhere on this {@code Entity}.
      */
     public boolean hasCase() {
         // Clan Mechs always have CASE!

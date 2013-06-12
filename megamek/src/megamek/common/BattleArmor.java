@@ -785,7 +785,11 @@ public class BattleArmor extends Infantry {
             // ECM adds 1
             for (Mounted mounted : getMisc()) {
                 if (mounted.getType().hasFlag(MiscType.F_ECM)) {
-                    dBV += 1;
+                    if (mounted.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                        dBV += 2;
+                    } else {
+                        dBV += 1;
+                    }
                     break;
                 }
             }

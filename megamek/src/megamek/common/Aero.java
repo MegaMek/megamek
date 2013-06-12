@@ -1210,7 +1210,7 @@ public class Aero extends Entity {
                 bvText.append(startColumn);
                 bvText.append(endColumn);
                 bvText.append(endRow);
-            } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
+            } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP) || etype.hasFlag(MiscType.F_CHAFF_POD))) {
                 defEqBV += etype.getBV(this);
                 bvText.append(startRow);
                 bvText.append(startColumn);
@@ -1328,10 +1328,10 @@ public class Aero extends Entity {
                     continue;
                 }
             }
-            
+
             // PPC capacitor does not count separately, it's already counted for
             // with the PPC
-            if (etype instanceof MiscType && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
+            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 continue;
             }
 
@@ -1718,7 +1718,7 @@ public class Aero extends Entity {
             } else if ((this instanceof FixedWingSupport) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
                 dBV *= targetingSystemBVMod;
             }
-            
+
             // half for being rear mounted (or front mounted, when more rear-
             // than front-mounted un-modded BV
             if (((mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && halveRear) || (!(mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && !halveRear)) {
@@ -1944,7 +1944,7 @@ public class Aero extends Entity {
                 continue;
             }
 
-            if (mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP)) {
+            if (mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_CHAFF_POD)) {
                 continue;
             }
             double bv = mtype.getBV(this);

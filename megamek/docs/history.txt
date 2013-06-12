@@ -99,6 +99,7 @@ v0.35.39-dev (SVN)
 + Bug: TacOps ammo explosions ignore vehicle CASE.
 + Bug: Broken C3i network display in Swing chat lounge (missing message string for free slot count).
 + Data: CASE mounted in rear rather than body on Thor Artillery Vehicle (C3i); fixed.
++ Bug: misc BV fixes
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

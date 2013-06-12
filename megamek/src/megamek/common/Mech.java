@@ -29,6 +29,9 @@ import java.util.Vector;
 import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.ACWeapon;
+import megamek.common.weapons.CLImprovedHeavyLargeLaser;
+import megamek.common.weapons.CLImprovedHeavyMediumLaser;
+import megamek.common.weapons.CLImprovedHeavySmallLaser;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.HVACWeapon;
@@ -2739,8 +2742,8 @@ public abstract class Mech extends Entity {
                 && ((mounted.getType() instanceof GaussWeapon)
                         || (mounted.getType() instanceof ACWeapon)
                         || (mounted.getType() instanceof UACWeapon)
-                        || (mounted.getType() instanceof LBXACWeapon)
-                        || (mounted.getType() instanceof PPCWeapon))) {
+                        || (mounted.getType() instanceof LBXACWeapon) || (mounted
+                            .getType() instanceof PPCWeapon))) {
             if (hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)) {
                 setCritical(loc, 2, null);
             }
@@ -3112,9 +3115,11 @@ public abstract class Mech extends Entity {
                     continue;
                 }
             } else {
-                if (((loc == LOC_LARM) || (loc == LOC_LLEG)) && (hasCASEII(LOC_LT))) {
+                if (((loc == LOC_LARM) || (loc == LOC_LLEG))
+                        && (hasCASEII(LOC_LT))) {
                     continue;
-                } else if (((loc == LOC_RARM) || (loc == LOC_RLEG)) && (hasCASEII(LOC_RT))) {
+                } else if (((loc == LOC_RARM) || (loc == LOC_RLEG))
+                        && (hasCASEII(LOC_RT))) {
                     continue;
                 }
                 // inner sphere with XL or XXL counts everywhere
@@ -3134,12 +3139,13 @@ public abstract class Mech extends Entity {
                 }
             }
 
-            // gauss rifles only subtract 1 point per slot, same for HVACs
-            if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)) {
-                toSubtract = 1;
-            }
-            // tasers also get only 1 point per slot
-            if (etype instanceof ISMekTaser) {
+            // gauss rifles only subtract 1 point per slot, same for HVACs and
+            // iHeavy Lasers and mektasers
+            if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)
+                    || (etype instanceof CLImprovedHeavyLargeLaser)
+                    || (etype instanceof CLImprovedHeavyMediumLaser)
+                    || (etype instanceof CLImprovedHeavySmallLaser)
+                    || (etype instanceof ISMekTaser)) {
                 toSubtract = 1;
             }
             if ((etype instanceof MiscType)
@@ -3528,7 +3534,8 @@ public abstract class Mech extends Entity {
         ArrayList<Mounted> weapons = getWeaponList();
         for (Mounted weapon : weapons) {
             WeaponType wtype = (WeaponType) weapon.getType();
-            if (wtype.hasFlag(WeaponType.F_B_POD)) {
+            if (wtype.hasFlag(WeaponType.F_B_POD)
+                    || wtype.hasFlag(WeaponType.F_M_POD)) {
                 continue;
             }
             double dBV = wtype.getBV(this);
@@ -4626,7 +4633,7 @@ public abstract class Mech extends Entity {
             if (getJumpType() == Mech.JUMP_BOOSTER) {
                 jumpBaseCost = 150;
                 costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight
-                * jumpBaseCost;
+                        * jumpBaseCost;
             }
         } else {
             if (getJumpType() == Mech.JUMP_BOOSTER) {
@@ -5393,15 +5400,13 @@ public abstract class Mech extends Entity {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mech.LOC_LARM) ||
-                        (location == Mech.LOC_LT) ||
-                        (location == Mech.LOC_LLEG))) {
+                    && ((location == Mech.LOC_LARM)
+                            || (location == Mech.LOC_LT) || (location == Mech.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mech.LOC_RARM) ||
-                        (location == Mech.LOC_RT) ||
-                        (location == Mech.LOC_RLEG))) {
+                    && ((location == Mech.LOC_RARM)
+                            || (location == Mech.LOC_RT) || (location == Mech.LOC_RLEG))) {
                 return true;
             }
         } else {
@@ -5414,15 +5419,13 @@ public abstract class Mech extends Entity {
                 return true;
             }
             if (((cover & LosEffects.COVER_LEFT) != 0)
-                    && ((location == Mech.LOC_LARM) ||
-                            (location == Mech.LOC_LT) ||
-                            (location == Mech.LOC_LLEG))) {
+                    && ((location == Mech.LOC_LARM)
+                            || (location == Mech.LOC_LT) || (location == Mech.LOC_LLEG))) {
                 return true;
             }
             if (((cover & LosEffects.COVER_RIGHT) != 0)
-                    && ((location == Mech.LOC_LARM) ||
-                            (location == Mech.LOC_LT) ||
-                            (location == Mech.LOC_LLEG))) {
+                    && ((location == Mech.LOC_LARM)
+                            || (location == Mech.LOC_LT) || (location == Mech.LOC_LLEG))) {
                 return true;
             }
         }
@@ -7539,10 +7542,10 @@ public abstract class Mech extends Entity {
             // If the cockpit isn't torso-mounted, we're done; if it is, we
             // need to look at the CT sensor slot as well.
             if ((getCockpitType() != COCKPIT_TORSO_MOUNTED)
-                || (getHitCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS,
-                    LOC_CT) > 0)) {
+                    || (getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                            SYSTEM_SENSORS, LOC_CT) > 0)) {
                 System.out.println(getDisplayName()
-                    + " CRIPPLED: Sensors destroyed.");
+                        + " CRIPPLED: Sensors destroyed.");
                 return true;
             }
         }
@@ -7619,7 +7622,7 @@ public abstract class Mech extends Entity {
         // modular armor since they're reasonably permanent but ignoring heat
         // effects -- have dropped to 0, we're stuck even if we still have
         // jump jets because we can't get up anymore to *use* them.
-        if (getWalkMP(true, true, false) <= 0 && isProne()) {
+        if ((getWalkMP(true, true, false) <= 0) && isProne()) {
             return true;
         }
         // Gyro destroyed? TW p. 258 at least heavily implies that that counts
@@ -7631,7 +7634,7 @@ public abstract class Mech extends Entity {
         }
         return false;
     }
-    
+
     @Override
     public boolean isDmgHeavy() {
         if (((double) getArmor(LOC_HEAD) / getOArmor(LOC_HEAD)) <= 0.33) {

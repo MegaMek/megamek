@@ -64,6 +64,7 @@ Wheeled
 ISThumperAmmo
 ISThumperAmmo
 ISC3iUnit
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -77,7 +78,6 @@ ISThumper
 </Left Equipment>
 
 <Rear Equipment>
-ISCASE
 </Rear Equipment>
 
 <Turret Equipment>

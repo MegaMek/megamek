@@ -19645,8 +19645,15 @@ public class Server implements Runnable {
         // destroyed the unit
         if (ammoExplosion
                 && game.getOptions().booleanOption("tacops_ammunition")
+                // For 'Mechs we care whether there was CASE specifically in the
+                // location that went boom...
                 && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit
-                        .getLocation())) && (te.isDestroyed() || te.isDoomed())
+                        .getLocation()))
+                // ...but vehicles and ASFs just have one CASE item for the
+                // whole unit, so we need to look whether there's CASE anywhere
+                // at all.
+                && !((te instanceof Tank || te instanceof Aero) && te.hasCase())
+                && (te.isDestroyed() || te.isDoomed())
                 && (damage_orig > 0) && ((damage_orig / 10) > 0)) {
             Report.addNewline(vDesc);
             r = new Report(5068, Report.PUBLIC);

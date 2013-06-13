@@ -3,7 +3,7 @@
 <!-- To see userlevel commands and their descpription type 'ant -projecthelp' -->
 <!-- from a command prompt where this file is located -->
 
-<project default="all" name="MegaMek" basedir=".">
+<project default="compile" name="MegaMek" basedir=".">
 	<!-- Global properties for this build -->
 
 	<property name="srcdir" value="src" />
@@ -54,7 +54,8 @@
 
 	<target name="compile" depends="init" description="Compile java sources into class files">
 		<!-- compile -->
-		<javac debug="true" debuglevel="lines,source" target="1.6" source="1.6" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+		<javac includeantruntime="false" debug="true" debuglevel="lines,source" target="1.6" source="1.6" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+			<compilerarg line="-Xlint:all -Xmaxwarns 0"/>
 			<classpath>
 				<pathelement location="${basedir}" />
 				<fileset dir="${libdir}" includes="*.jar" />
@@ -139,7 +140,4 @@
 			</fileset>
 		</delete>
 	</target>
-
-	<target depends="clean, compile, jar" name="all" />
-
 </project>

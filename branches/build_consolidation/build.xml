@@ -55,7 +55,7 @@
 	<target name="compile" depends="init" description="Compile java sources into class files">
 		<!-- compile -->
 		<javac includeantruntime="false" debug="true" debuglevel="lines,source" target="1.6" source="1.6" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
-			<compilerarg line="-Xlint:all -Xmaxwarns 0"/>
+			<compilerarg line="-Xlint:all -Xmaxwarns 10000" />
 			<classpath>
 				<pathelement location="${basedir}" />
 				<fileset dir="${libdir}" includes="*.jar" />

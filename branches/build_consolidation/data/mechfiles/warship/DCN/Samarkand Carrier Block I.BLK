@@ -1,0 +1,196 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Samarkand Carrier
+</Name>
+<Model>
+Block I
+</Model>
+<Tonnage>
+350000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+48
+38
+38
+38
+38
+40
+</Armor>
+<Nose Equipment>
+MediumNPPC
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:54
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Nose Equipment>
+<Front Left Side Equipment>
+NAC10
+NAC10 Ammo:20
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10 Ammo:72
+ISSRM4
+ISSRM4
+ISSRM4
+ISSRM4 Ammo:50
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+NAC10
+NAC10 Ammo:20
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10 Ammo:72
+ISSRM4
+ISSRM4
+ISSRM4
+ISSRM4 Ammo:50
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+LightNPPC
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:100
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+LightNPPC
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:100
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL35
+NL35
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:100
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+NL35
+NL35
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:100
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NL45
+NL45
+ISMediumLaser
+ISMediumLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:100
+</Aft Equipment>
+<structural_integrity>
+71
+</structural_integrity>
+<heatsinks>
+950
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+6562
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2579
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:36:4
+ASFBay:36:3
+SmallCraftBay:12:1
+CargoBay:46757:6
+</transporters>
+<docking_collar>
+3
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+25
+</escape_pod>
+<life_boat>
+0
+</life_boat>
+<crew>
+414
+</crew>
+<passengers>
+0
+</passengers>

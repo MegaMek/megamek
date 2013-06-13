@@ -1,0 +1,190 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Transit
+
+</Name>
+
+
+
+<Model>
+
+TR-10
+
+</Model>
+
+
+
+<Tonnage>
+
+50
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+
+
+<Armor>
+
+65
+
+35
+
+35
+
+33
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+Autocannon/20
+
+Medium Laser
+
+Medium Laser
+
+IS Ammo AC/20
+
+IS Ammo AC/20
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Medium Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Medium Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+13
+
+</heatsinks>
+
+
+
+<sink_type>
+
+0
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 1
+
+</type>
+
+
+
+<year>
+
+2932
+
+</year>
+
+
+
+<source>
+
+Succession Wars
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+0
+
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

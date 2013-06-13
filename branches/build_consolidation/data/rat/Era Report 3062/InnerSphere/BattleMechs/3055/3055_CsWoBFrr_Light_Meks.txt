@@ -1,0 +1,23 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3055 CS_WoB_FRR Light Meks
+Hermes HER-1S,83
+Hermes HER-3S,139
+Hussar HSR-200-D,83
+Jackal JA-KL-1532,28
+Mercury MCY-97,222
+Mongoose MON-66,111
+Raptor RTX1-O,7
+Raptor RTX1-OA,7
+Raptor RTX1-OB,6
+Raptor RTX1-OC,6
+Raptor RTX1-OD,6
+Raptor RTX1-OE,6
+Raptor RTX1-OF,6
+Raptor RTX1-OG,6
+Raptor RTX1-OR,6
+Thorn THE-N,250
+Venom SDR-9K,28

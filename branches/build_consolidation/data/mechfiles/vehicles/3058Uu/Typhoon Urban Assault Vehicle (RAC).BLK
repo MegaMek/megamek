@@ -1,0 +1,71 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Typhoon Urban Assault Vehicle
+</Name>
+<Model>
+(RAC)
+</Model>
+<Tonnage>
+70
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+43
+40
+40
+32
+42
+</Armor>
+<Turret Equipment>
+ISRotaryAC5
+ISRotaryAC5
+ISERMediumLaser
+ISERMediumLaser
+ISStreakSRM2
+ISStreakSRM2
+</Turret Equipment>
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+ISBeagleActiveProbe
+</Front Equipment>
+<Body Equipment>
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISStreakSRM2 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3064
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Civil War
+</source>

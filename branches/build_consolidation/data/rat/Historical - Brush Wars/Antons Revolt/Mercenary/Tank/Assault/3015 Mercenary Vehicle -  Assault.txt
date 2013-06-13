@@ -1,0 +1,12 @@
+3015 Mercenary Vehicle -  Assault
+Behemoth Heavy Tank,1
+Behemoth Heavy Tank,2
+Schrek PPC Carrier,3
+Schrek PPC Carrier,4
+Demolisher Heavy Tank,5
+Demolisher Heavy Tank,6
+Demolisher Heavy Tank,5
+Ontos Heavy Tank,4
+Ontos Heavy Tank,3
+Partisan Heavy Tank,2
+Partisan Heavy Tank,1

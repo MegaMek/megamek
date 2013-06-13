@@ -1,0 +1,12 @@
+3085 Periphery General - Lesser States Light Mech F
+Crosscut LoggerMech ED-X2,1
+UrbanMech UM-R60,2
+Stinger STG-3R,3
+Firestarter FS9-H,4
+Commando COM-2D,5
+Locust LCT-1V,6
+Javelin JVN-10N,5
+Wasp WSP-1A,4
+Stinger STG-3P,3
+Flea FLE-19,2
+Stinger STG-5T,1

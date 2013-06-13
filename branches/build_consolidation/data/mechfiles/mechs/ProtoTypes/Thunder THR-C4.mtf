@@ -1,0 +1,131 @@
+Version:1.1
+Thunder
+THR-C4
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3083
+Rules Level:4
+
+Mass:70
+Engine:280 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:6
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:23
+RT Armor:23
+CT Armor:34
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:5
+1 ISERMediumLaser, Left Arm
+1 ISERMediumLaser, Left Arm
+1 ISERMediumLaser, Left Arm
+1 ISMediumXPulseLaser, Head
+1 ISThunderbolt20, Right Arm, Ammo:12
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISCASEII
+
+Left Torso:
+Engine
+Engine
+Engine
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+ISImprovedJump Jet
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumXPulseLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

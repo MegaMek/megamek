@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Kinnol MBT
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3083
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+70.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+65
+40
+40
+30
+40
+</armor>
+
+<Body Equipment>
+IS LB 10-X AC Ammo
+IS Ammo MML-5 LRM
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+ISCASE
+IS LB 10-X Cluster Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISMML5
+ISMML5
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLBXAC10
+ISERMediumLaser
+</Turret Equipment>
+

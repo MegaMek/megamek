@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Gray Death Scout
+</Name>
+<Model>
+The Willow Wisps
+</Model>
+<Trooper Count>
+4
+</Trooper Count>
+<chassis>
+biped
+</chassis>
+<weightclass>
+1
+</weightclass>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+4
+</jumpingMP>
+<Armor>
+4
+</Armor>
+<Squad Equipment>
+CLMicroPulseLaser:Body
+BAArmoredGlove
+BAArmoredGlove
+BattleArmorC3
+Improved Stealth
+</Squad Equipment>
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+<year>
+3076
+</year>
+<motion_type>
+Jump
+</motion_type>
+<source>
+Jihad
+</source>

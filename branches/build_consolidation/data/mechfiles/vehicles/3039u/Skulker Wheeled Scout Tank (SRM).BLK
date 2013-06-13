@@ -1,0 +1,75 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Skulker Wheeled Scout Tank
+</Name>
+
+<Model>
+(SRM)
+</Model>
+
+<year>
+2901
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+20.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<armor>
+18
+18
+18
+18
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-4
+IS Ammo SRM-4
+</Body Equipment>
+
+<Front Equipment>
+SRM 4
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+

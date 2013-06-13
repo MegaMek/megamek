@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Morningstar City Command Vehicle
+</Name>
+<Model>
+(Laser)
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+43
+31
+31
+20
+25
+</Armor>
+<Turret Equipment>
+ISAC10
+</Turret Equipment>
+<Front Equipment>
+ISLargeLaser
+</Front Equipment>
+<transporters>
+TroopSpace:4
+</transporters>
+<Body Equipment>
+ISAC10 Ammo
+ISAC10 Ammo
+ISTargeting Computer
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3065
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

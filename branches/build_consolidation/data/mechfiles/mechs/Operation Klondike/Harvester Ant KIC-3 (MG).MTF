@@ -1,0 +1,119 @@
+Version:1.1
+Harvester Ant
+KIC-3 (MG)
+
+Config:Quad
+TechBase:Inner Sphere
+Era:2801
+Rules Level:2
+
+Mass:20
+Engine:60 I.C.E. Engine
+Structure:Industrial
+Myomer:Standard
+
+Heat Sinks:2 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Commercial
+LA Armor:3
+RA Armor:3
+LT Armor:7
+RT Armor:7
+CT Armor:8
+HD Armor:8
+LL Armor:3
+RL Armor:3
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:5
+1 ISSRM2, Center Torso, Ammo:50
+1 ISMachine Gun, Right Torso, Ammo:400
+1 ISMachine Gun, Right Torso
+1 ISMachine Gun, Left Torso
+1 ISMachine Gun, Left Torso
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Left Torso:
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (100)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (100)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISSRM2
+ISSRM2 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

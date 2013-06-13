@@ -1,0 +1,12 @@
+3085 Fronc Reaches Heavy Mech C
+Archer ARC-2R,1
+Crusader CRD-3R,2
+Helios HEL-3D,3
+Ti Ts'ang TSG-9H,4
+Warhammer WHM-6R,5
+Archer ARC-2R,6
+Thunderbolt TDR-5S,5
+Ostroc OSR-4L,4
+Thunder THR-1L,3
+Marauder MAD-3R,2
+Cataphract CTF-1X,1

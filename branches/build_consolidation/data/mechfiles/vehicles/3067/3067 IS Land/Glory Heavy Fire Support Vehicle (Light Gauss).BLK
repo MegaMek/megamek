@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Glory Heavy Fire Support Vehicle
+</Name>
+<Model>
+(Light Gauss)
+</Model>
+<Tonnage>
+85
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+60
+50
+50
+30
+60
+</Armor>
+<Turret Equipment>
+ISLightGaussRifle
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+</Turret Equipment>
+<Body Equipment>
+ISLightGauss Ammo
+ISLightGauss Ammo
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISGuardianECM
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3067
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

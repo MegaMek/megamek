@@ -1,0 +1,12 @@
+3034 Free Rasalhague Republic Mech - Assault  C
+Atlas AS7-D,1
+Goliath GOL-1H,2
+Stalker STK-3F,3
+Victor VTR-9B,4
+Charger CGR-1A1,5
+Atlas AS7-D,6
+Awesome AWS-8Q,5
+BattleMaster BLR-1G,4
+BattleMaster BLR-1G,3
+Cyclops CP-10-Z,2
+Banshee BNC-3E,1

@@ -1,0 +1,12 @@
+3085 Raven Alliance Medium Tank Second Line
+Condor Heavy Hover Tank,1
+Vedette Medium Tank,2
+Vedette Medium Tank (AC2),3
+Ku Wheeled Assault Tank,4
+Hachiman Fire Support Tank 'Huey',5
+Vedette Medium Tank,6
+Hachiman Fire Support Tank (AAA),5
+Hachiman Fire Support Tank (AAA),4
+Ares Medium Tank,3
+Hachiman Fire Support Tank 'Huey',2
+Enyo Strike Tank,1

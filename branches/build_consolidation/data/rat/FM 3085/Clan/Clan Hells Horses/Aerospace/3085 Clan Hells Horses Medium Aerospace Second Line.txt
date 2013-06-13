@@ -1,0 +1,12 @@
+3085 Clan Hell's Horses Medium Aerospace Second Line
+Tyre,1
+Corsair CSR-V12b,2
+Tyre 3,3
+Gotha GTHA-500b,4
+Ironsides IRN-SD1b,5
+Hellcat II HCT-213C,6
+Ammon,5
+Ammon,4
+Tyre,3
+Ammon,2
+Tyre 3,1

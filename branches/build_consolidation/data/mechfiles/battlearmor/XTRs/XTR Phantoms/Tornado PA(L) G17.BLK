@@ -1,0 +1,72 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Tornado PA(L)
+</Name>
+
+<Model>
+G17
+</Model>
+
+<year>
+3074
+</year>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Squad Equipment>
+Improved Stealth
+BAArmoredGlove
+BAArmoredGlove
+SwarmMek
+StopSwarm
+LegAttack
+Infantry Auto Rifle
+</Squad Equipment>
+
+<source>
+XTR:Phantoms
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+7
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+

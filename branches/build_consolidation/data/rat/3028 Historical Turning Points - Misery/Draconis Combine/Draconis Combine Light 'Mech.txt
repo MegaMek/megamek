@@ -1,0 +1,12 @@
+Draconis Combine Light 'Mech
+Valkyrie VLK-QA,1
+Locust LCT-1V,2
+Stinger STG-3R,3
+Wasp WSP-1K,4
+Jenner JR7-D,5
+Jenner JR7-D,6
+Panther PNT-9R,5
+Panther PNT-9R,4
+Jenner JR7-D,3
+Spider SDR-5V,2
+Ostscout OTT-7J,1

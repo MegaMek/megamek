@@ -1,0 +1,13 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3056 CS_WoB_FRR Medium Meks
+Beowulf BEO-12,28
+Buccaneer BCN-3R,83
+Crab CRB-27,361
+Initiate INI-02,56
+Kintaro KTO-19,167
+Sentinel STN-3L,194
+Wyvern WVE-5N,111

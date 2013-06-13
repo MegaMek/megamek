@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Assault Mechs (Wolf),
+Supernova,1
+Marauder IIC,2
+Naga Prime,3
+Crockett CRK-5003-1,4
+Naga A,5
+Warhammer IIC,6
+Marauder IIC,5
+King Crab KGC-000,4
+Naga D,3
+Thug THG-11E,2
+Supernova,1

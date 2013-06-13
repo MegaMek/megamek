@@ -1,0 +1,16 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 PerAndMerc Areospace Fighters
+Centurion CNT-1D,167
+Cheetah F-11,139
+Chippewa CHP-W5,56
+Eagle EGL-R6,28
+Lightning LTN-G15,111
+Sabre SB-27,111
+Shilone SL-17,83
+Sholagar SL-21,83
+Slayer SL-15,56
+Sparrowhawk SPR-6D,139
+Thunderbird TRB-D36,28

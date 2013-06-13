@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Rommel Tank
+</Name>
+<Model>
+(Gauss)
+</Model>
+<Tonnage>
+65
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+42
+40
+40
+26
+40
+</Armor>
+<Turret Equipment>
+ISGaussRifle
+ISMediumLaser
+ISMediumLaser
+ISMachine Gun
+ISMachine Gun
+</Turret Equipment>
+<Front Equipment>
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Rear Equipment>
+ISMachine Gun
+</Rear Equipment>
+<Body Equipment>
+ISGauss Ammo
+ISGauss Ammo
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3054
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Clan Invasion
+</source>

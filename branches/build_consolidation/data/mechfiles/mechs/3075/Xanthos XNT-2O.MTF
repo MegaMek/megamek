@@ -1,0 +1,156 @@
+Version:1.1
+Xanthos
+XNT-2O
+
+Config:Quad
+TechBase:Inner Sphere
+Era:2564
+Source:Star League
+Rules Level:1
+
+Mass:100
+Engine:360 Fusion Engine
+Structure:Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:18 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Industrial(Inner Sphere)
+FLL Armor:16
+FRL Armor:16
+LT Armor:19
+RT Armor:19
+CT Armor:31
+HD Armor:9
+RLL Armor:16
+RRL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:8
+
+Weapons:7
+Autocannon/10, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Left Torso
+Large Laser, Left Torso
+SRM 4, Left Torso
+Small Laser, Left Torso
+Small Laser, Head
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Large Laser
+Large Laser
+SRM 4
+Medium Laser
+Small Laser (R)
+IS Ammo SRM-4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Medium Laser
+IS Ammo AC/10
+IS Ammo AC/10
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

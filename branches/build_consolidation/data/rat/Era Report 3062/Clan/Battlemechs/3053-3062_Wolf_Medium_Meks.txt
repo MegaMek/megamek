@@ -1,0 +1,62 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Wolf Medium Meks
+Arctic Wolf Prime,7
+Arctic Wolf 2,7
+Arctic Wolf A,7
+Arctic Wolf J,7
+Black Hawk (Nova) Prime,23
+Black Hawk (Nova) A,23
+Black Hawk (Nova) B,23
+Black Hawk (Nova) C,23
+Black Hawk (Nova) D,23
+Black Hawk (Nova) E,23
+Black Hawk (Nova) F,22
+Black Hawk (Nova) H,22
+Black Hawk (Nova) S,22
+Dragonfly (Viper) Prime,10
+Dragonfly (Viper) A,10
+Dragonfly (Viper) B,9
+Dragonfly (Viper) C,9
+Dragonfly (Viper) D,9
+Dragonfly (Viper) E,9
+Dragonfly (Viper) G,9
+Dragonfly (Viper) H,9
+Dragonfly (Viper) I,9
+Fenris (Ice Ferret) Prime,9
+Fenris (Ice Ferret) A,9
+Fenris (Ice Ferret) B,9
+Fenris (Ice Ferret) C,9
+Fenris (Ice Ferret) D,8
+Fenris (Ice Ferret) E,8
+Fenris (Ice Ferret) H,8
+Fenris (Ice Ferret) L,8
+Phantom Prime,16
+Phantom A,16
+Phantom B,16
+Phantom C,16
+Phantom D,16
+Phantom E,16
+Phantom H,15
+Pouncer Prime,4
+Pouncer A,4
+Pouncer B,4
+Pouncer C,4
+Pouncer D,4
+Pouncer E,4
+Pouncer H,4
+Ryoken (Stormcrow) Prime,10
+Ryoken (Stormcrow) A,10
+Ryoken (Stormcrow) B,9
+Ryoken (Stormcrow) C,9
+Ryoken (Stormcrow) D,9
+Ryoken (Stormcrow) E,9
+Ryoken (Stormcrow) F,9
+Ryoken (Stormcrow) G,9
+Ryoken (Stormcrow) H,9

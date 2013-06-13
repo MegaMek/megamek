@@ -1,0 +1,37 @@
+########################################################
+# Taken from Era Report 3062.  With OmniFighters, I've
+# divided the odds for each configuration as evenly as
+# possible.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Ghost Bear Areospace Fighters
+Bashkir Prime,6
+Bashkir A,6
+Bashkir B,6
+Bashkir C,5
+Bashkir D,5
+Jengiz Prime,39
+Jengiz A,39
+Jengiz B,39
+Jengiz C,39
+Jengiz D,38
+Kirghiz Prime,23
+Kirghiz A,22
+Kirghiz B,22
+Kirghiz C,22
+Kirghiz D,22
+Sulla Prime,50
+Sulla A,50
+Sulla B,50
+Sulla C,50
+Sulla D,50
+Turk Prime,17
+Turk A,17
+Turk B,17
+Turk C,16
+Turk D,16
+Visigoth Prime,67
+Visigoth A,67
+Visigoth B,67
+Visigoth C,66
+Visigoth D,66

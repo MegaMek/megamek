@@ -1,0 +1,20 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+# NOTE:  Era Report 3062 states that FC and LA have an 
+#        Eisensturm EST-R6,28 Aerospace fighter.  However
+#        The closest I could find were the EST-R3 and
+#        the EST-O omnis.  I chose the R3 for this RAT.
+########################################################
+3053-3062 FedCom_and_LA Areospace Fighters
+Centurion CNT-1D,111
+Chippewa CHP-W7,56
+Corsair CSR-V14,83
+Eisensturm EST-R3,28
+Hellcat HCT-213,139
+Lucifer LCF-R16,111
+Seydlitz SYD-Z4,139
+Sparrowhawk SPR-6D,167
+Stingray F-92,83
+Stuka STU-D6,56
+Thunderbird TRB-D36,28

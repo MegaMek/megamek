@@ -1,0 +1,12 @@
+3085 Fronc Reaches Light Mech D
+Locust LCT-1V,1
+Wasp WSP-1A,2
+Locust LCT-1V,3
+Stinger STG-3R,4
+Stinger STG-5R,5
+Stinger STG-5T,6
+Firestarter FS9-H,5
+Commando COM-2D,4
+Valkyrie VLK-QA,3
+Anubis ABS-3R,2
+Commando COM-2Dr,1

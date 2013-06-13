@@ -1,0 +1,200 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Volga Transport
+</Name>
+<Model>
+(2709)
+</Model>
+<Tonnage>
+780000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+120
+106
+106
+106
+106
+112
+</Armor>
+<Nose Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+NAC20
+NAC20
+NAC20 Ammo:100
+NL45
+</Nose Equipment>
+<Front Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+NAC30
+NAC30 Ammo:133
+NAC30
+NAC30 Ammo:133
+NL45
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+NAC30
+NAC30 Ammo:133
+NAC30
+NAC30 Ammo:133
+NL45
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+NL35
+NL35
+HeavyNGauss
+HeavyNGauss Ammo:100
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+NL35
+NL35
+HeavyNGauss
+HeavyNGauss Ammo:100
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NL45
+NL45
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+NL45
+NL45
+</Aft Right Side Equipment>
+<Aft Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+NAC20
+NAC20
+NAC20 Ammo:100
+</Aft Equipment>
+<structural_integrity>
+75
+</structural_integrity>
+<heatsinks>
+477
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+4750
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2709
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+13
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:12:4
+CargoBay:213517:1
+</transporters>
+<docking_collar>
+4
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+20
+</escape_pod>
+<life_boat>
+20
+</life_boat>
+<crew>
+304
+</crew>
+<passengers>
+0
+</passengers>

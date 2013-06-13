@@ -1,0 +1,88 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Fury Command Tank
+</Name>
+
+<Model>
+(C3S)
+</Model>
+
+<year>
+3069
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+80.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+4
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+68
+46
+46
+43
+65
+</armor>
+
+<Body Equipment>
+ISC3SlaveUnit
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+ISLAC5 Ammo
+ISLAC5 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISLAC5
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+</Turret Equipment>
+

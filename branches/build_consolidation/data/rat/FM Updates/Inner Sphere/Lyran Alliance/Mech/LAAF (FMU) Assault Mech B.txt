@@ -1,0 +1,12 @@
+LAAF Assault Mechs B 3067 (FMU)
+Thunder Hawk TDK-7X,1
+Striker STC-2C,2
+BattleMaster BLR-3S,3
+Stalker STK-5S,4
+Victor VTR-9D,5
+Zeus ZEU-9S,6
+Banshee BNC-5S,5
+Awesome AWS-9M,4
+Atlas AS7-S2,3
+Berserker BRZ-B3,2
+Salamander PPR-5T,1

@@ -1,0 +1,17 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3058-3062 PerAndMerc Light Meks
+Firestarter FS9-S,111
+Hermes HER-1A,56
+Javelin JVN-10P,139
+Jenner JR7-K,111
+Locust LCT-3M,167
+Mongoose MON-66,56
+Panther PNT-10K,83
+Thorn THE-S,28
+Valkyrie VLK-QD,83
+Wasp WSP-3M,139
+Wolfhound WLF-2,28

@@ -1,0 +1,15 @@
+3039 House Liao Mech - Medium A
+Blackjack BJ-3, 1
+Hunchback HBK-4J, 2
+Hunchback HBK-4G, 3
+Griffin GRF-1N, 4
+Wolverine WVR-6R, 5
+Phoenix Hawk PXH-1, 6
+Vindicator VND-1R, 5
+Vindicator VND-1R, 4
+Shadow Hawk SHD-2H, 3
+Blackjack BJ-3, 2
+Cronus CNS-3M, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

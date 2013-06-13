@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Pirate
+</Name>
+<Model>
+Lady Death's "Pacification" Squads
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+InfantryLaserRifle
+</Primary>
+<Secondary>
+InfantryHeavyFlamer
+</Secondary>
+<secondn>
+2
+</secondn>
+<type>
+IS Level 2
+</type>
+<year>
+2500
+</year>
+<era>
+Age of War
+</era>
+<motion_type>
+Motorized
+</motion_type>
+<antimek>
+</antimek>

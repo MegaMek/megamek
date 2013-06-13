@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+<Name>
+Tomahawk
+</Name>
+<Model>
+CX-11
+</Model>
+<Tonnage>
+45
+</Tonnage>
+<SafeThrust>
+8
+</SafeThrust>
+<Armor>
+47
+33
+33
+31
+</Armor>
+<Nose Equipment>
+ISERSmallLaser
+</Nose Equipment>
+<Left Wing Equipment>
+ISERLargeLaser
+ISLaserInsulator
+</Left Wing Equipment>
+<Right Wing Equipment>
+ISERLargeLaser
+ISLaserInsulator
+</Right Wing Equipment>
+<Aft Equipment>
+</Aft Equipment>
+<heatsinks>
+12
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+400
+</fuel>
+<type>
+IS Level 4
+</type>
+<year>
+3074
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+3
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>

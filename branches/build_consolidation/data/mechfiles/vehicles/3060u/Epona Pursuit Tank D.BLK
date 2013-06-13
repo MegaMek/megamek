@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Epona Pursuit Tank
+</Name>
+
+<Model>
+D
+</Model>
+
+<year>
+3068
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+21
+20
+20
+18
+17
+</armor>
+
+<Body Equipment>
+HAG/20 Ammo
+HAG/20 Ammo
+CLTargeting Computer
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHAG20
+CLCASE
+</Turret Equipment>
+
+<source>
+Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

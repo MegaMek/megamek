@@ -1,0 +1,17 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3054 SiC Assault Meks
+Atlas AS7-D,204
+Atlas AS7-K,19
+Awesome AWS-8Q,127
+Awesome AWS-9M,12
+Cerberus MR-V2,83
+Grand Titan T-IT-N10M,28
+Pillager PLG-3Z,56
+Stalker STK-3F,153
+Stalker STK-5S,14
+Striker STC-2D,28
+Yu Huang Y-H9G,278

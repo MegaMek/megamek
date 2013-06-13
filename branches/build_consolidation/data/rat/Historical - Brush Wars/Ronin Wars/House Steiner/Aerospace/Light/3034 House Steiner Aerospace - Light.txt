@@ -1,0 +1,12 @@
+3034 House Steiner Aerospace - Light
+Cheetah F-10,1
+Cheetah F-10,2
+Seydlitz SYD-Z1,3
+Sabre SB-27,4
+Seydlitz SYD-Z2,5
+Seydlitz SYD-Z2,6
+Centurion CNT-1D,5
+Sholagar SL-21,4
+Seydlitz SYD-Z1,3
+Seydlitz SYD-Z3,2
+Sparrowhawk SPR-8H,1

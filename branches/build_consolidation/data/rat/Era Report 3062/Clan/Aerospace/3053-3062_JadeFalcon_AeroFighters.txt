@@ -1,0 +1,47 @@
+########################################################
+# Taken from Era Report 3062.  With OmniFighters, I've
+# divided the odds for each configuration as evenly as
+# possible.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Jade Falcon Areospace Fighters
+Bashkir Prime,17
+Bashkir A,17
+Bashkir B,17
+Bashkir C,16
+Bashkir D,16
+Batu Prime,23
+Batu A,22
+Batu B,22
+Batu C,22
+Batu D,22
+Jagatai Prime,45
+Jagatai A,45
+Jagatai B,44
+Jagatai C,44
+Jagatai D,44
+Jengiz Prime,6
+Jengiz A,6
+Jengiz B,6
+Jengiz C,5
+Jengiz D,5
+Kirghiz Prime,12
+Kirghiz A,11
+Kirghiz B,11
+Kirghiz C,11
+Kirghiz D,11
+Scytha Prime,50
+Scytha A,50
+Scytha B,50
+Scytha C,50
+Scytha D,50
+Vandal Prime,6
+Vandal A,6
+Vandal B,6
+Vandal C,6
+Vandal D,6
+Visigoth Prime,45
+Visigoth A,45
+Visigoth B,44
+Visigoth C,44
+Visigoth D,44

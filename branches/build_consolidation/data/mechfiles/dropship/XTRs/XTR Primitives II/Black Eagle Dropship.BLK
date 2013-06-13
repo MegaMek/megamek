@@ -1,0 +1,133 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Dropship
+</UnitType>
+<Name>
+Black Eagle
+</Name>
+<Model>
+</Model>
+<Tonnage>
+4500
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+191
+171
+171
+120
+</Armor>
+<Nose Equipment>
+ISLargeLaser
+ISLargeLaser
+IS LRM-20
+IS LRM-20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Nose Equipment>
+<Left Side Equipment>
+ISLargeLaser
+ISLargeLaser
+IS LRM-20
+IS LRM-20
+(R) IS LRM-20
+(R) ISLargeLaser
+(R) ISLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Left Side Equipment>
+<Right Side Equipment> 
+ISLargeLaser
+ISLargeLaser
+IS LRM-20
+IS LRM-20
+(R) IS LRM-20
+(R) ISLargeLaser
+(R) ISLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Right Side Equipment>
+<Aft Equipment> 
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+16
+</structural_integrity>
+<heatsinks>
+156
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+7500
+</fuel>
+<type>
+IS Level 5
+</type>
+<year>
+2453
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+17
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+MechBay:12:2
+CargoBay:540:2
+</transporters>
+<escape_pod>
+8
+</escape_pod>
+<life_boat>
+1
+</life_boat>
+<crew>
+52
+</crew>
+<passengers>
+0
+</passengers>

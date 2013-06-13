@@ -1,0 +1,84 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Prowler Multi-Terrain Vehicle
+</Name>
+
+<Tonnage>
+55
+</Tonnage>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+25
+23
+23
+18
+23
+</Armor>
+
+<Front Equipment>
+ISSRM2
+</Front Equipment>
+
+<Turret Equipment>
+ISLRM10
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Turret Equipment>
+
+<Body Equipment>
+ISLRM10 Ammo
+ISSRM2 Ammo
+ISBeagleActiveProbe
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (0.5 tons)
+ISFullyAmphibiousChassis
+</Body Equipment>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2611
+</year>
+
+<source>
+Star League
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Tracked
+</motion_type>

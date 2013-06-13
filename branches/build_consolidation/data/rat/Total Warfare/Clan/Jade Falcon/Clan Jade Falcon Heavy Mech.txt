@@ -1,0 +1,14 @@
+Clan Jade Falcon Heavy 'Mech
+Night Gyr D,1
+Night Gyr B,2
+Loki (Hellbringer) B,3
+Thor (Summoner) A,4
+Loki (Hellbringer) Prime,5
+Thor (Summoner) Prime,6
+Thor (Summoner) D,5
+Night Gyr Prime,4
+Night Gyr A,3
+Loki (Hellbringer) A,2
+Night Gyr C,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

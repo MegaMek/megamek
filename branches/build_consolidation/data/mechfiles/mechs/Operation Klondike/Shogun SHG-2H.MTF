@@ -1,0 +1,135 @@
+Version:1.1
+Shogun
+SHG-2H
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2771
+Rules Level:2
+
+Mass:85
+Engine:255 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Ferro-Fibrous
+LA Armor:27
+RA Armor:27
+LT Armor:28
+RT Armor:28
+CT Armor:41
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:9
+1 ISERPPC, Right Torso
+1 ISMediumPulseLaser, Head
+1 ISMediumLaser, Center Torso
+1 ISStreakSRM2, Left Torso, Ammo:50
+1 ISStreakSRM2, Left Torso
+1 ISStreakSRM2, Right Torso
+1 ISStreakSRM2, Right Torso
+1 ISLRM15, Right Arm, Ammo:24
+1 ISLRM15, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISStreakSRM2
+ISStreakSRM2
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISCASE
+Ferro-Fibrous
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERPPC
+ISERPPC
+ISERPPC
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2 Ammo
+ISLRM15 Ammo Artemis-capable
+ISCASE
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Jump Jet
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumPulseLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Ferro-Fibrous

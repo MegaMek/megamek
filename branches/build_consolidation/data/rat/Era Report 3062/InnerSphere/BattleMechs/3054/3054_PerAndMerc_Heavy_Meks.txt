@@ -1,0 +1,25 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3054 PerAndMerc Heavy Meks
+Archer ARC-2R,162
+Archer ARC-4M,5
+Catapult CPLT-C1,81
+Catapult CPLT-K2,2
+Crusader CRD-3R,108
+Crusader CRD-5M,3
+Flashman FLS-7K,28
+Gallowglas GAL-1GLS,56
+Marauder MAD-3R,108
+Marauder MAD-5D,3
+Orion ON1-K,54
+Orion ON1-M,2
+Rifleman RFL-3N,81
+Rifleman RFL-5M,2
+Thunderbolt TDR-5S,135
+Thunderbolt TDR-7M,4
+War Dog WR-DG-02FC,28
+Warhammer WHM-6R,135
+Warhammer WHM-7M,4

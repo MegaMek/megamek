@@ -1,0 +1,63 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Padilla Tube Artillery Tank
+</Name>
+<Tonnage>
+55
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+28
+25
+25
+20
+22
+</Armor>
+<Turret Equipment>
+ISSniperArtillery
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM5
+ISLRM5
+</Turret Equipment>
+<Front Equipment>
+</Front Equipment>
+<Body Equipment>
+ISSniperArtillery Ammo
+ISSniperArtillery Ammo
+ISLRM5 Ammo
+ISLRM5 Ammo
+</Body Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3077
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+4
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Jihad
+</source>

@@ -1,0 +1,15 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3058-3062 DracCom Assault Meks
+Akuma AKU-1X,83
+Atlas AS7-K,139
+Gunslinger GUN-1ERD,111
+Hatamoto-Chi HTM-27T,250
+Katana (Crockett) CRK-5003-2,111
+Mauler MAL-1R,139
+Naginata NG-C3A,56
+O-Bakemono OBK-M10,56
+Tai-sho TSH-7S,28

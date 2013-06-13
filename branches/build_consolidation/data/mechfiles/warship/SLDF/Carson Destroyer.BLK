@@ -1,0 +1,128 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Carson Destroyer
+</Name>
+<Model>
+</Model>
+<Tonnage>
+510000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+42
+35
+35
+35
+35
+31
+</Armor>
+<Nose Equipment>
+MediumNPPC
+MediumNPPC
+WhiteShark
+WhiteShark
+WhiteShark Ammo:30
+</Nose Equipment>
+<Front Left Side Equipment>
+NL45
+NL45
+NL45
+NL45
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL45
+NL45
+NL45
+NL45
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC30
+NAC30
+NAC30 Ammo:40
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC30
+NAC30
+NAC30 Ammo:40
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NAC30
+NAC30 Ammo:20
+NL45
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NAC30
+NAC30 Ammo:20
+NL45
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NL45
+NL45
+WhiteShark
+WhiteShark Ammo:30
+</Aft Equipment>
+<structural_integrity>
+40
+</structural_integrity>
+<heatsinks>
+1500
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+20000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2632
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:6:1
+SmallCraftBay:6:1
+CargoBay:144443:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+27
+</escape_pod>
+<life_boat>
+15
+</life_boat>
+<crew>
+250
+</crew>
+<passengers>
+0
+</passengers>

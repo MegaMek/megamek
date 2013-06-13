@@ -1,0 +1,170 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Chippewa IIC
+
+</Name>
+
+<model>
+(Standard)
+</model>
+
+<Tonnage>
+
+90
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+92
+
+62
+
+62
+
+43
+
+</Armor>
+
+<Nose Equipment>
+
+CLLRM15
+
+CLArtemisIV
+
+CLLRM15
+
+CLArtemisIV
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLLRM15 Ammo (Clan) Artemis-capable
+
+CLStreakSRM4
+
+CLStreakSRM4 Ammo
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLTargeting Computer
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+CLERSmallLaser
+
+CLERSmallLaser
+
+</Aft Equipment>
+
+<heatsinks>
+
+25
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+2861
+
+</year>
+
+<Source>
+
+ED:Golden Age
+
+</source>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

@@ -1,0 +1,398 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Carrier
+
+</Name>
+
+<Model>
+
+
+
+</Model>
+
+<Tonnage>
+
+5000
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+210
+
+210
+
+210
+
+210
+
+</Armor>
+
+<Nose Equipment>
+
+CLStreakSRM6
+
+CLStreakSRM6
+
+CLStreakSRM6
+
+CLStreakSRM6
+
+CLStreakSRM6
+
+CLStreakSRM6
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLStreakSRM6 Ammo
+
+CLAntiMissileSystem
+
+CLAntiMissileSystem
+
+CLAntiMissileSystem
+
+CLAntiMissileSystem
+
+CLAntiMissileSystem
+
+CLAntiMissileSystem
+
+CLAMS Ammo
+
+CLAMS Ammo
+
+CLAMS Ammo
+
+CLAMS Ammo
+
+CLAMS Ammo
+
+CLAMS Ammo
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLLargePulseLaser
+
+CLLargePulseLaser
+
+CLLargePulseLaser
+
+CLMG
+
+CLMG
+
+CLMG
+
+CLMG
+
+CLMG Ammo
+
+CLMG Ammo
+
+CLMG Ammo
+
+CLMG Ammo
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+(R) CLGaussRifle
+
+(R) CLGauss Ammo
+
+(R) CLGauss Ammo
+
+(R) CLGaussRifle
+
+(R) CLGauss Ammo
+
+(R) CLGauss Ammo
+
+(R) CLUltraAC10
+
+(R) CLUltraAC10 Ammo
+
+(R) CLUltraAC10 Ammo
+
+(R) CLUltraAC10
+
+(R) CLUltraAC10 Ammo
+
+(R) CLUltraAC10 Ammo
+
+(R) CLERMediumLaser
+
+(R) CLERMediumLaser
+
+(R) CLERMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLLargePulseLaser
+
+CLLargePulseLaser
+
+CLLargePulseLaser
+
+CLMG
+
+CLMG
+
+CLMG
+
+CLMG
+
+CLMG Ammo
+
+CLMG Ammo
+
+CLMG Ammo
+
+CLMG Ammo
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+CLERMediumLaser
+
+(R) CLGaussRifle
+
+(R) CLGauss Ammo
+
+(R) CLGauss Ammo
+
+(R) CLGaussRifle
+
+(R) CLGauss Ammo
+
+(R) CLGauss Ammo
+
+(R) CLUltraAC10
+
+(R) CLUltraAC10 Ammo
+
+(R) CLUltraAC10 Ammo
+
+(R) CLUltraAC10
+
+(R) CLUltraAC10 Ammo
+
+(R) CLUltraAC10 Ammo
+
+(R) CLERMediumLaser
+
+(R) CLERMediumLaser
+
+(R) CLERMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+CLUltraAC20
+
+CLUltraAC20
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+CLUltraAC20 Ammo
+
+</Aft Equipment>
+
+<structural_integrity>
+
+10
+
+</structural_integrity>
+
+<heatsinks>
+
+76
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+10110
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+2882
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<transporters>
+
+ASFBay:5:2
+
+ASFBay:5:2
+
+CargoBay:751:1
+
+</transporters>
+
+<escape_pod>
+
+0
+
+</escape_pod>
+
+<life_boat>
+
+3
+
+</life_boat>
+
+<crew>
+
+37
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

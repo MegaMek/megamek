@@ -1,0 +1,82 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Chaparral Missile Artillery Tank
+</Name>
+
+<Model>
+(MG)
+</Model>
+
+<year>
+3062
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+16
+18
+18
+36
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-4
+IS Machine Gun Ammo - Half
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+</Body Equipment>
+
+<Front Equipment>
+ISArrowIV
+</Front Equipment>
+
+<Right Equipment>
+Medium Laser
+</Right Equipment>
+
+<Left Equipment>
+Medium Laser
+</Left Equipment>
+
+<Rear Equipment>
+SRM 4
+Machine Gun
+</Rear Equipment>
+

@@ -1,0 +1,134 @@
+Version:1.1
+Mad Cat Mk II
+2
+
+Config:Biped
+TechBase:Clan
+Era:3069
+Rules Level:2
+
+Mass:90
+Engine:360 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:3
+
+Armor:Ferro-Fibrous
+LA Armor:27
+RA Armor:27
+LT Armor:26
+RT Armor:26
+CT Armor:38
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:8
+1 CLERMediumLaser, Right Torso
+1 CLERMediumLaser, Left Torso
+1 CLStreakSRM4, Left Torso, Ammo:50
+1 CLStreakSRM4, Left Torso
+1 CLStreakSRM4, Right Torso
+1 CLStreakSRM4, Right Torso
+1 CLGaussRifle, Right Arm, Ammo:16
+1 CLLBXAC20, Left Arm, Ammo:10
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Jump Jet
+CLStreakSRM4
+CLStreakSRM4
+CLERMediumLaser
+CLStreakSRM4 Ammo
+CLLBXAC20 Ammo
+CLLBXAC20 CL Ammo
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Engine
+Engine
+Jump Jet
+CLStreakSRM4
+CLStreakSRM4
+CLERMediumLaser
+CLStreakSRM4 Ammo
+CLGauss Ammo
+CLGauss Ammo
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Jump Jet
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

@@ -1,0 +1,152 @@
+Version:1.0
+Seraph
+C-SRP-OS Caelestis
+
+Config:Biped Omni
+TechBase:Mixed (IS Chassis)
+Era:3075
+Rules Level:4
+
+Mass:85
+Engine:255 Light Engine
+Structure:Standard
+Myomer:Triple-Strength
+Cockpit:Small Cockpit
+
+Heat Sinks:17 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard
+LA Armor:27
+RA Armor:27
+LT Armor:26
+RT Armor:26
+CT Armor:40
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:9
+RTR Armor:9
+RTC Armor:13
+
+Weapons:7
+1 CLStreakLRM10, Right Arm, Ammo:24
+1 CLStreakLRM10, Left Arm
+1 CLStreakLRM10, Right Torso
+1 ISImprovedC3CPU, Left Torso
+2 CLMediumPulseLaser, Left Torso
+1 CLLargePulseLaser, Center Torso
+1 CLLargePulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLStreakLRM10
+CLStreakLRM10
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLStreakLRM10
+CLStreakLRM10
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+CLStreakLRM10 Ammo
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISImprovedC3CPU
+ISImprovedC3CPU
+Jump Jet
+Jump Jet
+CLMediumPulseLaser
+CLMediumPulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakLRM10
+CLStreakLRM10
+CLStreakLRM10 Ammo
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Jump Jet
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLargePulseLaser
+CLLargePulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+CLLargePulseLaser
+CLLargePulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

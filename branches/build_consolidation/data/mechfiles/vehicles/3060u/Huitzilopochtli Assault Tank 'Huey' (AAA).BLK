@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Huitzilopochtli Assault Tank 'Huey'
+</Name>
+
+<Model>
+(AAA)
+</Model>
+
+<year>
+3070
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
+28
+25
+25
+22
+24
+</armor>
+
+<Body Equipment>
+CLCASE
+CLECMSuite
+CLArrowIVAmmo
+CLArrowIVAmmo
+CLArrowIVAmmo
+CLArrowIVHomingAmmo
+CLArrowIVHomingAmmo
+CLArrowIVHomingAmmo
+HAG/20 Ammo
+HAG/20 Ammo
+HAG/20 Ammo
+HAG/20 Ammo
+Clan Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+CLArrowIV
+CLArrowIV
+</Front Equipment>
+
+<Right Equipment>
+CLMG
+</Right Equipment>
+
+<Left Equipment>
+CLMG
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHAG20
+CLHAG20
+CLCASE
+</Turret Equipment>
+
+<source>
+Jihad
+</source>
+
+<tonnage>
+85.0
+</tonnage>
+

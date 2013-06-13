@@ -1,0 +1,20 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3054 FWL Light Meks
+Eagle EGL-1M,56
+Eagle EGL-2M,56
+Falcon Hawk FNHK-9K,28
+Hammer HMR-3M,306
+Hermes HER-1A,93
+Hermes HER-3S,19
+Jackal JA-KL-1532,83
+Locust LCT-1V,93
+Locust LCT-3M,19
+Spider SDR-5V,116
+Spider SDR-7M,23
+Tarantula ZPH-1A,28
+Wasp WSP-1A,69
+Wasp WSP-3M,14

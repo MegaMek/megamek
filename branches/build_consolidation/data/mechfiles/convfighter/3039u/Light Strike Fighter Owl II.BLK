@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Light Strike Fighter
+</Name>
+
+<Model>
+Owl II
+</Model>
+
+<Tonnage>
+10
+</Tonnage>
+
+<SafeThrust>
+10
+</SafeThrust>
+
+<Armor>
+2
+2
+2
+2
+</Armor>
+
+<Nose Equipment>
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Small Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Small Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 1
+</type>
+
+<year>
+2711
+</year>
+
+<source>
+Star League
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

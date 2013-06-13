@@ -1,0 +1,151 @@
+Version:1.0
+Stalker
+STK-8S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3064
+Rules Level:2
+
+Mass:85
+Engine:255 Light Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:23
+RA Armor:23
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:6
+1 ISERPPC, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISERPPC, Left Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISHeavyGaussRifle, Right Torso, Ammo:12
+2 ISERMediumLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISERMediumLaser
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGauss Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

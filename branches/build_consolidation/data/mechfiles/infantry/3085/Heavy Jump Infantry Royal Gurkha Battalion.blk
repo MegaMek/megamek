@@ -1,0 +1,49 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Heavy Jump Infantry
+</Name>
+<Model>
+Royal Gurkha Battalion
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+3
+</squadn>
+<Primary>
+InfantrySunbeamStarfire
+</Primary>
+<Secondary>
+InfantryKingDavid
+</Secondary>
+<secondn>
+1
+</secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<encumberingarmor>
+</encumberingarmor>
+<type>
+IS Level 3
+</type>
+<year>
+3063
+</year>
+<era>
+Civil War
+</era>
+<motion_type>
+Jump
+</motion_type>

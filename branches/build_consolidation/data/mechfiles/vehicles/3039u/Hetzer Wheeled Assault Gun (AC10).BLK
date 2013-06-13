@@ -1,0 +1,78 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Hetzer Wheeled Assault Gun
+</Name>
+
+<Model>
+(AC10)
+</Model>
+
+<year>
+2893
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+40.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+34
+26
+26
+26
+</armor>
+
+<Body Equipment>
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+</Body Equipment>
+
+<Front Equipment>
+Autocannon/10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+

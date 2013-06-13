@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Manticore Heavy Tank
+</Name>
+<Model>
+(LB-X)
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+43
+34
+34
+26
+42
+</Armor>
+<Turret Equipment>
+ISLBXAC10
+ISStreakSRM6
+</Turret Equipment>
+<Front Equipment>
+ISMediumPulseLaser
+</Front Equipment>
+<Body Equipment>
+ISLBXAC10 Ammo
+ISLBXAC10 Ammo
+ISLBXAC10 CL Ammo
+IS Streak SRM 6 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3060
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Clan Invasion
+</source>

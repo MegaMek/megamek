@@ -1,0 +1,77 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Hiryo Armored Infantry Transport
+</Name>
+
+<model>
+"BloodHound"
+</model>
+
+<Tonnage>
+40
+</Tonnage>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<Armor>
+25
+25
+25
+24
+</Armor>
+
+<Front Equipment>
+ISMediumXPulseLaser
+ISBloodhoundActiveProbe
+</Front Equipment>
+
+<Body Equipment>
+Environmental Sealing
+</Body Equipment>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3083
+</year>
+
+<source>
+TRO:Prototype
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+WIGE
+</motion_type>
+
+<transporters>
+TroopSpace:4
+</transporters>

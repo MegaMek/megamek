@@ -1,0 +1,15 @@
+3039 House Davion Vehicle Medium
+Hetzer Wheeled Assault Gun, 1
+Condor Heavy Hover Tank, 2
+Goblin Medium Tank, 3
+Maxim Heavy Hover Transport, 4
+Drillson Heavy Hover Tank, 5
+Goblin Medium Tank, 6
+Condor Heavy Hover Tank, 5
+Vedette Medium Tank, 4
+Drillson Heavy Hover Tank, 3
+Hetzer Wheeled Assault Gun, 2
+Drillson Heavy Hover Tank, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

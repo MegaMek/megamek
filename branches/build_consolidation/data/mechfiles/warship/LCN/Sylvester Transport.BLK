@@ -1,0 +1,338 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Sylvester Transport
+</Name>
+<Tonnage>
+280000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+10
+9
+9
+9
+9
+8
+</Armor>
+<Nose Equipment>
+NL55
+NL35
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1000
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10 Ammo:80
+ISAC20
+ISAC20
+ISAC20 Ammo:20
+</Nose Equipment>
+<Front Left Side Equipment>
+NAC20
+NAC20 Ammo:15
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1200
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:120
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC20
+NAC20 Ammo:15
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1200
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:120
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NL35
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1200
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10 Ammo:108
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NL35
+NL35
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1200
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10
+ISLRM10 Ammo:108
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL35
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1000
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NL35
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1000
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NL55
+NL55
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISSmallLaser
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+IS Machine Gun Ammo:1000
+</Aft Equipment>
+<structural_integrity>
+20
+</structural_integrity>
+<heatsinks>
+767
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+5000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2499
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:4:4
+CargoBay:73357:9
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+10
+</escape_pod>
+<life_boat>
+10
+</life_boat>
+<crew>
+282
+</crew>
+<passengers>
+0
+</passengers>

@@ -1,0 +1,59 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Arashi Heavy Hovertank
+</Name>
+<Model>
+UK
+</Model>
+<Tonnage>
+45
+</Tonnage>
+<cruiseMP>
+10
+</cruiseMP>
+<Armor>
+30
+25
+25
+9
+</Armor>
+<Front Equipment>
+ISStreakSRM6
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISTAG
+</Front Equipment>
+<Body Equipment>
+ISStreakSRM6 Ammo
+ISStreakSRM6 Ammo
+ISC3SlaveUnit
+ISGuardianECM
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3050
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

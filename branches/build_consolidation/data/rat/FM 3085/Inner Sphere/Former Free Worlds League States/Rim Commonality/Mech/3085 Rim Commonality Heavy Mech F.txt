@@ -1,0 +1,12 @@
+3085 Rim Commonality Heavy Mech F
+Quickdraw QKD-5M,1
+Tempest TMP-3M,2
+Orion ON1-K,3
+Guillotine GLT-5M,4
+Anvil ANV-3M,5
+Orion ON1-M,6
+Thunderbolt TDR-7M,5
+Crusader CRD-5M,4
+Yeoman YMN-6Y,3
+Archer ARC-4M,2
+Thunderbolt TDR-9M,1

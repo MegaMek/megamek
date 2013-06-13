@@ -1,0 +1,134 @@
+Version:1.1
+Hercules
+HRC-LS-9000 (Julius)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3065
+Rules Level:2
+
+Mass:70
+Engine:350 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:22
+RA Armor:22
+LT Armor:21
+RT Armor:21
+CT Armor:33
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:8
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISSmallPulseLaser, Right Arm
+1 ISSmallPulseLaser, Left Torso
+1 ISAntiMissileSystem, Center Torso
+1 ISLBXAC20, Right Torso, Ammo:15
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+ISMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISMediumLaser
+ISMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISSmallPulseLaser
+IS AMS Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+ISLBXAC20 CL Ammo
+ISLBXAC20 CL Ammo
+ISLBXAC20 Ammo
+ISCASE
+
+Right Torso:
+Engine
+Engine
+Engine
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISSmallPulseLaser
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISAntiMissileSystem
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous

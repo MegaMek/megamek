@@ -1,0 +1,12 @@
+AFFS Light Mechs D (FMU)
+Osiris OSR-4D,1
+Commando COM-2D,2
+Javelin JVN-11D,3
+Dart DRT-6S,4
+Firestarter FS9-S,5
+Javelin JVN-10F "Fire Javelin",6
+Valkyrie VLK-QD1,5
+Wolfhound WLF-2,4
+Javelin JVN-10F "Fire Javelin",3
+Garm GRM-01B,2
+Panther PNT-12A,1

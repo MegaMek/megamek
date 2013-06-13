@@ -1,0 +1,67 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Smoke Jaguar Light Meks
+Dasher (Fire Moth) Prime,16
+Dasher (Fire Moth) A,16
+Dasher (Fire Moth) B,16
+Dasher (Fire Moth) C,16
+Dasher (Fire Moth) D,15
+Dasher (Fire Moth) E,15
+Dasher (Fire Moth) F,15
+Dasher (Fire Moth) H,15
+Dasher (Fire Moth) K,15
+Hankyu (Arctic Cheetah) Prime,4
+Hankyu (Arctic Cheetah) A,4
+Hankyu (Arctic Cheetah) B,4
+Hankyu (Arctic Cheetah) C,4
+Hankyu (Arctic Cheetah) D,4
+Hankyu (Arctic Cheetah) E,4
+Hankyu (Arctic Cheetah) H,4
+Koshi (Mist Lynx) Prime,20
+Koshi (Mist Lynx) A,20
+Koshi (Mist Lynx) B,20
+Koshi (Mist Lynx) C,20
+Koshi (Mist Lynx) D,20
+Koshi (Mist Lynx) E,20
+Koshi (Mist Lynx) F,19
+Koshi (Mist Lynx) G,19
+Koshi (Mist Lynx) H,19
+Koshi (Mist Lynx) P,19
+Locust IIC,7
+Locust IIC 2,7
+Locust IIC 3,6
+Locust IIC 4,6
+Locust IIC 5,6
+Locust IIC 6,6
+Locust IIC 7,6
+Locust IIC 8,6
+Locust IIC 9,6
+Peregrine (Horned Owl),6
+Peregrine (Horned Owl) 2,6
+Peregrine (Horned Owl) 3,6
+Peregrine (Horned Owl) 4,5
+Peregrine (Horned Owl) 5,5
+Puma (Adder) Prime,18
+Puma (Adder) A,18
+Puma (Adder) B,18
+Puma (Adder) C,17
+Puma (Adder) D,17
+Puma (Adder) E,17
+Puma (Adder) H,17
+Puma (Adder) J,17
+Uller (Kit Fox) Prime,42
+Uller (Kit Fox) A,42
+Uller (Kit Fox) B,42
+Uller (Kit Fox) C,42
+Uller (Kit Fox) D,42
+Uller (Kit Fox) E,42
+Uller (Kit Fox) F,42
+Uller (Kit Fox) H,41
+Uller (Kit Fox) S,41
+Uller (Kit Fox) W,41

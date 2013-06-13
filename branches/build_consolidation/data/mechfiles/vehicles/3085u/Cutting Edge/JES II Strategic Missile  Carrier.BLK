@@ -1,0 +1,79 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+JES II Strategic Missile Carrier
+</Name>
+<Tonnage>
+95
+</Tonnage>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+64
+35
+35
+34
+</Armor>
+<Front Equipment>
+ISERMediumLaser
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15
+</Front Equipment>
+<Right Equipment>
+ISMML9
+</Right Equipment>
+<Left Equipment>
+ISMML9
+</Left Equipment>
+<Body Equipment>
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISMML9 LRM Ammo
+ISMML9 LRM Ammo
+ISMML9 SRM Ammo
+ISMML9 SRM Ammo
+ISGuardianECM
+ISC3SlaveUnit
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3079
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Jihad
+</source>

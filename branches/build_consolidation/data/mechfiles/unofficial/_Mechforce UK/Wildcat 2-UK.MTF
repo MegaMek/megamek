@@ -1,0 +1,152 @@
+Version:1.0
+Wildcat
+WDCT-2-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:18 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:7
+1 CLATM9, Right Arm, Ammo:14
+1 CLSRM6, Right Arm, Ammo:30
+2 CLHeavyMediumLaser, Left Arm
+1 CLMediumPulseLaser, Left Arm
+1 CLMediumPulseLaser, Right Torso
+1 CLLargePulseLaser, Left Torso
+1 CLHeavySmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLSRM6
+CLATM9 ER Ammo
+CLATM9 Ammo
+CLSRM6 Ammo
+CLSRM6 Ammo
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLargePulseLaser
+CLLargePulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLMASC
+CLMASC
+CLMASC
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLHeavySmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

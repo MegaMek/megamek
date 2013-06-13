@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Ares Medium Tank
+</Name>
+
+<Model>
+(Plasma)
+</Model>
+
+<year>
+3069
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+19
+17
+17
+16
+17
+</armor>
+
+<Body Equipment>
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLLRM15
+CLArtemisIV
+CLLRM15
+CLArtemisIV
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLPlasmaCannon
+</Turret Equipment>
+
+<source>
+Jihad
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

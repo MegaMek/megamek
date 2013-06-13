@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Orc
+</Name>
+
+<Model>
+4
+</Model>
+
+<Tonnage>
+4
+</Tonnage>
+
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+3
+5
+2
+2
+4
+</Armor>
+<Torso Equipment>
+CLSRM3
+CLSRM3 Ammo (3)
+CLMG Ammo (12)
+</Torso Equipment>
+<Right Arm Equipment>
+CLMG
+</Right Arm Equipment>
+<Left Arm Equipment>
+CLMG
+</Left Arm Equipment>
+<type>
+Clan
+</type>
+<year>
+3072
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Biped
+</motion_type>

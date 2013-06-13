@@ -1,0 +1,12 @@
+3015 Mercenary Vehicle -  Medium
+Goblin Medium Tank,1
+Goblin Medium Tank,2
+Maxim Heavy Hover Transport,3
+Maxim Heavy Hover Transport,4
+Vedette Medium Tank,5
+Vedette Medium Tank,6
+Vedette Medium Tank,5
+Hetzer Wheeled Assault Gun,4
+Hetzer Wheeled Assault Gun,3
+Condor Heavy Hover Tank,2
+Condor Heavy Hover Tank,1

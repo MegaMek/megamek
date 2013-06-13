@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Assault Mechs (Jade Falcon),
+Behemoth (Stone Rhino),1
+Masakari (Warhawk) Prime,2
+Thug THG-11E,3
+Phoenix Hawk IIC,4
+Phoenix Hawk IIC,5
+Warhammer IIC,6
+Warhammer IIC,5
+Kraken (Bane),4
+Kraken (Bane),3
+Highlander HGN-732,2
+Marauder IIC,1

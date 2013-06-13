@@ -1,0 +1,259 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Union-X
+
+</Name>
+
+<Model>
+
+(3065)
+
+</Model>
+
+<Tonnage>
+
+3700
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+190
+
+180
+
+180
+
+179
+
+</Armor>
+
+<Nose Equipment>
+
+ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo:60
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20
+
+IS Artemis IV FCS
+
+ISLRM20 Ammo Artemis-capable:80
+
+ISERPPC
+
+ISERPPC
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISUltraAC5
+
+ISUltraAC5
+
+ISUltraAC5 Ammo:200
+
+ISERPPC
+
+ISERPPC
+
+ISERLargeLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+(R) ISERLargeLaser
+
+(R) ISERLargeLaser
+
+(R) ISERMediumLaser
+
+(R) ISERMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISUltraAC5
+
+ISUltraAC5
+
+ISUltraAC5 Ammo:200
+
+ISERPPC
+
+ISERPPC
+
+ISERLargeLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+(R) ISERLargeLaser
+
+(R) ISERLargeLaser
+
+(R) ISERMediumLaser
+
+(R) ISERMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISERLargeLaser
+
+ISERLargeLaser
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+12
+
+</structural_integrity>
+
+<heatsinks>
+
+120
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+6000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3065
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+MechBay:8:4
+
+BattleArmorBay:5:1
+
+ASFBay:4:2
+
+CargoBay:281:1
+
+</transporters>
+
+<escape_pod>
+
+5
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+42
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

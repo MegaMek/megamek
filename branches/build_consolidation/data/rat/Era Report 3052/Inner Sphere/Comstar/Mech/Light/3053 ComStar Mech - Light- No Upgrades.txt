@@ -1,0 +1,12 @@
+3053 ComStar Mech - Light- No Upgraded
+Ostscout OTT-7J,1
+Mercury MCY-97,2
+Hermes HER-1S,3
+Thorn THE-N,4
+Hermes HER-3S,5
+Mercury MCY-97,6
+Thorn THE-N,5
+Mongoose MON-66,4
+Hussar HSR-200-D,3
+Mercury MCY-97,2
+Mongoose MON-66,1

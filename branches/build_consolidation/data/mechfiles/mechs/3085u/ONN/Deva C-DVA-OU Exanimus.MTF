@@ -1,0 +1,156 @@
+Version:1.1
+Deva
+C-DVA-OU Exanimus
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3077
+Source:Jihad
+Rules Level:4
+
+Mass:70
+Engine:280 Light Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Heavy Duty Gyro
+
+Heat Sinks:11 Double
+Base Chassis Heat Sinks:11
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:20
+RT Armor:20
+CT Armor:33
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+LRT 15, Right Arm
+LRT 15, Right Arm
+ER Small Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRT 15
+LRT 15
+LRT 15
+LRT 15
+LRT 15
+LRT 15
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-15
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISUMU
+ISERSmallLaser (R)
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISUMU
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-15
+IS Ammo LRTorpedo-15
+ISC3iUnit
+ISC3iUnit
+ISCASE
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISUMU
+ISUMU
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISMASS
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

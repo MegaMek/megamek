@@ -1,0 +1,152 @@
+Version:1.0
+Spatha
+SP1-X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Source:Civil War
+Rules Level:4
+
+Mass:60
+Engine:360 XXL Engine
+Structure:Standard
+Myomer:Triple-Strength
+
+Heat Sinks:13 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Reflective(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:26
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:5
+ER PPC, Left Arm
+Medium X-Pulse Laser, Head
+Medium X-Pulse Laser, Right Torso
+Laser AMS, Center Torso
+Streak SRM 6, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+PPC Capacitor
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+Reflective
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Sword
+Reflective
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Reflective
+Reflective
+Reflective
+TSM
+TSM
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumXPulseLaser
+Reflective
+Reflective
+Reflective
+TSM
+TSM
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumXPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Reflective
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Reflective
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

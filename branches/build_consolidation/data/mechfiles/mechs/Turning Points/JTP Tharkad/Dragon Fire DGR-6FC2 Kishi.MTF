@@ -1,0 +1,150 @@
+Version:1.0
+Dragon Fire
+DGR-6FC2 Kishi
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Rules Level:2
+
+Mass:75
+Engine:300 Light Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+Cockpit:Small Cockpit
+
+Heat Sinks:11 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard
+LA Armor:24
+RA Armor:24
+LT Armor:26
+RT Armor:26
+CT Armor:38
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:5
+1 ISPlasmaRifle, Right Arm, Ammo:20
+1 ISLightPPC, Left Arm
+1 ISImprovedC3CPU, Right Torso
+1 ISHeavyGaussRifle, Left Torso, Ammo:8
+2 ISERMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLightPPC
+ISLightPPC
+Endo Steel
+Endo Steel
+Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+Endo Steel
+Endo Steel
+Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISImprovedC3CPU
+ISImprovedC3CPU
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISPlasmaRifle Ammo
+ISPlasmaRifle Ammo
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISERMediumLaser
+ISERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

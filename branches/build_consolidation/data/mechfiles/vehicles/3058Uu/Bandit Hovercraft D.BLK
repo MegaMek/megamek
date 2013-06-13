@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Bandit Hovercraft
+</Name>
+<Model>
+D
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+42
+40
+40
+32
+22
+</Armor>
+<Turret Equipment>
+ISLRM5
+ISLRM5
+ISLRM5
+</Turret Equipment>
+<transporters>
+TroopSpace:4
+</transporters>
+<Body Equipment>
+ISLRM5 Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3008
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<omni>
+</omni>
+<source>
+Succession Wars
+</source>

@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Medium Mechs (Blood Spirit),
+Griffin IIC,1
+Crab CRB-27,2
+Hellhound (Conjurer),3
+Griffin IIC,4
+Shadow Hawk IIC,5
+Hellhound (Conjurer),6
+Hellhound (Conjurer),5
+Shadow Hawk IIC,4
+Griffin IIC,3
+Crab CRB-27,2
+Hunchback IIC,1

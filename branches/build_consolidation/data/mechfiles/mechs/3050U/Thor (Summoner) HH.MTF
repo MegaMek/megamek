@@ -1,0 +1,150 @@
+Version:1.0
+Thor (Summoner)
+HH
+
+Config:Biped OmniMech
+TechBase:Clan
+Era:3070
+Rules Level:2
+
+Mass:70
+Engine:350 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Ferro-Fibrous Armor
+LA Armor:17
+RA Armor:17
+LT Armor:22
+RT Armor:22
+CT Armor:27
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:6
+1 CLERMediumLaser, Center Torso
+1 CLERMediumLaser, Left Arm
+1 CLHeavyMediumLaser, Right Torso
+1 CLPlasmaCannon, Left Torso, Ammo:20
+1 CLAPGaussRifle, Left Arm, Ammo:40
+1 CLHAG20, Right Arm, Ammo:18
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumLaser
+CLAPGaussRifle
+CLAPGaussRifle Ammo
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20 Ammo
+CLHAG20 Ammo
+CLHAG20 Ammo
+Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+CLPlasmaCannon
+CLPlasmaCannon Ammo
+CLPlasmaCannon Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+JumpJet
+CLERMediumLaser
+
+Head:
+Life Support
+Cockpit
+Sensors
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+JumpJet
+JumpJet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+JumpJet
+JumpJet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

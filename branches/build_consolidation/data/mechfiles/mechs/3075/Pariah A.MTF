@@ -1,0 +1,155 @@
+Version:1.0
+Pariah (Septicemia)
+A
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3072
+Source:Jihad
+Rules Level:2
+
+Mass:55
+Engine:275 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:8
+LL Armor:24
+RL Armor:24
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:8
+Heavy Small Laser, Left Arm
+Heavy Small Laser, Left Arm
+Heavy Small Laser, Left Arm
+Heavy Small Laser, Right Arm
+Heavy Small Laser, Right Arm
+Heavy Small Laser, Right Arm
+ATM 12, Left Torso
+ATM 12, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLHeavySmallLaser
+CLHeavySmallLaser
+CLHeavySmallLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLHeavySmallLaser
+CLHeavySmallLaser
+CLHeavySmallLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12
+Clan Ammo ATM-12 ER
+Clan Ammo ATM-12 HE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12
+Clan Ammo ATM-12 ER
+Clan Ammo ATM-12 HE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

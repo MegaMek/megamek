@@ -1,0 +1,151 @@
+Version:1.0
+Thor (Summoner)
+B
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:2872
+Rules Level:2
+
+Mass:70
+Engine:350 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Ferro-Fibrous
+LA Armor:17
+RA Armor:17
+LT Armor:22
+RT Armor:22
+CT Armor:27
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:6
+1 CLLRM20, Left Arm
+1 CLSRM4, Left Arm
+1 CLAntiMissileSystem, Left Torso, Ammo:24
+1 CLNarcBeacon, Left Torso, Ammo:6
+1 CLLRM20, Right Arm, Ammo:24
+1 CLSRM4, Right Arm, Ammo:50
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLSRM4
+CLLRM20 Ammo (Clan) Narc-capable
+CLLRM20 Ammo (Clan) Narc-capable
+CLSRM4 Ammo (Clan) Narc-capable
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLSRM4
+CLLRM20 Ammo (Clan) Narc-capable
+CLLRM20 Ammo (Clan) Narc-capable
+CLSRM4 Ammo (Clan) Narc-capable
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLAntiMissileSystem
+CLNarcBeacon
+CLAMS Ammo
+CLNarc Pods
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

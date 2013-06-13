@@ -1,0 +1,65 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+VTOL
+</UnitType>
+<Name>
+Anhur
+</Name>
+<Model>
+(P-Stealth)
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+12
+12
+12
+10
+2
+</Armor>
+<Front Equipment>
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+</Front Equipment>
+<Rear Equipment>
+CLMediumPulseLaser
+</Rear Equipment>
+<transporters>
+troopsize:5.5
+</transporters>
+<Body Equipment>
+ISGuardianECM
+</Body Equipment>
+<type>
+Mixed (Clan Chassis) Experimental
+</type>
+<year>
+3074
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+8
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+VTOL
+</motion_type>
+<source>
+Jihad
+</source>

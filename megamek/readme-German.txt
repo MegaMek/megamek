@@ -1,20 +1,20 @@
 EINLEITUNG
 ----------
-MegaMek ist eine Version von BattleTech, die ihr mit euren Freunden übers
-Internet oder LAN spielen könnt. Es wurde mit JAVA geschrieben.  Das ganze
-Equipment von Level 1 (3025), der Großteil des Level 2 Equipments sowie beinahe
+MegaMek ist eine Version von BattleTech, die ihr mit euren Freunden Ã¼bers
+Internet oder LAN spielen kÃ¶nnt. Es wurde mit JAVA geschrieben.  Das ganze
+Equipment von Level 1 (3025), der GroÃŸteil des Level 2 Equipments sowie beinahe
 alle Level 1 und 2 Regeln sind enthalten. Ausserdem sind sogar einen Level 3
 Regeln enthalten.
 
-Wenn ihr Informationen darüber braucht, wie man das Spiel spielt, schaut in
+Wenn ihr Informationen darÃ¼ber braucht, wie man das Spiel spielt, schaut in
 die "DAS SPIEL SPIELEN" Sektion unten. Solltet ihr Probleme haben MegaMek zu
 starten, schaut einfach in die "MEGAMEK STARTEN" Sektion weiter unten.
 
 MEGAMEK STARTEN
 ---------------
 Java Programme laufen in ihrer eigenen Umgebung, genannt 'Virtual Machine'
-oder kurt VM. Diese Java VMs sind für die meisten Systeme aus unterschiedlichen
-Quellen verfügbar. Die meisten Systeme haben eine standardmässig installiert.
+oder kurt VM. Diese Java VMs sind fÃ¼r die meisten Systeme aus unterschiedlichen
+Quellen verfÃ¼gbar. Die meisten Systeme haben eine standardmÃ¤ssig installiert.
 
 Windows Nutzer: Um MegaMek zu starten, starte die MegaMek.bat Datei. Wenn das
 nicht funktioniert, siehe die "INSTALLATION ODER AKTUALISIERUNG DER JAVA 
@@ -22,12 +22,12 @@ LAUFZEIT UMGEBUNG" Sektion, weiter unten.
 
 Andere graphische Betriebssysteme: Viele andere graphische Betriebssysteme, wie
 MacOS und OSX erlauben das Doppelklicken der "MegaMek.jar" Datei um sie aus-
-zuführen. Wenn das nicht funktionert, versuche MegaMek von der Kommandozeile
+zufÃ¼hren. Wenn das nicht funktionert, versuche MegaMek von der Kommandozeile
 aus zu starten.
 
 MegaMek von der Kommandozeile starten: Um dies zu tun, wenn Sun Java, oder die
 meisten anderen Implementationen, verwendet wird, navigiere in das Verzeichnis
-das die "MegaMek.jar" Datei enthält, und führe:
+das die "MegaMek.jar" Datei enthÃ¤lt, und fÃ¼hre:
 
 java -jar MegaMek.jar
 
@@ -36,19 +36,19 @@ aus.
 Wenn keine der obigen Optionen funktioniert, siehe die "INSTALLATION ODER
 AKTUALISIERUNG DER JAVA LAUFZEIT UMGEBUNG" Sektion, weiter unten.
 
-Wenn Du eine VM hast, diese aber keine .jar Dateien unterstützt, benutze das
+Wenn Du eine VM hast, diese aber keine .jar Dateien unterstÃ¼tzt, benutze das
 Entpackprogramm Deiner Wahl um "MegaMek.jar", "collections.jar", "TinyXML.jar" 
 und "Ostermiller.jar" in ein neues "classes" Verzeichnis (erstelle dieses
-im "megamek" Ordner) zu entpacken. Wenn Du das durchgeführt hast (dies muss
+im "megamek" Ordner) zu entpacken. Wenn Du das durchgefÃ¼hrt hast (dies muss
 nur einmal gemacht werden), muss der classpath auf das "classes" Verzeichnis
 sowie auf das aktuelle Verzeichnis gesetzt werden, und "MegaMek.class" ausge-
-führt werden. Zum Beispiel bei Nutzung von Sun Java, führe:
+fÃ¼hrt werden. Zum Beispiel bei Nutzung von Sun Java, fÃ¼hre:
 
 java -cp .;classes megamek/MegaMek
 
 aus.
 
-Beachte das in einigen Fällen das Semikolen escaped werden muss:
+Beachte das in einigen FÃ¤llen das Semikolen escaped werden muss:
 java -cp .\;classes megamek/MegaMek
 
 
@@ -62,16 +62,16 @@ Sun Java (Linux, Solaris, Windows):
 http://java.sun.com/j2se/downloads.html
 
 Microsoft VM (Windows):
-Microsoft stellt seine VM nicht mehr für den separaten Download zur Verfügung.
+Microsoft stellt seine VM nicht mehr fÃ¼r den separaten Download zur VerfÃ¼gung.
 Bitte frag im Forum (http://sourceforge.net/forum/forum.php?forum_id=154580)
 nach Hilfe. Beachte das Du die Java VM von Sun (oben) als Alternative nutzen
-kannst, da Sun eine Windows Version zur Verfügung stellt.
+kannst, da Sun eine Windows Version zur VerfÃ¼gung stellt.
 
-Mac OSX 10.1 und höher:
-Java Aktualisierungen sind in den OS-Aktualisierungen für 10.1 und höher ein-
+Mac OSX 10.1 und hÃ¶her:
+Java Aktualisierungen sind in den OS-Aktualisierungen fÃ¼r 10.1 und hÃ¶her ein-
 geschlossen. Es gibt keinen externe Weg, die Java VM zu aktualisieren.
 
-Frühere Mac OS Versionen:
+FrÃ¼here Mac OS Versionen:
 http://developer.apple.com/java/download.html
 
 IBM VM:
@@ -80,28 +80,28 @@ MegaMek funktioniert nur schlecht mit dieser VM - sie ist nicht empfohlen.
 
 VERBINDEN
 ---------
-MegaMek ist ein Netzwerk Spiel. Ein Spieler öffnet den Server für das Spiel 
+MegaMek ist ein Netzwerk Spiel. Ein Spieler Ã¶ffnet den Server fÃ¼r das Spiel 
 und der Rest muss sich mit diesem Server verbinden. Die verbindenden Spieler
-können von überall her mit der TCP/IP Verbindung zum Server connecten,
-inklusive des selben Computer auf dem der Server läuft. 
+kÃ¶nnen von Ã¼berall her mit der TCP/IP Verbindung zum Server connecten,
+inklusive des selben Computer auf dem der Server lÃ¤uft. 
 (Siehe Hotseat, weiter unten)
 
 Um einen Server zu starten, klickt man auf den "Host a New Game..." Button
-im Main Menü.  Bestimmt euren Namen und klickt dann auf "Okay". Das password
-Feld erlaubt es, ein bestimmtes Passwort für bestimmte Serverbefehle zu setzen
+im Main MenÃ¼.  Bestimmt euren Namen und klickt dann auf "Okay". Das password
+Feld erlaubt es, ein bestimmtes Passwort fÃ¼r bestimmte Serverbefehle zu setzen
 (Tippe /help im Chatfenster um eine Liste der Serverbefehle zu bekommen). 
-Wenn dann der Lobby Bildschirm auftaucht, können die anderen Spieler connecten,
-und das Spiel kann beginnen. Die anderen Spieler müssen die IP Adresse des
+Wenn dann der Lobby Bildschirm auftaucht, kÃ¶nnen die anderen Spieler connecten,
+und das Spiel kann beginnen. Die anderen Spieler mÃ¼ssen die IP Adresse des
 Servers kennen um sich mit ihm zu verbinden. Um diese unter Windows 95,
-98 oder ME zu erfahren muss man ins Startemenü gehen, und dann bei "AUSFÜHREN"
+98 oder ME zu erfahren muss man ins StartemenÃ¼ gehen, und dann bei "AUSFÃœHREN"
 "WINIPCFG" eingeben. In Windows 2000 oder XP dort zuerst "CMD" und im dann
 aufspringenden Fenster "IPCONFIG" eingeben. Ausserdem gibt es einige 
 Internetseiten, wie zum Beispiel www.whatismyip.com, wo sie euch gezeigt wird
 (dies funktioniert aber nicht, wenn der PC sich hinter einem Proxy oder Gateway
 befindet.)
 
-Um an einem Spiel teilzunehmen, drückt man den "Connect to a Server..."
-Button im Main Menü und gibt dann seinen Namen und die Server IP Adresse
+Um an einem Spiel teilzunehmen, drÃ¼ckt man den "Connect to a Server..."
+Button im Main MenÃ¼ und gibt dann seinen Namen und die Server IP Adresse
 ein.
 
 Um eine Hotseat Partie zu spielen (Mehrere Personen an einem PC), kann man
@@ -113,18 +113,18 @@ man "localhost" ein. Jeder Spieler muss dann zu seinem Fenster von MegaMek
 wechseln um seinen Zug zu machen.
 
 Um einen dedizierten Server zu starten, benutze die -dedicated Kommandozeilen-
-option. Ein dedizierter Server lässt nur den Server in der Konsole laufen,
-ohne einen "Host" Spieler im Spiel. Mitspieler, inklusive Dirselbst, können
+option. Ein dedizierter Server lÃ¤sst nur den Server in der Konsole laufen,
+ohne einen "Host" Spieler im Spiel. Mitspieler, inklusive Dirselbst, kÃ¶nnen
 sich mit dem Server verbinden wie bei einem Spiel mit Host. Der dedizierte
 Server liest das Passwort und die Portoptionen aus der MegaMek.cfg Datei,
 oder verwendet die Standardoptionen (kein Passwort und Port 2346).
-Wenn Du willst, das der dedizierte Server ein gespeichertes Spiel lädt,
-übergib den Dateinamen nach der -dedicated Option, z.B. so:
+Wenn Du willst, das der dedizierte Server ein gespeichertes Spiel lÃ¤dt,
+Ã¼bergib den Dateinamen nach der -dedicated Option, z.B. so:
 
  "-dedicated gespeichertesspiel.sav"
 
 Um den Server zu stoppen, musst Du die Java VM anhalten, was auf den meisten
-Plattformen durch drücken von STRG + C erreicht wird.
+Plattformen durch drÃ¼cken von STRG + C erreicht wird.
 
 
 DAS SPIEL SPIELEN
@@ -132,134 +132,134 @@ DAS SPIEL SPIELEN
 
 VOR-DEM-SPIEL BERICHT:
 
-Hier kann man chatten, seine Mechs aussuchen, die Karte wählen, seinen
+Hier kann man chatten, seine Mechs aussuchen, die Karte wÃ¤hlen, seinen
 Startpunkt aussuchen, und seine Spielerfarbe einstellen . Sobald jeder
-mindesten einen Mech hat, können alle auf "ready" klicken und das Spiel kann
-beginnen. Die meisten Änderungen an den Spiel Parametern setzten den ready
-status zurück, also sollte man am besten warten bis alle ihre Mechs und
-Positionen gewöhlt haben.
+mindesten einen Mech hat, kÃ¶nnen alle auf "ready" klicken und das Spiel kann
+beginnen. Die meisten Ã„nderungen an den Spiel Parametern setzten den ready
+status zurÃ¼ck, also sollte man am besten warten bis alle ihre Mechs und
+Positionen gewÃ¶hlt haben.
 
 EINLEITUNGS-REPORT:
 
-Die Anfangswürfe jedes Spielers und die entsprechende Zug-Reihenfolge werden
+Die AnfangswÃ¼rfe jedes Spielers und die entsprechende Zug-Reihenfolge werden
 hier angezeigt.
 
 AUFSTELLUNGSPHASE:
 
 In dieser Phase kann man seine Einheiten in den gelb umrandeten Hexfeldern 
-aufstellen, falls vorher eine bestimmte Startposition gewählt wurde. Anonsten
+aufstellen, falls vorher eine bestimmte Startposition gewÃ¤hlt wurde. Anonsten
 kann man seine Einheiten aufstellen, wo man will.
 
 
 BEWEGUNGS PHASE:
 
-Mit den Knöpfe am rechten unteren Rand kann man zwischen verschiedenen
-Bewegungsarten wählen, zwischen den Einheiten wechseln oder den gewählten
-Bewegungs Pfad bestätigen. Man muss nicht die erste angewählte Einheit
+Mit den KnÃ¶pfe am rechten unteren Rand kann man zwischen verschiedenen
+Bewegungsarten wÃ¤hlen, zwischen den Einheiten wechseln oder den gewÃ¤hlten
+Bewegungs Pfad bestÃ¤tigen. Man muss nicht die erste angewÃ¤hlte Einheit
 bewegen.
 
-Ein Links-Klick auf die Karte wählt das Hex-Feld aus, auf das man ziehen
-will. Der Pfad muss komplett ausgewählt sein, und im Bereich der möglichen
-Züge liegen. Die Nummern im Zentrum zeigen an, wie viele Bewegungspunkte
-man benötigt um den Zug durch zu führen. HELLBLAUE Farbe zeigt den GEHEN-Bereich
+Ein Links-Klick auf die Karte wÃ¤hlt das Hex-Feld aus, auf das man ziehen
+will. Der Pfad muss komplett ausgewÃ¤hlt sein, und im Bereich der mÃ¶glichen
+ZÃ¼ge liegen. Die Nummern im Zentrum zeigen an, wie viele Bewegungspunkte
+man benÃ¶tigt um den Zug durch zu fÃ¼hren. HELLBLAUE Farbe zeigt den GEHEN-Bereich
 an, GELB den LAUFEN-Bereich und ROT den Bereich in den man Springen kann.
-GRAUE Bereiche zeigen an, das man seine Reichweite überschritten hat, oder
-andere unmögliche Bewegungen. Wenn man seinen Mauszeiger herum zieht, kann
-man sich verschiedene Wege über die Hex-Felder ansehen.
+GRAUE Bereiche zeigen an, das man seine Reichweite Ã¼berschritten hat, oder
+andere unmÃ¶gliche Bewegungen. Wenn man seinen Mauszeiger herum zieht, kann
+man sich verschiedene Wege Ã¼ber die Hex-Felder ansehen.
 
-Einheiten können sich auch bewegen, indem sie Wegpunkte benutzen. Man muss
+Einheiten kÃ¶nnen sich auch bewegen, indem sie Wegpunkte benutzen. Man muss
 dann einfach jedes Hex-Feld anklicken, zwischen der derzeitigen Position der
 Einheit und dem Ziel. Man kann so exakt den Weg beschreiben, den die Eihneit
 nehmen soll.
 
-Wenn man die Shift Taste drücken, während man auf die Karte klicken, kann
-man die Sicht-Richtung der gewählten Einheit bestimmen, ohne die Einheit zu
+Wenn man die Shift Taste drÃ¼cken, wÃ¤hrend man auf die Karte klicken, kann
+man die Sicht-Richtung der gewÃ¤hlten Einheit bestimmen, ohne die Einheit zu
 bewegen. Am besten macht man das am Ende des Zuges.
 
-Um sich zurück zu bewegen, drückt man den "Back Up" Knopf bevor man den Weg hinter
-dem Mech festlegt. Um zurück zu springen, drückt man erst "Back Up" und dann "Jump".
-Sichtrichtungs wechsel während des Sprunges sind frei.
+Um sich zurÃ¼ck zu bewegen, drÃ¼ckt man den "Back Up" Knopf bevor man den Weg hinter
+dem Mech festlegt. Um zurÃ¼ck zu springen, drÃ¼ckt man erst "Back Up" und dann "Jump".
+Sichtrichtungs wechsel wÃ¤hrend des Sprunges sind frei.
 
-Hingefallene Einheiten können die Sichtrichtung ändern, ohne aufzustehen.
-Man klickt auf "Get Up", und dann gewünschte Blickrichtung. Blickrichtungsänderungen
-im selben Feld sind frei für Einheiten die versuchen Aufzustehen. Um Aufzustehen,
-und sich dabei zurück zu ziehen, muss man erst "Get Up" anklicken, und dann "Back Up"
-und dann das gewünschte Feld oder die gewünschte Richtung. Man kann im selben Zug nicht
+Hingefallene Einheiten kÃ¶nnen die Sichtrichtung Ã¤ndern, ohne aufzustehen.
+Man klickt auf "Get Up", und dann gewÃ¼nschte Blickrichtung. BlickrichtungsÃ¤nderungen
+im selben Feld sind frei fÃ¼r Einheiten die versuchen Aufzustehen. Um Aufzustehen,
+und sich dabei zurÃ¼ck zu ziehen, muss man erst "Get Up" anklicken, und dann "Back Up"
+und dann das gewÃ¼nschte Feld oder die gewÃ¼nschte Richtung. Man kann im selben Zug nicht
 aufstehen und springen.
 
-Den Piloten eines Mechs kann man über den 'EJECT' Knopf aussteigen lassen, dieser Mech
+Den Piloten eines Mechs kann man Ã¼ber den 'EJECT' Knopf aussteigen lassen, dieser Mech
 ist dann sofort aus dem Spiel.
 
-Rammen und Todessprung (D.F.A.) sind Aangriffe, die während der Bewegungsphase
-hemacht werden müssen. Man Klickt auf den "Charge" oder "D.F.A." Knopf und klickt
-dann auf die Einheit die man angreifen will. Wenn der Angriff durchgeführt werden kann,
-wird es sofort ausgeführt, und der Zug ist beendet. Das Ergebnis wird dann bei den
-physischen Anngriffen aufgeführt. Sollte MEGAMEK nicht denn gewünschten Weg benutzen, 
-kann man selber den Pfad auswehlen, indem man einen eigenen Weg in die Nähe des Ziels
+Rammen und Todessprung (D.F.A.) sind Aangriffe, die wÃ¤hrend der Bewegungsphase
+hemacht werden mÃ¼ssen. Man Klickt auf den "Charge" oder "D.F.A." Knopf und klickt
+dann auf die Einheit die man angreifen will. Wenn der Angriff durchgefÃ¼hrt werden kann,
+wird es sofort ausgefÃ¼hrt, und der Zug ist beendet. Das Ergebnis wird dann bei den
+physischen Anngriffen aufgefÃ¼hrt. Sollte MEGAMEK nicht denn gewÃ¼nschten Weg benutzen, 
+kann man selber den Pfad auswehlen, indem man einen eigenen Weg in die NÃ¤he des Ziels
 aufbaut, und dann auf "Charge" oder "D.F.A." klickt um den Angriff zu beenden.
 
-Die Esc Taste stop alle derzeitigen Züge.
+Die Esc Taste stop alle derzeitigen ZÃ¼ge.
 
 
 Bewegungs Report:
 
-Wenn irgendeine Einheit während der Bewegung die Piloten Fähigkeit auswürfeln muss,
+Wenn irgendeine Einheit wÃ¤hrend der Bewegung die Piloten FÃ¤higkeit auswÃ¼rfeln muss,
 so werden die Ergebnisse in einem Bericht gezeigt, ebenso wie ausgestiegene Piloten.
 
 
 WAFFEN-FEUER PHASE:
 
-Wenn Du Entfernung und Sichtline (LoS) zwischen zwei Hexfeldern überprüfen
+Wenn Du Entfernung und Sichtline (LoS) zwischen zwei Hexfeldern Ã¼berprÃ¼fen
 willst, hast Du die Wahl zwischen zwei Tools: Das "LoS tool" und den "Ruler".
 Um das "LoS tool" zu benutzen, halte STRG und clicke die beiden Hexfelder die 
-du überprüfen willst. Der "Ruler" funktioniert wie das "LoS tool", nutzt aber
+du Ã¼berprÃ¼fen willst. Der "Ruler" funktioniert wie das "LoS tool", nutzt aber
 die ALT Taste anstatt der STRG Taste. Der "ruler" kann auch genutzt werden,
 indem man mit der mittleren Maustaste einer drei-Tasten Maus die beiden Hex-
-felder anklickt. Beide Tools öffnen ein Fenster das mitteilt, welches Terrain
+felder anklickt. Beide Tools Ã¶ffnen ein Fenster das mitteilt, welches Terrain
 zwischen den beiden Feldern liegt und ob eins oder beide Hexfelder teilweise
 Deckung hat. Der "ruler" zieht ausserdem die Sichtlinie auf dem Spielfeld, so
 das man sehen kann durch welche Hexfelder die Los geht.
 
 Du kannst zwischen 'Mech und nicht-'Mech Sichtlinie im "LoS Setting" Fenster
-umschalten, dies erreichst Du über das "View" Menü am oberen Ende des Fensters.
+umschalten, dies erreichst Du Ã¼ber das "View" MenÃ¼ am oberen Ende des Fensters.
 'Mech- und nicht-'Mech Sichtlinie unterscheidet sich dadurch, das 'Mechs von
-einem Level höher als das Höhenlevel des Terrains "gucken", während Infantrie
-und Panzer nur das Höhenlevel des Terrains beanspruchen.
+einem Level hÃ¶her als das HÃ¶henlevel des Terrains "gucken", wÃ¤hrend Infantrie
+und Panzer nur das HÃ¶henlevel des Terrains beanspruchen.
 
 Die Buttons am unteren Rand erlauben euch, eure Waffen abzufeuern,
-eine andere Einheit auszuwählen, oder euren derzeitigen Schuss zu
-bestätigen. Nochmal, ihr müsst nicht mit der als erstes gewählten Einheit
+eine andere Einheit auszuwÃ¤hlen, oder euren derzeitigen Schuss zu
+bestÃ¤tigen. Nochmal, ihr mÃ¼sst nicht mit der als erstes gewÃ¤hlten Einheit
 feuern.
 
 Um auf eine andere Einheit zu zielen, klickt man sie auf dem Spielfeld an.
-Um auf Wälder zu zielen, klickt man diese mit der rechten Maustaste an und
-wählt, ob man sie roden oder in Brand setzen möchte.
+Um auf WÃ¤lder zu zielen, klickt man diese mit der rechten Maustaste an und
+wÃ¤hlt, ob man sie roden oder in Brand setzen mÃ¶chte.
 Mit dem "MODE" Knopf kann man bei einigen Waffen den Feuermodus umschalten,
 z.B. bei Ultra- oder Rotations-Autokanonen oder bei LBX-Autokanonen.
-Die Zielinformationen über die grade gewählte Waffe werden dann im 
-MECHINFORMATIONSFELD angezeigt. Um die gewählte Waffe aufs Ziel abzufeuer,
-drückt man den "FIRE" Knopf. Um zu einer anderen Waffe zu wechseln, klickt auf
+Die Zielinformationen Ã¼ber die grade gewÃ¤hlte Waffe werden dann im 
+MECHINFORMATIONSFELD angezeigt. Um die gewÃ¤hlte Waffe aufs Ziel abzufeuer,
+drÃ¼ckt man den "FIRE" Knopf. Um zu einer anderen Waffe zu wechseln, klickt auf
 den Namen der Waffe in der Liste im MECHINFORMATIONSFELD. So kann man sein Feuer
 auf verschiedene Ziele verteilen, indem man diese Schritte wiederholt. Wenn alle
-Waffen auf ihre Ziele ausgerichtet sind, bzw. nicht abgefeuert werden können, 
-drückt man den "DONE" Knopf.
+Waffen auf ihre Ziele ausgerichtet sind, bzw. nicht abgefeuert werden kÃ¶nnen, 
+drÃ¼ckt man den "DONE" Knopf.
 
-Die Waffen werden dann in der Reihenfolge abgefeuert, in der sie ausgewählt worden
+Die Waffen werden dann in der Reihenfolge abgefeuert, in der sie ausgewÃ¤hlt worden
 sind.
 
-Man kann seine Blickrichtung ein zweites Mal ändern (Torso drehung), wenn man die
-Shift-Taste gedrückt halt, und dann auf ein entsprechendes Feld in der gewünschten
-Blickrichtung klickt. Am Rand der Karte geht dies nur über die Shift-Taste und die
-Pfeiltasten der Tastatur. Die gewählte Einheit wird nun versuchen den Torso in die
-gewünschte Richtung zu drehen. Wenn man mit einer Waffe auf eine Einheit zielt,
-und dann die Blickrichtung ändert, werdern alle Feuerbefehle gelöscht, und müssen
+Man kann seine Blickrichtung ein zweites Mal Ã¤ndern (Torso drehung), wenn man die
+Shift-Taste gedrÃ¼ckt halt, und dann auf ein entsprechendes Feld in der gewÃ¼nschten
+Blickrichtung klickt. Am Rand der Karte geht dies nur Ã¼ber die Shift-Taste und die
+Pfeiltasten der Tastatur. Die gewÃ¤hlte Einheit wird nun versuchen den Torso in die
+gewÃ¼nschte Richtung zu drehen. Wenn man mit einer Waffe auf eine Einheit zielt,
+und dann die Blickrichtung Ã¤ndert, werdern alle Feuerbefehle gelÃ¶scht, und mÃ¼ssen
 nochmal gegeben werden.
 
 Man kann nicht mehr zu einer anderen Einheit wechseln, sobald man einmal mit
 einer Waffe gefeuert hat. Um zu einer anderen Einheit zu wechseln, muss man dann
-erst das gesamte Waffenfeuer abbrechen, indem man die ESC Taste drüclt.
-Wenn man die "FIRE" Knopf für de letzte vorhandene Waffe drückt, werden alle
-Schüsse ausgeführt, und der nächste Spieler ist am Zug.
+erst das gesamte Waffenfeuer abbrechen, indem man die ESC Taste drÃ¼clt.
+Wenn man die "FIRE" Knopf fÃ¼r de letzte vorhandene Waffe drÃ¼ckt, werden alle
+SchÃ¼sse ausgefÃ¼hrt, und der nÃ¤chste Spieler ist am Zug.
 
 
 WAFFEFEUER BERICHT:
@@ -270,18 +270,18 @@ Ergebnisse am Ende der Runde in einem Feuer-Bericht anzeigen.
 
 PHYSISCHE-ANGRIFFS PHASE:
 
-Um einen physische Angriff auszuführen, wählt man zuerst sein Ziel und klickt
-dann auf den Knopf für den entsprechenden Angriff (KICK/PUNCH/PUSH). Sollte
-einer der Angriffe nicht möglich sein (oder noch nicht einprogramiert), so
+Um einen physische Angriff auszufÃ¼hren, wÃ¤hlt man zuerst sein Ziel und klickt
+dann auf den Knopf fÃ¼r den entsprechenden Angriff (KICK/PUNCH/PUSH). Sollte
+einer der Angriffe nicht mÃ¶glich sein (oder noch nicht einprogramiert), so
 wird der Knopf GRAU, und nicht aktiv.
 
 
 ENDE-DES-ZUGS BERICHT:
 
 Sollten irgendwelche physikalischen Angriffe statt gefunde haben
-(Schläge/Tritte/Todessprünge/Rammangriffe), so werden hier die Ergebnisse
-gezeigt, sowie die Resultate der Hitze und evtl. brennende Wälder und die
-Felder, die mit Rauch gefüllt sind.
+(SchlÃ¤ge/Tritte/TodessprÃ¼nge/Rammangriffe), so werden hier die Ergebnisse
+gezeigt, sowie die Resultate der Hitze und evtl. brennende WÃ¤lder und die
+Felder, die mit Rauch gefÃ¼llt sind.
 
 Nach dieser Phase beginnt eine neue Runde.
 
@@ -290,20 +290,20 @@ Nach dieser Phase beginnt eine neue Runde.
 UNTERSCHIEDE ZWISCHEN DEM BRETTSPIEL UND MEGAMEK
 ------------------------------------------------
 MEGAMEK versucht den original Brettspiel Regeln treu zu bleiben. In einigen
-Fällen, die aufgrund der technischen- und design- Beschränkungen auftreten,
-ist dies nicht immer möglich. Diese Unterschiede sind keine Fehler (BUGS).
+FÃ¤llen, die aufgrund der technischen- und design- BeschrÃ¤nkungen auftreten,
+ist dies nicht immer mÃ¶glich. Diese Unterschiede sind keine Fehler (BUGS).
 Solltet ihr noch irgendwelche Unterschide feststellen, kontaktet bitte den
 Autor (wie, steht in "CONTACT" unten.)
 
-- Man kann jeden Weg springen, nicht nur den kürzesten.
+- Man kann jeden Weg springen, nicht nur den kÃ¼rzesten.
     
-- Wenn die Feuerlinie entlang zweier Hex-Feld-Kanten liegt, wählte im
-Brettspiel der Verteidiger aus, über welches Feld der Angreifer schiessen
-muss, Derzeit wählt MEGAMEK einfach das für den Verteidiger vorteilhaftere
-Feld aus (so daß der Verteidiger schwerer zu treffen ist)
+- Wenn die Feuerlinie entlang zweier Hex-Feld-Kanten liegt, wÃ¤hlte im
+Brettspiel der Verteidiger aus, Ã¼ber welches Feld der Angreifer schiessen
+muss, Derzeit wÃ¤hlt MEGAMEK einfach das fÃ¼r den Verteidiger vorteilhaftere
+Feld aus (so daÃŸ der Verteidiger schwerer zu treffen ist)
 
-- Während eines Schlages, schlägt man automatisch mit beiden Armen, wenn
-dies möglich ist. Das heisst, du kannst nicht zwei Ziele in einer Runde
+- WÃ¤hrend eines Schlages, schlÃ¤gt man automatisch mit beiden Armen, wenn
+dies mÃ¶glich ist. Das heisst, du kannst nicht zwei Ziele in einer Runde
 schlagen.
 
 - Bei einem Tritt, benutzt der Mech automatisch das Bein, das bessere Chancen
@@ -311,9 +311,9 @@ auf einen Treffer hat.
 
 - Es gibt viele Situationen, besonder den ANGRIFF VON OBEN (D.F.A *DEATH
 FROM ABOVE*), bei dem die Einheit in ein anderes Feld verschoben wird.
-Normal kann der Spieler dieses Feld selbst wählen, MEGAMEK allerdings
-bestimmt derzeit diese Feld noch selbst für sie (und wählt dabei das Feld
-mit der höchsten Höhenstufe, so daß unbeabsichtiges Fallen von Klippen
+Normal kann der Spieler dieses Feld selbst wÃ¤hlen, MEGAMEK allerdings
+bestimmt derzeit diese Feld noch selbst fÃ¼r sie (und wÃ¤hlt dabei das Feld
+mit der hÃ¶chsten HÃ¶henstufe, so daÃŸ unbeabsichtiges Fallen von Klippen
 vermieden wird)
     
 - Ein paar die ich vergessen habe...
@@ -321,14 +321,14 @@ vermieden wird)
 
 KONTAKT & WEITERE INFORMATIONEN
 -------------------------------
-Für mehr Informationen, und um die neueste MEGAMEK Version zu bekommen, besucht die Homepage:
+FÃ¼r mehr Informationen, und um die neueste MEGAMEK Version zu bekommen, besucht die Homepage:
 http://megamek.sourceforge.net/
 
-Für mehr Informationen über das Battletech Brettspiel besucht:
+FÃ¼r mehr Informationen Ã¼ber das Battletech Brettspiel besucht:
 http://www.classicbattletech.com/ oder http://www.battletech.info/
 
 
-Um dem Autor Fehler Berichte, Vorschläge oder sonst was zu machen, besucht
+Um dem Autor Fehler Berichte, VorschlÃ¤ge oder sonst was zu machen, besucht
 die 'contact' Seite auf der MegaMek Webseite, oder schickt eine E-Mail an
 bmazur@sev.org
 

@@ -796,7 +796,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 // grounded aero
                 if (!(ae instanceof Dropship)) {
                     toHit.addModifier(+2, "grounded aero");
-                } else if (!target.isAirborne()) {
+                } else if (!target.isAirborne() && !isArtilleryIndirect) {
                     toHit.addModifier(-2,
                             "grounded dropships firing on ground units");
                 }

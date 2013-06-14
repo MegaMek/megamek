@@ -100,6 +100,8 @@ v0.35.39-dev (SVN)
 + Bug: Broken C3i network display in Swing chat lounge (missing message string for free slot count).
 + Data: CASE mounted in rear rather than body on Thor Artillery Vehicle (C3i); fixed.
 + Bug: misc BV fixes
++ Bug 3762: Dropship Artillery receiving bonus
++ WIP Bug 3763: ArtilleryBayWeapon not working on ground map (always out of range)
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

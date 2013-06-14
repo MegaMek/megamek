@@ -86,7 +86,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
     }
 
     /**
-     * Insert any additionaly attacks that should occur before this attack
+     * Insert any additional attacks that should occur before this attack
      */
     @Override
     protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {

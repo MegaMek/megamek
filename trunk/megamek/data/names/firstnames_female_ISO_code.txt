@@ -4511,7 +4511,7 @@ Celeste,1,2
 Celia,1,2
 Celina,1,2
 Celine,1,2
-Cerys ,1,2
+CerysÂ ,1,2
 Chana,1,2
 Charity,1,2
 Charlie,1,2
@@ -4871,7 +4871,7 @@ Kassandra,1,2
 Kassidy,1,2
 Katarina,1,2
 Kate,1,2
-Kate ,1,2
+KateÂ ,1,2
 Katelin,1,2
 Katelyn,1,2
 Katelynn,1,2
@@ -5025,7 +5025,7 @@ Madelynn,1,2
 Madilyn,1,2
 Madisen,1,2
 Madison,1,2
-Madison ,1,2
+MadisonÂ ,1,2
 Madisyn,1,2
 Madyson,1,2
 Maegan,1,2
@@ -5107,7 +5107,7 @@ Mireya,1,2
 Miriam,1,2
 Miya,1,2
 Mollie,1,2
-Mollie ,1,2
+MollieÂ ,1,2
 Molly,1,2
 Molly,1,2
 Monica,1,2
@@ -10094,12 +10094,12 @@ Alva,1,7
 Andrea,1,7
 Anja,1,7
 Anna,1,7
-Annbjørg,1,7
+AnnbjÃ¸rg,1,7
 Anne,1,7
 Annelie,1,7
 Anniken,1,7
 Antonia,1,7
-Arnbjørg,1,7
+ArnbjÃ¸rg,1,7
 _se,1,7
 Aslaug,1,7
 Asta,1,7
@@ -10111,7 +10111,7 @@ Bergliot,1,7
 Bergljot,1,7
 Berit,1,7
 Birgit,1,7
-Bjørg,1,7
+BjÃ¸rg,1,7
 Bodil,1,7
 Borghild,1,7
 Brit,1,7
@@ -10179,13 +10179,13 @@ Henrike,1,7
 Hilda,1,7
 Hildegard,1,7
 Hildegarde,1,7
-Hjørdis,1,7
+HjÃ¸rdis,1,7
 Hulda,1,7
 Ida,1,7
 Ina,1,7
 Inga,1,7
 Inge,1,7
-Ingebjørg,1,7
+IngebjÃ¸rg,1,7
 Ingeborg,1,7
 Ingegerd,1,7
 Ingrid,1,7
@@ -10297,7 +10297,7 @@ Sunniva,1,7
 Susanne,1,7
 Svanhild,1,7
 Sylvia,1,7
-Synnøve,1,7
+SynnÃ¸ve,1,7
 Tea,1,7
 Tekla,1,7
 Teresa,1,7
@@ -10309,13 +10309,13 @@ Thyra,1,7
 Tine,1,7
 Tone,1,7
 Tora,1,7
-Torbjørg,1,7
+TorbjÃ¸rg,1,7
 Torborg,1,7
 Tordis,1,7
 Torhild,1,7
 Toril,1,7
 Torny,1,7
-Torø,1,7
+TorÃ¸,1,7
 Tove,1,7
 Turid,1,7
 Tuva,1,7
@@ -10326,7 +10326,7 @@ Ursula,1,7
 Vanja,1,7
 Vera,1,7
 Veronika,1,7
-Veslemøy,1,7
+VeslemÃ¸y,1,7
 Vibeke,1,7
 Viktoria,1,7
 Viola,1,7
@@ -10519,7 +10519,7 @@ Annelise,1,7
 Antonia,1,7
 _se,1,7
 Aslaug,1,7
-Asløg,1,7
+AslÃ¸g,1,7
 Asta,1,7
 Astrid,1,7
 Beata,1,7
@@ -10601,13 +10601,13 @@ Henrike,1,7
 Hilda,1,7
 Hildegard,1,7
 Hildegarde,1,7
-Hjørdis,1,7
+HjÃ¸rdis,1,7
 Hulda,1,7
 Ida,1,7
 Ina,1,7
 Inga,1,7
 Inge,1,7
-Ingebjørg,1,7
+IngebjÃ¸rg,1,7
 Ingeborg,1,7
 Ingegerd,1,7
 Ingrid,1,7
@@ -10637,7 +10637,7 @@ Klara,1,7
 Kris,1,7
 Kristin,1,7
 Kristine,1,7
-Lærke,1,7
+LÃ¦rke,1,7
 Laura,1,7
 Lena,1,7
 Lene,1,7
@@ -13236,8 +13236,8 @@ Asensio,1,10
 Ases,1,10
 Ases,1,10
 Asia,1,10
-Asianah ,1,10
-Asianah ,1,10
+AsianahÂ ,1,10
+AsianahÂ ,1,10
 Asiannique,1,10
 Asiturri,1,10
 Asiturri,1,10
@@ -16848,8 +16848,8 @@ Henriette,1,10
 Henriqua,1,10
 Henriqua,1,10
 Hera,1,10
-Heriberto ,1,10
-Heriberto ,1,10
+HeribertoÂ ,1,10
+HeribertoÂ ,1,10
 Herlinda,1,10
 Herlinda,1,10
 Hermelinda,1,10
@@ -18710,7 +18710,7 @@ Madre,1,10
 Madrona,1,10
 Madrona,1,10
 Mae,1,10
-Maela ,1,10
+MaelaÂ ,1,10
 Mafalda,1,10
 Mafalda,1,10
 Mag,1,10
@@ -21773,8 +21773,8 @@ Tetxa,1,10
 Tetxa,1,10
 Teyra,1,10
 Teyra,1,10
-Thaimy ,1,10
-Thaimy ,1,10
+ThaimyÂ ,1,10
+ThaimyÂ ,1,10
 Thais,1,10
 Thalia,1,10
 Thalia,1,10
@@ -22866,28 +22866,28 @@ Albertina,1,11
 Alda,1,11
 Alexandra,1,11
 Alice,1,11
-Alícia,1,11
-Amália,1,11
+AlÃ­cia,1,11
+AmÃ¡lia,1,11
 Amanda,1,11
-Amélia,1,11
-América,1,11
+AmÃ©lia,1,11
+AmÃ©rica,1,11
 Ana,1,11
 Anabela,1,11
-Andréa,1,11
+AndrÃ©a,1,11
 Andreia,1,11
-Andréia,1,11
-Ângela,1,11
-Antónia,1,11
-Assunção,1,11
+AndrÃ©ia,1,11
+Ã‚ngela,1,11
+AntÃ³nia,1,11
+AssunÃ§Ã£o,1,11
 Augusta,1,11
 Aurora,1,11
-Bárbara,1,11
+BÃ¡rbara,1,11
 Beatriz,1,11
 Benedita,1,11
 Benigna,1,11
 Bia,1,11
 Branca,1,11
-Brígida,1,11
+BrÃ­gida,1,11
 Bruna,1,11
 Brunilda,1,11
 Calista,1,11
@@ -22898,52 +22898,52 @@ Carlota,1,11
 Carmo,1,11
 Carolina,1,11
 Catarina,1,11
-Cátia,1,11
-Cecília,1,11
-Célia,1,11
+CÃ¡tia,1,11
+CecÃ­lia,1,11
+CÃ©lia,1,11
 Chica,1,11
-Cíntia,1,11
+CÃ­ntia,1,11
 Clara,1,11
 Clarissa,1,11
-Cláudia,1,11
+ClÃ¡udia,1,11
 Clementina,1,11
-Constança,1,11
-Constância,1,11
+ConstanÃ§a,1,11
+ConstÃ¢ncia,1,11
 Cristiana,1,11
 Cristina,1,11
 Cruz,1,11
 Daniela,1,11
-Débora,1,11
-Desidéria,1,11
+DÃ©bora,1,11
+DesidÃ©ria,1,11
 Diamantina,1,11
 Diana,1,11
 Domitila,1,11
 Dores,1,11
-Dorotéia,1,11
+DorotÃ©ia,1,11
 Dulce,1,11
 Edite,1,11
 Eduarda,1,11
-Efigênia,1,11
+EfigÃªnia,1,11
 Elisa,1,11
 Elisabete,1,11
 Ema,1,11
-Emília,1,11
+EmÃ­lia,1,11
 Emiliana,1,11
-Érica,1,11
+Ã‰rica,1,11
 Estela,1,11
 Ester,1,11
 Eufemia,1,11
-Eugênia,1,11
-Eulália,1,11
+EugÃªnia,1,11
+EulÃ¡lia,1,11
 Eva,1,11
-Fábia,1,11
+FÃ¡bia,1,11
 Fabiana,1,11
 Fatima,1,11
 Felicidade,1,11
 Fernanda,1,11
 Filipa,1,11
 Filomena,1,11
-Flávia,1,11
+FlÃ¡via,1,11
 Fortunata,1,11
 Francisca,1,11
 Frederica,1,11
@@ -22952,20 +22952,20 @@ Genoveva,1,11
 Gertrudes,1,11
 Gilda,1,11
 Gisela,1,11
-Gláucia,1,11
+GlÃ¡ucia,1,11
 Gloria,1,11
-Graça,1,11
+GraÃ§a,1,11
 Graciana,1,11
 Guiomar,1,11
 Helena,1,11
-Hermínia,1,11
+HermÃ­nia,1,11
 Ida,1,11
 Imaculada,1,11
-Inês,1,11
+InÃªs,1,11
 Iolanda,1,11
 Irene,1,11
 Iria,1,11
-Íris,1,11
+Ãris,1,11
 Isabel,1,11
 Isabela,1,11
 Isaura,1,11
@@ -22977,22 +22977,22 @@ Judite,1,11
 J_lia,1,11
 Juliana,1,11
 Laura,1,11
-Leocádia,1,11
+LeocÃ¡dia,1,11
 Leonor,1,11
 Leticia,1,11
 Lia,1,11
 Liana,1,11
-Lídia,1,11
-Lígia,1,11
-Lílian,1,11
+LÃ­dia,1,11
+LÃ­gia,1,11
+LÃ­lian,1,11
 Liliana,1,11
 Livia,1,11
-Lívia,1,11
+LÃ­via,1,11
 Lorena,1,11
 L_cia,1,11
 Luciana,1,11
 Lucinda,1,11
-Luísa,1,11
+LuÃ­sa,1,11
 Luiza,1,11
 Lurdes,1,11
 Luzia,1,11
@@ -23002,7 +23002,7 @@ Mafalda,1,11
 Magda,1,11
 Manoela,1,11
 Manuela,1,11
-Márcia,1,11
+MÃ¡rcia,1,11
 Margarida,1,11
 Maria,1,11
 Mariana,1,11
@@ -23014,17 +23014,17 @@ Matilde,1,11
 Micaela,1,11
 Miguela,1,11
 Monica,1,11
-Mônica,1,11
-Natália,1,11
-Nathália,1,11
+MÃ´nica,1,11
+NatÃ¡lia,1,11
+NathÃ¡lia,1,11
 Neves,1,11
 Nilda,1,11
-Noemí,1,11
-Noêmia,1,11
+NoemÃ­,1,11
+NoÃªmia,1,11
 N_ria,1,11
-Ofélia,1,11
+OfÃ©lia,1,11
 Olga,1,11
-Olívia,1,11
+OlÃ­via,1,11
 Palmira,1,11
 Patricia,1,11
 Paula,1,11
@@ -23038,10 +23038,10 @@ Rita,1,11
 Rosa,1,11
 Rosalina,1,11
 Rosana,1,11
-Rosário,1,11
+RosÃ¡rio,1,11
 Rute,1,11
 Sabina,1,11
-Salomé,1,11
+SalomÃ©,1,11
 Sandra,1,11
 Sara,1,11
 Severina,1,11
@@ -23051,7 +23051,7 @@ Sol,1,11
 Sonia,1,11
 Susana,1,11
 Suzana,1,11
-Tânia,1,11
+TÃ¢nia,1,11
 Tatiana,1,11
 Telma,1,11
 Teodora,1,11
@@ -23060,11 +23060,11 @@ Teresinha,1,11
 Tereza,1,11
 Terezinha,1,11
 _rsula,1,11
-Valéria,1,11
+ValÃ©ria,1,11
 Vera,1,11
-Verônica,1,11
+VerÃ´nica,1,11
 Virginia,1,11
-Vitória,1,11
+VitÃ³ria,1,11
 Adla,1,12
 Adleida,1,12
 Adlesha,1,12
@@ -24824,43 +24824,43 @@ Zoyenka,1,12
 Ztrezena,1,12
 Zvatata,1,12
 Zvenislava,1,12
-Adéla,1,13
+AdÃ©la,1,13
 Adriana,1,13
 Agata,1,13
-Albína,1,13
+AlbÃ­na,1,13
 Alena,1,13
 Alexandra,1,13
 Alica,1,13
 Alojzia,1,13
-Albeta,1,13
-Albeta,1,13
-Amália,1,13
-Amálie,1,13
-Anastázia,1,13
-Anastázie,1,13
+AlÂbeta,1,13
+AlÂbeta,1,13
+AmÃ¡lia,1,13
+AmÃ¡lie,1,13
+AnastÃ¡zia,1,13
+AnastÃ¡zie,1,13
 Andela,1,13
 Andrea,1,13
 Aneta,1,13
 Angela,1,13
 Anna,1,13
-Antónia,1,13
+AntÃ³nia,1,13
 Antonie,1,13
 Apolena,1,13
 Barbora,1,13
-Beáta,1,13
+BeÃ¡ta,1,13
 Benedikta,1,13
 Berta,1,13
 Blanka,1,13
 Bohumila,1,13
 Bohuslava,1,13
 Boleslava,1,13
-Boena,1,13
+BoÂena,1,13
 Branislava,1,13
 Branka,1,13
 Bronislava,1,13
-Cecília,1,13
+CecÃ­lia,1,13
 Cecilie,1,13
-Cecílie,1,13
+CecÃ­lie,1,13
 Dana,1,13
 Danica,1,13
 Daniela,1,13
@@ -24869,19 +24869,19 @@ Darja,1,13
 Denisa,1,13
 Dominika,1,13
 Dorota,1,13
-Drahomíra,1,13
+DrahomÃ­ra,1,13
 Drahoslava,1,13
-Dušana,1,13
+DuÂšana,1,13
 Edita,1,13
-Eliška,1,13
+EliÂška,1,13
 Ema,1,13
-Emília,1,13
-Emílie,1,13
+EmÃ­lia,1,13
+EmÃ­lie,1,13
 Erika,1,13
 Ester,1,13
 Estera,1,13
 Eva,1,13
-Františka,1,13
+FrantiÂška,1,13
 Gabriela,1,13
 Hana,1,13
 Hedviga,1,13
@@ -24908,27 +24908,27 @@ Josefa,1,13
 Judita,1,13
 J_lia,1,13
 Justina,1,13
-Justína,1,13
+JustÃ­na,1,13
 Just_na,1,13
-Kája,1,13
+KÃ¡ja,1,13
 Kamila,1,13
-Karolína,1,13
-Katarína,1,13
+KarolÃ­na,1,13
+KatarÃ­na,1,13
 Katerina,1,13
-Klára,1,13
+KlÃ¡ra,1,13
 Klaudia,1,13
 Klaudie,1,13
 Kristina,1,13
-Kristína,1,13
+KristÃ­na,1,13
 Krist_na,1,13
 Kveta,1,13
 Ladislava,1,13
 Lenka,1,13
 Libena,1,13
-Libuše,1,13
-Lída,1,13
+LibuÂše,1,13
+LÃ­da,1,13
 Linda,1,13
-Lívia,1,13
+LÃ­via,1,13
 Livie,1,13
 Lucia,1,13
 Lucie,1,13
@@ -24939,21 +24939,21 @@ L_die,1,13
 Madlenka,1,13
 Magda,1,13
 Magdalena,1,13
-Magdaléna,1,13
+MagdalÃ©na,1,13
 Marcela,1,13
 Margita,1,13
-Mária,1,13
+MÃ¡ria,1,13
 Mariana,1,13
 Marianna,1,13
 Marie,1,13
 Marika,1,13
-Markéta,1,13
+MarkÃ©ta,1,13
 Marta,1,13
 Martina,1,13
 Matilda,1,13
 Matylda,1,13
-Melánia,1,13
-Melánie,1,13
+MelÃ¡nia,1,13
+MelÃ¡nie,1,13
 Michaela,1,13
 Michala,1,13
 Mila,1,13
@@ -24964,16 +24964,16 @@ Miloslava,1,13
 Miroslava,1,13
 Monika,1,13
 Nada,1,13
-Nadeda,1,13
-Nadeda,1,13
-Natália,1,13
-Natálie,1,13
+NadeÂda,1,13
+NadeÂda,1,13
+NatÃ¡lia,1,13
+NatÃ¡lie,1,13
 Nikola,1,13
 Noemi,1,13
-Olívia,1,13
+OlÃ­via,1,13
 Olivie,1,13
 Olympia,1,13
-Patrícia,1,13
+PatrÃ­cia,1,13
 Patricie,1,13
 Pavla,1,13
 Pavlina,1,13
@@ -24984,43 +24984,43 @@ Radomila,1,13
 Radomira,1,13
 Radoslava,1,13
 Renata,1,13
-Renáta,1,13
+RenÃ¡ta,1,13
 Romana,1,13
-Ruena,1,13
+RuÂena,1,13
 Sabina,1,13
-Sára,1,13
-Šárka,1,13
+SÃ¡ra,1,13
+ÂŠÃ¡rka,1,13
 Silvia,1,13
 Silvie,1,13
 Simona,1,13
-Šimona,1,13
+ÂŠimona,1,13
 Sona,1,13
 Stanislava,1,13
-Štefánia,1,13
-Štepánka,1,13
+ÂŠtefÃ¡nia,1,13
+ÂŠtepÃ¡nka,1,13
 Svetlana,1,13
 Svetlana,1,13
-Tatána,1,13
+TatÃ¡na,1,13
 Tatiana,1,13
 Tereza,1,13
-Terézia,1,13
+TerÃ©zia,1,13
 Terezie,1,13
-Václava,1,13
-Valentína,1,13
+VÃ¡clava,1,13
+ValentÃ­na,1,13
 Vendula,1,13
 Vera,1,13
 Veronika,1,13
-Viktória,1,13
+ViktÃ³ria,1,13
 Viktorie,1,13
 Vilma,1,13
-Vladimíra,1,13
+VladimÃ­ra,1,13
 Vladislava,1,13
 Vlasta,1,13
 Zdenka,1,13
 Zdenka,1,13
 Zita,1,13
-ofia,1,13
-ofie,1,13
+Âofia,1,13
+Âofie,1,13
 Zoja,1,13
 Zora,1,13
 Zuzana,1,13
@@ -25399,7 +25399,7 @@ Heleena,1,16
 Helena,1,16
 Heli,1,16
 Helka,1,16
-Hellä,1,16
+HellÃ¤,1,16
 Helmi,1,16
 Henna,1,16
 Henriikka,1,16
@@ -25491,8 +25491,8 @@ Noora,1,16
 Oili,1,16
 Olivia,1,16
 Orvokki,1,16
-Päivä,1,16
-Päivi,1,16
+PÃ¤ivÃ¤,1,16
+PÃ¤ivi,1,16
 Paula,1,16
 Pauliina,1,16
 Petra,1,16
@@ -25513,7 +25513,7 @@ Riina,1,16
 Riitta,1,16
 Ritva,1,16
 Saara,1,16
-Säde,1,16
+SÃ¤de,1,16
 Saija,1,16
 Salli,1,16
 Sandra,1,16
@@ -25535,7 +25535,7 @@ Suoma,1,16
 Susanna,1,16
 Suvi,1,16
 Sylvi,1,16
-Tähti,1,16
+TÃ¤hti,1,16
 Taika,1,16
 Taimi,1,16
 Taina,1,16
@@ -25572,7 +25572,7 @@ Vilhelmina,1,16
 Virva,1,16
 Vuokko,1,16
 Aferdita,1,17
-Afërdita,1,17
+AfÃ«rdita,1,17
 Agla,1,17
 Agnes,1,17
 Alba,1,17
@@ -25766,9 +25766,9 @@ Adrijana,1,18
 Aleksandra,1,18
 Ana,1,18
 Andela,1,18
-Andjela ,1,18
+AndjelaÂ ,1,18
 Anka,1,18
-Antonija ,1,18
+AntonijaÂ ,1,18
 Biljana,1,18
 Bogdana,1,18
 Bojana,1,18
@@ -25784,7 +25784,7 @@ Dragica,1,18
 Dragoslava,1,18
 Dubravka,1,18
 Dunja,1,18
-Dušana,1,18
+DuÂšana,1,18
 Ema,1,18
 Emilija,1,18
 Filipa,1,18
@@ -25821,14 +25821,14 @@ Milena,1,18
 Milica,1,18
 Milka,1,18
 Mirjana,1,18
-Mirna ,1,18
+MirnaÂ ,1,18
 Miroslava,1,18
-Mladenka ,1,18
+MladenkaÂ ,1,18
 Mojca,1,18
 Nada,1,18
 Naida,1,18
 Natalija,1,18
-Nataša,1,18
+NataÂša,1,18
 Olga,1,18
 Olivera,1,18
 Radmila,1,18
@@ -25839,7 +25839,7 @@ Senka,1,18
 Severina,1,18
 Silvija,1,18
 Slavica,1,18
-Sneana,1,18
+SneÂana,1,18
 Snjezana,1,18
 Sofija,1,18
 Sonja,1,18
@@ -25857,7 +25857,7 @@ Valerija,1,18
 Veca,1,18
 Vedrana,1,18
 Vesna,1,18
-Višnja,1,18
+ViÂšnja,1,18
 Vjekoslava,1,18
 Zlata,1,18
 Zora,1,18
@@ -26005,7 +26005,7 @@ Isadora,1,19
 Isadorer,1,19
 Isaura,1,19
 Jace,1,19
-Jacinda ,1,19
+JacindaÂ ,1,19
 Jacinta,1,19
 Kaia,1,19
 Kalika,1,19
@@ -26207,7 +26207,7 @@ Aydan,1,20
 Ayfer,1,20
 Aygen,1,20
 Aygul,1,20
-Aygül,1,20
+AygÃ¼l,1,20
 Ayhan,1,20
 Ayhanim,1,20
 Ayhun,1,20
@@ -26470,14 +26470,14 @@ Gonca,1,20
 Gonce,1,20
 Gonul,1,20
 Gozde,1,20
-Gözde,1,20
+GÃ¶zde,1,20
 Guher,1,20
 Gul,1,20
-Gül,1,20
+GÃ¼l,1,20
 Gulay,1,20
-Gülay,1,20
+GÃ¼lay,1,20
 Gulbahar,1,20
-Gülbahar,1,20
+GÃ¼lbahar,1,20
 Gulben,1,20
 Gulbin,1,20
 Gulcan,1,20
@@ -26494,7 +26494,7 @@ Gulhan,1,20
 Gulhis,1,20
 Gulin,1,20
 Gulistan,1,20
-Gülistan,1,20
+GÃ¼listan,1,20
 Gulizar,1,20
 Gullu,1,20
 Gulnaz,1,20
@@ -26627,7 +26627,7 @@ Jamilya,1,20
 Jihan,1,20
 Julide,1,20
 Kader,1,20
-Kader ,1,20
+KaderÂ ,1,20
 Kadriye,1,20
 Kamelya,1,20
 Kamile,1,20
@@ -26724,7 +26724,7 @@ Muberra,1,20
 Mucella,1,20
 Muesser,1,20
 Muge,1,20
-Müge,1,20
+MÃ¼ge,1,20
 Muhtepem,1,20
 Muhtethem,1,20
 Mujde,1,20
@@ -26796,7 +26796,7 @@ Nilay,1,20
 Nilgun,1,20
 Nilhan,1,20
 Nilufer,1,20
-Nilüfer,1,20
+NilÃ¼fer,1,20
 Nimet,1,20
 Nisa,1,20
 Nisan,1,20
@@ -26848,11 +26848,11 @@ Ozden,1,20
 Ozel,1,20
 Ozenc,1,20
 Ozge,1,20
-Özge,1,20
+Ã–zge,1,20
 Ozgur,1,20
-Özgür,1,20
+Ã–zgÃ¼r,1,20
 Ozlem,1,20
-Özlem,1,20
+Ã–zlem,1,20
 Oznur,1,20
 Padiye,1,20
 Pafak,1,20
@@ -27097,7 +27097,7 @@ Tuba,1,20
 Tugba,1,20
 Tugce,1,20
 Tulay,1,20
-Tülay,1,20
+TÃ¼lay,1,20
 Tulin,1,20
 Tulu,1,20
 Turhan,1,20
@@ -29412,7 +29412,7 @@ Malti ,1,25
 Mamata ,1,25
 Manali ,1,25
 Manana ,1,25
-Manasa ,1,25
+ManasaÂ ,1,25
 Manasi ,1,25
 Manda ,1,25
 Mandakini ,1,25
@@ -30689,14 +30689,14 @@ Chisa,1,26
 Chisako,1,26
 Chisaku,1,26
 Chisato,1,26
-Chisato ,1,26
+ChisatoÂ ,1,26
 Chiseko,1,26
 Chishik,1,26
 Chishiko,1,26
 Chitae,1,26
 Chitako,1,26
 Chitose,1,26
-Chitose ,1,26
+ChitoseÂ ,1,26
 Chitoyo,1,26
 Chitsuko,1,26
 Chiwa,1,26
@@ -31795,10 +31795,10 @@ Maho,1,26
 Mahoka,1,26
 Mahoko,1,26
 Mai,1,26
-Mai ,1,26
+MaiÂ ,1,26
 Maika,1,26
 Maiko,1,26
-Maiko ,1,26
+MaikoÂ ,1,26
 Maina,1,26
 Maira,1,26
 Maiya,1,26
@@ -31811,15 +31811,15 @@ Makami,1,26
 Makana,1,26
 Makeira,1,26
 Maki,1,26
-Maki ,1,26
+MakiÂ ,1,26
 Makie,1,26
 Makikam,1,26
 Makiko,1,26
-Makiko ,1,26
+MakikoÂ ,1,26
 Makino,1,26
 Makkenji,1,26
 Mako,1,26
-Mako ,1,26
+MakoÂ ,1,26
 Makoto,1,26
 Makou,1,26
 Makushi-n,1,26
@@ -32116,7 +32116,7 @@ Mizuho,1,26
 Mizuhoko,1,26
 Mizuka,1,26
 Mizuki,1,26
-Mizuki ,1,26
+MizukiÂ ,1,26
 Mizuko,1,26
 Mizuna,1,26
 Mizuyo,1,26
@@ -32746,7 +32746,7 @@ Seishi,1,26
 Seishiru,1,26
 Seka,1,26
 Seki,1,26
-Seki ,1,26
+SekiÂ ,1,26
 Sekiko,1,26
 Sekiwak,1,26
 Seko,1,26
@@ -32754,7 +32754,7 @@ Sekogo,1,26
 Sema,1,26
 Semba,1,26
 Sen,1,26
-Sen ,1,26
+SenÂ ,1,26
 Sena,1,26
 Sen-hi,1,26
 Sen-hik,1,26
@@ -32947,18 +32947,18 @@ Sukiko,1,26
 Sukimin,1,26
 Sukki,1,26
 Suko,1,26
-Suko ,1,26
+SukoÂ ,1,26
 Sukomi,1,26
 Suma,1,26
 Sumako,1,26
 Sumayo,1,26
 Sumi,1,26
-Sumi ,1,26
+SumiÂ ,1,26
 Sumie,1,26
-Sumie ,1,26
+SumieÂ ,1,26
 Sumika,1,26
 Sumiko,1,26
-Sumiko ,1,26
+SumikoÂ ,1,26
 Suminoto,1,26
 Sumio,1,26
 Sumire,1,26
@@ -32986,7 +32986,7 @@ Suzanna,1,26
 Suzu,1,26
 Suzu,1,26
 Suzue,1,26
-Suzue ,1,26
+SuzueÂ ,1,26
 Suzuka,1,26
 Suzuki,1,26
 Suzuko,1,26
@@ -33343,7 +33343,7 @@ Ukyo,1,26
 Uma,1,26
 Umako,1,26
 Ume,1,26
-Ume ,1,26
+UmeÂ ,1,26
 Umeka,1,26
 Umeka,1,26
 Umeko,1,26
@@ -33374,7 +33374,7 @@ Uta,1,26
 Utae,1,26
 Utagawa,1,26
 Utako,1,26
-Utako ,1,26
+UtakoÂ ,1,26
 Utami,1,26
 Utashiro,1,26
 Utasumi,1,26

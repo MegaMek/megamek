@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="trunk/megamek/src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-1.6.0-openjdk-1.6.0.0.x86_64"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/j3dcore.jar"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/j3dutils.jar"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/Ostermiller.jar"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/PngEncoder.jar"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/TabPanel.jar"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/TinyXML.jar"/>
+	<classpathentry kind="lib" path="trunk/megamek/lib/tinyXML07-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="trunk/megamek/lib/vecmath.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -24420,8 +24420,16 @@ public class Server implements Runnable {
             if (query_file.isDirectory()) {
                 getBoardSizesInDir(query_file, sizes);
             } else {
-                if (filename.endsWith(".board")) { //$NON-NLS-1$
-                    sizes.add(Board.getSize(query_file));
+                try{                   
+                    if (filename.endsWith(".board")) { //$NON-NLS-1$
+                        BoardDimensions size = Board.getSize(query_file);
+                        if (size == null)
+                            throw new Exception();
+                        sizes.add(Board.getSize(query_file));
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error reading in board: " + 
+                            query_file.getAbsolutePath());
                 }
             }
         }

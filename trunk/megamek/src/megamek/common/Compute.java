@@ -3716,6 +3716,14 @@ public class Compute {
      * return the total content.
      */
     public static int getMetalInPath(Entity ae, Coords a, Coords b) {
+        // If we're in space, or anything is null... get out.
+    	if (ae.getGame().getBoard().inSpace()) {
+            return 0;
+        }
+        if ((a == null) || (b == null)) {
+            return 0;
+        }
+        
         // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
         // loop through all intervening coords, check each if they are ECM

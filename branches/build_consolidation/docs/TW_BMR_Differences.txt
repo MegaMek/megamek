@@ -22,7 +22,7 @@ x4) An additional skill, The Anti-'Mech Skill, has been added for infantry, whic
 
 MOVEMENT
 
-x1) A ‘Mech missing both arms and one leg may no longer attempt to stand
+x1) A Â‘Mech missing both arms and one leg may no longer attempt to stand
 
 x2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
 
@@ -71,7 +71,7 @@ x3) No penalty for taking partial cover in Depth 1 water (Depth 1 water now prov
 
 x4) Ammo Dumping rules expanded to cover vehicles & aerospace craft
 
-x5) ‘Mechs may now spot for indirect attacks/use TAG and fire in the same turn, although spotting for indirect LRM fire typically incurs a +1 to hit penalty (no penalty for using TAG).
+x5) Â‘Mechs may now spot for indirect attacks/use TAG and fire in the same turn, although spotting for indirect LRM fire typically incurs a +1 to hit penalty (no penalty for using TAG).
 
 x6) When clearing woods, woods now have a number of Terrain Factor points, much like the Construction Factor of buildings, which must be reduced or eliminated to clear them.
 
@@ -86,7 +86,7 @@ x10) A skidding unit suffers an additional +1 to hit modifier when attacking oth
 
 x11) Target Movement Modifier Table increased to cover a speed of 25+ hexes per turn.  To-hit modifiers for Target Movement now go up to +5 at 18 hexes and +6 at 25+ hexes.
 
-x12) +1 to hit modifier for Battle Armor only applies if the attacking unit isn’t infantry
+x12) +1 to hit modifier for Battle Armor only applies if the attacking unit isnÂ’t infantry
 
 x13) Anti-Missile System improved significantly.  When activated, the AMS now incurs an automatic -4 penalty to the attackers roll on the Cluster Hit Table, and only uses one shot of ammo per activation.
 
@@ -120,7 +120,7 @@ x21) The rules for Infernos have changed extensively.  They now effect their tar
       Against Infantry: Each missile automatically kills 3 conventional infantry
          Every three missiles kill one Battle Armor Trooper (round down)
          unless the BA has Fire-Resistant Armor
-      Against ‘Mechs/Aerospace Fighters: +2 heat per missile for the turn of impact
+      Against Â‘Mechs/Aerospace Fighters: +2 heat per missile for the turn of impact
       Against Conventional Fighters: Every three missiles inflict 1 point of SI damage
          (round down)
       Against Dropships: No Effect
@@ -129,19 +129,19 @@ x21) The rules for Infernos have changed extensively.  They now effect their tar
 
 22) Physical attacks are -2 to hit Support Vehicles & Grounded Small Craft due to their size
 
-23) If a Physical attack might displace the target of another Physical attack, the attack by the unit with the lower initiative is resolved first.  If the target is displaced and the attacker moves into the displaced unit’s hex, then a physical attack targeted at the original target is now directed against the unit now    occupying the hex, a standard to-hit roll for the attack is made with a +1 modifier the attack is carried out as normal using the new target
+23) If a Physical attack might displace the target of another Physical attack, the attack by the unit with the lower initiative is resolved first.  If the target is displaced and the attacker moves into the displaced unitÂ’s hex, then a physical attack targeted at the original target is now directed against the unit now    occupying the hex, a standard to-hit roll for the attack is made with a +1 modifier the attack is carried out as normal using the new target
 
 x24) Physical Attacks now use the attackers Piloting Skill as the Base To-Hit # Modified as follows:
-   Charging +/- the Attacker’s Difference in Skill from the Defender
+   Charging +/- the AttackerÂ’s Difference in Skill from the Defender
    Clubbing -1
-   Death From Above +/- the Attacker’s Difference in Skill from the Defender
+   Death From Above +/- the AttackerÂ’s Difference in Skill from the Defender
    Kicking -2
    Punching -1 (confirmed from Ask the Writers, actual book is conflicting on whether or not it's -1 or +0)
    Pushing -1
 
 25) You may now punch two different targets in the same Physical Attack Phase without a secondary target penalty.
 
-x26) Targets of a Push attack cannot Countercharge the Pushing ‘Mech. (Probably a clarification)
+x26) Targets of a Push attack cannot Countercharge the Pushing Â‘Mech. (Probably a clarification)
 
 x27) Quads may now kick (Mule Kick) into their rear arc, but suffer a +1 to hit modifier when doing so.
 
@@ -162,7 +162,7 @@ x1) Multi-hex buildings now have a separate CF for each of their hexes, and each
 
 x3) ProtoMechs may now enter and move within Buildings as infantry, except that they inflict 1 point of CF damage to the building when they enter
 
-x4) Area-Effect attacks such as artillery do additional damage to buildings.  In the case of an attack which is a single hex in size, Area Effect attacks do double CF damage.  In the case of multi-hex attacks (central hex and six surrounding hexes)  Buildings in the surrounding hexes take double CF damage and buildings in the central hex take triple CF damage.  In addition, units in the levels above and below where the Area Effect attack hit suffer ½ damage from that attack.  Weapons which scatter do so in targeted building level in addition to hex of impact when striking buildings.
+x4) Area-Effect attacks such as artillery do additional damage to buildings.  In the case of an attack which is a single hex in size, Area Effect attacks do double CF damage.  In the case of multi-hex attacks (central hex and six surrounding hexes)  Buildings in the surrounding hexes take double CF damage and buildings in the central hex take triple CF damage.  In addition, units in the levels above and below where the Area Effect attack hit suffer Â½ damage from that attack.  Weapons which scatter do so in targeted building level in addition to hex of impact when striking buildings.
 
 
 x5) When shooting at targets within a building, all units may fire at targets at a range of 0.  The to-hit number is modified by +1 for each hex or level of building between or containing the target, with two or more intervening hexes or levels blocking line of sight.  Rules for hitting vehicles and infantry    within buildings are provided
@@ -174,7 +174,7 @@ x1) ProtoMechs cannot skid.
 
 x2) ProtoMechs do not use their standard near-miss hit location table when struck by area-effect attacks, collapsing buildings, falling, crashing Aerospace Fighters or skidding/sideslipping units.  They use the Special Hit Location Table without near misses instead
 
-x3) The ProtoMech physical attack is now called a “Frenzy”
+x3) The ProtoMech physical attack is now called a Â“FrenzyÂ”
 
 4) A new ProtoMech piece of equipment is added: the ProtoMech Myomer Booster (similar to MASC)
 
@@ -218,7 +218,7 @@ x3) Battle Armor Squads can now go to 6 Soldiers (for WOB/Comstar)
 
 x4) Infantry do not suffer from penalties to hit for their movement
 
-x5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and it’s weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
+x5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and itÂ’s weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
 
 x6) Conventional Infantry ignore penalties to hit from Steath Systems, but not Mimetic or Camo systems.
 
@@ -232,7 +232,7 @@ x10) Battle Armor can fire as a Rifle (Ballistic) squad of Conventional Infantry
 
 x11) Battle Armor may now make physical attacks with their Vibroclaws against other infantry in their hex in the Physical Attack phase, treating it as a standard attack, doing one damage per vibroclaw
 
-x12) Battle Armor may now split their fire between different targets for a +1 to hit modifier, same as ‘Mechs and Vehicles.
+x12) Battle Armor may now split their fire between different targets for a +1 to hit modifier, same as Â‘Mechs and Vehicles.
 
 x13) Area Effect Attacks inflict their full damage to each individual trooper in a Battle Armor Squad/Point
 
@@ -246,7 +246,7 @@ x17) Anti-BattleMech Leg attacks always inflict 4 damage regardless of whether o
 
 x18) BA with Magnetic Claws are -1 to hit when performing Swarm Attacks.  The Vibroclaw bonus to Leg Attack damage applies to Swarm attacks as well.
 
-x19) Friendly Mechanized Battle Armor may now defend a ‘Mech from swarm attacks, and may even board a BattleMech already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMech cause Infantry attempting to Swarm that 'Mech to suffer a penalty to their to-hit roll to swarm.
+x19) Friendly Mechanized Battle Armor may now defend a Â‘Mech from swarm attacks, and may even board a BattleMech already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMech cause Infantry attempting to Swarm that 'Mech to suffer a penalty to their to-hit roll to swarm.
 
 x20) Vehicles may be swarmed, and are -2 to hit.
 
@@ -264,17 +264,17 @@ x26) Rules for using weapons while carrying Mechanized Battle Armor was changed 
 
 x27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Clamps
 
-x28) Mechanized Battle Armor fall off the ‘Mech if it falls, but not if it intentionally goes prone.
+x28) Mechanized Battle Armor fall off the Â‘Mech if it falls, but not if it intentionally goes prone.
 
-x29) ‘Mechs carrying Battle Armor on their backs cannot dump ammunition
+x29) Â‘Mechs carrying Battle Armor on their backs cannot dump ammunition
 
-30) Mechanized Battle Armor do not take damage when the ‘Mech carrying them is hit by another unit colliding with it.
+30) Mechanized Battle Armor do not take damage when the Â‘Mech carrying them is hit by another unit colliding with it.
 
-31) Mechanized Battle Armor may fall off and take damage from the ‘Mech carrying them entering a building
+31) Mechanized Battle Armor may fall off and take damage from the Â‘Mech carrying them entering a building
 
-x32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a ‘Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the ‘Mech they are riding on.
+x32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a Â‘Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the Â‘Mech they are riding on.
 
-x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but it’s actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
+x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but itÂ’s actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
 
 x34) Mimetic Armour adds to movement modifiers instead of replacing them (p228)
 

@@ -341,7 +341,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         int row = 0;
         for (Mounted m : entity.getMisc()) {
-            if (!m.getType().hasFlag((MiscType.F_MINE))) {
+            if (!m.getType().hasFlag((MiscType.F_MINE)) && 
+                    !m.getType().hasFlag((MiscType.F_VEHICLE_MINE_DISPENSER))) {
                 continue;
             }
 

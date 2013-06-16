@@ -30413,50 +30413,40 @@ public class Server implements Runnable {
         Mounted mine = entity.getEquipment(mineId);
         Report r;
         if (!mine.isMissing()) {
+            int reportId = 0;
             switch (mine.getMineType()) {
                 case Mounted.MINE_CONVENTIONAL:
-                    deliverThunderMinefield(coords, entity.getOwnerId(), 10,
-                            entity.getId());
-                    mine.setMissing(true);
-                    r = new Report(3500);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(coords.getBoardNum());
-                    addReport(r);
+                    deliverThunderMinefield(coords, entity.getOwnerId(), 
+                            10, entity.getId());
+                    reportId = 3500;
                     break;
                 case Mounted.MINE_VIBRABOMB:
                     deliverThunderVibraMinefield(coords, entity.getOwnerId(),
                             10, mine.getVibraSetting(), entity.getId());
-                    mine.setMissing(true);
-                    r = new Report(3505);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(coords.getBoardNum());
-                    addReport(r);
+                    reportId = 3505;
                     break;
                 case Mounted.MINE_ACTIVE:
                     deliverThunderActiveMinefield(coords, entity.getOwnerId(),
                             10, entity.getId());
-                    mine.setMissing(true);
-                    r = new Report(3510);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(coords.getBoardNum());
-                    addReport(r);
+                    reportId = 3510;
                     break;
                 case Mounted.MINE_INFERNO:
                     deliverThunderInfernoMinefield(coords, entity.getOwnerId(),
                             10, entity.getId());
-                    mine.setMissing(true);
-                    r = new Report(3515);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(coords.getBoardNum());
-                    addReport(r);
+                    reportId = 3515; 
                     break;
             // TODO: command-detonated mines
             // case 2:
             }
+            mine.setShotsLeft(mine.getUsableShotsLeft() - 1);
+            if (mine.getUsableShotsLeft() <= 0){
+                mine.setMissing(true);
+            }
+            r = new Report(reportId);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(coords.getBoardNum());
+            addReport(r);
             entity.setLayingMines(true);
         }
     }

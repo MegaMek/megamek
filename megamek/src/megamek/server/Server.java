@@ -5851,29 +5851,61 @@ public class Server implements Runnable {
                 HashMap<Integer, List<CriticalSlot>> crits = new HashMap<Integer, List<CriticalSlot>>();
                 Vector<Report> vReport = new Vector<Report>();
                 if (entity.checkForMASCFailure(md, vReport, crits)) {
-                    addReport(vReport);
-                    for (Integer loc : crits.keySet()) {
-                        List<CriticalSlot> lcs = crits.get(loc);
-                        for (CriticalSlot cs : lcs) {
-                            // HACK: if loc is -1, we need to deal motive damage
-                            // to
-                            // the tank, the severity of which is stored in the
-                            // critslot index
-                            if (loc == -1) {
-                                addReport(vehicleMotiveDamage((Tank) entity, 0,
-                                        true, cs.getIndex()));
-                            } else {
-                                addReport(applyCriticalHit(entity, loc, cs,
-                                        true, 0, false));
+                    boolean mascFailure = true;
+                    //Check to see if the pilot can reroll due to Edge
+                    if (entity.getCrew().hasEdgeRemaining()
+                            && entity.getCrew().getOptions().booleanOption(
+                                    "edge_when_masc_fails")) {
+                        entity.getCrew().decreaseEdge();
+                        //Need to reset the MASCUsed flag
+                        entity.setMASCUsed(false);
+                        //Report to notify user that masc check was rerolled
+                        Report masc_report = new Report(6501);
+                        masc_report.subject = entity.getId();
+                        masc_report.indent(2);
+                        masc_report.addDesc(entity);
+                        vReport.add(masc_report);
+                        //Report to notify user how much edge pilot has left
+                        masc_report = new Report(6510);
+                        masc_report.subject = entity.getId();
+                        masc_report.indent(2);
+                        masc_report.addDesc(entity);
+                        masc_report.add(
+                               entity.getCrew().getOptions().intOption("edge"));
+                        vReport.addElement(masc_report);
+                        //Recheck MASC failure
+                        if (!entity.checkForMASCFailure(md, vReport, crits))
+                        {   //The reroll passed, don't process the failure   
+                            mascFailure = false;
+                            addReport(vReport);
+                        }                            
+                    }
+                    //Check for failure and process it
+                    if (mascFailure){
+                        addReport(vReport);
+                        for (Integer loc : crits.keySet()) {
+                            List<CriticalSlot> lcs = crits.get(loc);
+                            for (CriticalSlot cs : lcs) {
+                                // HACK: if loc is -1, we need to deal motive damage
+                                // to
+                                // the tank, the severity of which is stored in the
+                                // critslot index
+                                if (loc == -1) {
+                                    addReport(vehicleMotiveDamage((Tank) entity, 0,
+                                            true, cs.getIndex()));
+                                } else {
+                                    addReport(applyCriticalHit(entity, loc, cs,
+                                            true, 0, false));
+                                }
                             }
                         }
+                        // do any PSR immediately
+                        addReport(resolvePilotingRolls(entity));
+                        game.resetPSRs(entity);
+                        // let the player replot their move as MP might be changed
+                        md.clear();
+                        fellDuringMovement = true; // so they get a new turn
                     }
-                    // do any PSR immediately
-                    addReport(resolvePilotingRolls(entity));
-                    game.resetPSRs(entity);
-                    // let the player replot their move as MP might be changed
-                    md.clear();
-                    fellDuringMovement = true; // so they get a new turn
                 } else {
                     addReport(vReport);
                 }

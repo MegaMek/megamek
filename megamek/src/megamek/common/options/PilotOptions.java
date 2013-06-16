@@ -63,6 +63,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, "edge_when_tac", false); //$NON-NLS-1$
         addOption(edge, "edge_when_ko", false); //$NON-NLS-1$
         addOption(edge, "edge_when_explosion", false); //$NON-NLS-1$
+        addOption(edge, "edge_when_masc_fails", false); //$NON-NLS-1$
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$

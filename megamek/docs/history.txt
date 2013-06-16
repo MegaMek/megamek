@@ -104,6 +104,7 @@ v0.35.39-dev (SVN)
 + Bug 3762: Dropship Artillery receiving bonus
 + WIP Bug 3763: ArtilleryBayWeapon not working on ground map (always out of range)
 + Bug 3764: NPE loading maps 
++ Feature 1127: Edge and MASC 
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

@@ -8489,7 +8489,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Object oMount : miscList) {
             Mounted mount = (Mounted) oMount;
             EquipmentType type = mount.getType();
-            if (!mount.isMissing() && type.hasFlag(MiscType.F_MINE)
+            if (!mount.isMissing() && 
+                    (type.hasFlag(MiscType.F_MINE) || 
+                     type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER))
                     && !isLayingMines()) {
                 return true;
             }

@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 
@@ -76,8 +77,10 @@ public class MineLayingDialog extends JDialog implements ActionListener {
         for (Mounted mount : entity.getMisc()) {
 
             // Is this a Mine that can be layed?
-            if (mount.getType().hasFlag(MiscType.F_MINE) && mount.canFire()) {
-
+            EquipmentType type = mount.getType();
+            if ((type.hasFlag(MiscType.F_MINE) || 
+                    type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) && 
+                 mount.canFire()) {
                 StringBuffer message = new StringBuffer();
                 message.append(entity.getLocationName(mount.getLocation()))
                         .append(' ')

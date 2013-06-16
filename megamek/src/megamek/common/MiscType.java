@@ -330,6 +330,9 @@ public class MiscType extends EquipmentType {
             .shiftLeft(149);
     public static final BigInteger F_SPACE_MINE_DISPENSER = BigInteger.valueOf(1)
             .shiftLeft(150);
+    public static final BigInteger F_VEHICLE_MINE_DISPENSER = BigInteger.valueOf(1)
+    .shiftLeft(151);
+    
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -2856,9 +2859,8 @@ public class MiscType extends EquipmentType {
         misc.cost = 20000;
         misc.tonnage = 0.5f;
         misc.criticals = 1;
-        // TODO: implement game rules for this, analog to the mine for BAs
-        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER)
+                .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
         misc.introDate = 3062;
         misc.techLevel.put(3062, misc.techLevel.get(3071));
@@ -2878,9 +2880,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.techRating = RATING_B;
         misc.availRating = new int[] { RATING_E, RATING_E, RATING_F };
-        // TODO: implement game rules for this, analog to the mine for BAs
-        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_AERO_EQUIPMENT);
+        misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER)
+                .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 8; // because it includes 2 mines
 
         return misc;

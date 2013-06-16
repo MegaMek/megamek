@@ -3758,7 +3758,8 @@ public abstract class Mech extends Entity {
         double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.hasFlag(WeaponType.F_B_POD)) {
+            if (wtype.hasFlag(WeaponType.F_B_POD)
+                    || wtype.hasFlag(WeaponType.F_M_POD)) {
                 continue;
             }
             double weaponHeat = wtype.getHeat();

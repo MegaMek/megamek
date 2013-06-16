@@ -162,6 +162,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
+          //Used to keep track of the # of mines
+            shotsLeft = 1;
+        }
+        if ((type instanceof MiscType) && 
+                type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
+            mineType = MINE_CONVENTIONAL;
+            //Used to keep track of the # of mines
+            shotsLeft = 2;
         }
         if ((type instanceof MiscType)
                 && type.hasFlag(MiscType.F_SENSOR_DISPENSER)) {

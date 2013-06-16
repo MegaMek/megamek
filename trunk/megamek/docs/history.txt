@@ -78,6 +78,7 @@ v0.35.39-dev (SVN)
 + Bug 3750: Indirect LRM fire from a tank isn't being checked correctly for LOS 
 + Bug: Modifier for motive damage check for charged vehicles taken from *attacker*, not target; ClassCastException if "attacker" was a (skidding) 'Mech.
 + Bug 3722: Synchronized the copying of the events_to_process LinkedList.
++ Bug: Missing messages for WeaponQuirksInfo.option.fast_reload.displayableName and WeaponQuirksInfo.option.fast_reload.description
 + Bug: sprinting with XXL should cost 9 heat, not 8
 + Bug 3743: NPE: Incorrect cross platform support for directory path separator (/ vs. \ depending on OS)
 + Bug: ASF BV wrong when using PPC capacitors 

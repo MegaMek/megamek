@@ -24460,7 +24460,7 @@ public class Server implements Runnable {
                         sizes.add(Board.getSize(query_file));
                     }
                 } catch (Exception e) {
-                    System.out.println("Error reading in board: " + 
+                    System.out.println("Error parsing board: " + 
                             query_file.getAbsolutePath());
                 }
             }

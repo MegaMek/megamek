@@ -62,18 +62,44 @@ public class GameTurn implements Serializable {
      *         <code>false</code> if the entity is not valid for this turn.
      */
     public boolean isValidEntity(Entity entity, IGame game) {
+        return isValidEntity(entity,game,true);
+    }
+    
+    /**
+     * Determine if the specified entity is a valid one to use for this turn.
+     * In addition to the "standard" validity checks, there is also a check 
+     * for the optional rules "infantry move later" and "protos move later."
+     * This checks to see if those options are enabled and if there is a valid
+     * non-infantry (or proto) unit to move and if so, the entity is invalid.
+     * 
+     * There are certain instances where this check should not be used when
+     * the optional rules are enabled (such as loading infantry into a unit).
+     * Hence, the use of these additional checks is specified by a boolean input
+     * parameter.
+     *
+     * @param entity the <code>Entity</code> that may take this turn.
+     * @param game the <code>IGame</code> this turn belongs to.
+     * @param useValidNonInfantryCheck Boolean that determines if we should 
+     *        check to see if infantry can be moved yet
+     * @return <code>true</code> if the specified entity can take this turn.
+     *         <code>false</code> if the entity is not valid for this turn.
+     */
+    public boolean isValidEntity(Entity entity, IGame game, 
+            boolean useValidNonInfantryCheck) {
 
         return (entity != null) && (entity.getOwnerId() == playerId)
-                && entity.isSelectableThisTurn()
-                // This next bit enforces the "A players Infantry/Protos
-                // move after that players other units" options.
-                && !((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
-                        && (((entity instanceof Infantry) && game.getOptions()
-                                .booleanOption("inf_move_later")) || ((entity instanceof Protomech) && game
-                                .getOptions()
-                                .booleanOption("protos_move_later"))) && game
-                        .checkForValidNonInfantryAndOrProtomechs(playerId));
-    }
+            && entity.isSelectableThisTurn()
+            // This next bit enforces the "A players Infantry/Protos
+            // move after that players other units" options.
+            && !(useValidNonInfantryCheck &&
+                 (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                 && (((entity instanceof Infantry) && 
+                      game.getOptions().booleanOption("inf_move_later")) 
+                    || 
+                    ((entity instanceof Protomech) && 
+                     game.getOptions().booleanOption("protos_move_later"))) 
+                 && game.checkForValidNonInfantryAndOrProtomechs(playerId));
+    }    
 
     /**
      * Returns true if the player and entity are both valid.

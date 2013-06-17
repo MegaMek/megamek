@@ -1909,12 +1909,26 @@ public class Game implements Serializable, IGame {
             }
         }
 
+              
+        boolean useInfantryMoveLaterCheck = true;
+        // If we have the "infantry move later" or "protos move later" optional
+        //  rules, then we may be removing an infantry unit that would be
+        //  considered invalid unless we don't consider the extra validity 
+        //  checks.
+        if ((getOptions().booleanOption("inf_move_later") && 
+                    entity instanceof Infantry) ||
+                (getOptions().booleanOption("protos_move_later") &&  
+                     entity instanceof Protomech)){
+            useInfantryMoveLaterCheck = false;
+        }
+        
         for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
             GameTurn turn = turnVector.elementAt(i);
-            if (turn.isValidEntity(entity, this)) {
+            
+            if (turn.isValidEntity(entity, this,useInfantryMoveLaterCheck)) {
                 turnVector.removeElementAt(i);
                 break;
-            }
+            }     
         }
     }
 

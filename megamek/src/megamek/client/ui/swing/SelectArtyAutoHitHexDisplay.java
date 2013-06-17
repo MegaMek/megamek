@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
@@ -113,7 +114,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        setArtyEnabled(5);
+        // we should get 5 hexes per 4 mapsheets
+        // 4 mapsheets is 16*17*4 hexes, so 1088
+        IBoard board = clientgui.getClient().game.getBoard();
+        int hexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
+        setArtyEnabled(hexes);
         //FIXME: had to disable this now that the boardview draws deployment based on entities not players
         //clientgui.bv.markDeploymentHexesFor(p);
         butDone.setEnabled(true);

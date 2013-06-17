@@ -28,6 +28,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
@@ -60,7 +61,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         client.game.addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
@@ -119,7 +120,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        setArtyEnabled(5);
+        // we should get 5 hexes per 4 mapsheets
+        // 4 mapsheets is 16*17*4 hexes, so 1088
+        IBoard board = clientgui.getClient().game.getBoard();
+        int hexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
+        setArtyEnabled(hexes);
         //FIXME: had to comment this out now that boardview draws deployment based on entities and not players
         //clientgui.bv.markDeploymentHexesFor(p);
         butDone.setEnabled(true);
@@ -151,7 +156,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
             return;
         }
         if (!artyAutoHitHexes.contains(coords)
-                && artyAutoHitHexes.size() < 5
+                && (artyAutoHitHexes.size() < 5)
                 && clientgui
                         .doYesNoDialog(
                                 Messages
@@ -178,7 +183,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -188,7 +193,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
 
         // ignore buttons other than 1
         if (!client.isMyTurn()
-                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+                || ((b.getModifiers() & InputEvent.BUTTON1_MASK) == 0)) {
             return;
         }
 
@@ -204,7 +209,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -230,12 +235,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
         if (client.isMyTurn()
-                && client.game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+                && (client.game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
             endMyTurn();
         }
         if (client.game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
@@ -250,12 +255,13 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
 
         if (!client.isMyTurn()) {
             // odd...

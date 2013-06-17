@@ -5269,12 +5269,24 @@ public class Server implements Runnable {
             return false;
         }
         // we must be in atmosphere
-        return game.getBoard().getHex(pos).ceiling() >= altitude;
+        // if we're off the map, assume hex ceiling 0
+        int ceiling = 0;
+        if (game.getBoard().getHex(pos) != null) {
+            ceiling = game.getBoard().getHex(pos).ceiling();
+        }
+        return ceiling >= altitude;
     }
 
     private Vector<Report> processCrash(Entity entity, int vel, Coords c) {
         Vector<Report> vReport = new Vector<Report>();
         Report r;
+        if (c == null) {
+            r = new Report(9701);
+            r.subject = entity.getId();
+            vReport.add(r);
+            vReport.addAll(destroyEntity(entity, "crashed off the map", true, true));
+            return vReport;
+        }
 
         // we might hit multiple hexes, if we're a dropship, so we do some
         // checks for all of them
@@ -5875,10 +5887,10 @@ public class Server implements Runnable {
                         vReport.addElement(masc_report);
                         //Recheck MASC failure
                         if (!entity.checkForMASCFailure(md, vReport, crits))
-                        {   //The reroll passed, don't process the failure   
+                        {   //The reroll passed, don't process the failure
                             mascFailure = false;
                             addReport(vReport);
-                        }                            
+                        }
                     }
                     //Check for failure and process it
                     if (mascFailure){
@@ -15614,7 +15626,7 @@ public class Server implements Runnable {
         addReport(new Report(5000, Report.PUBLIC));
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = i.nextElement();
-            if (null == entity.getPosition()) {
+            if ((null == entity.getPosition()) && !(entity instanceof Aero)) {
                 continue;
             }
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
@@ -19684,7 +19696,7 @@ public class Server implements Runnable {
                 // ...but vehicles and ASFs just have one CASE item for the
                 // whole unit, so we need to look whether there's CASE anywhere
                 // at all.
-                && !((te instanceof Tank || te instanceof Aero) && te.hasCase())
+                && !(((te instanceof Tank) || (te instanceof Aero)) && te.hasCase())
                 && (te.isDestroyed() || te.isDoomed())
                 && (damage_orig > 0) && ((damage_orig / 10) > 0)) {
             Report.addNewline(vDesc);
@@ -24452,15 +24464,16 @@ public class Server implements Runnable {
             if (query_file.isDirectory()) {
                 getBoardSizesInDir(query_file, sizes);
             } else {
-                try{                   
+                try{
                     if (filename.endsWith(".board")) { //$NON-NLS-1$
                         BoardDimensions size = Board.getSize(query_file);
-                        if (size == null)
+                        if (size == null) {
                             throw new Exception();
+                        }
                         sizes.add(Board.getSize(query_file));
                     }
                 } catch (Exception e) {
-                    System.out.println("Error parsing board: " + 
+                    System.out.println("Error parsing board: " +
                             query_file.getAbsolutePath());
                 }
             }
@@ -30416,7 +30429,7 @@ public class Server implements Runnable {
             int reportId = 0;
             switch (mine.getMineType()) {
                 case Mounted.MINE_CONVENTIONAL:
-                    deliverThunderMinefield(coords, entity.getOwnerId(), 
+                    deliverThunderMinefield(coords, entity.getOwnerId(),
                             10, entity.getId());
                     reportId = 3500;
                     break;
@@ -30433,7 +30446,7 @@ public class Server implements Runnable {
                 case Mounted.MINE_INFERNO:
                     deliverThunderInfernoMinefield(coords, entity.getOwnerId(),
                             10, entity.getId());
-                    reportId = 3515; 
+                    reportId = 3515;
                     break;
             // TODO: command-detonated mines
             // case 2:

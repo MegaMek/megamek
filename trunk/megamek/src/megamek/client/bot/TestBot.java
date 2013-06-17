@@ -224,7 +224,7 @@ public class TestBot extends BotClient {
             // should ignore mechs that are not engaged
             // and only do the below when there are 2 or mechs left to move
             if (!short_circuit) {
-                if (getEntitiesOwned().size() > 1) {
+                if ((getEntitiesOwned().size() > 1) && (possible.size() > 0)) {
                     GALance lance = new GALance(this, possible, 50, 80);
                     lance.evolve();
                     min = lance.getResult();
@@ -1842,7 +1842,7 @@ public class TestBot extends BotClient {
         // should ignore mechs that are not engaged
         // and only do the below when there are 2 or mechs left to move
         if (!short_circuit) {
-            if (getEntitiesOwned().size() > 1) {
+            if ((getEntitiesOwned().size() > 1) && (possible.size() > 0)) {
                 GALance lance = new GALance(this, possible, 50, 80);
                 lance.evolve();
                 min = lance.getResult();

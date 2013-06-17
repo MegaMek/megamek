@@ -109,7 +109,8 @@ v0.35.39-dev (SVN)
 + Bug: NPE in Compute.java - Missing NULL check for metal content.
 + Bug: NPE in Tank.java when calling calculateBattleValue (via MekHQ)
 + Bug 3765: Turn issues with "infantry move after other units" option
-+ Bug 3752: Artillery Designated Hexes not scaling with map sheet size 
++ Bug 3752: Artillery Designated Hexes not scaling with map sheet size
++ Bug 3754: View Unit Not Working in Artillery Phase 
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

@@ -1177,12 +1177,6 @@ KeyListener, ItemListener, ListSelectionListener {
     protected void updateTarget() {
         setFireEnabled(false);
 
-        // make sure we're showing the current entity in the mech display
-        // this is causing bug 2816058 by imediatly after a change of view replacing it with the selected unit.
-        /*if ((ce() != null) && !ce().equals(clientgui.mechD.getCurrentEntity())) {
-            clientgui.mechD.displayEntity(ce());
-        }*/
-
         // allow spotting
         if ((ce() != null) && ce().canSpot() && (target != null)
                 && clientgui.getClient().game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)

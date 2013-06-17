@@ -350,7 +350,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
-        
+
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
         if ((turn instanceof GameTurn.TriggerAPPodTurn) && (null != ce())) {
@@ -674,11 +674,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     protected void updateTarget() {
         setFireEnabled(false);
-
-        // make sure we're showing the current entity in the mech display
-        if ((ce() != null) && !ce().equals(clientgui.mechD.getCurrentEntity())) {
-            clientgui.mechD.displayEntity(ce());
-        }
 
         // update target panel
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();

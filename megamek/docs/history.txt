@@ -112,6 +112,7 @@ v0.35.39-dev (SVN)
 + Bug 3752: Artillery Designated Hexes not scaling with map sheet size
 + Bug 3754: View Unit Not Working in Artillery Phase 
 + Bug 3304: Hang when unloading elementals from prone unit with TestBot
++ Bug 2845: Aero does not dissipate heat while offmap
 
 v0.35.38 (2013-05-07, 01:44 UTC+2)
 + Bug 3703: TacOps partial cover causes one-sided LOS

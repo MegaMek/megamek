@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.35.39-dev (SVN)
+v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug 3720: defaultQuirks.xml is missing the Rifleman C 2 entry
 + Bug 3719: defaultQuirks.xml is missing the Quickdraw QKD-8P entry
 + Bug 3714: defaultQuirks.xml is missing the Mongoose MON-69 entry

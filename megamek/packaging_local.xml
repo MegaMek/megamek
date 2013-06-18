@@ -82,16 +82,21 @@
 	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar"/>
 
 	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
-	<target name="checkOSMac" if="isOsMac">
-		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
-	</target>
+    <target name="checkOSMac" if="isOsMac">
+        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
+    </target>
 
-	<!-- if we're using UNIX or Linux then we'll use the launch4j for Linux -->
-	<target name="checkOSUNIX" if="isOsUnixNotMac">
-		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/linux/launch4j/launch4j.jar:${util}/linux/launch4j/lib/xstream.jar" />
-	</target>
+    <!-- if we're using Windows then we use the launch4j for Windows -->
+    <target name="checkOSWindows" if="isOsWindows">
+            <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
+    </target>
 
-	<target name="localdev-init" depends="checkOSMac, checkOSUNIX">
+    <!-- if we're using UNIX or Linux then we'll use the launch4j for Linux -->
+    <target name="checkOSUNIX" if="isOsUnixNotMac">
+        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/linux/launch4j/launch4j.jar:${util}/linux/launch4j/lib/xstream.jar" />
+    </target>
+
+    <target name="localdev-init" depends="checkOSMac, checkOSWindows, checkOSUNIX">
 		<tstamp />
 		<delete dir="${localdir}" />
 		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>

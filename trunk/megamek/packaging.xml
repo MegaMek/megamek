@@ -89,12 +89,17 @@
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
 	</target>
 
+	<!-- if we're using Windows then we use the launch4j for Windows -->
+	<target name="checkOSWindows" if="isOsWindows">
+	        <taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/launch4j/launch4j.jar:${util}/launch4j/lib/xstream.jar" />
+	</target>
+
 	<!-- if we're using UNIX or Linux then we'll use the launch4j for Linux -->
 	<target name="checkOSUNIX" if="isOsUnixNotMac">
 		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${util}/linux/launch4j/launch4j.jar:${util}/linux/launch4j/lib/xstream.jar" />
 	</target>
 
-	<target name="svndev-init" depends="checkOSMac, checkOSUNIX">
+	<target name="svndev-init" depends="checkOSMac, checkOSWindows, checkOSUNIX">
 		<tstamp />
 		<delete dir="${svndir}" />
 		<input message="Please enter version number (eg. 0.34.0):" addproperty="version"/>

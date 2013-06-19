@@ -3471,7 +3471,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("IS "+EquipmentType
                 .getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
         misc.addLookupName("IS Endo-Composite");
-        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.introDate = 3067;
+        misc.techLevel.put(misc.introDate, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3085, TechConstants.T_IS_ADVANCED);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 7;
@@ -3540,6 +3541,7 @@ public class MiscType extends EquipmentType {
                 + EquipmentType
                         .getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE));
         misc.addLookupName("Clan Endo-Composite");
+        misc.introDate = 3073;
         misc.techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         misc.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
         misc.tonnage = TONNAGE_VARIABLE;

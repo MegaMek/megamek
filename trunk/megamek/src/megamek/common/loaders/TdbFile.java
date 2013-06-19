@@ -628,16 +628,6 @@ public class TdbFile implements IMechLoader {
                 // missle ammo.
                 critName = critName.substring(0, critName.indexOf(" - Narc"));
             }
-            if (critName.equals("(C) Endosteel")) {
-                // MegaMek determines whether Endo Steel is IS or Clan
-                // type by techbase of mech.
-                critName = critName.substring(4);
-            }
-            if (critName.equals("(C) Ferro-Fibrous Armor")) {
-                // MegaMek determines whether FF Armor is IS or Clan
-                // type by techbase of mech.
-                critName = critName.substring(4);
-            }
             try {
                 String hashPrefix;
                 if (critName.startsWith("(C)")) {

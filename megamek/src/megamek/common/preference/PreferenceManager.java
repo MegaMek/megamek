@@ -112,7 +112,7 @@ public class PreferenceManager {
             Enumeration<?> children = optionsNode.elements();
             while (children.hasMoreElements()) {
                 ParsedXML child = (ParsedXML) children.nextElement();
-                if (child != null && child.getName().equals(STORE_NODE_NAME)) {
+                if ((child != null) && child.getName().equals(STORE_NODE_NAME)) {
                     String name = child.getAttribute(NAME_ATTRIBUTE);
                     if (name.equals(CLIENT_SETTINGS_STORE_NAME)) {
                         loadGroup(child, clientPreferenceStore);
@@ -135,10 +135,10 @@ public class PreferenceManager {
         Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
-            if (child != null && child.getName().equals(PREFERENCE_NODE_NAME)) {
+            if ((child != null) && child.getName().equals(PREFERENCE_NODE_NAME)) {
                 String name = child.getAttribute(NAME_ATTRIBUTE);
                 String value = child.getAttribute(VALUE_ATTRIBUTE);
-                if (name != null && value != null) {
+                if ((name != null) && (value != null)) {
                     cp.putValue(name, value);
                 }
             }
@@ -149,7 +149,7 @@ public class PreferenceManager {
         try {
 
             Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(DEFAULT_CFG_FILE_NAME))));
+                    new FileOutputStream(new File(Configuration.configDir(), DEFAULT_CFG_FILE_NAME))));
 
             output.write("<?xml version=\"1.0\"?>");
             output.write(CommonConstants.NL);

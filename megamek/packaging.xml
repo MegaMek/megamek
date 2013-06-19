@@ -121,7 +121,7 @@
 
 		<!-- compile -->
 		<echo message="building MegaMek from svn sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.5" source="1.5" destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+		<javac debug="true" debuglevel="lines,source" target="1.6" source="1.6" destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
 			<classpath>
 				<pathelement location="${svndir}" />
 				<fileset dir="${svndir}/${libdir}" includes="*.jar" />

@@ -673,6 +673,9 @@ implements IMechLoader
                     EquipmentType equipment = null;
                     try {
                         equipment = EquipmentType.get(criticalName);
+                        if (equipment == null) {
+                            equipment = EquipmentType.get(mech.isClan()?"Clan "+criticalName:"IS "+criticalName);
+                        }
                         if (equipment != null) {
                             // for experimental or unofficial equipment, we need
                             // to adjust the mech's techlevel, because HMP only

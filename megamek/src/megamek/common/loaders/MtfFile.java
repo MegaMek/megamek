@@ -577,6 +577,9 @@ public class MtfFile implements IMechLoader {
 
             try {
                 EquipmentType etype = EquipmentType.get(critName);
+                if (etype == null) {
+                    etype = EquipmentType.get(mech.isClan()?"Clan "+critName:"IS "+critName);
+                }
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these? Key on Type

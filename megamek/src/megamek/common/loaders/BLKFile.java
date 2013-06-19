@@ -87,7 +87,7 @@ public class BLKFile {
 
         // prefix is "Clan " or "IS "
         String prefix;
-        if (t.getTechLevel() == TechConstants.T_CLAN_TW) {
+        if (t.isClan()) {
             prefix = "Clan ";
         } else {
             prefix = "IS ";

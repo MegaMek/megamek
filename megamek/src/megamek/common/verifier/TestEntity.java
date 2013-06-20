@@ -266,10 +266,18 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printWeightArmor() {
-        return StringUtil.makeLength(
-                "Armor: " + Integer.toString(getTotalOArmor()) + " "
-                        + armor[0].getShortName(), getPrintSize() - 5)
-                + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+        if (!getEntity().hasPatchworkArmor()) {
+            return StringUtil.makeLength(
+                    "Armor: " + Integer.toString(getTotalOArmor()) + " "
+                            + armor[0].getShortName(), getPrintSize() - 5)
+                    + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+        } else {
+            return StringUtil.makeLength(
+                    "Armor: " + Integer.toString(getTotalOArmor()) + " "
+                            + "Patchwork", getPrintSize() - 5)
+                    + TestEntity.makeWeightString(getWeightArmor()) + "\n";
+        }
+
     }
 
     public float getWeightArmor() {
@@ -300,8 +308,15 @@ public abstract class TestEntity implements TestEntityOption {
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
             if (mt.hasFlag(MiscType.F_ENDO_STEEL)
+                    || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
                     || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
+                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)
                     || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(MiscType.F_LIGHT_FERRO)
+                    || mt.hasFlag(MiscType.F_HEAVY_FERRO)
+                    || mt.hasFlag(MiscType.F_REACTIVE)
+                    || mt.hasFlag(MiscType.F_REFLECTIVE)
                     || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
                     || mt.hasFlag(MiscType.F_HEAT_SINK)
                     || mt.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
@@ -327,6 +342,21 @@ public abstract class TestEntity implements TestEntityOption {
             MiscType mt = (MiscType) m.getType();
 
             if (m.getLocation() == Entity.LOC_NONE) {
+                continue;
+            }
+            if (mt.hasFlag(MiscType.F_ENDO_COMPOSITE)
+                    || mt.hasFlag(MiscType.F_ENDO_STEEL)
+                    || mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)
+                    || mt.hasFlag(MiscType.F_REINFORCED)
+                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS)
+                    || mt.hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)
+                    || mt.hasFlag(MiscType.F_LIGHT_FERRO)
+                    || mt.hasFlag(MiscType.F_HEAVY_FERRO)
+                    || mt.hasFlag(MiscType.F_REACTIVE)
+                    || mt.hasFlag(MiscType.F_REFLECTIVE)
+                    || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
+                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)
+                    ) {
                 continue;
             }
 
@@ -531,10 +561,7 @@ public abstract class TestEntity implements TestEntityOption {
         } else if (EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_HEAVY_FERRO).equals(mt.getInternalName())) {
             return 21;
-        } else if (EquipmentType.getStructureTypeName(
-                EquipmentType.T_STRUCTURE_ENDO_STEEL).equals(
-                mt.getInternalName())
-                || mt.hasFlag(MiscType.F_ENDO_STEEL)) {
+        } else if (mt.hasFlag(MiscType.F_ENDO_STEEL)) {
             if (isClan()
                     || mt.getInternalName()
                             .equals("Clan "
@@ -543,14 +570,9 @@ public abstract class TestEntity implements TestEntityOption {
                 return 7;
             }
             return 14;
-        } else if (EquipmentType.getStructureTypeName(
-                EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE).equals(
-                mt.getInternalName())) {
+        } else if (mt.hasFlag(MiscType.F_ENDO_STEEL_PROTO)) {
             return 16;
-        } else if (EquipmentType.getStructureTypeName(
-                EquipmentType.T_STRUCTURE_ENDO_COMPOSITE).equals(
-                mt.getInternalName())
-                || mt.hasFlag(MiscType.F_ENDO_COMPOSITE)) {
+        } else if (mt.hasFlag(MiscType.F_ENDO_COMPOSITE)) {
             if (isClan()
                     || mt.getInternalName()
                             .equals("Clan "
@@ -559,14 +581,12 @@ public abstract class TestEntity implements TestEntityOption {
                 return 4;
             }
             return 7;
-        } else if (EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_REACTIVE).equals(mt.getInternalName())) {
+        } else if (mt.hasFlag(MiscType.F_REACTIVE)) {
             if (isClanArmor()) {
                 return 7;
             }
             return 14;
-        } else if (EquipmentType.getArmorTypeName(
-                EquipmentType.T_ARMOR_REFLECTIVE).equals(mt.getInternalName())) {
+        } else if (mt.hasFlag(MiscType.F_REFLECTIVE)) {
             if (isClanArmor()) {
                 return 5;
             }

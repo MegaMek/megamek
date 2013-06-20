@@ -541,11 +541,14 @@ public class EquipmentType {
         EquipmentType.allTypes.addElement(type);
     }
 
-    public static int getArmorType(String inType) {
-        EquipmentType et = EquipmentType.get(inType);
+    public static int getArmorType(String inType, boolean clan) {
+        if (inType.equals(armorNames[T_ARMOR_PATCHWORK])) {
+            return T_ARMOR_PATCHWORK;
+        }
+        EquipmentType et = EquipmentType.get(!inType.contains("Standard")?clan?"Clan "+inType:"IS "+inType:inType);
         if (et != null) {
             for (int x = 0; x < armorNames.length; x++) {
-                if (armorNames[x].equals(et.getInternalName())) {
+                if (armorNames[x].equals(et.getName())) {
                     return x;
                 }
             }
@@ -560,11 +563,18 @@ public class EquipmentType {
         return armorNames[armorType];
     }
 
-    public static int getStructureType(String inType) {
-        EquipmentType et = EquipmentType.get(inType);
+    public static String getArmorTypeName(int armorType, boolean clan) {
+        if ((armorType < 0) || (armorType >= armorNames.length)) {
+            return "UNKNOWN";
+        }
+        return clan?"Clan "+armorNames[armorType]:"IS "+armorNames[armorType];
+    }
+
+    public static int getStructureType(String inType, boolean clan) {
+        EquipmentType et = EquipmentType.get(!inType.equals("Standard")?clan?"Clan "+inType:"IS "+inType:inType);
         if (et != null) {
             for (int x = 0; x < structureNames.length; x++) {
-                if (structureNames[x].equals(et.getInternalName())) {
+                if (structureNames[x].equals(et.getName())) {
                     return x;
                 }
             }
@@ -577,6 +587,13 @@ public class EquipmentType {
             return "UNKNOWN";
         }
         return structureNames[structureType];
+    }
+
+    public static String getStructureTypeName(int structureType, boolean clan) {
+        if ((structureType < 0) || (structureType >= structureNames.length)) {
+            return "UNKNOWN";
+        }
+        return clan?"Clan "+structureNames[structureType]:"IS "+structureNames[structureType];
     }
 
     /**

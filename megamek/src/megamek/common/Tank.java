@@ -1025,7 +1025,7 @@ public class Tank extends Entity {
     	 * Entity subclasses does not check for crew being alive. I've commented
     	 * this out for now. If it does need to be here, then it needs a check
     	 * for !ignorePilot added to it.
-    	 */ 
+    	 */
     	/*if (getCrew().isDead()) {
             return 0;
         }*/
@@ -3086,7 +3086,7 @@ public class Tank extends Entity {
         if ((armType == EquipmentType.T_ARMOR_STEALTH) && addMount) {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType
-                        .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH)),
+                        .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH, false)),
                         LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen

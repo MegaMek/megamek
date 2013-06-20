@@ -485,7 +485,7 @@ public class HmvFile implements IMechLoader {
             } else {
                 vehicle.setMovementMode(movementType == HMVMovementType.DISPLACEMENT_HULL ? EntityMovementMode.NAVAL : movementType == HMVMovementType.HYDROFOIL ? EntityMovementMode.HYDROFOIL : movementType == HMVMovementType.HOVER ? EntityMovementMode.HOVER : movementType == HMVMovementType.WHEELED ? EntityMovementMode.WHEELED : movementType == HMVMovementType.SUBMARINE ? EntityMovementMode.SUBMARINE : EntityMovementMode.TRACKED);
             }
-            vehicle.setStructureType(EquipmentType.getStructureType("Standard"));
+            //vehicle.setStructureType(EquipmentType.getStructureType("Standard", false));
             // FIXME: structureType is being read wrong
             // stupid not-consistent file format
             // vehicle.setStructureType(EquipmentType.getStructureType(structureType.toString()));
@@ -513,7 +513,7 @@ public class HmvFile implements IMechLoader {
             vehicle.setHasNoDualTurret(true);
 
             vehicle.autoSetInternal();
-            vehicle.setArmorType(armorType.toString());
+            vehicle.setArmorType(vehicle.isClan()?"Clan ":"IS "+armorType.toString());
             if (armorTechType == HMVTechType.CLAN) {
                 switch (rulesLevel) {
                     case 2:

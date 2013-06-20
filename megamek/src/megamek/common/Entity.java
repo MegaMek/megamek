@@ -8219,11 +8219,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setArmorType(String armType) {
-        setArmorType(EquipmentType.getArmorType(armType));
+        setArmorType(EquipmentType.getArmorType(armType, isClan()));
     }
 
     public void setStructureType(String strucType) {
-        setStructureType(EquipmentType.getStructureType(strucType));
+        setStructureType(EquipmentType.getStructureType(strucType, isClan()));
     }
 
     public int getArmorType(int loc) {
@@ -8489,8 +8489,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Object oMount : miscList) {
             Mounted mount = (Mounted) oMount;
             EquipmentType type = mount.getType();
-            if (!mount.isMissing() && 
-                    (type.hasFlag(MiscType.F_MINE) || 
+            if (!mount.isMissing() &&
+                    (type.hasFlag(MiscType.F_MINE) ||
                      type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER))
                     && !isLayingMines()) {
                 return true;

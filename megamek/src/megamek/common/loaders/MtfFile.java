@@ -333,7 +333,8 @@ public class MtfFile implements IMechLoader {
 
             String thisArmorType = armorType.substring(armorType.indexOf(':') + 1);
             if (thisArmorType.indexOf('(') != -1) {
-                if (thisArmorType.toLowerCase().indexOf("clan") != -1) {
+                boolean clan = thisArmorType.toLowerCase().indexOf("clan") != -1;
+                if (clan) {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 2:
                             mech.setArmorTechLevel(TechConstants.T_CLAN_TW);
@@ -350,7 +351,7 @@ public class MtfFile implements IMechLoader {
                         default:
                             throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
-                } else if (thisArmorType.toLowerCase().indexOf("inner sphere") != -1) {
+                } else {
                     switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                         case 1:
                             mech.setArmorTechLevel(TechConstants.T_INTRO_BOXSET);
@@ -372,18 +373,18 @@ public class MtfFile implements IMechLoader {
                     }
                 }
                 thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('('));
+                mech.setArmorType(EquipmentType.getArmorType(thisArmorType, clan));
             } else {
                 mech.setArmorTechLevel(mech.getTechLevel());
-            }
-            if (thisArmorType.length() > 0) {
                 mech.setArmorType(thisArmorType);
-            } else {
+            }
+            if (!(thisArmorType.length() > 0)) {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
             for (int x = 0; x < locationOrder.length; x++) {
                 mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
-                    mech.setArmorType(EquipmentType.getArmorType(armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('('))), locationOrder[x]);
+                    mech.setArmorType(EquipmentType.getArmorType(armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('(')), armorValues[x].toLowerCase().indexOf("clan") != -1), locationOrder[x]);
                     if (armorValues[x].toLowerCase().indexOf("clan") != -1) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                             case 2:

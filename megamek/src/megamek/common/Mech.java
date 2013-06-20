@@ -5721,7 +5721,7 @@ public abstract class Mech extends Entity {
                         : "");
         sb.append(newLine);
         sb.append("Structure:");
-        sb.append(EquipmentType.getStructureTypeName(getStructureType()));
+        sb.append(EquipmentType.getStructureTypeName(getStructureType(), isClan()));
         sb.append(newLine);
 
         sb.append("Myomer:");
@@ -5779,7 +5779,7 @@ public abstract class Mech extends Entity {
                             .getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
         } else {
             sb.append("Armor:").append(
-                    EquipmentType.getArmorTypeName(getArmorType(0)));
+                    EquipmentType.getArmorTypeName(getArmorType(0), isClan()));
             sb.append("(" + TechConstants.getTechName(getArmorTechLevel(0))
                     + ")");
         }
@@ -5788,7 +5788,7 @@ public abstract class Mech extends Entity {
         for (int element : MtfFile.locationOrder) {
             sb.append(getLocationAbbr(element)).append(" Armor:");
             if (hasPatchworkArmor()) {
-                sb.append(EquipmentType.getArmorTypeName(getArmorType(element)))
+                sb.append(EquipmentType.getArmorTypeName(getArmorType(element), isClan()))
                         .append('(')
                         .append(TechConstants
                                 .getTechName(getArmorTechLevel(element)))

@@ -32,13 +32,8 @@ public abstract class PacketMarshaller {
     public static final int NATIVE_SERIALIZATION_MARSHALING = 0;
 
     /**
-     * XML serialization marshalling
-     */
-    public static final int XML_MARSHALING = 1;
-
-    /**
      * Marshalls the packet data into the <code>byte[]</code>
-     * 
+     *
      * @param packet packet to marshall
      * @return marshalled representation of the given <code>Packet</code>
      */
@@ -56,7 +51,7 @@ public abstract class PacketMarshaller {
 
     /**
      * Marshalls the packet data into the given <code>OutputStream</code>
-     * 
+     *
      * @param packet packet to marshall
      * @param stream <code>OutputStream</code> to marshall the
      *            <code>Packet</code> to
@@ -67,7 +62,7 @@ public abstract class PacketMarshaller {
 
     /**
      * Unmarshalls the packet data from the given <code>byte[]</code> array
-     * 
+     *
      * @param data <code>byte[]</code> array to unmarshall the packet from
      * @return the new <code>Packet</code>unmarshalled from the given
      *         <code>byte[]</code> array
@@ -84,7 +79,7 @@ public abstract class PacketMarshaller {
 
     /**
      * Unmarshalls the packet data from the given <code>InputStream</code>
-     * 
+     *
      * @param stream <code>InputStream</code> to unmarshall the packet from
      * @return the new <code>Packet</code>unmarshalled from the given
      *         <code>InputStream</code>

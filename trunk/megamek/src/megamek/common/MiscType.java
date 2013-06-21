@@ -5294,6 +5294,8 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD);
         misc.setInternalName(EquipmentType
                 .getStructureTypeName(T_STRUCTURE_STANDARD));
+        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, false));
+        misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, true));
         misc.addLookupName("Regular");
         misc.addLookupName("Standard Armor");
 

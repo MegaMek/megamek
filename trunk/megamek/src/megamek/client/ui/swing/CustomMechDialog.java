@@ -34,9 +34,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,28 +51,20 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;
-import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.Dropship;
+import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Jumpship;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
-import megamek.common.Crew;
-import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
-import megamek.common.SmallCraft;
 import megamek.common.Tank;
-import megamek.common.TechConstants;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
@@ -870,12 +860,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         if(entity.getTransportId() != Entity.NONE) {
             choDeployment.setEnabled(false);
-        }  
+        }
     }
 
     /**
      * Populate the list of entities in other units from the given enumeration.
-     * 
+     *
      * @param others
      *            the <code>Enumeration</code> containing entities in other
      *            units.
@@ -932,6 +922,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     }
                 }
             }
+            int dist = Math.min(Math.max(entity.getOffBoardDistance(), 17),
+                    maxDistance);
             Slider sl = new Slider(
                     clientgui.frame,
                     Messages.getString("CustomMechDialog.offboardDistanceTitle"),
@@ -1020,7 +1012,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
 
-            if (entity instanceof VTOL && height > 50) {
+            if ((entity instanceof VTOL) && (height > 50)) {
                 JOptionPane
                             .showMessageDialog(
                                     clientgui.frame,
@@ -1198,7 +1190,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         GridBagLayout gbl = new GridBagLayout();
         panEquip.setLayout(gbl);
 
-        m_equip = new EquipChoicePanel(this.entity, this.clientgui, this.client);
+        m_equip = new EquipChoicePanel(entity, clientgui, client);
         panEquip.add(m_equip, GBC.std());
     }
 }

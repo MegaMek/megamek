@@ -378,12 +378,12 @@ public class MegaMekGUI implements IMegaMekGUI {
             @Override
             public boolean accept(File dir) {
                 return ((dir.getName() != null) && (dir.getName().endsWith(
-                        ".sav") || dir.isDirectory())); //$NON-NLS-1$
+                        ".sav") || dir.getName().endsWith(".sav.gz")|| dir.isDirectory())); //$NON-NLS-1$
             }
 
             @Override
             public String getDescription() {
-                return "*.sav";
+                return "Savegames";
             }
         });
         int returnVal = fc.showOpenDialog(frame);
@@ -462,9 +462,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             client.die();
         }
         optdlg = null;
-        
+
         // free some memory thats only needed in lounge
-        //  This normally happens in the deployment phase in Client, but 
+        //  This normally happens in the deployment phase in Client, but
         //  if we are loading a game, this phase may not be reached
         MechFileParser.dispose();
         RandomUnitGenerator.getInstance().dispose();
@@ -472,7 +472,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         //We must do this last, as the name and unit generators can create
         // a new instance if they are running
         MechSummaryCache.dispose();
-        
+
         launch(gui.getFrame());
     }
 

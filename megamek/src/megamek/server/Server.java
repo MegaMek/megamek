@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -54,6 +56,8 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import megamek.MegaMek;
 import megamek.client.ui.AWT.util.PlayerColors;
@@ -234,6 +238,8 @@ import megamek.server.commands.TraitorCommand;
 import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * @author Ben Mazur
@@ -1097,8 +1103,8 @@ public class Server implements Runnable {
     public void sendSaveGame(int connId, String sFile, String sLocalPath) {
         saveGame(sFile, false);
         String sFinalFile = sFile;
-        if (!sFinalFile.endsWith(".sav")) {
-            sFinalFile = sFile + ".sav";
+        if (!sFinalFile.endsWith(".sav.gz")) {
+            sFinalFile = sFile + ".sav.gz";
         }
         sLocalPath = sLocalPath.replaceAll("\\|", " ");
         String localFile = "savegames" + File.separator + sFinalFile;
@@ -1126,6 +1132,7 @@ public class Server implements Runnable {
      *            saving to the server chat.
      */
     public void saveGame(String sFile, boolean sendChat) {
+        XStream xstream = new XStream();
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(".sav")) {
             sFinalFile = sFile + ".sav";
@@ -1149,7 +1156,18 @@ public class Server implements Runnable {
             oos.writeObject(game);
             oos.flush();
             oos.close();
-
+            String xmlGame = xstream.toXML(game);
+            FileOutputStream output = new FileOutputStream(sFinalFile+".gz");
+            try {
+              Writer writer = new OutputStreamWriter(new GZIPOutputStream(output), "UTF-8");
+              try {
+                writer.write(xmlGame);
+              } finally {
+                writer.close();
+              }
+             } finally {
+               output.close();
+             }
             for (GameListener listener : gameListenersClone) {
                 getGame().addGameListener(listener);
             }
@@ -1201,10 +1219,17 @@ public class Server implements Runnable {
     public boolean loadGame(File f) {
         System.out.println("s: loading saved game file '" + f + '\'');
         try {
-            ObjectInputStream ois = new ObjectInputStream(
-                    new FileInputStream(f));
-            game = (IGame) ois.readObject();
-            ois.close();
+            if (f.getName().endsWith(".sav")) {
+                ObjectInputStream ois = new ObjectInputStream(
+                        new FileInputStream(f));
+                game = (IGame) ois.readObject();
+                ois.close();
+            } else if (f.getName().endsWith(".gz")) {
+                XStream xstream = new XStream();
+                xstream.fromXML(new GZIPInputStream(new FileInputStream(f)));
+                game = (IGame) xstream.fromXML(f);
+            }
+
         } catch (Exception e) {
             System.err.println("Unable to load file: " + f);
             e.printStackTrace();

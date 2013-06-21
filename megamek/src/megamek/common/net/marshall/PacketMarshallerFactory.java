@@ -19,7 +19,6 @@ public class PacketMarshallerFactory {
     private static PacketMarshallerFactory instance = new PacketMarshallerFactory();
 
     private NativeSerializationMarshaller nativeSerializationMarshaller;
-    private XMLMarshaller XMLMarshaller;
 
     private PacketMarshallerFactory() {
     }
@@ -35,11 +34,6 @@ public class PacketMarshallerFactory {
                     nativeSerializationMarshaller = new NativeSerializationMarshaller();
                 }
                 return nativeSerializationMarshaller;
-            case PacketMarshaller.XML_MARSHALING:
-                if (XMLMarshaller == null) {
-                    XMLMarshaller = new XMLMarshaller();
-                }
-                return XMLMarshaller;
             default:
                 return null;
         }

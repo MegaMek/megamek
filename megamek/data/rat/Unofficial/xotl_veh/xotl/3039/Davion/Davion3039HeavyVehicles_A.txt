@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 Davion3039HeavyVehicles_A
-AC2 Carrier,7
+AC/2 Carrier,7
 Bulldog Medium Tank (AC2),19
 Laser Carrier,38
 Bulldog Medium Tank,103

@@ -32,7 +32,7 @@
 #############################################################################
 Liao3039HeavyVehicles_C
 Po Heavy Tank,780
-AC2 Carrier,230
+AC/2 Carrier,230
 Zhukov Heavy Tank,550
 Bulldog Medium Tank (AC2),390
 Laser Carrier,310

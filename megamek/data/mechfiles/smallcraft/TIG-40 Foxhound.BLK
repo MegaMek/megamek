@@ -7,7 +7,7 @@
 MAM0
 </Version>
 <UnitType>
-Dropship
+SmallCraft
 </UnitType>
 <Name>
 Foxhound Gunboat
@@ -57,7 +57,7 @@ IS Laser AMS
 640
 </fuel>
 <type>
-IS Level 4
+IS Level 3
 </type>
 <year>
 3083

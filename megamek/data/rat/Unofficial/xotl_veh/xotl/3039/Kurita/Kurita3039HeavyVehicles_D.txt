@@ -32,7 +32,7 @@
 #############################################################################
 Kurita3039HeavyVehicles_D
 Po Heavy Tank,100
-AC2 Carrier,300
+AC/2 Carrier,300
 Bulldog Medium Tank (AC2),490
 Laser Carrier,400
 Bulldog Medium Tank,1980

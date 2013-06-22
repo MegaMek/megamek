@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 MerPerGen3039HeavyVehicles_B
-AC2 Carrier,250
+AC/2 Carrier,250
 Zhukov Heavy Tank,250
 Bulldog Medium Tank (AC2),420
 Laser Carrier,340

@@ -32,7 +32,7 @@
 #############################################################################
 MerPerGen3028HeavyVehicles_B
 Brutus Assault Tank (LRM),10
-AC2 Carrier,260
+AC/2 Carrier,260
 Bulldog Medium Tank (AC2),460
 Laser Carrier,360
 Bulldog Medium Tank,1820

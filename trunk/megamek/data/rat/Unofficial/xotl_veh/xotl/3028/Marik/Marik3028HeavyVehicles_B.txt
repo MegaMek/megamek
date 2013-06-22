@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 Marik3028HeavyVehicles_B
-AC2 Carrier,32
+AC/2 Carrier,32
 Bulldog Medium Tank (AC2),53
 Laser Carrier,43
 Bulldog Medium Tank,215

@@ -35,7 +35,7 @@ Brutus Assault Tank (PPC 2),7
 Brutus Assault Tank,28
 Brutus Assault Tank (PPC),15
 Brutus Assault Tank (LRM),65
-AC2 Carrier,28
+AC/2 Carrier,28
 Bulldog Medium Tank (AC2),46
 Laser Carrier,37
 Bulldog Medium Tank,185

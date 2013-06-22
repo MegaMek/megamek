@@ -32,7 +32,7 @@
 #############################################################################
 Steiner3039HeavyVehicles_C
 Po Heavy Tank,70
-AC2 Carrier,220
+AC/2 Carrier,220
 Bulldog Medium Tank (AC2),370
 Laser Carrier,300
 Bulldog Medium Tank,1490

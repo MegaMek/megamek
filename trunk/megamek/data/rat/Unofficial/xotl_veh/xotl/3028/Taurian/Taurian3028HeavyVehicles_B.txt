@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 Taurian3028HeavyVehicles_B
-AC2 Carrier,27
+AC/2 Carrier,27
 Bulldog Medium Tank (AC2),46
 Laser Carrier,37
 Bulldog Medium Tank,183

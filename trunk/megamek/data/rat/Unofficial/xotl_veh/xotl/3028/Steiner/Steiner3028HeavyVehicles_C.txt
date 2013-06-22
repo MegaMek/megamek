@@ -33,7 +33,7 @@
 Steiner3028HeavyVehicles_C
 Rommel Tank,290
 Patton Tank,290
-AC2 Carrier,310
+AC/2 Carrier,310
 Bulldog Medium Tank (AC2),500
 Laser Carrier,400
 Bulldog Medium Tank,1990

@@ -32,7 +32,7 @@
 #############################################################################
 FRR3039HeavyVehicles_B
 Po Heavy Tank,8
-AC2 Carrier,24
+AC/2 Carrier,24
 Bulldog Medium Tank (AC2),41
 Laser Carrier,32
 Bulldog Medium Tank,163

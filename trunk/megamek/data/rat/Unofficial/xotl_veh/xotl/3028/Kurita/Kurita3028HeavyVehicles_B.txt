@@ -32,7 +32,7 @@
 #############################################################################
 Kurita3028HeavyVehicles_B
 Von Luckner Heavy Tank VNL-K70,4
-AC2 Carrier,30
+AC/2 Carrier,30
 Bulldog Medium Tank (AC2),51
 Laser Carrier,40
 Bulldog Medium Tank,202

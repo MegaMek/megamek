@@ -33,7 +33,7 @@
 Davion3028HeavyVehicles_B
 Von Luckner Heavy Tank VNL-K100,5
 Von Luckner Heavy Tank VNL-K65N,83
-AC2 Carrier,39
+AC/2 Carrier,39
 Bulldog Medium Tank (AC2),26
 Laser Carrier,51
 Bulldog Medium Tank,141

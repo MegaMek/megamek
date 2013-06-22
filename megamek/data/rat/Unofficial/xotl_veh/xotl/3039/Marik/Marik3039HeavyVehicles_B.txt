@@ -32,7 +32,7 @@
 #############################################################################
 Marik3039HeavyVehicles_B
 Po Heavy Tank,19
-AC2 Carrier,29
+AC/2 Carrier,29
 Zhukov Heavy Tank,68
 Bulldog Medium Tank (AC2),48
 Laser Carrier,39

@@ -10,10 +10,10 @@ MAM0
 Dropship
 </UnitType>
 <Name>
-Vengeance-DC
+Vengeance
 </Name>
 <Model>
-PWS
+DC
 </Model>
 <Tonnage>
 11400
@@ -129,7 +129,7 @@ ISERMediumLaser
 18000
 </fuel>
 <type>
-IS Level 4
+IS Level 3
 </type>
 <year>
 3083

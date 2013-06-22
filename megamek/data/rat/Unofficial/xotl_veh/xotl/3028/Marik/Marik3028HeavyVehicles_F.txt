@@ -32,7 +32,7 @@
 #############################################################################
 Marik3028HeavyVehicles_F
 Brutus Assault Tank (PPC 2),10
-AC2 Carrier,360
+AC/2 Carrier,360
 Bulldog Medium Tank (AC2),600
 Laser Carrier,490
 Bulldog Medium Tank,2430

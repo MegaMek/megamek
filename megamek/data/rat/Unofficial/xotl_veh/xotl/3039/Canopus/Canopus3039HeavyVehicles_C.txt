@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 Canopus3039HeavyVehicles_C
-AC2 Carrier,250
+AC/2 Carrier,250
 Bulldog Medium Tank (AC2),410
 Laser Carrier,330
 Bulldog Medium Tank,1640

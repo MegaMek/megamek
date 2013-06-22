@@ -5,18 +5,18 @@ BLR-4S Calvin II
 Config:Biped
 TechBase:Inner Sphere
 Era:3071
-Rules Level:3
+Rules Level:4
 
 Mass:85
-Engine:340 Light Engine
-Structure:Standard
+Engine:340 Light Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Reflective
+Armor:IS Reflective(Inner Sphere)
 LA Armor:24
 RA Armor:24
 LT Armor:23
@@ -29,26 +29,29 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:11
 
-Weapons:7
-1 ISRotaryAC5, Right Arm, Ammo:40
-2 ISLightPPC, Left Arm
-2 ISERMediumLaser, Right Torso
-1 ISMachine Gun, Right Torso, Ammo:100
-2 ISERMediumLaser, Left Torso
-1 ISMachine Gun, Left Torso
-1 ISStreakSRM6, Left Torso, Ammo:15
+Weapons:10
+Light PPC, Left Arm
+Light PPC, Left Arm
+Rotary AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+Machine Gun, Left Torso
+Streak SRM 6, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Machine Gun, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLightPPC
-ISLightPPC
-ISLightPPC
-ISLightPPC
-Reflective Armor
-Reflective Armor
+Light PPC
+Light PPC
+Light PPC
+Light PPC
+IS Reflective
+IS Reflective
 -Empty-
 -Empty-
 
@@ -63,33 +66,33 @@ ISRotaryAC5
 ISRotaryAC5
 ISRotaryAC5
 ISRotaryAC5
-Reflective Armor
-Reflective Armor
+IS Reflective
+IS Reflective
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
-ISMachine Gun
+Machine Gun
 ISStreakSRM6
 ISStreakSRM6
-ISStreakSRM6 Ammo
+IS Streak SRM 6 Ammo
 ISCASE
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
-ISMachine Gun
-ISMG Ammo (100)
+Machine Gun
+IS Machine Gun Ammo - Half
 ISRotaryAC5 Ammo
 ISRotaryAC5 Ammo
 ISCASE
@@ -105,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Reflective Armor
-Reflective Armor
+IS Reflective
+IS Reflective
 
 Head:
 Life Support
@@ -127,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Reflective Armor
-Reflective Armor
+IS Reflective
+IS Reflective
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +144,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Reflective Armor
-Reflective Armor
+IS Reflective
+IS Reflective
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

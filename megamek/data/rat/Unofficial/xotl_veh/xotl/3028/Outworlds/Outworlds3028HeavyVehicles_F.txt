@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 Outworlds3028HeavyVehicles_F
-AC2 Carrier,320
+AC/2 Carrier,320
 Bulldog Medium Tank (AC2),520
 Laser Carrier,440
 Bulldog Medium Tank,2090

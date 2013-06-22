@@ -5394,6 +5394,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
+        misc.hittable = false;
         misc.flags = misc.flags.or(F_REACTIVE);
         misc.bv = 0;
         misc.introDate = 3063;
@@ -5416,6 +5417,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
+        misc.hittable = false;
         misc.flags = misc.flags.or(F_REACTIVE);
         misc.bv = 0;
         misc.introDate = 3065;

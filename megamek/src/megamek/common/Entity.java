@@ -8236,6 +8236,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
     }
 
+    public void setArmorType(String armType, int loc) {
+        if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
+            armType = TechConstants.isClan(getArmorTechLevel(0))?"Clan "+armType:"IS "+armType;
+        }
+        EquipmentType et = EquipmentType.get(armType);
+        if (et == null) {
+            setArmorType(EquipmentType.T_ARMOR_UNKNOWN, loc);
+        } else {
+            setArmorType(EquipmentType.getArmorType(et), loc);
+        }
+    }
+
     public void setStructureType(String strucType) {
         if (!(strucType.startsWith("Clan ") || strucType.startsWith("IS "))) {
             strucType = isClan()?"Clan "+strucType:"IS "+strucType;

@@ -1346,6 +1346,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISNavalTugAdaptor());
         EquipmentType.addType(MiscType.createISSpaceMineDispenser());
         EquipmentType.addType(MiscType.createCLSpaceMineDispenser());
+        EquipmentType.addType(MiscType.createVehicularStealth());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -3095,6 +3096,33 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createVehicularStealth() {
+        MiscType misc = new MiscType();
+
+        misc.name = EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE);
+        misc.setInternalName(EquipmentType
+                .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE, false));
+        misc.addLookupName("IS Vehicular Stealth Armor");
+        misc.tonnage = 0; // ???
+        misc.tankslots = 2;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3084, TechConstants.T_IS_ADVANCED);
+        misc.flags = misc.flags.or(F_STEALTH).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        String[] saModes = { "Off", "On" };
+        misc.setModes(saModes);
+        misc.setInstantModeSwitch(false);
+        misc.bv = 0;
+        misc.introDate = 3067;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+
+
     public static MiscType createNullSignatureSystem() {
         MiscType misc = new MiscType();
 
@@ -3172,7 +3200,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 2571;
         misc.techLevel.put(2571, TechConstants.T_IS_TW_NON_BOX);
@@ -3196,7 +3224,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 2571;
         misc.techLevel.put(2571, TechConstants.T_CLAN_TW);
@@ -3220,7 +3248,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         misc.introDate = 2557;
@@ -3244,7 +3272,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_LIGHT_FERRO).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_LIGHT_FERRO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.introDate = 3067;
@@ -3267,7 +3295,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_HEAVY_FERRO).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_HEAVY_FERRO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.introDate = 3069;
@@ -3290,7 +3318,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.introDate = 3047;
         misc.bv = 0;
-        misc.flags = misc.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel.put(misc.introDate, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3081, TechConstants.T_IS_ADVANCED);
         misc.techRating = RATING_D;
@@ -3311,7 +3339,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.introDate = 3061;
         misc.bv = 0;
-        misc.flags = misc.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         misc.techLevel.put(misc.introDate, TechConstants.T_CLAN_EXPERIMENTAL);
         misc.techLevel.put(3081, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_D;
@@ -3375,7 +3403,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 3070;
         misc.techLevel.put(misc.introDate, TechConstants.T_CLAN_EXPERIMENTAL);
         misc.techLevel.put(3084, TechConstants.T_CLAN_ADVANCED);
-        misc.flags = misc.flags.or(F_FERRO_LAMELLOR).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_FERRO_LAMELLOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         return misc;
     }
 
@@ -5320,7 +5348,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Regular");
         misc.addLookupName("IS Standard Armor");
         misc.addLookupName("Clan Standard Armor");
-        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.techLevel.put(2000, TechConstants.T_ALLOWED_ALL);
 
         return misc;
@@ -5347,7 +5375,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 150000;
         misc.setModes(new String[] { "Off", "Charge" });
         misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
         // misc.bv = 88;
@@ -5373,7 +5401,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 3058;
         misc.techLevel.put(3058, TechConstants.T_IS_EXPERIMENTAL);
@@ -5397,7 +5425,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
-        misc.flags = misc.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 3061;
         misc.techLevel.put(3061, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -5421,7 +5449,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 3063;
         misc.techLevel.put(3063, TechConstants.T_IS_EXPERIMENTAL);
@@ -5445,7 +5473,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = CRITICALS_VARIABLE;
         misc.spreadable = true;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 3065;
         misc.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -5467,7 +5495,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 100000;
         misc.flags = misc.flags.or(F_MODULAR_ARMOR).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = BV_VARIABLE;
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 10;

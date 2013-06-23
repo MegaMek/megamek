@@ -129,15 +129,15 @@ public class MechView {
             if (entity.getAllUMUCount() > 0){
                 // Add in Jump MP if it wasn't already printed
                 if (entity.getJumpMP() == 0){
-                    sBasic.append("/0"); //$NON-NLS-1$ 
+                    sBasic.append("/0"); //$NON-NLS-1$
                 }
                 sBasic.append("/") //$NON-NLS-1$
                 .append(entity.getActiveUMUCount());
-                if (entity.getAllUMUCount() - entity.getActiveUMUCount() != 0){
-                    sBasic.append("<font color='red'> (" + 
+                if ((entity.getAllUMUCount() - entity.getActiveUMUCount()) != 0){
+                    sBasic.append("<font color='red'> (" +
                           (entity.getAllUMUCount() - entity.getActiveUMUCount())
                           + " damaged UMUs)</font>");
-                }                
+                }
             }
         }
         if (isBA && ((BattleArmor) entity).isBurdened()) {
@@ -320,18 +320,18 @@ public class MechView {
                         continue;
                     }
                     if (isVTOL) {
-                        if (loc == VTOL.LOC_TURRET && ((VTOL) entity).hasNoTurret()) {
+                        if ((loc == VTOL.LOC_TURRET) && ((VTOL) entity).hasNoTurret()) {
                             continue;
                         }
                     }
                     else if (isLargeSupportVehicle) {
-                        if (loc == LargeSupportTank.LOC_TURRET
+                        if ((loc == LargeSupportTank.LOC_TURRET)
                                 && ((LargeSupportTank) entity).hasNoTurret()) {
                             continue;
                         }
                     }
                     else { // Neither VTOL nor large support? Must be a plain vee.
-                        if (loc == Tank.LOC_TURRET && ((Tank) entity).hasNoTurret()) {
+                        if ((loc == Tank.LOC_TURRET) && ((Tank) entity).hasNoTurret()) {
                             continue;
                         }
                     }
@@ -457,7 +457,7 @@ public class MechView {
                     continue;
                 }
                 // Skip the "Body" location on fixed-wing support vees.
-                if (isFixedWingSupport && loc == FixedWingSupport.LOC_BODY) {
+                if (isFixedWingSupport && (loc == FixedWingSupport.LOC_BODY)) {
                     continue;
                 }
 
@@ -680,11 +680,14 @@ public class MechView {
         int nEquip = 0;
         for (Mounted mounted : entity.getMisc()) {
             String name = mounted.getName();
-            if ((name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
+            if ((mounted.getLocation() == Entity.LOC_NONE)
+                    || (name.indexOf("Jump Jet") != -1)//$NON-NLS-1$
                     || ((name.indexOf("CASE") != -1) && entity.isClan()) //$NON-NLS-1$
                     || (name.indexOf("Heat Sink") != -1)//$NON-NLS-1$
-                    || (name.indexOf("Endo Steel") != -1) //$NON-NLS-1$
+                    || (name.indexOf("Endo-Steel") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Fibrous") != -1) //$NON-NLS-1$
+                    || (name.indexOf("Reactive") != -1) //$NON-NLS-1$
+                    || (name.indexOf("Reflective") != -1) //$NON-NLS-1$
                     || (name.indexOf("Ferro-Lamellor") != -1)) { //$NON-NLS-1$
                 // These items are displayed elsewhere, so skip them here.
                 continue;

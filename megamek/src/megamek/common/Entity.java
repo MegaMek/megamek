@@ -235,6 +235,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private   String[] c3iUUIDs             = new String[MAX_C3i_NODES];
 
     protected int structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
+    protected int structureTechLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected String source = "";
 
@@ -8216,14 +8217,53 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setStructureType(int strucType) {
         structureType = strucType;
+        structureTechLevel = getTechLevel();
+    }
+
+    public void setStructureTechLevel(int level) {
+        structureTechLevel = level;
     }
 
     public void setArmorType(String armType) {
-        setArmorType(EquipmentType.getArmorType(armType, isClan()));
+        if (!(armType.startsWith("Clan ") || armType.startsWith("IS "))) {
+            armType = TechConstants.isClan(getArmorTechLevel(0))?"Clan "+armType:"IS "+armType;
+        }
+        EquipmentType et = EquipmentType.get(armType);
+        if (et == null) {
+            setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
+        } else {
+            setArmorType(EquipmentType.getArmorType(et));
+            if (et.getCriticals(this) == 0) {
+                try {
+                    this.addEquipment(et, LOC_NONE);
+                } catch (LocationFullException e) {
+                    // can't happen
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void setStructureType(String strucType) {
-        setStructureType(EquipmentType.getStructureType(strucType, isClan()));
+        if (!(strucType.startsWith("Clan ") || strucType.startsWith("IS "))) {
+            strucType = isClan()?"Clan "+strucType:"IS "+strucType;
+        }
+        EquipmentType et = EquipmentType.get(strucType);
+        setStructureType(EquipmentType.getStructureType(et));
+        if (et == null) {
+            structureTechLevel = TechConstants.T_TECH_UNKNOWN;
+        } else {
+            structureTechLevel = et.getTechLevel(year);
+            if (et.getCriticals(this) == 0) {
+                try {
+                    this.addEquipment(et, LOC_NONE);
+                } catch (LocationFullException e) {
+                    // can't happen
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
     public int getArmorType(int loc) {
@@ -8246,6 +8286,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getStructureType() {
         return structureType;
+    }
+
+    public int getStructureTechLevel() {
+        return structureTechLevel;
     }
 
     public void setWeaponHit(Mounted which) {

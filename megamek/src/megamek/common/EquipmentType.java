@@ -93,7 +93,7 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum" };
 
     public static final String[] structureNames = { "Standard", "Industrial",
-            "Endo Steel", "Endo Steel Prototype", "Reinforced", "Composite",
+            "Endo-Steel", "Endo-Steel Prototype", "Reinforced", "Composite",
             "Endo-Composite" };
 
     // Assume for now that prototype is not more expensive
@@ -222,7 +222,7 @@ public class EquipmentType {
         return internalName;
     }
 
-    public Map<Integer,Integer> getTechLevels() {
+    public Map<Integer, Integer> getTechLevels() {
         return techLevel;
     }
 
@@ -541,16 +541,10 @@ public class EquipmentType {
         EquipmentType.allTypes.addElement(type);
     }
 
-    public static int getArmorType(String inType, boolean clan) {
-        if (inType.equals(armorNames[T_ARMOR_PATCHWORK])) {
-            return T_ARMOR_PATCHWORK;
-        }
-        EquipmentType et = EquipmentType.get(!inType.contains("Standard")?clan?"Clan "+inType:"IS "+inType:inType);
-        if (et != null) {
-            for (int x = 0; x < armorNames.length; x++) {
-                if (armorNames[x].equals(et.getName())) {
-                    return x;
-                }
+    public static int getArmorType(EquipmentType et) {
+        for (int x = 0; x < armorNames.length; x++) {
+            if (armorNames[x].equals(et.getName())) {
+                return x;
             }
         }
         return T_ARMOR_UNKNOWN;
@@ -567,16 +561,17 @@ public class EquipmentType {
         if ((armorType < 0) || (armorType >= armorNames.length)) {
             return "UNKNOWN";
         }
-        return clan?"Clan "+armorNames[armorType]:"IS "+armorNames[armorType];
+        return clan ? "Clan " + armorNames[armorType] : "IS "
+                + armorNames[armorType];
     }
 
-    public static int getStructureType(String inType, boolean clan) {
-        EquipmentType et = EquipmentType.get(!inType.equals("Standard")?clan?"Clan "+inType:"IS "+inType:inType);
-        if (et != null) {
-            for (int x = 0; x < structureNames.length; x++) {
-                if (structureNames[x].equals(et.getName())) {
-                    return x;
-                }
+    public static int getStructureType(EquipmentType et) {
+        if (et == null) {
+            return T_STRUCTURE_UNKNOWN;
+        }
+        for (int x = 0; x < structureNames.length; x++) {
+            if (structureNames[x].equals(et.getName())) {
+                return x;
             }
         }
         return T_STRUCTURE_UNKNOWN;
@@ -593,7 +588,8 @@ public class EquipmentType {
         if ((structureType < 0) || (structureType >= structureNames.length)) {
             return "UNKNOWN";
         }
-        return clan?"Clan "+structureNames[structureType]:"IS "+structureNames[structureType];
+        return clan ? "Clan " + structureNames[structureType] : "IS "
+                + structureNames[structureType];
     }
 
     /**
@@ -753,11 +749,16 @@ public class EquipmentType {
                     w.write("M,");
                 }
                 for (int year : type.getTechLevels().keySet()) {
-                    w.write(year+"-"+TechConstants.getTechName(type.getTechLevel(year)));
+                    w.write(year
+                            + "-"
+                            + TechConstants.getTechName(type.getTechLevel(year)));
                 }
                 w.write(",");
                 for (int year : type.getTechLevels().keySet()) {
-                    w.write(year+"-"+TechConstants.getLevelName(type.getTechLevel(year)));
+                    w.write(year
+                            + "-"
+                            + TechConstants.getLevelName(type
+                                    .getTechLevel(year)));
                 }
                 w.write(",");
                 for (Enumeration<String> names = type.getNames(); names
@@ -797,11 +798,16 @@ public class EquipmentType {
                 w.write(type.getName());
                 w.write(",");
                 for (int year : type.getTechLevels().keySet()) {
-                    w.write(year+"-"+TechConstants.getTechName(type.getTechLevel(year)));
+                    w.write(year
+                            + "-"
+                            + TechConstants.getTechName(type.getTechLevel(year)));
                 }
                 w.write(",");
                 for (int year : type.getTechLevels().keySet()) {
-                    w.write(year+"-"+TechConstants.getLevelName(type.getTechLevel(year)));
+                    w.write(year
+                            + "-"
+                            + TechConstants.getLevelName(type
+                                    .getTechLevel(year)));
                 }
                 w.write(",");
                 w.write(type.getFullRatingName());

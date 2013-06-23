@@ -441,19 +441,6 @@ public class TdbFile implements IMechLoader {
             mech.setYear(Integer.parseInt(techYear));
             mech.setOmni(isOmni);
 
-            if (structureType.substring(0, 3).equals("(C)")) {
-                structureType = structureType.substring(4);
-            }
-            mech.setStructureType(structureType);
-
-            if (armorType.substring(0, 3).equals("(C)")) {
-                armorType = armorType.substring(4);
-            }
-            mech.setArmorType(armorType);
-
-            if (LAMTonnage != null) {
-                // throw new EntityLoadingException("Unsupported tech: LAM?");
-            }
             if (techBase.equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel)) {
                     case 1:
@@ -492,6 +479,21 @@ public class TdbFile implements IMechLoader {
                 throw new EntityLoadingException("Unsupported tech base: "
                         + techBase);
             }
+
+            if (structureType.substring(0, 3).equals("(C)")) {
+                structureType = structureType.substring(4);
+            }
+            mech.setStructureType(structureType);
+
+            if (armorType.substring(0, 3).equals("(C)")) {
+                armorType = armorType.substring(4);
+            }
+            mech.setArmorType(armorType);
+
+            if (LAMTonnage != null) {
+                // throw new EntityLoadingException("Unsupported tech: LAM?");
+            }
+
             mech.setWeight(Integer.parseInt(tonnage));
             if (jumpMP != null) {
                 mech.setOriginalJumpMP(Integer.parseInt(jumpMP));

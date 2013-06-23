@@ -694,7 +694,8 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
-            return (float) (Math.ceil(cargoTonnage / 40f) * 2.0);
+            float weight = cargoTonnage / 20f;
+            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             float weaponWeight = 0;
@@ -703,7 +704,8 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton TODO: round to kilograms for small support
             // vees, but we don't support them yet
-            return (float) (Math.ceil(weaponWeight / 40f) * 2.0);
+            float weight = weaponWeight / 20f;
+            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
             float weaponWeight = 0;

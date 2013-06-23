@@ -293,11 +293,11 @@ public abstract class TestEntity implements TestEntityOption {
         } else {
             for (int i = 0; i < armor.length; i++) {
                 int points = getEntity().getOArmor(i);
-                if (getEntity().getOArmor(i, true) > 0 ) {
+                if (getEntity().getOArmor(i, true) > 0) {
                     points += getEntity().getOArmor(i, true);
                 }
-                armorWeight += armor[i].getWeightArmor(
-                        points, getWeightCeilingArmor());
+                armorWeight += armor[i].getWeightArmor(points,
+                        getWeightCeilingArmor());
             }
         }
         return armorWeight;
@@ -363,8 +363,7 @@ public abstract class TestEntity implements TestEntityOption {
                     || mt.hasFlag(MiscType.F_REACTIVE)
                     || mt.hasFlag(MiscType.F_REFLECTIVE)
                     || mt.hasFlag(MiscType.F_FERRO_LAMELLOR)
-                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)
-                    ) {
+                    || mt.hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)) {
                 continue;
             }
 
@@ -668,7 +667,8 @@ public abstract class TestEntity implements TestEntityOption {
             if ((ignoreAmmo) && (nextE instanceof AmmoType)) {
                 continue;
             } else if (!(TechConstants.isLegal(eTechLevel,
-                    nextE.getTechLevel(getEntity().getTechLevelYear()), true, getEntity().isMixedTech()))) {
+                    nextE.getTechLevel(getEntity().getTechLevelYear()), true,
+                    getEntity().isMixedTech()))) {
                 if (!retVal) {
                     buff.append("Equipment illegal at unit's tech level:\n");
                 }
@@ -783,6 +783,20 @@ public abstract class TestEntity implements TestEntityOption {
         if (fieldKitchenCount > 3) {
             buff.append("Unit has more than three Field Kitchens\n");
             illegal = true;
+        }
+        if (getEntity() instanceof Tank) {
+            Tank tank = (Tank) getEntity();
+            if ((tank.getMovementMode() == EntityMovementMode.VTOL)
+                    || (tank.getMovementMode() == EntityMovementMode.WIGE)
+                    || (tank.getMovementMode() == EntityMovementMode.HOVER)) {
+                for (int i = 0; i < tank.locations(); i++) {
+                    if (tank.getArmorType(i) == EquipmentType.T_ARMOR_HARDENED) {
+                        buff.append("Hardened armor can't be mounted on WiGE/Hover/Wheeled vehicles");
+                        illegal = true;
+                    }
+                }
+            }
+
         }
         if (getEntity() instanceof Mech) {
             Mech mech = (Mech) getEntity();
@@ -1038,7 +1052,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                         && (mounted.getLocation() == Mech.LOC_HEAD)) {
                     illegal = true;
-                    buff.append("Unable to load Modular Armor in Rotor/Head location\n");
+                    buff.append("Unable to load Modular Armor in Head location\n");
                 }
 
                 if (mounted.getType().hasFlag(MiscType.F_HEAD_TURRET)
@@ -1106,11 +1120,11 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
 
-            if (mech.hasUMU() && (mech.getJumpType()  != Mech.JUMP_NONE)  &&
-                                 (mech.getJumpType()  != Mech.JUMP_BOOSTER)){
+            if (mech.hasUMU() && (mech.getJumpType() != Mech.JUMP_NONE)
+                    && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
                 illegal = true;
-                buff.append("UMUs cannot be mounted with jump jets " +
-                		"(jump boosters are legal)");
+                buff.append("UMUs cannot be mounted with jump jets "
+                        + "(jump boosters are legal)");
             }
 
         }

@@ -32,7 +32,7 @@
 #############################################################################
 Canopus3028LightVehicles_A
 Galleon Light Tank GAL-100,21
-Karnov UR Transport (Gunship),18
+Karov UR Gunship,18
 Warrior Attack Helicopter H-7A,18
 Warrior Attack Helicopter H-7,35
 Scorpion Light Tank,177

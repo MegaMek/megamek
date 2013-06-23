@@ -34,7 +34,7 @@ Canopus3028LightVehicles_F
 Ferret Light Scout VTOL,320
 Ferret Light Scout VTOL (Armor) "Wild Weasel",100
 Galleon Light Tank GAL-100,600
-Karnov UR Transport (Gunship),200
+Karov UR Gunship,200
 Warrior Attack Helicopter H-7A,200
 Warrior Attack Helicopter H-7,380
 Scorpion Light Tank,1940

@@ -33,7 +33,7 @@
 Steiner3028LightVehicles_A
 Savannah Master Hovercraft,18
 Galleon Light Tank GAL-100,17
-Karnov UR Transport (Gunship),12
+Karov UR Gunship,12
 Warrior Attack Helicopter H-7A,12
 Warrior Attack Helicopter H-7,73
 Scorpion Light Tank,122

@@ -34,7 +34,7 @@ MerPerGen3028LightVehicles_A
 Ferret Light Scout VTOL,26
 Ferret Light Scout VTOL (Armor) "Wild Weasel",9
 Galleon Light Tank GAL-100,35
-Karnov UR Transport (Gunship),17
+Karov UR Gunship,17
 Warrior Attack Helicopter H-7A,17
 Warrior Attack Helicopter H-7,35
 Scorpion Light Tank,173

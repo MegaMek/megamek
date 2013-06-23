@@ -33,7 +33,7 @@
 Kurita3039LightVehicles_B
 Galleon Light Tank GAL-100,500
 Galleon Light Tank GAL-200,30
-Karnov UR Transport (Gunship),110
+Karov UR Gunship,110
 Skulker Wheeled Scout Tank (MG),50
 Warrior Attack Helicopter H-7A,110
 Warrior Attack Helicopter H-7,210

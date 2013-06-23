@@ -31,7 +31,7 @@
 #   less than 1.                                                            #
 #############################################################################
 StIves3039LightVehicles_C
-Karnov UR Transport (Gunship),150
+Karov UR Gunship,150
 Packrat LRPV PKR-T5 (SRM2),180
 Warrior Attack Helicopter H-7A,150
 Warrior Attack Helicopter H-7,300

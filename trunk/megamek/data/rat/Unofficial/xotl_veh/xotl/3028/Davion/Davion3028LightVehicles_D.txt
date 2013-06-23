@@ -35,7 +35,7 @@ Ferret Light Scout VTOL,780
 Ferret Light Scout VTOL (Armor) "Wild Weasel",190
 Darter Scout Car,450
 Galleon Light Tank GAL-100,290
-Karnov UR Transport (Gunship),150
+Karov UR Gunship,150
 Packrat LRPV PKR-T5 (SRM2),10
 Warrior Attack Helicopter H-7A,150
 Warrior Attack Helicopter H-7,290

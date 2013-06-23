@@ -35,7 +35,7 @@ Packrat LRPV PKR-T5 (SRM2),190
 Darter Scout Car,10
 Ferret Light Scout VTOL,30
 Galleon Light Tank GAL-100,50
-Karnov UR Transport (Gunship),160
+Karov UR Gunship,160
 Warrior Attack Helicopter H-7A,160
 Warrior Attack Helicopter H-7,340
 Scorpion Light Tank,1640

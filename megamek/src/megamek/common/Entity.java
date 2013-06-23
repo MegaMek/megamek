@@ -8449,7 +8449,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getArmorWeight(int loc) {
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType[loc], armorTechLevel[loc]);
-        double points = getOArmor(loc)+(getOArmor(loc,true)>0?getOArmor(loc,true):0);
+        double points = getOArmor(loc)+(hasRearArmor(loc)?getOArmor(loc,true):0);
         double armorWeight = points / armorPerTon;
         return Math.ceil(armorWeight * 2.0) / 2.0;
 

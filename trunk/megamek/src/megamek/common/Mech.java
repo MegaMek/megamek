@@ -5721,7 +5721,7 @@ public abstract class Mech extends Entity {
                         : "");
         sb.append(newLine);
         sb.append("Structure:");
-        sb.append(EquipmentType.getStructureTypeName(getStructureType(), isClan()));
+        sb.append(EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(structureTechLevel)));
         sb.append(newLine);
 
         sb.append("Myomer:");
@@ -5779,7 +5779,7 @@ public abstract class Mech extends Entity {
                             .getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK));
         } else {
             sb.append("Armor:").append(
-                    EquipmentType.getArmorTypeName(getArmorType(0), isClan()));
+                    EquipmentType.getArmorTypeName(getArmorType(0)));
             sb.append("(" + TechConstants.getTechName(getArmorTechLevel(0))
                     + ")");
         }

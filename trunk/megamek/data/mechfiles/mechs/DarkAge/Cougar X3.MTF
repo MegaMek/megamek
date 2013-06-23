@@ -3,13 +3,13 @@ Cougar
 X3
 
 Config:Biped Omnimech
-TechBase:Clan
+TechBase:Mixed (Clan Chassis)
 Era:3132
 Rules Level:4
 
 Mass:35
 Engine:175 XL Engine
-Structure:Clan Endo-Composite
+Structure:IS Composite
 Myomer:Standard
 Gyro:Heavy Duty
 

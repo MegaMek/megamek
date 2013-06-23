@@ -372,9 +372,9 @@ public class MtfFile implements IMechLoader {
                             throw new EntityLoadingException("Unsupported tech level: " + rulesLevel.substring(12).trim());
                     }
                 }
-                thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('('));
-                mech.setArmorType(EquipmentType.getArmorType(thisArmorType, clan));
-            } else {
+                thisArmorType = thisArmorType.substring(0, thisArmorType.indexOf('(')).trim();
+                mech.setArmorType(thisArmorType);
+            } else if (!thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))){
                 mech.setArmorTechLevel(mech.getTechLevel());
                 mech.setArmorType(thisArmorType);
             }
@@ -384,7 +384,12 @@ public class MtfFile implements IMechLoader {
             for (int x = 0; x < locationOrder.length; x++) {
                 mech.initializeArmor(Integer.parseInt(armorValues[x].substring(armorValues[x].lastIndexOf(':') + 1)), locationOrder[x]);
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
-                    mech.setArmorType(EquipmentType.getArmorType(armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('(')), armorValues[x].toLowerCase().indexOf("clan") != -1), locationOrder[x]);
+                    boolean clan = false;
+                    if (armorValues[x].contains("Clan")) {
+                        clan = true;
+                    }
+                    String armorName = armorValues[x].substring(armorValues[x].indexOf(':')+1,armorValues[x].indexOf('('));
+                    mech.setArmorType(EquipmentType.getArmorType(EquipmentType.get(clan?"Clan "+armorName:"IS "+armorName)), locationOrder[x]);
                     if (armorValues[x].toLowerCase().indexOf("clan") != -1) {
                         switch (Integer.parseInt(rulesLevel.substring(12).trim())) {
                             case 2:

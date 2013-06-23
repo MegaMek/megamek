@@ -707,6 +707,10 @@ public class Dropship extends SmallCraft {
                 double abv = ratio * atype.getBV(this);
                 String key = atype.getAmmoType() + ":" + atype.getRackSize();
                 String key2 = atype.getName() + ";" + key;
+                // MML needs special casing so they don't count double
+                if (atype.getAmmoType() == AmmoType.T_MML) {
+                    key2 = "MML "+atype.getRackSize()+ " Ammo;"+key;
+                }
                 if (!keys.contains(key2)) {
                     keys.add(key2);
                 }

@@ -13,31 +13,27 @@ VTOL
 </UnitType>
 
 <Name>
-Pinto Attack VTOL
+Warrior Stealth Helicopter
 </Name>
 
 <Model>
-
+S-9
 </Model>
 
 <year>
-3055
+3084
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
 VTOL
 </motion_type>
 
-<transporters>
-troopspace:1.0
-</transporters>
-
 <cruiseMP>
-10
+1
 </cruiseMP>
 
 <engine_type>
@@ -45,32 +41,30 @@ troopspace:1.0
 </engine_type>
 
 <armor_type>
-1
+8
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <armor>
-20
-18
-18
-13
+8
+8
+8
+6
 2
 </armor>
 
 <Body Equipment>
-IS Ammo LRM-5 Artemis-capable
+Stealth
+ISGuardianECMSuite
+ISVTOLJetBooster
+IS Ammo Extended LRM-10
 </Body Equipment>
 
 <Front Equipment>
-Medium Laser
-Medium Laser
-Medium Laser
-LRM 5
-ISArtemisIV
-BeagleActiveProbe
+ISExtendedLRM10
 </Front Equipment>
 
 <Right Equipment>
@@ -85,11 +79,7 @@ BeagleActiveProbe
 <Rotor Equipment>
 </Rotor Equipment>
 
-<source>
-Clan Invasion
-</source>
-
 <tonnage>
-30.0
+21.0
 </tonnage>
 

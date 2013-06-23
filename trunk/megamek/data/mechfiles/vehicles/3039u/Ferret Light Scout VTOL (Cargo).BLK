@@ -53,9 +53,6 @@ VTOL
 </armor>
 
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (0.5 tons)
 </Body Equipment>
 
 <Front Equipment>
@@ -72,4 +69,10 @@ Cargo (0.5 tons)
 
 <Rotor Equipment>
 </Rotor Equipment>
+
+<transporters>
+cargobay:2.5:1
+</transporters>
+
+
 

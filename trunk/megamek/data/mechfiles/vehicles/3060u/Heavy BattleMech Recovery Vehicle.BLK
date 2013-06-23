@@ -25,37 +25,12 @@ Heavy BattleMech Recovery Vehicle
 10
 </Armor>
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 </Body Equipment>
+
+<transporters>
+cargobay:30:1
+</transporters>
+
 <type>
 IS Level 1
 </type>

@@ -37,7 +37,7 @@ Ferret Light Scout VTOL,340
 Ferret Light Scout VTOL (Armor) "Wild Weasel",90
 Galleon Light Tank GAL-100,1690
 Savannah Master Hovercraft,10
-Karnov UR Transport (Gunship),130
+Karov UR Gunship,130
 Warrior Attack Helicopter H-7A,130
 Warrior Attack Helicopter H-7,290
 Scorpion Light Tank,1320

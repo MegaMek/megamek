@@ -34,7 +34,7 @@ Outworlds3039LightVehicles_D
 Ferret Light Scout VTOL,400
 Ferret Light Scout VTOL (Armor) "Wild Weasel",160
 Galleon Light Tank GAL-100,320
-Karnov UR Transport (Gunship),160
+Karov UR Gunship,160
 Warrior Attack Helicopter H-7A,160
 Warrior Attack Helicopter H-7,320
 Scorpion Light Tank,1590

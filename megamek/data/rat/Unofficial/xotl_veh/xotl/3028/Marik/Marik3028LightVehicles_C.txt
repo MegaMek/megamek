@@ -35,7 +35,7 @@ Packrat LRPV PKR-T5 (ML),80
 Ferret Light Scout VTOL,320
 Ferret Light Scout VTOL (Armor) "Wild Weasel",80
 Galleon Light Tank GAL-100,1680
-Karnov UR Transport (Gunship),110
+Karov UR Gunship,110
 Warrior Attack Helicopter H-7A,110
 Warrior Attack Helicopter H-7,250
 Scorpion Light Tank,1180

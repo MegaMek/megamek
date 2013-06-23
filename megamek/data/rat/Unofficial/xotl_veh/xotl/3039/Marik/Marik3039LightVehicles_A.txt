@@ -32,7 +32,7 @@
 #############################################################################
 Marik3039LightVehicles_A
 Galleon Light Tank GAL-100,130
-Karnov UR Transport (Gunship),10
+Karov UR Gunship,10
 Warrior Attack Helicopter H-7A,10
 Warrior Attack Helicopter H-7,20
 Scorpion Light Tank,97

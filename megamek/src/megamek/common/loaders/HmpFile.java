@@ -495,7 +495,7 @@ implements IMechLoader
 
             mech.setOriginalJumpMP(jumpMP);
 
-            mech.setStructureType(mech.isClan()?"Clan ":"IS "+internalStructureType.toString());
+            mech.setStructureType(internalStructureType.toString());
             mech.autoSetInternal();
 
             mech.setArmorType(armorType.toString());

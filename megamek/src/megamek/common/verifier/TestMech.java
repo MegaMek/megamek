@@ -391,6 +391,9 @@ public class TestMech extends TestEntity {
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
                 }
+                if ((entity instanceof Mech) && (m.getType().getCriticals(entity) == 0)) {
+                    continue;
+                }
                 if (!(m.getType() instanceof MiscType)) {
                     unallocated.addElement(m);
                     continue;

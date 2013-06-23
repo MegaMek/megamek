@@ -6349,7 +6349,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLStreakLRM5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "Streak LRM 5 Ammo";
         ammo.shortName = "Streak LRM 5";
         ammo.setInternalName("Clan Streak LRM 5 Ammo");
@@ -6361,6 +6361,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 11;
         ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
 
         return ammo;
     }
@@ -6368,7 +6370,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLStreakLRM10Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "Streak LRM 10 Ammo";
         ammo.shortName = "Streak LRM 10";
         ammo.setInternalName("Clan Streak LRM 10 Ammo");
@@ -6380,6 +6382,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 22;
         ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
 
         return ammo;
     }
@@ -6387,7 +6391,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLStreakLRM15Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "Streak LRM 15 Ammo";
         ammo.shortName = "Streak LRM 15";
         ammo.setInternalName("Clan Streak LRM 15 Ammo");
@@ -6399,6 +6403,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 32;
         ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
 
         return ammo;
     }
@@ -6406,7 +6412,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLStreakLRM20Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "Streak LRM 20 Ammo";
         ammo.shortName = "Streak LRM 20";
         ammo.setInternalName("Clan Streak LRM 20 Ammo");
@@ -6418,6 +6424,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 43;
         ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
 
         return ammo;
     }

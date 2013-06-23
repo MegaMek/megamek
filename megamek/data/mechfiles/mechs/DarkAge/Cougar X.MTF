@@ -9,14 +9,14 @@ Rules Level:4
 
 Mass:35
 Engine:175 XL Engine
-Structure:Composite
+Structure:Endo-Composite
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:5
 Jump MP:7
 
-Armor:Ferro-Fibrous
+Armor:Clan Ferro-Fibrous Armor
 LA Armor:6
 RA Armor:6
 LT Armor:7

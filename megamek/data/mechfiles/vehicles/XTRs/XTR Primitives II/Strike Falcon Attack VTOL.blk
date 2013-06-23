@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-VTOL
+SupportVTOL
 </UnitType>
 
 <Name>
@@ -25,7 +25,7 @@ Strike Falcon Attack VTOL
 </year>
 
 <type>
-IS Level 5
+IS Level 2
 </type>
 
 <motion_type>

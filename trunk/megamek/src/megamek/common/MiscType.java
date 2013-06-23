@@ -688,7 +688,7 @@ public class MiscType extends EquipmentType {
             // 5% of cargo
             float cargoTonnage = 0;
             for (Mounted mount : entity.getMisc()) {
-                if (mount.getType().hasFlag(F_CARGO)) {
+                if (mount.getType().hasFlag(F_CARGO) && (mount.getLocation() == location)) {
                     cargoTonnage += mount.getType().getTonnage(entity);
                 }
             }
@@ -5782,7 +5782,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
-        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.introDate = 1950;
@@ -5801,7 +5801,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
-        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.introDate = 1950;
@@ -5820,7 +5820,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
-        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.introDate = 1950;
@@ -5839,7 +5839,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
-        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_DUMPER).or(F_TANK_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.introDate = 1950;

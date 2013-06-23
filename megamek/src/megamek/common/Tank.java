@@ -3083,10 +3083,10 @@ public class Tank extends Entity {
 
     public void setArmorType(int armType, boolean addMount) {
         super.setArmorType(armType);
-        if ((armType == EquipmentType.T_ARMOR_STEALTH) && addMount) {
+        if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType
-                        .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH, false)),
+                        .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)),
                         LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen

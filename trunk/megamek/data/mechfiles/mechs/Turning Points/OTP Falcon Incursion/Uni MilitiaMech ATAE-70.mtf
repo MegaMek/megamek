@@ -1,64 +1,75 @@
-Version:1.1
+Version:1.0
 Uni MilitiaMech
 ATAE-70
 
 Config:Quad
 TechBase:Inner Sphere
 Era:3053
-Rules Level:1
+Rules Level:2
 
 Mass:70
-Engine:210 Fuel-Cell Engine
-Structure:Industrial
-Cockpit:Industrial Cockpit (AFC)
+Engine:210 Fuel Cell Engine(IS)
+Structure:IS Industrial
 Myomer:Standard
 
 Heat Sinks:2 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Commercial
-LA Armor:27
-RA Armor:27
+Armor:Commercial(Inner Sphere)
+FLL Armor:27
+FRL Armor:27
 LT Armor:20
 RT Armor:20
 CT Armor:31
 HD Armor:9
-LL Armor:27
-RL Armor:27
+RLL Armor:27
+RRL Armor:27
 RTL Armor:9
 RTR Armor:9
 RTC Armor:10
 
 Weapons:4
-1 ISAC5, Left Torso, Ammo:20
-1 ISAC5, Right Torso
-1 ISSRM4, Left Torso, Ammo:25
-1 ISSRM4, Right Torso
+AC/5, Left Torso
+SRM 4, Left Torso
+AC/5, Right Torso
+SRM 4, Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Environmental Sealing
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 
 Left Torso:
-ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISSRM4
-ISSRM4 Ammo
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+SRM 4
+IS Ammo SRM-4
 Environmental Sealing
 -Empty-
 -Empty-
@@ -67,11 +78,11 @@ Environmental Sealing
 -Empty-
 
 Right Torso:
-ISAC5
-ISAC5
-ISAC5
-ISAC5
-ISSRM4
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+SRM 4
 Environmental Sealing
 -Empty-
 -Empty-
@@ -81,17 +92,17 @@ Environmental Sealing
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISAC5 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo AC/5
 Environmental Sealing
 
 Head:
@@ -101,19 +112,39 @@ Cockpit
 Environmental Sealing
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Environmental Sealing
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Environmental Sealing
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

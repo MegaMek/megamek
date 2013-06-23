@@ -1,23 +1,22 @@
-Version:1.1
+Version:1.0
 Rock Hound ProspectorMech
 AM-PRM-RH7 "Rock Possum"
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3045
-Rules Level:1
+Rules Level:2
 
 Mass:40
-Engine:160 Fuel-Cell Engine
-Structure:Industrial
-Cockpit:Industrial Cockpit (AFC)
+Engine:160 Fuel Cell Engine(IS)
+Structure:IS Industrial
 Myomer:Standard
 
 Heat Sinks:1 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:10
@@ -30,12 +29,8 @@ RTL Armor:6
 RTR Armor:6
 RTC Armor:6
 
-Weapons:5
-1 ISSRM4, Left Torso, Ammo:25
-1 MiningDrill, Right Arm
-1 Lift Hoist, Left Arm
-1 Searchlight, Center Torso
-1 ISCargoStandard, Right Torso
+Weapons:1
+SRM 4, Left Torso
 
 Left Arm:
 Shoulder
@@ -66,8 +61,8 @@ MiningDrill
 -Empty-
 
 Left Torso:
-ISSRM4
-ISSRM4 Ammo
+SRM 4
+IS Ammo SRM-4
 -Empty-
 -Empty-
 -Empty-
@@ -94,16 +89,16 @@ Cargo (1 ton)
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Searchlight
 -Empty-
 
@@ -114,12 +109,24 @@ Cockpit
 Ejection Seat
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -130,3 +137,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

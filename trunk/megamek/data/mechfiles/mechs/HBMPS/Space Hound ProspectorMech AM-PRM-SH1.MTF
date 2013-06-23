@@ -1,23 +1,22 @@
-Version:1.1
+Version:1.0
 Space Hound ProspectorMech
 AM-PRM-SH1
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3047
-Rules Level:1
+Rules Level:2
 
 Mass:40
-Engine:160 Fusion Engine
-Structure:Industrial
-Cockpit:Industrial Cockpit (AFC)
+Engine:160 Fusion Engine(IS)
+Structure:IS Industrial
 Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:4
 Jump MP:1
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:10
@@ -30,14 +29,8 @@ RTL Armor:6
 RTR Armor:6
 RTC Armor:6
 
-Weapons:7
-1 MiningDrill, Right Arm
-1 Lift Hoist, Left Arm
-1 Searchlight, Center Torso
-1 Cargo (1 ton), Left Torso
-1 ISSmallLaser, Right Arm
-1 Cargo (1 ton), Right Torso
-1 Cargo (1 ton), Right Torso
+Weapons:1
+Small Laser, Right Arm
 
 Left Arm:
 Shoulder
@@ -61,11 +54,11 @@ MiningDrill
 MiningDrill
 MiningDrill
 MiningDrill
-ISSmallLaser
+Small Laser
 Heat Sink
--Empty-
--Empty-
 Environmental Sealing
+-Empty-
+-Empty-
 
 Left Torso:
 Cargo (1 ton)
@@ -96,16 +89,16 @@ Environmental Sealing
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Searchlight
 Environmental Sealing
 
@@ -116,6 +109,12 @@ Cockpit
 Environmental Sealing
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -124,6 +123,12 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -132,3 +137,11 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

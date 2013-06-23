@@ -9,7 +9,7 @@ Rules Level:4
 
 Mass:35
 Engine:175 XL Engine
-Structure:Composite
+Structure:Clan Endo-Composite
 Myomer:Standard
 Gyro:Heavy Duty
 
@@ -17,7 +17,7 @@ Heat Sinks:11 Double
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Clan Ferro-Fibrous Armor
 LA Armor:11
 RA Armor:11
 LT Armor:12

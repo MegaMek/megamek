@@ -21,9 +21,7 @@ SpaceStation
 </UnitType>
 
 <Name>
-
-Bastion
- System Defense Station
+Bastion  System Defense Station
 </Name>
 
 <Tonnage>
@@ -302,17 +300,17 @@ ISSmallLaser
 10000
 </fuel>
 <type>
-IS Level 1
+IS Level 3
 </type>
 <year>
-3057
+2584
 </year>
 <internal_type>
 0
 </internal_type>
 <armor_type>
 0
-</armor_type>
+</armor_type>
 <transporters>
 SmallCraftBay:12:2
 CargoBay:123619:1

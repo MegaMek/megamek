@@ -7141,6 +7141,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_F, EquipmentType.RATING_E };
         misc.introDate = 2300;
         misc.techLevel.put(2300, misc.techLevel.get(3071));
+        misc.techLevel.put(3078, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_D;
         return misc;
     }

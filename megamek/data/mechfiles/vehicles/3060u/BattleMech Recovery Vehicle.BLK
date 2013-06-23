@@ -25,22 +25,17 @@ BattleMech Recovery Vehicle
 2
 </Armor>
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 </Body Equipment>
+
+<transporters>
+cargobay:10:1
+</transporters>
+
 <type>
 IS Level 1
 </type>
 <year>
-2439
+2440
 </year>
 <internal_type>
 0

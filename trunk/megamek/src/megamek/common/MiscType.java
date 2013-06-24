@@ -3144,7 +3144,7 @@ public class MiscType extends EquipmentType {
         misc.extinctDate = 2790;
         misc.availRating = new int[] { RATING_E, RATING_X, RATING_X };
         misc.techRating = RATING_E;
-        
+
 
         return misc;
     }
@@ -5361,7 +5361,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Standard Armor");
         misc.addLookupName("Clan Standard Armor");
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
-        misc.techLevel.put(2000, TechConstants.T_ALLOWED_ALL);
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
 
         return misc;
     }

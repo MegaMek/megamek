@@ -22,6 +22,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
+import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;
 
 /**
@@ -88,31 +89,6 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
-        boolean patchworkArmor = false;
-        if (dataFile.exists("armor_type")) {
-            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
-                patchworkArmor = true;
-            } else {
-                t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
-            }
-        } else {
-            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
-        }
-        if (!patchworkArmor && dataFile.exists("armor_tech")) {
-            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
-        }
-        if (!patchworkArmor) {
-            if (!dataFile.exists("barrating")) {
-                throw new EntityLoadingException("Could not find barrating block.");
-            }
-            t.setBARRating(dataFile.getDataAsInt("barrating")[0]);
-        } else {
-            for (int i = 1; i < t.locations(); i++) {
-                t.setArmorType(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-                t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
-                t.setBARRating(dataFile.getDataAsInt(t.getLocationName(i) + "_barrating")[0], i);
-            }
-        }
         if (dataFile.exists("internal_type")) {
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
         } else {
@@ -138,6 +114,32 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
             t.initializeArmor(fullArmor[x], x);
         }
 
+        boolean patchworkArmor = false;
+        if (dataFile.exists("armor_type")) {
+            if (dataFile.getDataAsInt("armor_type")[0] == EquipmentType.T_ARMOR_PATCHWORK) {
+                patchworkArmor = true;
+            } else {
+                t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+            }
+        } else {
+            t.setArmorType(EquipmentType.T_ARMOR_STANDARD);
+        }
+        if (!patchworkArmor && dataFile.exists("armor_tech")) {
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
+        }
+        if (!patchworkArmor) {
+            if (!dataFile.exists("barrating")) {
+                throw new EntityLoadingException("Could not find barrating block.");
+            }
+            t.setBARRating(dataFile.getDataAsInt("barrating")[0]);
+        } else {
+            for (int i = 1; i < t.locations(); i++) {
+                t.setArmorType(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
+                t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
+                t.setBARRating(dataFile.getDataAsInt(t.getLocationName(i) + "_barrating")[0], i);
+            }
+        }
+
         t.autoSetInternal();
 
         loadEquipment(t, "Front", Tank.LOC_FRONT);
@@ -145,6 +147,10 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
         loadEquipment(t, "Body", Tank.LOC_BODY);
+        loadEquipment(t, "Rotor", VTOL.LOC_ROTOR);
+        if (armor.length == 6) {
+            loadEquipment(t, "Turret", VTOL.LOC_TURRET);
+        }
 
         if (dataFile.exists("omni")) {
             t.setOmni(true);

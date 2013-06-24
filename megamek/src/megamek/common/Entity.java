@@ -8247,6 +8247,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
             setArmorType(EquipmentType.getArmorType(et));
+            if (et.getCriticals(this) == 0) {
+                try {
+                    this.addEquipment(et, LOC_NONE);
+                } catch (LocationFullException e) {
+                    // can't happen
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -8260,6 +8268,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN, loc);
         } else {
             setArmorType(EquipmentType.getArmorType(et), loc);
+            if (et.getCriticals(this) == 0) {
+                try {
+                    this.addEquipment(et, LOC_NONE);
+                } catch (LocationFullException e) {
+                    // can't happen
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

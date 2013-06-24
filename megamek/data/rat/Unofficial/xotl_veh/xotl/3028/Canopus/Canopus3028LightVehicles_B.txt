@@ -34,7 +34,7 @@ Canopus3028LightVehicles_B
 Ferret Light Scout VTOL,27
 Ferret Light Scout VTOL (Armor) "Wild Weasel",9
 Galleon Light Tank GAL-100,35
-Karov UR Gunship,18
+Karnov UR Gunship,18
 Warrior Attack Helicopter H-7A,18
 Warrior Attack Helicopter H-7,35
 Scorpion Light Tank,177

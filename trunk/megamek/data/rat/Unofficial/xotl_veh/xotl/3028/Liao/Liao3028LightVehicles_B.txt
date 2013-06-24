@@ -32,7 +32,7 @@
 #############################################################################
 Liao3028LightVehicles_B
 Packrat LRPV PKR-T5 (SRM2),19
-Karov UR Gunship,16
+Karnov UR Gunship,16
 Warrior Attack Helicopter H-7A,16
 Warrior Attack Helicopter H-7,32
 Scorpion Light Tank,158

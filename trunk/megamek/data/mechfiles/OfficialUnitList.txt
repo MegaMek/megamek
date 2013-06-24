@@ -3797,7 +3797,7 @@ J. Edgar Light Hover Tank|
 J-27 Ordnance Transport K-27 "Killjoy"|
 Karnov UR Transport (AC)|
 Karnov UR Transport (Artillery)|
-Karov UR Gunship|
+Karnov UR Gunship|
 Karnov UR Transport|
 Laser Carrier|
 LRM Carrier|

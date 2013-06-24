@@ -38,7 +38,7 @@ Saladin Assault Hover Tank (Armor),100
 Darter Scout Car,10
 Ferret Light Scout VTOL,30
 Galleon Light Tank GAL-100,580
-Karov UR Gunship,120
+Karnov UR Gunship,120
 Warrior Attack Helicopter H-7A,120
 Warrior Attack Helicopter H-7,270
 Scorpion Light Tank,1260

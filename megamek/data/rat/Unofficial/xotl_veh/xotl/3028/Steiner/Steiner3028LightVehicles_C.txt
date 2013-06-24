@@ -35,7 +35,7 @@ Savannah Master Hovercraft,180
 Ferret Light Scout VTOL,350
 Ferret Light Scout VTOL (Armor) "Wild Weasel",90
 Galleon Light Tank GAL-100,290
-Karov UR Gunship,120
+Karnov UR Gunship,120
 Warrior Attack Helicopter H-7A,120
 Warrior Attack Helicopter H-7,750
 Scorpion Light Tank,1280

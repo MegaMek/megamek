@@ -33,7 +33,7 @@
 FRR3039LightVehicles_C
 Galleon Light Tank GAL-100,520
 Galleon Light Tank GAL-200,30
-Karov UR Gunship,110
+Karnov UR Gunship,110
 Skulker Wheeled Scout Tank (MG),60
 Warrior Attack Helicopter H-7A,110
 Warrior Attack Helicopter H-7,220

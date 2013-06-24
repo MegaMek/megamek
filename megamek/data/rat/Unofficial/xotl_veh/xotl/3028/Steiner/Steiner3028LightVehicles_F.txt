@@ -36,7 +36,7 @@ Saladin Assault Hover Tank (Armor),10
 Ferret Light Scout VTOL,360
 Ferret Light Scout VTOL (Armor) "Wild Weasel",100
 Galleon Light Tank GAL-100,410
-Karov UR Gunship,140
+Karnov UR Gunship,140
 Warrior Attack Helicopter H-7A,140
 Warrior Attack Helicopter H-7,770
 Scorpion Light Tank,1390

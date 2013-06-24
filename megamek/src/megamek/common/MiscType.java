@@ -3139,7 +3139,12 @@ public class MiscType extends EquipmentType {
         misc.setInstantModeSwitch(false);
         misc.bv = 0;
         misc.cost = 1400000;
-        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(2630, TechConstants.T_IS_EXPERIMENTAL);
+        misc.introDate = 2630;
+        misc.extinctDate = 2790;
+        misc.availRating = new int[] { RATING_E, RATING_X, RATING_X };
+        misc.techRating = RATING_E;
+        
 
         return misc;
     }
@@ -3162,6 +3167,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 2000000;
         misc.techLevel.put(3070, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3085, TechConstants.T_IS_ADVANCED);
+        misc.introDate = 3060;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.techRating = RATING_E;
 
         return misc;
     }
@@ -3183,7 +3191,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CHAMELEON_SHIELD).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 600000;
-        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(2630, TechConstants.T_IS_EXPERIMENTAL);
+        misc.introDate = 2630;
+        misc.extinctDate = 2790;
+        misc.availRating = new int[] { RATING_E, RATING_X, RATING_X };
+        misc.techRating = RATING_E;
 
         return misc;
     }

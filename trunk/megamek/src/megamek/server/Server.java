@@ -23734,7 +23734,7 @@ public class Server implements Runnable {
                 + fallHex.depth(true);
         int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
-        int newElevation = entity.getElevation();
+        int newElevation = 0;
         // we might have to check if the building/bridge we are falling onto
         // collapses
         boolean checkCollapse = false;

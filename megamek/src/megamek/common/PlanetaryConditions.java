@@ -407,7 +407,11 @@ public class PlanetaryConditions implements Serializable {
         if((windStrength == WI_STRONG_GALE) || (windStrength == WI_STORM) || (weatherConditions == WE_ICE_STORM)) {
             mod += 4;
         }
-        mod += getTemperatureDifference(30,-30);
+        if (getTemperature() > 30) {
+            mod -= getTemperatureDifference(30,-30);
+        } else if (getTemperature() < 30) {
+            mod += getTemperatureDifference(30, -30);
+        }
 
         return mod;
     }
@@ -467,12 +471,12 @@ public class PlanetaryConditions implements Serializable {
         } else if (getTemperature() < low) {
             do {
                 i++;
-            } while (getTemperature() + i * 10 < low);
+            } while ((getTemperature() + (i * 10)) < low);
             return i;
         } else {
             do {
                 i++;
-            } while (getTemperature() - i * 10 > high);
+            } while ((getTemperature() - (i * 10)) > high);
         }
         return i;
     }
@@ -503,9 +507,9 @@ public class PlanetaryConditions implements Serializable {
         //wind mods
         switch(windStrength) {
         case(WI_LIGHT_GALE):
-            if(!(en instanceof BattleArmor) 
-                    && (en.getMovementMode() == EntityMovementMode.INF_LEG 
-                            || en.getMovementMode() == EntityMovementMode.INF_JUMP)) {
+            if(!(en instanceof BattleArmor)
+                    && ((en.getMovementMode() == EntityMovementMode.INF_LEG)
+                            || (en.getMovementMode() == EntityMovementMode.INF_JUMP))) {
                 mod -= 1;
             }
             break;
@@ -536,17 +540,17 @@ public class PlanetaryConditions implements Serializable {
         //weather mods (clarified in an email exchange with TPTB)
         switch(weatherConditions) {
         case(WE_LIGHT_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
+            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
                 mod -= 1;
             }
             break;
         case(WE_MOD_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
+            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
                 mod -= 2;
             }
             break;
         case(WE_HEAVY_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || (en instanceof Aero && !en.isAirborne())) {
+            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
                 mod -= 3;
             }
             break;
@@ -760,7 +764,7 @@ public class PlanetaryConditions implements Serializable {
             return 3;
         }
     }
-    
+
     public void setLight(int type) {
         lightConditions = type;
     }
@@ -873,7 +877,7 @@ public class PlanetaryConditions implements Serializable {
     public void setMaxWindStrength(int strength){
         maxWindStrength = strength;
     }
-    
+
     public int getMinWindStrength(){
         return minWindStrength;
     }

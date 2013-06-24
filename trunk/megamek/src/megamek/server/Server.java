@@ -26,8 +26,6 @@ import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -1156,18 +1154,11 @@ public class Server implements Runnable {
             oos.writeObject(game);
             oos.flush();
             oos.close();
-            String xmlGame = xstream.toXML(game);
-            FileOutputStream output = new FileOutputStream(sFinalFile+".gz");
-            try {
-              Writer writer = new OutputStreamWriter(new GZIPOutputStream(output), "UTF-8");
-              try {
-                writer.write(xmlGame);
-              } finally {
-                writer.close();
-              }
-             } finally {
-               output.close();
-             }
+            String xml = xstream.toXML(game);
+            GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(sFinalFile+".gz"));
+            gzo.write(xml.getBytes("UTF-8"));
+            gzo.close();
+            gzo.flush();
             for (GameListener listener : gameListenersClone) {
                 getGame().addGameListener(listener);
             }
@@ -1226,8 +1217,7 @@ public class Server implements Runnable {
                 ois.close();
             } else if (f.getName().endsWith(".gz")) {
                 XStream xstream = new XStream();
-                xstream.fromXML(new GZIPInputStream(new FileInputStream(f)));
-                game = (IGame) xstream.fromXML(f);
+                game = (IGame) xstream.fromXML(new GZIPInputStream(new FileInputStream(f)));
             }
 
         } catch (Exception e) {

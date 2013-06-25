@@ -757,6 +757,7 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode");
                 }
             }
+
         }
         if (getEntity() instanceof Tank) {
             for (Mounted m : getEntity().getMisc()) {
@@ -881,6 +882,17 @@ public abstract class TestEntity implements TestEntityOption {
                     if (!foundEngine) {
                         buff.append("supercharger in location without engine\n");
                         illegal = true;
+                    }
+                }
+                if (m.getType().hasFlag(MiscType.F_AP_POD)) {
+                    if ((mech instanceof QuadMech) && ((m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG) && (m.getLocation() != Mech.LOC_LARM) && (m.getLocation() != Mech.LOC_RARM))) {
+                        buff.append("A-Pod must be mounted in leg\n");
+                        illegal = true;
+                    } else {
+                        if ((m.getLocation() != Mech.LOC_LLEG) && (m.getLocation() != Mech.LOC_RLEG) ) {
+                            buff.append("A-Pod must be mounted in leg\n");
+                            illegal = true;
+                        }
                     }
                 }
             }

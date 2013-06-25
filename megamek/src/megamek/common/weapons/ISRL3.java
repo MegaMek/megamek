@@ -42,8 +42,8 @@ public class ISRL3 extends RLWeapon {
         longRange = 12;
         extremeRange = 14;
         bv = 4;
-        introDate = 3064;
-        techLevel.put(3064, techLevel.get(3071));
+        introDate = 3050;
+        techLevel.put(3050, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_B };
         techRating = RATING_E;
     }

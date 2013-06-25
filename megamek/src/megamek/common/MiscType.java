@@ -3771,7 +3771,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Communications Equipment (5 ton)";
         misc.setInternalName(misc.name);
-        misc.addLookupName("CommsGear:51");
+        misc.addLookupName("CommsGear:5");
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.bv = 0;
@@ -4283,8 +4283,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 12;
         misc.availRating = new int[] { EquipmentType.RATING_E,
                 EquipmentType.RATING_F, EquipmentType.RATING_D };
-        misc.introDate = 2832;
-        misc.techLevel.put(2832, misc.techLevel.get(3071));
+        misc.introDate = 2900;
+        misc.techLevel.put(2900, misc.techLevel.get(3071));
         misc.techRating = RATING_E;
 
         return misc;
@@ -6008,8 +6008,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.explosive = true;
         misc.industrial = true;
-        misc.introDate = 2300;
-        misc.techLevel.put(2300, misc.techLevel.get(3071));
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
         misc.techRating = RATING_C;
 
@@ -6028,8 +6030,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.explosive = true;
         misc.industrial = true;
-        misc.introDate = 2300;
-        misc.techLevel.put(2300, misc.techLevel.get(3071));
+        misc.introDate = 2744;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2744, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
         misc.techRating = RATING_C;
 

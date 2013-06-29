@@ -356,6 +356,7 @@ public class MiscType extends EquipmentType {
             .shiftLeft(162);
     public static final BigInteger F_COMMERCIAL_ARMOR = BigInteger.valueOf(1)
             .shiftLeft(163);
+    public static final BigInteger F_C3EM = BigInteger.valueOf(1).shiftLeft(164);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1347,6 +1348,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSpaceMineDispenser());
         EquipmentType.addType(MiscType.createCLSpaceMineDispenser());
         EquipmentType.addType(MiscType.createVehicularStealth());
+        EquipmentType.addType(MiscType.createEmergencyC3M());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createBAFireResistantArmor());
@@ -2007,6 +2009,28 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_E };
         misc.introDate = 3050;
         misc.techLevel.put(3050, misc.techLevel.get(3071));
+        misc.techRating = RATING_E;
+
+        return misc;
+    }
+
+    public static MiscType createEmergencyC3M() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "Emergency C3 Master";
+        misc.setInternalName("ISC3EmergencyMaster");
+        misc.tonnage = 2;
+        misc.criticals = 2;
+        misc.cost = 2800000;
+        // TODO: implement game rules
+        misc.flags = misc.flags.or(F_C3EM).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_C3S);
+        misc.bv = 0;
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.introDate = 3071;
+        misc.techLevel.put(3071, misc.techLevel.get(3071));
         misc.techRating = RATING_E;
 
         return misc;

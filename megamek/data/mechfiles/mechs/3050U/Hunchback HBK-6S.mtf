@@ -1,0 +1,151 @@
+Version:1.0
+Hunchback
+HBK-6S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3060
+Source:RS3050Uu-I
+Rules Level:2
+
+Mass:50
+Engine:300 XL Engine(IS)
+Structure:IS Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:16
+RA Armor:16
+LT Armor:20
+RT Armor:20
+CT Armor:26
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:4
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+SRM 6, Left Torso
+LB 20-X AC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC20
+ISLBXAC20
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

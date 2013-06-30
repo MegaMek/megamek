@@ -23,6 +23,7 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.common.EquipmentType;
 
 /**
  * @author Andrew Hunter
@@ -38,7 +39,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
      */
     public ISLB10XACPrototype() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2590, TechConstants.T_IS_EXPERIMENTAL);
         name = "LB 10-X AC Prototype";
         setInternalName("ISLBXAC10Prototype");
         addLookupName("IS LB 10-X AC Prototype");
@@ -54,6 +55,11 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         tonnage = 11.0f;
         bv = 148;
         cost = 400000;
+        introDate = 2590;
+        extinctDate = 2595;
+        reintroDate = 3035;
+        availRating = new int[] { RATING_E,RATING_F, RATING_D };
+        techRating = RATING_E;
     }
 
     @Override

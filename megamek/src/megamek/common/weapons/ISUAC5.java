@@ -61,5 +61,6 @@ public class ISUAC5 extends UACWeapon {
         techLevel.put(2640, techLevel.get(3071));
         extinctDate = 2915;
         reintroDate = 3035;
+        techRating = RATING_E;
     }
 }

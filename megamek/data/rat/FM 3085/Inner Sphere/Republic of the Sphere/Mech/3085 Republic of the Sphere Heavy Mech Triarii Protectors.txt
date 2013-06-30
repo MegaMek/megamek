@@ -1,5 +1,5 @@
 3085 Republic of the Sphere Heavy Mech Triarii Protectors
-Black Knight BL6b-KNT,1
+Black Knight BL-6b-KNT,1
 Marauder MAD-9M2,2
 Hammerhands HMH-3D,3
 Rifleman RFL-8X,4

@@ -1,0 +1,161 @@
+Version:1.0
+Behemoth (Stone Rhino)
+4
+
+Config:Biped
+TechBase:Clan
+Era:2846
+Source:RS3055Uu
+Rules Level:2
+
+Mass:100
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:17 Single
+Walk MP:3
+Jump MP:3
+
+Armor:Standard(Clan)
+LA Armor:31
+RA Armor:31
+LT Armor:23
+RT Armor:23
+CT Armor:37
+HD Armor:9
+LL Armor:37
+RL Armor:37
+RTL Armor:11
+RTR Armor:11
+RTC Armor:14
+
+Weapons:14
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+LRM 10, Right Torso
+LRM 10, Right Torso
+LRM 10, Left Torso
+LRM 10, Left Torso
+Ultra AC/10, Left Torso
+Ultra AC/10, Right Torso
+Machine Gun, Right Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+CLERMediumLaser
+CLERMediumLaser
+CLMG
+CLMG
+Clan Machine Gun Ammo - Full
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+CLERMediumLaser
+CLERMediumLaser
+CLMG
+CLMG
+Clan Machine Gun Ammo - Full
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLLRM10
+CLLRM10
+Clan Ammo LRM-10
+Clan Ammo LRM-10
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLLRM10
+CLLRM10
+Clan Ammo LRM-10
+Clan Ammo LRM-10
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

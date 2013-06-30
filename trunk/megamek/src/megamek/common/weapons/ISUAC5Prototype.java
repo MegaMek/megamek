@@ -23,6 +23,7 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.common.EquipmentType;
 
 /**
  * @author Andrew Hunter
@@ -38,7 +39,7 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     public ISUAC5Prototype() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2635, TechConstants.T_IS_EXPERIMENTAL);
         name = "Ultra AC/5 Prototype";
         setInternalName("ISUltraAC5Prototype");
         addLookupName("IS Ultra AC/5 Prototype");
@@ -60,6 +61,11 @@ public class ISUAC5Prototype extends UACWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
+        introDate = 2635;
+        extinctDate = 2640;
+        reintroDate = 3035;
+        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        techRating = RATING_E;
     }
 
     /*

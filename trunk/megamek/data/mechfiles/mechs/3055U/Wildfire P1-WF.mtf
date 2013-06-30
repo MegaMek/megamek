@@ -1,0 +1,134 @@
+Version:1.1
+Wildfire
+P1-WF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3053
+Rules Level:4
+
+Mass:65
+Engine:390 XL Fusion Engine
+Structure:Endo-Steel
+Cockpit:Torso-Mounted Cockpit
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:20
+RA Armor:20
+LT Armor:24
+RT Armor:24
+CT Armor:33
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:7
+1 ISMachine Gun, Right Arm, Ammo:200
+1 ISMachine Gun, Head
+1 ISLargePulseLaser, Left Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISSmallPulseLaser, Right Arm
+1 ISStreakSRM2, Right Leg, Ammo:50
+1 ISStreakSRM2, Left Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallPulseLaser
+ISMachine Gun
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+Engine
+Life Support
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+Life Support
+ISMG Ammo (200)
+ISStreakSRM2 Ammo
+ISCASE
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+ISMachine Gun
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2
+Ferro-Fibrous

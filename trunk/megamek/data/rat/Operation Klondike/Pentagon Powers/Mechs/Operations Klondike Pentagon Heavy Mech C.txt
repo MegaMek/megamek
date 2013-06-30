@@ -7,6 +7,6 @@ Flashman FLS-8K,5
 Guillotine GLT-3N,6
 Thunderbolt TDR-5S,5
 Crusader CRD-3R,4
-Black Knight BL6b-KNT,3
+Black Knight BL-6b-KNT,3
 Galahad GLH-2D,2
 Cestus CTS-6Y,1

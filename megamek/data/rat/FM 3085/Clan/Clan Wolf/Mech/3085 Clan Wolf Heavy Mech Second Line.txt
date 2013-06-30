@@ -1,6 +1,6 @@
 3085 Clan Wolf Heavy Mech Second Line
 Excalibur EXC-B2b,1
-Black Knight BL6b-KNT,2
+Black Knight BL-6b-KNT,2
 Galahad (Glass Spider),3
 Archer C,4
 Guillotine IIC,5

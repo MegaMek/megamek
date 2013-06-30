@@ -1668,7 +1668,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISDoubleHeatSinkPrototype() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+        misc.techLevel.put(2559, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Double Heat Sink Prototype";
         misc.setInternalName("ISDoubleHeatSinkPrototype");
         misc.addLookupName("IS Double Heat Sink Prototype");
@@ -1680,7 +1680,8 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { EquipmentType.RATING_F,
                 EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.introDate = 2559;
-        misc.techLevel.put(2559, misc.techLevel.get(3071));
+        misc.extinctDate = 2567;
+        misc.reintroDate = 3040;
         misc.techRating = RATING_E;
         return misc;
     }
@@ -3288,6 +3289,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         misc.introDate = 2557;
+        misc.extinctDate = 2571;
+        misc.reintroDate = 3040;
         misc.techLevel.put(2557, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_D, RATING_F, RATING_D };
         misc.techRating = RATING_E;
@@ -3623,6 +3626,8 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { EquipmentType.RATING_D,
                 EquipmentType.RATING_F, EquipmentType.RATING_E };
         misc.introDate = 2471;
+        misc.extinctDate = 2487;
+        misc.reintroDate = 3035; 
         misc.techLevel.put(2471, misc.techLevel.get(3071));
         misc.techRating = RATING_E;
 

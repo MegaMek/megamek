@@ -23,6 +23,7 @@ import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.common.EquipmentType;
 
 /**
  * @author Sebastian Brocks
@@ -38,7 +39,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
      */
     public ISGaussRiflePrototype() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2587, TechConstants.T_IS_EXPERIMENTAL);
         name = "Gauss Rifle Prototype";
         setInternalName("ISGaussRiflePrototype");
         addLookupName("IS Gauss Rifle Prototype");
@@ -56,6 +57,11 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         criticals = 8;
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = 20;
+        introDate = 2587;
+        extinctDate = 2590;
+        reintroDate = 3040;
+        availRating = new int[] { RATING_E,RATING_F, RATING_D };
+        techRating = RATING_E;
     }
 
     /*

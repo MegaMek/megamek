@@ -1,6 +1,6 @@
-Version:1.0
+Version:1.1
 Atlas
-AS-700 Jurn
+AS7-00 Jurn
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,8 +10,10 @@ Rules Level:4
 
 Mass:100
 Engine:300 XL Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
 
 Heat Sinks:16 Double
 Walk MP:3
@@ -31,11 +33,11 @@ RTR Armor:10
 RTC Armor:14
 
 Weapons:5
-Light PPC, Left Arm
 Light PPC, Right Arm
 Snub-Nose PPC, Right Torso
-Thunderbolt 15, Left Torso
+Light PPC, Left Arm
 HVAC/10, Right Torso
+Thunderbolt 15, Left Torso
 
 Left Arm:
 Shoulder
@@ -110,8 +112,8 @@ BeagleActiveProbe
 Head:
 Life Support
 Sensors
-Cockpit
-CommsGear:1
+Cockpit (armored)
+Cockpit (armored)
 Sensors
 Life Support
 -Empty-

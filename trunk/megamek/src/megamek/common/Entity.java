@@ -9371,15 +9371,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Force rapid fire mode to the highest level on RAC and UAC
+     * Force rapid fire mode to the highest level on RAC and UAC - this is for aeros
      */
     public void setRapidFire() {
         for (Mounted m : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 m.setMode("6-shot");
+                m.setModeSwitchable(false);
             } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
                 m.setMode("Ultra");
+                m.setModeSwitchable(false);
             }
         }
     }

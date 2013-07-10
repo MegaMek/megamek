@@ -2851,11 +2851,12 @@ public class MechDisplay extends JPanel {
                         && m.isDWPMounted()) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner && m.getType().hasModes()) {
-                    if (!m.isInoperable() && en.isActive()) {
+                    if (!m.isInoperable() && en.isActive() && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }
-                    if (!m.isInoperable()
-                            && m.getType().hasFlag(MiscType.F_STEALTH)) {
+                    if (!m.isInoperable() && m.getType() instanceof MiscType
+                            && m.getType().hasFlag(MiscType.F_STEALTH)
+                            && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }// if the maxtech eccm option is not set then the ECM
                     // should not show anything.

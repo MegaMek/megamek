@@ -126,7 +126,10 @@ public class BayWeaponHandler extends WeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
 
-        if ((null == entityTarget) || entityTarget.isAirborne()
+        if ((((null == entityTarget) || entityTarget.isAirborne()) 
+                && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
+                      &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
+                      &&  target.getTargetType() != Targetable.TYPE_BUILDING))
                 || game.getBoard().inSpace()) {
             return super.handle(phase, vPhaseReport);
         }
@@ -139,8 +142,10 @@ public class BayWeaponHandler extends WeaponHandler {
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
 
-        ae.setLastTarget(entityTarget.getId());
-
+        if (entityTarget != null) {
+            ae.setLastTarget(entityTarget.getId());
+        }
+        
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
         String number = nweapons > 1 ? " (" + nweapons + ")" : "";
@@ -151,7 +156,12 @@ public class BayWeaponHandler extends WeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         r.add(wtype.getName() + number);
-        r.addDesc(entityTarget);
+        if (entityTarget != null) {
+            r.addDesc(entityTarget);
+        } else {
+            r.messageId = 3120;
+            r.add(target.getDisplayName(), true);
+        }
 
         vPhaseReport.addElement(r);
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -209,7 +219,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption("tacops_direct_blow")
-                && ((toHit.getMoS() / 3) >= 1);
+                && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -252,6 +262,23 @@ public class BayWeaponHandler extends WeaponHandler {
 
         } // End missed-target
 
+        if ((target.getTargetType() == Targetable.TYPE_HEX_IGNITE)
+                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
+            handleIgnitionDamage(vPhaseReport, bldg, 1);
+            return false;
+        }
+        if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+            handleClearDamage(vPhaseReport, bldg, calcAttackValue());
+            return false;
+        }
+        // Targeting a building.
+        if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+            // The building takes the full brunt of the attack
+            handleBuildingDamage(vPhaseReport, bldg, calcAttackValue(),
+                    target.getPosition());
+            return false;
+        }
+        
         Report.addNewline(vPhaseReport);
         // loop through weapons in bay and do damage
         int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);

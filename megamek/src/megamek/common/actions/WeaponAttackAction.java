@@ -2968,6 +2968,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
+        
+        //air2air and air2ground cannot be combined by any aerospace units
+        if(Compute.isAirToAir(ae, target) || Compute.isAirToGround(ae, target)) {
+            for (Enumeration<EntityAction> i = game.getActions(); i
+                    .hasMoreElements();) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
+                    continue;
+                }            
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                if (prevAttack.getEntityId() != ae.getId()) {
+                    continue;
+                }
+                if(Compute.isAirToAir(ae, target) && prevAttack.isAirToGround(game)) {
+                    return "air-to-ground attack already declared";
+                }
+                if(Compute.isAirToGround(ae, target) && prevAttack.isAirToAir(game)) {
+                    return "air-to-air attack already declared";
+                }  
+            }
+        }
+        
         if ((target.getAltitude() > 8) && Compute.isGroundToAir(ae, target)) {
             return "cannot target aero units beyond altitude 8";
         }

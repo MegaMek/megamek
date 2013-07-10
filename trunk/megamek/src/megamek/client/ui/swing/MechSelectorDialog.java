@@ -67,14 +67,14 @@ import megamek.common.preference.PreferenceManager;
 
 /**
  *
- * @author  Jay Lawson <jaylawson39 at yahoo.com>
- * This is a heavily reworked version of the original MechSelectorDialog which
- * brings up a list of units for the player to select to add to their forces.
- * The original list has been changed to a sortable table and a text filter
- * is used for advanced searching.
+ * @author Jay Lawson <jaylawson39 at yahoo.com> This is a heavily reworked
+ *         version of the original MechSelectorDialog which brings up a list of
+ *         units for the player to select to add to their forces. The original
+ *         list has been changed to a sortable table and a text filter is used
+ *         for advanced searching.
  */
 public class MechSelectorDialog extends JDialog implements Runnable,
-    KeyListener, ActionListener {
+        KeyListener, ActionListener {
 
     /**
      *
@@ -103,7 +103,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     JTextField txtFilter;
     private MechViewPanel panelMekView;
     private JLabel lblPlayer;
-    private JComboBox comboPlayer;  
+    private JComboBox comboPlayer;
     private JPanel selectionPanel;
     private JSplitPane splitPane;
 
@@ -111,7 +111,6 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     private long lastSearch = 0;
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
-
 
     private MechSummary[] mechs;
 
@@ -140,14 +139,13 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
     private void initComponents() {
         setMinimumSize(new java.awt.Dimension(800, 600));
-        
+
         GridBagConstraints c;
-        
+
         selectionPanel = new JPanel(new GridBagLayout());
         selectionPanel.setMinimumSize(new java.awt.Dimension(500, 600));
         selectionPanel.setPreferredSize(new java.awt.Dimension(500, 600));
-        
-        
+
         panelFilterBtns = new JPanel();
         panelSearchBtns = new JPanel();
         panelOKBtns = new JPanel();
@@ -158,7 +156,6 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         panelMekView = new MechViewPanel();
         panelMekView.setMinimumSize(new java.awt.Dimension(300, 600));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
-        
 
         comboType = new JComboBox();
         comboWeight = new JComboBox();
@@ -172,15 +169,20 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         btnAdvSearch = new JButton();
         btnResetSearch = new JButton();
 
-        lblType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
-        lblWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
-        lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
-        lblFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
+        lblType = new JLabel(
+                Messages.getString("MechSelectorDialog.m_labelType"));
+        lblWeight = new JLabel(
+                Messages.getString("MechSelectorDialog.m_labelWeightClass"));
+        lblUnitType = new JLabel(
+                Messages.getString("MechSelectorDialog.m_labelUnitType"));
+        lblFilter = new JLabel(
+                Messages.getString("MechSelectorDialog.m_labelFilter"));
         lblImage = new JLabel();
-        lblPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
+        lblPlayer = new JLabel(
+                Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
         comboPlayer = new JComboBox();
 
-        getContentPane().setLayout(new GridBagLayout());        
+        getContentPane().setLayout(new GridBagLayout());
 
         scrTableUnits.setMinimumSize(new java.awt.Dimension(500, 400));
         scrTableUnits.setPreferredSize(new java.awt.Dimension(500, 400));
@@ -189,29 +191,30 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         tableUnits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sorter = new TableRowSorter<MechTableModel>(unitModel);
         tableUnits.setRowSorter(sorter);
-        tableUnits.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                //There can be multiple events for one selection.  Check to
-                // see if this is the last.
-                if (!evt.getValueIsAdjusting())
-                    refreshUnitView();
-            }
-        });
+        tableUnits.getSelectionModel().addListSelectionListener(
+                new javax.swing.event.ListSelectionListener() {
+                    public void valueChanged(
+                            javax.swing.event.ListSelectionEvent evt) {
+                        // There can be multiple events for one selection. Check
+                        // to
+                        // see if this is the last.
+                        if (!evt.getValueIsAdjusting()) {
+                            refreshUnitView();
+                        }
+                    }
+                });
         TableColumn column = null;
         for (int i = 0; i < MechTableModel.N_COL; i++) {
             column = tableUnits.getColumnModel().getColumn(i);
             if (i == MechTableModel.COL_CHASSIS) {
                 column.setPreferredWidth(125);
-            }
-            else if((i == MechTableModel.COL_MODEL)
-                || (i == MechTableModel.COL_COST)) {
+            } else if ((i == MechTableModel.COL_MODEL)
+                    || (i == MechTableModel.COL_COST)) {
                 column.setPreferredWidth(75);
-            }
-            else if((i == MechTableModel.COL_WEIGHT)
-                || (i == MechTableModel.COL_BV)) {
+            } else if ((i == MechTableModel.COL_WEIGHT)
+                    || (i == MechTableModel.COL_BV)) {
                 column.setPreferredWidth(50);
-            }
-            else {
+            } else {
                 column.setPreferredWidth(25);
             }
         }
@@ -265,7 +268,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
         weightModel.setSelectedItem(EntityWeightClass.getClassName(0));
         comboWeight.setModel(weightModel);
-        comboWeight.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
+        comboWeight.setSelectedItem(Messages
+                .getString("MechSelectorDialog.All"));
         comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
         comboWeight.setPreferredSize(new java.awt.Dimension(200, 27));
         comboWeight.addActionListener(this);
@@ -284,7 +288,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
 
         DefaultComboBoxModel unitTypeModel = new DefaultComboBoxModel();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
-        unitTypeModel.setSelectedItem(Messages.getString("MechSelectorDialog.All"));
+        unitTypeModel.setSelectedItem(Messages
+                .getString("MechSelectorDialog.All"));
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
@@ -301,18 +306,19 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         txtFilter.setText("");
         txtFilter.setMinimumSize(new java.awt.Dimension(200, 28));
         txtFilter.setPreferredSize(new java.awt.Dimension(200, 28));
-        txtFilter.getDocument().addDocumentListener(
-                new DocumentListener() {
-                    public void changedUpdate(DocumentEvent e) {
-                    filterUnits();
-                }
-                public void insertUpdate(DocumentEvent e) {
-                    filterUnits();
-                }
-                public void removeUpdate(DocumentEvent e) {
-                    filterUnits();
-                }
-            });
+        txtFilter.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                filterUnits();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                filterUnits();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                filterUnits();
+            }
+        });
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 3;
@@ -346,15 +352,16 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         selectionPanel.add(panelFilterBtns, c);
 
         panelSearchBtns.setLayout(new GridBagLayout());
-        
-        btnAdvSearch.setText(Messages.getString("MechSelectorDialog.AdvSearch")); //$NON-NLS-1$
+
+        btnAdvSearch
+                .setText(Messages.getString("MechSelectorDialog.AdvSearch")); //$NON-NLS-1$
         btnAdvSearch.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridwidth = 1;
         c.gridy = 0;
         c.anchor = GridBagConstraints.WEST;
-        panelSearchBtns.add(btnAdvSearch, c);        
+        panelSearchBtns.add(btnAdvSearch, c);
 
         btnResetSearch.setText(Messages.getString("MechSelectorDialog.Reset")); //$NON-NLS-1$
         btnResetSearch.addActionListener(this);
@@ -375,15 +382,14 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         c.insets = new java.awt.Insets(10, 10, 10, 0);
         selectionPanel.add(panelSearchBtns, c);
 
-
         panelOKBtns.setLayout(new GridBagLayout());
-
 
         btnSelect.setText(Messages.getString("MechSelectorDialog.m_bPick"));
         btnSelect.addActionListener(this);
         panelOKBtns.add(btnSelect, new GridBagConstraints());
 
-        btnSelectClose.setText(Messages.getString("MechSelectorDialog.m_bPickClose"));
+        btnSelectClose.setText(Messages
+                .getString("MechSelectorDialog.m_bPickClose"));
         btnSelectClose.addActionListener(this);
         panelOKBtns.add(btnSelectClose, new GridBagConstraints());
 
@@ -399,29 +405,23 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         btnShowBV.addActionListener(this);
         panelOKBtns.add(btnShowBV, new GridBagConstraints());
 
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new java.awt.Insets(10,0,0,0);
-        selectionPanel.add(panelOKBtns, c);
-
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 selectionPanel, panelMekView);
-        splitPane.setResizeWeight(.7);
+        splitPane.setResizeWeight(0);
         c = new GridBagConstraints();
         c.gridx = c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
         c.weightx = c.weighty = 1;
-        getContentPane().add(splitPane,c);
-        
+        getContentPane().add(splitPane, c);
+        c.gridy = 1;
+        getContentPane().add(panelOKBtns, c);
+
         pack();
     }
 
     void select(boolean close) {
         Entity e = getSelectedEntity();
-        if(null != e) {
+        if (null != e) {
             Client c = null;
             if (comboPlayer.getSelectedIndex() > 0) {
                 String name = (String) comboPlayer.getSelectedItem();
@@ -434,7 +434,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             e.setOwner(c.getLocalPlayer());
             c.sendAddEntity(e);
         }
-        if(close) {
+        if (close) {
             setVisible(false);
         }
     }
@@ -444,77 +444,81 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         final int nType = comboType.getSelectedIndex();
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
-        //If current expression doesn't parse, don't update.
+        // If current expression doesn't parse, don't update.
         try {
-            unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
+            unitTypeFilter = new RowFilter<MechTableModel, Integer>() {
                 @Override
-                public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
+                public boolean include(
+                        Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
-                    MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
+                    MechSummary mech = mechModel.getMechSummary(entry
+                            .getIdentifier());
                     if (/* Weight */
-                            ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
-                            /*Canon*/
-                            (!client.game.getOptions().booleanOption("canon_only") || mech.isCanon()) &&
-                            /*Technology Level*/
+                    ((nClass == EntityWeightClass.SIZE) || (mech
+                            .getWeightClass() == nClass))
+                            &&
+                            /* Canon */
+                            (!client.game.getOptions().booleanOption(
+                                    "canon_only") || mech.isCanon())
+                            &&
+                            /* Technology Level */
                             ((nType == TechConstants.T_ALL)
-                                || (nType == mech.getType())
-                                || ((nType == TechConstants.T_IS_TW_ALL)
-                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
-                                || ((nType == TechConstants.T_TW_ALL)
-                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() <= TechConstants.T_INTRO_BOXSET)
-                                     || (mech.getType() <= TechConstants.T_CLAN_TW)))
-                                || ((nType == TechConstants.T_ALL_IS)
-                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)
-                                     || (mech.getType() == TechConstants.T_IS_ADVANCED)
-                                     || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL)
-                                     || (mech.getType() == TechConstants.T_IS_UNOFFICIAL)))
-                                || ((nType == TechConstants.T_ALL_CLAN)
-                                    && ((mech.getType() == TechConstants.T_CLAN_TW)
-                                     || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
-                                     || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
-                                     || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
-                            && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
-                            /*Advanced Search*/
-                            && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))) {
-                        //yuck, I have to pull up a full Entity to get MechView to search in
-                        //TODO: why not put mechview into the mech summary itself?
-                        if(txtFilter.getText().length() > 0) {
-                            //TODO: this search routine is too slow
-                            //I think putting a copy of the mechreadout in
-                            //the mechsummary would speed things up enormously
-                            //NOTE: now getting weirdness on txtFilter when I do this
+                                    || (nType == mech.getType())
+                                    || ((nType == TechConstants.T_IS_TW_ALL) && ((mech
+                                            .getType() <= TechConstants.T_IS_TW_NON_BOX) || (mech
+                                            .getType() == TechConstants.T_INTRO_BOXSET)))
+                                    || ((nType == TechConstants.T_TW_ALL) && ((mech
+                                            .getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                            || (mech.getType() <= TechConstants.T_INTRO_BOXSET) || (mech
+                                            .getType() <= TechConstants.T_CLAN_TW)))
+                                    || ((nType == TechConstants.T_ALL_IS) && ((mech
+                                            .getType() <= TechConstants.T_IS_TW_NON_BOX)
+                                            || (mech.getType() == TechConstants.T_INTRO_BOXSET)
+                                            || (mech.getType() == TechConstants.T_IS_ADVANCED)
+                                            || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL) || (mech
+                                            .getType() == TechConstants.T_IS_UNOFFICIAL))) || ((nType == TechConstants.T_ALL_CLAN) && ((mech
+                                    .getType() == TechConstants.T_CLAN_TW)
+                                    || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
+                                    || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL) || (mech
+                                    .getType() == TechConstants.T_CLAN_UNOFFICIAL))))
+                            && ((nUnit == -1) || mech.getUnitType().equals(
+                                    UnitType.getTypeName(nUnit)))
+                            /* Advanced Search */
+                            && ((searchFilter == null) || MechSearchFilter
+                                    .isMatch(mech, searchFilter))) {
+                        // yuck, I have to pull up a full Entity to get MechView
+                        // to search in
+                        // TODO: why not put mechview into the mech summary
+                        // itself?
+                        if (txtFilter.getText().length() > 0) {
+                            // TODO: this search routine is too slow
+                            // I think putting a copy of the mechreadout in
+                            // the mechsummary would speed things up enormously
+                            // NOTE: now getting weirdness on txtFilter when I
+                            // do this
                             String text = txtFilter.getText();
-                            //String [] ind_words = text.split(" "); //split with regex as space
+                            // String [] ind_words = text.split(" "); //split
+                            // with regex as space
                             /*
-                            MechView mv = null;
-                            try {
-                                Entity entity = new MechFileParser(mech.getSourceFile(), mech.getEntryName()).getEntity();
-                                mv = new MechView(entity, true);
-                            } catch (EntityLoadingException ex) {
-                                // do nothing, I guess
-                            }
-                            if(null == mv) {
-                                return false;
-                            }
-                             * */
+                             * MechView mv = null; try { Entity entity = new
+                             * MechFileParser(mech.getSourceFile(),
+                             * mech.getEntryName()).getEntity(); mv = new
+                             * MechView(entity, true); } catch
+                             * (EntityLoadingException ex) { // do nothing, I
+                             * guess } if(null == mv) { return false; }
+                             */
                             /*
-                            boolean match = true;
-                            for(int i = 0; i < ind_words.length; i++) {
-                            if(!mv.getMechReadout().contains(ind_words[i])) {
-                                match = false;
-                                break;
-                            }
+                             * boolean match = true; for(int i = 0; i <
+                             * ind_words.length; i++) {
+                             * if(!mv.getMechReadout().contains(ind_words[i])) {
+                             * match = false; break; } } return match;
+                             */
+                            return mech.getName().toLowerCase()
+                                    .contains(text.toLowerCase());
                         }
-                        return match;
-                        */
-                        return mech.getName().toLowerCase().contains(text.toLowerCase());
+                        return true;
                     }
-                    return true;
-                }
-                return false;
+                    return false;
                 }
             };
         } catch (java.util.regex.PatternSyntaxException e) {
@@ -530,8 +534,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         comboPlayer.setEnabled(true);
         comboPlayer.addItem(clientName);
         for (Client client : clientgui.getBots().values()) {
-         comboPlayer.addItem(client.getName());
-      }
+            comboPlayer.addItem(client.getName());
+        }
         if (comboPlayer.getItemCount() == 1) {
             comboPlayer.setEnabled(false);
         }
@@ -561,39 +565,43 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             populateTextFields = false;
         }
         if (populateTextFields && (mechView != null)) {
-            panelMekView.setMech(selectedUnit,mechView);
+            panelMekView.setMech(selectedUnit, mechView);
         } else {
             panelMekView.reset();
         }
 
-        clientgui.loadPreviewImage(lblImage, selectedUnit, client.getLocalPlayer());
+        clientgui.loadPreviewImage(lblImage, selectedUnit,
+                client.getLocalPlayer());
     }
 
     public Entity getSelectedEntity() {
         int view = tableUnits.getSelectedRow();
-        if(view < 0) {
-            //selection got filtered away
+        if (view < 0) {
+            // selection got filtered away
             return null;
         }
         int selected = tableUnits.convertRowIndexToModel(view);
         // else
         MechSummary ms = mechs[selected];
         try {
-             // For some unknown reason the base path gets screwed up after you
-             // print so this sets the source file to the full path.
-             Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-             return entity;
+            // For some unknown reason the base path gets screwed up after you
+            // print so this sets the source file to the full path.
+            Entity entity = new MechFileParser(ms.getSourceFile(),
+                    ms.getEntryName()).getEntity();
+            return entity;
         } catch (EntityLoadingException ex) {
-            System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage());
+            System.out.println("Unable to load mech: " + ms.getSourceFile()
+                    + ": " + ms.getEntryName() + ": " + ex.getMessage());
             ex.printStackTrace();
             return null;
-       }
+        }
     }
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if(cs.useAverageSkills()) {
-            int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+        if (cs.useAverageSkills()) {
+            int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
+                    true);
 
             int gunnery = skills[0];
             int piloting = skills[1];
@@ -601,153 +609,155 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             e.getCrew().setGunnery(gunnery);
             e.getCrew().setPiloting(piloting);
         }
-        if(cs.generateNames()) {
+        if (cs.generateNames()) {
             e.getCrew().setName(client.getRandomNameGenerator().generate());
         }
     }
 
-     public void run() {
-         // Loading mechs can take a while, so it will have its own thread.
-         // This prevents the UI from freezing, and allows the
-         // "Please wait..." dialog to behave properly on various Java VMs.
-         mechs = MechSummaryCache.getInstance().getAllMechs();
+    public void run() {
+        // Loading mechs can take a while, so it will have its own thread.
+        // This prevents the UI from freezing, and allows the
+        // "Please wait..." dialog to behave properly on various Java VMs.
+        mechs = MechSummaryCache.getInstance().getAllMechs();
 
-         // break out if there are no units to filter
-         if (mechs == null) {
-             System.err.println("No units to filter!");
-         } else {
-             unitModel.setData(mechs);
-         }
-         filterUnits();
+        // break out if there are no units to filter
+        if (mechs == null) {
+            System.err.println("No units to filter!");
+        } else {
+            unitModel.setData(mechs);
+        }
+        filterUnits();
 
-         //initialize with the units sorted alphabetically by chassis
-         ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
-         sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
-         //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
-         tableUnits.getRowSorter().setSortKeys(sortlist);
-         ((DefaultRowSorter<?, ?>)tableUnits.getRowSorter()).sort();
+        // initialize with the units sorted alphabetically by chassis
+        ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
+        sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,
+                SortOrder.ASCENDING));
+        // sortlist.add(new
+        // RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
+        tableUnits.getRowSorter().setSortKeys(sortlist);
+        ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
-         tableUnits.invalidate(); // force re-layout of window
-         pack();
-         //setLocation(computeDesiredLocation());
+        tableUnits.invalidate(); // force re-layout of window
+        pack();
+        // setLocation(computeDesiredLocation());
 
-         unitLoadingDialog.setVisible(false);
+        unitLoadingDialog.setVisible(false);
 
-         final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
-                 .getFailedFiles();
-         if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
-             new UnitFailureDialog(clientgui.frame, hFailedFiles); // self-showing
-                                                                     // dialog
-         }
-     }
+        final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
+                .getFailedFiles();
+        if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
+            new UnitFailureDialog(clientgui.frame, hFailedFiles); // self-showing
+                                                                  // dialog
+        }
+    }
 
-     @Override
-     public void setVisible(boolean visible) {
-         asd.clearValues();
-         searchFilter=null;
-         updatePlayerChoice();
-         //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
-         filterUnits();
-         super.setVisible(visible);
-     }
-
+    @Override
+    public void setVisible(boolean visible) {
+        asd.clearValues();
+        searchFilter = null;
+        updatePlayerChoice();
+        // FIXME: this is not updating the table when canonicity is
+        // selected/deselected until user clicks it
+        filterUnits();
+        super.setVisible(visible);
+    }
 
     /**
      * A table model for displaying work items
      */
     public class MechTableModel extends AbstractTableModel {
 
-            /**
+        /**
              *
              */
-            private static final long serialVersionUID = -5457068129532709857L;
-            private final static int COL_CHASSIS = 0;
-            private final static int COL_MODEL = 1;
-            private final static int COL_WEIGHT = 2;
-            private final static int COL_BV = 3;
-            private final static int COL_YEAR = 4;
-            private final static int COL_COST = 5;
-            private final static int COL_LEVEL = 6;
-            private final static int N_COL = 7;
+        private static final long serialVersionUID = -5457068129532709857L;
+        private final static int COL_CHASSIS = 0;
+        private final static int COL_MODEL = 1;
+        private final static int COL_WEIGHT = 2;
+        private final static int COL_BV = 3;
+        private final static int COL_YEAR = 4;
+        private final static int COL_COST = 5;
+        private final static int COL_LEVEL = 6;
+        private final static int N_COL = 7;
 
-            private MechSummary[] data = new MechSummary[0];
+        private MechSummary[] data = new MechSummary[0];
 
-            public int getRowCount() {
-                return data.length;
+        public int getRowCount() {
+            return data.length;
+        }
+
+        public int getColumnCount() {
+            return N_COL;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case COL_MODEL:
+                    return "Model";
+                case COL_CHASSIS:
+                    return "Chassis";
+                case COL_WEIGHT:
+                    return "Weight";
+                case COL_BV:
+                    return "BV";
+                case COL_YEAR:
+                    return "Year";
+                case COL_COST:
+                    return "Price";
+                case COL_LEVEL:
+                    return "Level";
+                default:
+                    return "?";
             }
+        }
 
-            public int getColumnCount() {
-                return N_COL;
-            }
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
 
-            @Override
-            public String getColumnName(int column) {
-                switch(column) {
-                    case COL_MODEL:
-                        return "Model";
-                    case COL_CHASSIS:
-                        return "Chassis";
-                    case COL_WEIGHT:
-                        return "Weight";
-                    case COL_BV:
-                        return "BV";
-                    case COL_YEAR:
-                        return "Year";
-                    case COL_COST:
-                        return "Price";
-                    case COL_LEVEL:
-                         return "Level";
-                    default:
-                        return "?";
-                }
-            }
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
 
-            @Override
-            public Class<?> getColumnClass(int c) {
-                return getValueAt(0, c).getClass();
-            }
+        public MechSummary getMechSummary(int i) {
+            return data[i];
+        }
 
-            @Override
-            public boolean isCellEditable(int row, int col) {
-                return false;
-            }
+        // fill table with values
+        public void setData(MechSummary[] ms) {
+            data = ms;
+            fireTableDataChanged();
+        }
 
-            public MechSummary getMechSummary(int i) {
-                return data[i];
+        public Object getValueAt(int row, int col) {
+            MechSummary ms = data[row];
+            if (col == COL_MODEL) {
+                return ms.getModel();
             }
-
-            //fill table with values
-            public void setData(MechSummary[] ms) {
-                data = ms;
-                fireTableDataChanged();
+            if (col == COL_CHASSIS) {
+                return ms.getChassis();
             }
-
-            public Object getValueAt(int row, int col) {
-                MechSummary ms = data[row];
-                if(col == COL_MODEL) {
-                    return ms.getModel();
-                }
-                if(col == COL_CHASSIS) {
-                    return ms.getChassis();
-                }
-                if(col == COL_WEIGHT) {
-                    return ms.getTons();
-                }
-                if(col == COL_BV) {
-                    return ms.getBV();
-                }
-                if(col == COL_YEAR) {
-                    return ms.getYear();
-                }
-                if(col == COL_COST) {
-                    //return NumberFormat.getInstance().format(ms.getCost());
-                    return ms.getCost();
-                }
-                if (col == COL_LEVEL) {
-                    return ms.getLevel();
-                }
-                return "?";
+            if (col == COL_WEIGHT) {
+                return ms.getTons();
             }
+            if (col == COL_BV) {
+                return ms.getBV();
+            }
+            if (col == COL_YEAR) {
+                return ms.getYear();
+            }
+            if (col == COL_COST) {
+                // return NumberFormat.getInstance().format(ms.getCost());
+                return ms.getCost();
+            }
+            if (col == COL_LEVEL) {
+                return ms.getLevel();
+            }
+            return "?";
+        }
 
     }
 
@@ -773,7 +783,8 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     }
 
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource().equals(comboType) || ev.getSource().equals(comboWeight)
+        if (ev.getSource().equals(comboType)
+                || ev.getSource().equals(comboWeight)
                 || ev.getSource().equals(comboUnitType)) {
             filterUnits();
         } else if (ev.getSource().equals(btnSelect)) {
@@ -787,7 +798,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             tEditorPane.setContentType("text/html");
             tEditorPane.setEditable(false);
             Entity e = getSelectedEntity();
-            if(null == e) {
+            if (null == e) {
                 return;
             }
             e.calculateBattleValue();
@@ -798,16 +809,18 @@ public class MechSelectorDialog extends JDialog implements Runnable,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             Dimension size = new Dimension(550, 300);
             tScroll.setPreferredSize(size);
-            JOptionPane.showMessageDialog(null, tScroll, "BV", JOptionPane.INFORMATION_MESSAGE, null);
-        } else if(ev.getSource().equals(btnAdvSearch)) {
+            JOptionPane.showMessageDialog(null, tScroll, "BV",
+                    JOptionPane.INFORMATION_MESSAGE, null);
+        } else if (ev.getSource().equals(btnAdvSearch)) {
             searchFilter = asd.showDialog();
-            btnResetSearch.setEnabled(searchFilter!=null);
-            //TurretFacingDialog tfd = new TurretFacingDialog(clientgui.frame, "test", "test2", (Mech)getSelectedEntity(), null, clientgui);
-            //tfd.setVisible(true);
+            btnResetSearch.setEnabled(searchFilter != null);
+            // TurretFacingDialog tfd = new TurretFacingDialog(clientgui.frame,
+            // "test", "test2", (Mech)getSelectedEntity(), null, clientgui);
+            // tfd.setVisible(true);
             filterUnits();
-        } else if(ev.getSource().equals(btnResetSearch)) {
+        } else if (ev.getSource().equals(btnResetSearch)) {
             asd.clearValues();
-            searchFilter=null;
+            searchFilter = null;
             btnResetSearch.setEnabled(false);
             filterUnits();
         }
@@ -828,4 +841,4 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     public void enableResetButton(boolean b) {
         btnResetSearch.setEnabled(b);
     }
- }
+}

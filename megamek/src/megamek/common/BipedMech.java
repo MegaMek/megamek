@@ -76,10 +76,6 @@ public class BipedMech extends Mech {
             canFlip = true;
         }
 
-        if (hasQuirk("no_arms")) {
-            canFlip = false;
-        }
-
         if (isProne()) {
             canFlip = false;
         }
@@ -325,7 +321,7 @@ public class BipedMech extends Mech {
 
     @Override
     protected double getLegActuatorCost() {
-        return weight * 150 * 2 + weight * 80 * 2 + weight * 120 * 2;
+        return (weight * 150 * 2) + (weight * 80 * 2) + (weight * 120 * 2);
     }
 
     /**
@@ -400,7 +396,7 @@ public class BipedMech extends Mech {
             }
             if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
-            }           
+            }
             Mounted m = this.getEquipment(cs.getIndex());
             //sometimes this mounted is null in MML - causing problems so check
             if(null == m) {

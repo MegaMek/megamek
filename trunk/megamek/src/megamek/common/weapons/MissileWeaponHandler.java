@@ -664,33 +664,31 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             // this will work differently for cluster and non-cluster weapons,
             // and differently for capital fighter/fighter squadrons
             nCluster = calcnClusterAero(entityTarget);
-            if (nCluster > 1) {
+            if (ae.isCapitalFighter()) {
+                bSalvo = false;
+                if (nweapons > 1) {
+                    nweaponsHit = Compute.missilesHit(nweapons,
+                            ((Aero) ae).getClusterMods());
+                    r = new Report(3325);
+                    r.subject = subjectId;
+                    r.add(nweaponsHit);
+                    r.add(" weapon(s) ");
+                    r.add(" ");
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                }
+                nDamPerHit = attackValue * nweaponsHit;
+                hits = 1;
+                nCluster = 1;
+            } else if (nCluster > 1) {
                 bSalvo = true;
                 nDamPerHit = 1;
                 hits = attackValue;
             } else {
-                if (ae.isCapitalFighter()) {
-                    bSalvo = true;
-                    if (nweapons > 1) {
-                        nweaponsHit = Compute.missilesHit(nweapons,
-                                ((Aero) ae).getClusterMods());
-                        r = new Report(3325);
-                        r.subject = subjectId;
-                        r.add(nweaponsHit);
-                        r.add(" weapon(s) ");
-                        r.add(" ");
-                        r.newlines = 0;
-                        vPhaseReport.add(r);
-                    }
-                    nDamPerHit = attackValue * nweaponsHit;
-                    hits = 1;
-                    nCluster = 1;
-                } else {
-                    bSalvo = false;
-                    nDamPerHit = attackValue;
-                    hits = 1;
-                    nCluster = 1;
-                }
+                bSalvo = false;
+                nDamPerHit = attackValue;
+                hits = 1;
+                nCluster = 1;
             }
         }
 

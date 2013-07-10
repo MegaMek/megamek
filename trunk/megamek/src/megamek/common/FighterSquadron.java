@@ -479,6 +479,8 @@ public class FighterSquadron extends Aero {
                 }
             }
         }
+        //make sure to set all the UACs and RACs to rapid fire
+        setRapidFire();
     }
 
     /**

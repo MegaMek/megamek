@@ -585,7 +585,9 @@ public class Hex implements IHex, Serializable {
         for (Integer i : hsTerrains){
             if(containsTerrain(i) && (i != Terrains.PAVEMENT) &&
                     (i!=Terrains.ROAD)  && (i != Terrains.FLUFF) &&
-                    (i != Terrains.ARMS) && (i != Terrains.LEGS)) {
+                    (i != Terrains.ARMS) && (i != Terrains.LEGS)
+                    && (i != Terrains.SNOW) && (i != Terrains.MUD)
+                    && (i != Terrains.SMOKE) && (i != Terrains.METAL_CONTENT)) {
                 return false;
             }
         }
@@ -593,16 +595,7 @@ public class Hex implements IHex, Serializable {
     }
 
     public boolean isClearForLanding() {
-        for (Integer i : hsTerrains){
-            if(containsTerrain(i) && (i != Terrains.PAVEMENT) &&
-                    (i!=Terrains.ROAD) && (i != Terrains.ROUGH) &&
-                    (i != Terrains.RUBBLE) && (i != Terrains.WOODS) &&
-                    (i != Terrains.FLUFF) && (i != Terrains.ARMS) &&
-                    (i != Terrains.LEGS)) {
-                return false;
-            }
-        }
-        return true;
+        return !containsTerrain(Terrains.IMPASSABLE);
     }
 
     public int getFireTurn() {

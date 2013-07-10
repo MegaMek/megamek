@@ -2924,6 +2924,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
 
+            int altitudeLoss = 1; 
+            if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                altitudeLoss = 2;
+            }
+            if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                altitudeLoss = 0;
+            }
+            //you cant make attacks that would lower you to zero altitude
+            if(altitudeLoss >= ae.getAltitude()) {
+                return "This attack would cause too much altitude loss";
+            }
+            
             // can only make a strike attack against a single target
             for (Enumeration<EntityAction> i = game.getActions(); i
                     .hasMoreElements();) {

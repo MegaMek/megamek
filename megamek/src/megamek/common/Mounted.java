@@ -66,7 +66,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int mode; // Equipment's current state. On or Off. Sixshot or
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
-
+    private boolean modeSwitchable = true; // disallow mode switching
+    
     private int location;
     private boolean rearMounted;
 
@@ -1498,5 +1499,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setOriginalShots(int shots) {
         originalShots = shots;
+    }
+    
+    public boolean isModeSwitchable() {
+        return modeSwitchable;
+    }
+    
+    public void setModeSwitchable(boolean b) {
+        this.modeSwitchable = b;
     }
 }

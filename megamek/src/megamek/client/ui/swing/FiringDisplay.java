@@ -489,7 +489,6 @@ KeyListener, ItemListener, ListSelectionListener {
             setNextEnabled(true);
             butDone.setEnabled(true);
             butMore.setEnabled(true);
-            setFireModeEnabled(true);
             setFireCalledEnabled(clientgui.getClient().game.getOptions().booleanOption("tacops_called_shots"));
             clientgui.getBoardView().select(null);
         }
@@ -1040,6 +1039,13 @@ KeyListener, ItemListener, ListSelectionListener {
         }
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
+        final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
+        if(weaponId == -1) {
+            setFireModeEnabled(false);
+        } else {
+            Mounted m = ce().getEquipment(weaponId);
+            setFireModeEnabled(m.isModeSwitchable());
+        }
         updateTarget();
     }
 

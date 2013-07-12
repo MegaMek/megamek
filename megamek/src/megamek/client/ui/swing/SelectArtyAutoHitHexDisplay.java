@@ -49,9 +49,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private Player p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
+    
+    private int startingHexes;
 
     /**
-     * Creates and lays out a new deployment phase display for the specified
+     * Creates and lays out a new select designated hex phase display for the specified
      * clientgui.getClient().
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
@@ -117,8 +119,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         // we should get 5 hexes per 4 mapsheets
         // 4 mapsheets is 16*17*4 hexes, so 1088
         IBoard board = clientgui.getClient().game.getBoard();
-        int hexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
-        setArtyEnabled(hexes);
+        startingHexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
+        setArtyEnabled(startingHexes);
         //FIXME: had to disable this now that the boardview draws deployment based on entities not players
         //clientgui.bv.markDeploymentHexesFor(p);
         butDone.setEnabled(true);
@@ -150,7 +152,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             return;
         }
         if (!artyAutoHitHexes.contains(coords)
-                && (artyAutoHitHexes.size() < 5)
+                && (artyAutoHitHexes.size() < startingHexes)
                 && clientgui
                         .doYesNoDialog(
                                 Messages
@@ -159,7 +161,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                                         .getString(
                                                 "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
-            setArtyEnabled(5 - artyAutoHitHexes.size());
+            setArtyEnabled(startingHexes - artyAutoHitHexes.size());
             clientgui.getClient().game.getBoard().addSpecialHexDisplay(
                     coords,
                     new SpecialHexDisplay(

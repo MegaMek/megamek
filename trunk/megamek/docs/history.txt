@@ -36,6 +36,7 @@ v0.35.40-dev (SVN)
 + Bug 3612: Grounded Dropship Does Negative Damage to Terrain
 + Bug: Designated Artillery wasn't getting correct number of hexes (Started correct, but upon adding 1 it dropped to 4)
     due to hard coded 5 limit in other places.
++ Bug 3779: Last Option in Basic Options Not Showing Name 
 
 v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug 3720: defaultQuirks.xml is missing the Rifleman C 2 entry

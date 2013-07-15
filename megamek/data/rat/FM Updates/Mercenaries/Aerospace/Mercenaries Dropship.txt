@@ -1,7 +1,7 @@
 Mercenaries Dropship
 Excalibur (3056),1
 Intruder (3056),2
-Mule,3
+Mule (Standard),3
 Triumph (3057),4
 Leopard (3054),5
 Union (3055),6

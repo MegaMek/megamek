@@ -3,10 +3,10 @@ Vengeance (2782),1
 Fortress (2613),2
 Intruder (2655),3
 Dictator,4
-Mule,5
+Mule (Standard),5
 Overlord (2762),6
 Union (2708),5
 Triumph (2593),4
 Colossus,3
-Pentagon,2
+Pentagon (2751),2
 Achilles (2582),1

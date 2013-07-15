@@ -3245,6 +3245,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Heavy Gauss";
         ammo.setInternalName("ISHeavyGauss Ammo");
         ammo.addLookupName("IS Heavy Gauss Rifle Ammo");
+        ammo.addLookupName("ISHeavyGaussRifle Ammo");
         ammo.damagePerShot = 25; // actually variable
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS_HEAVY;
@@ -9347,6 +9348,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Manta Ray Ammo";
         ammo.setInternalName("Ammo Manta Ray");
         ammo.addLookupName("MantaRay Ammo");
+        ammo.addLookupName("Manta Ray Ammo");
         ammo.damagePerShot = 5;
         ammo.ammoType = AmmoType.T_MANTA_RAY;
         ammo.shots = 1;

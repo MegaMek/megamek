@@ -63,9 +63,10 @@ Tractor
 </Body Equipment>
 <transporters>
 TroopSpace:5
+liquidcargobay:18.36:1
 </transporters>
 <type>
-IS
+IS Level 3
 </type>
 <year>
 3069

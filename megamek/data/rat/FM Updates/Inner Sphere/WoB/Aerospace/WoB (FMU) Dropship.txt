@@ -8,5 +8,5 @@ Union (3055),6
 Leopard (3054),5
 Triumph (Assault),4
 Fury (3056),3
-Merlin,2
+Merlin (3063),2
 Hannibal,1

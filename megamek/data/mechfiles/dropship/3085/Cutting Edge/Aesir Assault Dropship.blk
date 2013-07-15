@@ -1,0 +1,246 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<source>
+TRO 3085
+</source>
+
+<Name>
+Aesir Assault Dropship
+</Name>
+
+<Model>
+</Model>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<type>
+Clan Level 3
+</type>
+
+<year>
+3077
+</year>
+
+<Tonnage>
+18000
+</Tonnage>
+
+<BV>
+</BV>
+
+<fuel>
+1200
+</fuel>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+333
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<Armor>
+536
+500
+500
+400
+</Armor>
+
+<armor_type>
+19
+</armor_type>
+
+<internal_type>
+0
+</internal_type>
+
+<engine_type>
+0
+</engine_type>
+
+<transporters>
+CargoBay:1515:2
+asfbay:30:5
+smallcraftbay:3:1
+</transporters>
+
+<escape_pod>
+10
+</escape_pod>
+
+<life_boat>
+10
+</life_boat>
+
+<crew>
+121
+</crew>
+
+<battlearmor>
+25
+</battlearmor>
+
+<marines>
+</marines>
+
+<passengers>
+0
+</passengers>
+
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLATM12
+CLATM12
+CLATM12 Ammo:30
+CLATM12 ER Ammo:30
+CLATM12 HE Ammo:30
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS Ammo:216
+CLSmallNavalCommScannerSuite
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Piranha
+Piranha
+Piranha Ammo:30
+CLHAG40
+CLHAG40
+CLHAG40 Ammo:42
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLATM12
+CLATM12
+CLATM12 Ammo:30
+CLATM12 ER Ammo:30
+CLATM12 HE Ammo:30
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS Ammo:216
+(R) Piranha
+(R) Piranha
+(R) Piranha Ammo:30
+(R) CLERLargeLaser
+(R) CLERLargeLaser
+(R) CLERLargeLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLATM12
+(R) CLATM12
+(R) CLATM12 Ammo:30
+(R) CLATM12 ER Ammo:30
+(R) CLATM12 HE Ammo:30
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS Ammo:216
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Piranha
+Piranha
+Piranha Ammo:30
+CLHAG40
+CLHAG40
+CLHAG40 Ammo:42
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLATM12
+CLATM12
+CLATM12 Ammo:30
+CLATM12 ER Ammo:30
+CLATM12 HE Ammo:30
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS Ammo:216
+(R) Piranha
+(R) Piranha
+(R) Piranha Ammo:30
+(R) CLERLargeLaser
+(R) CLERLargeLaser
+(R) CLERLargeLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLLargePulseLaser
+(R) CLATM12
+(R) CLATM12
+(R) CLATM12 Ammo:30
+(R) CLATM12 ER Ammo:30
+(R) CLATM12 HE Ammo:30
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS
+(R) Clan AMS Ammo:216
+</Right Side Equipment>
+
+<Aft Equipment>
+CLHAG40
+CLHAG40
+CLHAG40 Ammo:42
+CLATM12
+CLATM12
+CLATM12 Ammo:30
+CLATM12 ER Ammo:30
+CLATM12 HE Ammo:30
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS
+Clan AMS Ammo:216
+</Aft Equipment>
+
+
+

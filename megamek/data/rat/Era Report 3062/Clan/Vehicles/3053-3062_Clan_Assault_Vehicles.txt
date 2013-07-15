@@ -1,7 +1,0 @@
-########################################################
-# Taken from Era Report 3062.
-# Conversion performed by Deric Page deric.page@usa.net
-########################################################
-3053-3062 Clan Assault Vehicles
-Huitzilopochtli Assault Tank 'Huey',278
-Mars Assault Vehicle,722

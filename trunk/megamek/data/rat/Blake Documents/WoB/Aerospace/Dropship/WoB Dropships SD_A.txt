@@ -1,12 +1,12 @@
 WoB Dropships A
-Pentagon WoB,1
+Pentagon (3071),1
 Leopard (Pocket Warship),2
-Mule Q-Ship,3
+Mule (Armored Pocket Warship),3
 Overlord (3056),4
 Vengeance (3056),5
 Union (3055),6
 Triumph (Assault),5
 Leopard (3054),4
-Merlin,3
+Merlin (3063),3
 Union "Pocket Warship",2
 Excalibur 'Pocket Warship',1

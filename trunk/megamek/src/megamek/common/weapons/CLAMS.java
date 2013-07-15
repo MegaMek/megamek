@@ -39,6 +39,8 @@ public class CLAMS extends AmmoWeapon {
         setInternalName("CLAntiMissileSystem");
         addLookupName("Clan Anti-Missile Sys");
         addLookupName("Clan AMS");
+        addLookupName("ClanAMS");
+        addLookupName("ClAMS");
         heat = 1;
         rackSize = 2;
         damage = 2; // # of d6 of missiles affected

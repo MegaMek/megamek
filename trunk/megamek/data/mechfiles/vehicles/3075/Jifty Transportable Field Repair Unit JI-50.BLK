@@ -47,6 +47,7 @@ Lift Hoist
 
 <Body Equipment>
 IS Light Machine Gun Ammo - Half
+Armored Chassis
 </Body Equipment>
 
 <type>
@@ -82,5 +83,5 @@ Tracked
 </motion_type>
 
 <transporters>
-TroopSpace:19.5
+cargobay:19.5:1
 </transporters>

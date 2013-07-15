@@ -1,7 +1,7 @@
 WoB Dropships B
 Hannibal,1
 Leopard (Pocket Warship),2
-Mule Q-Ship,3
+Mule (Pocket Warship),3
 Dictator,4
 Leopard CV (3054),5
 Union (3055),6

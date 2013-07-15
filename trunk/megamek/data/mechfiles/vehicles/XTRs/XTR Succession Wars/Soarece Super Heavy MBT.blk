@@ -13,10 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Şoarece Superheavy MBT
+Soarece
 </Name>
 
 <Model>
+Superheavy MBT
 </Model>
 
 <year>
@@ -59,7 +60,6 @@ IS Ammo AC/20
 IS Ammo AC/20
 IS Ammo AC/10
 IS Ammo AC/10
-IS Ammo AC/10
 IS Ammo AC/2
 IS Ammo AC/2
 IS Ammo MG - Full
@@ -67,6 +67,7 @@ IS Ammo MG - Full
 
 <Front Equipment>
 Machine Gun
+IS Ammo AC/10
 </Front Equipment>
 
 <Front Right Equipment>
@@ -85,13 +86,13 @@ Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
-Autocannon/20
 Autocannon/10
 Autocannon/2
+Autocannon/20
 </Turret Equipment>
 
 <source>
-XTR Succession Wars
+XTR Succesion Wars
 </source>
 
 <tonnage>

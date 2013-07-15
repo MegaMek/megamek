@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
@@ -17,7 +17,7 @@ Carter
 </Name>
 
 <Model>
-MERV
+Medical Emergency Response Vehicle
 </Model>
 
 <year>
@@ -25,7 +25,7 @@ MERV
 </year>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -34,6 +34,7 @@ Wheeled
 
 <transporters>
 troopspace:2.0
+cargobay:2:1
 </transporters>
 
 <cruiseMP>
@@ -72,8 +73,6 @@ Paramedic Equipment
 </Left Equipment>
 
 <Rear Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
 </Rear Equipment>
 
 <source>

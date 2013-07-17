@@ -18662,12 +18662,15 @@ public class Server implements Runnable {
                     r = new Report(6072);
                     r.indent(2);
                     r.subject = te_n;
+                    r.add("7+");
+                    r.add("Searchlight");
                     r.add(spotroll);
                     vDesc.addElement(r);
                     if (spotroll >= 7) {
                         r = new Report(6071);
                         r.subject = te_n;
                         r.indent(2);
+                        r.add("Searchlight");
                         vDesc.addElement(r);
                         te.setSpotlightState(false);
                         te.setSpotlight(false);

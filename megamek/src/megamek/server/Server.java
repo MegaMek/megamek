@@ -6354,9 +6354,19 @@ public class Server implements Runnable {
                     && entity.hasSpotlight()) {
                 final boolean SearchOn = !entity.isUsingSpotlight();
                 entity.setSpotlightState(SearchOn);
-                sendServerChat(entity.getDisplayName()
-                        + " switched searchlight " + (SearchOn ? "on" : "off")
-                        + '.');
+                if (doBlind()) { //if doubleblind, we may need to filter the 
+                                 //players that receive this messgae
+                    Vector<Player> vCanSee = whoCanSee(entity);
+                    for (Player p : vCanSee){
+                        sendServerChat(p.getId(), entity.getDisplayName()
+                                + " switched searchlight " 
+                                + (SearchOn ? "on" : "off") + '.');
+                    }
+                }else{ //No double blind, everyone can see this
+                    sendServerChat(entity.getDisplayName()
+                            + " switched searchlight " 
+                            + (SearchOn ? "on" : "off") + '.');
+                }
             }
 
             // set most step parameters

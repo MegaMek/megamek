@@ -6356,11 +6356,18 @@ public class Server implements Runnable {
                 entity.setSpotlightState(SearchOn);
                 if (doBlind()) { //if doubleblind, we may need to filter the 
                                  //players that receive this messgae
+                    Vector<Player> vPlayers = game.getPlayersVector();
                     Vector<Player> vCanSee = whoCanSee(entity);
-                    for (Player p : vCanSee){
-                        sendServerChat(p.getId(), entity.getDisplayName()
-                                + " switched searchlight " 
-                                + (SearchOn ? "on" : "off") + '.');
+                    for (Player p : vPlayers){
+                        if (vCanSee.contains(p)){ // Player sees the unit
+                            sendServerChat(p.getId(), entity.getDisplayName()
+                                    + " switched searchlight " 
+                                    + (SearchOn ? "on" : "off") + '.');
+                        }else{
+                            sendServerChat(p.getId(), "An unseen unit"
+                                    + " switched searchlight " 
+                                    + (SearchOn ? "on" : "off") + '.');  
+                        }
                     }
                 }else{ //No double blind, everyone can see this
                     sendServerChat(entity.getDisplayName()

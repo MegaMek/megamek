@@ -18642,9 +18642,8 @@ public class Server implements Runnable {
             }
 
             // Destroy searchlights on 7+ (torso hits on mechs)
-            boolean spotlightHittable = false;
             if (te.hasSpotlight()) {
-                spotlightHittable = true;
+                boolean spotlightHittable = true;
                 int loc = hit.getLocation();
                 if (te instanceof Mech) {
                     if ((loc != Mech.LOC_CT) && (loc != Mech.LOC_LT)
@@ -18672,8 +18671,7 @@ public class Server implements Runnable {
                         r.indent(2);
                         r.add("Searchlight");
                         vDesc.addElement(r);
-                        te.setSpotlightState(false);
-                        te.setSpotlight(false);
+                        te.destroyOneSpotlight();
                     }
                 }
             }

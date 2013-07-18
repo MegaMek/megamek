@@ -156,7 +156,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
-    protected boolean hasSpotlight = false;
+    /**
+     * Variable to store the state of a possible externally mounted searchlight.
+     * True if an operable searchlight is externally mounted, false if one
+     * isn't mounted or if it is destroyed.  Other searchlights may be mounted
+     * as equipment on the entity.
+     * 
+     */
+    protected boolean hasExternalSpotlight = false;
     protected boolean illuminated = false;
     protected boolean spotlightIsActive = false;
     protected boolean usedSearchlight = false;
@@ -7990,10 +7997,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         captured = arg;
     }
 
-    public void setSpotlight(boolean arg) {
-        hasSpotlight = arg;
+    public void setExternalSpotlight(boolean arg) {
+        hasExternalSpotlight = arg;
     }
 
+    /**
+     * Returns true if the unit has a usable spotlight.  It considers both 
+     * externally mounted spotlights as well as internally mounted ones.
+     * @return
+     */
     public boolean hasSpotlight() {
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)
@@ -8001,11 +8013,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return true;
             }
         }
-        return hasSpotlight;
+        return hasExternalSpotlight;
     }
 
+    /**
+     * Method to destroy a single spotlight on an entity.  Spotlights can be
+     * destroyed on a roll of 7+ on a torso hit on a mek or on a front/side hit
+     * on a combat vehicle.
+     */
+    public void destroyOneSpotlight(){
+        if (!hasSpotlight())
+            return;
+        // A random spotlight should be destroyed, but this is easier...
+        if (hasExternalSpotlight)
+            hasExternalSpotlight = false;
+       
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)
+                    && !m.isInoperable()) {
+                m.setDestroyed(true);
+                break;
+            }
+        }
+        
+        //Turn off the light all spot lights were destroyed
+        if (!hasSpotlight())
+            setSpotlightState(false);
+        
+    }
+    
     public void setSpotlightState(boolean arg) {
-        if (hasSpotlight) {
+        if (hasSpotlight()) {
             spotlightIsActive = arg;
             if (arg) {
                 illuminated = true;
@@ -8022,7 +8060,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isUsingSpotlight() {
-        return hasSpotlight && spotlightIsActive;
+        return hasSpotlight() && spotlightIsActive;
     }
 
     public void setUsedSearchlight(boolean arg) {
@@ -8040,7 +8078,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *            the <code>HexTarget</code> to illuminate
      */
     public void illuminateTarget(HexTarget target) {
-        if (hasSpotlight && spotlightIsActive && (target != null)) {
+        if (hasSpotlight() && spotlightIsActive && (target != null)) {
             illuminated = true;
             ArrayList<Coords> in = Coords.intervening(getPosition(),
                     target.getPosition());

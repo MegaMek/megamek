@@ -119,7 +119,7 @@ public class Protomech extends Entity {
 
     private boolean isQuad = false;
 
-    //for MHQ
+    // for MHQ
     private boolean engineHit = false;
 
     /**
@@ -248,7 +248,7 @@ public class Protomech extends Entity {
 
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
-        if(isEngineHit()) {
+        if (isEngineHit()) {
             return 0;
         }
         int wmp = getOriginalWalkMP();
@@ -960,20 +960,22 @@ public class Protomech extends Entity {
                                         weaponList.add(mounted);
                                         totalWeaponList.add(mounted);
                                         torsoDGunNum = getEquipmentNum(mounted);
+                                    } else {
+                                        bHasTorsoCGun = true;
+                                        mounted.setLocation(loc, rearMounted);
+                                        equipmentList.add(mounted);
+                                        weaponList.add(mounted);
+                                        totalWeaponList.add(mounted);
+                                        torsoCGunNum = getEquipmentNum(mounted);
                                     }
-                                    bHasTorsoCGun = true;
+                                } else {
+                                    bHasTorsoBGun = true;
                                     mounted.setLocation(loc, rearMounted);
                                     equipmentList.add(mounted);
                                     weaponList.add(mounted);
                                     totalWeaponList.add(mounted);
-                                    torsoCGunNum = getEquipmentNum(mounted);
+                                    torsoBGunNum = getEquipmentNum(mounted);
                                 }
-                                bHasTorsoBGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
-                                torsoBGunNum = getEquipmentNum(mounted);
                             } else {
                                 bHasTorsoAGun = true;
                                 mounted.setLocation(loc, rearMounted);
@@ -1000,35 +1002,40 @@ public class Protomech extends Entity {
                                                 weaponList.add(mounted);
                                                 totalWeaponList.add(mounted);
                                                 torsoFGunNum = getEquipmentNum(mounted);
+                                            } else {
+                                                bHasTorsoEGun = true;
+                                                mounted.setLocation(loc,
+                                                        rearMounted);
+                                                equipmentList.add(mounted);
+                                                weaponList.add(mounted);
+                                                totalWeaponList.add(mounted);
+                                                torsoEGunNum = getEquipmentNum(mounted);
                                             }
-                                            bHasTorsoEGun = true;
+                                        } else {
+                                            bHasTorsoDGun = true;
                                             mounted.setLocation(loc,
                                                     rearMounted);
                                             equipmentList.add(mounted);
                                             weaponList.add(mounted);
                                             totalWeaponList.add(mounted);
-                                            torsoEGunNum = getEquipmentNum(mounted);
+                                            torsoDGunNum = getEquipmentNum(mounted);
                                         }
-                                        bHasTorsoDGun = true;
+                                    } else {
+                                        bHasTorsoCGun = true;
                                         mounted.setLocation(loc, rearMounted);
                                         equipmentList.add(mounted);
                                         weaponList.add(mounted);
                                         totalWeaponList.add(mounted);
-                                        torsoDGunNum = getEquipmentNum(mounted);
+                                        torsoCGunNum = getEquipmentNum(mounted);
                                     }
-                                    bHasTorsoCGun = true;
+                                } else {
+                                    bHasTorsoBGun = true;
                                     mounted.setLocation(loc, rearMounted);
                                     equipmentList.add(mounted);
                                     weaponList.add(mounted);
                                     totalWeaponList.add(mounted);
-                                    torsoCGunNum = getEquipmentNum(mounted);
+                                    torsoBGunNum = getEquipmentNum(mounted);
                                 }
-                                bHasTorsoBGun = true;
-                                mounted.setLocation(loc, rearMounted);
-                                equipmentList.add(mounted);
-                                weaponList.add(mounted);
-                                totalWeaponList.add(mounted);
-                                torsoBGunNum = getEquipmentNum(mounted);
                             } else {
                                 bHasTorsoAGun = true;
                                 mounted.setLocation(loc, rearMounted);
@@ -1068,7 +1075,6 @@ public class Protomech extends Entity {
                             torsoAGunNum = getEquipmentNum(mounted);
                         }
                     }
-
             }
         } else {
             super.addEquipment(mounted, loc, rearMounted);
@@ -1158,8 +1164,9 @@ public class Protomech extends Entity {
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(
                 getRunMP(false, true, true), false, false).getValue();
-        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false).getValue();
-        double tmmFactor = 1 + (Math.max(tmmRan,tmmJumped) / 10) + 0.1;
+        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true,
+                false).getValue();
+        double tmmFactor = 1 + (Math.max(tmmRan, tmmJumped) / 10) + 0.1;
         dbv *= tmmFactor;
 
         double weaponBV = 0;
@@ -1677,7 +1684,8 @@ public class Protomech extends Entity {
     @Override
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            System.out.println(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
+            System.out.println(getDisplayName()
+                    + " CRIPPLED: Pilot has taken 4+ damage.");
             return true;
         }
 
@@ -1686,7 +1694,8 @@ public class Protomech extends Entity {
                 return false;
             }
         }
-        System.out.println(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+        System.out.println(getDisplayName()
+                + " CRIPPLED: has no more viable weapons.");
         return true;
     }
 
@@ -1753,9 +1762,9 @@ public class Protomech extends Entity {
     @Override
     public String getLocationDamage(int loc) {
         int hits = getCritsHit(loc);
-        if(hits > 0) {
+        if (hits > 0) {
             String strHit = " critical hit";
-            if(hits > 1) {
+            if (hits > 1) {
                 strHit += "s";
             }
             return hits + strHit;

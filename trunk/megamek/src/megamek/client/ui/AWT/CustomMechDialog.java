@@ -1770,7 +1770,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 m_bombs.applyChoice();
             }
             // update searchlight setting
-            entity.setSpotlight(chSearchlight.getState());
+            entity.setExternalSpotlight(chSearchlight.getState());
             entity.setSpotlightState(chSearchlight.getState());
 
             // update commander status

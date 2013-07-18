@@ -279,7 +279,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
 
         // update searchlight setting
-        entity.setSpotlight(chSearchlight.isSelected());
+        entity.setExternalSpotlight(chSearchlight.isSelected());
         entity.setSpotlightState(chSearchlight.isSelected());
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {

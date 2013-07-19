@@ -2439,6 +2439,12 @@ public class Server implements Runnable {
                 }
 
                 sendSpecialHexDisplayPackets();
+                for (Enumeration<Player> i = game.getPlayers(); i
+                        .hasMoreElements();) {
+                    Player player = i.nextElement();
+                    int connId = player.getId();
+                    send(connId, createArtilleryPacket(player));
+                }
 
                 break;
             case PHASE_OFFBOARD:

@@ -45,6 +45,7 @@ v0.35.40-dev (SVN)
 + Bug [#3783]: Spotlight destruction code isn't completely correct
 + Bug: quad protomech torso weapons multiply on loading
 + Updated strings for easy and difficult to maintain to better explain that they non-effect part is for MegaMek only.
++ Bug [#3784]: Artillery sprites get drawn twice 
 
 v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug 3720: defaultQuirks.xml is missing the Rifleman C 2 entry

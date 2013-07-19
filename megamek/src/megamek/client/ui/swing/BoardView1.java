@@ -1043,31 +1043,38 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Mounted weapon = getSelectedArtilleryWeapon();
         Rectangle view = g.getClipBounds();
 
-        if ((game.getArtillerySize() == 0) && (weapon == null)) {
-            return; // nothing to do
-        }
-
         int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
         int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        IBoard board = game.getBoard();
         Image scaledImage;
 
-        // loop through the hexes
-        for (int i = 0; i < drawHeight; i++) {
-            for (int j = 0; j < drawWidth; j++) {
-                Coords c = new Coords(j + drawX, i + drawY);
+        // process incoming attacks - requires server to update client's
+        // view of game
+        for (Enumeration<ArtilleryAttackAction> attacks = 
+                game.getArtilleryAttacks(); attacks.hasMoreElements();) {
+            ArtilleryAttackAction a = attacks.nextElement();
+            Coords c = a.getTarget(game).getPosition();
+            //Is the Coord within the viewing area?
+            if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
+                 c.y >= drawY && c.y <= (drawY + drawHeight)){
+                
                 Point p = getHexLocation(c);
-
-                if (!board.contains(c)) {
-                    continue;
-                }
-
-                if (weapon != null) {
-                    // process targetted hexes
+                scaledImage = tileManager
+                        .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
+                g.drawImage(scaledImage, p.x, p.y, this);                
+            }
+        }
+        
+        if (weapon != null){
+            for (Coords c : selectedEntity.getOwner().getArtyAutoHitHexes()){
+                //Is the Coord within the viewing area?
+                if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
+                     c.y >= drawY && c.y <= (drawY + drawHeight)){
+                    
+                    Point p = getHexLocation(c);
                     int amod = 0;
                     // Check the predesignated hexes
                     if (selectedEntity.getOwner().getArtyAutoHitHexes()
@@ -1076,9 +1083,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     } else {
                         amod = selectedEntity.aTracker.getModifier(weapon, c);
                     }
-
+    
                     if (amod != 0) {
-
+    
                         // draw the crosshairs
                         if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
                             // predesignated or already hit
@@ -1088,27 +1095,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             scaledImage = tileManager
                                     .getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
                         }
-
+    
                         g.drawImage(scaledImage, p.x, p.y, this);
-                    }
-                }
-                // process incoming attacks - requires server to update client's
-                // view of game
-
-                for (Enumeration<ArtilleryAttackAction> attacks = game
-                        .getArtilleryAttacks(); attacks.hasMoreElements();) {
-                    ArtilleryAttackAction a = attacks.nextElement();
-
-                    if (a.getTarget(game).getPosition().equals(c)) {
-                        scaledImage = tileManager
-                                .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
-                        g.drawImage(scaledImage, p.x, p.y, this);
-                        break; // do not draw multiple times, tooltop will show
-                        // all attacks
-                    }
+                    }   
                 }
             }
-        }
+        }        
     }
 
     /*
@@ -1388,29 +1380,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (game.getBoard().inSpace()) {
             boardGraph.setColor(Color.LIGHT_GRAY);
         }
-
-        // draw special stuff for the hex
-        final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                .getSpecialHexDisplay(c);
-        try {
-            if (shdList != null) {
-                for (SpecialHexDisplay shd : shdList) {
-                    if (shd.drawNow(game.getPhase(), game.getRoundCount(),
-                            localPlayer.getName())) {
-                        scaledImage = getScaledImage(shd.getType()
-                                .getDefaultImage());
-                        boardGraph.drawImage(scaledImage, drawX, drawY, this);
-                    }
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            System.err
-                    .println("Illegal argument exception, probably can't load file.");
-            e.printStackTrace();
-            drawCenteredString("Loading Error", drawX, drawY
-                    + (int) (50 * scale), font_note, boardGraph);
-            return;
-        }
+        
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY

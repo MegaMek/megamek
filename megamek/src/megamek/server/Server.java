@@ -1978,7 +1978,7 @@ public class Server implements Runnable {
 
                         public boolean accept(Entity entity) {
                             if (owner.equals(entity.getOwner())
-                                    && entity.isEligibleForTargetingPhase()) {
+                                    && entity.isEligibleForArtyAutoHitHexes()) {
                                 return true;
                             }
                             return false;

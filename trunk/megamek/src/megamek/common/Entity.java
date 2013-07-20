@@ -7802,6 +7802,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return canHit;
     }
 
+    /**
+     * Determines if this Entity is eligible to pre-designate hexes as auto-hits.
+     * Per TacOps pg 180, if a player has offboard artillery they get 5 pre-
+     * designated hexes per mapsheet.
+     * @return
+     */
+    public boolean isEligibleForArtyAutoHitHexes() {
+        return isEligibleForTargetingPhase() && isOffBoard();
+    }    
+    
     public boolean isEligibleForTargetingPhase() {
         if (isAssaultDropInProgress()) {
             return false;

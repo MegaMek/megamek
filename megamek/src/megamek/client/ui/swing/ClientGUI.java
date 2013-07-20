@@ -1388,8 +1388,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             // This is a really lame place for this, but I couldn't find a
             // better one without making massive changes (which didn't seem
             // worth it for one little feature).
-            if (bv.getLocalPlayer() == null) {
-                bv.setLocalPlayer(getClient().getLocalPlayer());
+            if (bv.getLocalPlayer() != client.getLocalPlayer()) {
+                // The adress based comparison is somewhat important.  
+                //  Use of the /reset command can cause the player to get reset,
+                //  and the equals function of Player isn't powerful enough.
+                bv.setLocalPlayer(client.getLocalPlayer());
             }
 
             // Swap to this phase's panel.

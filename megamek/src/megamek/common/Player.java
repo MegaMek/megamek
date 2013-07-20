@@ -326,6 +326,10 @@ public final class Player extends TurnOrdered {
     public Vector<Coords> getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
+    
+    public void addArtyAutoHitHex(Coords c){
+        artyAutoHitHexes.add(c);
+    }
 
     public boolean hasTAG() {
         for (Enumeration<Entity> e = game

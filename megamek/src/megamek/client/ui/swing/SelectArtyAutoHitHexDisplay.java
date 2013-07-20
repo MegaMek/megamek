@@ -120,9 +120,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         // 4 mapsheets is 16*17*4 hexes, so 1088
         IBoard board = clientgui.getClient().game.getBoard();
         startingHexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
+        artyAutoHitHexes.clear();
         setArtyEnabled(startingHexes);
-        //FIXME: had to disable this now that the boardview draws deployment based on entities not players
-        //clientgui.bv.markDeploymentHexesFor(p);
         butDone.setEnabled(true);
     }
 
@@ -162,13 +161,14 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                                                 "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(startingHexes - artyAutoHitHexes.size());
+            p.addArtyAutoHitHex(coords);
             clientgui.getClient().game.getBoard().addSpecialHexDisplay(
                     coords,
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                            SpecialHexDisplay.NO_ROUND, clientgui.getClient().getLocalPlayer()
-                                    .getName(),
-                            "Artilery autohit, for player " + clientgui.getClient().getLocalPlayer().getName()));
+                            SpecialHexDisplay.NO_ROUND, p.getName(),
+                            "Artilery autohit, for player " + p.getName()));
+            clientgui.getBoardView().refreshDisplayables();
         }
     }
 
@@ -267,7 +267,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void clear() {
-        //TODO no clear action currently defined
+        artyAutoHitHexes.clear();
+        p.removeArtyAutoHitHexes();
+        setArtyEnabled(startingHexes);
     }
 
     @Override

@@ -83,6 +83,7 @@ import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.common.Aero;
+import megamek.common.ArtilleryTracker;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -1043,15 +1044,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Mounted weapon = getSelectedArtilleryWeapon();
         Rectangle view = g.getClipBounds();
 
+        //Compute the origin of the viewing area
         int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
         int drawY = (view.y / (int) (HEX_H * scale)) - 1;
 
+        //Compute size of viewing area
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
         Image scaledImage;
 
-        // process incoming attacks - requires server to update client's
+        //Draw incoming artillery sprites - requires server to update client's
         // view of game
         for (Enumeration<ArtilleryAttackAction> attacks = 
                 game.getArtilleryAttacks(); attacks.hasMoreElements();) {
@@ -1067,40 +1070,45 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 g.drawImage(scaledImage, p.x, p.y, this);                
             }
         }
+     
+        // Draw pre-designated auto-hit hexes
+        for (Coords c : localPlayer.getArtyAutoHitHexes()){
+            //Is the Coord within the viewing area?
+            if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
+                 c.y >= drawY && c.y <= (drawY + drawHeight)){
+                
+                Point p = getHexLocation(c);
+                scaledImage = tileManager
+                        .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);                   
+                g.drawImage(scaledImage, p.x, p.y, this);                   
+            }
+        }
         
-        if (weapon != null){
-            for (Coords c : selectedEntity.getOwner().getArtyAutoHitHexes()){
+        // Draw modifiers for selected entity and weapon
+        if (weapon != null){  
+            //Loop through all of the attack modifiers for this weapon
+            for (ArtilleryTracker.ArtilleryModifier attackMod : 
+                    selectedEntity.aTracker.getWeaponModifiers(weapon)){
+                Coords c = attackMod.getCoords();
                 //Is the Coord within the viewing area?
                 if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
                      c.y >= drawY && c.y <= (drawY + drawHeight)){
                     
                     Point p = getHexLocation(c);
-                    int amod = 0;
-                    // Check the predesignated hexes
-                    if (selectedEntity.getOwner().getArtyAutoHitHexes()
-                            .contains(c)) {
-                        amod = TargetRoll.AUTOMATIC_SUCCESS;
+                    // draw the crosshairs
+                    if (attackMod.getModifier() == 
+                            TargetRoll.AUTOMATIC_SUCCESS) {
+                        // predesignated or already hit
+                        scaledImage = tileManager.getArtilleryTarget(
+                                TilesetManager.ARTILLERY_AUTOHIT);
                     } else {
-                        amod = selectedEntity.aTracker.getModifier(weapon, c);
+                        scaledImage = tileManager.getArtilleryTarget(
+                                TilesetManager.ARTILLERY_ADJUSTED);
                     }
-    
-                    if (amod != 0) {
-    
-                        // draw the crosshairs
-                        if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                            // predesignated or already hit
-                            scaledImage = tileManager
-                                    .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
-                        } else {
-                            scaledImage = tileManager
-                                    .getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
-                        }
-    
-                        g.drawImage(scaledImage, p.x, p.y, this);
-                    }   
+                    g.drawImage(scaledImage, p.x, p.y, this);
                 }
             }
-        }        
+        }               
     }
 
     /*

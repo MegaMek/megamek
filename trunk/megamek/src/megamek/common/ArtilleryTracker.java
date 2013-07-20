@@ -83,8 +83,6 @@ public class ArtilleryTracker implements Serializable {
         if (am != null) {
             return am.getModifier();
         }
-        am = new ArtilleryModifier(coords, 0);
-        weaponMods.addElement(am);
         return 0;
     }
 
@@ -94,7 +92,7 @@ public class ArtilleryTracker implements Serializable {
      * @param mounted weapon to get modifiers for
      * @return the <code>Vector</code> of the modifiers for the given weapon
      */
-    protected Vector<ArtilleryModifier> getWeaponModifiers(Mounted mounted) {
+    public Vector<ArtilleryModifier> getWeaponModifiers(Mounted mounted) {
         Vector<ArtilleryModifier> result = weapons.get(mounted);
         if (result == null) {
             result = new Vector<ArtilleryModifier>();
@@ -126,7 +124,7 @@ public class ArtilleryTracker implements Serializable {
      * Small collector...just holds a Coords and a modifier (either
      * ToHitData.AUTOMATIC_SUCCESS or just a modifier.
      */
-    private static class ArtilleryModifier implements Serializable {
+    public static class ArtilleryModifier implements Serializable {
 
         /**
          *

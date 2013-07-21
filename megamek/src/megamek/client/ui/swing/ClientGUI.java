@@ -804,6 +804,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
+                this.mechW.setVisible(false);
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
             case PHASE_DEPLOYMENT:

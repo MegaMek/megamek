@@ -116,8 +116,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
+        // Make sure we've got the correct local player
+        p = clientgui.getClient().getLocalPlayer();
         // we should get 5 hexes per 4 mapsheets
-        // 4 mapsheets is 16*17*4 hexes, so 1088
+        // 4 mapsheets is 16*17*4 hexes, so 1088        
         IBoard board = clientgui.getClient().game.getBoard();
         startingHexes = (int) Math.ceil(((double)(board.getHeight() * board.getWidth()))/1088)*5;
         artyAutoHitHexes.clear();

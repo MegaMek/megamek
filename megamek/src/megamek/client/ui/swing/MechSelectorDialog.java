@@ -67,14 +67,14 @@ import megamek.common.preference.PreferenceManager;
 
 /**
  *
- * @author Jay Lawson <jaylawson39 at yahoo.com> This is a heavily reworked
- *         version of the original MechSelectorDialog which brings up a list of
- *         units for the player to select to add to their forces. The original
- *         list has been changed to a sortable table and a text filter is used
- *         for advanced searching.
+ * @author  Jay Lawson <jaylawson39 at yahoo.com>
+ * This is a heavily reworked version of the original MechSelectorDialog which
+ * brings up a list of units for the player to select to add to their forces.
+ * The original list has been changed to a sortable table and a text filter
+ * is used for advanced searching.
  */
 public class MechSelectorDialog extends JDialog implements Runnable,
-        KeyListener, ActionListener {
+    KeyListener, ActionListener {
 
     /**
      *
@@ -609,155 +609,168 @@ public class MechSelectorDialog extends JDialog implements Runnable,
             e.getCrew().setGunnery(gunnery);
             e.getCrew().setPiloting(piloting);
         }
-        if (cs.generateNames()) {
+        if(cs.generateNames()) {
             e.getCrew().setName(client.getRandomNameGenerator().generate());
         }
     }
 
-    public void run() {
-        // Loading mechs can take a while, so it will have its own thread.
-        // This prevents the UI from freezing, and allows the
-        // "Please wait..." dialog to behave properly on various Java VMs.
-        mechs = MechSummaryCache.getInstance().getAllMechs();
+     public void run() {
+         // Loading mechs can take a while, so it will have its own thread.
+         // This prevents the UI from freezing, and allows the
+         // "Please wait..." dialog to behave properly on various Java VMs.
+         MechSummaryCache mscInstance = MechSummaryCache.getInstance();
+         mechs = mscInstance.getAllMechs();
 
-        // break out if there are no units to filter
-        if (mechs == null) {
-            System.err.println("No units to filter!");
-        } else {
-            unitModel.setData(mechs);
-        }
-        filterUnits();
+         // break out if there are no units to filter
+         if (mechs == null) {
+             System.err.println("No units to filter!");
+         } else {
+             unitModel.setData(mechs);
+         }
+         filterUnits();
 
-        // initialize with the units sorted alphabetically by chassis
-        ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
-        sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,
-                SortOrder.ASCENDING));
-        // sortlist.add(new
-        // RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
-        tableUnits.getRowSorter().setSortKeys(sortlist);
-        ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
+         //initialize with the units sorted alphabetically by chassis
+         ArrayList<SortKey> sortlist = new ArrayList<SortKey>();
+         sortlist.add(new SortKey(MechTableModel.COL_CHASSIS,SortOrder.ASCENDING));
+         //sortlist.add(new RowSorter.SortKey(MechTableModel.COL_MODEL,SortOrder.ASCENDING));
+         tableUnits.getRowSorter().setSortKeys(sortlist);
+         ((DefaultRowSorter<?, ?>)tableUnits.getRowSorter()).sort();
 
-        tableUnits.invalidate(); // force re-layout of window
-        pack();
-        // setLocation(computeDesiredLocation());
+         tableUnits.invalidate(); // force re-layout of window
+         pack();
+         //setLocation(computeDesiredLocation());
 
-        unitLoadingDialog.setVisible(false);
+         unitLoadingDialog.setVisible(false);
 
-        final Map<String, String> hFailedFiles = MechSummaryCache.getInstance()
-                .getFailedFiles();
-        if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
-            new UnitFailureDialog(clientgui.frame, hFailedFiles); // self-showing
-                                                                  // dialog
-        }
-    }
+         // In some cases, it's possible to get here without an initialized 
+         // instance (loading a saved game without a cahce).  In these cases,
+         // we dn't care about the failed loads.
+         if (mscInstance.isInitialized())
+         {
+             final Map<String, String> hFailedFiles = 
+                 MechSummaryCache.getInstance().getFailedFiles();
+             if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
+                 // self-showing dialog
+                 new UnitFailureDialog(clientgui.frame, hFailedFiles);
+             }
+         }
+     }
 
-    @Override
-    public void setVisible(boolean visible) {
-        asd.clearValues();
-        searchFilter = null;
-        updatePlayerChoice();
-        // FIXME: this is not updating the table when canonicity is
-        // selected/deselected until user clicks it
-        filterUnits();
-        super.setVisible(visible);
-    }
+     @Override
+     public void setVisible(boolean visible) {
+         GUIPreferences guip = GUIPreferences.getInstance();
+         comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
+         comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
+         comboType.setSelectedIndex(guip.getMechSelectorRulesLevel());
+         asd.clearValues();
+         searchFilter=null;
+         btnResetSearch.setEnabled(false);
+         updatePlayerChoice();
+         //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
+         filterUnits();
+         super.setVisible(visible);
+     }
+
 
     /**
      * A table model for displaying work items
      */
     public class MechTableModel extends AbstractTableModel {
 
-        /**
+            /**
              *
              */
-        private static final long serialVersionUID = -5457068129532709857L;
-        private final static int COL_CHASSIS = 0;
-        private final static int COL_MODEL = 1;
-        private final static int COL_WEIGHT = 2;
-        private final static int COL_BV = 3;
-        private final static int COL_YEAR = 4;
-        private final static int COL_COST = 5;
-        private final static int COL_LEVEL = 6;
-        private final static int N_COL = 7;
+            private static final long serialVersionUID = -5457068129532709857L;
+            private final static int COL_CHASSIS = 0;
+            private final static int COL_MODEL = 1;
+            private final static int COL_WEIGHT = 2;
+            private final static int COL_BV = 3;
+            private final static int COL_YEAR = 4;
+            private final static int COL_COST = 5;
+            private final static int COL_LEVEL = 6;
+            private final static int N_COL = 7;
 
-        private MechSummary[] data = new MechSummary[0];
+            private MechSummary[] data = new MechSummary[0];
 
-        public int getRowCount() {
-            return data.length;
-        }
+            public int getRowCount() {
+                return data.length;
+            }
 
-        public int getColumnCount() {
-            return N_COL;
-        }
+            public int getColumnCount() {
+                return N_COL;
+            }
 
-        @Override
-        public String getColumnName(int column) {
-            switch (column) {
-                case COL_MODEL:
-                    return "Model";
-                case COL_CHASSIS:
-                    return "Chassis";
-                case COL_WEIGHT:
-                    return "Weight";
-                case COL_BV:
-                    return "BV";
-                case COL_YEAR:
-                    return "Year";
-                case COL_COST:
-                    return "Price";
-                case COL_LEVEL:
-                    return "Level";
-                default:
+            @Override
+            public String getColumnName(int column) {
+                switch(column) {
+                    case COL_MODEL:
+                        return "Model";
+                    case COL_CHASSIS:
+                        return "Chassis";
+                    case COL_WEIGHT:
+                        return "Weight";
+                    case COL_BV:
+                        return "BV";
+                    case COL_YEAR:
+                        return "Year";
+                    case COL_COST:
+                        return "Price";
+                    case COL_LEVEL:
+                         return "Level";
+                    default:
+                        return "?";
+                }
+            }
+
+            @Override
+            public Class<?> getColumnClass(int c) {
+                return getValueAt(0, c).getClass();
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return false;
+            }
+
+            public MechSummary getMechSummary(int i) {
+                return data[i];
+            }
+
+            //fill table with values
+            public void setData(MechSummary[] ms) {
+                data = ms;
+                fireTableDataChanged();
+            }
+
+            public Object getValueAt(int row, int col) {
+                if (data.length <= row)
                     return "?";
+                
+                MechSummary ms = data[row];
+                if(col == COL_MODEL) {
+                    return ms.getModel();
+                }
+                if(col == COL_CHASSIS) {
+                    return ms.getChassis();
+                }
+                if(col == COL_WEIGHT) {
+                    return ms.getTons();
+                }
+                if(col == COL_BV) {
+                    return ms.getBV();
+                }
+                if(col == COL_YEAR) {
+                    return ms.getYear();
+                }
+                if(col == COL_COST) {
+                    //return NumberFormat.getInstance().format(ms.getCost());
+                    return ms.getCost();
+                }
+                if (col == COL_LEVEL) {
+                    return ms.getLevel();
+                }
+                return "?";
             }
-        }
-
-        @Override
-        public Class<?> getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
-
-        @Override
-        public boolean isCellEditable(int row, int col) {
-            return false;
-        }
-
-        public MechSummary getMechSummary(int i) {
-            return data[i];
-        }
-
-        // fill table with values
-        public void setData(MechSummary[] ms) {
-            data = ms;
-            fireTableDataChanged();
-        }
-
-        public Object getValueAt(int row, int col) {
-            MechSummary ms = data[row];
-            if (col == COL_MODEL) {
-                return ms.getModel();
-            }
-            if (col == COL_CHASSIS) {
-                return ms.getChassis();
-            }
-            if (col == COL_WEIGHT) {
-                return ms.getTons();
-            }
-            if (col == COL_BV) {
-                return ms.getBV();
-            }
-            if (col == COL_YEAR) {
-                return ms.getYear();
-            }
-            if (col == COL_COST) {
-                // return NumberFormat.getInstance().format(ms.getCost());
-                return ms.getCost();
-            }
-            if (col == COL_LEVEL) {
-                return ms.getLevel();
-            }
-            return "?";
-        }
 
     }
 
@@ -790,8 +803,16 @@ public class MechSelectorDialog extends JDialog implements Runnable,
         } else if (ev.getSource().equals(btnSelect)) {
             select(false);
         } else if (ev.getSource().equals(btnSelectClose)) {
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
+            guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
+            guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
             select(true);
         } else if (ev.getSource().equals(btnClose)) {
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
+            guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
+            guip.setMechSelectorRulesLevel(comboType.getSelectedIndex()); 
             setVisible(false);
         } else if (ev.getSource().equals(btnShowBV)) {
             JEditorPane tEditorPane = new JEditorPane();
@@ -841,4 +862,4 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     public void enableResetButton(boolean b) {
         btnResetSearch.setEnabled(b);
     }
-}
+ }

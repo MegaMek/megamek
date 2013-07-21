@@ -88,6 +88,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_INCLUDE_LEVEL = "MechSelectorIncludeLevel";
     public static final String MECH_SELECTOR_INCLUDE_COST = "MechSelectorIncludeCost";
     public static final String MECH_SELECTOR_SHOW_ADVANCED = "MechSelectorShowAdvanced";
+    public static final String MECH_SELECTOR_UNIT_TYPE= "MechSelectorUnitType";
+    public static final String MECH_SELECTOR_WEIGHT_CLASS= "MechSelectorWeightClass";
+    public static final String MECH_SELECTOR_RULES_LEVEL= "MechSelectorRuleType";
     // public static final String MECH_SELECTOR_SIZE_HEIGHT =
     // "MechSelectorSizeHeight";
     // public static final String MECH_SELECTOR_SIZE_WIDTH =
@@ -190,6 +193,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_YEAR, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_LEVEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
+        store.setDefault(MECH_SELECTOR_SHOW_ADVANCED,0);
+        store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
+        store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,12);
+        store.setDefault(MECH_SELECTOR_RULES_LEVEL,0);
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINIMAP_ENABLED, true);
@@ -303,6 +310,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMechSelectorShowAdvanced() {
         return store.getBoolean(MECH_SELECTOR_SHOW_ADVANCED);
+    }
+    
+    public int getMechSelectorUnitType(){
+        return store.getInt(MECH_SELECTOR_UNIT_TYPE);
+    }
+    
+    public int getMechSelectorWeightClass(){
+        return store.getInt(MECH_SELECTOR_WEIGHT_CLASS);
+    }
+    
+    public int getMechSelectorRulesLevel(){
+        return store.getInt(MECH_SELECTOR_RULES_LEVEL);
     }
 
     /*
@@ -537,6 +556,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMechSelectorShowAdvanced(boolean showAdvanced) {
         store.setValue(MECH_SELECTOR_SHOW_ADVANCED, showAdvanced);
+    }
+    
+    public void setMechSelectorUnitType(int unitType){
+        store.setValue(MECH_SELECTOR_UNIT_TYPE,unitType);
+    }
+    
+    public void setMechSelectorWeightClass(int weightClass){
+        store.setValue(MECH_SELECTOR_WEIGHT_CLASS,weightClass);
+    }
+    
+    public void setMechSelectorRulesLevel(int rulesLevel){
+        store.setValue(MECH_SELECTOR_RULES_LEVEL,rulesLevel);
     }
 
     /*

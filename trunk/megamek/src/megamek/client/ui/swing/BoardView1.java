@@ -1016,6 +1016,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * or it is not artillery or null if the selected entity is not owned
      */
     private Mounted getSelectedArtilleryWeapon() {
+        //We don't want to display artillery auto-hit/adjusted fire hexes during
+        // the artyautohithexes phase.  These could be displayed if the player 
+        // uses the /reset command in some situations
+        if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES){
+            return null;
+        }
+        
         if ((selectedEntity == null) || (selectedWeapon == null)) {
             return null;
         }

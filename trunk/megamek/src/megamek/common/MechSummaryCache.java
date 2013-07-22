@@ -360,6 +360,27 @@ public class MechSummaryCache {
         } else {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
+        ms.setEquipment(e.getEquipment());
+        ms.setTotalArmor(e.getTotalArmor());
+        ms.setTotalInternal(e.getTotalInternal());
+        ms.setInternalsType(e.getStructureType());
+        int [] armorTypes = new int[e.locations()];
+        for (int i = 0; i < armorTypes.length; i++)
+            armorTypes[i] = e.getArmorType(i);
+        ms.setArmorType(armorTypes);
+        
+        // Check to see if this entity has a cockpit, and if so, set it's type
+        if ((e instanceof Mech)){            
+            ms.setCockpitType(((Mech)e).getCockpitType());
+        }else if ((e instanceof Aero) ){
+            ms.setCockpitType(((Aero)e).getCockpitType());
+        }else{
+            // TODO: There's currently no NO_COCKPIT type value, if this value
+            //  existed, Entity could have a getCockpitType function and this
+            //  logic could become unnecessary
+            ms.setCockpitType(-2);
+        }
+        
         // we can only test meks and vehicles right now
         if ((e instanceof Mech)
                 || ((e instanceof Tank) && !(e instanceof GunEmplacement))) {

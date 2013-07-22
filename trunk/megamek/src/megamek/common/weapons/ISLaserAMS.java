@@ -35,6 +35,7 @@ public class ISLaserAMS extends LaserWeapon {
         setInternalName("ISLaserAntiMissileSystem");
         addLookupName("IS Laser Anti-Missile System");
         addLookupName("IS Laser AMS");
+        addLookupName("ISLaserAMS");
         heat = 7;
         rackSize = 2;
         damage = 2; // # of d6 of missiles affected

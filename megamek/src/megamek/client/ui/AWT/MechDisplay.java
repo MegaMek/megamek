@@ -1567,7 +1567,7 @@ public class MechDisplay extends BufferedPanel {
             int avMed = wtype.getRoundMedAV();
             int avLong = wtype.getRoundLongAV();
             int avExt = wtype.getRoundExtAV();
-            int maxr = wtype.getMaxRange();
+            int maxr = wtype.getMaxRange(null);
 
             // change range and attack values based upon ammo
             if (null != wAmmo) {
@@ -1763,7 +1763,7 @@ public class MechDisplay extends BufferedPanel {
                     double mAVMed = bayWType.getMedAV();
                     double mAVLong = bayWType.getLongAV();
                     double mAVExt = bayWType.getExtAV();
-                    int mMaxR = bayWType.getMaxRange();
+                    int mMaxR = bayWType.getMaxRange(null);
 
                     // deal with any ammo adjustments
                     if (null != m.getLinked()) {

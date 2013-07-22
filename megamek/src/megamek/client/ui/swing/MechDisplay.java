@@ -1740,7 +1740,7 @@ public class MechDisplay extends JPanel {
                 } else {
                     // otherwise I need to replace range display with standard
                     // ranges and attack values
-                    updateAttackValues(wtype, mounted.getLinked());
+                    updateAttackValues(mounted, mounted.getLinked());
                 }
 
             }
@@ -1920,13 +1920,14 @@ public class MechDisplay extends JPanel {
             onResize();
         } // End private void updateRangeDisplayForAmmo( AmmoType )
 
-        private void updateAttackValues(WeaponType wtype, Mounted ammo) {
+        private void updateAttackValues(Mounted weapon, Mounted ammo) {
+            WeaponType wtype = (WeaponType) weapon.getType();
             // update Attack Values and change range
             int avShort = wtype.getRoundShortAV();
             int avMed = wtype.getRoundMedAV();
             int avLong = wtype.getRoundLongAV();
             int avExt = wtype.getRoundExtAV();
-            int maxr = wtype.getMaxRange();
+            int maxr = wtype.getMaxRange(weapon);
 
             // change range and attack values based upon ammo
             if (null != ammo) {
@@ -2112,7 +2113,7 @@ public class MechDisplay extends JPanel {
                     double mAVMed = bayWType.getMedAV();
                     double mAVLong = bayWType.getLongAV();
                     double mAVExt = bayWType.getExtAV();
-                    int mMaxR = bayWType.getMaxRange();
+                    int mMaxR = bayWType.getMaxRange(m);
 
                     // deal with any ammo adjustments
                     if (null != m.getLinked()) {
@@ -2219,22 +2220,38 @@ public class MechDisplay extends JPanel {
                 }
                 Mounted mWeap = entity.getWeaponList().get(n);
                 Mounted oldWeap = mWeap;
+                Mounted oldAmmo = mWeap.getLinked();
+                Mounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
                 // if this is a weapon bay, then this is not what we want
                 boolean isBay = false;
                 if (mWeap.getType() instanceof BayWeapon) {
-                    // this is not the weapon we are looking for
                     isBay = true;
                     n = m_chBayWeapon.getSelectedIndex();
                     if (n == -1) {
                         return;
                     }
-                    mWeap = entity.getEquipment(mWeap.getBayWeapons()
+                    //
+                    Mounted sWeap = entity.getEquipment(mWeap.getBayWeapons()
                             .elementAt(n));
+                    //cycle through all weapons of the same type and load with this ammo
+                    for(int wid : mWeap.getBayWeapons()) {
+                        Mounted bWeap = entity.getEquipment(wid);
+                        if(bWeap.getType().equals(sWeap.getType())) {
+                            entity.loadWeapon(bWeap, mAmmo);
+                            // Alert the server of the update.
+                            clientgui.getClient().sendAmmoChange(entity.getId(),
+                                    entity.getEquipmentNum(bWeap),
+                                    entity.getEquipmentNum(mAmmo));
+                        }
+                    }
+                } else {             
+                    entity.loadWeapon(mWeap, mAmmo);
+                    // Alert the server of the update.
+                    clientgui.getClient().sendAmmoChange(entity.getId(),
+                            entity.getEquipmentNum(mWeap),
+                            entity.getEquipmentNum(mAmmo));
                 }
-
-                Mounted oldAmmo = mWeap.getLinked();
-                Mounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
-                entity.loadWeapon(mWeap, mAmmo);
+                
 
                 // Refresh for hot load change
                 if ((((oldAmmo == null) || !oldAmmo.isHotLoaded()) && mAmmo
@@ -2246,7 +2263,7 @@ public class MechDisplay extends JPanel {
                     weaponList.ensureIndexIsVisible(n);
                     displaySelected();
                 }
-
+                
                 // Update the range display to account for the weapon's loaded
                 // ammo.
                 updateRangeDisplayForAmmo(mAmmo);
@@ -2257,7 +2274,7 @@ public class MechDisplay extends JPanel {
                     } else {
                         // otherwise I need to replace range display with
                         // standard ranges and attack values
-                        updateAttackValues(wtype, mAmmo);
+                        updateAttackValues(mWeap, mAmmo);
                     }
                 }
 
@@ -2269,10 +2286,6 @@ public class MechDisplay extends JPanel {
                 } else if (clientgui.curPanel instanceof TargetingPhaseDisplay) {
                     ((TargetingPhaseDisplay) clientgui.curPanel).updateTarget();
                 }
-                // Alert the server of the update.
-                clientgui.getClient().sendAmmoChange(entity.getId(),
-                        entity.getEquipmentNum(mWeap),
-                        entity.getEquipmentNum(mAmmo));
                 displaySelected();
             } else if (ev.getSource().equals(m_chBayWeapon)
                     && (m_chBayWeapon.getItemCount() > 0)) {

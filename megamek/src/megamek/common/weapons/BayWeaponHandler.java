@@ -229,7 +229,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
-        nDamPerHit = calcDamagePerHit();
+        nDamPerHit = calcAttackValue();
         addHeat();
 
         // Any necessary PSRs, jam checks, etc.
@@ -268,13 +268,13 @@ public class BayWeaponHandler extends WeaponHandler {
             return false;
         }
         if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
-            handleClearDamage(vPhaseReport, bldg, calcAttackValue());
+            handleClearDamage(vPhaseReport, bldg, nDamPerHit);
             return false;
         }
         // Targeting a building.
         if (target.getTargetType() == Targetable.TYPE_BUILDING) {
             // The building takes the full brunt of the attack
-            handleBuildingDamage(vPhaseReport, bldg, calcAttackValue(),
+            handleBuildingDamage(vPhaseReport, bldg, nDamPerHit,
                     target.getPosition());
             return false;
         }

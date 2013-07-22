@@ -1201,7 +1201,8 @@ public class Game implements Serializable, IGame {
                 lastEntityId = id;
             }
 
-            processGameEvent(new GameEntityChangeEvent(this, entity, movePath));
+            processGameEvent(
+                    new GameEntityChangeEvent(this,entity,movePath,oldEntity));
         }
         assert (entities.size() == entityIds.size()) : "Set Entity Failed";
     }

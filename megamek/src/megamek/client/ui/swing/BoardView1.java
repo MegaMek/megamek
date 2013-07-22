@@ -1861,11 +1861,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity) {
+        redrawEntity(entity,null);
+    }
+    
+    /**
+     * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
+     * the old sprite with the new! Takes a reference to the Entity object 
+     * before changes, in case it contained important state information, like 
+     * Dropships taking off (airborne dropships lose their secondary hexes).  
+     * Try to prevent annoying ConcurrentModificationExceptions
+     */
+    public void redrawEntity(Entity entity, Entity oldEntity) {
         Integer entityId = new Integer(entity.getId());
+        if (oldEntity == null){
+            oldEntity = entity;
+        }                    
 
         if (entity.getPosition() == null) {
-            for (Iterator<EntitySprite> spriteIter = entitySprites.iterator(); spriteIter
-                    .hasNext();) {
+            for (Iterator<EntitySprite> spriteIter = entitySprites.iterator(); 
+                    spriteIter.hasNext();) {
                 EntitySprite sprite = spriteIter.next();
                 if (sprite.entity.equals(entity)) {
                     spriteIter.remove();
@@ -1914,7 +1928,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (isoSprite != null) {
             isoSprites.remove(isoSprite);
         }
-        for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
+        for (int secondaryPos : oldEntity.getSecondaryPositions().keySet()) {
             temp = new ArrayList<Integer>();
             temp.add(entityId);
             temp.add(secondaryPos);
@@ -5994,7 +6008,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             } else {
-                redrawEntity(e.getEntity());
+                redrawEntity(e.getEntity(),e.getOldEntity());
             }
         }
 

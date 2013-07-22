@@ -3588,6 +3588,7 @@ public class Server implements Runnable {
                 if ((bldg != null)) {
                     bldgAbsorbs = bldg.getAbsorbtion(pos);
                     addReport(damageBuilding(bldg, Compute.d6(damageDice), pos));
+                    addAffectedBldg(bldg,false);
                 }
 
                 // get units in hex
@@ -3650,6 +3651,20 @@ public class Server implements Runnable {
                                 DamageType.NONE, false, true, false));
                         hits -= Math.min(5, hits);
                     }
+                    // Has the target been destroyed?
+                    if (entity.isDoomed()) {
+                        // Has the target taken a turn?
+                        if (!entity.isDone()) {
+                            // Dead entities don't take turns.
+                            game.removeTurnFor(entity);
+                            send(createTurnVectorPacket());
+                        } // End target-still-to-move
+                        // Clean out the entity.
+                        entity.setDestroyed(true);
+                        game.moveToGraveyard(entity.getId());
+                        send(createRemoveEntityPacket(entity.getId()));
+                    }
+                    entityUpdate(entity.getId());
                 }
             }
         }

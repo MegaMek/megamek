@@ -168,7 +168,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             current_av = Math.floor(0.6 * current_av);
         } else if (AmmoType.T_ATM == atype.getAmmoType()) {
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-                current_av = bayWType.getExtAV() / 2;
+                current_av = bayWType.getShortAV() / 2;
             } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                 current_av = 1.5 * current_av;
                 if (range > WeaponType.RANGE_SHORT) {

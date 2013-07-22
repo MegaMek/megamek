@@ -374,7 +374,25 @@ public class WeaponType extends EquipmentType {
         return waterExtremeRange;
     }
 
-    public int getMaxRange() {
+    public int getMaxRange(Mounted weapon) {
+        if(null != weapon) {
+            if (getAmmoType() == AmmoType.T_ATM) {
+                AmmoType atype = (AmmoType) weapon.getLinked().getType();
+                if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+                    return RANGE_EXT;
+                } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) {
+                    return RANGE_SHORT;
+                }
+            }
+            if (getAmmoType() == AmmoType.T_MML) {
+                AmmoType atype = (AmmoType) weapon.getLinked().getType();
+                if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
+                    return RANGE_LONG;
+                } else {
+                    return RANGE_SHORT;
+                }
+            }
+        }      
         return maxRange;
     }
 

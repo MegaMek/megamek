@@ -17,8 +17,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -55,5 +58,21 @@ public abstract class BayWeapon extends Weapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new BayWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public int getMaxRange(Mounted weapon) {
+        int mrange = RANGE_SHORT;
+        Entity ae = weapon.getEntity();
+        if(null != ae) {
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted bayW = ae.getEquipment(wId);
+                WeaponType bayWType = (WeaponType) bayW.getType();
+                if (bayWType.getMaxRange(bayW) > mrange) {
+                    mrange = bayWType.getMaxRange(bayW);
+                }
+            }
+        }
+        return mrange;
     }
 }

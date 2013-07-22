@@ -780,7 +780,7 @@ public class Compute {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon can only fire underwater.");
         }
 
-        // if Aero then adjust to stanard ranges
+        // if Aero then adjust to standard ranges
         if (ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard().onGround())) {
             weaponRanges = wtype.getATRanges();
         }
@@ -789,18 +789,8 @@ public class Compute {
         int distance = Compute.effectiveDistance(game, ae, target, false);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange);
 
-        int maxRange = wtype.getMaxRange();
-        // if this is a weapon bay I need to cycle through weapons
-        if (wtype instanceof BayWeapon) {
-            for (int wId : weapon.getBayWeapons()) {
-                Mounted bayW = ae.getEquipment(wId);
-                WeaponType bayWType = (WeaponType) bayW.getType();
-                if (bayWType.getMaxRange() > maxRange) {
-                    maxRange = bayWType.getMaxRange();
-                }
-            }
-        }
-
+        int maxRange = wtype.getMaxRange(weapon);
+        
         // if aero and greater than max range then swith to range_out
         if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard().onGround())) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;

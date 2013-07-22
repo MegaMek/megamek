@@ -1732,6 +1732,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Machine Gun";
         ammo.setInternalName("IS Ammo MG - Full");
         ammo.addLookupName("ISMG Ammo (200)");
+        ammo.addLookupName("ISMG Ammo Full");
         ammo.addLookupName("IS Machine Gun Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
@@ -1758,6 +1759,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Machine Gun Ammo - Half");
         ammo.addLookupName("IS Ammo MG - Half");
         ammo.addLookupName("ISMG Ammo (100)");
+        ammo.addLookupName("ISMG Ammo Half");
         ammo.addLookupName("IS Machine Gun Ammo (1/2 ton)");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
@@ -3222,6 +3224,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Light Gauss Ammo");
         ammo.addLookupName("ISLightGauss Ammo");
         ammo.addLookupName("IS Light Gauss Rifle Ammo");
+        ammo.addLookupName("ISLightGaussRifle Ammo");
         ammo.damagePerShot = 8;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS_LIGHT;
@@ -8968,6 +8971,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "White Shark Ammo";
         ammo.setInternalName("Ammo White Shark");
         ammo.addLookupName("WhiteShark Ammo");
+        ammo.addLookupName("White Shark Ammo");
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_WHITE_SHARK;
         ammo.shots = 1;
@@ -9421,6 +9425,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Piranha Ammo";
         ammo.setInternalName("Ammo Piranha");
         ammo.addLookupName("Piranha Ammo");
+        ammo.addLookupName("PiranhaAmmo");
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_PIRANHA;
         ammo.shots = 1;

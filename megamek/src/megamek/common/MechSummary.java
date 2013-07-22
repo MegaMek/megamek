@@ -16,6 +16,10 @@ package megamek.common;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Vector;
+
 
 /**
  * Contains minimal information about a single entity
@@ -47,6 +51,33 @@ public class MechSummary implements Serializable {
     private int walkMp;
     private int runMp;
     private int jumpMp;
+    private int totalArmor;
+    private int totalInternal;
+    private int cockpitType;
+
+    /** Stores the type of internal structure on this unit **/
+    private int internalsType;
+    /**
+     * Each location can have a separate armor type, but this is used for 
+     * search purposes we we really only care about which types are present.
+     */
+    private HashSet<Integer> armorType;
+    
+    
+    public MechSummary(){
+        armorType = new HashSet<Integer>();
+    }
+    
+    /**
+     * Store a unique list of the names of the equipment mounted on this unit.
+     */
+    private Vector<String> equipmentNames;
+    
+    /**
+     * The number of times the piece of equipment in the corresponding 
+     * <code>equipmentNames</code> list appears.
+     */
+    private Vector<Integer> equipmentQuantities;
 
     public String getName() {
         return (m_sName);
@@ -259,6 +290,91 @@ public class MechSummary implements Serializable {
     public void setJumpMp(int jumpMp) {
         this.jumpMp = jumpMp;
     }
+    
+    /**
+     * Given the list of equipment mounted on this unit, parse it into a unique
+     * list of names and the number of times that name appears.
+     * 
+     * @param mountedList A collection of <code>Mounted</code> equipment
+     */
+    public void setEquipment(List<Mounted> mountedList)
+    {
+        equipmentNames = new Vector<String>(mountedList.size());
+        equipmentQuantities = new Vector<Integer>(mountedList.size());
+        for (Mounted mnt : mountedList)
+        {
+            String eqName = mnt.getType().getName();
+            int index = equipmentNames.indexOf(eqName);
+            if (index == -1){ //We aven't seen this piece of equipment before
+                equipmentNames.add(eqName);
+                equipmentQuantities.add(1);
+            }else{ //We've seen this before, update count
+                equipmentQuantities.set(index, equipmentQuantities.get(index)+1);
+            }               
+        }
+        
+    }
+    
+    public Vector<String> getEquipmentNames()
+    {
+        return equipmentNames;
+    }
+    
+    public Vector<Integer> getEquipmentQuantities()
+    {
+        return equipmentQuantities;
+    }
+
+    public void setTotalArmor(int totalArmor) {
+        this.totalArmor = totalArmor;
+    }
+
+    public int getTotalArmor() {
+        return totalArmor;
+    }
+
+    public void setTotalInternal(int totalInternal) {
+        this.totalInternal = totalInternal;
+    }
+
+    public int getTotalInternal() {
+        return totalInternal;
+    }
+
+    public void setInternalsType(int internalsType) {
+        this.internalsType = internalsType;
+    }
+
+    public int getInternalsType() {
+        return internalsType;
+    }
+
+    /**
+     * Takes the armor type at all locations and creates a set of the armor 
+     * types.
+     * 
+     * @param locsArmor  An array that stores the armor type at each location.
+     */
+    public void setArmorType(int[] locsArmor) {
+        armorType.clear();
+        for (int i = 0; i < locsArmor.length; i++){
+            armorType.add(locsArmor[i]);
+        }
+        
+    }
+
+    public HashSet<Integer> getArmorType() {
+        return armorType;
+    }
+
+    public void setCockpitType(int cockpitType) {
+        this.cockpitType = cockpitType;
+    }
+
+    public int getCockpitType() {
+        return cockpitType;
+    }
+
 
     @Override
     public boolean equals(Object other) {

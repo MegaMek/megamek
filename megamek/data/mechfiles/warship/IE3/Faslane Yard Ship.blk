@@ -1,0 +1,260 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Faslane Yard Ship
+</Name>
+
+<Tonnage>
+550000
+</Tonnage>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<Armor>
+16
+12
+12
+9
+9
+8
+</Armor>
+
+<Nose Equipment>
+MediumNPPC
+NAC10
+NAC10 Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48
+ISMobileHPG
+</Nose Equipment>
+
+<Front Left Side Equipment>
+MediumNPPC
+NAC10
+NAC10 Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+MediumNPPC
+NAC10
+NAC10 Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+MediumNPPC
+NAC20
+NAC20 Ammo:166
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+MediumNPPC
+NAC20
+NAC20 Ammo:166
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+MediumNPPC
+NAC10
+NAC10 Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+MediumNPPC
+NAC10
+NAC10 Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+MediumNPPC
+NAC10
+NAC10 Ammo:100
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-Capable:48 
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<heatsinks>
+817
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2882
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+20
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:2:1
+CargoBay:136811:1
+</transporters>
+
+<docking_collar>
+2
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+10
+</escape_pod>
+
+<life_boat>
+10
+</life_boat>
+
+<crew>
+201
+</crew>
+
+<passengers>
+90
+</passengers>
+
+<history>
+Unit is equipped with a Unpressurized Repair Facility with a 2,000,000 Ton Capacity.  Repair Facility are not coded into MegaMek so unit is included for completeness
+</history>

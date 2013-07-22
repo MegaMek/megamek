@@ -1,0 +1,121 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Tsuru VIP Aircraft
+</Name>
+
+<Tonnage>
+100
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+24
+24
+24
+31
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISChaffPod
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISChaffPod
+</Right Wing Equipment>
+
+<Body Equipment>
+Armored Chassis
+STOLChassisMod
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+Ejection Seat
+CommsGear:3
+</Body Equipment>
+
+<Aft Equipment>
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
+
+<transporters>
+cargobay:15:1
+1stclassquarters:10:1
+</transporters>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3021
+</year>
+
+<source>
+XTR Succession Wars
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<barrating>
+10
+</barrating>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<vstol>
+1
+</vstol>

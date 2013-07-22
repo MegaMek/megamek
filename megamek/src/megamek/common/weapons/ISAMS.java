@@ -39,6 +39,7 @@ public class ISAMS extends AmmoWeapon {
         setInternalName("ISAntiMissileSystem");
         addLookupName("IS Anti-Missile System");
         addLookupName("IS AMS");
+        addLookupName("ISAMS");
         heat = 1;
         rackSize = 2;
         damage = 1; // # of d6 of missiles affected

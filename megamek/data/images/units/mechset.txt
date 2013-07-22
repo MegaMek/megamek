@@ -267,6 +267,7 @@ chassis "McKenna Battleship" "warships/mckenna.gif"
 chassis "Mjolnir Battlecruiser" "warships/mjolnir.gif"
 chassis "Monsoon Battleship" "warships/monsoon.gif"
 chassis "Naga Destroyer" "warships/naga_warship.gif"
+exact "Naga (Caspar II Control Ship)" "warships/naga_warship.gif"
 chassis "Nightlord Battleship" "warships/nightlord.gif"
 chassis "Potemkin Troop Cruiser" "warships/potemkin.gif"
 chassis "Quixote Frigate" "warships/quixote.gif"
@@ -285,6 +286,7 @@ chassis "Whirlwind Destroyer" "warships/whirlwind.gif"
 chassis "York Destroyer/Carrier" "warships/york.gif"
 chassis "Zechetinu Corvette" "warships/zechetinu.gif"
 chassis "Zechetinu II Corvette" "warships/zechetinu.gif"
+
 
 # Infantry
 chassis "Achileus Light Battle Armor" "battle armor/achileus(4).gif"
@@ -320,6 +322,7 @@ chassis "Clan Medium Battle Armor" "battle armor/Clan Medium.gif"
 #chassis "Clan Motorized Combat Engineers"
 chassis "Clan Motorized Point" "Infantry/motorized_infantry.gif"
 chassis "Clan Motorized Squad" "Infantry/motorized_infantry.gif"
+exact "Commando CCAF Battlefield Infiltration Units" "Infantry/jump_infantry.gif"
 chassis "Corona Battle Armor" "battle armor/corona.gif"
 chassis "Djinn Battle Armor" "battle armor/Djinn.gif"
 chassis "Elemental Battle Armor" "battle armor/elementals.gif"
@@ -423,7 +426,6 @@ chassis "Void Medium Battle Armor" "battle armor/void.gif"
 exact "Void Medium Battle Armor (Nova Cat)" "battle armor/void nova cat.gif"
 chassis "Warg Assault Battle Armor" "battle armor/warg.gif"
 chassis "Ying Long Medium Battle Armor" "battle armor/yinglong.gif"
-
 
 #Gun Emplacements
 exact "AC Turret AC2" "GunEmplacements/light_ac_turret.gif"

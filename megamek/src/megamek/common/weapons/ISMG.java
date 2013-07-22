@@ -37,6 +37,7 @@ public class ISMG extends MGWeapon {
         this.setInternalName(this.name);
         this.addLookupName("IS Machine Gun");
         this.addLookupName("ISMachine Gun");
+        this.addLookupName("ISMG");
         this.heat = 0;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;

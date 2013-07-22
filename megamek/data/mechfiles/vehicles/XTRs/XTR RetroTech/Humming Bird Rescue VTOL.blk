@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-VTOL
+SupportVTOL
 </UnitType>
 
 <Name>
@@ -57,9 +57,6 @@ VTOL
 
 
 <Body Equipment>
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (0.5 tons)
 </Body Equipment>
 
 <Front Equipment>
@@ -79,6 +76,10 @@ Lift Hoist
 
 <Rotor Equipment>
 </Rotor Equipment>
+
+<transporters>
+cargobay:2.5:1
+</transporters>
 
 <source>
 XTR RetroTech

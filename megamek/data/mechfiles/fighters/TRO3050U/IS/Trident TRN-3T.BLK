@@ -38,96 +38,64 @@ TRN-3T
 </Tonnage>
 
 <SafeThrust>
-
 12
-
 </SafeThrust>
 
 <Armor>
-
 10
-
 10
-
 10
-
 5
-
 </Armor>
 
 <Nose Equipment>
-
 ISMediumLaser 
-
 </Nose Equipment>
 
 <Left Wing Equipment> 
-
 ISMediumLaser
-
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-
 ISMediumLaser 
-
 </Right Wing Equipment>
 
 <Aft Equipment> 
-
 ISSmallLaser
-
 </Aft Equipment>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 240
-
 </fuel>
 
 <type>
-
 IS Level 2
-
 </type>
 
 <year>
-
 2717
-
 </year>
 
 <internal_type>
-
 0
-
 </internal_type>
 
 <armor_type>
-
 19
 </armor_type>
 
 <engine_type>
-
 0
-
 </engine_type>
 
 <motion_type>
-
 aerodyne
-
 </motion_type>

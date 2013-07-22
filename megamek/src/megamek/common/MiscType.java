@@ -4304,7 +4304,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(Sensor.CLAN_AP);
         misc.addLookupName("Active Probe");
         misc.addLookupName("Clan Active Probe");
-        misc.tonnage = 1;
+        misc.addLookupName("ClActiveProbe");
+                misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)

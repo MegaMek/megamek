@@ -9,56 +9,52 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportVTOL
 </UnitType>
 
 <Name>
-Enyo
+Lexan Surveillance VTOL
 </Name>
 
 <Model>
-XR
+(Production)
 </Model>
 
 <year>
-3075
+3080
 </year>
 
 <type>
-Clan Level 4
+IS Level 3
 </type>
 
 <motion_type>
-Tracked
+VTOL
 </motion_type>
 
 <cruiseMP>
-7
+12
 </cruiseMP>
 
 <engine_type>
-3
+0
 </engine_type>
 
-<armor_type>
-1
-</armor_type>
-
-<armor_tech>
-8
-</armor_tech>
-
 <armor>
-29
-25
-25
-25
-20
+5
+3
+3
+2
+2
+2
 </armor>
 
+<barrating>
+10
+</barrating>
+
 <Body Equipment>
-CLSuperCharger
-CLArmoredMotiveSystem
+ISGuardianECM
 </Body Equipment>
 
 <Front Equipment>
@@ -73,15 +69,20 @@ CLArmoredMotiveSystem
 <Rear Equipment>
 </Rear Equipment>
 
+<Rotor Equipment>
+</Rotor Equipment>
+
 <Turret Equipment>
-CLERLargePulseLaser
+Small Laser
+Small Laser
+ISReconCamera
 </Turret Equipment>
 
 <source>
-XTR Clans
+TRO:Prototypes
 </source>
 
 <tonnage>
-55.0
+17.0
 </tonnage>
 

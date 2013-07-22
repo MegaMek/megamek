@@ -1,83 +1,86 @@
 #building block data file
+
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
+
 <Version>
 MAM0
 </Version>
 
 <UnitType>
-SmallCraft
+Aero
 </UnitType>
 
 <Name>
-Ares
+Scytha
 </Name>
 
 <Model>
-Landing Craft
+E
 </Model>
 
 <Tonnage>
-150
+90
 </Tonnage>
 
 <SafeThrust>
-3
+6
 </SafeThrust>
 
 <Armor>
-76
-75
-75
-55
+89
+66
+66
+47
 </Armor>
 
 <Nose Equipment>
-ISMediumLaser
-ISMediumLaser
+ClActiveProbe
+CLECMSuite
+CLERMediumLaser
+CLERMediumLaser
+CLERPPC
 </Nose Equipment>
 
-<Left Side Equipment>
-IS LRM-15 Primitive
-ISLRM15p Ammo
-ISLRM15p Ammo
-</Left Side Equipment>
+<Left Wing Equipment>
+CLHAG30
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLHAG30 Ammo
+</Left Wing Equipment>
 
-<Right Side Equipment>
-IS LRM-15 Primitive
-ISLRM15p Ammo
-ISLRM15p Ammo
-</Right Side Equipment>
+<Right Wing Equipment>
+CLHAG30
+CLHAG30 Ammo
+CLHAG30 Ammo
+CLHAG30 Ammo
+</Right Wing Equipment>
 
-<Aft Equipment> 
-ISMediumLaser
-ISMediumLaser
+<Aft Equipment>
+CLERSmallLaser
 </Aft Equipment>
 
-<structural_integrity>
-6
-</structural_integrity>
-
 <heatsinks>
-16
+20
 </heatsinks>
 
 <sink_type>
-0
+1
 </sink_type>
 
 <fuel>
-480
+320
 </fuel>
 
 <type>
-IS Level 5
+Clan Level 2
 </type>
 
 <year>
-2438
+3073
 </year>
 
 <internal_type>
@@ -85,20 +88,16 @@ IS Level 5
 </internal_type>
 
 <armor_type>
-17
+19
 </armor_type>
+
 <engine_type>
-0
+2
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
-<transporters>
-CargoBay:65:2
-</transporters>
-<crew>
-4
-</crew>
-<passengers>
-0
-</passengers>
+
+<omni>
+</omni>

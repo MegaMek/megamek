@@ -28,18 +28,18 @@ Procyon
 </cruiseMP>
 
 <Armor>
-2
-6
-8
-8
-8
+4
+12
+14
+14
+14
 </Armor>
 
 <Torso Equipment>
 CLAPGaussRifle
 CLAPGaussRifle
-CLSRM1
-CLSRM1 Ammo (10)
+CLSRM2
+CLSRM2 Ammo (10)
 CLAPGaussRifle Ammo (32)
 </Torso Equipment>
 

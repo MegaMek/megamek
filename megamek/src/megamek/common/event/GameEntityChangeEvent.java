@@ -28,6 +28,7 @@ import megamek.common.UnitLocation;
 public class GameEntityChangeEvent extends GameEntityEvent {
     private static final long serialVersionUID = -7241101183271789555L;
     protected Vector<UnitLocation> movePath;
+    protected Entity oldEntity;
 
     /**
      * Constructs new GameEntityChangeEvent
@@ -49,6 +50,23 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     public GameEntityChangeEvent(final Object source, final Entity entity,
             final Vector<UnitLocation> movePath) {
         super(source, entity);
+        oldEntity = null;
+        this.movePath = movePath;
+    }
+    
+    /**
+     * Constructs new GameEntityChangeEvent, storing the entity prior to changes.
+     * This old entity may be needed in certain cases, like when a Dropship is
+     * taking off, since some of the old state is important.
+     * 
+     * @param source
+     * @param entity
+     * @param movePath
+     */
+    public GameEntityChangeEvent(final Object source, final Entity entity,
+            final Vector<UnitLocation> movePath, Entity oldEntity) {
+        super(source, entity);
+        this.oldEntity = oldEntity;
         this.movePath = movePath;
     }
 
@@ -59,6 +77,10 @@ public class GameEntityChangeEvent extends GameEntityEvent {
         return movePath;
     }
 
+    public Entity getOldEntity() {
+        return oldEntity;
+    }  
+    
     @Override
     public String toString() {
     	if (movePath == null)

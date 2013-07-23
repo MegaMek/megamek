@@ -937,7 +937,7 @@ public class AmmoType extends EquipmentType {
         isBaLrmAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createBAISLRM5Ammo();
-        clanBaLrmAmmos.add(base);
+        isBaLrmAmmos.add(base);
         EquipmentType.addType(base);
         base = AmmoType.createBACLLRM1Ammo();
         clanBaLrmAmmos.add(base);
@@ -1138,6 +1138,7 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(srmAmmos, munitions);
+        AmmoType.createMunitions(baSrmAmmos, munitions);
 
         // Create the munition types for Clan SRM launchers.
         munitions.clear();
@@ -1169,11 +1170,10 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanSrmAmmos, munitions);
+        AmmoType.createMunitions(baSrmAmmos, munitions);
 
         // Create the munition types for BA SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO,
-                TechConstants.T_ALLOWED_ALL));
         munitions.add(new MunitionMutator("Torpedo", 1, M_TORPEDO,
                 TechConstants.T_ALLOWED_ALL));
 
@@ -1242,6 +1242,7 @@ public class AmmoType extends EquipmentType {
         // mutators, and create munition types.
         AmmoType.createMunitions(lrmAmmos, munitions);
         AmmoType.createMunitions(enhancedlrmAmmos, munitions);
+        AmmoType.createMunitions(isBaLrmAmmos, munitions);
 
         // Create the munition types for Clan LRM launchers.
         munitions.clear();
@@ -1285,7 +1286,8 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanLrmAmmos, munitions);
-
+        AmmoType.createMunitions(clanBaLrmAmmos, munitions);
+        
         // Create the munition types for AC rounds.
         munitions.clear();
         munitions.add(new MunitionMutator("Precision", 2, M_PRECISION,

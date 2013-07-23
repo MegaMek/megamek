@@ -3479,7 +3479,7 @@ public class Server implements Runnable {
         }
     }
 
-    private void applyDropshipLandingDamage(Coords centralPos) {
+    private void applyDropshipLandingDamage(Coords centralPos, Entity killer) {
 
         // first cycle through hexes to figure out final elevation
         IHex centralHex = game.getBoard().getHex(centralPos);
@@ -3520,11 +3520,11 @@ public class Server implements Runnable {
             sendChangedHex(pos);
         }
 
-        applyDropshipProximityDamage(centralPos);
+        applyDropshipProximityDamage(centralPos, killer);
     }
 
-    private void applyDropshipProximityDamage(Coords centralPos) {
-        applyDropshipProximityDamage(centralPos, false, 0);
+    private void applyDropshipProximityDamage(Coords centralPos, Entity killer) {
+        applyDropshipProximityDamage(centralPos, false, 0, killer);
     }
 
     /**
@@ -3535,7 +3535,9 @@ public class Server implements Runnable {
      *            - the Coords for the central position of the dropship
      */
     private void applyDropshipProximityDamage(Coords centralPos,
-            boolean rearArc, int facing) {
+            boolean rearArc, int facing, Entity killer) {
+
+        Vector<Integer> alreadyHit = new Vector<Integer>();
 
         // anything in the central hex or adjacent hexes is destroyed
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
@@ -3545,6 +3547,7 @@ public class Server implements Runnable {
             if (!en.isAirborne()) {
                 addReport(destroyEntity(en, "dropship proximity damage", false,
                         false));
+                alreadyHit.add(en.getId());
             }
         }
         Building bldg = game.getBoard().getBuildingAt(centralPos);
@@ -3560,6 +3563,7 @@ public class Server implements Runnable {
                     addReport(destroyEntity(en, "dropship proximity damage",
                             false, false));
                 }
+                alreadyHit.add(en.getId());
             }
             bldg = game.getBoard().getBuildingAt(pos);
             if (null != bldg) {
@@ -3567,7 +3571,7 @@ public class Server implements Runnable {
             }
         }
 
-        Report r;
+        //Report r;
         // ok now I need to look at the damage rings - start at 2 and go to 7
         for (int i = 2; i < 8; i++) {
             int damageDice = (8 - i) * 2;
@@ -3578,10 +3582,15 @@ public class Server implements Runnable {
                                 Compute.ARC_AFT)) {
                     continue;
                 }
+                
+                alreadyHit = artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(), killer, null, false, 0, vPhaseReport, false, alreadyHit, true);
+                
+                /*
                 IHex hex = game.getBoard().getHex(pos);
                 if (null == hex) {
                     continue;
                 }
+                
                 // code borrowed heavily from artilleryDamageHex
                 bldg = game.getBoard().getBuildingAt(pos);
                 int bldgAbsorbs = 0;
@@ -3666,6 +3675,7 @@ public class Server implements Runnable {
                     }
                     entityUpdate(entity.getId());
                 }
+                */
             }
         }
     }
@@ -5721,7 +5731,7 @@ public class Server implements Runnable {
             a.liftOff(1);
             if (entity instanceof Dropship) {
                 applyDropshipProximityDamage(md.getFinalCoords(), true,
-                        md.getFinalFacing());
+                        md.getFinalFacing(), entity);
             }
             checkForTakeoffDamage(a);
             a.setPosition(a.getPosition().translated(a.getFacing(),
@@ -5738,7 +5748,7 @@ public class Server implements Runnable {
                 a.setCurrentVelocity(0);
                 a.liftOff(1);
                 if (entity instanceof Dropship) {
-                    applyDropshipProximityDamage(md.getFinalCoords());
+                    applyDropshipProximityDamage(md.getFinalCoords(), a);
                 }
                 checkForTakeoffDamage(a);
             }
@@ -5767,7 +5777,7 @@ public class Server implements Runnable {
                     md.getFinalVelocity(), md.getFinalCoords());
             doAttemptLanding(entity, rollTarget);
             if (entity instanceof Dropship) {
-                applyDropshipLandingDamage(md.getFinalCoords());
+                applyDropshipLandingDamage(md.getFinalCoords(), a);
             }
             a.land();
             entity.setPosition(md.getFinalCoords());
@@ -29681,15 +29691,22 @@ public class Server implements Runnable {
      *            The Vector of Reports for the phasereport
      * @param asfFlak
      *            Is this flak against ASF?
+     * @param alreadyHit 
+     *          a vector of unit ids for units that have already been hit that will be ignored
+     * @param variableDamage
+     *          if true, treat damage as the number of six-sided dice to roll
      */
-    void artilleryDamageHex(Coords coords, Coords attackSource, int damage,
+    public Vector<Integer> artilleryDamageHex(Coords coords, Coords attackSource, int damage,
             AmmoType ammo, int subjectId, Entity killer, Entity exclude,
             boolean flak, int altitude, Vector<Report> vPhaseReport,
-            boolean asfFlak) {
+            boolean asfFlak, Vector<Integer> alreadyHit, boolean variableDamage) {
 
+        //TODO: pass in a vector of unit ids that give units already hit and then pass it out
+        //an updated one. Don't apply damage to a unit if it is already hit.
+        
         IHex hex = game.getBoard().getHex(coords);
         if (hex == null) {
-            return; // not on board.
+            return alreadyHit; // not on board.
         }
 
         Report r;
@@ -29719,7 +29736,7 @@ public class Server implements Runnable {
                         || (altitude <= hex.terrainLevel(Terrains.BLDG_ELEV)) || (altitude == hex
                         .terrainLevel(Terrains.BRIDGE_ELEV)))) {
             // Flak in this hex would only hit landed units
-            return;
+            return alreadyHit;
         }
 
         // get units in hex
@@ -29727,6 +29744,9 @@ public class Server implements Runnable {
                 .hasMoreElements();) {
             Entity entity = impactHexHits.nextElement();
             int hits = damage;
+            if(variableDamage) {
+                hits = Compute.d6(damage);
+            }
             ToHitData toHit = new ToHitData();
             if (entity instanceof Protomech) {
                 toHit.setHitTable(ToHitData.HIT_SPECIAL_PROTO);
@@ -29734,7 +29754,7 @@ public class Server implements Runnable {
             int cluster = 5;
 
             // Check: is entity excluded?
-            if (entity == exclude) {
+            if (entity == exclude || alreadyHit.contains(entity.getId())) {
                 continue;
             }
 
@@ -29927,6 +29947,8 @@ public class Server implements Runnable {
                     }
                 }
             }
+            
+            alreadyHit.add(entity.getId());
 
             // Do the damage
             r = new Report(6480);
@@ -29963,6 +29985,8 @@ public class Server implements Runnable {
                 creditKill(entity, killer);
             }
         }
+        
+        return alreadyHit;
     }
 
     /**
@@ -30064,11 +30088,12 @@ public class Server implements Runnable {
             AmmoType ammo, int subjectId, Entity killer, int damage,
             int falloff, boolean flak, int altitude,
             Vector<Report> vPhaseReport, boolean asfFlak) {
+        Vector<Integer> alreadyHit = new Vector<Integer>();
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);
             for (Coords c : hexes) {
-                artilleryDamageHex(c, attackSource, damage, ammo, subjectId,
-                        killer, null, flak, altitude, vPhaseReport, asfFlak);
+                alreadyHit = artilleryDamageHex(c, attackSource, damage, ammo, subjectId,
+                            killer, null, flak, altitude, vPhaseReport, asfFlak, alreadyHit, false);
             }
             attackSource = centre; // all splash comes from ground zero
         }
@@ -30082,15 +30107,15 @@ public class Server implements Runnable {
             range = 1;
             damage = 5;
         }
-        artilleryDamageHex(centre, centre, damage, null, subjectId, killer,
-                null, false, 0, vPhaseReport, false);
+        Vector<Integer> alreadyHit = new Vector<Integer>();
+
+        alreadyHit = artilleryDamageHex(centre, centre, damage, null, subjectId, killer,
+                null, false, 0, vPhaseReport, false, alreadyHit, false);
         if (range > 0) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, range);
             for (Coords c : hexes) {
-                // TODO: should probably generalize the artilleryDamageHex
-                // method for bombs and artillery?
-                artilleryDamageHex(c, centre, damage, null, subjectId, killer,
-                        null, false, 0, vPhaseReport, false);
+                alreadyHit = artilleryDamageHex(c, centre, damage, null, subjectId, killer,
+                        null, false, 0, vPhaseReport, false, alreadyHit, false);
             }
         }
     }

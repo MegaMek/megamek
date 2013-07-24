@@ -468,7 +468,7 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_JUMP_JET)) {
-            if (hasSubType(S_IMPROVED)) {
+            if (hasSubType(S_IMPROVED) && !hasSubType(S_PROTOTYPE)) {
                 if (entity.getWeight() <= 55.0f) {
                     return 1.0f;
                 } else if (entity.getWeight() <= 85.0f) {
@@ -1407,6 +1407,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createVSTOLChassisMod());
         EquipmentType.addType(MiscType.createElectricDischargeArmor());
         EquipmentType.addType(MiscType.createISPrototypeJumpJet());
+        EquipmentType.addType(MiscType.createISPrototypeImprovedJumpJet());
         EquipmentType.addType(MiscType.createBoobyTrap());
         EquipmentType.addType(MiscType.createRefuelingDrogue());
         EquipmentType.addType(MiscType.createBulldozer());
@@ -1459,11 +1460,31 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISPrototypeJumpJet() {
+    public static MiscType createISPrototypeImprovedJumpJet() {
         MiscType misc = new MiscType();
 
         misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         misc.name = "Prototype Improved Jump Jet";
+        misc.setInternalName("ISPrototypeImprovedJumpJet");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 0;
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_PROTOTYPE | S_IMPROVED;
+        misc.bv = 0;
+        misc.introDate = 3020;
+        misc.techLevel.put(2464, misc.techLevel.get(3071));
+        misc.availRating = new int[] { EquipmentType.RATING_E,
+                EquipmentType.RATING_X, EquipmentType.RATING_X };
+        misc.techRating = RATING_D;
+        return misc;
+    }
+    
+    public static MiscType createISPrototypeJumpJet() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        misc.name = "Prototype Jump Jet";
         misc.setInternalName("ISPrototypeJumpJet");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
@@ -1477,7 +1498,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_X };
         misc.techRating = RATING_D;
         return misc;
-    }
+    }    
 
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();

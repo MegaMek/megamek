@@ -168,6 +168,9 @@ public abstract class Mech extends Entity {
     public static final int JUMP_BOOSTER = 4;
 
     public static final int JUMP_DISPOSABLE = 5;
+    
+    // Type for Improved Jumpjet Prototype
+    public static final int JUMP_PROTOTYPE_IMPROVED = 6;
 
     // Some "has" items only need be determined once
     public static final int HAS_FALSE = -1;
@@ -1272,7 +1275,10 @@ public abstract class Mech extends Entity {
         jumpType = JUMP_NONE;
         for (Mounted m : miscList) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+                if (m.getType().hasSubType(MiscType.S_IMPROVED) &&
+                        m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
+                    jumpType = JUMP_PROTOTYPE_IMPROVED;
+                }else if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                     jumpType = JUMP_IMPROVED;
                 } else if (m.getType().hasSubType(MiscType.S_PROTOTYPE)) {
                     jumpType = JUMP_PROTOTYPE;
@@ -1307,6 +1313,9 @@ public abstract class Mech extends Entity {
         switch (getJumpType()) {
             case JUMP_IMPROVED:
                 return engine.getJumpHeat((movedMP / 2) + (movedMP % 2));
+            case JUMP_PROTOTYPE_IMPROVED:
+                // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
+                return Math.max(6, engine.getJumpHeat(movedMP*2));
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
             case JUMP_NONE:
@@ -3187,7 +3196,7 @@ public abstract class Mech extends Entity {
             toSubtract *= etype.getCriticals(this);
             ammoPenalty += toSubtract;
         }
-        if (getJumpType() == JUMP_PROTOTYPE) {
+        if (getJumpType() == JUMP_PROTOTYPE_IMPROVED) {
             ammoPenalty += this.getJumpMP(false, true);
         }
         // special case for blueshield, need to check each non-head location

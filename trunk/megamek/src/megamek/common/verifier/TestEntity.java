@@ -978,6 +978,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if ((mech.getJumpType() != Mech.JUMP_STANDARD)
                         && (mech.getJumpType() != Mech.JUMP_NONE)
                         && (mech.getJumpType() != Mech.JUMP_PROTOTYPE)
+                        && (mech.getJumpType() != Mech.JUMP_PROTOTYPE_IMPROVED)
                         && (mech.getJumpType() != Mech.JUMP_BOOSTER)) {
                     buff.append("industrial mechs can only mount standard jump jets or mechanical jump boosters\n");
                     illegal = true;

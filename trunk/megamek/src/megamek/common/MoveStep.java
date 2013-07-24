@@ -2047,12 +2047,20 @@ public class MoveStep implements Serializable {
                         .abs(parent.getEntity().getElevation() - getElevation()) == 1))
                 && (movementType != EntityMovementType.MOVE_JUMP)) {
             movementType = EntityMovementType.MOVE_WALK;
-        }
+        }        
+        
         // Free facing changes are legal
         if (((stepType == MoveStepType.TURN_LEFT) || (stepType == MoveStepType.TURN_RIGHT))
                 && (getMp() == 0)) {
             movementType = prev.movementType;
         }
+        
+        // Mechanical Jump Boosters don't allow facing changes
+        if (parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER &&
+                (stepType == MoveStepType.TURN_LEFT || 
+                 stepType == MoveStepType.TURN_RIGHT)){
+            movementType = EntityMovementType.MOVE_ILLEGAL;                        
+        }        
 
         // going prone from hull down is legal and costs 0
         if ((getMp() == 0) && (stepType == MoveStepType.GO_PRONE)

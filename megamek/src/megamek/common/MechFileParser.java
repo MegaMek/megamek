@@ -552,14 +552,42 @@ public class MechFileParser {
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
+                    
+                    //Handle weapon bays
+                    if (wtype.getBayType().equals(EquipmentType.get("PPC Bay"))){
+                        for (int wId : mWeapon.getBayWeapons())
+                        {
+                            Mounted bayMountedWeapon = ent.getEquipment(wId);
+                            WeaponType bayWeapType = 
+                                    (WeaponType)bayMountedWeapon.getType();
+                            
+                            // Check for PPC that isn't crosslinked
+                            if (!bayWeapType.hasFlag(WeaponType.F_PPC) || 
+                                    bayMountedWeapon.getCrossLinkedBy() != null){
+                                continue;
+                            }
+                            
+                            // check location
+                            if (bayMountedWeapon.getLocation() == 
+                                    m.getLocation()) {
 
-                    // Only PPCS are Valid
-                    if (!wtype.hasFlag(WeaponType.F_PPC)) {
-                        continue;
+                                // Only Legal IS PPC's are allowed.
+                                if ((bayWeapType instanceof ISPPC)
+                                        || (bayWeapType instanceof ISLightPPC)
+                                        || (bayWeapType instanceof ISHeavyPPC)
+                                        || (bayWeapType instanceof ISERPPC)
+                                        || (bayWeapType instanceof ISSnubNosePPC)) {
+
+                                    m.setCrossLinked(bayMountedWeapon);
+                                    break;
+                                }
+                            }
+                        }
                     }
-
-                    // already crossLinked?
-                    if (mWeapon.getCrossLinkedBy() != null) {
+                    
+                    // Check for PPC that isn't crosslinked
+                    if (!wtype.hasFlag(WeaponType.F_PPC) || 
+                            mWeapon.getCrossLinkedBy() != null){
                         continue;
                     }
 

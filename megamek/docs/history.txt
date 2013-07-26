@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.35.41-dev (SVN)
 + Bug: Fixing Arana Militia Mech.  Wrong Unit encoding.
++ Bug [#3791]: Prototype Improved Jump Jets using incorrect rules (Super Griffin)
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

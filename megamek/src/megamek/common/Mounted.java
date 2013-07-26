@@ -67,7 +67,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
-    
+
     private int location;
     private boolean rearMounted;
 
@@ -166,7 +166,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
           //Used to keep track of the # of mines
             shotsLeft = 1;
         }
-        if ((type instanceof MiscType) && 
+        if ((type instanceof MiscType) &&
                 type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
             mineType = MINE_CONVENTIONAL;
             //Used to keep track of the # of mines
@@ -942,6 +942,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (mtype.hasFlag(MiscType.F_BLUE_SHIELD)) {
                 return 5;
             }
+            if (mtype.hasFlag(MiscType.F_JUMP_JET) && mtype.hasSubType(MiscType.S_PROTOTYPE) && mtype.hasSubType(MiscType.S_IMPROVED)) {
+                return 10;
+            }
             return 0;
         }
         // um, otherwise, I'm not sure
@@ -1500,12 +1503,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setOriginalShots(int shots) {
         originalShots = shots;
     }
-    
+
     public boolean isModeSwitchable() {
         return modeSwitchable;
     }
-    
+
     public void setModeSwitchable(boolean b) {
-        this.modeSwitchable = b;
+        modeSwitchable = b;
     }
 }

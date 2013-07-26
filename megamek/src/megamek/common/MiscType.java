@@ -1469,6 +1469,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.tankslots = 0;
+        misc.explosive = true;
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_MECH_EQUIPMENT);
         misc.subType |= S_PROTOTYPE | S_IMPROVED;
         misc.bv = 0;
@@ -1479,7 +1480,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         return misc;
     }
-    
+
     public static MiscType createISPrototypeJumpJet() {
         MiscType misc = new MiscType();
 
@@ -1498,7 +1499,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_X };
         misc.techRating = RATING_D;
         return misc;
-    }    
+    }
 
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
@@ -3648,7 +3649,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_F, EquipmentType.RATING_E };
         misc.introDate = 2471;
         misc.extinctDate = 2487;
-        misc.reintroDate = 3035; 
+        misc.reintroDate = 3035;
         misc.techLevel.put(2471, misc.techLevel.get(3071));
         misc.techRating = RATING_E;
 

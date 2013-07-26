@@ -1370,6 +1370,19 @@ public class Board implements Serializable, IBoard {
          }
       }
     }
+    
+    // Kill all the unknown basements
+    public void setRandomBasementsOff() {
+    	Coords c = null;
+    	for (Building b : buildings) {
+    		for (Enumeration<Coords> coords = b.getCoords();coords.hasMoreElements();) {
+    			c = coords.nextElement();
+    			if (b.getBasement(c) == BasementType.UNKNOWN) {
+    				b.setBasement(c, BasementType.NONE);
+    			}
+    		}
+    	}
+    }
 
     /*
      * (non-Javadoc)

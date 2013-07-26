@@ -346,6 +346,8 @@ public interface IBoard {
      */
     public abstract void setBridgeCF(int value);
     
+    public abstract void setRandomBasementsOff();
+    
     public abstract void setType(int t);
     
     public abstract int getType();

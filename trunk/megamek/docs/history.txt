@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.35.41-dev (SVN)
 + Bug: Fixing Arana Militia Mech.  Wrong Unit encoding.
 + Bug [#3791]: Prototype Improved Jump Jets using incorrect rules (Super Griffin)
++ Feature: Random Basements Option
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid
@@ -169,7 +170,7 @@ v0.35.39 (2013-06-18, 23:00 UTC+2)
 + Bug: misc BV fixes
 + Bug 3762: Dropship Artillery receiving bonus
 + WIP Bug 3763: ArtilleryBayWeapon not working on ground map (always out of range)
-+ Bug 3764: NPE loading maps 
++ Bug 3764: NPE loading maps
 + Feature 1127: Edge and MASC 
 + Bug 3753: Vehicular Mine Dispenser is non-functional
 + Bug: NPE in Compute.java - Missing NULL check for metal content.

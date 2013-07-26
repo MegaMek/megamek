@@ -2879,6 +2879,9 @@ public class Server implements Runnable {
             newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF")
                     .intValue());
         }
+        if (!game.getOptions().booleanOption("random_basements")) {
+        	newBoard.setRandomBasementsOff();
+        }
         BoardUtilities.addWeatherConditions(newBoard, game
                 .getPlanetaryConditions().getWeather(), game
                 .getPlanetaryConditions().getWindStrength());

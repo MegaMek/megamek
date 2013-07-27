@@ -1457,6 +1457,44 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
+        } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP) && 
+                ce().getJumpType() == Mech.JUMP_BOOSTER){
+            //Jumps with mechanical jump boosters are special
+            Coords src = cmd.getLastStep().getPosition();
+            if (src == null ){
+                src = ce().getPosition();
+            }            
+            int dir = src.direction(dest);
+            int facing = ce().getFacing();
+            //Adjust dir based upon facing
+            // Java does mod different from how we want...
+            dir = ((dir - facing) % 6 + 6) % 6;
+            switch (dir)
+            {
+                case 0:
+                    cmd.findSimplePathTo(dest, MoveStepType.FORWARDS,src.direction(dest),ce().getFacing());
+                    break;
+                case 1:
+                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT,src.direction(dest),ce().getFacing());
+                    break;
+                case 2:
+                    // TODO: backwards lateral shifts are switched: 
+                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS,src.direction(dest),ce().getFacing());
+                    break;
+                case 3:
+                    cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS,src.direction(dest),ce().getFacing());
+                    break;                    
+                case 4:
+                    // TODO: backwards lateral shifts are switched: 
+                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa                    
+                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS,src.direction(dest),ce().getFacing());
+                    break;
+                case 5:
+                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT,src.direction(dest),ce().getFacing());
+                    break;                    
+            }
+                
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {

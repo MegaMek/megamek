@@ -751,6 +751,9 @@ public class MoveStep implements Serializable {
                 } else if (entity.isUsingManAce()
                         & (entity instanceof QuadMech)) {
                     setMp(getMp());
+                } else if (parent.isJumping() && 
+                        entity.getJumpType() == Mech.JUMP_BOOSTER){
+                    setMp(1);
                 } else {
                     setMp(getMp() + 1); // +1 for side step
                 }
@@ -766,6 +769,9 @@ public class MoveStep implements Serializable {
                 } else if (entity.isUsingManAce()
                         & (entity instanceof QuadMech)) {
                     setMp(getMp());
+                } else if (parent.isJumping() && 
+                        entity.getJumpType() == Mech.JUMP_BOOSTER){
+                    setMp(1);                    
                 } else {
                     setMp(getMp() + 1); // +1 for side step
                 }
@@ -2060,7 +2066,23 @@ public class MoveStep implements Serializable {
                 (stepType == MoveStepType.TURN_LEFT || 
                  stepType == MoveStepType.TURN_RIGHT)){
             movementType = EntityMovementType.MOVE_ILLEGAL;                        
-        }        
+        }    
+        
+        // We need to ensure the jump is in a straight-line (can't steer)
+        if (parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER  &&
+                parent.length() > 2){
+            Coords firstPos = parent.getStep(0).getPosition();
+            Coords secondPos = parent.getStep(1).getPosition();
+            Coords currPos = getPosition();
+            double tolerance = .00001;
+            double initialDir = firstPos.radian(secondPos);
+            double currentDir = firstPos.radian(currPos);
+            if (currentDir > initialDir+tolerance || 
+                    currentDir < initialDir-tolerance){
+                movementType = EntityMovementType.MOVE_ILLEGAL;   
+            }
+            
+        }
 
         // going prone from hull down is legal and costs 0
         if ((getMp() == 0) && (stepType == MoveStepType.GO_PRONE)
@@ -2625,8 +2647,9 @@ public class MoveStep implements Serializable {
         final int destAlt = elevation + destHex.getElevation();
 
         // Can't back up across an elevation change.
-        if (!(entity instanceof VTOL)
+        if (!(entity instanceof VTOL)                
                 && isThisStepBackwards()
+                && !(parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER)
                 && (((destAlt != srcAlt) && !game.getOptions().booleanOption(
                         "tacops_walk_backwards")) || (game.getOptions()
                         .booleanOption("tacops_walk_backwards") && (Math
@@ -2733,7 +2756,8 @@ public class MoveStep implements Serializable {
         // (Ben thinks this rule is dumb)
         if (((type == MoveStepType.BACKWARDS)
                 || (type == MoveStepType.LATERAL_LEFT_BACKWARDS) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                && (destAlt != srcAlt) && !(entity instanceof VTOL)) {
+                && (destAlt != srcAlt) && !(entity instanceof VTOL) &&
+                !(parent.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER)) {
             if (game.getOptions().booleanOption("tacops_walk_backwards")
                     && (Math.abs(destAlt - srcAlt) > 1)) {
                 return false;

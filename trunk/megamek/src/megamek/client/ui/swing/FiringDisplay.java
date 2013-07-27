@@ -1248,6 +1248,12 @@ KeyListener, ItemListener, ListSelectionListener {
             clientgui.mechD.wPan.wToHitR.setText("---"); //$NON-NLS-1$
             clientgui.mechD.wPan.toHitText.setText(""); //$NON-NLS-1$
         }
+        
+        if (weaponId != -1 && ce() != null){
+            Mounted m = ce().getEquipment(weaponId);
+            setFireModeEnabled(m.isModeSwitchable());
+        }
+        
         updateSearchlight();
     }
 

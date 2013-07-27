@@ -81,6 +81,8 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.BattleArmor;
+import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
@@ -98,6 +100,7 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.Transporter;
 import megamek.common.UnitType;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -1833,7 +1836,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * @param loaderId
      *            - the id of the entity that will load
      */
-    private void loader(Entity loadee, int loaderId) {
+    private void loader(Entity loadee, int loaderId, int bayNumber) {
         Client c = clientgui.getBots().get(loadee.getOwner().getName());
         if (c == null) {
             c = clientgui.getClient();
@@ -1842,7 +1845,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (loader == null) {
             return;
         }
-        c.sendLoadEntity(loadee.getId(), loaderId);
+        c.sendLoadEntity(loadee.getId(), loaderId, bayNumber);
         // TODO: it would probably be a good idea to reset deployment
         // info to equal that of the loader, and disable it in customMechDialog
         // I tried doing this but I cant quite figure out the client/server
@@ -3093,9 +3096,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("LOAD")) {
-                int id = Integer.parseInt(st.nextToken());
+            	StringTokenizer stLoad = new StringTokenizer(st.nextToken(),
+                        ":");
+                int id = Integer.parseInt(stLoad.nextToken());
+                int bayNumber = Integer.parseInt(stLoad.nextToken());
                 for (Entity e : entities) {
-                    loader(e, id);
+                    loader(e, id, bayNumber);
                 }
             } else if (command.equalsIgnoreCase("UNLOAD")) {
                 for (Entity e : entities) {
@@ -3279,12 +3285,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         }
                         if (loadable) {
                             canLoad = true;
-                            menuItem = new JMenuItem(loader.getShortName());
-                            menuItem.setActionCommand("LOAD|" + loader.getId());
-                            menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
-                            menu.add(menuItem);
+                            JMenu subMenu = new JMenu(loader.getShortName());
+                            Entity en = entities.firstElement();
+                            for (Bay bay : loader.getTransportBays()) {
+                            	if (bay.canLoad(en)) {
+		                            menuItem = new JMenuItem("Bay #"+bay.getBayNumber()+" (Free Slots: "+(int)loader.getBayById(bay.getBayNumber()).getUnused()+")");
+		                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":" + bay.getBayNumber());
+		                            menuItem.addActionListener(this);
+		                            menuItem.setEnabled((isOwner || isBot)
+		                                    && allUnloaded);
+		                            subMenu.add(menuItem);
+                            	}
+                            }
+                            if (en instanceof BattleArmor && loader.hasBattleArmorHandles()) {
+                            	menuItem = new JMenuItem("Battle Armor Handles");
+	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+	                            menuItem.addActionListener(this);
+	                            menuItem.setEnabled((isOwner || isBot)
+	                                    && allUnloaded);
+	                            subMenu.add(menuItem);
+                            }
+                            menu.add(subMenu);
                         }
                     }
                     if (canLoad) {

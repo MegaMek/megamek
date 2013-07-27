@@ -61,6 +61,7 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.Transporter;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -2454,6 +2455,112 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         else {
             choice = mountableUnits.get(0);
         }
+        
+        if (!(ce instanceof BattleArmor && choice.hasBattleArmorHandles())) {
+	        Vector<Integer> bayChoices = new Vector<Integer>();
+	        for (Transporter t : choice.getTransports()) {
+	        	if (t.canLoad(ce)) {
+	        		bayChoices.add(((Bay) t).getBayNumber());
+	        	}
+	        }
+	        String[] retVal = new String[bayChoices.size()];
+	        int i = 0;
+	        for (Integer bn : bayChoices) {
+	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)choice.getBayById(bn).getUnused()+")";
+	        }
+	        if (bayChoices.size() > 1 && !(choice instanceof BattleArmor && choice.hasBattleArmorHandles())) {
+	        	String bayString = (String) JOptionPane.showInputDialog(
+	        				clientgui,
+	        				Messages
+	        						.getString("MovementDisplay.MountUnitBayNumberDialog.message", new Object[] { choice.getShortName() }), //$NON-NLS-1$
+	        						Messages
+	                                .getString("MovementDisplay.MountUnitBayNumberDialog.title"), //$NON-NLS-1$
+	                        JOptionPane.QUESTION_MESSAGE, null,
+	                        retVal, null);
+	        	ce.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+            	// We need to update the entity here so that the server knows about our target bay
+            	clientgui.getClient().sendUpdateEntity(ce); 
+	        } else {
+	        	ce.setTargetBay(-1); // Safety set!
+	        }
+        } else {
+        	ce.setTargetBay(-1); // Safety set!
+        }
+
+        // Return the chosen unit.
+        return choice;
+    }
+
+    private Entity getLoadedUnit() {
+        Entity choice = null;
+        
+        Vector<Entity> choices = new Vector<Entity>();
+        Enumeration<Entity> entities = clientgui.getClient().game
+                .getEntities(ce().getPosition());
+        Entity other;
+        while (entities.hasMoreElements()) {
+            other = entities.nextElement();
+            if (other.isSelectableThisTurn() && (ce() != null) && ce().canLoad(other, false)) {
+                choices.addElement(other);
+            }
+        }
+        
+        // Handle error condition.
+        if (choices.size() == 0) {
+            System.err
+                    .println("MovementDisplay#getLoadedUnit() called without loadable units."); //$NON-NLS-1$
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        if (choices.size() > 1) {
+            String input = (String) JOptionPane
+                    .showInputDialog(
+                            clientgui,
+                            Messages
+                                    .getString(
+                                            "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                            Messages
+                                    .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            SharedUtility.getDisplayArray(choices), null);
+            choice = (Entity) SharedUtility.getTargetPicked(choices, input);
+        } // End have-choices
+        
+        // Only one choice.
+        else {
+            choice = choices.get(0);
+        }
+        
+        if (!(choice instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+	        Vector<Integer> bayChoices = new Vector<Integer>();
+	        for (Transporter t : ce().getTransports()) {
+	        	if (t.canLoad(choice)) {
+	        		bayChoices.add(((Bay) t).getBayNumber());
+	        	}
+	        }
+	        String[] retVal = new String[bayChoices.size()];
+	        int i = 0;
+	        for (Integer bn : bayChoices) {
+	        	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
+	        }
+	        if (bayChoices.size() > 1 && !(choice instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+	        	String bayString = (String) JOptionPane.showInputDialog(
+	        				clientgui,
+	        				Messages
+	        						.getString("MovementDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+	        						Messages
+	                                .getString("MovementDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+	                        JOptionPane.QUESTION_MESSAGE, null,
+	                        retVal, null);
+	        	choice.setTargetBay(Integer.parseInt(bayString.substring(0, bayString.indexOf(" "))));
+            	// We need to update the entity here so that the server knows about our target bay
+            	clientgui.getClient().sendUpdateEntity(choice); 
+	        } else {
+	        	choice.setTargetBay(-1); // Safety set!
+	        }
+        } else {
+        	choice.setTargetBay(-1); // Safety set!
+        }
 
         // Return the chosen unit.
         return choice;
@@ -3585,20 +3692,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(MOVE_LOAD)) {
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
-            Entity other = null;
-            Enumeration<Entity> entities = clientgui.getClient().game
-                    .getEntities(ce.getPosition());
-            while (entities.hasMoreElements()) {
-                other = entities.nextElement();
-                // if (ce.getOwner().equals(other.getOwner()) &&
-                // !ce.equals(other)) {
-                if ((ce != null) && !ce.equals(other)
-                        && ce.canLoad(other, false)) {
-                    loadedUnits.add(other);
-                    break;
-                }
-                other = null;
-            }
+            Entity other = getLoadedUnit();
             if (other != null) {
                 cmd.addStep(MoveStepType.LOAD);
                 clientgui.bv.drawMovementData(ce(), cmd);

@@ -32,6 +32,8 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
+import megamek.common.BattleArmor;
+import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -40,7 +42,9 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.Mech;
 import megamek.common.Terrains;
+import megamek.common.Transporter;
 import megamek.common.VTOL;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -576,9 +580,40 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 JOptionPane.QUESTION_MESSAGE, null,
                                 SharedUtility.getDisplayArray(choices), null);
                 other = (Entity) SharedUtility.getTargetPicked(choices, input);
+                if (!(other instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+                	Vector<Integer> bayChoices = new Vector<Integer>();
+                    for (Transporter t : ce().getTransports()) {
+	                	if (t.canLoad(other)) {
+	                		bayChoices.add(((Bay) t).getBayNumber());
+	                	}
+	                }
+	                String[] retVal = new String[bayChoices.size()];
+	                int i = 0;
+	                for (Integer bn : bayChoices) {
+	                	retVal[i++] = bn.toString()+" (Free Slots: "+(int)ce().getBayById(bn).getUnused()+")";
+	                }
+	                if (bayChoices.size() > 1 && !(other instanceof BattleArmor && ce().hasBattleArmorHandles())) {
+	                	String bayString = (String) JOptionPane.showInputDialog(
+	                				clientgui,
+	                				Messages
+	                						.getString("DeploymentDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
+	                						Messages
+	                                        .getString("DeploymentDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+	                                JOptionPane.QUESTION_MESSAGE, null,
+	                                retVal, null);
+	                	int bayNum = Integer.parseInt(bayString.substring(0, bayString.indexOf(" ")));
+	                	other.setTargetBay(bayNum);
+	                	// We need to update the entity here so that the server knows about our target bay
+	                	clientgui.getClient().sendUpdateEntity(other); 
+	                } else if (other != null) {
+	                	other.setTargetBay(-1); // Safety set!
+	                }
+                } else if (other != null) {
+                	other.setTargetBay(-1); // Safety set!
+                }
                 if (other != null) {
                     // Please note, the Server may never get this load order.
-                    ce().load(other, false);
+                    ce().load(other, false, other.getTargetBay());
                     other.setTransportId(cen);
                     clientgui.mechD.displayEntity(ce());
                 }

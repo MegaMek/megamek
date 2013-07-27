@@ -4,6 +4,7 @@ v0.35.41-dev (SVN)
 + Bug: Fixing Arana Militia Mech.  Wrong Unit encoding.
 + Bug [#3791]: Prototype Improved Jump Jets using incorrect rules (Super Griffin)
 + Feature: Random Basements Option
++ Bug: Cannot choose which bay you wish to have your units load into when there are multiple of 1 type of bay
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

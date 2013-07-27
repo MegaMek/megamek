@@ -3717,7 +3717,7 @@ public class Server implements Runnable {
      * @param unit
      *            - the <code>Entity</code> being loaded.
      */
-    private void loadUnit(Entity loader, Entity unit) {
+    private void loadUnit(Entity loader, Entity unit, int bayNumber) {
 
         if ((game.getPhase() != IGame.Phase.PHASE_LOUNGE) && !unit.isDone()) {
             // Remove the *last* friendly turn (removing the *first* penalizes
@@ -3728,7 +3728,7 @@ public class Server implements Runnable {
 
         // Load the unit. Do not check for elevation during deployment
         loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
+                && (game.getPhase() != IGame.Phase.PHASE_LOUNGE), bayNumber);
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -7138,7 +7138,7 @@ public class Server implements Runnable {
                             loaded = null;
                         } else {
                             // Have the deployed unit load the indicated unit.
-                            loadUnit(entity, loaded);
+                            loadUnit(entity, loaded, loaded.getTargetBay());
 
                             // Stop looking.
                             break;
@@ -7171,7 +7171,7 @@ public class Server implements Runnable {
                     } else {
                         // Have the indicated unit load this unit.
                         entity.setDone(true);
-                        loadUnit(dropship, entity);
+                        loadUnit(dropship, entity, entity.getTargetBay());
                         Bay currentBay = dropship.getBay(entity);
                         if ((null != currentBay) && (Compute.d6(2) == 2)) {
                             r = new Report(9390);
@@ -8065,7 +8065,7 @@ public class Server implements Runnable {
                     fs.setDone(true);
                     // place on board
                     fs.setPosition(loader.getPosition());
-                    loadUnit(fs, loader);
+                    loadUnit(fs, loader, -1);
                     loader = fs;
                     entityUpdate(fs.getId());
                 }
@@ -10705,7 +10705,7 @@ public class Server implements Runnable {
                 break;
             }
             // Have the deployed unit load the indicated unit.
-            loadUnit(entity, loaded);
+            loadUnit(entity, loaded, loaded.getTargetBay());
         }
 
         /*
@@ -25270,11 +25270,12 @@ public class Server implements Runnable {
     private void receiveEntityLoad(Packet c, int connIndex) {
         int loadeeId = (Integer) c.getObject(0);
         int loaderId = (Integer) c.getObject(1);
+        int bayNumber = (Integer) c.getObject(2);
         Entity loadee = game.getEntity(loadeeId);
         Entity loader = game.getEntity(loaderId);
 
         if ((loadee != null) && (loader != null)) {
-            loadUnit(loader, loadee);
+            loadUnit(loader, loadee, bayNumber);
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
                 /*

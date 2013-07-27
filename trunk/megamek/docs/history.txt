@@ -7,6 +7,7 @@ v0.35.41-dev (SVN)
 + Bug: Cannot choose which bay you wish to have your units load into when there are multiple of 1 type of bay
 + Bug [#3294]: Mechanical Jump Booster Turn Arrow not Grayed Out
 + Bug [#3780]: Mode Button Grayed Out When Attempting UAC Mode Switch 0.35.40 Dev
++ Bug [#3796]: Optional Ultra AC rule creates extra shot
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

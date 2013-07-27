@@ -105,7 +105,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
 
         if ((howManyShots == 1)
-                || (game.getOptions().booleanOption("unjam_uac") && ((wtype
+                || (game.getOptions().booleanOption("uac_tworolls") && ((wtype
                         .getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                         .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
             return 1;

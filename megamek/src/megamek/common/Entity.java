@@ -117,6 +117,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected transient Player owner;
     protected int ownerId;
     protected int traitorId = -1;
+    
+    protected int targetBay = -1;
 
     private int startingPos = Board.START_NONE;
 
@@ -6277,7 +6279,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @throws IllegalArgumentException
      *             If the unit can't be loaded
      */
-    public void load(Entity unit, boolean checkElev) {
+    public void load(Entity unit, boolean checkElev, int bayNumber) {
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
@@ -6285,8 +6287,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             if (next.canLoad(unit)
-                    && (!checkElev || (unit.getElevation() == getElevation()))) {
+                    && (!checkElev || (unit.getElevation() == getElevation()))
+                    && ((unit instanceof BattleArmor && hasBattleArmorHandles()) || bayNumber == -1 || ((Bay) next).getBayNumber() == bayNumber)) {
                 next.load(unit);
+                unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
             }
         }
@@ -6296,8 +6300,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 + unit.getShortName());
     }
 
+    public void load(Entity unit, boolean checkElev) {
+        this.load(unit, checkElev, -1);
+    }
+
+    public void load(Entity unit, int bayNumber) {
+        this.load(unit, true, bayNumber);
+    }
+
     public void load(Entity unit) {
-        this.load(unit, true);
+        this.load(unit, true, -1);
     }
 
     /**
@@ -6510,6 +6522,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     if (loaded.getId() == e.getId()) {
                         return (Bay) next;
                     }
+                }
+            }
+        }
+        return null;
+    }
+    
+    public Bay getBayById(int bayNumber) {
+    	for (Transporter next : transports) {
+            if (next instanceof Bay) {
+                if (((Bay) next).getBayNumber() == bayNumber) {
+                    return (Bay) next;
                 }
             }
         }
@@ -12105,5 +12128,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return game.getOptions().intOption("year");
         }
         return year;
+    }
+    
+    public int getTargetBay() {
+    	return targetBay;
+    }
+    
+    public void setTargetBay(int tb) {
+    	targetBay = tb;
     }
 }

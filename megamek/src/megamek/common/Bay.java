@@ -270,6 +270,10 @@ public class Bay implements Transporter {
     public String getUnusedString() {
         return getUnusedString(true);
     }
+    
+    public double getUnused() {
+    	return currentSpace;
+    }
 
     /**
      * Determine if transported units prevent a weapon in the given location

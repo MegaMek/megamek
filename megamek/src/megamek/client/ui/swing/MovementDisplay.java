@@ -1460,8 +1460,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP) && 
                 ce().getJumpType() == Mech.JUMP_BOOSTER){
             //Jumps with mechanical jump boosters are special
-            Coords src = cmd.getLastStep().getPosition();
-            if (src == null ){
+            Coords src;
+            if (cmd.getLastStep() != null){
+                src = cmd.getLastStep().getPosition();
+            }else{
                 src = ce().getPosition();
             }            
             int dir = src.direction(dest);

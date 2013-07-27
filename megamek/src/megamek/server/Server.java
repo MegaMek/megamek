@@ -7293,7 +7293,8 @@ public class Server implements Runnable {
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
-                    .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
+                    .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) &&
+                    !(md.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER)
                     && ((lastHex.getElevation() + entity.calcElevation(curHex,
                             lastHex, step.getElevation(), md.getFinalClimbMode(), false)) != (curHex.getElevation() + entity
                             .getElevation()))

@@ -197,7 +197,7 @@ public class MovePath implements Cloneable, Serializable {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         } else {
         final int distance = start.distance(land);
-        if (isJumping()) {
+        if (isJumping() && entity.getJumpType() != Mech.JUMP_BOOSTER) {
             if (step.isThisStepBackwards() || step.getMpUsed() > distance) {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
@@ -641,6 +641,64 @@ public class MovePath implements Cloneable, Serializable {
             return jump;
         }
         return false;
+    }
+    
+    /**
+     * Extend the current path to the destination <code>Coords</code>, moving 
+     * only in one direction.  This method works by applying the supplied move
+     * step as long as it moves closer to the destination.  If the destination
+     * cannot be reached solely by the provided movestep, the pathfinder will
+     * quit once it gets as closer as it can.
+     *
+     * @param dest
+     *            the destination <code>Coords</code> of the move.
+     * @param type
+     *            the type of movement step required.
+     *  @param direction
+     *            the direction of movement.
+     */
+    public void findSimplePathTo(final Coords dest, final MoveStepType type, 
+            int direction, int facing) {
+        Coords src = this.getFinalCoords();
+        Coords currStep = src;
+        Coords nextStep = currStep.translated(direction);
+        while (dest.distance(nextStep) < dest.distance(currStep)){
+            addStep(type);
+            currStep = nextStep;
+            nextStep = currStep.translated(direction);
+        } 
+        
+        // Did we reach the destination?  If not, try another direction
+        if (!currStep.equals(dest)){           
+            int dir = currStep.direction(dest);
+            // Java does mod different from how we want... 
+            dir = ((dir - facing) % 6 + 6) % 6;
+            switch (dir)
+            {
+                case 0:
+                    findSimplePathTo(dest, MoveStepType.FORWARDS,currStep.direction(dest),facing);
+                    break;
+                case 1:
+                    findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT,currStep.direction(dest),facing);
+                    break;
+                case 2:
+                    // TODO: backwards lateral shifts are switched: 
+                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
+                    findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS,currStep.direction(dest),facing);
+                    break;
+                case 3:
+                    findSimplePathTo(dest, MoveStepType.BACKWARDS,currStep.direction(dest),facing);
+                    break;                    
+                case 4:
+                    // TODO: backwards lateral shifts are switched: 
+                    //  LATERAL_LEFT_BACKWARDS moves back+right and vice-versa                    
+                    findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT_BACKWARDS,currStep.direction(dest),facing);
+                    break;
+                case 5:
+                    findSimplePathTo(dest, MoveStepType.LATERAL_LEFT,currStep.direction(dest),facing);
+                    break;                    
+            }
+        }
     }
 
     /**

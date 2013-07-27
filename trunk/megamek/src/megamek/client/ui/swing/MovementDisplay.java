@@ -1457,7 +1457,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
-        } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP) && 
+        } else if (((gear == GEAR_LAND) || (gear == GEAR_JUMP)) && 
                 ce().getJumpType() == Mech.JUMP_BOOSTER){
             //Jumps with mechanical jump boosters are special
             Coords src;

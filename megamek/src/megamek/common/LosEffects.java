@@ -808,11 +808,19 @@ public class LosEffects {
                     //25% cover, left
                     leftLos.targetCover  = COVER_LOWLEFT;
                     rightLos.targetCover = COVER_LOWLEFT;
+                    rightLos.setCoverBuildingPrimary(leftLos.getCoverBuildingPrimary());
+                    rightLos.setCoverDropshipPrimary(leftLos.getCoverDropshipPrimary());
+                    rightLos.setDamagableCoverTypePrimary(leftLos.getDamagableCoverTypePrimary());
+                    rightLos.setCoverLocPrimary(leftLos.getCoverLocPrimary());
                 }else if ((leftLos.targetCover == COVER_NONE && 
                           rightLos.targetCover == COVER_HORIZONTAL)) {
                     //25% cover, right
                     leftLos.targetCover  = COVER_LOWRIGHT;
                     rightLos.targetCover = COVER_LOWRIGHT;
+                    leftLos.setCoverBuildingPrimary(rightLos.getCoverBuildingPrimary());
+                    leftLos.setCoverDropshipPrimary(rightLos.getCoverDropshipPrimary());
+                    leftLos.setDamagableCoverTypePrimary(rightLos.getDamagableCoverTypePrimary());
+                    leftLos.setCoverLocPrimary(rightLos.getCoverLocPrimary());
                 } else if(leftLos.targetCover == COVER_FULL && 
                          rightLos.targetCover == COVER_NONE){
                     //vertical cover, left
@@ -864,11 +872,20 @@ public class LosEffects {
                     //25% cover, left
                     leftLos.attackerCover  = COVER_LOWLEFT;
                     rightLos.attackerCover = COVER_LOWLEFT;
+                    rightLos.targetCover = COVER_LOWLEFT;
+                    rightLos.setCoverBuildingPrimary(leftLos.getCoverBuildingPrimary());
+                    rightLos.setCoverDropshipPrimary(leftLos.getCoverDropshipPrimary());
+                    rightLos.setDamagableCoverTypePrimary(leftLos.getDamagableCoverTypePrimary());
+                    rightLos.setCoverLocPrimary(leftLos.getCoverLocPrimary());
                 }else if ((leftLos.attackerCover == COVER_NONE && 
                           rightLos.attackerCover == COVER_HORIZONTAL)) {
                     //25% cover, right
                     leftLos.attackerCover  = COVER_LOWRIGHT;
                     rightLos.attackerCover = COVER_LOWRIGHT;
+                    leftLos.setCoverBuildingPrimary(rightLos.getCoverBuildingPrimary());
+                    leftLos.setCoverDropshipPrimary(rightLos.getCoverDropshipPrimary());
+                    leftLos.setDamagableCoverTypePrimary(rightLos.getDamagableCoverTypePrimary());
+                    leftLos.setCoverLocPrimary(rightLos.getCoverLocPrimary());
                 } else if(leftLos.attackerCover == COVER_FULL && 
                          rightLos.attackerCover == COVER_NONE){
                     //vertical cover, left

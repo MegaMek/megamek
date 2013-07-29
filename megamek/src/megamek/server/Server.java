@@ -1385,7 +1385,8 @@ public class Server implements Runnable {
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
-
+            entity.clearSeenBy();
+            
             if (entity instanceof MechWarrior) {
                 ((MechWarrior) entity).setLanded(true);
             }
@@ -2371,6 +2372,7 @@ public class Server implements Runnable {
             case PHASE_FIRING:
                 // write Weapon Attack Phase header
                 addReport(new Report(3000, Report.PUBLIC));
+                resolveWhatPlayersCanSeeWhatUnits();
                 resolveAllButWeaponAttacks();
                 resolveSelfDestructions();
                 reportGhostTargetRolls();
@@ -11199,6 +11201,24 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Called to what players can see what units. this is used to determine 
+     * who can see what in double blind reports.
+     */
+    
+    private void resolveWhatPlayersCanSeeWhatUnits(){
+    
+    	for (Entity entity : game.getEntitiesVector()){
+    		for ( Player p : game.getPlayersVector() ){
+    			
+    			if (canSee(p, entity)){
+    				entity.addBeenSeenBy(p);
+    			}
+    		}
+    	}
+    
+    }
+    
     /**
      * Called during the weapons fire phase. Resolves anything other than
      * weapons fire that happens. Torso twists, for example.
@@ -24965,7 +24985,9 @@ public class Server implements Runnable {
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
             if (((r.type == Report.PLAYER) && (p.getId() != r.player))
-                    || omitCheck || ((entity != null) && !canSee(p, entity))) {
+                    || omitCheck || ((entity != null) && !entity.hasSeenEntity(p))) {
+                    		//Trying out new code for double blind
+                    		//&& !canSee(p, entity))) {
                 if (r.isValueObscured(j)) {
                     copy.hideData(j);
                     // Mark the original report to indicate which players

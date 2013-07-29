@@ -402,6 +402,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     private boolean visibleToEnemy = false;
 
+    /**
+     * Check to see who has seen this Entity
+     * Used for Double Blind Reports.
+     */
+    private Vector<Player> entitySeenBy = new Vector<Player>();
+    
     /** Whether this entity is captured or not. */
     private boolean captured = false;
 
@@ -5732,10 +5738,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return roll;
         }
 
-        IHex curHex = null;
+        /*IHex curHex = null;
         if (null != curPos) {
             curHex = game.getBoard().getHex(curPos);
-        }
+        }*/
 
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
@@ -7488,6 +7494,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isVisibleToEnemy() {
         return visibleToEnemy;
+    }
+
+    public void addBeenSeenBy(Player p){
+    	if ( p != null && !entitySeenBy.contains(p)){
+    		entitySeenBy.add(p);
+    	}
+    }
+    
+    public void clearSeenBy(){
+    	entitySeenBy.clear();
+    }
+    
+    public boolean hasSeenEntity(Player p)
+    {
+    	if ( p != null && entitySeenBy.contains(p)){
+    		return true;
+    	}
+    	
+    	return false;
     }
 
     protected int applyGravityEffectsOnMP(int MP) {

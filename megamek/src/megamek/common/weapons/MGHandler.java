@@ -70,6 +70,10 @@ public class MGHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 toReturn = (int) Math.floor(nDamPerHit / 2.0);
             }
+            if (bDirect) {
+                toReturn = Math.min(toReturn + (toHit.getMoS() / 3),
+                        toReturn * 2);
+            }
         } else {
             if ((target instanceof Infantry)
                     && !(target instanceof BattleArmor)) {
@@ -127,11 +131,15 @@ public class MGHandler extends AmmoWeaponHandler {
         // Report the miss
         Report r = new Report(3220);
         r.subject = subjectId;
-        if (weapon.isRapidfire()) {
-            r.messageId = 3225;
-            r.add(nDamPerHit * 3);
-        }
         vPhaseReport.add(r);
+        if (weapon.isRapidfire()
+                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
+            r.newlines = 0;
+            r = new Report(3225);
+            r.subject = subjectId;
+            r.add(nDamPerHit * 3);
+            vPhaseReport.add(r);
+        }
     }
 
     /*
@@ -156,6 +164,7 @@ public class MGHandler extends AmmoWeaponHandler {
                     break;
             }
 
+            numRapidFireHits = nDamPerHit;
             nRapidDamHeatPerHit = nDamPerHit;
             checkAmmo();
             int ammoUsage = 3 * nRapidDamHeatPerHit;

@@ -85,6 +85,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nweapons; // for capital fighters/fighter squadrons
     protected int nweaponsHit; // for capital fighters/fighter squadrons
     protected boolean secondShot = false;
+    protected int numRapidFireHits;
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -602,6 +603,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
+            if (weapon.isRapidfire()){
+                r.newlines = 0;
+                r = new Report(3225);
+                r.subject = subjectId;
+                r.add(numRapidFireHits * 3);
+                vPhaseReport.add(r);
+            }
         } else {
             // Keep spacing consistent
             Report.addNewline(vPhaseReport);
@@ -756,6 +764,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.add(toHit.getTableDesc());
             r.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(r);
+            if (weapon.isRapidfire()){
+                r.newlines = 0;
+                r = new Report(3225);
+                r.subject = subjectId;
+                r.add(numRapidFireHits * 3);
+                vPhaseReport.add(r);
+            }
         } else {
             Report.addNewline(vPhaseReport);
         }

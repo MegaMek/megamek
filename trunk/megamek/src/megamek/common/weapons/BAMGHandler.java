@@ -65,6 +65,7 @@ public class BAMGHandler extends WeaponHandler {
                     nDamPerHit = Compute.d6();
                     break;
             }
+            numRapidFireHits = nDamPerHit;
             if (bDirect) {
                 nDamPerHit = Math.min(nDamPerHit + (toHit.getMoS() / 3),
                         nDamPerHit * 2);
@@ -104,11 +105,14 @@ public class BAMGHandler extends WeaponHandler {
         // Report the miss
         Report r = new Report(3220);
         r.subject = subjectId;
+        vPhaseReport.add(r);
         if (weapon.isRapidfire()
                 && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
-            r.messageId = 3225;
+            r.newlines = 0;
+            r = new Report(3225);
+            r.subject = subjectId;
             r.add(nDamPerHit * 3);
-        }
-        vPhaseReport.add(r);
+            vPhaseReport.add(r);
+        }       
     }
 }

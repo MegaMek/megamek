@@ -1386,7 +1386,7 @@ public class Server implements Runnable {
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
             entity.clearSeenBy();
-            
+
             if (entity instanceof MechWarrior) {
                 ((MechWarrior) entity).setLanded(true);
             }
@@ -3587,15 +3587,15 @@ public class Server implements Runnable {
                                 Compute.ARC_AFT)) {
                     continue;
                 }
-                
+
                 alreadyHit = artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(), killer, null, false, 0, vPhaseReport, false, alreadyHit, true);
-                
+
                 /*
                 IHex hex = game.getBoard().getHex(pos);
                 if (null == hex) {
                     continue;
                 }
-                
+
                 // code borrowed heavily from artilleryDamageHex
                 bldg = game.getBoard().getBuildingAt(pos);
                 int bldgAbsorbs = 0;
@@ -5345,7 +5345,7 @@ public class Server implements Runnable {
         coords.add(c);
         int crateredElevation = game.getBoard().getHex(c).getElevation() - 1;
         if (entity instanceof Dropship) {
-            for (int i = 0; i < 6; i++) {                
+            for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
                 IHex adjHex = game.getBoard().getHex(adjCoords);
                 coords.add(adjCoords);
@@ -6397,24 +6397,24 @@ public class Server implements Runnable {
                     && entity.hasSpotlight()) {
                 final boolean SearchOn = !entity.isUsingSpotlight();
                 entity.setSpotlightState(SearchOn);
-                if (doBlind()) { //if doubleblind, we may need to filter the 
+                if (doBlind()) { //if doubleblind, we may need to filter the
                                  //players that receive this messgae
                     Vector<Player> vPlayers = game.getPlayersVector();
                     Vector<Player> vCanSee = whoCanSee(entity);
                     for (Player p : vPlayers){
                         if (vCanSee.contains(p)){ // Player sees the unit
                             sendServerChat(p.getId(), entity.getDisplayName()
-                                    + " switched searchlight " 
+                                    + " switched searchlight "
                                     + (SearchOn ? "on" : "off") + '.');
                         }else{
                             sendServerChat(p.getId(), "An unseen unit"
-                                    + " switched searchlight " 
-                                    + (SearchOn ? "on" : "off") + '.');  
+                                    + " switched searchlight "
+                                    + (SearchOn ? "on" : "off") + '.');
                         }
                     }
                 }else{ //No double blind, everyone can see this
                     sendServerChat(entity.getDisplayName()
-                            + " switched searchlight " 
+                            + " switched searchlight "
                             + (SearchOn ? "on" : "off") + '.');
                 }
             }
@@ -7303,7 +7303,7 @@ public class Server implements Runnable {
             if (((step.getType() == MoveStepType.BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
                     .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) &&
-                    !(md.isJumping() && entity.getJumpType() == Mech.JUMP_BOOSTER)
+                    !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                     && ((lastHex.getElevation() + entity.calcElevation(curHex,
                             lastHex, step.getElevation(), md.getFinalClimbMode(), false)) != (curHex.getElevation() + entity
                             .getElevation()))
@@ -11209,23 +11209,23 @@ public class Server implements Runnable {
     }
 
     /**
-     * Called to what players can see what units. this is used to determine 
+     * Called to what players can see what units. this is used to determine
      * who can see what in double blind reports.
      */
-    
+
     private void resolveWhatPlayersCanSeeWhatUnits(){
-    
+
     	for (Entity entity : game.getEntitiesVector()){
     		for ( Player p : game.getPlayersVector() ){
-    			
+
     			if (canSee(p, entity)){
     				entity.addBeenSeenBy(p);
     			}
     		}
     	}
-    
+
     }
-    
+
     /**
      * Called during the weapons fire phase. Resolves anything other than
      * weapons fire that happens. Torso twists, for example.
@@ -26135,18 +26135,18 @@ public class Server implements Runnable {
         Player player = getPlayer(toPlayer);
         if (player != null) {
             final String playerName = getPlayer(toPlayer).getName();
-            System.err.println("building special update list for: "
-                    + playerName + " PlayerNumber " + toPlayer);
+            //System.err.println("building special update list for: "
+            //        + playerName + " PlayerNumber " + toPlayer);
 
             for (Coords coord : shdTable.keySet()) {
                 tempList = new LinkedList<SpecialHexDisplay>();
                 for (SpecialHexDisplay shd : shdTable.get(coord)) {
-                    System.err.println("list item: " + shd.getType()
-                            + " owner: " + shd.getOwner() + " obscured:"
-                            + shd.isObscured());
+                    //System.err.println("list item: " + shd.getType()
+                    //        + " owner: " + shd.getOwner() + " obscured:"
+                    //        + shd.isObscured());
 
                     if (!shd.isObscured() || shd.isOwner(playerName)) {
-                        System.err.println("Added");
+                        //System.err.println("Added");
                         tempList.add(0, shd);
                     }
                 }
@@ -29725,7 +29725,7 @@ public class Server implements Runnable {
      *            The Vector of Reports for the phasereport
      * @param asfFlak
      *            Is this flak against ASF?
-     * @param alreadyHit 
+     * @param alreadyHit
      *          a vector of unit ids for units that have already been hit that will be ignored
      * @param variableDamage
      *          if true, treat damage as the number of six-sided dice to roll
@@ -29737,7 +29737,7 @@ public class Server implements Runnable {
 
         //TODO: pass in a vector of unit ids that give units already hit and then pass it out
         //an updated one. Don't apply damage to a unit if it is already hit.
-        
+
         IHex hex = game.getBoard().getHex(coords);
         if (hex == null) {
             return alreadyHit; // not on board.
@@ -29788,7 +29788,7 @@ public class Server implements Runnable {
             int cluster = 5;
 
             // Check: is entity excluded?
-            if (entity == exclude || alreadyHit.contains(entity.getId())) {
+            if ((entity == exclude) || alreadyHit.contains(entity.getId())) {
                 continue;
             }
 
@@ -29981,7 +29981,7 @@ public class Server implements Runnable {
                     }
                 }
             }
-            
+
             alreadyHit.add(entity.getId());
 
             // Do the damage
@@ -30019,7 +30019,7 @@ public class Server implements Runnable {
                 creditKill(entity, killer);
             }
         }
-        
+
         return alreadyHit;
     }
 

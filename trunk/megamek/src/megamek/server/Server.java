@@ -5343,7 +5343,7 @@ public class Server implements Runnable {
         // checks for all of them
         ArrayList<Coords> coords = new ArrayList<Coords>();
         coords.add(c);
-        int crateredElevation = game.getBoard().getHex(c).getElevation();
+        int crateredElevation = game.getBoard().getHex(c).getElevation() - 1;
         if (entity instanceof Dropship) {
             for (int i = 0; i < 6; i++) {                
                 Coords adjCoords = c.translated(i);

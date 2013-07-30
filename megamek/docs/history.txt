@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
-v0.35.41-dev (SVN)\
+v0.35.41-dev (SVN)
++ Bug: Fix to my Double Blind message fix.
 + Bug: Double Blind message being filtered if a unit falls during combat.
 + Bug: Fixing Arana Militia Mech.  Wrong Unit encoding.
 + Bug [#3791]: Prototype Improved Jump Jets using incorrect rules (Super Griffin)

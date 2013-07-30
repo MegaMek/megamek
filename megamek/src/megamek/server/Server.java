@@ -1385,7 +1385,6 @@ public class Server implements Runnable {
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
-            entity.clearSeenBy();
 
             if (entity instanceof MechWarrior) {
                 ((MechWarrior) entity).setLanded(true);
@@ -2325,6 +2324,7 @@ public class Server implements Runnable {
                 }
                 break;
             case PHASE_INITIATIVE:
+                resolveWhatPlayersCanSeeWhatUnits();
                 game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 break;
@@ -2345,6 +2345,7 @@ public class Server implements Runnable {
                 }
                 break;
             case PHASE_MOVEMENT:
+                resolveWhatPlayersCanSeeWhatUnits();
                 doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
@@ -2402,6 +2403,7 @@ public class Server implements Runnable {
                 changePhase(IGame.Phase.PHASE_PHYSICAL);
                 break;
             case PHASE_PHYSICAL:
+                resolveWhatPlayersCanSeeWhatUnits();
                 resolvePhysicalAttacks();
                 applyBuildingDamage();
                 checkForPSRFromDamage();
@@ -11216,6 +11218,8 @@ public class Server implements Runnable {
     private void resolveWhatPlayersCanSeeWhatUnits(){
 
     	for (Entity entity : game.getEntitiesVector()){
+            //We are hidden once again!
+            entity.clearSeenBy();
     		for ( Player p : game.getPlayersVector() ){
 
     			if (canSee(p, entity)){

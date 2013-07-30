@@ -4877,6 +4877,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
         }
+        
     }
 
     /**

@@ -5343,9 +5343,15 @@ public class Server implements Runnable {
         // checks for all of them
         ArrayList<Coords> coords = new ArrayList<Coords>();
         coords.add(c);
+        int crateredElevation = game.getBoard().getHex(c).getElevation();
         if (entity instanceof Dropship) {
-            for (int i = 0; i < 6; i++) {
-                coords.add(c.translated(i));
+            for (int i = 0; i < 6; i++) {                
+                Coords adjCoords = c.translated(i);
+                IHex adjHex = game.getBoard().getHex(adjCoords);
+                coords.add(adjCoords);
+                if (adjHex.getElevation() < crateredElevation){
+                    crateredElevation = adjHex.getElevation();
+                }
             }
         }
         if (vel < 1) {
@@ -5518,6 +5524,7 @@ public class Server implements Runnable {
                     }
                 }
             }
+            h.setElevation(crateredElevation);
             sendChangedHex(hitCoords);
 
             // check for a stacking violation - which should only happen in the

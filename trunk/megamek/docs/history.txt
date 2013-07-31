@@ -19,6 +19,9 @@ v0.35.41-dev (SVN)
 + Bug [#3804]: Squadrons can't have additional fighters loaded since [r9651]
 + Data: More Units. Space Stations/LAMs(Only playable as Mechs)/Some missing Dropships
 + Errata: Mech Composite IS should have a BV multiplier of 0.5
++ Bug: more than one TAG on one unit should be legal
++ Bug: M-Pods should not affect TC weight and BV
+
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

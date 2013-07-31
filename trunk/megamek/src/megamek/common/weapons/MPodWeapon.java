@@ -46,7 +46,7 @@ public abstract class MPodWeapon extends AmmoWeapon {
         extremeRange = 4;
         tonnage = 1.0f;
         criticals = 1;
-        flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
+        flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC)
                 .or(F_ONESHOT).or(F_M_POD);
         explosive = true;
         bv = 5;
@@ -56,7 +56,7 @@ public abstract class MPodWeapon extends AmmoWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)

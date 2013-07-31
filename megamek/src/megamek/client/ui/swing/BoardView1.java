@@ -44,7 +44,6 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1079,17 +1078,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
      
         // Draw pre-designated auto-hit hexes
-        for (Coords c : localPlayer.getArtyAutoHitHexes()){
-            //Is the Coord within the viewing area?
-            if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
-                 c.y >= drawY && c.y <= (drawY + drawHeight)){
-                
-                Point p = getHexLocation(c);
-                scaledImage = tileManager
-                        .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);                   
-                g.drawImage(scaledImage, p.x, p.y, this);                   
+        if (localPlayer != null) //Could be null, like in map-editor
+        {
+            for (Coords c : localPlayer.getArtyAutoHitHexes()){
+                //Is the Coord within the viewing area?
+                if ( c.x >= drawX && c.x <= (drawX + drawWidth) &&
+                     c.y >= drawY && c.y <= (drawY + drawHeight)){
+                    
+                    Point p = getHexLocation(c);
+                    scaledImage = tileManager
+                            .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);                   
+                    g.drawImage(scaledImage, p.x, p.y, this);                   
+                }
             }
         }
+        
         
         // Draw modifiers for selected entity and weapon
         if (weapon != null){  

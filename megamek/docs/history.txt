@@ -21,6 +21,7 @@ v0.35.41-dev (SVN)
 + Errata: Mech Composite IS should have a BV multiplier of 0.5
 + Bug: more than one TAG on one unit should be legal
 + Bug: M-Pods should not affect TC weight and BV
++ Bug: Fixed a NPE in BoardView1 when using the map editor
 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)

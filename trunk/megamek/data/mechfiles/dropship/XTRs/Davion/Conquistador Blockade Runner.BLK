@@ -43,20 +43,16 @@ LightSCC
 LightSCC
 LightSCC
 LightSCC Ammo:80
-
 (B) ISGaussRifle
 ISGaussRifle
 ISGauss Ammo:80
-
 (B) ISLightGaussRifle
 ISLightGaussRifle
 ISLightGauss Ammo:80
-
 ISERPPC
 ISERPPCCapacitor
 ISERPPC
 ISERPPCCapacitor
-
 ISLRM20
 IS Artemis IV FCS
 ISLRM20
@@ -66,7 +62,6 @@ IS Artemis IV FCS
 ISLRM20
 IS Artemis IV FCS
 ISLRM20 Ammo Artemis-capable:144
-
 IS Laser AMS
 IS Laser AMS
 IS Laser AMS
@@ -102,18 +97,18 @@ IS Laser AMS
 IS Laser AMS
 IS Laser AMS
 (R) ISGaussRifle
-(R)ISGaussRifle
-(R)ISGauss Ammo:32
-(R)ISERPPC
-(R)ISERPPC
-(R)ISLargePulseLaser
-(R)ISLargePulseLaser
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
+(R) ISGaussRifle
+(R) ISGauss Ammo:32
+(R) ISERPPC
+(R) ISERPPC
+(R) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
 </Left Side Equipment>
 
 <Right Side Equipment> 
@@ -143,18 +138,18 @@ IS Laser AMS
 IS Laser AMS
 IS Laser AMS
 (R) ISGaussRifle
-(R)ISGaussRifle
-(R)ISGauss Ammo:32
-(R)ISERPPC
-(R)ISERPPC
-(R)ISLargePulseLaser
-(R)ISLargePulseLaser
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
-(R)IS Laser AMS
+(R) ISGaussRifle
+(R) ISGauss Ammo:32
+(R) ISERPPC
+(R) ISERPPC
+(R) ISLargePulseLaser
+(R) ISLargePulseLaser
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
+(R) IS Laser AMS
 </Right Side Equipment>
 
 <Aft Equipment> 
@@ -214,8 +209,6 @@ IS Level 4
 <motion_type>
 aerodyne
 </motion_type>
-
-
 
 <transporters>
 ASFBay:20:6

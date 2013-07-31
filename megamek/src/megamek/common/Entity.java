@@ -117,7 +117,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected transient Player owner;
     protected int ownerId;
     protected int traitorId = -1;
-    
+
     protected int targetBay = -1;
 
     private int startingPos = Board.START_NONE;
@@ -160,10 +160,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean selfDestructInitiated = false;
     /**
      * Variable to store the state of a possible externally mounted searchlight.
-     * True if an operable searchlight is externally mounted, false if one
-     * isn't mounted or if it is destroyed.  Other searchlights may be mounted
-     * as equipment on the entity.
-     * 
+     * True if an operable searchlight is externally mounted, false if one isn't
+     * mounted or if it is destroyed. Other searchlights may be mounted as
+     * equipment on the entity.
+     *
      */
     protected boolean hasExternalSpotlight = false;
     protected boolean illuminated = false;
@@ -403,11 +403,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean visibleToEnemy = false;
 
     /**
-     * Check to see who has seen this Entity
-     * Used for Double Blind Reports.
+     * Check to see who has seen this Entity Used for Double Blind Reports.
      */
     private Vector<Player> entitySeenBy = new Vector<Player>();
-    
+
     /** Whether this entity is captured or not. */
     private boolean captured = false;
 
@@ -4877,7 +4876,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (taserFeedBackRounds > 0) {
             taserFeedBackRounds--;
         }
-        
+
     }
 
     /**
@@ -5739,10 +5738,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return roll;
         }
 
-        /*IHex curHex = null;
-        if (null != curPos) {
-            curHex = game.getBoard().getHex(curPos);
-        }*/
+        /*
+         * IHex curHex = null; if (null != curPos) { curHex =
+         * game.getBoard().getHex(curPos); }
+         */
 
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
@@ -6295,7 +6294,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Transporter next = iter.nextElement();
             if (next.canLoad(unit)
                     && (!checkElev || (unit.getElevation() == getElevation()))
-                    && ((unit instanceof BattleArmor && hasBattleArmorHandles()) || bayNumber == -1 || ((Bay) next).getBayNumber() == bayNumber)) {
+                    && (((unit instanceof BattleArmor) && hasBattleArmorHandles())
+                            || (bayNumber == -1) || (((Bay) next).getBayNumber() == bayNumber))) {
                 next.load(unit);
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
@@ -6344,8 +6344,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     return;
                 }
                 if (next instanceof DockingCollar) {
-                	((DockingCollar) next).recover(unit);
-                	return;
+                    ((DockingCollar) next).recover(unit);
+                    return;
                 }
             }
         }
@@ -6538,9 +6538,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return null;
     }
-    
+
     public Bay getBayById(int bayNumber) {
-    	for (Transporter next : transports) {
+        for (Transporter next : transports) {
             if (next instanceof Bay) {
                 if (((Bay) next).getBayNumber() == bayNumber) {
                     return (Bay) next;
@@ -7553,23 +7553,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return visibleToEnemy;
     }
 
-    public void addBeenSeenBy(Player p){
-    	if ( p != null && !entitySeenBy.contains(p)){
-    		entitySeenBy.add(p);
-    	}
+    public void addBeenSeenBy(Player p) {
+        if ((p != null) && !entitySeenBy.contains(p)) {
+            entitySeenBy.add(p);
+        }
     }
-    
-    public void clearSeenBy(){
-    	entitySeenBy.clear();
+
+    public void clearSeenBy() {
+        entitySeenBy.clear();
     }
-    
-    public boolean hasSeenEntity(Player p)
-    {
-    	if ( p != null && entitySeenBy.contains(p)){
-    		return true;
-    	}
-    	
-    	return false;
+
+    public boolean hasSeenEntity(Player p) {
+        if ((p != null) && entitySeenBy.contains(p)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected int applyGravityEffectsOnMP(int MP) {
@@ -7908,15 +7907,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Determines if this Entity is eligible to pre-designate hexes as auto-hits.
-     * Per TacOps pg 180, if a player has offboard artillery they get 5 pre-
-     * designated hexes per mapsheet.
+     * Determines if this Entity is eligible to pre-designate hexes as
+     * auto-hits. Per TacOps pg 180, if a player has offboard artillery they get
+     * 5 pre- designated hexes per mapsheet.
+     *
      * @return
      */
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase() && isOffBoard();
-    }    
-    
+    }
+
     public boolean isEligibleForTargetingPhase() {
         if (isAssaultDropInProgress()) {
             return false;
@@ -8117,8 +8117,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns true if the unit has a usable spotlight.  It considers both 
+     * Returns true if the unit has a usable spotlight. It considers both
      * externally mounted spotlights as well as internally mounted ones.
+     *
      * @return
      */
     public boolean hasSpotlight() {
@@ -8132,17 +8133,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Method to destroy a single spotlight on an entity.  Spotlights can be
+     * Method to destroy a single spotlight on an entity. Spotlights can be
      * destroyed on a roll of 7+ on a torso hit on a mek or on a front/side hit
      * on a combat vehicle.
      */
-    public void destroyOneSpotlight(){
-        if (!hasSpotlight())
+    public void destroyOneSpotlight() {
+        if (!hasSpotlight()) {
             return;
+        }
         // A random spotlight should be destroyed, but this is easier...
-        if (hasExternalSpotlight)
+        if (hasExternalSpotlight) {
             hasExternalSpotlight = false;
-       
+        }
+
         for (Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)
                     && !m.isInoperable()) {
@@ -8150,13 +8153,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             }
         }
-        
-        //Turn off the light all spot lights were destroyed
-        if (!hasSpotlight())
+
+        // Turn off the light all spot lights were destroyed
+        if (!hasSpotlight()) {
             setSpotlightState(false);
-        
+        }
+
     }
-    
+
     public void setSpotlightState(boolean arg) {
         if (hasSpotlight()) {
             spotlightIsActive = arg;
@@ -9524,7 +9528,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Force rapid fire mode to the highest level on RAC and UAC - this is for aeros
+     * Force rapid fire mode to the highest level on RAC and UAC - this is for
+     * aeros
      */
     public void setRapidFire() {
         for (Mounted m : getTotalWeaponList()) {
@@ -12211,12 +12216,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return year;
     }
-    
+
     public int getTargetBay() {
-    	return targetBay;
+        return targetBay;
     }
-    
+
     public void setTargetBay(int tb) {
-    	targetBay = tb;
+        targetBay = tb;
     }
 }

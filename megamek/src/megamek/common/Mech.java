@@ -168,7 +168,7 @@ public abstract class Mech extends Entity {
     public static final int JUMP_BOOSTER = 4;
 
     public static final int JUMP_DISPOSABLE = 5;
-    
+
     // Type for Improved Jumpjet Prototype
     public static final int JUMP_PROTOTYPE_IMPROVED = 6;
 
@@ -2908,7 +2908,7 @@ public abstract class Mech extends Entity {
 
         // total internal structure
         double internalMultiplier = 1.0;
-        if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) {
+        if ((getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL) || (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE)) {
             internalMultiplier = 0.5;
         } else if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED) {
             internalMultiplier = 2.0;

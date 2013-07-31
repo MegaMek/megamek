@@ -17,7 +17,8 @@ v0.35.41-dev (SVN)
 + Bug [#3803]: Ammo consumption for rapid fire mgs not always accurated reported
 + Bug [#3800]: Crash landing Dropship doesn't damage terrain
 + Bug [#3804]: Squadrons can't have additional fighters loaded since [r9651]
-+ Data: More Units. Space Stations/LAM's(Only playable as Mechs)/Some missing Dropships
++ Data: More Units. Space Stations/LAMs(Only playable as Mechs)/Some missing Dropships
++ Errata: Mech Composite IS should have a BV multiplier of 0.5
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

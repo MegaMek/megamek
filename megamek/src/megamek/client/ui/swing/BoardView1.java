@@ -4501,6 +4501,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     graph.drawString(load, loadX - 1, stepPos.y + 38);
                     break;
                 case LAUNCH:
+                case UNDOCK:
                     // announce launch
                     String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
                     if (step.isPastDanger()) {
@@ -4537,6 +4538,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 case RECOVER:
                     // announce launch
                     String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
+                    if (step.isDocking()) {
+                    	recover = Messages.getString("BoardView1.Dock"); //$NON-NLS-1$
+                    }
                     if (step.isPastDanger()) {
                         launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }

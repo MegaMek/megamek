@@ -45,6 +45,7 @@ import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -135,6 +136,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_DECN = "MoveDecNext"; //$NON-NLS-1$
     public static final String MOVE_ROLL = "MoveRoll"; //$NON-NLS-1$
     public static final String MOVE_LAUNCH = "MoveLaunch"; //$NON-NLS-1$
+    public static final String MOVE_DOCK = "MoveDock"; //$NON-NLS-1$
     public static final String MOVE_RECOVER = "MoveRecover"; //$NON-NLS-1$
     public static final String MOVE_DROP = "MoveDrop"; //$NON-NLS-1$
     public static final String MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
@@ -198,6 +200,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private JButton butDecN;
     private JButton butRoll;
     private JButton butLaunch;
+    private JButton butDock;
     private JButton butRecover;
     private JButton butDrop;
     private JButton butDump;
@@ -489,8 +492,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butLaunch.setActionCommand(MOVE_LAUNCH);
         butLaunch.addKeyListener(this);
 
-        butRecover = new JButton(
-                Messages.getString("MovementDisplay.butRecover")); //$NON-NLS-1$
+        butDock = new JButton(Messages.getString("MovementDisplay.butDock")); //$NON-NLS-1$
+        butDock.addActionListener(this);
+        butDock.setEnabled(false);
+        butDock.setActionCommand(MOVE_DOCK);
+        butDock.addKeyListener(this);
+
+        butRecover = new JButton(Messages.getString("MovementDisplay.butRecover")); //$NON-NLS-1$
         butRecover.addActionListener(this);
         butRecover.setEnabled(false);
         butRecover.setActionCommand(MOVE_RECOVER);
@@ -745,6 +753,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butFlyOff);
             buttonsAero.add(butEject);
             buttonsAero.add(butLaunch);
+            buttonsAero.add(butDock);
             buttonsAero.add(butRecover);
             buttonsAero.add(butDrop);
             buttonsAero.add(butJoin);
@@ -764,6 +773,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butEject);
             buttonsAero.add(butFlyOff);
             buttonsAero.add(butLaunch);
+            buttonsAero.add(butDock);
             buttonsAero.add(butRecover);
             buttonsAero.add(butDrop);
             buttonsAero.add(butJoin);
@@ -1141,6 +1151,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setDecNEnabled(false);
         setRollEnabled(false);
         setLaunchEnabled(false);
+        setDockEnabled(false);
         setDropEnabled(false);
         setThrustEnabled(false);
         setYawEnabled(false);
@@ -2222,7 +2233,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
 
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0)
-                || (ce.getLaunchableSmallCraft().size() > 0));
+                || (ce.getLaunchableSmallCraft().size() > 0) || (ce.getLaunchableDropships().size() > 0));
+
+    }
+
+    private void updateDockButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        updateRecoveryButton();
 
     }
 
@@ -2740,7 +2763,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     if (clientgui.getClient().game.useVectorMove()) {
                         if (Compute.sameVectors(cmd.getFinalVectors(),
                                 oa.getVectors())) {
-                            setRecoverEnabled(true);
+                        	if (ce instanceof Dropship) {
+                        		setDockEnabled(true);
+                        	} else {
+                        		setRecoverEnabled(true);
+                        	}
                             isGood = true;
 
                             // We can stop looking now.
@@ -2748,7 +2775,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         }
                     } else if (cmd.getFinalVelocity() == oa
                             .getCurrentVelocity()) {
-                        setRecoverEnabled(true);
+                    	if (ce instanceof Dropship) {
+                    		setDockEnabled(true);
+                    	} else {
+                    		setRecoverEnabled(true);
+                    	}
                         isGood = true;
 
                         // We can stop looking now.
@@ -2760,6 +2791,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             } // Check the next entity in this position.
             if (!isGood) {
                 setRecoverEnabled(false);
+                setDockEnabled(false);
             }
         }
 
@@ -2846,21 +2878,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
+        Vector<Entity> launchableDropships = ce.getLaunchableDropships();
 
         // Handle error condition.
         if ((launchableFighters.size() <= 0)
-                && (launchableSmallCraft.size() <= 0)) {
+                && (launchableSmallCraft.size() <= 0)
+                && (launchableDropships.size() <= 0)) {
             System.err
-                    .println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
+                    .println("MovementDisplay#getLaunchedUnits() called without loaded units."); //$NON-NLS-1$
 
         } else {
             // cycle through the fighter bays and then the small craft bays
             int bayNum = 1;
+            int i = 0;
             Bay currentBay;
             Vector<Entity> currentFighters = new Vector<Entity>();
             int doors = 0;
             Vector<Bay> FighterBays = ce.getFighterBays();
-            for (int i = 0; i < FighterBays.size(); i++) {
+            for (i = 0; i < FighterBays.size(); i++) {
                 currentBay = FighterBays.elementAt(i);
                 Vector<Integer> bayChoices = new Vector<Integer>();
                 currentFighters = currentBay.getLaunchableUnits();
@@ -2888,7 +2923,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                                     "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
                                     currentBay.getType(), bayNum }), question,
                             names);
-                    ;
                     while (!doIt) {
                         choiceDialog = new ChoiceDialog(
                                 clientgui.frame,
@@ -2924,6 +2958,96 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     }
                 }
                 bayNum++;
+            }
+        }// End have-choices
+         // Return the chosen unit.
+        return choices;
+    }
+
+    /**
+     * Get the unit that the player wants to unload. This method will remove the
+     * unit from our local copy of loaded units.
+     *
+     * @return The <code>Entity</code> that the player wants to unload. This
+     *         value will not be <code>null</code>.
+     */
+    private TreeMap<Integer, Vector<Integer>> getUndockedUnits() {
+        Entity ce = ce();
+        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+
+        Vector<Entity> launchableFighters = ce.getLaunchableFighters();
+        Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
+        Vector<Entity> launchableDropships = ce.getLaunchableDropships();
+
+        // Handle error condition.
+        if ((launchableFighters.size() <= 0)
+                && (launchableSmallCraft.size() <= 0)
+                && (launchableDropships.size() <= 0)) {
+            System.err
+                    .println("MovementDisplay#getUndockedUnits() called without loaded units."); //$NON-NLS-1$
+
+        } else {
+            // cycle through the docking collars
+            int i = 0;
+            int collarNum = 1;
+            Vector<Entity> currentDropships = new Vector<Entity>();
+            for (DockingCollar collar : ce.getDockingCollars()) {
+            	currentDropships = collar.getLaunchableUnits();
+            	Vector<Integer> collarChoices = new Vector<Integer>();
+            	if (currentDropships.size() > 0) {
+                    String[] names = new String[currentDropships.size()];
+                    String question = Messages
+                            .getString(
+                                    "MovementDisplay.LaunchDropshipDialog.message", new Object[] { //$NON-NLS-1$
+                                    ce.getShortName(), 1, collarNum });
+                    for (int loop = 0; loop < names.length; loop++) {
+                        names[loop] = currentDropships.elementAt(loop)
+                                .getShortName();
+                    }
+
+                    boolean doIt = false;
+                    ChoiceDialog choiceDialog = new ChoiceDialog(
+                            clientgui.frame,
+                            Messages.getString(
+                                    "MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
+                                    		collar.getType(), collarNum }), question,
+                            names);
+                    while (!doIt) {
+                        choiceDialog = new ChoiceDialog(
+                                clientgui.frame,
+                                Messages.getString(
+                                        "MovementDisplay.LaunchDropshipDialog.title", new Object[] { //$NON-NLS-1$
+                                        		collar.getType(), collarNum }),
+                                question, names);
+                        choiceDialog.setVisible(true);
+                        if (choiceDialog.getChoices().length > (1)) {
+                            ConfirmDialog nag = new ConfirmDialog(
+                                    clientgui.frame,
+                                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                                    Messages.getString("MovementDisplay.ConfirmLaunch"),
+                                    true);
+                            nag.setVisible(true);
+                            doIt = nag.getAnswer();
+                        } else {
+                            doIt = true;
+                        }
+                    }
+                    if ((choiceDialog.getAnswer() == true) && doIt) {
+                        // load up the choices
+                        int[] unitsLaunched = choiceDialog.getChoices();
+                        for (int element : unitsLaunched) {
+                            collarChoices.add(currentDropships.elementAt(element)
+                                    .getId());
+                        }
+                        choices.put(i, collarChoices);
+                        // now remove them (must be a better way?)
+                        for (int l = unitsLaunched.length; l > 0; l--) {
+                            currentDropships.remove(unitsLaunched[l - 1]);
+                        }
+                    }
+                }
+            	collarNum++;
+                i++;
             }
         }// End have-choices
          // Return the chosen unit.
@@ -3895,15 +4019,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             TreeMap<Integer, Vector<Integer>> launched = getLaunchedUnits();
             if (!launched.isEmpty()) {
                 cmd.addStep(MoveStepType.LAUNCH, launched);
+            }
+            TreeMap<Integer, Vector<Integer>> undocked = getUndockedUnits();
+            if (!undocked.isEmpty()) {
+                cmd.addStep(MoveStepType.UNDOCK, undocked);
+            }
+            if (!launched.isEmpty() || !undocked.isEmpty()) {
                 clientgui.bv.drawMovementData(ce, cmd);
             }
-        } else if (ev.getActionCommand().equals(MOVE_RECOVER)) {
+        } else if (ev.getActionCommand().equals(MOVE_RECOVER) || ev.getActionCommand().equals(MOVE_DOCK)) {
             // if more than one unit is available as a carrier
             // then bring up an option dialog
             int recoverer = getRecoveryUnit();
             if (recoverer != -1) {
                 cmd.addStep(MoveStepType.RECOVER, recoverer, -1);
                 clientgui.bv.drawMovementData(ce, cmd);
+            }
+            if (ev.getActionCommand().equals(MOVE_DOCK)) {
+            	cmd.getLastStep().setDocking(true);
             }
         } else if (ev.getActionCommand().equals(MOVE_DROP)) {
             TreeMap<Integer, Vector<Integer>> dropped = getDroppedUnits();
@@ -4409,6 +4542,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
     private void setLaunchEnabled(boolean enabled) {
         butLaunch.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
+    }
+
+    private void setDockEnabled(boolean enabled) {
+        butDock.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLaunchEnabled(enabled);
     }
 

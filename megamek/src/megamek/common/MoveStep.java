@@ -72,6 +72,7 @@ public class MoveStep implements Serializable {
 
     private boolean danger; // keep psr
     private boolean pastDanger;
+    private boolean docking;
     private boolean isUsingMASC;
     private int targetNumberMASC; // psr
     //
@@ -153,7 +154,7 @@ public class MoveStep implements Serializable {
         this.type = type;
         parent = path;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -179,7 +180,7 @@ public class MoveStep implements Serializable {
         targetType = target.getTargetType();
         targetPos = pos;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -201,7 +202,7 @@ public class MoveStep implements Serializable {
         targetId = target.getTargetId();
         targetType = target.getTargetType();
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -239,7 +240,7 @@ public class MoveStep implements Serializable {
         this(path, type);
         launched = targets;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
-                || (type == MoveStepType.DROP)) {
+                || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
         } else {
             hasEverUnloaded = false;
@@ -1355,7 +1356,8 @@ public class MoveStep implements Serializable {
             // Can't jump zero hexes.
             legal = false;
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
-                && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)) {
+                && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
+                && (type != MoveStepType.UNDOCK)) {
             // Can't be after unloading BA/inf
             legal = false;
         }
@@ -1419,6 +1421,17 @@ public class MoveStep implements Serializable {
      */
     public boolean isPastDanger() {
         return pastDanger;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isDocking() {
+        return docking;
+    }
+
+    public void setDocking(boolean tf) {
+        docking = tf;
     }
 
     /**
@@ -1771,6 +1784,11 @@ public class MoveStep implements Serializable {
 
             // no moves after launching fighters
             if (!isFirstStep() && (prev.getType() == MoveStepType.LAUNCH)) {
+                return;
+            }
+
+            // no moves after launching dropships
+            if (!isFirstStep() && (prev.getType() == MoveStepType.UNDOCK)) {
                 return;
             }
 

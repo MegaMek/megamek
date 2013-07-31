@@ -16,6 +16,7 @@ v0.35.41-dev (SVN)
 + Bug [#3802]: Rapid fire MGs not effected by direct blows
 + Bug [#3803]: Ammo consumption for rapid fire mgs not always accurated reported
 + Bug [#3800]: Crash landing Dropship doesn't damage terrain
++ Bug [#3804]: Squadrons can't have additional fighters loaded since [r9651]
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

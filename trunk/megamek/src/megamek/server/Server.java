@@ -77,6 +77,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
+import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -3731,8 +3732,13 @@ public class Server implements Runnable {
         }
 
         // Load the unit. Do not check for elevation during deployment
-        loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+        if (bayNumber == -1) {
+        	loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+                    && (game.getPhase() != IGame.Phase.PHASE_LOUNGE));
+        } else {
+        	loader.load(unit, (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
                 && (game.getPhase() != IGame.Phase.PHASE_LOUNGE), bayNumber);
+        }
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3945,10 +3951,9 @@ public class Server implements Runnable {
             return false;
         }
 
-        // must be an ASF or Small Craft
+        // must be an ASF, Small Craft, or Dropship
         Aero a = new Aero();
-        if ((unit instanceof Aero) && !(unit instanceof Dropship)
-                && !(unit instanceof Jumpship)) {
+        if ((unit instanceof Aero) && !(unit instanceof Jumpship)) {
             a = (Aero) unit;
         } else {
             return false;
@@ -4055,9 +4060,7 @@ public class Server implements Runnable {
 
         // Update the unloaded unit.
         entityUpdate(unit.getId());
-
         return true;
-
     }
 
     public void dropUnit(Entity drop, Entity entity, Coords curPos, int altitude) {
@@ -6306,6 +6309,41 @@ public class Server implements Runnable {
                     entity.resetBayDoors();
                 }
 
+                // handle dropship undocking
+                if (step.getType() == MoveStepType.UNDOCK) {
+                    TreeMap<Integer, Vector<Integer>> launched = step
+                            .getLaunched();
+                    Set<Integer> collars = launched.keySet();
+                    Iterator<Integer> collarIter = collars.iterator();
+                    while (collarIter.hasNext()) {
+                        int collarId = collarIter.next();
+                        Vector<Integer> launches = launched.get(collarId);
+                        int nLaunched = launches.size();
+                        // ok, now lets launch them
+                        r = new Report(9380);
+                        r.add(entity.getDisplayName());
+                        r.subject = entity.getId();
+                        r.newlines = 0;
+                        r.add(nLaunched);
+                        addReport(r);
+                        for (int dropshipId : launches) {
+                            // check to see if we are in the same door
+                            Entity ds = game.getEntity(dropshipId);
+                            if (!launchUnit(entity, ds, curPos, curFacing,
+                                    step.getVelocity(), step.getAltitude(),
+                                    step.getVectors(), 0)) {
+                                System.err
+                                        .println("Error! Server was told to unload "
+                                                + ds.getDisplayName()
+                                                + " from "
+                                                + entity.getDisplayName()
+                                                + " into "
+                                                + curPos.getBoardNum());
+                            }
+                        }
+                    }
+                }
+
                 // handle combat drops
                 if (step.getType() == MoveStepType.DROP) {
                     TreeMap<Integer, Vector<Integer>> dropped = step
@@ -7203,6 +7241,7 @@ public class Server implements Runnable {
             if (step.getType() == MoveStepType.RECOVER) {
 
                 loader = game.getEntity(step.getRecoveryUnit());
+                boolean isDS = (entity instanceof Dropship);
 
                 PilotingRollData psr = entity
                         .getBasePilotingRoll(overallMoveType);
@@ -7210,7 +7249,11 @@ public class Server implements Runnable {
                     psr.addModifier(5, "carrier used thrust");
                 }
                 int ctrlroll = Compute.d6(2);
-                r = new Report(9381);
+                if (isDS) {
+                	r = new Report(9388);
+                } else {
+                	r = new Report(9381);
+                }
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
                 r.add(loader.getDisplayName());

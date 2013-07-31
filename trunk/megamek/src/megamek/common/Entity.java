@@ -6343,6 +6343,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     ((SmallCraftBay) next).recover(unit);
                     return;
                 }
+                if (next instanceof DockingCollar) {
+                	((DockingCollar) next).recover(unit);
+                	return;
+                }
             }
         }
 
@@ -6677,6 +6681,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     }
 
+    /**
+     * @return get the bays separately
+     */
+    public Vector<DockingCollar> getDockingCollars() {
+        Vector<DockingCollar> result = new Vector<DockingCollar>();
+
+        for (Transporter next : transports) {
+            if (next instanceof DockingCollar) {
+                result.addElement((DockingCollar) next);
+            }
+        }
+
+        // Return the list.
+        return result;
+
+    }
+
     /***
      * Returns vector of Transports for everything a unit transports
      *
@@ -6764,6 +6785,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (((SmallCraftBay) next).getDoors() > 0)) {
                 Bay nextbay = (Bay) next;
                 for (Entity e : nextbay.getLaunchableUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+
+    public Vector<Entity> getLoadedDropships() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        for (Transporter next : transports) {
+            if (next instanceof DockingCollar) {
+                for (Entity e : next.getLoadedUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+
+    public Vector<Entity> getLaunchableDropships() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        for (Transporter next : transports) {
+            if (next instanceof DockingCollar) {
+                DockingCollar collar = (DockingCollar) next;
+                for (Entity e : collar.getLaunchableUnits()) {
                     result.addElement(e);
                 }
             }

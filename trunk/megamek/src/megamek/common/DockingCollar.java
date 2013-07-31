@@ -105,6 +105,11 @@ public class DockingCollar implements Transporter {
         totalSpace = 1;
         currentSpace = 1;
     }
+    
+    // Type is Docking Collar
+    public String getType() {
+    	return "Docking Collar";
+    }
 
 
     /**
@@ -115,25 +120,28 @@ public class DockingCollar implements Transporter {
      * @return  <code>true</code> if the unit can be loaded,
      *          <code>false</code> otherwise.
      */
-    public boolean canLoad( Entity unit ) {
+    public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
         /*
          * For now disable everything until I get docking worked out
+         */
         if(unit instanceof Dropship) {
-            Dropship ds = (Dropship)unit;
+            // Dropships are all that collars can carry
+        	Dropship ds = (Dropship)unit;
             result = true;
-            if(ds.isDockCollarDamaged())
+            
+            // If the dropship's collar is damaged, we can't mate with it.
+            if(ds.isDockCollarDamaged()) {
                 result = false;
-        }
+            }
 
-        // We must have enough space for the new troops.
-        // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        if ( this.currentSpace < 1 || isDamaged()) {
-            result = false;
+            // If this collar is in use, or if it's damaged, then we can't 
+            if ( this.currentSpace < 1 || isDamaged()) {
+                result = false;
+            }
         }
-        */
 
         // Return our result.
         return result;
@@ -162,6 +170,20 @@ public class DockingCollar implements Transporter {
         troops.addElement( unit );
     }
 
+    // Recovery is different from loading in that it uses up a recovery slot
+    // load is only used in deployment phase
+    public void recover(Entity unit) throws IllegalArgumentException {
+        // If we can't load the unit, throw an exception.
+        if (!canLoad(unit)) {
+            throw new IllegalArgumentException("Can not recover " + unit.getShortName() + " into this bay. " + currentSpace);
+        }
+
+        currentSpace -= 1;
+
+        // Add the unit to our list of troops.
+        troops.addElement(unit);
+    }
+
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
@@ -174,6 +196,29 @@ public class DockingCollar implements Transporter {
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         return (Vector<Entity>)troops.clone();
+    }
+
+    /**
+     * get a vector of launchable units. This is different from loaded in that
+     * units in recovery cannot launch
+     */
+    public Vector<Entity> getLaunchableUnits() {
+
+        Vector<Entity> launchable = new Vector<Entity>();
+
+        for (int i = 0; i < troops.size(); i++) {
+            Entity nextUnit = troops.elementAt(i);
+            if (nextUnit.getRecoveryTurn() == 0 && !damaged) {
+            	if (nextUnit instanceof Dropship) {
+            		Dropship ds = (Dropship) nextUnit;
+            		if (!ds.isDockCollarDamaged()) {
+            			launchable.add(nextUnit);
+            		}
+            	}
+            }
+        }
+
+        return launchable;
     }
 
     /**

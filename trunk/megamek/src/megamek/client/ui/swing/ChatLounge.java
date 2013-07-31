@@ -87,6 +87,7 @@ import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.Crew;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
@@ -94,13 +95,13 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
-import megamek.common.Transporter;
 import megamek.common.UnitType;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -3188,6 +3189,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
+            boolean allDropships = true;
+            boolean allBattleArmor = true;
             boolean sameSide = true;
             int prevOwnerId = -1;
             for (Entity en : entities) {
@@ -3204,6 +3207,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     sameSide = false;
                 }
                 prevOwnerId = en.getOwnerId();
+                if (!(en instanceof Dropship)) {
+                	allDropships = false;
+                }
+                if (!(en instanceof BattleArmor)) {
+                	allBattleArmor = false;
+                }
             }
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
@@ -3297,8 +3306,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 		                            subMenu.add(menuItem);
                             	}
                             }
-                            if (en instanceof BattleArmor && loader.hasBattleArmorHandles()) {
+                            if (allBattleArmor && loader.hasBattleArmorHandles()) {
                             	menuItem = new JMenuItem("Battle Armor Handles");
+	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+	                            menuItem.addActionListener(this);
+	                            menuItem.setEnabled((isOwner || isBot)
+	                                    && allUnloaded);
+	                            subMenu.add(menuItem);
+                            }
+                            if (loader instanceof FighterSquadron && allCapFighter) {
+                            	menuItem = new JMenuItem("Join "+loader.getShortName());
+	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
+	                            menuItem.addActionListener(this);
+	                            menuItem.setEnabled((isOwner || isBot)
+	                                    && allUnloaded);
+	                            subMenu.add(menuItem);
+                            }
+                         // This doesn't currently work since Docking Collars are disabled.
+                            if (loader instanceof Jumpship && allDropships) {
+                            	menuItem = new JMenuItem("Dock With "+loader.getShortName());
 	                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
 	                            menuItem.addActionListener(this);
 	                            menuItem.setEnabled((isOwner || isBot)
@@ -3309,8 +3335,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         }
                     }
                     if (canLoad) {
-                        menu.setEnabled((isOwner || isBot) && allUnloaded
-                                && canLoad);
+                        menu.setEnabled((isOwner || isBot) && allUnloaded);
                         popup.add(menu);
                     }
                 } else if (allLoaded) {

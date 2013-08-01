@@ -2449,28 +2449,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Airborne units cannot fire TAG and other weapons in the same turn.";
         }
 
-        // capital fighters cannot use more heat than they have heat sinks to
-        // dissipate
-        if (ae.isCapitalFighter()) {
-            int totalheat = 0;
-            for (Enumeration<EntityAction> i = game.getActions(); i
-                    .hasMoreElements();) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
-                    continue;
-                }
-                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
-                if ((prevAttack.getEntityId() == attackerId)
-                        && (weaponId != prevAttack.getWeaponId())) {
-                    Mounted prevWeapon = ae.getEquipment(prevAttack
-                            .getWeaponId());
-                    totalheat += prevWeapon.getCurrentHeat();
-                }
-            }
-            if ((totalheat + weapon.getCurrentHeat()) > ae.getHeatCapacity()) {
-                return "attack would exceed heat sink capacity";
-            }
-        }
 
         if (ae.usesWeaponBays() && (weapon.getBayWeapons().size() > 0)) {
 

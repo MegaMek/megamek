@@ -711,6 +711,35 @@ KeyListener, ItemListener, ListSelectionListener {
                 return;
             }
         }
+        
+        // We need to nag for overheat on capital fighters
+        if (ce().isCapitalFighter() &&
+                GUIPreferences.getInstance().getNagForOverheat()) {
+            int totalheat = 0;
+            for (EntityAction action : attacks){
+                if (action instanceof WeaponAttackAction){
+                    Mounted weapon = ce().getEquipment(
+                            ((WeaponAttackAction) action).getWeaponId());
+                    totalheat += weapon.getCurrentHeat(); 
+                }
+            }
+            if (totalheat > ce().getHeatCapacity()) {                       
+                // comfirm this action
+                String title = Messages
+                .getString("FiringDisplay.OverheatNag.title"); //$NON-NLS-1$
+                String body = Messages
+                .getString("FiringDisplay.OverheatNag.message"); //$NON-NLS-1$
+                ConfirmDialog response = 
+                        clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForOverheat(false);
+                }
+                if (!response.getAnswer()) {
+                    return;
+                }
+            }
+        }
+        
 
         // stop further input (hopefully)
         disableButtons();

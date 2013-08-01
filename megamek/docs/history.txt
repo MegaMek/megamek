@@ -26,6 +26,7 @@ v0.35.41-dev (SVN)
 + Bug: Isomentric view not showing grounded sphereoid dropships as a single multi-hex unit.
     (This fix has a small issue that I couldn't figure out yet, for some reason the "aft" or "rear" facing side of the unit
     is ghosted out as if it cannot be seen by an enemy, but I'm not using double blind. Thoughts anyone?)
++ Bug [#3119]: Squadron Overheat Strat Ops errata
 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)

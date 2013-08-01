@@ -15782,7 +15782,11 @@ public class Server implements Runnable {
 
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero) {
-
+                // If this aero is part of a squadron, we will deal with its 
+                //  heat with the fighter squadron
+                if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)){
+                    continue;
+                }
                 Aero a = (Aero) entity;
 
                 // should we even bother?
@@ -15883,7 +15887,21 @@ public class Server implements Runnable {
                         entity.heat = 0;
                     }
                     continue;
+                }   
+                
+                // Capital fighters can overheat and require control rolls
+                if (entity.isCapitalFighter() && entity.heat > 0) {                    
+                    int penalty = (int) Math.ceil(entity.heat / 15.0);
+                    game.addControlRoll(new PilotingRollData(
+                            entity.getId(), penalty, "used too much heat"));
+                }   
+                
+                // Like other large craft, the rest of these rules don't apply
+                //  to capital fighters
+                if (entity.isCapitalFighter()){
+                    continue;
                 }
+                
 
                 int autoShutDownHeat = 30;
                 boolean mtHeat = game.getOptions().booleanOption("tacops_heat");

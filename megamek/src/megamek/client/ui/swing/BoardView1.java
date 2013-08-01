@@ -2072,8 +2072,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     temp.add(secondaryPos);
                     newSpriteIds.put(temp, sprite);
 
-                    IsometricSprite isosprite = new IsometricSprite(entity,
-                            secondaryPos);
+                    IsometricSprite isosprite = new IsometricSprite(entity, secondaryPos);
                     newIsometricSprites.add(isosprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entity.getId());
@@ -3053,7 +3052,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             graph.fillRect(0, 0, bounds.width, bounds.height);
 
             // draw entity image
-            graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
+            graph.drawImage(tileManager.imageFor(entity, secondaryPos), 0, 0, this);
 
             // create final image
             if (zoomIndex == BASE_ZOOM_INDEX) {

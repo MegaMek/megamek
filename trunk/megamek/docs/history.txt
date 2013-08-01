@@ -22,6 +22,7 @@ v0.35.41-dev (SVN)
 + Bug: more than one TAG on one unit should be legal
 + Bug: M-Pods should not affect TC weight and BV
 + Bug: Fixed a NPE in BoardView1 when using the map editor
++ Bug [#3596]: Assorted Aero Bugs - AR10 related issues
 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)

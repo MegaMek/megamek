@@ -4009,8 +4009,7 @@ public class Server implements Runnable {
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
             r.add(psr.getValue());
-            r.add(ctrlroll);
-            r.newlines = 0;
+            r.add(ctrlroll);            
             r.indent(1);
             if (ctrlroll < psr.getValue()) {
                 r.choose(false);
@@ -4019,7 +4018,10 @@ public class Server implements Runnable {
                 int damage = 10 * (psr.getValue() - ctrlroll);
                 HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL,
                         ToHitData.SIDE_FRONT);
-                addReport(damageEntity(unit, hit, damage));
+                Vector<Report> rep = damageEntity(unit, hit, damage);
+                Report.indentAll(rep,1);
+                rep.lastElement().newlines++;
+                addReport(rep);
                 // did we destroy the unit?
                 if (unit.isDoomed()) {
                     // Clean out the entity.
@@ -4030,8 +4032,16 @@ public class Server implements Runnable {
             } else {
                 // avoided damage
                 r.choose(true);
+                r.newlines++;
                 addReport(r);
             }
+        }else{
+            r = new Report(9374);
+            r.subject = unit.getId();
+            r.add(unit.getDisplayName());           
+            r.indent(1); 
+            r.newlines++;
+            addReport(r);
         }
 
         // launching from an OOC vessel causes damage
@@ -6263,8 +6273,9 @@ public class Server implements Runnable {
                         r = new Report(9380);
                         r.add(entity.getDisplayName());
                         r.subject = entity.getId();
-                        r.newlines = 0;
                         r.add(nLaunched);
+                        r.add("bay " + currentBay.getBayNumber() +" (" + 
+                                doors + " doors)");
                         addReport(r);
                         int currentDoor = 0;
                         int fighterCount = 0;
@@ -6272,6 +6283,27 @@ public class Server implements Runnable {
                         for (int fighterId : launches) {
                             // check to see if we are in the same door
                             fighterCount++;
+                            
+                            // check for door damage
+                            Report doorReport = null;
+                            if (!doorDamage && (distribution[currentDoor] > 2) && 
+                                    fighterCount > 2){
+                                doorReport = new Report(9378);
+                                doorReport.subject = entity.getId();
+                                doorReport.indent(2);        
+                                int roll = Compute.d6(2) ;
+                                doorReport.add(roll);
+                                if (roll == 2)
+                                {
+                                    doorDamage = true;                                    
+                                    doorReport.choose(true);                                    
+                                    currentBay.destroyDoorNext();
+                                }else{
+                                    doorReport.choose(false);
+                                }
+                                doorReport.newlines++;
+                            }
+                            
                             if (fighterCount > distribution[currentDoor]) {
                                 // move to a new door
                                 currentDoor++;
@@ -6280,17 +6312,7 @@ public class Server implements Runnable {
                             }
                             int bonus = Math.max(0,
                                     distribution[currentDoor] - 2);
-                            // check for door damage
-                            if (!doorDamage && (distribution[currentDoor] > 2)
-                                    && (Compute.d6(2) == 2)) {
-                                doorDamage = true;
-                                r = new Report(9390);
-                                r.subject = entity.getId();
-                                r.indent(1);
-                                r.add(currentBay.getType());
-                                addReport(r);
-                                currentBay.destroyDoorNext();
-                            }
+                            
                             Entity fighter = game.getEntity(fighterId);
                             if (!launchUnit(entity, fighter, curPos, curFacing,
                                     step.getVelocity(), step.getAltitude(),
@@ -6302,6 +6324,9 @@ public class Server implements Runnable {
                                                 + entity.getDisplayName()
                                                 + " into "
                                                 + curPos.getBoardNum());
+                            }
+                            if (doorReport != null){
+                                addReport(doorReport);
                             }
                         }
                     }
@@ -6323,8 +6348,8 @@ public class Server implements Runnable {
                         r = new Report(9380);
                         r.add(entity.getDisplayName());
                         r.subject = entity.getId();
-                        r.newlines = 0;
                         r.add(nLaunched);
+                        r.add("collar " + collarId);
                         addReport(r);
                         for (int dropshipId : launches) {
                             // check to see if we are in the same door

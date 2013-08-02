@@ -2943,7 +2943,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     //Determine PSRs
                     StringBuilder psrs = new StringBuilder();
                     for (int choice = 0; choice < numChoices; choice++){
-                        int modifier = aerosPerDoor;
+                        int modifier = aerosPerDoor - 2;
                         if (choice/aerosPerDoor >= doors-1){
                             modifier += remainder;
                         }

@@ -27,6 +27,7 @@ v0.35.41-dev (SVN)
     (This fix has a small issue that I couldn't figure out yet, for some reason the "aft" or "rear" facing side of the unit
     is ghosted out as if it cannot be seen by an enemy, but I'm not using double blind. Thoughts anyone?)
 + Bug [#3119]: Squadron Overheat Strat Ops errata
++ Bug : Several issues with the ChoiceDialog for launching fighters.  It has a nag if the bay doors are overloaded with launching fighters.  This nag message has the option to not ask again, but the answer to this isn't saved.  Now it is.  Also, the nag is very specific about what kinds of rolls will need to be made for launching too many fighters.  Finally, there was an NPE if no units were selected and ok/cancel was clicked.  This made it impossible to launch latter bays without launching from previous bays, but it's fixed now.
 
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)

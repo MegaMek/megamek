@@ -2874,7 +2874,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     private TreeMap<Integer, Vector<Integer>> getLaunchedUnits() {
         Entity ce = ce();
-        TreeMap<Integer, Vector<Integer>> choices = new TreeMap<Integer, Vector<Integer>>();
+        TreeMap<Integer, Vector<Integer>> choices = 
+                new TreeMap<Integer, Vector<Integer>>();
 
         Vector<Entity> launchableFighters = ce.getLaunchableFighters();
         Vector<Entity> launchableSmallCraft = ce.getLaunchableSmallCraft();
@@ -2886,81 +2887,102 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 && (launchableDropships.size() <= 0)) {
             System.err
                     .println("MovementDisplay#getLaunchedUnits() called without loaded units."); //$NON-NLS-1$
-
-        } else {
-            // cycle through the fighter bays and then the small craft bays
-            int bayNum = 1;
-            int i = 0;
-            Bay currentBay;
-            Vector<Entity> currentFighters = new Vector<Entity>();
-            int doors = 0;
-            Vector<Bay> FighterBays = ce.getFighterBays();
-            for (i = 0; i < FighterBays.size(); i++) {
-                currentBay = FighterBays.elementAt(i);
-                Vector<Integer> bayChoices = new Vector<Integer>();
-                currentFighters = currentBay.getLaunchableUnits();
-                /*
-                 * We will assume that if more fighters are launched than is
-                 * safe, that these excess fighters will be distributed equally
-                 * among available doors
-                 */
-                doors = currentBay.getDoors();
-                if (currentFighters.size() > 0) {
-                    String[] names = new String[currentFighters.size()];
-                    String question = Messages
-                            .getString(
-                                    "MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
-                                    ce.getShortName(), doors * 2, bayNum });
-                    for (int loop = 0; loop < names.length; loop++) {
-                        names[loop] = currentFighters.elementAt(loop)
-                                .getShortName();
-                    }
-
-                    boolean doIt = false;
-                    ChoiceDialog choiceDialog = new ChoiceDialog(
-                            clientgui.frame,
-                            Messages.getString(
-                                    "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
-                                    currentBay.getType(), bayNum }), question,
-                            names);
-                    while (!doIt) {
-                        choiceDialog = new ChoiceDialog(
-                                clientgui.frame,
-                                Messages.getString(
-                                        "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
-                                        currentBay.getType(), bayNum }),
-                                question, names);
-                        choiceDialog.setVisible(true);
-                        if (choiceDialog.getChoices().length > (doors * 2)) {
-                            ConfirmDialog nag = new ConfirmDialog(
-                                    clientgui.frame,
-                                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                    Messages.getString("MovementDisplay.ConfirmLaunch"),
-                                    true);
-                            nag.setVisible(true);
-                            doIt = nag.getAnswer();
-                        } else {
-                            doIt = true;
-                        }
-                    }
-                    if ((choiceDialog.getAnswer() == true) && doIt) {
-                        // load up the choices
-                        int[] unitsLaunched = choiceDialog.getChoices();
-                        for (int element : unitsLaunched) {
-                            bayChoices.add(currentFighters.elementAt(element)
-                                    .getId());
-                        }
-                        choices.put(i, bayChoices);
-                        // now remove them (must be a better way?)
-                        for (int l = unitsLaunched.length; l > 0; l--) {
-                            currentFighters.remove(unitsLaunched[l - 1]);
-                        }
-                    }
-                }
+            return choices;
+        }
+        
+        // cycle through the fighter bays and then the small craft bays
+        int bayNum = 1;
+        int i = 0;
+        Bay currentBay;
+        Vector<Entity> currentFighters = new Vector<Entity>();
+        int doors = 0;
+        Vector<Bay> FighterBays = ce.getFighterBays();
+        for (i = 0; i < FighterBays.size(); i++) {
+            currentBay = FighterBays.elementAt(i);
+            Vector<Integer> bayChoices = new Vector<Integer>();
+            currentFighters = currentBay.getLaunchableUnits();
+            /*
+             * We will assume that if more fighters are launched than is
+             * safe, that these excess fighters will be distributed equally
+             * among available doors
+             */
+            doors = currentBay.getDoors();
+            if (currentFighters.size() == 0) {
                 bayNum++;
+                continue;
             }
-        }// End have-choices
-         // Return the chosen unit.
+            String[] names = new String[currentFighters.size()];
+            String question = Messages
+                    .getString(
+                            "MovementDisplay.LaunchFighterDialog.message", new Object[] { //$NON-NLS-1$
+                            ce.getShortName(), doors * 2, bayNum });
+            for (int loop = 0; loop < names.length; loop++) {
+                names[loop] = currentFighters.elementAt(loop)
+                        .getShortName();
+            }
+
+            boolean doIt = false;
+            ChoiceDialog choiceDialog = null;
+            while (!doIt) {
+                choiceDialog = new ChoiceDialog(
+                        clientgui.frame,
+                        Messages.getString(
+                                "MovementDisplay.LaunchFighterDialog.title", new Object[] { //$NON-NLS-1$
+                                currentBay.getType(), bayNum }), question,
+                        names);
+                choiceDialog.setVisible(true);
+                if (choiceDialog.getChoices() == null){
+                    doIt = true;
+                    continue;
+                }
+                int numChoices = choiceDialog.getChoices().length;
+                if (numChoices > (doors * 2) &&
+                        GUIPreferences.getInstance().getNagForLaunchDoors()){                                        
+                    int aerosPerDoor = numChoices/ doors;
+                    int remainder = numChoices % doors;
+                    //Determine PSRs
+                    StringBuilder psrs = new StringBuilder();
+                    for (int choice = 0; choice < numChoices; choice++){
+                        int modifier = aerosPerDoor;
+                        if (choice/aerosPerDoor >= doors-1){
+                            modifier += remainder;
+                        }
+                        modifier += currentFighters.get(choice).getCrew().getPiloting();
+                        String damageMsg = Messages.getString(
+                                "MovementDisplay.LaunchFighterDialog.controlroll", //$NON-NLS-1$ 
+                                new Object[] { names[choice], modifier});
+                        psrs.append("\t" + damageMsg + "\n");                        
+                    }
+                    ConfirmDialog nag = new ConfirmDialog(
+                            clientgui.frame,
+                            Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                            Messages.getString("MovementDisplay.ConfirmLaunch") + psrs.toString(),
+                            true);
+                    nag.setVisible(true);
+                    doIt = nag.getAnswer();
+                    if (!nag.getShowAgain()) {
+                        GUIPreferences.getInstance().setNagForLaunchDoors(false);
+                    }
+                } else {
+                    doIt = true;
+                }
+            }
+            if ((choiceDialog.getAnswer() == true) && doIt) {
+                // load up the choices
+                int[] unitsLaunched = choiceDialog.getChoices();
+                for (int element : unitsLaunched) {
+                    bayChoices.add(currentFighters.elementAt(element)
+                            .getId());
+                }
+                choices.put(i, bayChoices);
+                // now remove them (must be a better way?)
+                for (int l = unitsLaunched.length; l > 0; l--) {
+                    currentFighters.remove(unitsLaunched[l - 1]);
+                }
+            }
+            
+            bayNum++;
+        }
         return choices;
     }
 

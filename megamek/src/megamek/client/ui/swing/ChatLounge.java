@@ -3103,7 +3103,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int bayNumber = Integer.parseInt(stLoad.nextToken());
                 Entity loadingEntity = clientgui.getClient().getEntity(id);
                 double capacity = loadingEntity.getBayById(bayNumber).getUnused();
-                if (entities.size() < capacity){                
+                if (entities.size() <= capacity){                
                     for (Entity e : entities) {
                         loader(e, id, bayNumber);
                     }

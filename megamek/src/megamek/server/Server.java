@@ -3966,13 +3966,13 @@ public class Server implements Runnable {
             return false;
         }
 
-        // pg. 86 of TW: launched fighters can move in fire in the turn they are
-        // unloaded
-        unit.setUnloaded(false);
-
         // The unloaded unit is no longer being carried.
         unit.setTransportId(Entity.NONE);
 
+        // pg. 86 of TW: launched fighters can move in fire in the turn they are
+        // unloaded
+        unit.setUnloaded(false);
+        
         // Place the unloaded unit onto the screen.
         unit.setPosition(pos);
 
@@ -4070,6 +4070,15 @@ public class Server implements Runnable {
 
         // Update the unloaded unit.
         entityUpdate(unit.getId());
+        
+        // ok add another turn for the unloaded entity so that it can move
+        GameTurn newTurn = new GameTurn.EntityClassTurn(
+                unit.getOwner().getId(), GameTurn.CLASS_AERO | 
+                GameTurn.CLASS_DROPSHIP | GameTurn.CLASS_SMALL_CRAFT);
+        game.insertNextTurn(newTurn);
+        // brief everybody on the turn update
+        send(createTurnVectorPacket());
+             
         return true;
     }
 

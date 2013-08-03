@@ -771,7 +771,6 @@ public class Client implements IClientCommandHandler {
      * Sends a "load entity" packet
      */
     public void sendLoadEntity(int id, int loaderId, int bayNumber) {
-        checkDuplicateNamesDuringDelete(id);
         send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[] {id, loaderId, bayNumber}));
     }
 

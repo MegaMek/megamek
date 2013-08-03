@@ -3101,8 +3101,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         ":");
                 int id = Integer.parseInt(stLoad.nextToken());
                 int bayNumber = Integer.parseInt(stLoad.nextToken());
-                for (Entity e : entities) {
-                    loader(e, id, bayNumber);
+                Entity loadingEntity = clientgui.getClient().getEntity(id);
+                double capacity = loadingEntity.getBayById(bayNumber).getUnused();
+                if (entities.size() < capacity){                
+                    for (Entity e : entities) {
+                        loader(e, id, bayNumber);
+                    }
+                } else{
+                    JOptionPane.showMessageDialog(clientgui.frame,
+                            Messages.getString("LoadingBay.toomany") + //$NON-NLS-2$
+                              " " + (int)capacity + ".",//$NON-NLS-2$
+                            Messages.getString("LoadingBay.error"),//$NON-NLS-2$
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } else if (command.equalsIgnoreCase("UNLOAD")) {
                 for (Entity e : entities) {

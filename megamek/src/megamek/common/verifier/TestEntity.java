@@ -708,6 +708,10 @@ public abstract class TestEntity implements TestEntityOption {
         int fieldKitchenCount = 0;
         boolean hasSponsonTurret = false;
         for (Mounted m : getEntity().getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_VOIDSIG) && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
+                illegal = true;
+                buff.append("void signature system needs ECM suite");
+            }
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 fieldKitchenCount++;
             }

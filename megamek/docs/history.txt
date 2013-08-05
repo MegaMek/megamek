@@ -6,7 +6,8 @@ v0.35.41-dev (SVN)
 + Bug: Fixing Arana Militia Mech.  Wrong Unit encoding.
 + Bug [#3791]: Prototype Improved Jump Jets using incorrect rules (Super Griffin)
 + Feature: Random Basements Option
-+ Bug: Cannot choose which bay you wish to have your units load into when there are multiple of 1 type of bay
++ Bug: Cannot choose which bay you wish to have your units load into when there
+    are multiple of 1 type of bay
 + Bug [#3294]: Mechanical Jump Booster Turn Arrow not Grayed Out
 + Bug [#3780]: Mode Button Grayed Out When Attempting UAC Mode Switch 0.35.40 Dev
 + Bug [#3796]: Optional Ultra AC rule creates extra shot
@@ -17,30 +18,49 @@ v0.35.41-dev (SVN)
 + Bug [#3803]: Ammo consumption for rapid fire mgs not always accurated reported
 + Bug [#3800]: Crash landing Dropship doesn't damage terrain
 + Bug [#3804]: Squadrons can't have additional fighters loaded since [r9651]
-+ Data: More Units. Space Stations/LAMs(Only playable as Mechs)/Some missing Dropships
++ Data: More Units. Space Stations/LAMs(Only playable as Mechs)/Some missing
+    Dropships
 + Errata: Mech Composite IS should have a BV multiplier of 0.5
 + Bug: more than one TAG on one unit should be legal
 + Bug: M-Pods should not affect TC weight and BV
 + Bug: Fixed a NPE in BoardView1 when using the map editor
 + Bug [#3596]: Assorted Aero Bugs - AR10 related issues
-+ Bug: Isomentric view not showing grounded sphereoid dropships as a single multi-hex unit.
-    (This fix has a small issue that I couldn't figure out yet, for some reason the "aft" or "rear" facing side of the unit
-    is ghosted out as if it cannot be seen by an enemy, but I'm not using double blind. Thoughts anyone?)
++ Bug: Isomentric view not showing grounded sphereoid dropships as a single
+    multi-hex unit.
+    (This fix has a small issue that I couldn't figure out yet, for some reason
+    the "aft" or "rear" facing side of the unit is ghosted out as if it cannot
+    be seen by an enemy, but I'm not using double blind. Thoughts anyone?)
 + Bug [#3119]: Squadron Overheat Strat Ops errata
-+ Bug : Several issues with the ChoiceDialog for launching fighters.  It has a nag if the bay doors are overloaded with launching fighters.  This nag message has the option to not ask again, but the answer to this isn't saved.  Now it is.  Also, the nag is very specific about what kinds of rolls will need to be made for launching too many fighters.  Finally, there was an NPE if no units were selected and ok/cancel was clicked.  This made it impossible to launch latter bays without launching from previous bays, but it's fixed now.
-+ Bug [#3808]: Launching ASFs from DSs won't damage doors and poor report formatting
-+ Bug [#3809] ASFs launched from a DS aren't able to expend MP in the turn they are launched 
-+ Bug [#3810]: When loading Aeros into a Dropships, the short name can get changed 
-+ Bug: Trying to load more units into a bay than the bay has capacity causes an exception.
-+ Bug: Protomech Bay checking for instanceof Mech instead of instanceof Protomech, so can never load protos
++ Bug : Several issues with the ChoiceDialog for launching fighters.  It has a
+    nag if the bay doors are overloaded with launching fighters.  This nag
+    message has the option to not ask again, but the answer to this isn't saved.
+    Now it is.  Also, the nag is very specific about what kinds of rolls will 
+    need to be made for launching too many fighters.  Finally, there was an NPE
+    if no units were selected and ok/cancel was clicked.  This made it
+    impossible to launch latter bays without launching from previous bays,
+     but it's fixed now.
++ Bug [#3808]: Launching ASFs from DSs won't damage doors and poor report
+   formatting
++ Bug [#3809] ASFs launched from a DS aren't able to expend MP in the turn they
+   are launched 
++ Bug [#3810]: When loading Aeros into a Dropships, the short name can get
+   changed 
++ Bug: Trying to load more units into a bay than the bay has capacity causes an
+   exception.
++ Bug: Protomech Bay checking for instanceof Mech instead of instanceof
+   Protomech, so can never load protos
 + Bug: Non-bay transporters such as troop space cause NPEs
-+ Refactored loading menus to be a lot smarter and account for all transporter types
++ Refactored loading menus to be a lot smarter and account for all transporter
+   types
 + Added Unload All From Bay # to complement loading into specific bays
 + Bug: Battle Armor Bays still not correctly setting bayNumber
 + Bug: Infantry bays show tons/ton instead of platoons/platoon
-+ Refactored arlith's fix for loading too many units so that it doesn't NPE on non-bay units.
-    He is going to continue to refactor it so that it'll actually be smarter, but for now it just needs to work.
-+ Added entity short names to the exceptions in MechFileParser.java so that we know WHICH entity has the issue
++ Refactored arlith's fix for loading too many units so that it doesn't NPE on
+    non-bay units. He is going to continue to refactor it so that it'll actually
+    be smarter, but for now it just needs to work.
++ Added entity short names to the exceptions in MechFileParser.java so that we
+    know WHICH entity has the issue
++ Bug: verifier does not check for ECM for stealth armor/void sig armor
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

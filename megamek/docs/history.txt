@@ -35,6 +35,9 @@ v0.35.41-dev (SVN)
 + Bug: Protomech Bay checking for instanceof Mech instead of instanceof Protomech, so can never load protos
 + Bug: Non-bay transporters such as troop space cause NPEs
 + Refactored loading menus to be a lot smarter and account for all transporter types
++ Added Unload All From Bay # to complement loading into specific bays
++ Bug: Battle Armor Bays still not correctly setting bayNumber
++ Bug: Infantry bays show tons/ton instead of platoons/platoon
 
 v0.35.40 (2013-07-25, 19:04 UTC+2)
 + Bug 3756: Clan 'Mechs with endo-composite flagged as invalid

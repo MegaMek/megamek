@@ -267,7 +267,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match laser insulator to laser");
+                            "Unable to match laser insulator to laser for "+ent.getShortName());
                 }
             }
 
@@ -291,7 +291,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match DWP to weapon");
+                            "Unable to match DWP to weapon for "+ent.getShortName());
                 }
             }
 
@@ -329,7 +329,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Artemis to launcher");
+                            "Unable to match Artemis to launcher for "+ent.getShortName());
                 }
             } // End link-Artemis
             else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType()
@@ -350,7 +350,7 @@ public class MechFileParser {
                     // This mech has stealth armor but no ECM. Probably
                     // an improperly created custom.
                     throw new EntityLoadingException(
-                            "Unable to find an ECM Suite.  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
+                            "Unable to find an ECM Suite for "+ent.getShortName()+".  Mechs with Stealth Armor or Void-Signature-System must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
               // Link PPC Capacitor to PPC it its location.
@@ -416,7 +416,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "Unable to match Apollo to launcher");
+                            "Unable to match Apollo to launcher for "+ent.getShortName());
                 }
             } // End link-Apollo
               // now find any active probes and add them to the sensor list
@@ -466,7 +466,7 @@ public class MechFileParser {
                         || (((Mech) ent).hasMASC() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(
-                            "Unable to load AES due to incompatible systems");
+                            "Unable to load AES due to incompatible systems for "+ent.getShortName());
                 }
 
                 if ((m.getLocation() != Mech.LOC_LARM)
@@ -474,7 +474,7 @@ public class MechFileParser {
                         && (m.getLocation() != Mech.LOC_RARM)
                         && (m.getLocation() != Mech.LOC_RLEG)) {
                     throw new EntityLoadingException(
-                            "Unable to load AES due to incompatible location");
+                            "Unable to load AES due to incompatible location for "+ent.getShortName());
                 }
 
             }
@@ -482,7 +482,7 @@ public class MechFileParser {
             if (m.getType().hasFlag(MiscType.F_HARJEL)
                     && (m.getLocation() == Mech.LOC_HEAD)) {
                 throw new EntityLoadingException(
-                        "Unable to load harjel in head.");
+                        "Unable to load harjel in head for "+ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_MASS)
@@ -490,14 +490,14 @@ public class MechFileParser {
                             .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (m
                             .getLocation() != Mech.LOC_CT)))) {
                 throw new EntityLoadingException(
-                        "Unable to load MASS!  Must be located in the same location as the cockpit.");
+                        "Unable to load MASS for "+ent.getShortName()+"!  Must be located in the same location as the cockpit.");
             }
 
             if (m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                     && (((ent instanceof Mech) && (m.getLocation() == Mech.LOC_HEAD)) || ((ent instanceof VTOL) && (m
                             .getLocation() == VTOL.LOC_ROTOR)))) {
                 throw new EntityLoadingException(
-                        "Unable to load Modular Armor in Rotor/Head location");
+                        "Unable to load Modular Armor in Rotor/Head location for "+ent.getShortName());
             }
 
             if (m.getType().hasFlag(MiscType.F_TALON)) {
@@ -505,14 +505,14 @@ public class MechFileParser {
                     if ((m.getLocation() != Mech.LOC_LLEG)
                             && (m.getLocation() != Mech.LOC_RLEG)) {
                         throw new EntityLoadingException(
-                                "Talons are only legal in the Legs");
+                                "Talons are only legal in the Legs for "+ent.getShortName());
                     }
 
                     if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG)
                             || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
                                     Mech.LOC_LLEG)) {
                         throw new EntityLoadingException(
-                                "Talons must be in all legs");
+                                "Talons must be in all legs for "+ent.getShortName());
                     }
                 } else if (ent instanceof QuadMech) {
                     if ((m.getLocation() != Mech.LOC_LLEG)
@@ -520,7 +520,7 @@ public class MechFileParser {
                             && (m.getLocation() != Mech.LOC_LARM)
                             && (m.getLocation() != Mech.LOC_RARM)) {
                         throw new EntityLoadingException(
-                                "Talons are only legal in the Legs");
+                                "Talons are only legal in the Legs for "+ent.getShortName());
                     }
 
                     if (!ent.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG)
@@ -531,12 +531,12 @@ public class MechFileParser {
                             || !ent.hasWorkingMisc(MiscType.F_TALON, -1,
                                     Mech.LOC_LARM)) {
                         throw new EntityLoadingException(
-                                "Talons must be in all legs");
+                                "Talons must be in all legs for "+ent.getShortName());
                     }
 
                 } else {
                     throw new EntityLoadingException(
-                            "Unable to load talons in non-Mek entity");
+                            "Unable to load talons in non-Mek entity for "+ent.getShortName());
                 }
             }
 
@@ -610,7 +610,7 @@ public class MechFileParser {
                 if (m.getLinked() == null) {
                     // huh. this shouldn't happen
                     throw new EntityLoadingException(
-                            "No available PPC to match Capacitor!");
+                            "No available PPC to match Capacitor for "+ent.getShortName()+"!");
                 }
 
             } // End crossLink-PPC Capacitor

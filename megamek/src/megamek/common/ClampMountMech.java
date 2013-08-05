@@ -25,7 +25,7 @@ package megamek.common;
  * @see megamek.server.Server#checkForMagneticClamp()
  */
 
-/* package */class ClampMountMech extends BattleArmorHandles {
+/* package */public class ClampMountMech extends BattleArmorHandles {
 
     // Private attributes, constants and helper functions.
 

@@ -241,6 +241,10 @@ public class TestMech extends TestEntity {
         MiscType mt = (MiscType) mounted.getType();
         int eNum = entity.getEquipmentNum(mounted);
         if (mt.hasFlag(MiscType.F_STEALTH) && !entity.hasPatchworkArmor()) {
+            if (!entity.hasWorkingMisc(MiscType.F_ECM)) {
+                buff.append("stealth armor needs ECM suite\n");
+                return false;
+            }
             // stealth needs to have 2 crits in legs arm and side torso
             if (countCriticalSlotsFromEquipInLocation(entity, eNum,
                     Mech.LOC_LARM) != 2) {
@@ -290,7 +294,7 @@ public class TestMech extends TestEntity {
             for (int locations = 0; locations < entity.locations(); locations++) {
                 if (countCriticalSlotsFromEquipInLocation(entity, eNum,
                         locations) != 1) {
-                    buff.append("not a environmental sealing crit in each location\n");
+                    buff.append("not an environmental sealing crit in each location\n");
                     return false;
                 }
             }
